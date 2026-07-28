@@ -72,3 +72,32 @@ Plugins/**/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
+
+Binaries/
+Intermediate/
+Saved/
+DerivedDataCache/
+.vs/
+*.sln
+# JetBrains Rider (非常流行的 UE C++ IDE)
+.idea/
+
+# Mac 系统文件 (如果你或协作者可能用 Mac)
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# 缩略图缓存 (Windows 可能产生)
+Thumbs.db
+
+# 崩溃报告和日志
+Saved/Logs/
+Saved/Crashes/
+
+# 特定的用户设置文件
+*.user
+*.userosscache
+*.userprefs
+
+# 编辑器的回话文件
+*.session.vim
