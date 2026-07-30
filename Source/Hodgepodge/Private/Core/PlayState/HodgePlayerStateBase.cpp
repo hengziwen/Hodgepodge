@@ -2,6 +2,10 @@
 
 
 #include "Core/PlayState/HodgePlayerStateBase.h"
+#include "AbilitySystem/HodgeAbilitySystemComponentBase.h"
+#include "GameFramework/Character.h"
+#include "AbilitySystemComponent.h"
+#include "AttributeSet.h"
 
 AHodgePlayerStateBase::AHodgePlayerStateBase()
 {
@@ -26,10 +30,25 @@ void AHodgePlayerStateBase::InitializeAbilitySystemForCharacter(ACharacter* Avat
         AbilitySystemComponent->InitAbilityActorInfo(this, Avatar);
     }
 
-    // TODO: Give default abilities/effects only on server
+    // Ensure attribute sets are added on server
     if (HasAuthority())
     {
-        // e.g., GiveAbilities/GiveStartupEffects
+        // Only add once
+        if (AddedAttributeSets.Num() == 0)
+        {
+            for (TSubclassOf<UAttributeSet> AttrClass : AttributeSetClasses)
+            {
+                if (!AttrClass) continue;
+                UAttributeSet* NewAS = NewObject<UAttributeSet>(AbilitySystemComponent, AttrClass);
+                if (NewAS)
+                {
+                    AbilitySystemComponent->AddAttributeSetSubobject(NewAS);
+                    AddedAttributeSets.Add(NewAS);
+                }
+            }
+        }
+
+        // TODO: Give default abilities/effects (ApplyGameplayEffectToSelf etc.)
     }
 }
 
