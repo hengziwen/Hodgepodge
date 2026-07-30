@@ -10,7 +10,6 @@
 AHodgePlayerStateBase::AHodgePlayerStateBase()
 {
     AbilitySystemComponent = CreateDefaultSubobject<UHodgeAbilitySystemComponentBase>(TEXT("AbilitySystemComponent"));
-    AbilitySystemComponent->SetIsReplicatedByDefault(true);
 }
 
 UAbilitySystemComponent* AHodgePlayerStateBase::GetAbilitySystemComponent() const
