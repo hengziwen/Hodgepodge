@@ -17,15 +17,6 @@ void AHodgeCharacterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 void AHodgeCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// Initialize AbilitySystemComponent from PlayerState (PlayerState owns ASC)
-	if (APlayerState* PS = GetPlayerState())
-	{
-		if (AHodgePlayerStateBase* HPS = Cast<AHodgePlayerStateBase>(PS))
-		{
-			HPS->InitializeAbilitySystemForCharacter(this);
-		}
-	}
 }
 
 
