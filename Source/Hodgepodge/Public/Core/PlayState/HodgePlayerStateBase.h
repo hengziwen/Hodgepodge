@@ -47,4 +47,3 @@ public:
 	UPROPERTY()
 	TArray<UAttributeSet*> AddedAttributeSets;
 };
-

@@ -2,7 +2,7 @@
 
 
 #include "Character/HodgeCharacterBase.h"
-#include "Core/PlayState/HodgePlayerStateBase.h"
+
 void AHodgeCharacterBase::PreInitializeComponents()
 {
 	Super::PreInitializeComponents();
@@ -18,5 +18,3 @@ void AHodgeCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
 }
-
-

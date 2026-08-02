@@ -10,6 +10,7 @@
 AHodgePlayerStateBase::AHodgePlayerStateBase()
 {
     AbilitySystemComponent = CreateDefaultSubobject<UHodgeAbilitySystemComponentBase>(TEXT("AbilitySystemComponent"));
+    SetNetUpdateFrequency(100.0f); // High frequency for player state updates
 }
 
 UAbilitySystemComponent* AHodgePlayerStateBase::GetAbilitySystemComponent() const
@@ -50,4 +51,3 @@ void AHodgePlayerStateBase::InitializeAbilitySystemForCharacter(ACharacter* Avat
         // TODO: Give default abilities/effects (ApplyGameplayEffectToSelf etc.)
     }
 }
-
