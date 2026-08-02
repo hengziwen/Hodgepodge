@@ -12,19 +12,11 @@ class HODGEPODGE_API AHodgeCharacterBase : public ACharacter
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
-	AHodgeCharacterBase();
-
-protected:
-	// Called when the game starts or when spawned
+	//~ Begin AActor Interface
+	virtual void PreInitializeComponents() override;
 	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	//~ End AActor Interface
 
 };
 

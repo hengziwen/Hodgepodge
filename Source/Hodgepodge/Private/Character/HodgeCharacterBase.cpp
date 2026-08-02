@@ -3,13 +3,14 @@
 
 #include "Character/HodgeCharacterBase.h"
 #include "Core/PlayState/HodgePlayerStateBase.h"
-
-// Sets default values
-AHodgeCharacterBase::AHodgeCharacterBase()
+void AHodgeCharacterBase::PreInitializeComponents()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	Super::PreInitializeComponents();
+}
 
+void AHodgeCharacterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
 }
 
 // Called when the game starts or when spawned
@@ -25,20 +26,6 @@ void AHodgeCharacterBase::BeginPlay()
 			HPS->InitializeAbilitySystemForCharacter(this);
 		}
 	}
-}
-
-// Called every frame
-void AHodgeCharacterBase::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
-// Called to bind functionality to input
-void AHodgeCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
 }
 
 
