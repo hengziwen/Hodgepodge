@@ -1,5 +1,11 @@
-﻿// 111屎山代码来袭
-
+﻿/**
+ * @file HodgePlayerControllerBase.cpp
+ * @brief AHodgePlayerControllerBase 类的实现
+ *
+ * 实现了玩家控制器基类的事件桥接功能:
+ * 将 PlayerController 的生命周期回调事件桥接到
+ * UHodgeLocalPlayerBase 的多播委托系统,实现观察者模式的事件分发。
+ */
 
 #include "Core/PlayerController/HodgePlayerControllerBase.h"
 
