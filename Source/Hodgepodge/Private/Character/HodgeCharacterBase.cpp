@@ -11,6 +11,17 @@
 #include "Character/HodgeCharacterBase.h"
 
 /**
+ * @brief 构造函数
+ *
+ * 将 FObjectInitializer 传递给父类 AAlsCharacter,
+ * 由父类负责把默认移动组件替换为 UAlsCharacterMovementComponent。
+ */
+AHodgeCharacterBase::AHodgeCharacterBase(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+{
+}
+
+/**
  * @brief Actor组件初始化前的回调(重写自AActor)
  *
  * 预留扩展点,供子类在组件初始化前执行自定义逻辑
