@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @file HodgePlayerControllerBase.cpp
  * @brief AHodgePlayerControllerBase 类的实现
  *

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @file HodgeCharacterBase.cpp
  * @brief AHodgeCharacterBase 类的实现
  *
