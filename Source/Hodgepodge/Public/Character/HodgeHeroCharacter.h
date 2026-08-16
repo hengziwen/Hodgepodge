@@ -1,15 +1,15 @@
-/**
- * @file HodgeHeroCharacter.h
- * @brief AHodgeHeroCharacter 类的头文件
- *
- * 英雄角色类,玩家实际操控的主角。
- * 继承自 AHodgeCombatCharacter(其父类为 AHodgeCharacterBase,再往上是 AAlsCharacter),
- * 因此天然获得 ALS 的移动、动画与状态管理能力。
- *
- * 本类承担两类职责:
- * 1. GAS 的双初始化入口(PossessedBy + OnRep_PlayerState)
- * 2. ALS 的相机组件与输入接入(输入使用 Hodgepodge 输入框架 UHodgeInputComponentBase)
- */
+﻿// **
+//  * @file HodgeHeroCharacter.h
+//  * @brief AHodgeHeroCharacter 类的头文件
+//  *
+//  * 英雄角色类,玩家实际操控的主角。
+//  * 继承自 AHodgeCombatCharacter(其父类为 AHodgeCharacterBase,再往上是 AAlsCharacter),
+//  * 因此天然获得 ALS 的移动、动画与状态管理能力。
+//  *
+//  * 本类承担两类职责:
+//  * 1. GAS 的双初始化入口(PossessedBy + OnRep_PlayerState)
+//  * 2. ALS 的相机组件与输入接入(输入使用 Hodgepodge 输入框架 UHodgeInputComponentBase)
+//  */
 
 #pragma once
 
@@ -64,9 +64,9 @@ protected:
 	// =============================================================================
 	// ALS 输入
 	//
-	// 输入动作(UInputAction)统一由 UHodgeInputConfig 数据资产管理,
-	// 通过 InputTag 与对应的 UInputAction 映射(见 NativeInputActions)。
-	// 输入映射上下文(InputMappingContext)仍由角色蓝图配置,
+	// 输入动作(U输入动作)统一由 UHodge输入Config 数据资产管理,
+	// 通过 输入Tag 与对应的 U输入动作 映射(见 Native输入动作s)。
+	// 输入映射上下文(输入MappingContext)仍由角色蓝图配置,
 	// 并在 NotifyControllerChanged 中负责添加/移除。
 	// =============================================================================
 
@@ -124,7 +124,7 @@ protected:
 	virtual void CalcCamera(float DeltaTime, FMinimalViewInfo& ViewInfo) override;
 
 	// =============================================================================
-	// Input
+	// 输入
 	// =============================================================================
 
 protected:
@@ -183,7 +183,7 @@ public:
 	virtual void PossessedBy(AController* NewController) override;
 
 	/**
-	 * @brief 客户端 PlayerState 复制到位时的回调(重写自 ACharacter)
+	 * 简介: 客户端 玩家State 复制到位时的回调(重写自 A角色)
 	 *
 	 * 这是 GAS 客户端初始化的入口。
 	 */

@@ -1,10 +1,10 @@
-/**
- * @file HodgeCombatCharacter.h
- * @brief AHodgeCombatCharacter 类的头文件
- *
- * 战斗角色基类,CharacterBase 和 HeroCharacter 之间的中间层,
- * 预留给战斗相关的通用逻辑。
- */
+﻿// **
+//  * @file HodgeCombatCharacter.h
+//  * @brief AHodgeCombatCharacter 类的头文件
+//  *
+//  * 战斗角色基类,CharacterBase 和 HeroCharacter 之间的中间层,
+//  * 预留给战斗相关的通用逻辑。
+//  */
 
 #pragma once
 
@@ -33,10 +33,10 @@ class HODGEPODGE_API AHodgeCombatCharacter : public AHodgeCharacterBase
 
 public:
 	/**
-	 * @brief 构造函数
+	 * 简介: 构造函数
 	 *
-	 * 将 FObjectInitializer 传递给父类 AHodgeCharacterBase,
-	 * 保持整条继承链的 FObjectInitializer 传递。
+	 * 将 FObject初始化r 传递给父类 AHodge角色Base,
+	 * 保持整条继承链的 FObject初始化r 传递。
 	 */
 	explicit AHodgeCombatCharacter(const FObjectInitializer& ObjectInitializer);
 };

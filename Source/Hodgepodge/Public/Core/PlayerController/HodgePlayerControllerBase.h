@@ -1,10 +1,10 @@
-/**
- * @file HodgePlayerControllerBase.h
- * @brief AHodgePlayerControllerBase 类的头文件
- *
- * 玩家控制器基类,作为事件桥梁将引擎生命周期回调
- * 桥接到 UHodgeLocalPlayerBase 的多播委托系统。
- */
+﻿// **
+//  * @file HodgePlayerControllerBase.h
+//  * @brief AHodgePlayerControllerBase 类的头文件
+//  *
+//  * 玩家控制器基类,作为事件桥梁将引擎生命周期回调
+//  * 桥接到 UHodgeLocalPlayerBase 的多播委托系统。
+//  */
 
 #pragma once
 
@@ -110,15 +110,15 @@ public:
 
 protected:
 	/**
-	 * @brief 当 PlayerState 通过网络复制到达客户端时调用(重写自APlayerController)
+	 * 简介: 当 玩家State 通过网络复制到达客户端时调用(重写自A玩家Controller)
 	 * 
 	 * 这是一个客户端专用的回调(网络复制回调),
-	 * 当服务器端的 PlayerState 复制到本地客户端时,引擎自动调用此函数。
+	 * 当服务器端的 玩家State 复制到本地客户端时,引擎自动调用此函数。
 	 * 
-	 * 事件广播: OnPlayerStateSet - 通知订阅者 PlayerState 已就绪
-	 * 这是客户端获取 PlayerState 信息(如分数、队伍、玩家名等)的关键时机。
+	 * 事件广播: On玩家StateSet - 通知订阅者 玩家State 已就绪
+	 * 这是客户端获取 玩家State 信息(如分数、队伍、玩家名等)的关键时机。
 	 * 
-	 * 注意: 此函数只在客户端调用,服务器端 PlayerState 直接在 ReceivedPlayer 中获取。
+	 * 注意: 此函数只在客户端调用,服务器端 玩家State 直接在 Received玩家 中获取。
 	 */
 	virtual void OnRep_PlayerState() override;
 };

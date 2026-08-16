@@ -1,10 +1,10 @@
-﻿/**
- * @file HodgePlayerStateBase.h
- * @brief AHodgePlayerStateBase 类的头文件
- *
- * 玩家状态基类,持有 GAS AbilitySystemComponent,
- * 负责能力、属性、效果的管理,以及 GAS 的双初始化流程。
- */
+﻿// **
+//  * @file HodgePlayerStateBase.h
+//  * @brief AHodgePlayerStateBase 类的头文件
+//  *
+//  * 玩家状态基类,持有 GAS AbilitySystemComponent,
+//  * 负责能力、属性、效果的管理,以及 GAS 的双初始化流程。
+//  */
 
 #pragma once
 
@@ -103,10 +103,10 @@ public:
 
 private:
 	/**
-	 * @brief ASC 是否已完成初始化
+	 * 简介: ASC 是否已完成初始化
 	 *
-	 * 防止服务器端重复创建 AttributeSet。
-	 * 使用独立 bool 而非 AddedAttributeSets.Num() == 0 判断,
+	 * 防止服务器端重复创建 属性集。
+	 * 使用独立 bool 而非 Added属性集s.Num() == 0 判断,
 	 * 因为死亡重生/重新 Possess 时数组可能为空但 ASC 已初始化过。
 	 */
 	bool bASCInitialized = false;

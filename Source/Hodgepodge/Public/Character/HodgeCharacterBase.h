@@ -1,10 +1,10 @@
-/**
- * @file HodgeCharacterBase.h
- * @brief AHodgeCharacterBase 类的头文件
- *
- * 角色基类,所有角色的公共基类,
- * 提供 PreInitializeComponents、BeginPlay、EndPlay 等生命周期扩展点。
- */
+﻿// **
+//  * @file HodgeCharacterBase.h
+//  * @brief AHodgeCharacterBase 类的头文件
+//  *
+//  * 角色基类,所有角色的公共基类,
+//  * 提供 PreInitializeComponents、BeginPlay、EndPlay 等生命周期扩展点。
+//  */
 
 #pragma once
 
@@ -59,12 +59,12 @@ public:
 	virtual void BeginPlay() override;
 
 	/**
-	 * @brief Actor结束播放时的回调(重写自AActor)
+	 * 简介: Actor(演员)结束播放时的回调(重写自AActor(演员))
 	 *
-	 * Actor被销毁、关卡切换或游戏结束时触发,用于清理资源。
+	 * Actor(演员)被销毁、关卡切换或游戏结束时触发,用于清理资源。
 	 * 当前实现仅调用 Super,预留扩展点供子类使用。
 	 *
-	 * @param EndPlayReason 结束原因(如关卡切换、Actor被销毁、游戏结束等)
+	 * 参数: EndPlayReason 结束原因(如关卡切换、Actor(演员)被销毁、游戏结束等)
 	 */
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 };
