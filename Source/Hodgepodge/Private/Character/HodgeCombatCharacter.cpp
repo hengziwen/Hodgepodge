@@ -18,4 +18,31 @@
 AHodgeCombatCharacter::AHodgeCombatCharacter(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+	// 禁用Tick以提高性能
+	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bStartWithTickEnabled = false;
+
+	// 禁用网格接收贴花（提高渲染性能）
+	GetMesh()->bReceivesDecals = false;
+}
+
+UAbilitySystemComponent* AHodgeCombatCharacter::GetAbilitySystemComponent() const
+{
+	return GetHodgeAbilitySystemComponent();
+}
+
+void AHodgeCombatCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	// 确保能力系统组件有效
+	if (HodgeAbilitySystemComponent)
+	{
+		/**
+		 * 初始化能力系统角色信息
+		 * this指针传递两次：分别作为OwnerActor和AvatarActor
+		 * 在服务器端初始化
+		 */
+		//HodgeAbilitySystemComponent->InitAbilityActorInfo(this, this);
+	}
 }
