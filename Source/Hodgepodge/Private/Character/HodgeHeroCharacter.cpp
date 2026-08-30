@@ -391,7 +391,6 @@ void AHodgeHeroCharacter::PossessedBy(AController* NewController)
 
 	if (AHodgePlayerStateBase* PS = GetPlayerState<AHodgePlayerStateBase>())
 	{
-		PS->InitializeAbilitySystemForCharacter(this);
 	}
 }
 
@@ -411,7 +410,6 @@ void AHodgeHeroCharacter::OnRep_PlayerState()
 
 	if (AHodgePlayerStateBase* PS = GetPlayerState<AHodgePlayerStateBase>())
 	{
-		PS->InitializeAbilitySystemForCharacter(this);
 	}
 }
 
