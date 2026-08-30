@@ -30,6 +30,10 @@
 		{
 			"Name": "UNTLink",
 			"Enabled": true
+		},
+		{
+			"Name": "GameFeatures",
+			"Enabled": true
 		}
 	]
 }

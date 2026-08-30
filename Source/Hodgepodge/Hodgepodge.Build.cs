@@ -24,9 +24,8 @@ public class Hodgepodge : ModuleRules
 			"GameplayAbilities",
 			"GameplayTags",
 			"GameplayTasks",
-			// ALS: 提供 AAlsCharacter、UAlsCharacterMovementComponent、
-			// UAlsAnimationInstance 以及移动/动画所需的底层能力。
-			"ALS"
+			"ALS", 
+			"GameFeatures"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {
