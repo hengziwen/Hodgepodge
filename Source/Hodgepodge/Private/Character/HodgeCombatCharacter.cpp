@@ -9,6 +9,8 @@
 
 #include "Character/HodgeCombatCharacter.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeCombatCharacter)
+
 /**
  * @brief 构造函数
  *

@@ -11,6 +11,8 @@
 
 #include "AbilitySystem/HodgeAbilitySystemComponentBase.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeAttributeSet)
+
 class UWorld;
 
 UHodgeAttributeSet::UHodgeAttributeSet()

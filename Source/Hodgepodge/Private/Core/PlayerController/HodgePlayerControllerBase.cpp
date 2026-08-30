@@ -11,6 +11,7 @@
 
 #include "Core/LocalPlayer/HodgeLocalPlayerBase.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(HodgePlayerControllerBase)
 
 /**
  * @brief 构造函数

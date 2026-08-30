@@ -7,6 +7,8 @@
 #include "AbilitySystem/HodgeAbilitySystemComponentBase.h"
 #include "Net/UnrealNetwork.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeHealthSet)
+
 UHodgeHealthSet::UHodgeHealthSet() : Health(100.0f)
                                      , MaxHealth(100.0f)
                                      , BaseDamage(0.0f)

@@ -18,6 +18,8 @@
 #include "Input/HodgeInputComponentBase.h"
 #include "Utility/AlsVector.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeHeroCharacter)
+
 /**
  * @brief 构造函数
  *
