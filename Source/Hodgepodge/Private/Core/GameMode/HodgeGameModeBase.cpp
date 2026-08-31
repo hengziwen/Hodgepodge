@@ -180,7 +180,7 @@ void AHodgeGameModeBase::HandleMatchAssignmentIfNotExpectingOne()
 		// TODO：后续可以将默认 Experience 从配置文件或 Developer Settings 中读取。
 		ExperienceId = FPrimaryAssetId(
 			FPrimaryAssetType("HodgeExperienceDefinition"),
-			FName("B_HodgeDefaultExperience"));
+			FName("Exp_HodgeDefaultExperience"));
 
 		ExperienceIdSource = TEXT("Default");
 	}
