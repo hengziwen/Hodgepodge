@@ -5,6 +5,10 @@ public class Hodgepodge : ModuleRules
 	public Hodgepodge(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_5;
+
+		bEnableNonInlinedGenCppWarnings = true;
+		// UnsafeTypeCastWarningLevel = WarningLevel.Warning;
 
 		PublicDependencyModuleNames.AddRange(new string[]
 		{
@@ -20,14 +24,21 @@ public class Hodgepodge : ModuleRules
 			"GameFeatures",
 			"AIModule",
 			"EngineSettings",
-			"NetCore"
+			"NetCore",
+			"AnimGraphRuntime",
+			"RigVM",
+			"ControlRig"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[]
 		{
 			"ALSCamera",
-			"EnhancedInput"
+			"EnhancedInput",
+			"PhysicsCore",
+			"Niagara"
 		});
+
+		SetupIrisSupport(Target);
 
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
