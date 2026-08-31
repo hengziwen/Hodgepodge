@@ -8,45 +8,26 @@
 | 主模块 | `Hodgepodge`（Runtime，单模块） |
 | 代码规模 | `Source/Hodgepodge` 共 89 个文件（44 `.h` + 44 `.cpp` + 1 `.cs`） |
 | 核心依赖 | ALS-Refactored 4.15、GameplayAbilities、GameFeatures、EnhancedInput、**ModularGameplay** |
-| 项目阶段 | **Experience 的 C++ 层已搬完，资产层尚未开始**（当前**无法启动**，见下方阻塞项） |
+| 项目阶段 | ✅ **可运行** —— Experience 全链路已跑通（C++ + 资产 + 配置） |
 | 相关文档 | [`LYRA_LEARNING_GUIDE.md`](LYRA_LEARNING_GUIDE.md)（学什么）、[`LYRA_RUNTIME_FLOW.md`](LYRA_RUNTIME_FLOW.md)（怎么跑）、[`UE5 开放世界动作 RPG 架构方案 V2.md`](UE5%20开放世界动作%20RPG%20架构方案%20V2.md)（总体方案） |
-| 代码基线 | 提交 `b8e708f` "夺舍Lyra重构了一堆Gameplay基类并接上Experience" |
+| 代码基线 | 提交 `7c02de2`（Experience 跑通 + 清理无用文件） |
 
 ---
 
-## ⚠️ 当前最高优先级阻塞：项目跑不起来
+## ✅ 当前状态：Experience 全链路已跑通
 
-**先澄清进度**：Experience 的 **C++ 代码层已经搬完了**（`b8e708f`，GameMode / GameState / PlayerState / 状态机全部就位）。
-但 **资产层一步没做** —— `Content/` 里还没有任何一个 Experience 资产，`DefaultGame.ini` 也没注册扫描项。
-代码写完 ≠ 能跑，现在启动必然崩溃：
+上一版 README 顶部挂着的"项目跑不起来"阻塞项**已解决**（提交 `5b8f460`）。三处缺口全部补齐：
 
-```
-GameMode::InitGame → HandleMatchAssignmentIfNotExpectingOne()
-  → 所有来源都没有有效 Experience → 硬编码回退到 "B_HodgeDefaultExperience"
-  → OnMatchAssignmentGiven() → ExperienceComponent->SetCurrentExperience()
-  → UHodgeAssetManager::GetPrimaryAssetPath(ExperienceId)   ← 扫不到，路径无效
-  → AssetPath.TryLoad() 返回 nullptr
-  → check(AssetClass)    ← 💥 崩溃
-```
+| 曾经的阻塞 | 现状 |
+|---|---|
+| 没有 Experience 资产 | ✅ `Content/Main/Experiences/Exp_HodgeDefaultExperience.uasset` |
+| 没注册 `PrimaryAssetTypesToScan` | ✅ 补了 3 项：`HodgeExperienceDefinition`、`HodgePawnData`、`HodgeExperienceActionSet` |
+| ASC 的 Avatar 是 nullptr | ✅ `HodgeHeroCharacter` 双入口补上 `InitAbilityActorInfo(PS, this)` |
 
-**缺失的三样东西：**
+**现在的默认 Experience 是 `Exp_HodgeDefaultExperience`**（`HodgeGameModeBase.cpp` 里硬编码的兜底名）。
+换玩法用命令行即可：`-Experience=<资产名>`。
 
-| # | 缺失项 | 位置 |
-|---|---|---|
-| 1 | **Experience 数据资产本身** | 整个 `Content/` 下搜索 `*Experience*` 结果是 **0 个文件** |
-| 2 | **`HodgeExperienceDefinition` 的 `PrimaryAssetTypesToScan`** | `Config/DefaultGame.ini` 里只有 `HodgeGameData` 和 `GameFeatureData` |
-| 3 | **`UHodgeWorldSettings`**（可选，用于地图指定默认 Experience） | 代码里对应分支是注释状态 |
-
-**修复办法**（在编辑器里做，约 10 分钟）：
-
-1. 创建蓝图类，父类选 `HodgeExperienceDefinition`，命名为 **`B_HodgeDefaultExperience`**（必须这个名字，GameMode 里写死了），放到 `Content/Main/Data/`
-2. 在 `DefaultGame.ini` 补上扫描项：
-   ```ini
-   +PrimaryAssetTypesToScan=(PrimaryAssetType="HodgeExperienceDefinition",AssetBaseClass="/Script/Hodgepodge.HodgeExperienceDefinition",bHasBlueprintClasses=True,bIsEditorOnly=False,Directories=((Path="/Game/Main/Data")),SpecificAssets=,Rules=(Priority=-1,ChunkId=-1,bApplyRecursively=True,CookRule=AlwaysCook))
-   ```
-3. 在该资产上配好 `DefaultPawnData`（指向 `DA_DafultPawnData`）
-
-> 也可以用命令行临时绕过验证：`Hodgepodge.exe -Experience=xxx`，但资产不存在照样会崩，只是崩在不同的地方。
+> ⚠️ 前两条已提交（`5b8f460`），第三条（GAS 修复）**还在工作区未提交**，别丢。
 
 ---
 
@@ -81,7 +62,7 @@ Hodgepodge（大杂烩）是一个**用来长本事的框架工程**，不是一
 
 - **不是游戏** —— 没有可玩的玩法循环，没有 UI，没有关卡内容
 - **不是 Lyra 的复制品** —— 只吸收理念，不整体照搬（Lyra 耦合的 CommonUI / CommonUser / GameSettings 等子系统，本项目一个都没引入）
-- **不是稳定可运行的状态** —— 项目正处于一次大型重构的中途，见顶部阻塞项和 [§11 技术债](#11-已知问题与技术债)
+- **不是稳定可运行的状态** —— 项目处于活跃的 Lyra 化重构中，能跑但有不少技术债，见 [§7 进度](#7-当前进度) 和 [§11 技术债](#11-已知问题与技术债)
 
 ### 1.3 从 Lyra 借来的设计信条
 
@@ -89,14 +70,14 @@ Hodgepodge（大杂烩）是一个**用来长本事的框架工程**，不是一
 
 | # | 信条 | 本项目对应实现 | 状态 |
 |---|---|---|---|
-| 1 | **一套代码，多种玩法** | `UHodgeExperienceDefinition` + `AHodgeGameModeBase` 完整流程 | ✅ C++ 层接通<br>🚫 缺资产，见顶部阻塞项 |
+| 1 | **一套代码，多种玩法** | `UHodgeExperienceDefinition` + `AHodgeGameModeBase` 完整流程 | ✅ **已跑通** |
 | 2 | **数据驱动** | `UHodgePawnData` / `UHodgeGameData` / `UHodgeInputConfig` | 🚧 PawnData 只剩 1 个字段 |
 | 3 | **插件化扩展** | `UHodgeGameFeaturePolicy` + `GameFeatureAction_*` | 🚧 Policy 完成，Action 基本是死代码 |
 | 4 | **GameplayTag 作万能胶水** | `HodgeGameplayTags.h` + `FGameplayTagStackContainer` | ✅ |
 | 5 | **组合优于继承** | `PawnData` 决定 Pawn 类、ModularGameplay 组件化 | ✅ |
 | 6 | **服务器权威** | ASC 放 PlayerState、`Mixed` 复制模式 | ✅ |
 | 7 | **Base / Concrete 分层** | `HodgeGameStateBase` → `HodgeGameState`、`HodgePlayerStateBase` → `HodgePlayerState` | ✅ **新增** |
-| 8 | **Init State 链解耦异步依赖** | `UGameFrameworkComponentManager` + 4 个 InitState Tag | 🚧 链已注册，**无组件参与** |
+| 8 | **Init State 链解耦异步依赖** | `UGameFrameworkComponentManager` + 4 个 InitState Tag | 🚧 链已注册但**无组件参与**，当前靠双入口顶着，够用 |
 
 ### 1.4 与 Lyra 的关键分歧
 
@@ -105,7 +86,7 @@ Hodgepodge（大杂烩）是一个**用来长本事的框架工程**，不是一
 | 维度 | Lyra | Hodgepodge | 原因 |
 |---|---|---|---|
 | **Locomotion / Camera** | 自研 `LyraCharacterMovementComponent` + 相机模式栈 | 直接继承 **ALS** 的 `AAlsCharacter` / `UAlsCameraComponent` | 自研高质量 locomotion 成本极高，先借用 |
-| **Pawn 与 GAS 的协调** | `ULyraPawnExtensionComponent` 驱动 Init State 链 | 目前**没有 PawnExtensionComponent**。Init State 链已注册但无组件参与，GAS 初始化改由 `AHodgePlayerState::PreInitializeComponents()` 完成 | 重构中间态，见 [§6.6](#66-modulargameplay-与-init-state-链--半成品) |
+| **Pawn 与 GAS 的协调** | `ULyraPawnExtensionComponent` 驱动 Init State 链 | **没有 PawnExtensionComponent**，走双入口方案：`PossessedBy` / `OnRep_PlayerState` 里直接 `InitAbilityActorInfo(PS, this)` | 依赖少时够用；等 PawnData / AbilitySet / InputConfig 都变成异步依赖后再迁移到 Init State 链，见 [§6.6](#66-modulargameplay-与-init-state-链-半成品) |
 | **UI / 设置 / 登录** | CommonUI + UIExtension + GameSettings + CommonUser 全家桶 | **全部没有** | 体量大、非核心矛盾，延后引入 |
 
 ---
@@ -199,8 +180,9 @@ Public/Core/PlayState/HodgePlayerState.h       + Private/Core/PlayState/HodgePla
 ```
 Content/
 ├── Main/                    ★ 项目自有内容，新东西放这里
-│   ├── Data/                DA_Dafult_GameData / DA_DafultPawnData / DA_DafultGameData
-│   │                        ⚠️ 缺 B_HodgeDefaultExperience（见顶部阻塞项）
+│   ├── Experiences/         ★ Exp_HodgeDefaultExperience（当前默认）
+│   │                        ActionSet 也放这里（建议 LAS_ 前缀，同 Lyra 约定）
+│   ├── Data/                DA_Dafult_GameData / DA_Dafult_PawnData / DA_DafultGameData
 │   ├── Input/               DA_HodgeInputConfig / IMC_Default / IMC_UI / InputAction/(18)
 │   └── Character/EnemyBase/
 ├── Assets/                  Enemies / HeroCharacter / Weapons /
@@ -241,11 +223,12 @@ Content/
     "e:\Project\Git\Hodgepodge\Hodgepodge.uproject"
 ```
 
-### 4.3 首次运行检查清单
+### 4.3 运行检查清单
 
-跑不起来 90% 是配置问题，按这个顺序查：
+项目已可运行。如果启动异常，按这个顺序查：
 
-1. **先解决顶部阻塞项** —— 建 `B_HodgeDefaultExperience` 资产 + 补 `DefaultGame.ini` 扫描项。没做这步，后面全不用查。
+1. **Experience 扫得到吗？** 看日志里有没有 `Identified experience ... (Source: Default)`。
+   扫不到就检查 `DefaultGame.ini` 里 `HodgeExperienceDefinition` 的扫描目录是否是 `/Game/Main/Experiences`，以及 `Exp_HodgeDefaultExperience.uasset` 是否在那儿。
 
 2. **`DefaultEngine.ini` 的 `AssetManagerClassName`** 必须是 `/Script/Hodgepodge.HodgeAssetManager`。
    错了会直接 `UE_LOG(Fatal)` 退出。
@@ -253,13 +236,30 @@ Content/
 3. **`DefaultGame.ini` 的 `[/Script/HodgePodge.HodgeAssetManager]` 段**：
    ```ini
    HodgeGameDataPath=/Game/Main/Data/DA_Dafult_GameData.DA_Dafult_GameData
-   DefaultPawnData=/Game/Main/Data/DA_DafultPawnData.DA_Dafult_PawnData
+   DefaultPawnData=/Game/Main/Data/DA_Dafult_PawnData.DA_Dafult_PawnData
    ```
    GameData 加载失败是 **Fatal**，不是 Warning。
 
 4. **`GlobalDefaultGameMode` 用的是旧类名** `/Script/Hodgepodge.HodgepodgeGameModeBase`，靠 `DefaultEngine.ini` 的 `[CoreRedirects]` 生效。能跑，但建议改成 `HodgeGameModeBase`。
 
 5. **启动地图**：`GameDefaultMap=/Game/ALSExtras/Levels/L_Als_Grid`，`EditorStartupMap=/Game/ThirdPerson/Maps/ThirdPersonMap`。
+
+### 4.4 切换玩法
+
+现在只有 `Exp_HodgeDefaultExperience` 一个 Experience。要试多种玩法：
+
+```powershell
+# 命令行指定（优先级高于 WorldSettings）
+UnrealEditor.exe Hodgepodge.uproject -game -Experience=Exp_HodgeDefaultExperience
+
+# 或在编辑器里新建：Content/Main/Experiences/ 下右键
+# → Blueprint Class → 父类选 HodgeExperienceDefinition
+# → 配 DefaultPawnData / GameFeaturesToEnable / Actions
+```
+
+> 新建的 Experience 会**自动被扫描到**，因为扫描项是整目录 `/Game/Main/Experiences`（`bHasBlueprintClasses=True`），不用改配置。
+
+**验证是否生效**：日志过滤 `Identified experience`，`Source:` 字段会告诉你是从 OptionsString / CommandLine / WorldSettings / Default 哪一级来的。
 
 ---
 
@@ -316,7 +316,7 @@ Experience 已经接通，这是现在的完整流程：
      4. 命令行                  -Experience=XXX
      5. WorldSettings           （代码注释中，缺 UHodgeWorldSettings）
      6. Dedicated Server        TryDedicatedServerLogin()
-     7. 硬编码默认               "B_HodgeDefaultExperience"   ← 目前总会走到这里
+     7. 硬编码默认               "Exp_HodgeDefaultExperience"   ← 目前总会走到这里
 
 ④ OnMatchAssignmentGiven(ExperienceId, Source)
      └─ ExperienceComponent->SetCurrentExperience(ExperienceId)
@@ -378,10 +378,19 @@ Experience 已经接通，这是现在的完整流程：
 
 **空实现（待办）**：`InitializeGameplayCueManager()`、`UpdateInitialGameContentLoadPercent()`
 
-### 6.2 Experience 系统 ⚠️ C++ 层已接通，资产层缺失
+### 6.2 Experience 系统 ✅ 已跑通
 
 本项目的 Experience 是 Lyra 同名系统的移植，**代码结构与 Lyra 高度一致**。
 想深入理解每一步在干什么，强烈建议对照 [`LYRA_RUNTIME_FLOW.md`](LYRA_RUNTIME_FLOW.md) 的第 4~6 章阅读 —— 那篇文档把决策链路、状态机、启动时序逐行拆开讲了，把里面的 `Lyra` 前缀换成 `Hodge` 基本就是本项目的行为。
+
+#### 已落地的资产
+
+| 资产 | 路径 | 说明 |
+|---|---|---|
+| `Exp_HodgeDefaultExperience` | `/Game/Main/Experiences/` | 默认 Experience。GameMode 兜底硬编码引用它；用 `Exp_` 前缀比 Lyra 的 `B_` 更能区分资产类型 |
+| `DA_Dafult_PawnData` | `/Game/Main/Data/` | 已配进 Experience 的 `DefaultPawnData` |
+
+新建玩法 Experience：在 `/Game/Main/Experiences/` 建蓝图，父类选 `HodgeExperienceDefinition`，**不需要改任何配置**（扫描项覆盖整个目录，`bHasBlueprintClasses=True`）—— 建完即被 AssetManager 发现，用 `-Experience=<名字>` 切换即可。
 
 #### 三个数据资产
 
@@ -464,7 +473,10 @@ Unloaded → Loading → LoadingGameFeatures → LoadingChaosTestingDelay
 
 ```cpp
 // PreInitializeComponents
-AbilitySystemComponent->InitAbilityActorInfo(this, GetPawn());   // ⚠️ GetPawn() 此时大概率是 nullptr
+AbilitySystemComponent->InitAbilityActorInfo(this, GetPawn());
+// ⚠️ 这行绑定基本无效：PlayerState 创建早于 Pawn，GetPawn() 此时是 nullptr。
+//    真正的 Avatar 绑定在 HodgeHeroCharacter 的双入口里（见 §6.8），
+//    这行只是"先绑个 Owner 兜底"。
 // 非客户端：注册 Experience 加载完成回调
 ExperienceComponent->CallOrRegister_OnExperienceLoaded(...);
 ```
@@ -498,9 +510,9 @@ struct FGameplayTagStackContainer : public FFastArraySerializer
 
 用 `FFastArraySerializer` 做**增量复制**（改一项只传增量，不是整体替换），并提供 `PostReplicatedAdd` / `PreReplicatedRemove` / `PostReplicatedChange` 三个钩子。Lyra 用弹药、分数、统计都靠它，本项目目前只有 `StatTags` 一处使用。
 
-### 6.6 ModularGameplay 与 Init State 链 🚧 半成品
+### 6.6 ModularGameplay 与 Init State 链 🚧 半成品（当前不阻塞）
 
-本次重构开始接入，但**只做了一半**。
+本次重构开始接入，但**只做了一半**。注意：GAS 初始化目前走双入口（[§6.8](#68-gas-初始化已修复双入口方案)），**这条链不是必经之路** —— 它是在为"异步依赖变多"做的预留。
 
 **已做的：**
 
@@ -528,7 +540,7 @@ CopyProperties()          → 按类型+名字匹配，逐个复制 UPlayerState
 - ❌ **没有任何类实现 `IGameFrameworkInitStateInterface`**
 - ❌ **`UHodgePawnExtensionComponent` 根本不存在**（只在注释里出现：GameMode 的 `SpawnDefaultPawnAtTransform`、PlayerState 的 `ClientInitialize`、`GameFeatureAction_AddInputBinding`）
 
-**结论**：链搭好了，节点没接上。在这个状态下 Init State 链不会起作用，所有 `InitState_*` Tag 只是被注册而已。
+**结论**：链搭好了，节点没接上 —— 没有任何组件调用 `RegisterInitStateFeature`，所以当前这条链不会起作用，所有 `InitState_*` Tag 只是被注册而已。**但这不阻塞运行**：GAS 有双入口顶着。等 PawnData / AbilitySet / InputConfig 都变成异步依赖、双入口撑不住时，再补 `UHodgePawnExtensionComponent` 让链生效。
 
 ### 6.7 角色体系（ALS）✅
 
@@ -548,50 +560,60 @@ AHodgeCombatCharacter            ← + IAbilitySystemInterface，持有 ASC（�
 | 类 | 文件 | 关键点 |
 |---|---|---|
 | `AHodgeCharacterBase` | `Character/HodgeCharacterBase.h` | 继承 `AAlsCharacter`，只提供生命周期扩展点。**刻意不放 GAS** |
-| `AHodgeCombatCharacter` | `Character/HodgeCombatCharacter.h` | 持有 `HodgeAbilitySystemComponent`，但 `PossessedBy` 里的 `InitAbilityActorInfo(this, this)` **是注释状态**，所以这个 ASC 实际上从未被初始化 |
-| `AHodgeHeroCharacter` | `Character/HodgeHeroCharacter.h` | 重载 `CreatePlayerInputComponent()` 返回 `UHodgeInputComponentBase`；`NotifyControllerChanged()` 管理 IMC；12 个 ALS 输入动作 |
+| `AHodgeCombatCharacter` | `Character/HodgeCombatCharacter.h` | 持有 `HodgeAbilitySystemComponent`，但从未初始化。**孤儿 ASC，建议删除**（玩家用的是 PlayerState 上的 ASC，见 §6.8） |
+| `AHodgeHeroCharacter` | `Character/HodgeHeroCharacter.h` | 玩家角色。`PossessedBy` / `OnRep_PlayerState` **双入口绑定玩家 ASC 的 Avatar**（见 [§6.8](#68-gas-初始化已修复双入口方案)）；重载 `CreatePlayerInputComponent()` 返回 `UHodgeInputComponentBase`；`NotifyControllerChanged()` 管理 IMC；12 个 ALS 输入动作 |
 | `AHodgeEnemyCharacter` | `Character/HodgeEnemyCharacter.h` | 骨架，碰撞盒 / 血条 / 战斗组件全部注释 |
 
 **ALS 实现的 12 个输入动作**：Look、Move、Sprint、Walk、Crouch、Jump、Aim、Ragdoll、Roll、RotationMode、ViewMode、SwitchShoulder。
 
-### 6.8 GAS ⚠️ 初始化链路存在断裂
+### 6.8 GAS ✅ 初始化已修复（双入口方案）
 
-这是本次重构**最需要注意的地方**，改动前务必先读。
+上一版的"Avatar 断裂"已修复：`HodgeHeroCharacter` 在服务端/客户端两个入口分别重绑 Avatar。
+改动前务必读一下这段历史，理解为什么这么做 —— 它是 GAS 架构里最经典的坑。
 
-#### 旧方案（已废弃）
+#### 历史：为什么会断裂
 
+重构删掉了旧的 `AHodgePlayerStateBase::InitializeAbilitySystemForCharacter()`（原方案：由 Character 在 `PossessedBy` / `OnRep_PlayerState` 里调用，统一做 ASC 绑定 + 属性集创建），改成在 `AHodgePlayerState::PreInitializeComponents()` 里 `InitAbilityActorInfo(this, GetPawn())`。
+
+**问题在于 PlayerState 创建早于 Pawn**：`PreInitializeComponents` 那一刻 `GetPawn()` 还是 nullptr，而旧的调用点（`PossessedBy` / `OnRep_PlayerState`）又被删成了空块 —— 于是没有任何地方在 Pawn 就绪后重绑 Avatar，Avatar 永远是 nullptr。
+
+#### 现在的双入口（工作区未提交，记得 commit）
+
+```cpp
+// 服务端：Pawn 被 Possess 时
+void AHodgeHeroCharacter::PossessedBy(AController* NewController)
+{
+    Super::PossessedBy(NewController);
+    if (AHodgePlayerState* PS = GetPlayerState<AHodgePlayerState>())
+    {
+        PS->GetAbilitySystemComponent()->InitAbilityActorInfo(PS, this);
+    }
+}
+
+// 客户端：PlayerState 复制到位时
+void AHodgeHeroCharacter::OnRep_PlayerState()
+{
+    Super::OnRep_PlayerState();
+    if (AHodgePlayerState* PS = GetPlayerState<AHodgePlayerState>())
+    {
+        PS->GetAbilitySystemComponent()->InitAbilityActorInfo(PS, this);
+    }
+}
 ```
-AHodgePlayerStateBase::InitializeAbilitySystemForCharacter(Avatar)
-  ├─ ASC->InitAbilityActorInfo(PS, Avatar)
-  └─ 服务端遍历 AttributeSetClasses 动态创建属性集
-调用点：AHodgeHeroCharacter::PossessedBy() / OnRep_PlayerState()
-```
 
-`InitializeAbilitySystemForCharacter` **已在本次重构中删除**。
+要点：
 
-#### 新方案（当前）
+- **`AHodgePlayerStateBase` → `AHodgePlayerState`**：ASC 在 **Concrete 层**（继承关系见 [§6.4](#64-新增ahodgeplayerstate玩家状态主体)），用基类指针拿不到。
+- **双入口各管一条路**：服务端走 `PossessedBy`，客户端走 `OnRep_PlayerState`（属性复制回调），谁先到都不漏。
+- **遗留**：注释里还写着"调用 `InitializeAbilitySystemForCharacter(this)`"，已过时，顺手改掉。
 
-```
-AHodgePlayerState::PreInitializeComponents()
-  └─ ASC->InitAbilityActorInfo(/*Owner=*/this, /*Avatar=*/GetPawn())
-```
-
-#### 断裂点
-
-| 问题 | 说明 |
-|---|---|
-| **`GetPawn()` 大概率是 nullptr** | PlayerState 的创建早于 Pawn，`PreInitializeComponents` 时 Pawn 还没生成。Lyra 是在 Pawn 生成后由 `PawnExtensionComponent` 调用 `InitializeAbilitySystem(ASC, Pawn)` **重新绑定** Avatar 的，本项目没有这个组件 |
-| **`HodgeHeroCharacter::PossessedBy` / `OnRep_PlayerState` 是空块** | 旧的调用被删了，新的没接上，留下两个空的 `if` 块： <br>`if (AHodgePlayerStateBase* PS = GetPlayerState<AHodgePlayerStateBase>()) { }` |
-| **属性集不再动态创建** | 改成构造时 `CreateDefaultSubobject<UHodgeHealthSet>`，靠 ASC 的 `InitializeComponent` 自动检测。要加新属性集得改 C++，不再是配置驱动 |
-| **`AHodgeCombatCharacter` 的 ASC 是孤儿** | 持有但从不初始化，`GetAbilitySystemComponent()` 返回它，可能误导调用方 |
-
-**结论**：当前 ASC 的 Avatar 很可能是 nullptr，依赖 Avatar 的 GAS 功能（如需要 Avatar 的 Ability、GameplayCue）会异常。**修这个的最佳方式就是补上 `UHodgePawnExtensionComponent` + Init State 链**，这也是 Lyra 的原设计。
+**局限**：这是 Lyra 从前的双入口方案。Lyra 现在用 `PawnExtensionComponent` + Init State 链，能覆盖"换 Pawn / 死亡重生 / 观战"等更复杂的场景。当前异步依赖只有 ASC + PawnData，双入口够用；**等依赖变多再迁移**（见 [§6.6](#66-modulargameplay-与-init-state-链-半成品)）。
 
 #### 三套 ASC 的现状
 
 | ASC | 宿主 | 状态 |
 |---|---|---|
-| `AHodgePlayerState::AbilitySystemComponent` | 玩家 | ✅ 有效，待修 Avatar |
+| `AHodgePlayerState::AbilitySystemComponent` | 玩家 | ✅ 有效，Avatar 已由双入口绑定 |
 | `AHodgeGameState::AbilitySystemComponent` | 游戏全局 | ✅ 有效（Owner = Avatar = GameState），暂无使用者 |
 | `AHodgeCombatCharacter::HodgeAbilitySystemComponent` | 角色 | ❌ 从未初始化，建议删除或明确用途 |
 
@@ -668,7 +690,8 @@ UHodgeInputConfig  (DataAsset)          UHodgeInputComponentBase  (: UEnhancedIn
 
 | 模块 | 内容 |
 |---|---|
-| **Experience 系统（C++ 全链路）** | 数据资产三件套的**类定义** + 7 状态机 + Bundle 加载 + GameFeature 激活/停用 + 三档委托 + GameMode 全流程接通（7 级优先级、延迟生成 Pawn、PawnData 三级回退、重生重试）<br>⚠️ **只有 C++ 类，还没有任何数据资产实例** |
+| **Experience 系统（全链路已跑通）** | 数据资产三件套 + 7 状态机 + Bundle 加载 + GameFeature 激活/停用 + 三档委托 + GameMode 全流程接通（7 级优先级、延迟生成 Pawn、PawnData 三级回退、重生重试）<br>✅ 资产实例：`Exp_HodgeDefaultExperience`（提交 `5b8f460` 跑通） |
+| **GAS 初始化（双入口）** | `HodgeHeroCharacter::PossessedBy` / `OnRep_PlayerState` 重绑玩家 ASC 的 Avatar（见 [§6.8](#68-gas-初始化已修复双入口方案)）。⚠️ **工作区未提交** |
 | **Base / Concrete 分层** | `GameStateBase → GameState`、`PlayerStateBase → PlayerState`，职责分离 |
 | **游戏级 ASC** | `AHodgeGameState` 持有全局 ASC，Owner = Avatar = GameState |
 | **玩家状态主体** | PawnData 复制、连接类型枚举、队伍/小队、StatTags、观战视角旋转、Push Model 复制 |
@@ -679,21 +702,22 @@ UHodgeInputConfig  (DataAsset)          UHodgeInputComponentBase  (: UEnhancedIn
 | **输入框架** | `HodgeInputConfig` + `HodgeInputComponentBase` |
 | **GameplayTag 体系** | 100+ 原生 Tag |
 
-### 7.2 阻塞中 🚫（不解决无法启动）
+### 7.2 已解决 ✅（上一版的阻塞项）
 
-| # | 事项 | 说明 |
-|---|---|---|
-| 1 | **建 `B_HodgeDefaultExperience` 资产** | Content 下搜索 `*Experience*` 为 0 |
-| 2 | **注册 `HodgeExperienceDefinition` 扫描项** | `DefaultGame.ini` 缺失，会导致 `check(AssetClass)` 崩溃 |
+| # | 曾经的问题 | 怎么解决的 | 提交 |
+|---|---|---|---|
+| 1 | 没有 Experience 资产 | 建了 `Exp_HodgeDefaultExperience`（`/Game/Main/Experiences/`） | `5b8f460` |
+| 2 | 没注册扫描项 | `DefaultGame.ini` 补 `HodgeExperienceDefinition` / `HodgePawnData` / `HodgeExperienceActionSet` 三项，顺带修了 `DefaultPawnData` 路径笔误 | `5b8f460` |
+| 3 | ASC Avatar 是 nullptr | `HodgeHeroCharacter` 双入口 `InitAbilityActorInfo(PS, this)` | ⚠️ **未提交** |
 
 ### 7.3 未完成 🚧
 
 | 优先级 | 事项 | 说明 |
 |---|---|---|
-| 🔴 P0 | **修 GAS Avatar 断裂** | 补 `UHodgePawnExtensionComponent`，或用其他方式在 Pawn 生成后重绑 ASC 的 Avatar |
-| 🔴 P0 | **清理 `AHodgeCombatCharacter` 的孤儿 ASC** | 持有但从不初始化，会误导调用方 |
-| 🔴 P0 | **清理 `HodgeHeroCharacter` 的两个空 `if` 块** | 重构遗留的中间态 |
-| 🟠 P1 | **让 Init State 链真正跑起来** | 需要有组件 `RegisterInitStateFeature` + 实现 `IGameFrameworkInitStateInterface` |
+| 🔴 P0 | **提交 GAS 双入口修复** | `HodgeHeroCharacter.cpp` 的改动还在工作区，见 [§7.2](#72-已解决-上一版的阻塞项) |
+| 🔴 P0 | **清理 `AHodgeCombatCharacter` 的孤儿 ASC** | 持有但从不初始化，`GetAbilitySystemComponent()` 会误导调用方 |
+| 🔴 P0 | **清理过时注释** | `PossessedBy` / `OnRep_PlayerState` 的注释还写着已删除的 `InitializeAbilitySystemForCharacter` |
+| 🟠 P1 | **让 Init State 链真正跑起来** | **当前不阻塞**（双入口顶着）。等异步依赖变多后补 `UHodgePawnExtensionComponent` + `RegisterInitStateFeature` |
 | 🟠 P1 | **补 `UHodgePawnData` 字段** | AbilitySets / TagRelationshipMapping / InputConfig / DefaultCameraMode 仍被注释 |
 | 🟠 P1 | **实现 `UHodgeAbilitySet`** | 能力批量授予/回收（Lyra 理念 5），`SetPawnData` 里的调用是注释状态 |
 | 🟠 P1 | **实现 `UHodgeGameplayCueManager`** | `InitializeGameplayCueManager()` 是空实现 |
@@ -713,16 +737,17 @@ UHodgeInputConfig  (DataAsset)          UHodgeInputComponentBase  (: UEnhancedIn
 ### 7.4 路线图（建议顺序）
 
 ```
-阶段 A（1~2 天）：让项目跑起来        ← 当前在这里
-  ├─ 建 B_HodgeDefaultExperience 资产
-  ├─ DefaultGame.ini 补 HodgeExperienceDefinition 扫描项
-  └─ 验证 Experience 状态机跑通（日志 + 断点）
+阶段 A（已完成）：让项目跑起来         ✅
+  ├─ 建 Exp_HodgeDefaultExperience 资产            ✅ 5b8f460
+  ├─ DefaultGame.ini 补 3 个扫描项                 ✅ 5b8f460
+  ├─ 验证 Experience 状态机跑通                    ✅
+  └─ GAS 双入口修复 Avatar                         ✅（待提交）
 
-阶段 B（1 周）：修复 GAS 初始化
-  ├─ 补 UHodgePawnExtensionComponent，接上 Init State 链
-  ├─ 验证 ASC 的 Avatar 正确指向 Pawn
-  ├─ 清理 HodgeCombatCharacter 的孤儿 ASC 和 HeroCharacter 的空 if 块
-  └─ 加独立 Log Category
+阶段 B（当前）：GAS 收尾与代码卫生
+  ├─ 提交 GAS 双入口修复，清理过时注释
+  ├─ 清理 HodgeCombatCharacter 的孤儿 ASC
+  ├─ 加独立 Log Category（HodgeLogChannels.h）
+  └─ 可选：补 UHodgePawnExtensionComponent 让 Init State 链生效
 
 阶段 C（2~3 周）：数据驱动补全
   ├─ 补齐 UHodgePawnData 的 4 个字段
@@ -811,7 +836,7 @@ ExperienceComponent->CallOrRegister_OnExperienceLoaded(...)
 | [`LYRA_LEARNING_GUIDE.md`](LYRA_LEARNING_GUIDE.md) | **学什么**、按什么顺序学、哪些重要 | 规划学习路线时 |
 | [`LYRA_RUNTIME_FLOW.md`](LYRA_RUNTIME_FLOW.md) | **怎么跑**、执行顺序、各系统生命周期、调试技巧 | 读 Experience / Init State 代码时，边读边对照 |
 
-> 读 [§6.2 Experience](#62-experience-系统--c-层已接通资产层缺失) 和 [§6.6 Init State 链](#66-modulargameplay-与-init-state-链--半成品) 时，强烈建议把 `LYRA_RUNTIME_FLOW.md` 的第 4~7 章打开对照着看 —— 本项目这两块基本是 Lyra 的直接移植，原版讲得更细。
+> 读 [§6.2 Experience](#62-experience-系统-已跑通) 和 [§6.6 Init State 链](#66-modulargameplay-与-init-state-链-半成品) 时，强烈建议把 `LYRA_RUNTIME_FLOW.md` 的第 4~7 章打开对照着看 —— 本项目这两块基本是 Lyra 的直接移植，原版讲得更细。
 
 ### 9.1 第一天：建立整体认知（约 5 小时）
 
@@ -823,7 +848,7 @@ ExperienceComponent->CallOrRegister_OnExperienceLoaded(...)
 | 4 | `Private/Core/GameMode/HodgeGameModeBase.cpp` | 1.5 h | Experience 如何被选中、如何触发 Pawn 生成（对照第 4 章） |
 | 5 | `Data/HodgePawnData.h` + `AbilitySystem/HodgeGameplayTags.h` | 30 min | 数据契约与 Tag 体系 |
 
-然后按 [§4.3](#43-首次运行检查清单) 把项目跑起来 —— **当前跑不起来，先修复阻塞项本身就是最好的学习**。
+然后按 [§4.3](#43-运行检查清单) 把项目跑起来 —— 现在能直接跑，跑通后对照 [§10.6](#106-诊断pawn-没生成--卡住的标准流程) 排查异常。
 
 ### 9.2 第一周：玩家状态与角色
 
@@ -832,14 +857,14 @@ ExperienceComponent->CallOrRegister_OnExperienceLoaded(...)
 | 1-2 | `Core/PlayState/HodgePlayerState.h/.cpp` + `HodgePlayerStateBase.h/.cpp` | Base/Concrete 分层各自负责什么？PawnData 什么时候被设置？ |
 | 3-4 | `Core/GameState/HodgeGameState.h/.cpp` | 为什么需要游戏级 ASC？ExperienceManagerComponent 挂在哪？ |
 | 5 | `AbilitySystem/GameplayTagStack.h` | FastArray 增量复制相比直接复制 TArray 好在哪？ |
-| 6-7 | [§6.6](#66-modulargameplay-与-init-state-链--半成品) 的断裂点 | 为什么 ASC 的 Avatar 可能是 nullptr？Lyra 是怎么解决的？ |
+| 6-7 | [§6.6](#66-modulargameplay-与-init-state-链-半成品) + [§6.8](#68-gas-初始化已修复双入口方案) | 双入口是怎么修好 Avatar 断裂的？Lyra 的 Init State 链为什么更优？ |
 
 ### 9.3 第一个月：参与修复与扩展
 
-- 完成 [§7.4 阶段 A / B](#74-路线图建议顺序)：跑通项目 + 修复 GAS 初始化
-- 补 `UHodgePawnExtensionComponent`（这是理解 Lyra Init State 链最好的实践）
+- 完成 [§7.4 阶段 B](#74-路线图建议顺序)：GAS 收尾 + 代码卫生
+- 可选挑战：补 `UHodgePawnExtensionComponent`，让 Init State 链生效（这是理解 Lyra 初始化机制最好的实践）
   - 照抄对象：`LYRA_RUNTIME_FLOW.md` 第 7 章（四个状态、准入条件 `CanChangeInitState`、协作式推进机制）和第 8.1 节（ASC 初始化的 `InitializeAbilitySystem`）
-  - 本项目缺的正是这个组件，补全后 [§6.8](#68-gas--初始化链路存在断裂) 的断裂点会自动解决
+  - 补完后把 [§6.8](#68-gas-初始化已修复双入口方案) 的双入口替换成链式调用
 - 读 `Plugins/ALS-Refactored-4.15/` 的 `AAlsCharacter` 和 `UAlsAnimationInstance`
 
 ### 9.4 前置知识自检
@@ -864,7 +889,7 @@ ExperienceComponent->CallOrRegister_OnExperienceLoaded(...)
 - [ ] 能解释为什么 Pawn 要等 Experience 加载完才生成
 - [ ] 能说出 `GetPawnDataForController` 的三级回退顺序
 - [ ] 能解释 Base / Concrete 分层的好处
-- [ ] 能指出当前 ASC Avatar 断裂的原因和修复方向
+- [ ] 能说出双入口方案怎么修好 ASC Avatar 断裂的，以及 Lyra 的 Init State 链为什么更优
 - [ ] 能解释 HealthSet 里 Damage 为什么是 Meta 属性
 - [ ] 能说出 Push Model 下改属性必须做什么
 - [ ] 能解释 GameplayTagStack 为什么用 FastArray 而不是直接复制 TArray
@@ -914,7 +939,7 @@ ExperienceComponent->CallOrRegister_OnExperienceLoaded(...)
 | Pawn 何时生成 | `AHodgeGameModeBase::OnExperienceLoaded()` |
 | Pawn 用哪个类 | `AHodgeGameModeBase::GetDefaultPawnClassForController_Implementation()` |
 | PawnData 何时设置到 PlayerState | `AHodgePlayerState::SetPawnData()` |
-| ASC 何时初始化（**查 Avatar 断裂**） | `AHodgePlayerState::PreInitializeComponents()` |
+| ASC 的 Avatar 何时绑定 | `HodgeHeroCharacter::PossessedBy()`（服务端）/ `OnRep_PlayerState()`（客户端） |
 | GameData 何时加载 | `UHodgeAssetManager::LoadGameDataOfClass()` |
 | 伤害如何结算 | `UHodgeHealthSet::PostGameplayEffectExecute()` |
 | 输入绑定是否执行 | `AHodgeHeroCharacter::SetupPlayerInputComponent()` |
@@ -924,11 +949,11 @@ ExperienceComponent->CallOrRegister_OnExperienceLoaded(...)
 1. **建两个 Experience 资产，用 `-Experience=` 切换**，观察 PawnData 不同导致的角色行为变化 —— 这是理解 Experience 价值最快的方式
 2. **用 `Hodge.chaos.ExperienceDelayLoad.MinSecs 5`** 人为拖慢加载，观察状态机的中间状态
 3. **给 `AHodgePlayerState` 加一个 StatTag**，在服务端 `AddStatTagStack`，客户端验证复制
-4. **在 `AHodgePlayerState::PreInitializeComponents` 打断点**，看 `GetPawn()` 是不是 nullptr —— 亲眼看一次断裂点
+4. **给 `HodgeHeroCharacter::PossessedBy()` 打断点**，观察双入口把 Avatar 绑到 Pawn —— 同时对比 `PreInitializeComponents` 里 `GetPawn()` 还是 nullptr 的时序差异
 
 ### 10.6 诊断"Pawn 没生成 / 卡住"的标准流程
 
-修好阻塞项之后如果 Pawn 还是不出现，按这个顺序排查（改编自 `LYRA_RUNTIME_FLOW.md` 第 9.4 节）：
+Pawn 不出现或初始化卡住时，按这个顺序排查（改编自 `LYRA_RUNTIME_FLOW.md` 第 9.4 节）：
 
 | 步骤 | 查什么 | 怎么看 |
 |---|---|---|
@@ -937,9 +962,9 @@ ExperienceComponent->CallOrRegister_OnExperienceLoaded(...)
 | 3 | 插件名写错了吗？ | 日志搜 `Failed to find plugin URL from PluginName` |
 | 4 | PawnData 有了吗？ | 断点 `AHodgePlayerState::SetPawnData()` |
 | 5 | Pawn 类对不对？ | 断点 `AHodgeGameModeBase::GetDefaultPawnClassForController_Implementation()` |
-| 6 | ASC 的 Avatar 是 nullptr 吗？ | 断点 `AHodgePlayerState::PreInitializeComponents()`，看 `GetPawn()` |
+| 6 | ASC 的 Avatar 绑上了吗？ | 断点 `HodgeHeroCharacter::PossessedBy()` / `OnRep_PlayerState()`，确认 `InitAbilityActorInfo` 执行了且 Avatar 是 this |
 
-> 第 6 步当前**必然是 nullptr**，这是已知断裂点（[§6.8](#68-gas--初始化链路存在断裂)），不是你配置错了。
+> 第 6 步在 `5b8f460` 之前**必然是 nullptr**（旧断裂点）；现在由双入口修复，但该改动**还没提交**，别在 revert 时把它一起弄丢。
 
 ---
 
@@ -947,21 +972,20 @@ ExperienceComponent->CallOrRegister_OnExperienceLoaded(...)
 
 按影响面排序。改这里的东西前先看一眼。
 
-### 11.1 🚫 阻塞级（不解决无法启动）
+### 11.1 ✅ 已修复（上一版的阻塞级）
 
-| 问题 | 位置 |
+| 曾经的问题 | 现在 |
 |---|---|
-| **没有任何 Experience 资产** | 全 `Content/` 搜索 `*Experience*` 为 0 个结果，但 GameMode 硬编码回退到 `B_HodgeDefaultExperience` |
-| **`HodgeExperienceDefinition` 未注册扫描项** | `Config/DefaultGame.ini`。导致 `GetPrimaryAssetPath` 无效 → `TryLoad()` 返回 nullptr → `check(AssetClass)` 崩溃 |
+| 没有 Experience 资产 → `check(AssetClass)` 崩溃 | ✅ `Exp_HodgeDefaultExperience` + 3 个扫描项（`5b8f460`） |
+| ASC 的 Avatar 是 nullptr | ✅ 双入口 `InitAbilityActorInfo(PS, this)`（**未提交**） |
 
 ### 11.2 🔴 功能性缺陷
 
 | 问题 | 影响 | 位置 |
 |---|---|---|
-| **ASC 的 Avatar 大概率是 nullptr** | 依赖 Avatar 的 GAS 功能会异常 | `AHodgePlayerState::PreInitializeComponents` 用 `GetPawn()`，此时 Pawn 未生成 |
-| **`UHodgePawnExtensionComponent` 不存在** | Init State 链无节点、Pawn 无法接收 PawnData、AbilitySet 无法授予 | 仅在注释中出现于 GameMode / PlayerState / AddInputBinding |
+| **`UHodgePawnExtensionComponent` 不存在** | Init State 链无节点；双入口方案覆盖不了换 Pawn / 死亡重生 / 观战等场景 | 仅在注释中出现于 GameMode / PlayerState / AddInputBinding |
 | **Init State 链无组件参与** | 4 个 InitState Tag 注册了但不会起作用 | 无 `RegisterInitStateFeature`、无 `IGameFrameworkInitStateInterface` |
-| **`HodgeHeroCharacter::PossessedBy` / `OnRep_PlayerState` 是空块** | 重构中间态，死代码 | `Private/Character/HodgeHeroCharacter.cpp:388-414` |
+| **`PossessedBy` / `OnRep_PlayerState` 注释过时** | 注释还写着已删除的 `InitializeAbilitySystemForCharacter`，误导阅读 | `Private/Character/HodgeHeroCharacter.cpp` 两个入口的注释块 |
 | **`AHodgeCombatCharacter` 的 ASC 是孤儿** | 持有但从不初始化，`GetAbilitySystemComponent()` 会返回它，误导调用方 | `InitAbilityActorInfo` 是注释状态 |
 | **属性集不再是配置驱动** | 原来通过 `AttributeSetClasses` 数组配置，现在 `CreateDefaultSubobject` 写死 | `AHodgePlayerState` 构造函数 |
 | `UHodgePawnData` 只剩 1 个字段 | 数据驱动能力基本失效 | `Data/HodgePawnData.h` |
@@ -1038,9 +1062,14 @@ Source/Hodgepodge/Public/Interface/LoadingProcessInterface.h     极简接口设
 Config/DefaultEngine.ini     AssetManagerClassName、GlobalDefaultGameMode（旧类名）、
                              GameInstanceClass（旧类名）、[CoreRedirects]（勿删）
 Config/DefaultGame.ini       [/Script/HodgePodge.HodgeAssetManager] 数据路径、
-                             PrimaryAssetTypesToScan ★★ 缺 Experience 扫描项（阻塞项）
+                             PrimaryAssetTypesToScan ★ 共 6 项：
+                               Map / PrimaryAssetLabel / HodgeGameData /
+                               GameFeatureData / HodgeExperienceDefinition /
+                               HodgePawnData / HodgeExperienceActionSet
 Config/DefaultInput.ini      Enhanced Input 按键映射
 ```
+
+> 6 项扫描里后 3 项（Experience / PawnData / ActionSet）是 `5b8f460` 加的。新建 Experience 蓝图放在 `/Game/Main/Experiences/` 即自动被扫到，无需改 ini。
 
 ### 12.4 类继承关系速查
 
@@ -1121,10 +1150,10 @@ FFastArraySerializer
 | 文档 | 内容 | 本项目对应关系 |
 |---|---|---|
 | [`LYRA_LEARNING_GUIDE.md`](LYRA_LEARNING_GUIDE.md) | Lyra 架构学习指南：学什么、按什么顺序学、哪些重要。**新系统设计的第一参考**，第 4 章的十大理念是本项目的设计宪法 | 全部理念的来源 |
-| [`LYRA_RUNTIME_FLOW.md`](LYRA_RUNTIME_FLOW.md) | Lyra 运行时执行链路：Experience 决策链路、加载状态机、完整启动时序、Pawn Init State 链、各系统生命周期、调试技巧 | [§6.2](#62-experience-系统--c-层已接通资产层缺失) Experience（第 4~6 章）<br>[§6.6](#66-modulargameplay-与-init-state-链--半成品) Init State 链（第 7 章）<br>[§6.8](#68-gas--初始化链路存在断裂) ASC 初始化（第 8.1 节） |
+| [`LYRA_RUNTIME_FLOW.md`](LYRA_RUNTIME_FLOW.md) | Lyra 运行时执行链路：Experience 决策链路、加载状态机、完整启动时序、Pawn Init State 链、各系统生命周期、调试技巧 | [§6.2](#62-experience-系统-已跑通) Experience（第 4~6 章）<br>[§6.6](#66-modulargameplay-与-init-state-链-半成品) Init State 链（第 7 章）<br>[§6.8](#68-gas-初始化已修复双入口方案) ASC 初始化（第 8.1 节） |
 | [`UE5 开放世界动作 RPG 架构方案 V2.md`](UE5%20开放世界动作%20RPG%20架构方案%20V2.md) | 本项目的总体方案与 Phase 划分，含角色职责、组件设计、DS 路线 | [§7 当前进度](#7-当前进度) 的 Phase 依据 |
 | ALS 插件 README | `Plugins/ALS-Refactored-4.15/ALS-Refactored-4.15/README.md`，含引擎版本对照表 | [§2.2](#22-插件清单) |
 
 ---
 
-*本 README 基于 UE 5.5 + ALS-Refactored 4.15 + Hodgepodge 当前代码状态（提交 `b8e708f` 之后）整理。项目处于活跃的 Lyra 化重构中，**顶部的阻塞项和 [§7 进度表](#7-当前进度)请优先关注并定期更新**。*
+*本 README 基于 UE 5.5 + ALS-Refactored 4.15 + Hodgepodge 当前代码状态（提交 `7c02de2` + 工作区的 GAS 双入口修复）整理。项目处于活跃的 Lyra 化重构中，**[§7 进度表](#7-当前进度) 请优先关注并定期更新**。*

@@ -1,4 +1,4 @@
-﻿// **
+// **
 //  * @file HodgeHeroCharacter.h
 //  * @brief AHodgeHeroCharacter 类的头文件
 //  *

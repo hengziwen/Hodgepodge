@@ -11,7 +11,7 @@
 
 #include "AbilitySystem/HodgeGameplayTags.h"
 #include "AlsCameraComponent.h"
-#include "Core/PlayState/HodgePlayerStateBase.h"
+#include "Core/PlayState/HodgePlayerState.h"
 #include "EnhancedInputSubsystems.h"
 #include "Engine/LocalPlayer.h"
 #include "GameFramework/PlayerController.h"
@@ -380,7 +380,7 @@ void AHodgeHeroCharacter::Input_OnSwitchShoulder()
  * 这是 GAS 服务器端初始化的入口:
  * 1. 调用 Super::PossessedBy() 执行父类逻辑
  *    (AAlsCharacter 会调用 RefreshMeshProperties 刷新网格属性)
- * 2. 获取 AHodgePlayerStateBase 的 PlayerState
+ * 2. 获取 AHodgePlayerState 的 PlayerState
  * 3. 调用 InitializeAbilitySystemForCharacter(this) 完成 GAS 初始化
  *
  * @param NewController 新的控制器指针
@@ -389,8 +389,10 @@ void AHodgeHeroCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 
-	if (AHodgePlayerStateBase* PS = GetPlayerState<AHodgePlayerStateBase>())
+	if (AHodgePlayerState* PS = GetPlayerState<AHodgePlayerState>())
 	{
+		PS->GetAbilitySystemComponent()->InitAbilityActorInfo(PS, this);
+		HodgeAbilitySystemComponent->InitAbilityActorInfo(PS, this);
 	}
 }
 
@@ -399,7 +401,7 @@ void AHodgeHeroCharacter::PossessedBy(AController* NewController)
  *
  * 这是 GAS 客户端初始化的入口:
  * 1. 调用 Super::OnRep_PlayerState() 执行父类逻辑
- * 2. 获取 AHodgePlayerStateBase 的 PlayerState
+ * 2. 获取 AHodgePlayerState 的 PlayerState
  * 3. 调用 InitializeAbilitySystemForCharacter(this) 完成 GAS 初始化
  *
  * 注意:此函数仅在客户端调用,因为 OnRep_ 是属性复制回调。
@@ -408,8 +410,10 @@ void AHodgeHeroCharacter::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
 
-	if (AHodgePlayerStateBase* PS = GetPlayerState<AHodgePlayerStateBase>())
+	if (AHodgePlayerState* PS = GetPlayerState<AHodgePlayerState>())
 	{
+		PS->GetAbilitySystemComponent()->InitAbilityActorInfo(PS, this);
+		HodgeAbilitySystemComponent->InitAbilityActorInfo(PS, this);
 	}
 }
 
