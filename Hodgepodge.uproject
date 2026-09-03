@@ -30,10 +30,18 @@
 		},
 		{
 			"Name": "UNTLink",
-			"Enabled": false
+			"Enabled": true
 		},
 		{
 			"Name": "GameFeatures",
+			"Enabled": true
+		},
+		{
+			"Name": "AnimationLocomotionLibrary",
+			"Enabled": true
+		},
+		{
+			"Name": "AnimationWarping",
 			"Enabled": true
 		}
 	]
