@@ -9,6 +9,7 @@
 #include "Character/HodgeCharacterBase.h"
 #include "HodgeCombatCharacter.generated.h"
 
+class UHodgePawnExtensionComponent;
 class UHodgeCameraComponent;
 class AHodgePlayerControllerBase;
 class AHodgePlayerState;
@@ -255,8 +256,8 @@ protected:
 
 private:
 	// Pawn 扩展组件，当前暂未启用
-	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hodge|Character", Meta = (AllowPrivateAccess = "true"))
-	//TObjectPtr<UHodgePawnExtensionComponent> PawnExtComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hodge|Character", Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UHodgePawnExtensionComponent> PawnExtComponent;
 
 	// 角色生命值组件，当前暂未启用
 	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hodge|Character", Meta = (AllowPrivateAccess = "true"))

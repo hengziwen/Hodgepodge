@@ -13,6 +13,7 @@
 #include "AbilitySystem/HodgeGameplayTags.h"
 #include "Camera/HodgeCameraComponent.h"
 #include "Component/HodgeCharacterMovementComponent.h"
+#include "Component/HodgePawnExtensionComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Core/PlayerController/HodgePlayerControllerBase.h"
 #include "Core/PlayState/HodgePlayerState.h"
@@ -104,16 +105,16 @@ AHodgeCombatCharacter::AHodgeCombatCharacter(const FObjectInitializer& ObjectIni
 	// 设置角色蹲伏后的胶囊体半高
 	HodgeMoveComp->SetCrouchedHalfHeight(65.0f);
 
-	// Pawn 扩展组件，负责连接 Pawn 与 AbilitySystem 等系统
-	// PawnExtComponent = CreateDefaultSubobject<UHodgePawnExtensionComponent>(TEXT("PawnExtensionComponent"));
+	//Pawn 扩展组件，负责连接 Pawn 与 AbilitySystem 等系统
+	PawnExtComponent = CreateDefaultSubobject<UHodgePawnExtensionComponent>(TEXT("PawnExtensionComponent"));
 
-	// Pawn 的 AbilitySystem 初始化完成后注册回调
-	// PawnExtComponent->OnAbilitySystemInitialized_RegisterAndCall(
-	//     FSimpleMulticastDelegate::FDelegate::CreateUObject(this, &ThisClass::OnAbilitySystemInitialized));
+	//Pawn 的 AbilitySystem 初始化完成后注册回调
+	PawnExtComponent->OnAbilitySystemInitialized_RegisterAndCall(
+		FSimpleMulticastDelegate::FDelegate::CreateUObject(this, &ThisClass::OnAbilitySystemInitialized));
 
-	// Pawn 的 AbilitySystem 反初始化时注册回调
-	// PawnExtComponent->OnAbilitySystemUninitialized_Register(
-	//     FSimpleMulticastDelegate::FDelegate::CreateUObject(this, &ThisClass::OnAbilitySystemUninitialized));
+	//Pawn 的 AbilitySystem 反初始化时注册回调
+	PawnExtComponent->OnAbilitySystemUninitialized_Register(
+		FSimpleMulticastDelegate::FDelegate::CreateUObject(this, &ThisClass::OnAbilitySystemUninitialized));
 
 	// 创建角色生命值组件
 	//
@@ -296,16 +297,13 @@ UHodgeAbilitySystemComponentBase* AHodgeCombatCharacter::GetHodgeAbilitySystemCo
 // 实现 GAS 的 AbilitySystemInterface
 UAbilitySystemComponent* AHodgeCombatCharacter::GetAbilitySystemComponent() const
 {
-	// 当前 PawnExtensionComponent 已被暂时移除，因此这里暂时无法获取 ASC
-	// if (PawnExtComponent == nullptr)
-	// {
-	//     return nullptr;
-	// }
-	//
-	// return PawnExtComponent->GetHodgeAbilitySystemComponent();
+	// 从 PawnExtensionComponent 获取 ASC
+	if (PawnExtComponent == nullptr)
+	{
+		return nullptr;
+	}
 
-	// 当前版本暂时没有直接提供 ASC
-	return nullptr;
+	return PawnExtComponent->GetHodgeAbilitySystemComponent();
 }
 
 // AbilitySystem 初始化完成后调用
@@ -338,7 +336,7 @@ void AHodgeCombatCharacter::PossessedBy(AController* NewController)
 	Super::PossessedBy(NewController);
 
 	// 通知 PawnExtensionComponent Controller 发生变化
-	// PawnExtComponent->HandleControllerChanged();
+	PawnExtComponent->HandleControllerChanged();
 
 	// 如果 Controller 提供 Team 信息，则同步角色 Team
 	// if (IHodgeTeamAgentInterface* ControllerAsTeamProvider = Cast<IHodgeTeamAgentInterface>(NewController))
@@ -367,10 +365,10 @@ void AHodgeCombatCharacter::UnPossessed()
 	// }
 
 	// 调用父类解除占有逻辑
-	// Super::UnPossessed();
+	Super::UnPossessed();
 
 	// 通知 PawnExtensionComponent Controller 发生变化
-	// PawnExtComponent->HandleControllerChanged();
+	PawnExtComponent->HandleControllerChanged();
 
 	// 根据解除占有后的状态重新决定 Team
 	// MyTeamID = DetermineNewTeamAfterPossessionEnds(OldTeamID);
@@ -385,7 +383,7 @@ void AHodgeCombatCharacter::OnRep_Controller()
 	Super::OnRep_Controller();
 
 	// 通知 PawnExtensionComponent Controller 已经复制完成
-	// PawnExtComponent->HandleControllerChanged();
+	PawnExtComponent->HandleControllerChanged();
 }
 
 // PlayerState 网络复制完成时调用
@@ -394,7 +392,7 @@ void AHodgeCombatCharacter::OnRep_PlayerState()
 	Super::OnRep_PlayerState();
 
 	// 通知 PawnExtensionComponent PlayerState 已经复制完成
-	// PawnExtComponent->HandlePlayerStateReplicated();
+	PawnExtComponent->HandlePlayerStateReplicated();
 }
 
 // 设置玩家输入
@@ -403,7 +401,7 @@ void AHodgeCombatCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	// 由 PawnExtensionComponent 设置额外输入
-	// PawnExtComponent->SetupPlayerInputComponent();
+	PawnExtComponent->SetupPlayerInputComponent();
 }
 
 // 初始化角色 GameplayTag
@@ -568,7 +566,7 @@ void AHodgeCombatCharacter::UninitAndDestroy()
 		if (HodgeASC->GetAvatarActor() == this)
 		{
 			// 当前 PawnExtensionComponent 已被移除，ASC 解除逻辑暂时关闭
-			// PawnExtComponent->UninitializeAbilitySystem();
+			PawnExtComponent->UninitializeAbilitySystem();
 		}
 	}
 

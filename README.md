@@ -785,6 +785,155 @@ CombatCharacter.CameraComponent（每帧被 PlayerCameraManager 调用）
 - `ActivateStack()/DeactivateStack()` 同样没有调用者；
 - 所以第三人称跟随 / 撞击避让这些要等"PawnData 配 `DefaultCameraMode` + 模式选择逻辑"接上才真正生效（已记入 [§7.3](#73-未完成-) 和 [§11.2](#112-功能性缺陷)）。
 
+#### 6.13.1 每帧时序图（相机怎么被驱动）
+
+相机系统完全是「被动被问、主动算」：引擎每帧通过 `APlayerCameraManager` 主动调用 `UHodgeCameraComponent::GetCameraView()`（`HodgeCameraComponent.cpp:36`），相机组件在那一帧里问委托、压栈、混合、回写。
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Eng as 引擎 Tick
+    participant PCM as HodgePlayerCameraManager
+    participant CC as HodgeCameraComponent
+    participant Del as DetermineCameraModeDelegate
+    participant Stack as CameraModeStack
+    participant M as CameraMode(们)
+
+    Eng->>PCM: UpdateViewTarget(OutVT, Δt)
+    PCM->>CC: GetCameraView(Δt, DesiredView)
+    CC->>CC: UpdateCameraModes()
+    CC->>Del: Execute() 问"当前该用哪个Mode类?"
+    Del-->>CC: 返回 TSubclassOf<CameraMode>
+    CC->>Stack: PushCameraMode(ModeClass)
+    Stack->>Stack: 取到/新建实例, 插到栈顶(Index0)
+    Stack->>Stack: 栈底强制权重=1.0
+    CC->>Stack: EvaluateStack(Δt, CameraModeView)
+    loop 每个 Mode
+        Stack->>M: UpdateCameraMode(Δt)
+        M->>M: UpdateView() 算位姿(子类:跟随/防穿透/蹲伏)
+        M->>M: UpdateBlending() 推进BlendAlpha→算BlendWeight
+    end
+    Stack->>Stack: 若栈顶weight≥1, 移除下方旧Mode(OnDeactivation)
+    Stack->>Stack: BlendStack() 按权重叠成最终视图
+    Stack-->>CC: 最终 CameraModeView(位置/旋转/FOV)
+    CC->>CC: PC->SetControlRotation(ControlRotation)
+    CC->>CC: 叠加当帧 FOV 偏移(用后清零)
+    CC->>CC: SetWorldLocationAndRotation + 填 DesiredView
+    CC-->>PCM: DesiredView
+    PCM->>Eng: 用该视图渲染本帧
+    Note over PCM: UI相机(当前未启用)可在此后覆盖
+```
+
+要点：
+- `UpdateCameraModes()`（`HodgeCameraComponent.cpp:111`）只在栈激活且委托已绑定时才把委托返回的类 `PushCameraMode` 进栈；
+- `EvaluateStack` 内部先 `UpdateStack`（推进每个 Mode 的视图与权重、清理已 100% 覆盖的下方 Mode），再 `BlendStack`（叠加成最终视图）；
+- 最终视图回写两处：① `PlayerController->SetControlRotation`（让输入控制方向与相机一致）；② 相机组件自身 `Location/Rotation/FOV` 与引擎要的 `FMinimalViewInfo`。
+
+#### 6.13.2 多个 Mode 同时在栈里，画面怎么混合
+
+混合的本质在 `UHodgeCameraModeStack::BlendStack()`（`HodgeCameraMode.cpp:572`）。两条铁律：
+
+1. **栈底永远是权重 1.0**（`.cpp:456`），它是「地基」；
+2. **混合是顺序叠加**：从栈底往栈顶，逐个用 `Lerp`/`Blend` 把上层 Mode 按它的权重叠到当前结果上。
+
+公式（位置举例，旋转/FOV 同理）：
+
+```
+Result = 栈底.View
+Result = Lerp(Result, 上一层.View, 上一层.BlendWeight)
+Result = Lerp(Result, 栈顶.View, 栈顶.BlendWeight)
+```
+
+**具体例子**：第三人称下按住瞄准，栈变成 `[AimMode(栈顶, 权重0→1淡入), ThirdPerson(栈底, 权重=1)]`：
+- 刚开始按：`AimMode.weight = 0.3` → `Result = Lerp(ThirdPerson, Aim, 0.3)`，画面 70% 第三人称 + 30% 瞄准（FOV 略缩、相机略拉近）；
+- 0.5 秒后（默认 `BlendTime`）：`AimMode.weight = 1.0` → `Result = Aim`，完全瞄准视角；
+- 此时 `UpdateStack` 发现栈顶已 100% 覆盖，把 `ThirdPerson` 从栈移除（`.cpp:540`），稳态栈只剩 `AimMode`。
+
+**三个同时存在的情形** `[Vehicle, Aim, ThirdPerson]`，三者各自权重：
+
+```
+Result = ThirdPerson
+Result = Lerp(Result, Aim,     wAim)
+Result = Lerp(Result, Vehicle, wVehicle)
+```
+
+即「越靠栈顶、权重越高，越主导画面」的层叠关系。每个 Mode 的 `BlendWeight` 是它**覆盖下层的比例**。
+
+`FHodgeCameraModeView::Blend`（`HodgeCameraMode.cpp:29`）实现细节：
+- 权重 ≤0：完全不动；权重 ≥1：直接替换为目标；
+- 之间：`Location` 线性插值、旋转走**最短角差**（`(Other.Rotation - Rotation).GetNormalized()`，避免 359°→1° 反向转）、FOV 线性插值。
+
+> 多个 Mode 的权重**不会相加到超过 1**——它是层叠覆盖，不是平均。权重描述的是「我覆盖下面多少」。
+
+#### 6.13.3 怎么新增一个自定义 Mode
+
+**第 1 步：写一个子类。** 最简单继承 `UHodgeCameraMode`（纯基类），想直接复用跟随+防穿透+蹲伏就继承 `UHodgeCameraMode_ThirdPerson`。下面以「瞄准模式」为例：
+
+`Public/Camera/HodgeCameraMode_Aim.h`：
+```cpp
+#pragma once
+#include "CoreMinimal.h"
+#include "Camera/HodgeCameraMode.h"
+#include "HodgeCameraMode_Aim.generated.h"
+
+UCLASS(Abstract, NotBlueprintable)
+class UHodgeCameraMode_Aim : public UHodgeCameraMode
+{
+    GENERATED_BODY()
+public:
+    UHodgeCameraMode_Aim();
+protected:
+    virtual void UpdateView(float DeltaTime) override;
+};
+```
+
+`Private/Camera/HodgeCameraMode_Aim.cpp`：
+```cpp
+#include "Camera/HodgeCameraMode_Aim.h"
+#include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeCameraMode_Aim)
+
+UHodgeCameraMode_Aim::UHodgeCameraMode_Aim()
+{
+    FieldOfView   = 50.0f;   // 瞄准时视野收窄
+    BlendTime     = 0.2f;    // 0.2 秒平滑淡入
+    BlendFunction = EHodgeCameraModeBlendFunction::EaseOut;
+    BlendExponent = 4.0f;
+    // 打标签，方便上层逻辑查询"当前是不是瞄准相机"
+    CameraTypeTag = FGameplayTag::RequestGameplayTag(TEXT("Camera.Mode.Aim"));
+}
+
+void UHodgeCameraMode_Aim::UpdateView(float DeltaTime)
+{
+    Super::UpdateView(DeltaTime); // 基类已算好跟随目标的位姿，这里只改 FOV
+    // 想拉近相机：View.Location += View.Rotation.Vector() * -100.f;
+}
+```
+> `CameraTypeTag` 需先在项目的 GameplayTag 配置里注册（编辑器 Gameplay Tags 面板或 `DefaultGameplayTags.ini` 加 `Camera.Mode.Aim`），否则 `RequestGameplayTag` 拿到空标签。
+
+**第 2 步：让相机真正用上它（关键）。** 新建类不会自动生效，两种接法：
+
+- **A·Lyra 官方套路：绑定 `DetermineCameraModeDelegate`**（推荐）。每帧引擎调这个委托问「当前该用哪个 Mode」，返回对应类即可，`PushCameraMode` 自动去重、压栈、淡入。在角色（如 `AHodgeCombatCharacter`）里绑定：
+  ```cpp
+  // BeginPlay / OnPossessed 时
+  if (UHodgeCameraComponent* Cam = UHodgeCameraComponent::FindCameraComponent(this))
+  {
+      Cam->DetermineCameraModeDelegate.BindUObject(this, &AHodgeCombatCharacter::ChooseCameraMode);
+  }
+  ```
+  ```cpp
+  TSubclassOf<UHodgeCameraMode> AHodgeCombatCharacter::ChooseCameraMode() const
+  {
+      if (bIsAiming) return UHodgeCameraMode_Aim::StaticClass();
+      return UHodgeCameraMode_ThirdPerson::StaticClass(); // 平时第三人称
+  }
+  ```
+- **B·手动触发式**：状态变化时直接 `PushCameraMode`。注意 `CameraModeStack` 是 `protected`，要么加 `public` 包装函数，要么用委托法：
+  ```cpp
+  Cam->CameraModeStack->PushCameraMode(UHodgeCameraMode_Aim::StaticClass());
+  ```
+
+> ⚠️ **当前项目的坑**：`DetermineCameraModeDelegate` 全工程没有任何 `.BindXxx` 调用、第三人称模式也没被 push，栈恒为空 → `BlendStack` 直接 `return`（`HodgeCameraMode.cpp:578`），画面退化成 `CameraComponent` 默认位姿（即 `HodgeCombatCharacter.cpp:132` 的 `(-300, 0, 75)` 相对位置），完全没走模式逻辑。要让相机活起来，至少：①在角色 `CreateDefaultSubobject` 后（或 `OnPossessed`）绑定 `DetermineCameraModeDelegate`；②让委托返回默认模式类（通常 `UHodgeCameraMode_ThirdPerson`）。
+
 ### 6.14 动画实例：`UHodgeAnimInstance`
 
 `Animation/HodgeAnimInstance.h/.cpp`，Lyra `ULyraAnimInstance` 的移植，是 `ABP_Pover_Base` / `ABP_Enemy_Base` 的动画蓝图基类。
