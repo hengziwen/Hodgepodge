@@ -9,28 +9,29 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AlsCharacter.h"
+#include "GameFramework/Character.h"
 #include "HodgeCharacterBase.generated.h"
 
 /**
  * @brief Hodgepodge 框架的角色基类
  *
- * 继承自 AAlsCharacter,是所有角色的公共基类。
+ * 继承自 ACharacter,是所有角色的公共基类。
  * 提供了 PreInitializeComponents、BeginPlay、EndPlay 等生命周期回调的扩展点,
  * 方便子类在角色的不同生命阶段插入自定义逻辑。
  *
  * 继承层次:
- * ACharacter → AAlsCharacter → AHodgeCharacterBase → AHodgeCombatCharacter → AHodgeHeroCharacter
+ * ACharacter → AHodgeCharacterBase → AHodgeCombatCharacter → AHodgeHeroCharacter
+ *                                                         → AHodgeEnemyCharacter
  *
- * 继承 AAlsCharacter 是为了获得 ALS(Advanced Locomotion System)提供的
- * 移动、动画、状态管理等底层能力,同时保持本框架的生命周期扩展点。
- * 移动组件与相机组件沿用 ALS 原版(UAlsCharacterMovementComponent / UAlsCameraComponent)。
+ * 本类不再依赖 ALS(Advanced Locomotion System),移动组件在构造函数中通过
+ * FObjectInitializer::SetDefaultSubobjectClass 替换为 UHodgeCharacterMovementComponent。
+ * 移动参数(速度、加速度、旋转方式等)由蓝图 / 数据资产配置,C++ 侧不再硬编码。
  *
  * 注意:GAS 初始化逻辑放在 AHodgeHeroCharacter 中,
  *      基类 AHodgeCharacterBase 保持通用,不直接依赖 GAS 系统。
  */
 UCLASS()
-class HODGEPODGE_API AHodgeCharacterBase : public AAlsCharacter
+class HODGEPODGE_API AHodgeCharacterBase : public ACharacter
 {
 	GENERATED_BODY()
 
@@ -38,10 +39,11 @@ public:
 	/**
 	 * @brief 构造函数
 	 *
-	 * 接收 FObjectInitializer 并传递给父类 AAlsCharacter,
-	 * 因为 AAlsCharacter 的构造函数需要它来设置默认移动组件。
+	 * 接收 FObjectInitializer 并传递给父类 ACharacter,
+	 * 同时用它把默认的 CharacterMovement 子组件替换为 UHodgeCharacterMovementComponent。
 	 */
 	explicit AHodgeCharacterBase(const FObjectInitializer& ObjectInitializer);
+
 	/**
 	 * @brief Actor组件初始化前的回调(重写自AActor)
 	 *

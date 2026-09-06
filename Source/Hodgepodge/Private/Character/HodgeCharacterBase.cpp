@@ -6,20 +6,28 @@
  * - PreInitializeComponents:组件初始化前的扩展点
  * - BeginPlay:角色开始播放的扩展点
  * - EndPlay:角色结束播放的扩展点
+ *
+ * 构造函数负责把默认的 CharacterMovement 子组件替换为 UHodgeCharacterMovementComponent。
  */
 
 #include "Character/HodgeCharacterBase.h"
+
+#include "Component/HodgeCharacterMovementComponent.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeCharacterBase)
 
 /**
  * @brief 构造函数
  *
- * 将 FObjectInitializer 传递给父类 AAlsCharacter,
- * 由父类负责把默认移动组件替换为 UAlsCharacterMovementComponent。
+ * 通过 FObjectInitializer 把 ACharacter 默认的 CharacterMovement 子组件
+ * 替换为 UHodgeCharacterMovementComponent。
+ *
+ * 移动组件的具体参数(速度、加速度、摩擦、旋转方式等)不再在 C++ 里硬编码,
+ * 统一交给蓝图 / 数据资产配置,避免把 ALS 的调参残留到框架里。
  */
 AHodgeCharacterBase::AHodgeCharacterBase(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+	: Super(ObjectInitializer.SetDefaultSubobjectClass<UHodgeCharacterMovementComponent>(
+		ACharacter::CharacterMovementComponentName))
 {
 }
 

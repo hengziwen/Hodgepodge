@@ -20,7 +20,6 @@ public class Hodgepodge : ModuleRules
 			"GameplayTags",
 			"GameplayTasks",
 			"ModularGameplay",
-			"ALS",
 			"GameFeatures",
 			"AIModule",
 			"EngineSettings",
@@ -32,7 +31,6 @@ public class Hodgepodge : ModuleRules
 
 		PrivateDependencyModuleNames.AddRange(new string[]
 		{
-			"ALSCamera",
 			"EnhancedInput",
 			"PhysicsCore",
 			"Niagara"
