@@ -41,7 +41,7 @@ void AHodgeHeroCharacter::PossessedBy(AController* NewController)
 	if (AHodgePlayerState* PS = GetPlayerState<AHodgePlayerState>())
 	{
 		PS->GetAbilitySystemComponent()->InitAbilityActorInfo(PS, this);
-		HodgeAbilitySystemComponent->InitAbilityActorInfo(PS, this);
+		//HodgeAbilitySystemComponent->InitAbilityActorInfo(PS, this);
 	}
 }
 
@@ -62,6 +62,6 @@ void AHodgeHeroCharacter::OnRep_PlayerState()
 	if (AHodgePlayerState* PS = GetPlayerState<AHodgePlayerState>())
 	{
 		PS->GetAbilitySystemComponent()->InitAbilityActorInfo(PS, this);
-		HodgeAbilitySystemComponent->InitAbilityActorInfo(PS, this);
+		//HodgeAbilitySystemComponent->InitAbilityActorInfo(PS, this);
 	}
 }

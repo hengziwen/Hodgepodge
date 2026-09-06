@@ -33,7 +33,8 @@ public class Hodgepodge : ModuleRules
 		{
 			"EnhancedInput",
 			"PhysicsCore",
-			"Niagara"
+			"Niagara", 
+			"SignificanceManager"
 		});
 
 		SetupIrisSupport(Target);

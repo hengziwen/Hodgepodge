@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file HodgeCharacterBase.cpp
  * @brief AHodgeCharacterBase 类的实现
  *
@@ -13,6 +13,7 @@
 #include "Character/HodgeCharacterBase.h"
 
 #include "Component/HodgeCharacterMovementComponent.h"
+#include "Components/GameFrameworkComponentManager.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeCharacterBase)
 
@@ -40,6 +41,7 @@ AHodgeCharacterBase::AHodgeCharacterBase(const FObjectInitializer& ObjectInitial
 void AHodgeCharacterBase::PreInitializeComponents()
 {
 	Super::PreInitializeComponents();
+	UGameFrameworkComponentManager::AddGameFrameworkComponentReceiver(this);
 }
 
 /**
@@ -52,6 +54,9 @@ void AHodgeCharacterBase::PreInitializeComponents()
  */
 void AHodgeCharacterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent(
+		this, UGameFrameworkComponentManager::NAME_GameActorReady);
+
 	Super::EndPlay(EndPlayReason);
 }
 
@@ -63,5 +68,8 @@ void AHodgeCharacterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
  */
 void AHodgeCharacterBase::BeginPlay()
 {
+	UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent(
+		this, UGameFrameworkComponentManager::NAME_GameActorReady);
+
 	Super::BeginPlay();
 }
