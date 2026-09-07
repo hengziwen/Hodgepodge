@@ -4,7 +4,7 @@
 
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "AbilitySystem/HodgeAbilitySystemComponentBase.h"
+#include "AbilitySystem/HodgeAbilitySystemComponent.h"
 #include "Async/TaskGraphInterfaces.h"
 #include "Component/HodgeExperienceManagerComponent.h"
 #include "Core/PlayState/HodgePlayerStateBase.h"
@@ -30,7 +30,7 @@ AHodgeGameState::AHodgeGameState(const FObjectInitializer& ObjectInitializer)
 	PrimaryActorTick.bStartWithTickEnabled = true;
 
 	// 创建 GameState 级别的 AbilitySystemComponent，用于处理游戏全局的 GAS 功能。
-	AbilitySystemComponent = ObjectInitializer.CreateDefaultSubobject<UHodgeAbilitySystemComponentBase>(
+	AbilitySystemComponent = ObjectInitializer.CreateDefaultSubobject<UHodgeAbilitySystemComponent>(
 		this, TEXT("AbilitySystemComponent"));
 
 	// 开启 ASC 的网络复制，使其能够同步到客户端。

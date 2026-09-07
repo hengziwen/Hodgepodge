@@ -288,10 +288,10 @@ AHodgePlayerState* AHodgeCombatCharacter::GetHodgePlayerState() const
 }
 
 // 获取角色对应的 Hodge AbilitySystemComponent
-UHodgeAbilitySystemComponentBase* AHodgeCombatCharacter::GetHodgeAbilitySystemComponent() const
+UHodgeAbilitySystemComponent* AHodgeCombatCharacter::GetHodgeAbilitySystemComponent() const
 {
 	// 将通用 AbilitySystemComponent 转换为 Hodge 自定义 ASC
-	return Cast<UHodgeAbilitySystemComponentBase>(GetAbilitySystemComponent());
+	return Cast<UHodgeAbilitySystemComponent>(GetAbilitySystemComponent());
 }
 
 // 实现 GAS 的 AbilitySystemInterface
@@ -310,7 +310,7 @@ UAbilitySystemComponent* AHodgeCombatCharacter::GetAbilitySystemComponent() cons
 void AHodgeCombatCharacter::OnAbilitySystemInitialized()
 {
 	// 获取角色对应的 Hodge ASC
-	UHodgeAbilitySystemComponentBase* HodgeASC = GetHodgeAbilitySystemComponent();
+	UHodgeAbilitySystemComponent* HodgeASC = GetHodgeAbilitySystemComponent();
 	check(HodgeASC);
 
 	// 使用 ASC 初始化生命值组件
@@ -408,7 +408,7 @@ void AHodgeCombatCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 void AHodgeCombatCharacter::InitializeGameplayTags()
 {
 	// 获取角色对应的 ASC
-	if (UHodgeAbilitySystemComponentBase* HodgeASC = GetHodgeAbilitySystemComponent())
+	if (UHodgeAbilitySystemComponent* HodgeASC = GetHodgeAbilitySystemComponent())
 	{
 		// 清除之前 Pawn 可能残留在 ASC 上的移动模式 GameplayTag
 		for (const TPair<uint8, FGameplayTag>& TagMapping : HodgeGameplayTags::MovementModeTagMap)
@@ -443,7 +443,7 @@ void AHodgeCombatCharacter::InitializeGameplayTags()
 void AHodgeCombatCharacter::GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const
 {
 	// 从 ASC 获取当前角色所有 GameplayTag
-	if (const UHodgeAbilitySystemComponentBase* HodgeASC = GetHodgeAbilitySystemComponent())
+	if (const UHodgeAbilitySystemComponent* HodgeASC = GetHodgeAbilitySystemComponent())
 	{
 		HodgeASC->GetOwnedGameplayTags(TagContainer);
 	}
@@ -453,7 +453,7 @@ void AHodgeCombatCharacter::GetOwnedGameplayTags(FGameplayTagContainer& TagConta
 bool AHodgeCombatCharacter::HasMatchingGameplayTag(FGameplayTag TagToCheck) const
 {
 	// 委托 ASC 判断 GameplayTag
-	if (const UHodgeAbilitySystemComponentBase* HodgeASC = GetHodgeAbilitySystemComponent())
+	if (const UHodgeAbilitySystemComponent* HodgeASC = GetHodgeAbilitySystemComponent())
 	{
 		return HodgeASC->HasMatchingGameplayTag(TagToCheck);
 	}
@@ -465,7 +465,7 @@ bool AHodgeCombatCharacter::HasMatchingGameplayTag(FGameplayTag TagToCheck) cons
 bool AHodgeCombatCharacter::HasAllMatchingGameplayTags(const FGameplayTagContainer& TagContainer) const
 {
 	// 委托 ASC 判断是否匹配全部 GameplayTag
-	if (const UHodgeAbilitySystemComponentBase* HodgeASC = GetHodgeAbilitySystemComponent())
+	if (const UHodgeAbilitySystemComponent* HodgeASC = GetHodgeAbilitySystemComponent())
 	{
 		return HodgeASC->HasAllMatchingGameplayTags(TagContainer);
 	}
@@ -477,7 +477,7 @@ bool AHodgeCombatCharacter::HasAllMatchingGameplayTags(const FGameplayTagContain
 bool AHodgeCombatCharacter::HasAnyMatchingGameplayTags(const FGameplayTagContainer& TagContainer) const
 {
 	// 委托 ASC 判断是否至少匹配一个 GameplayTag
-	if (const UHodgeAbilitySystemComponentBase* HodgeASC = GetHodgeAbilitySystemComponent())
+	if (const UHodgeAbilitySystemComponent* HodgeASC = GetHodgeAbilitySystemComponent())
 	{
 		return HodgeASC->HasAnyMatchingGameplayTags(TagContainer);
 	}
@@ -560,7 +560,7 @@ void AHodgeCombatCharacter::UninitAndDestroy()
 	}
 
 	// 获取角色对应的 ASC
-	if (UHodgeAbilitySystemComponentBase* HodgeASC = GetHodgeAbilitySystemComponent())
+	if (UHodgeAbilitySystemComponent* HodgeASC = GetHodgeAbilitySystemComponent())
 	{
 		// 只有当前角色仍然是 ASC 的 AvatarActor 时才需要解除 ASC
 		if (HodgeASC->GetAvatarActor() == this)
@@ -594,7 +594,7 @@ void AHodgeCombatCharacter::OnMovementModeChanged(EMovementMode PrevMovementMode
 void AHodgeCombatCharacter::SetMovementModeTag(EMovementMode MovementMode, uint8 CustomMovementMode, bool bTagEnabled)
 {
 	// 获取角色 ASC
-	if (UHodgeAbilitySystemComponentBase* HodgeASC = GetHodgeAbilitySystemComponent())
+	if (UHodgeAbilitySystemComponent* HodgeASC = GetHodgeAbilitySystemComponent())
 	{
 		// 用于保存当前移动模式对应的 GameplayTag
 		const FGameplayTag* MovementModeTag = nullptr;
@@ -642,7 +642,7 @@ void AHodgeCombatCharacter::ToggleCrouch()
 void AHodgeCombatCharacter::OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust)
 {
 	// 获取角色 ASC
-	if (UHodgeAbilitySystemComponentBase* HodgeASC = GetHodgeAbilitySystemComponent())
+	if (UHodgeAbilitySystemComponent* HodgeASC = GetHodgeAbilitySystemComponent())
 	{
 		// 添加角色正在蹲伏的 GameplayTag
 		HodgeASC->SetLooseGameplayTagCount(HodgeGameplayTags::Status_Crouching, 1);
@@ -656,7 +656,7 @@ void AHodgeCombatCharacter::OnStartCrouch(float HalfHeightAdjust, float ScaledHa
 void AHodgeCombatCharacter::OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust)
 {
 	// 获取角色 ASC
-	if (UHodgeAbilitySystemComponentBase* HodgeASC = GetHodgeAbilitySystemComponent())
+	if (UHodgeAbilitySystemComponent* HodgeASC = GetHodgeAbilitySystemComponent())
 	{
 		// 移除角色正在蹲伏的 GameplayTag
 		HodgeASC->SetLooseGameplayTagCount(HodgeGameplayTags::Status_Crouching, 0);

@@ -3,7 +3,7 @@
 
 #include "Component/HodgePawnExtensionComponent.h"
 
-#include "AbilitySystem/HodgeAbilitySystemComponentBase.h"
+#include "AbilitySystem/HodgeAbilitySystemComponent.h"
 #include "AbilitySystem/HodgeGameplayTags.h"
 #include "Components/GameFrameworkComponentManager.h"
 #include "Data/HodgePawnData.h"
@@ -118,7 +118,7 @@ void UHodgePawnExtensionComponent::OnRep_PawnData()
 	CheckDefaultInitialization();
 }
 
-void UHodgePawnExtensionComponent::InitializeAbilitySystem(UHodgeAbilitySystemComponentBase* InASC,
+void UHodgePawnExtensionComponent::InitializeAbilitySystem(UHodgeAbilitySystemComponent* InASC,
                                                            AActor* InOwnerActor)
 {
 	check(InASC);

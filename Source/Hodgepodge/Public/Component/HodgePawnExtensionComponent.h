@@ -8,7 +8,7 @@
 #include "HodgePawnExtensionComponent.generated.h"
 
 class UHodgePawnData;
-class UHodgeAbilitySystemComponentBase;
+class UHodgeAbilitySystemComponent;
 
 // 前置声明 Actor 生命周期结束原因枚举
 namespace EEndPlayReason
@@ -70,10 +70,10 @@ public:
 
 	// 获取当前缓存的 AbilitySystemComponent
 	UFUNCTION(BlueprintPure, Category = "Hodge|Pawn")
-	UHodgeAbilitySystemComponentBase* GetHodgeAbilitySystemComponent() const { return AbilitySystemComponent; }
+	UHodgeAbilitySystemComponent* GetHodgeAbilitySystemComponent() const { return AbilitySystemComponent; }
 
 	// 初始化 AbilitySystem，并让当前 Pawn 成为 ASC 的 AvatarActor
-	void InitializeAbilitySystem(UHodgeAbilitySystemComponentBase* InASC, AActor* InOwnerActor);
+	void InitializeAbilitySystem(UHodgeAbilitySystemComponent* InASC, AActor* InOwnerActor);
 
 	// 解除当前 Pawn 与 AbilitySystem 的 Avatar 关系
 	void UninitializeAbilitySystem();
@@ -119,5 +119,5 @@ protected:
 
 	// 缓存当前使用的 AbilitySystemComponent，ASC 实际所有者可以是其他 Actor
 	UPROPERTY(Transient)
-	TObjectPtr<UHodgeAbilitySystemComponentBase> AbilitySystemComponent;
+	TObjectPtr<UHodgeAbilitySystemComponent> AbilitySystemComponent;
 };

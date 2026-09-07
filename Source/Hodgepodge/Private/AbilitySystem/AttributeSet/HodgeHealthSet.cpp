@@ -4,7 +4,7 @@
 #include "AbilitySystem/AttributeSet/HodgeHealthSet.h"
 
 #include "GameplayEffectExtension.h"
-#include "AbilitySystem/HodgeAbilitySystemComponentBase.h"
+#include "AbilitySystem/HodgeAbilitySystemComponent.h"
 #include "Net/UnrealNetwork.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeHealthSet)
@@ -212,7 +212,7 @@ void UHodgeHealthSet::PostAttributeChange(const FGameplayAttribute& Attribute, f
 		// Make sure current health is not greater than the new max health.
 		if (GetHealth() > NewValue)
 		{
-			UHodgeAbilitySystemComponentBase* HodgeASC = GetHodgeAbilitySystemComponent();
+			UHodgeAbilitySystemComponent* HodgeASC = GetHodgeAbilitySystemComponent();
 			check(HodgeASC);
 
 			HodgeASC->ApplyModToAttribute(GetHealthAttribute(), EGameplayModOp::Override, NewValue);

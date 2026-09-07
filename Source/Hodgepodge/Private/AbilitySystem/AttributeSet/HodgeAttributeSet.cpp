@@ -9,7 +9,7 @@
 
 #include "AbilitySystem/AttributeSet/HodgeAttributeSet.h"
 
-#include "AbilitySystem/HodgeAbilitySystemComponentBase.h"
+#include "AbilitySystem/HodgeAbilitySystemComponent.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeAttributeSet)
 
@@ -26,7 +26,7 @@ UWorld* UHodgeAttributeSet::GetWorld() const
 	return Super::GetWorld();
 }
 
-UHodgeAbilitySystemComponentBase* UHodgeAttributeSet::GetHodgeAbilitySystemComponent() const
+UHodgeAbilitySystemComponent* UHodgeAttributeSet::GetHodgeAbilitySystemComponent() const
 {
-	return Cast<UHodgeAbilitySystemComponentBase>(GetOwningAbilitySystemComponent());
+	return Cast<UHodgeAbilitySystemComponent>(GetOwningAbilitySystemComponent());
 }

@@ -8,7 +8,7 @@
 #include "HodgeGameState.generated.h"
 
 class UHodgeExperienceManagerComponent;
-class UHodgeAbilitySystemComponentBase;
+class UHodgeAbilitySystemComponent;
 
 /**
  * @brief Hodgepodge 框架的游戏状态类
@@ -56,7 +56,7 @@ public:
 
 	// 获取用于处理全局 Gameplay 能力和 Gameplay Cue 等功能的 AbilitySystemComponent。
 	UFUNCTION(BlueprintCallable, Category = "Hodge|GameState")
-	UHodgeAbilitySystemComponentBase* GetHodgeAbilitySystemComponent() const { return AbilitySystemComponent; }
+	UHodgeAbilitySystemComponent* GetHodgeAbilitySystemComponent() const { return AbilitySystemComponent; }
 
 	// 向所有客户端发送可能丢失的消息，适合击杀提示、玩家加入等不要求可靠到达的通知。
 	// UFUNCTION(NetMulticast, Unreliable, BlueprintCallable, Category = "Hodge|GameState")
@@ -86,7 +86,7 @@ private:
 
 	// GameState 使用的游戏级 AbilitySystemComponent，主要用于处理全局 Gameplay Cue 等能力系统功能。
 	UPROPERTY(VisibleAnywhere, Category = "Hodge|GameState")
-	TObjectPtr<UHodgeAbilitySystemComponentBase> AbilitySystemComponent;
+	TObjectPtr<UHodgeAbilitySystemComponent> AbilitySystemComponent;
 
 protected:
 	// 服务器当前 FPS，服务器计算后复制给客户端。

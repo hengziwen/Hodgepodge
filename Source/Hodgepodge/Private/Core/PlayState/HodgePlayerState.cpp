@@ -3,7 +3,7 @@
 
 #include "Core/PlayState/HodgePlayerState.h"
 
-#include "AbilitySystem/HodgeAbilitySystemComponentBase.h"
+#include "AbilitySystem/HodgeAbilitySystemComponent.h"
 #include "AbilitySystem/AttributeSet/HodgeHealthSet.h"
 #include "Component/HodgeExperienceManagerComponent.h"
 #include "Components/GameFrameworkComponentManager.h"
@@ -17,7 +17,7 @@ const FName AHodgePlayerState::NAME_HodgeAbilityReady("HodgeAbilitiesReady");
 
 AHodgePlayerState::AHodgePlayerState(const FObjectInitializer& ObjectInitializer)
 {
-	AbilitySystemComponent = ObjectInitializer.CreateDefaultSubobject<UHodgeAbilitySystemComponentBase>(
+	AbilitySystemComponent = ObjectInitializer.CreateDefaultSubobject<UHodgeAbilitySystemComponent>(
 		this, TEXT("AbilitySystemComponent"));
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);

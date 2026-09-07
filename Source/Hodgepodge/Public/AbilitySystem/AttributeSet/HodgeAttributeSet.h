@@ -62,7 +62,7 @@ GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
 GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
 struct FGameplayEffectSpec;
-class UHodgeAbilitySystemComponentBase;
+class UHodgeAbilitySystemComponent;
 /** 
  * Delegate used to broadcast attribute events, some of these parameters may be null on clients: 
  * @param EffectInstigator	The original instigating actor for this event
@@ -91,5 +91,5 @@ public:
 
 	virtual UWorld* GetWorld() const override;
 
-	UHodgeAbilitySystemComponentBase* GetHodgeAbilitySystemComponent() const;
+	UHodgeAbilitySystemComponent* GetHodgeAbilitySystemComponent() const;
 };

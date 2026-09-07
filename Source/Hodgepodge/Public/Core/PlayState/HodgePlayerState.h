@@ -11,7 +11,7 @@
 
 class UHodgeExperienceDefinition;
 class UHodgePawnData;
-class UHodgeAbilitySystemComponentBase;
+class UHodgeAbilitySystemComponent;
 class AHodgePlayerControllerBase;
 
 /**
@@ -54,7 +54,7 @@ public:
 
 	// 获取玩家专属的 AbilitySystemComponent。
 	UFUNCTION(BlueprintCallable, Category = "Hodge|PlayerState")
-	UHodgeAbilitySystemComponentBase* GetHodgeAbilitySystemComponent() const { return AbilitySystemComponent; }
+	UHodgeAbilitySystemComponent* GetHodgeAbilitySystemComponent() const { return AbilitySystemComponent; }
 
 	// 实现 IAbilitySystemInterface，返回玩家的 AbilitySystemComponent。
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
@@ -179,7 +179,7 @@ protected:
 private:
 	// 玩家专属的 AbilitySystemComponent，负责玩家技能、GameplayEffect、GameplayCue 等 GAS 功能。
 	UPROPERTY(VisibleAnywhere, Category = "Hodge|PlayerState")
-	TObjectPtr<UHodgeAbilitySystemComponentBase> AbilitySystemComponent;
+	TObjectPtr<UHodgeAbilitySystemComponent> AbilitySystemComponent;
 
 	// 玩家生命值相关的 AttributeSet。
 	UPROPERTY()

@@ -1,11 +1,9 @@
-﻿// 111屎山代码来袭
-
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
 #include "GenericTeamAgentInterface.h"
-#include "AbilitySystem/HodgeAbilitySystemComponentBase.h"
+#include "AbilitySystem/HodgeAbilitySystemComponent.h"
 #include "Character/HodgeCharacterBase.h"
 #include "HodgeCombatCharacter.generated.h"
 
@@ -131,7 +129,7 @@ public:
 
 	// 获取当前角色使用的 Hodge AbilitySystemComponent
 	UFUNCTION(BlueprintCallable, Category = "Hodge|Character")
-	UHodgeAbilitySystemComponentBase* GetHodgeAbilitySystemComponent() const;
+	UHodgeAbilitySystemComponent* GetHodgeAbilitySystemComponent() const;
 
 	// 实现 GAS 的 AbilitySystemInterface，返回角色对应的 AbilitySystemComponent
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
