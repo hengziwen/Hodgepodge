@@ -7,6 +7,8 @@
 #include "Camera/HodgeUICameraManagerComponent.h"
 #include "Engine/Canvas.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(HodgePlayerCameraManager)
+
 class FDebugDisplayInfo;
 
 // UI 相机组件使用的默认对象名称。

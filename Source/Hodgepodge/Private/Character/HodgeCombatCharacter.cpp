@@ -19,6 +19,8 @@
 #include "Core/PlayState/HodgePlayerState.h"
 #include "Net/UnrealNetwork.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeCombatCharacter)
+
 class AActor;
 class FLifetimeProperty;
 class IRepChangedPropertyTracker;
