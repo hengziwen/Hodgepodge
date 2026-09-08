@@ -1,6 +1,6 @@
 ﻿// **
 //  * @file HodgeInputComponentBase.h
-//  * @brief UHodgeInputComponentBase 类的头文件
+//  * @brief UHodgeInputComponent 类的头文件
 //  *
 //  * 输入组件基类,基于 Enhanced Input 系统,
 //  * 提供了输入映射管理、原生输入绑定、GAS 能力输入绑定等核心功能。
@@ -13,7 +13,7 @@
 #include "EnhancedInputComponent.h"
 #include "GameplayTagContainer.h"
 #include "HodgeInputConfig.h"
-#include "HodgeInputComponentBase.generated.h"
+#include "HodgeInputComponent.generated.h"
 
 class UEnhancedInputLocalPlayerSubsystem;
 
@@ -42,7 +42,7 @@ class UEnhancedInputLocalPlayerSubsystem;
  * 5. 角色销毁时调用 RemoveBinds 清理绑定
  */
 UCLASS(Config = Input)
-class HODGEPODGE_API UHodgeInputComponentBase : public UEnhancedInputComponent
+class HODGEPODGE_API UHodgeInputComponent : public UEnhancedInputComponent
 {
 	GENERATED_BODY()
 
@@ -52,7 +52,7 @@ public:
 	 *
 	 * 调用父类 UEnhancedInputComponent 构造函数,当前无自定义初始化逻辑。
 	 */
-	UHodgeInputComponentBase();
+	UHodgeInputComponent();
 
 	/**
 	 * @brief 将输入配置中的映射添加到 Enhanced Input 子系统
@@ -135,9 +135,9 @@ public:
 
 
 template <class UserClass, typename FuncType>
-void UHodgeInputComponentBase::BindNativeAction(const UHodgeInputConfig* InputConfig, const FGameplayTag& InputTag,
-                                                ETriggerEvent TriggerEvent, UserClass* Object, FuncType Func,
-                                                bool bLogIfNotFound)
+void UHodgeInputComponent::BindNativeAction(const UHodgeInputConfig* InputConfig, const FGameplayTag& InputTag,
+                                            ETriggerEvent TriggerEvent, UserClass* Object, FuncType Func,
+                                            bool bLogIfNotFound)
 {
 	check(InputConfig);
 	if (const UInputAction* IA = InputConfig->FindNativeInputActionForTag(InputTag, bLogIfNotFound))
@@ -147,9 +147,9 @@ void UHodgeInputComponentBase::BindNativeAction(const UHodgeInputConfig* InputCo
 }
 
 template <class UserClass, typename PressedFuncType, typename ReleasedFuncType>
-void UHodgeInputComponentBase::BindAbilityActions(const UHodgeInputConfig* InputConfig, UserClass* Object,
-                                                  PressedFuncType PressedFunc, ReleasedFuncType ReleasedFunc,
-                                                  TArray<uint32>& BindHandles)
+void UHodgeInputComponent::BindAbilityActions(const UHodgeInputConfig* InputConfig, UserClass* Object,
+                                              PressedFuncType PressedFunc, ReleasedFuncType ReleasedFunc,
+                                              TArray<uint32>& BindHandles)
 {
 	check(InputConfig);
 

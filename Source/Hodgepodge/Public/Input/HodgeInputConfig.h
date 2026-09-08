@@ -67,7 +67,7 @@ public:
  *
  * 数据资产位置:/Game/Input/ 目录下
  */
-UCLASS(BlueprintType, Blueprintable,Const)
+UCLASS(BlueprintType, Blueprintable, Const)
 class HODGEPODGE_API UHodgeInputConfig : public UDataAsset
 {
 	GENERATED_BODY()
