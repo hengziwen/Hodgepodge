@@ -3,6 +3,8 @@
 // 引入项目自定义的玩家可映射按键 Profile。
 #include "Input/HodgePlayerMappableKeyProfile.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(HodgePlayerMappableKeyProfile)
+
 // 装备当前按键 Profile 时调用。
 void UHodgePlayerMappableKeyProfile::EquipProfile()
 {

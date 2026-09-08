@@ -3,6 +3,8 @@
 // 引入项目自定义的输入用户设置。
 #include "Input/HodgeInputUserSettings.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeInputUserSettings)
+
 // 应用当前玩家的输入设置。
 void UHodgeInputUserSettings::ApplySettings()
 {
