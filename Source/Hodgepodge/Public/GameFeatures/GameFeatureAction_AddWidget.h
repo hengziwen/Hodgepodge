@@ -4,6 +4,7 @@
 //
 // #include "CommonActivatableWidget.h"
 // #include "GameFeatureAction_WorldActionBase.h"
+// #include "GameplayTagContainer.h"
 // #include "UIExtensionSystem.h"
 //
 // #include "GameFeatureAction_AddWidget.generated.h"
@@ -12,7 +13,7 @@
 // struct FComponentRequestHandle;
 //
 // USTRUCT()
-// struct FLyraHUDLayoutRequest
+// struct FHodgeHUDLayoutRequest
 // {
 // 	GENERATED_BODY()
 //
@@ -27,7 +28,7 @@
 //
 //
 // USTRUCT()
-// struct FLyraHUDElementEntry
+// struct FHodgeHUDElementEntry
 // {
 // 	GENERATED_BODY()
 //
@@ -68,14 +69,13 @@
 // private:
 // 	// Layout to add to the HUD
 // 	UPROPERTY(EditAnywhere, Category=UI, meta=(TitleProperty="{LayerID} -> {LayoutClass}"))
-// 	TArray<FLyraHUDLayoutRequest> Layout;
+// 	TArray<FHodgeHUDLayoutRequest> Layout;
 //
 // 	// Widgets to add to the HUD
 // 	UPROPERTY(EditAnywhere, Category=UI, meta=(TitleProperty="{SlotID} -> {WidgetClass}"))
-// 	TArray<FLyraHUDElementEntry> Widgets;
+// 	TArray<FHodgeHUDElementEntry> Widgets;
 //
 // private:
-//
 // 	struct FPerActorData
 // 	{
 // 		TArray<TWeakObjectPtr<UCommonActivatableWidget>> LayoutsAdded;
@@ -85,13 +85,14 @@
 // 	struct FPerContextData
 // 	{
 // 		TArray<TSharedPtr<FComponentRequestHandle>> ComponentRequests;
-// 		TMap<FObjectKey, FPerActorData> ActorData; 
+// 		TMap<FObjectKey, FPerActorData> ActorData;
 // 	};
 //
 // 	TMap<FGameFeatureStateChangeContext, FPerContextData> ContextData;
 //
 // 	//~ Begin UGameFeatureAction_WorldActionBase interface
-// 	virtual void AddToWorld(const FWorldContext& WorldContext, const FGameFeatureStateChangeContext& ChangeContext) override;
+// 	virtual void AddToWorld(const FWorldContext& WorldContext,
+// 	                        const FGameFeatureStateChangeContext& ChangeContext) override;
 // 	//~ End UGameFeatureAction_WorldActionBase interface
 //
 // 	void Reset(FPerContextData& ActiveData);
