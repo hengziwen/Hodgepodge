@@ -1,0 +1,8 @@
+---
+description: Hodgepodge UE5 项目开发与验证约定
+alwaysApply: true
+---
+
+- 遵守项目根目录 `AGENTS.md`。
+- 编译命令、当前工程事实和 UE 编辑器操作见 `Docs/AI_DEVELOPMENT.md`。
+- 当前代码与配置优先于历史 README 和 Lyra 参考文档；不可自行升级引擎或覆盖用户已有改动。

@@ -1,0 +1,8 @@
+
+[mcp_servers.hodge_blueprints]
+command = 'D:\Hodgepodge\Tools\UnrealMCP\.venv\Scripts\python.exe'
+args = ['D:\Hodgepodge\Tools\UnrealMCP\server.py']
+cwd = 'D:\Hodgepodge\Tools\UnrealMCP'
+startup_timeout_sec = 30
+tool_timeout_sec = 90
+
