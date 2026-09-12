@@ -8,4 +8,6 @@
 UHodgePawnData::UHodgePawnData(const FObjectInitializer& ObjectInitializer)
 {
 	PawnClass = nullptr;
+	InputConfig = nullptr;
+	DefaultCameraMode = nullptr;
 }
