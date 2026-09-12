@@ -4,6 +4,7 @@
 #include "GameMapsSettings.h"
 #include "Character/HodgeCharacterBase.h"
 #include "Component/HodgeExperienceManagerComponent.h"
+#include "Component/HodgePawnExtensionComponent.h"
 #include "Core/GameState/HodgeGameState.h"
 #include "Core/GameState/HodgeGameStateBase.h"
 #include "Core/HUD/HodgeHUDBase.h"
@@ -429,20 +430,20 @@ APawn* AHodgeGameModeBase::SpawnDefaultPawnAtTransform_Implementation(AControlle
 		// 根据指定的 PawnClass 和出生 Transform 生成 Pawn。
 		if (APawn* SpawnedPawn = GetWorld()->SpawnActor<APawn>(PawnClass, SpawnTransform, SpawnInfo))
 		{
-			// 可以在这里通过 PawnExtensionComponent 设置 PawnData，目前暂未启用。
-			// if (UHodgePawnExtensionComponent* PawnExtComp = UHodgePawnExtensionComponent::FindPawnExtensionComponent(
-			//     SpawnedPawn))
-			// {
-			//     if (const UHodgePawnData* PawnData = GetPawnDataForController(NewPlayer))
-			//     {
-			//        PawnExtComp->SetPawnData(PawnData);
-			//     }
-			//     else
-			//     {
-			//        UE_LOG(LogTemp, Error, TEXT("Game mode was unable to set PawnData on the spawned pawn [%s]."),
-			//               *GetNameSafe(SpawnedPawn));
-			//     }
-			// }
+			// 这里通过 PawnExtensionComponent 设置 PawnData
+			if (UHodgePawnExtensionComponent* PawnExtComp = UHodgePawnExtensionComponent::FindPawnExtensionComponent(
+			    SpawnedPawn))
+			{
+			    if (const UHodgePawnData* PawnData = GetPawnDataForController(NewPlayer))
+			    {
+			       PawnExtComp->SetPawnData(PawnData);
+			    }
+			    else
+			    {
+			       UE_LOG(LogTemp, Error, TEXT("Game mode was unable to set PawnData on the spawned pawn [%s]."),
+			              *GetNameSafe(SpawnedPawn));
+			    }
+			}
 
 			// 完成延迟构造，使 Pawn 正式完成初始化。
 			SpawnedPawn->FinishSpawning(SpawnTransform);

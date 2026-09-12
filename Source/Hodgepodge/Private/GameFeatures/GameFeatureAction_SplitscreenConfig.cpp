@@ -8,7 +8,7 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(GameFeatureAction_SplitscreenConfig)
 
-#define LOCTEXT_NAMESPACE "LyraGameFeatures"
+#define LOCTEXT_NAMESPACE "HodgeGameFeatures"
 
 //////////////////////////////////////////////////////////////////////
 // UGameFeatureAction_SplitscreenConfig

@@ -194,12 +194,12 @@ namespace HodgeGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(InitState_GameplayReady, "InitState.GameplayReady");
 
 	// =============================================================================
-	// Lyra Tags
+	// Hodge Tags
 	// =============================================================================
-	UE_DEFINE_GAMEPLAY_TAG(Lyra_Damage_Taken_Message, "Lyra.Damage.Taken.Message");
-	UE_DEFINE_GAMEPLAY_TAG(Lyra_HUD_PlayerHUD, "Lyra.HUD.PlayerHUD");
-	UE_DEFINE_GAMEPLAY_TAG(Lyra_HUD_TempTopWidgets, "Lyra.HUD.TempTopWidgets");
-	UE_DEFINE_GAMEPLAY_TAG(Lyra_Player, "Lyra.Player");
+	UE_DEFINE_GAMEPLAY_TAG(Hodge_Damage_Taken_Message, "Hodge.Damage.Taken.Message");
+	UE_DEFINE_GAMEPLAY_TAG(Hodge_HUD_PlayerHUD, "Hodge.HUD.PlayerHUD");
+	UE_DEFINE_GAMEPLAY_TAG(Hodge_HUD_TempTopWidgets, "Hodge.HUD.TempTopWidgets");
+	UE_DEFINE_GAMEPLAY_TAG(Hodge_Player, "Hodge.Player");
 
 	// =============================================================================
 	// Platform Trait Tags

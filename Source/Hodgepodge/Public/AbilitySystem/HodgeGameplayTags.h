@@ -193,12 +193,12 @@ namespace HodgeGameplayTags
 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InitState_GameplayReady);
 
 	// =============================================================================
-	// Lyra 标签
+	// Hodge 标签
 	// =============================================================================
-	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Lyra_Damage_Taken_Message);
-	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Lyra_HUD_PlayerHUD);
-	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Lyra_HUD_TempTopWidgets);
-	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Lyra_Player);
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Hodge_Damage_Taken_Message);
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Hodge_HUD_PlayerHUD);
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Hodge_HUD_TempTopWidgets);
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Hodge_Player);
 
 	// =============================================================================
 	// Platform Trait 标签

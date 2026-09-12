@@ -8,6 +8,7 @@
 #include "GameFeatureData.h"
 #include "GameplayCueManager.h"
 #include "GameplayCueSet.h"
+#include "AbilitySystem/HodgeGameplayCueManager.h"
 
 
 // 构造函数，暂时没有额外初始化逻辑。
@@ -171,63 +172,63 @@ void UHodgeGameFeature_AddGameplayCuePaths::OnGameFeatureRegistering(
 	for (const UGameFeatureAction* Action : GameFeatureData->GetActions())
 	{
 		// 找出其中专门用于添加 GameplayCue 路径的 Action。
-		//if (const UGameFeatureAction_AddGameplayCuePath* AddGameplayCueGFA = =
-		//        Cast<UGameFeatureAction_AddGameplayCuePath>(Action))
-		//{
-		// 获取该 Action 配置的 GameplayCue 目录。
-		//const TArray<FDirectoryPath>& DirsToAdd =
-		//    AddGameplayCueGFA->GetDirectoryPathsToAdd();
+		if (const UGameFeatureAction_AddGameplayCuePath* AddGameplayCueGFA =
+			Cast<UGameFeatureAction_AddGameplayCuePath>(Action))
+		{
+			//获取该 Action 配置的 GameplayCue 目录。
+			const TArray<FDirectoryPath>& DirsToAdd =
+				AddGameplayCueGFA->GetDirectoryPathsToAdd();
 
-		// 这里原本 Lyra 会获取自己的 GameplayCueManager，
-		// 然后把这些目录添加进去并重新扫描 GameplayCue。
-		//
-		// 当前 Hodge 项目暂时注释掉了这部分逻辑。
-		//
-		// if (UHodgeGameplayCueManager* GCM = UHodgeGameplayCueManager::Get())
-		// {
-		//     UGameplayCueSet* RuntimeGameplayCueSet = GCM->GetRuntimeCueSet();
-		//
-		//     const int32 PreInitializeNumCues =
-		//         RuntimeGameplayCueSet
-		//             ? RuntimeGameplayCueSet->GameplayCueData.Num()
-		//             : 0;
-		//
-		//     for (const FDirectoryPath& Directory : DirsToAdd)
-		//     {
-		//         FString MutablePath = Directory.Path;
-		//
-		//         // 将 Feature 内部配置的路径转换成实际插件包路径。
-		//         UGameFeaturesSubsystem::FixPluginPackagePath(
-		//             MutablePath,
-		//             PluginRootPath,
-		//             false
-		//         );
-		//
-		//         // 将 GameplayCue 路径添加到 GameplayCueManager。
-		//         GCM->AddGameplayCueNotifyPath(
-		//             MutablePath,
-		//             false
-		//         );
-		//     }
-		//
-		//     // 如果新增了 GameplayCue 路径，则重新建立 Runtime Cue Library。
-		//     if (!DirsToAdd.IsEmpty())
-		//     {
-		//         GCM->InitializeRuntimeObjectLibrary();
-		//     }
-		//
-		//     const int32 PostInitializeNumCues =
-		//         RuntimeGameplayCueSet
-		//             ? RuntimeGameplayCueSet->GameplayCueData.Num()
-		//             : 0;
-		//
-		//     // 如果 GameplayCue 数量发生变化，则刷新 GameplayCue PrimaryAsset。
-		//     if (PreInitializeNumCues != PostInitializeNumCues)
-		//     {
-		//         GCM->RefreshGameplayCuePrimaryAsset();
-		//     }
-		// }
-		//}
+			//这里原本 Lyra 会获取自己的 GameplayCueManager，
+			//然后把这些目录添加进去并重新扫描 GameplayCue。
+
+			//当前 Hodge 项目暂时注释掉了这部分逻辑。
+
+			if (UHodgeGameplayCueManager* GCM = UHodgeGameplayCueManager::Get())
+			{
+				UGameplayCueSet* RuntimeGameplayCueSet = GCM->GetRuntimeCueSet();
+
+				const int32 PreInitializeNumCues =
+					RuntimeGameplayCueSet
+						? RuntimeGameplayCueSet->GameplayCueData.Num()
+						: 0;
+
+				for (const FDirectoryPath& Directory : DirsToAdd)
+				{
+					FString MutablePath = Directory.Path;
+
+					// 将 Feature 内部配置的路径转换成实际插件包路径。
+					UGameFeaturesSubsystem::FixPluginPackagePath(
+						MutablePath,
+						PluginRootPath,
+						false
+					);
+
+					// 将 GameplayCue 路径添加到 GameplayCueManager。
+					GCM->AddGameplayCueNotifyPath(
+						MutablePath,
+						false
+					);
+				}
+
+				// 如果新增了 GameplayCue 路径，则重新建立 Runtime Cue Library。
+				if (!DirsToAdd.IsEmpty())
+				{
+					GCM->InitializeRuntimeObjectLibrary();
+				}
+
+				const int32 PostInitializeNumCues =
+					RuntimeGameplayCueSet
+						? RuntimeGameplayCueSet->GameplayCueData.Num()
+						: 0;
+
+				// 如果 GameplayCue 数量发生变化，则刷新 GameplayCue PrimaryAsset。
+				if (PreInitializeNumCues != PostInitializeNumCues)
+				{
+					GCM->RefreshGameplayCuePrimaryAsset();
+				}
+			}
+		}
 	}
 }
 
