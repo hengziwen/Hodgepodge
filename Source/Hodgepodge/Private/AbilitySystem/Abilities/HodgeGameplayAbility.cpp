@@ -10,7 +10,9 @@
 #include "AbilitySystem/HodgeGameplayEffectContext.h"
 #include "AbilitySystem/HodgeGameplayTags.h"
 #include "AbilitySystem/Abilities/HodgeAbilityCost.h"
+#include "Camera/HodgeCameraMode.h"
 #include "Character/HodgeCombatCharacter.h"
+#include "Component/HodgeHeroComponent.h"
 #include "Interface/HodgeAbilitySourceInterface.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeGameplayAbility)
@@ -120,10 +122,11 @@ AHodgeCombatCharacter* UHodgeGameplayAbility::GetHodgeCharacterFromActorInfo() c
 	return (CurrentActorInfo ? Cast<AHodgeCombatCharacter>(CurrentActorInfo->AvatarActor.Get()) : nullptr);
 }
 
-// UHodgeHeroComponent* UHodgeGameplayAbility::GetHeroComponentFromActorInfo() const
-// {
-// 	return (CurrentActorInfo ? UHodgeHeroComponent::FindHeroComponent(CurrentActorInfo->AvatarActor.Get()) : nullptr);
-// }
+UHodgeHeroComponent* UHodgeGameplayAbility::GetHeroComponentFromActorInfo() const
+{
+	// ActorInfo 有效时，从 AvatarActor 字段获取HodgeHeroComponent組件。
+	return (CurrentActorInfo ? UHodgeHeroComponent::FindHeroComponent(CurrentActorInfo->AvatarActor.Get()) : nullptr);
+}
 
 // C++ 层处理 Ability 激活失败。
 void UHodgeGameplayAbility::NativeOnAbilityFailedToActivate(const FGameplayTagContainer& FailedReason) const
@@ -772,12 +775,12 @@ void UHodgeGameplayAbility::SetCameraMode(TSubclassOf<UHodgeCameraMode> CameraMo
 	// 当前 Ability 必须已经实例化，因为 CameraMode 属于 Ability 的运行时状态。
 	ENSURE_ABILITY_IS_INSTANTIATED_OR_RETURN(SetCameraMode,);
 
-	// 当前 CameraMode 系统暂时被注释掉，预留给 HeroComponent 统一管理。
-	// if (UHodgeHeroComponent* HeroComponent = GetHeroComponentFromActorInfo())
-	// {
-	// 	HeroComponent->SetAbilityCameraMode(CameraMode, CurrentSpecHandle);
-	// 	ActiveCameraMode = CameraMode;
-	// }
+	//当前 CameraMode 系统暂时被注释掉，预留给 HeroComponent 统一管理。
+	if (UHodgeHeroComponent* HeroComponent = GetHeroComponentFromActorInfo())
+	{
+		HeroComponent->SetAbilityCameraMode(CameraMode, CurrentSpecHandle);
+		ActiveCameraMode = CameraMode;
+	}
 }
 
 // 清除当前 Ability 设置的 CameraMode。
@@ -787,13 +790,13 @@ void UHodgeGameplayAbility::ClearCameraMode()
 	ENSURE_ABILITY_IS_INSTANTIATED_OR_RETURN(ClearCameraMode,);
 
 	// 如果存在激活的 CameraMode，则通知 HeroComponent 清理。
-	// if (ActiveCameraMode)
-	// {
-	// 	if (UHodgeHeroComponent* HeroComponent = GetHeroComponentFromActorInfo())
-	// 	{
-	// 		HeroComponent->ClearAbilityCameraMode(CurrentSpecHandle);
-	// 	}
-	//
-	// 	ActiveCameraMode = nullptr;
-	// }
+	if (ActiveCameraMode)
+	{
+		if (UHodgeHeroComponent* HeroComponent = GetHeroComponentFromActorInfo())
+		{
+			HeroComponent->ClearAbilityCameraMode(CurrentSpecHandle);
+		}
+
+		ActiveCameraMode = nullptr;
+	}
 }

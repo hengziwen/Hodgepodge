@@ -28,6 +28,8 @@
 #include "Misc/DataValidation.h"
 #endif
 // 引入当前 CPP 对应的内联生成代码。
+#include "Component/HodgeHeroComponent.h"
+
 #include UE_INLINE_GENERATED_CPP_BY_NAME(GameFeatureAction_AddInputContextMapping)
 // 本文件使用 GameFeatures 作为本地化文本命名空间。
 #define LOCTEXT_NAMESPACE "GameFeatures"
@@ -365,10 +367,11 @@ void UGameFeatureAction_AddInputContextMapping::HandleControllerExtension(
 		// 移除该 PlayerController 对应的输入映射。
 		RemoveInputMapping(AsController, ActiveData);
 	}
-	// else if ((EventName == UGameFrameworkComponentManager::NAME_ExtensionAdded) || (EventName == UHodgeHeroComponent::NAME_BindInputsNow))
-	// {
-	//     AddInputMappingForPlayer(AsController->GetLocalPlayer(), ActiveData);
-	// }
+	else if ((EventName == UGameFrameworkComponentManager::NAME_ExtensionAdded) || (EventName ==
+		UHodgeHeroComponent::NAME_BindInputsNow))
+	{
+		AddInputMappingForPlayer(AsController->GetLocalPlayer(), ActiveData);
+	}
 }
 
 // 为指定 Player 添加当前 GameFeature 的输入映射。

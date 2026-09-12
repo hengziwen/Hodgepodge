@@ -172,7 +172,7 @@ void UHodgePawnExtensionComponent::InitializeAbilitySystem(UHodgeAbilitySystemCo
 	if (ensure(PawnData))
 	{
 		// 根据 PawnData 设置 ASC 的 TagRelationshipMapping
-		//InASC->SetTagRelationshipMapping(PawnData->TagRelationshipMapping);
+		InASC->SetTagRelationshipMapping(PawnData->TagRelationshipMapping);
 	}
 
 	// 通知所有依赖 ASC 初始化完成的系统
@@ -200,7 +200,7 @@ void UHodgePawnExtensionComponent::UninitializeAbilitySystem()
 		AbilitySystemComponent->CancelAbilities(nullptr, &AbilityTypesToIgnore);
 
 		// 清理 Ability 输入状态
-		//AbilitySystemComponent->ClearAbilityInput();
+		AbilitySystemComponent->ClearAbilityInput();
 
 		// 移除当前 AvatarActor 上的所有 GameplayCue
 		AbilitySystemComponent->RemoveAllGameplayCues();

@@ -38,6 +38,8 @@
 #endif
 
 // 引入当前 CPP 对应的内联生成代码。
+#include "Component/HodgeHeroComponent.h"
+
 #include UE_INLINE_GENERATED_CPP_BY_NAME(GameFeatureAction_AddInputBinding)
 
 // 本文件使用 GameFeatures 作为本地化文本命名空间。
@@ -192,12 +194,13 @@ void UGameFeatureAction_AddInputBinding::HandlePawnExtension(AActor* Actor, FNam
 		// 移除该 Pawn 上当前 GameFeature 添加的输入配置。
 		RemoveInputMapping(AsPawn, ActiveData);
 	}
-	// Pawn 的扩展被添加，或者 Pawn 已经准备好绑定输入时，添加输入配置。
-	// else if ((EventName == UGameFrameworkComponentManager::NAME_ExtensionAdded) || (EventName == UHodgeHeroComponent::NAME_BindInputsNow))
-	// {
-	// 	// 为该 Pawn 添加当前 GameFeature 提供的输入配置。
-	// 	AddInputMappingForPlayer(AsPawn, ActiveData);
-	// }
+	//Pawn 的扩展被添加，或者 Pawn 已经准备好绑定输入时，添加输入配置。
+	else if ((EventName == UGameFrameworkComponentManager::NAME_ExtensionAdded) || (EventName ==
+		UHodgeHeroComponent::NAME_BindInputsNow))
+	{
+		// 为该 Pawn 添加当前 GameFeature 提供的输入配置。
+		AddInputMappingForPlayer(AsPawn, ActiveData);
+	}
 }
 
 // 为指定 Pawn 添加当前 GameFeature 的输入配置。
@@ -214,22 +217,22 @@ void UGameFeatureAction_AddInputBinding::AddInputMappingForPlayer(APawn* Pawn, F
 			UEnhancedInputLocalPlayerSubsystem>())
 		{
 			// 获取 Pawn 上的 HeroComponent。
-			// UHodgeHeroComponent* HeroComponent = Pawn->FindComponentByClass<UHodgeHeroComponent>();
-			//
-			// // 只有 HeroComponent 存在并且已经准备好绑定输入时，才真正添加 InputConfig。
-			// if (HeroComponent && HeroComponent->IsReadyToBindInputs())
-			// {
-			// 	// 遍历当前 GameFeature 配置的所有输入配置。
-			// 	for (const TSoftObjectPtr<const UHodgeInputConfig>& Entry : InputConfigs)
-			// 	{
-			// 		// 获取已经加载的输入配置资源。
-			// 		if (const UHodgeInputConfig* BindSet = Entry.Get())
-			// 		{
-			// 			// 将该输入配置添加到 HeroComponent 的额外输入配置列表。
-			// 			HeroComponent->AddAdditionalInputConfig(BindSet);
-			// 		}
-			// 	}
-			// }
+			UHodgeHeroComponent* HeroComponent = Pawn->FindComponentByClass<UHodgeHeroComponent>();
+
+			// 只有 HeroComponent 存在并且已经准备好绑定输入时，才真正添加 InputConfig。
+			if (HeroComponent && HeroComponent->IsReadyToBindInputs())
+			{
+				// 遍历当前 GameFeature 配置的所有输入配置。
+				for (const TSoftObjectPtr<const UHodgeInputConfig>& Entry : InputConfigs)
+				{
+					// 获取已经加载的输入配置资源。
+					if (const UHodgeInputConfig* BindSet = Entry.Get())
+					{
+						// 将该输入配置添加到 HeroComponent 的额外输入配置列表。
+						HeroComponent->AddAdditionalInputConfig(BindSet);
+					}
+				}
+			}
 
 			// 记录该 Pawn 已经处理过输入绑定，方便后续停用时进行清理。
 			ActiveData.PawnsAddedTo.AddUnique(Pawn);
@@ -259,19 +262,19 @@ void UGameFeatureAction_AddInputBinding::RemoveInputMapping(APawn* Pawn, FPerCon
 			UEnhancedInputLocalPlayerSubsystem>())
 		{
 			// 查找 Pawn 上的 HeroComponent。
-			// if (UHodgeHeroComponent* HeroComponent = Pawn->FindComponentByClass<UHodgeHeroComponent>())
-			// {
-			// 	// 遍历当前 GameFeature 配置的所有输入配置。
-			// 	for (const TSoftObjectPtr<const UHodgeInputConfig>& Entry : InputConfigs)
-			// 	{
-			// 		// 获取已经加载的输入配置资源。
-			// 		if (const UHodgeInputConfig* InputConfig = Entry.Get())
-			// 		{
-			// 			// 从 HeroComponent 中移除该额外输入配置。
-			// 			HeroComponent->RemoveAdditionalInputConfig(InputConfig);
-			// 		}
-			// 	}
-			// }
+			if (UHodgeHeroComponent* HeroComponent = Pawn->FindComponentByClass<UHodgeHeroComponent>())
+			{
+				// 遍历当前 GameFeature 配置的所有输入配置。
+				for (const TSoftObjectPtr<const UHodgeInputConfig>& Entry : InputConfigs)
+				{
+					// 获取已经加载的输入配置资源。
+					if (const UHodgeInputConfig* InputConfig = Entry.Get())
+					{
+						// 从 HeroComponent 中移除该额外输入配置。
+						HeroComponent->RemoveAdditionalInputConfig(InputConfig);
+					}
+				}
+			}
 		}
 	}
 

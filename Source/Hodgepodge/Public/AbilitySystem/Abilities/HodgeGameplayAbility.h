@@ -8,6 +8,7 @@
 #include "HodgeGameplayAbility.generated.h"
 
 
+class UHodgeHeroComponent;
 class UHodgeAbilityCost;
 class UHodgeCameraMode;
 class IHodgeAbilitySourceInterface;
@@ -116,6 +117,10 @@ public:
 	// 从 Ability 的 ActorInfo 中获取项目自定义的战斗角色。
 	UFUNCTION(BlueprintCallable, Category = "Hodge|Ability")
 	AHodgeCombatCharacter* GetHodgeCharacterFromActorInfo() const;
+
+	// 从 Ability 的 ActorInfo 中获取项目自定义的HeroComponent
+	UFUNCTION(BlueprintCallable, Category = "Hodge|Ability")
+	UHodgeHeroComponent* GetHeroComponentFromActorInfo() const;
 
 	// 获取 Ability 的激活策略。
 	EHodgeAbilityActivationPolicy GetActivationPolicy() const { return ActivationPolicy; }
