@@ -69,4 +69,9 @@ public:
 	 * 这是 GAS 客户端初始化的入口。
 	 */
 	virtual void OnRep_PlayerState() override;
+
+private:
+	// Hero 扩展组件
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hodge|Character", Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UHodgeHeroComponent> HeroComponent = nullptr;
 };

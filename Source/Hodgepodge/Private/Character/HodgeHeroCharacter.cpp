@@ -10,6 +10,7 @@
 
 #include "Character/HodgeHeroCharacter.h"
 
+#include "Component/HodgeHeroComponent.h"
 #include "Core/PlayState/HodgePlayerState.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeHeroCharacter)
@@ -22,6 +23,7 @@
 AHodgeHeroCharacter::AHodgeHeroCharacter(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+	HeroComponent = CreateDefaultSubobject<UHodgeHeroComponent>(TEXT("HeroComponent"));
 }
 
 /**
