@@ -13,7 +13,7 @@ class UCurveVector;
 /**
  * 第三人称相机模式，负责处理目标跟随、蹲伏偏移以及相机碰撞防穿透。
  */
-UCLASS(Abstract, Blueprintable)
+UCLASS(Blueprintable)
 class UHodgeCameraMode_ThirdPerson : public UHodgeCameraMode
 {
 	GENERATED_BODY()

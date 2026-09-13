@@ -8,7 +8,7 @@
 #include "Component/HodgeExperienceManagerComponent.h"
 #include "Components/GameFrameworkComponentManager.h"
 #include "Core/GameMode/HodgeGameModeBase.h"
-#include "Core/PlayerController/HodgePlayerControllerBase.h"
+#include "Core/PlayerController/HodgePlayerController.h"
 #include "Net/UnrealNetwork.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgePlayerState)
@@ -32,9 +32,9 @@ AHodgePlayerState::AHodgePlayerState(const FObjectInitializer& ObjectInitializer
 	MySquadID = INDEX_NONE;
 }
 
-AHodgePlayerControllerBase* AHodgePlayerState::GetHodgePlayerController() const
+AHodgePlayerController* AHodgePlayerState::GetHodgePlayerController() const
 {
-	return Cast<AHodgePlayerControllerBase>(GetOwner());
+	return Cast<AHodgePlayerController>(GetOwner());
 }
 
 UAbilitySystemComponent* AHodgePlayerState::GetAbilitySystemComponent() const

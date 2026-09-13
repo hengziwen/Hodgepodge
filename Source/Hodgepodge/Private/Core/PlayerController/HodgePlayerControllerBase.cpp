@@ -19,7 +19,8 @@
  * 当前为空实现,仅调用父类构造函数。
  * 可在此处初始化输入组件、设置默认输入模式等。
  */
-AHodgePlayerControllerBase::AHodgePlayerControllerBase()
+AHodgePlayerControllerBase::AHodgePlayerControllerBase(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
 }
 

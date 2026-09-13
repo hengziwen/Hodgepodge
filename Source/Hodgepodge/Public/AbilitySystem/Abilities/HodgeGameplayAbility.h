@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Abilities/GameplayAbility.h"
-#include "Core/PlayerController/HodgePlayerControllerBase.h"
+#include "Core/PlayerController/HodgePlayerController.h"
 #include "HodgeGameplayAbility.generated.h"
 
 
@@ -108,7 +108,7 @@ public:
 
 	// 从 Ability 的 ActorInfo 中获取项目自定义的 PlayerController。
 	UFUNCTION(BlueprintCallable, Category = "Hodge|Ability")
-	AHodgePlayerControllerBase* GetHodgePlayerControllerFromActorInfo() const;
+	AHodgePlayerController* GetHodgePlayerControllerFromActorInfo() const;
 
 	// 从 Ability 的 ActorInfo 中获取当前 Controller。
 	UFUNCTION(BlueprintCallable, Category = "Hodge|Ability")

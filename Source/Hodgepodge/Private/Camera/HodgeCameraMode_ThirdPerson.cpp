@@ -22,6 +22,18 @@ UHodgeCameraMode_ThirdPerson::UHodgeCameraMode_ThirdPerson()
 	// 默认不使用目标偏移曲线。
 	TargetOffsetCurve = nullptr;
 
+	// 直接使用运行时曲线（RuntimeFloatCurve）描述相机相对目标的局部偏移，
+	// 这样即使不创建蓝图子类，把本 C++ 类直接用作 DefaultCameraMode 也能得到
+	// 一台位于角色身后、略高于视线的第三人称相机。
+	bUseRuntimeFloatCurves = true;
+
+	// 默认相机位于角色身后（局部 -X 方向）350 单位，并高出视线 60 单位。
+	// 在常用俯仰角范围内取常数值，Eval 时即得到固定后方偏移。
+	TargetOffsetX.EditorCurveData.AddKey(-89.0f, -350.0f);
+	TargetOffsetX.EditorCurveData.AddKey(89.0f, -350.0f);
+	TargetOffsetZ.EditorCurveData.AddKey(-89.0f, 60.0f);
+	TargetOffsetZ.EditorCurveData.AddKey(89.0f, 60.0f);
+
 	// 第0条是主射线，负责实际的相机碰撞检测。
 	PenetrationAvoidanceFeelers.Add(
 		FHodgePenetrationAvoidanceFeeler(FRotator(+00.0f, +00.0f, 0.0f), 1.00f, 1.00f, 14.f, 0));

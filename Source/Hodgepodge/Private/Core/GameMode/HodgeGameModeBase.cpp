@@ -8,7 +8,7 @@
 #include "Core/GameState/HodgeGameState.h"
 #include "Core/GameState/HodgeGameStateBase.h"
 #include "Core/HUD/HodgeHUDBase.h"
-#include "Core/PlayerController/HodgePlayerControllerBase.h"
+#include "Core/PlayerController/HodgePlayerController.h"
 #include "Core/PlayState/HodgePlayerState.h"
 #include "Data/HodgeAssetManager.h"
 #include "Data/HodgeExperienceDefinition.h"
@@ -28,7 +28,7 @@ AHodgeGameModeBase::AHodgeGameModeBase(const FObjectInitializer& ObjectInitializ
 	//GameSessionClass = AHodgeGameSession::StaticClass();
 
 	// 指定玩家连接后创建的 PlayerController 类。
-	PlayerControllerClass = AHodgePlayerControllerBase::StaticClass();
+	PlayerControllerClass = AHodgePlayerController::StaticClass();
 
 	// 指定 Replay 模式下使用的 PlayerController 类，目前暂未启用。
 	//ReplaySpectatorPlayerControllerClass = AHodgeReplayPlayerControllerBase::StaticClass();

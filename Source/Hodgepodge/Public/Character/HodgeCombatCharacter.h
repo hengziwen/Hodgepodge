@@ -9,7 +9,7 @@
 
 class UHodgePawnExtensionComponent;
 class UHodgeCameraComponent;
-class AHodgePlayerControllerBase;
+class AHodgePlayerController;
 class AHodgePlayerState;
 
 /**
@@ -121,7 +121,7 @@ public:
 
 	// 获取当前角色对应的 Hodge PlayerController
 	UFUNCTION(BlueprintCallable, Category = "Hodge|Character")
-	AHodgePlayerControllerBase* GetHodgePlayerController() const;
+	AHodgePlayerController* GetHodgePlayerController() const;
 
 	// 获取当前角色对应的 Hodge PlayerState
 	UFUNCTION(BlueprintCallable, Category = "Hodge|Character")

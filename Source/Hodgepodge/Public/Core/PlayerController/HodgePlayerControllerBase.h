@@ -47,7 +47,7 @@ public:
 	 * 当前实现为空,仅调用父类构造函数。
 	 * 可在此处配置默认输入模式、设置输入组件等。
 	 */
-	AHodgePlayerControllerBase();
+	AHodgePlayerControllerBase(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 	/**
 	 * @brief 当玩家(LocalPlayer)被分配到此PlayerController时调用(重写自APlayerController)

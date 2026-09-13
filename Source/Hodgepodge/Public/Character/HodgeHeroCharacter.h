@@ -59,7 +59,7 @@ public:
 	 * 2. 获取 AHodgePlayerState 的 PlayerState
 	 * 3. 调用 InitAbilityActorInfo 完成 GAS 初始化
 	 *
-	 * @param NewController 新的控制器指针(通常是 AHodgePlayerControllerBase)
+	 * @param NewController 新的控制器指针(通常是 AHodgePlayerController)
 	 */
 	virtual void PossessedBy(AController* NewController) override;
 

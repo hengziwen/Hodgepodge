@@ -15,7 +15,7 @@
 #include "Component/HodgeCharacterMovementComponent.h"
 #include "Component/HodgePawnExtensionComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "Core/PlayerController/HodgePlayerControllerBase.h"
+#include "Core/PlayerController/HodgePlayerController.h"
 #include "Core/PlayState/HodgePlayerState.h"
 #include "Net/UnrealNetwork.h"
 
@@ -276,10 +276,10 @@ void AHodgeCombatCharacter::NotifyControllerChanged()
 }
 
 // 获取当前角色对应的 Hodge PlayerController
-AHodgePlayerControllerBase* AHodgeCombatCharacter::GetHodgePlayerController() const
+AHodgePlayerController* AHodgeCombatCharacter::GetHodgePlayerController() const
 {
 	// Controller 为空时允许返回 nullptr，否则要求类型必须正确
-	return CastChecked<AHodgePlayerControllerBase>(Controller, ECastCheckedType::NullAllowed);
+	return CastChecked<AHodgePlayerController>(Controller, ECastCheckedType::NullAllowed);
 }
 
 // 获取当前角色对应的 Hodge PlayerState
@@ -335,7 +335,7 @@ void AHodgeCombatCharacter::PossessedBy(AController* NewController)
 	// 保存被占有之前的 Team ID
 	const FGenericTeamId OldTeamID = MyTeamID;
 
-	Super::PossessedBy(NewController);
+	Super::PossessedBy(NewController); UE_LOG(LogTemp, Warning, TEXT("[HODGE-DBG] CombatCharacter PossessedBy Pawn=%s Controller=%s PlayerState=%s"), *GetNameSafe(this), *GetNameSafe(NewController), *GetNameSafe(GetPlayerState<APlayerState>()));
 
 	// 通知 PawnExtensionComponent Controller 发生变化
 	PawnExtComponent->HandleControllerChanged();
@@ -400,7 +400,7 @@ void AHodgeCombatCharacter::OnRep_PlayerState()
 // 设置玩家输入
 void AHodgeCombatCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	Super::SetupPlayerInputComponent(PlayerInputComponent); UE_LOG(LogTemp, Warning, TEXT("[HODGE-DBG] CombatCharacter SetupPlayerInputComponent Pawn=%s InputComp=%s"), *GetNameSafe(this), *GetNameSafe(PlayerInputComponent));
 
 	// 由 PawnExtensionComponent 设置额外输入
 	PawnExtComponent->SetupPlayerInputComponent();

@@ -12,7 +12,7 @@
 class UHodgeExperienceDefinition;
 class UHodgePawnData;
 class UHodgeAbilitySystemComponent;
-class AHodgePlayerControllerBase;
+class AHodgePlayerController;
 
 /**
  * @brief 玩家当前的连接状态。
@@ -50,7 +50,7 @@ public:
 
 	// 获取该 PlayerState 对应的 HodgePlayerController。
 	UFUNCTION(BlueprintCallable, Category = "Hodge|PlayerState")
-	AHodgePlayerControllerBase* GetHodgePlayerController() const;
+	AHodgePlayerController* GetHodgePlayerController() const;
 
 	// 获取玩家专属的 AbilitySystemComponent。
 	UFUNCTION(BlueprintCallable, Category = "Hodge|PlayerState")

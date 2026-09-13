@@ -71,10 +71,10 @@ UHodgeAbilitySystemComponent* UHodgeGameplayAbility::GetHodgeAbilitySystemCompon
 }
 
 // 从当前 ActorInfo 中获取项目自定义的 PlayerController。
-AHodgePlayerControllerBase* UHodgeGameplayAbility::GetHodgePlayerControllerFromActorInfo() const
+AHodgePlayerController* UHodgeGameplayAbility::GetHodgePlayerControllerFromActorInfo() const
 {
 	// ActorInfo 有效时，从 PlayerController 字段获取并转换成 Hodge 类型。
-	return (CurrentActorInfo ? Cast<AHodgePlayerControllerBase>(CurrentActorInfo->PlayerController.Get()) : nullptr);
+	return (CurrentActorInfo ? Cast<AHodgePlayerController>(CurrentActorInfo->PlayerController.Get()) : nullptr);
 }
 
 // 从当前 ActorInfo 中获取 Controller。
