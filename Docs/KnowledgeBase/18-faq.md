@@ -2,50 +2,56 @@
 
 [返回首页](README.md)
 
-## 为什么有很多 Lyra 类，却还不能玩？
+> 最近源码核对：2026-09-13。
 
-类提供能力，但必须有创建、挂载、数据配置和调用。当前 HeroComponent 停用，PawnData 注入和技能输入消费等关键入口缺失，因此存在完整函数体却无法从游戏入口到达。
+## 现在还要从零接 HeroComponent 吗？
 
-## 是不是解开 GameMode 的 SetPawnData 就好了？
+不用。它已启用并在 HeroCharacter 构造挂载；状态就绪后接入 ASC、输入和相机。旧知识库“整份注释”是 9 月 10 日状态，现在已撤销。
 
-不是。那只解除 PawnExtension 的一个前置条件。还需正确 PawnClass、有效 Hero 协调、ASC 接入、输入映射绑定、每帧消费和相机模式。状态链末端目前也没有完整业务校验。
+## SetPawnData、ProcessAbilityInput 和相机委托还缺调用者吗？
 
-## PawnData 现在只有 PawnClass 吗？
+都已有有效入口：GameMode 生成前注入 PawnData；HodgePlayerController::PostProcessInput 消费能力输入；Hero 在 DataInitialized 绑定相机模式委托。仍要验证实际生成类、状态到达和资产值。
 
-不是。2026-09-10 工作区已启用五字段：PawnClass、AbilitySets、TagRelationshipMapping、InputConfig、DefaultCameraMode。旧 README 的描述是旧状态。字段已启用仍不等于资产值已填写或消费者已接通。
+## 为什么主链有代码仍可能不能移动？
 
-## HeroComponent 到底有没有？
+检查 Hero DefaultInputMappings、InputConfig、IMC 软引用加载、Native Tag。当前 AddMappingContext 在 bRegisterWithSettings 条件内，false 会跳过；Ready 事件也可能在绑定未成功时发送。不要只看 GameplayReady。
 
-有文件和较长草稿，没有有效编译类：头文件和实现整份是行注释。类重定向也不能代替 UCLASS 编译注册。
+## 为什么按键到了 ASC 但没有技能？
 
-## 为什么 PlayerState ASC 有效，Character ASC 却为空？
+PlayerState 的基础 AbilitySet 授予循环仍注释。先证明 Spec 已由权威入口授予，再检查动态 InputTag 精确匹配、Cost、Cooldown 和激活组。
 
-Character 查询走 PawnExtension 保存的指针；Hero 旧初始化路径直接操作 PlayerState ASC，没有通过 PawnExtension 保存关联。
+## PawnData 现在有哪些字段？
 
-## 为什么配置了 InputTag 还不能触发？
+PawnClass、AbilitySets、TagRelationshipMapping、InputConfig、DefaultCameraMode 都存在。关系映射和输入/相机消费已接入；AbilitySets 的基础授予仍缺。字段存在不保证资产值正确。
 
-还需要活动 IMC、正确组件类型、Action 绑定、已授予的 Spec、精确相同的动态 InputTag 和 ProcessAbilityInput 调用。完成这些后才检查技能激活条件。
+## EffectContext 还缺 Globals 吗？
 
-## GameFeature_AddAbilities 能不能替代 PlayerState 的授予？
+不缺类和配置了。新增 HodgeAbilitySystemGlobals 返回 Hodge Context，DefaultGame.ini 已选择它。如果仍有类型 check，检查运行时 Globals、实际 Context 类型和是否使用旧构建。
 
-它可作为能力来源，但要明确目标 ASC 和生命周期。永久基础技能、玩法临时技能和装备技能的回收策略不同。不能给 Pawn 再创建一套 ASC 来回避原有玩家 ASC 接入问题。
+## 现在有伤害和死亡吗？
 
-## 有 HealthSet 就能自动死亡吗？
+HealthSet 已实现 Damage/Healing 转换和耗尽广播；完整命中、敌人 ASC、角色 HealthComponent/死亡绑定仍不完整。不能继续说“结算主体全注释”，也不能说“完整战斗已通过”。
 
-不能。属性复制与夹取有实现，但 GE 结算主体、服务器耗尽处理和角色 HealthComponent/死亡绑定仍不完整。
+## GameFeature 和 Cue 是否全部好了？
 
-## 有 ABP_Pover_Base 就代表动画接好了吗？
+输入 Action 添加分支已恢复，但 Hero 额外输入移除为空。CueManager 和 Policy 已配置，但 Cue 路径观察者创建仍注释，注销移除和预加载也不完整。
 
-文件存在只证明资源在磁盘。还要在角色蓝图确认 Mesh、Skeleton、AnimClass，并运行检查变量、状态机、Slot 和动画层。
+## 为什么还要查重生？
 
-## 是否应该现在删除 ALS 资源、接背包或做大地图？
+旧 Hero 直接 ASC 初始化和新组件路径并存；控制器先清 Avatar 与 PawnExtension 条件清理可能相互影响。还需验证输入句柄、状态、Cue 和旧 Pawn 的解绑。
 
-建议先完成最小玩家和战斗闭环。删除资源需要确认引用；背包、开放世界和后端属于后续系统，不是当前输入断链的解决办法。
+## 新的 BP 和 CM_Default 可以证明资产都配好了？
 
-## 本知识库有没有联网搜来的结论？
+只能证明文件存在。内部父类、Mesh、AnimClass、默认字段和实际地图使用仍需编辑器验证。本轮未解析二进制资产。
 
-没有。它以本地代码、配置和现有文档为依据。涉及未验证的引擎安装、资产内部值、运行和打包行为均明确留作验证项。
+## 插件是否都跟 README 一样？
 
-## 怎样查一个类或 Tag？
+以描述文件为准：UNTLink 当前禁用；ALS 描述默认启用，即使主模块不再直接依赖；还发现默认启用的 UnrealMCP Editor 插件。它们的加载结果和连接功能本轮未验证。
 
-打开 Reference 索引，或运行 `python Docs/KnowledgeBase/tools/kb.py search "类名或标签"`。索引记录有效定义候选和源文件行号；精确行为仍要打开源码查看。
+## 知识库是否验证了当前编译和运行？
+
+本轮只验证文档、自动索引与文件漂移，未做 UE 构建、蓝图编译、PIE、联机或打包。项目约定要求文档修改只验证文档与差异。
+
+## 怎么查最新代码？
+
+打开 Reference 或运行 `python Docs/KnowledgeBase/tools/kb.py search "类名或标签"`。人工章节说明行为，自动参考提供导航；扫描工具不解析完整 C++ 或蓝图。

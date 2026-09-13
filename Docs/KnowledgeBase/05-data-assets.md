@@ -1,5 +1,6 @@
 # 数据资产与 AssetManager
 
+> 最近源码核对：2026-09-13。源码接入状态与运行验收分开记录。
 [返回首页](README.md)
 
 ## 三层配置的区别
@@ -8,13 +9,13 @@ GameData 是全局通用资源入口；ExperienceDefinition 是一套玩法的�
 
 ## PawnData 当前字段
 
-当前工作区已启用以下五个 UPROPERTY，旧 README 的“仅一个字段”已过时：
+当前工作区已启用以下五个 UPROPERTY，早期文档的“仅一个字段”已过时：
 
 - PawnClass：生成类。建议指向 AHodgeHeroCharacter 派生蓝图；构造默认空。
 - AbilitySets：配置要授予的能力集合。字段已存在，但 PlayerState 的授予循环仍注释。
-- TagRelationshipMapping：能力阻断、取消和附加激活条件关系；组件应用入口仍注释。
+- TagRelationshipMapping：能力阻断、取消和附加激活条件关系；组件初始化时已调用 ASC::SetTagRelationshipMapping。
 - InputConfig：InputAction 与 GameplayTag 的映射，不等价于 IMC；构造默认空。
-- DefaultCameraMode：默认相机模式类；构造默认空，实际消费依赖 HeroComponent。
+- DefaultCameraMode：默认相机模式类；构造默认空，已由有效 HeroComponent::DetermineCameraMode 消费。
 
 UPROPERTY 表示编辑器能保存此字段，不表示现有 DA_Dafult_PawnData 已填写。二进制数据内容必须在编辑器查看。
 
@@ -36,7 +37,7 @@ PlayerState 构造函数已经创建 HealthSet。若 AbilitySet 再添加同类�
 
 目前字段是 DamageGameplayEffect_SetByCaller、HealGameplayEffect_SetByCaller、DynamicTagGameplayEffect，均为软类引用。路径存在不代表引用已填，更不代表对应 GE 的 Modifier、SetByCaller 标签正确。
 
-DynamicTag GE 由 ASC 的动态标签辅助方法读取；伤害和治疗的实际结算还依赖技能和 HealthSet 管线。当前不能仅配置 Damage GE 就宣布伤害系统完成。
+DynamicTag GE 由 ASC 的动态标签辅助方法读取；HealthSet 已实现 Damage/Healing 元属性到 Health 的转换与耗尽广播；完整攻击仍需要技能授予、服务器命中、目标 ASC 和死亡衔接。
 
 ## AssetManager 配置
 

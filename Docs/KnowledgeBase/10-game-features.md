@@ -1,5 +1,6 @@
 # Experience 与 GameFeature 扩展
 
+> 最近源码核对：2026-09-13。源码接入状态与运行验收分开记录。
 [返回首页](README.md)
 
 ## 概念边界
@@ -20,15 +21,15 @@ WorldActionBase 为需要参与世界生命周期的 Action 提供上下文和 W
 
 ## AddInputContextMapping
 
-存在 LocalPlayer/设置注册逻辑和 AddMappingContext 函数体，但 Controller 扩展中的添加分支被注释。注册用户设置里的映射上下文与把映射加入当前活动输入不是同一操作。应验证每个入口，而不是全文搜索出现 AddMappingContext 就标记完成。
+存在 LocalPlayer/设置注册逻辑和 AddMappingContext 函数体，Controller 扩展中的添加分支现已启用，支持 ExtensionAdded 与 BindInputsNow。注册用户设置里的映射上下文与把映射加入当前活动输入不是同一操作。应验证每个入口，而不是全文搜索出现 AddMappingContext 就标记完成。
 
 ## AddInputBinding
 
-依赖 HeroComponent 的 Ready 状态和额外 InputConfig 增删。当前扩展添加分支、查找 Hero 和实际调用都被注释；HeroComponent 又整体停用，所以这条扩展链不完整。PawnsAddedTo 记录存在也不能证明绑定已发生。
+依赖 HeroComponent 的 Ready 状态和额外 InputConfig 增删。当前扩展添加分支、查找 Hero、增删额外配置调用均已启用。但 Hero 的 RemoveAdditionalInputConfig 仍为空，绑定句柄是局部数组；撤销闭环仍不完整。PawnsAddedTo 记录不能替代绑定成功证据。
 
 ## AddGameplayCuePath 与 Policy
 
-Cue 路径 Action 当前提供目录配置和编辑器校验，实际增删路径依赖 Policy 观察者；观察者内部的路径增删和资源库刷新仍被注释。另有自定义 CueManager 未配置、启动钩子空实现。加载插件资源、注册 Cue 搜索路径、预加载 Cue 是不同步骤，应分别验收。
+Cue 路径 Action 提供目录配置和编辑器校验；观察者的注册回调现已实现 AddGameplayCueNotifyPath 和资源库刷新，但 Policy::InitGameFeatureManager 创建 Cue 观察者的一行仍注释，注销回调的移除主体也仍停用。CueManager 与 Policy 类配置已经加入，启动预加载钩子仍为空。加载插件资源、注册 Cue 搜索路径、预加载 Cue 是不同步骤，应分别验收。
 
 Policy 中保留了上游迁移注释；检查实际激活类配置及有效函数体。不要照搬依赖 CommonGame、CommonUI、GameSettings 等未引入模块的代码。
 

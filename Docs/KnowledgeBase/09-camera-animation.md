@@ -1,5 +1,6 @@
 # 相机、移动与动画
 
+> 最近源码核对：2026-09-13。源码接入状态与运行验收分开记录。
 [返回首页](README.md)
 
 ## 相机实现结构
@@ -8,11 +9,11 @@ HodgeCameraComponent 持有 HodgeCameraModeStack。每次 GetCameraView 更新�
 
 HodgeCameraMode 定义视图、混合与 Pivot 基础；HodgeCameraMode_ThirdPerson 扩展第三人称偏移、蹲伏相关处理和防穿透探测；PenetrationAvoidanceFeeler 保存探测配置；PlayerCameraManager 和 UICameraManagerComponent 提供更高层扩展。
 
-CombatCharacter 已创建 CameraComponent，但 PlayerController 构造没有显式设置项目 PlayerCameraManagerClass。应区分“组件能参与引擎视图计算”与“自定义 PlayerCameraManager 已被实例化”。资产覆盖仍待验证。
+CombatCharacter 已创建 CameraComponent，新增 AHodgePlayerController 构造已经设置 PlayerCameraManagerClass，GameMode 也已选择此控制器。应区分“组件能参与引擎视图计算”与“自定义 PlayerCameraManager 已被实例化”。资产覆盖仍待验证。
 
-## 当前关键缺口
+## 当前接入与空配置风险
 
-UpdateCameraModes 只有在 DetermineCameraModeDelegate 绑定后才 Push 模式。有效源码没有绑定者，唯一草稿在已注释 HeroComponent。PawnData.DefaultCameraMode 字段已启用，但尚无有效消费入口。
+UpdateCameraModes 只有在 DetermineCameraModeDelegate 绑定后才 Push 模式。当前 HeroComponent 在 DataInitialized 阶段绑定此委托，并读取 PawnData.DefaultCameraMode。新增 CM_Default 资产已在磁盘存在，但具体类与字段值尚未在编辑器解析。
 
 CameraComponent 的相对偏移不是默认模式的替代。模式栈没有有效视图时，当前代码仍会将 CameraModeView 写回相机；默认视图位置/旋转为零，因此存在异常视角或控制旋转被覆盖的风险。实际表现需要 PIE 确认。
 
@@ -20,7 +21,7 @@ CameraComponent 的相对偏移不是默认模式的替代。模式栈没有有�
 
 HeroComponent 返回技能临时覆盖模式；没有覆盖时返回 PawnData.DefaultCameraMode。覆盖应记录拥有它的 Ability SpecHandle，清除时只接受对应句柄，防止旧技能结束误清新技能设置。
 
-该规则在草稿有表达，但 Ability 的 HeroComponent 相机桥接也有注释，启用时需要同时检查调用端和清理端。
+当前 Hero 模式优先级、SpecHandle 归属判断，以及 Ability 的 SetCameraMode/ClearCameraMode 桥接均已有有效实现。仍需运行验证技能结束、取消和换 Pawn 后恢复。
 
 ## 移动组件
 

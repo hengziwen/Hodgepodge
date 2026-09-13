@@ -24,8 +24,14 @@
 
 源码：[Source/Hodgepodge/Private/Input/HodgeInputComponent.cpp](../../../Source/Hodgepodge/Private/Input/HodgeInputComponent.cpp)
 
+项目内直接 include（不是运行调用关系）：[Input/HodgeInputComponent.h](../../../Source/Hodgepodge/Public/Input/HodgeInputComponent.h)
+
 定义候选（多行签名仅展示首行）：
 
+- L23: `UHodgeInputComponent::UHodgeInputComponent()`
+- L39: `void UHodgeInputComponent::AddInputMappings(const UHodgeInputConfig* InputConfig,`
+- L59: `void UHodgeInputComponent::RemoveInputMappings(const UHodgeInputConfig* InputConfig,`
+- L81: `void UHodgeInputComponent::RemoveBinds(TArray<uint32>& BindHandles)`
 
 ## HodgeInputConfig.cpp
 
@@ -33,8 +39,13 @@ NativeInputActions / AbilityInputActions 的 IA 与 Tag 数据配置及查询。
 
 源码：[Source/Hodgepodge/Private/Input/HodgeInputConfig.cpp](../../../Source/Hodgepodge/Private/Input/HodgeInputConfig.cpp)
 
+项目内直接 include（不是运行调用关系）：[Input/HodgeInputConfig.h](../../../Source/Hodgepodge/Public/Input/HodgeInputConfig.h)
+
 定义候选（多行签名仅展示首行）：
 
+- L22: `UHodgeInputConfig::UHodgeInputConfig(const FObjectInitializer& ObjectInitializer)`
+- L37: `const UInputAction* UHodgeInputConfig::FindNativeInputActionForTag(const FGameplayTag& InputTag,`
+- L68: `const UInputAction* UHodgeInputConfig::FindAbilityInputActionForTag(const FGameplayTag& InputTag,`
 
 ## HodgeInputModifiers.cpp
 

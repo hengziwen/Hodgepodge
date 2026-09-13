@@ -6,13 +6,13 @@
 
 ## 按系统打开
 
-- [AbilitySystem：21 个文件](source-abilitysystem.md)
+- [AbilitySystem：23 个文件](source-abilitysystem.md)
 - [Actor：2 个文件](source-actor.md)
 - [Animation：2 个文件](source-animation.md)
 - [Camera：12 个文件](source-camera.md)
 - [Character：8 个文件](source-character.md)
 - [Component：16 个文件](source-component.md)
-- [Core：18 个文件](source-core.md)
+- [Core：20 个文件](source-core.md)
 - [Data：16 个文件](source-data.md)
 - [GameFeatures：16 个文件](source-gamefeatures.md)
 - [Input：12 个文件](source-input.md)
@@ -23,6 +23,7 @@
 
 - [源码总索引](source-index.md)
 - [GameplayTag](gameplay-tags.md)
+- [插件描述](plugins.md)
 - [资产文件清单](assets.md)
 - [配置索引](config.md)
 - [扫描快照](snapshot.md)

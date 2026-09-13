@@ -1,12 +1,13 @@
 # GAS、AbilitySet 与技能生命周期
 
+> 最近源码核对：2026-09-13。源码接入状态与运行验收分开记录。
 [返回首页](README.md) · [伤害系统](08-combat-health.md)
 
 ## ASC 的项目职责
 
 UHodgeAbilitySystemComponent 在原生 GAS 上增加 Tag 输入缓存、激活组、关系映射、全局能力注册、失败通知和动态 Tag GE 辅助方法。它并不是某个普攻或闪避技能的实现。
 
-玩家 ASC 在 PlayerState 构造函数创建，开启复制并设置 Mixed。Hero 当前通过 PossessedBy 和 OnRep_PlayerState 给它设置 Owner/Avatar。这条直接路径能够触发 ASC 内部的新 Avatar 处理，却没有保存 PawnExtension 的 ASC 指针。
+玩家 ASC 在 PlayerState 构造函数创建，开启复制并设置 Mixed。Hero 当前通过 PossessedBy 和 OnRep_PlayerState 给它设置 Owner/Avatar。旧直接路径仍在；当前 HeroComponent 还会调用 PawnExtension::InitializeAbilitySystem 保存指针并设置关系映射。下一步需统一双路径及换 Pawn 的清理顺序。
 
 ASC 新 Avatar 处理包括通知能力实例、注册 GlobalAbilitySystem、给 HodgeAnimInstance 初始化 Tag 映射，以及尝试 OnSpawn 能力。因此“角色侧 ASC 查询断开”和“ASC 内部完全没初始化”是两种不同问题。
 
@@ -36,19 +37,19 @@ AbilitySet 为每个技能创建 FGameplayAbilitySpec，写入等级、SourceObj
 
 HodgeGameplayAbility 扩展 AdditionalCosts、激活组检查和 TagRelationshipMapping 条件，并提供失败文本/动画映射字段。字段存在并不证明 UI 已接入；项目没有完整 CommonUI/消息展示系统。
 
-TagRelationshipMapping 适合集中描述某类技能阻断/取消其他标签、需要或禁止哪些状态。PawnData 字段现已启用，但 PawnExtension 设置到 ASC 的调用仍未启用，配置后要检查 ASC 实際引用。
+TagRelationshipMapping 适合集中描述某类技能阻断/取消其他标签、需要或禁止哪些状态。PawnData 字段现已启用，PawnExtension 设置到 ASC 的调用已启用，配置后仍要检查 ASC 实际引用。
 
 ## EffectContext 配套缺口
 
-HodgeGameplayAbility::MakeEffectContext 调用父类创建句柄后，尝试提取 FHodgeGameplayEffectContext，并 check 结果。仓库未找到有效自定义 AbilitySystemGlobals 分配实现与对应配置，因此默认 Context 与项目期望类型不匹配。
+HodgeGameplayAbility::MakeEffectContext 调用父类创建句柄后，尝试提取 FHodgeGameplayEffectContext，并 check 结果。当前新增 HodgeAbilitySystemGlobals::AllocGameplayEffectContext 返回 FHodgeGameplayEffectContext，DefaultGame.ini 也已选择该 Globals，旧类型分配缺口已在代码和配置层补齐。
 
-需要补充 Globals 类型，重写分配入口返回自定义 Context，并配置引擎使用它。验收应检查实际 ScriptStruct 类型，再创建 GE Spec，不能通过删除 check 掩盖数据管线不一致。
+无需重复新增 Globals；现在应核对运行时实际使用的 Globals 和 Context 类型。验收应检查实际 ScriptStruct 类型，再创建 GE Spec，不能通过删除 check 掩盖数据管线不一致。
 
 当前自定义 Context 的 NetSerialize 复用父类，额外本地字段不会因此自动复制。Iris 路径也转发父类序列化；将来加入必须联网的自定义字段时，需要同步设计序列化和验证。
 
 ## Cue 与全局能力
 
-HodgeGameplayCueManager 实现了资源管理相关逻辑，但 AssetManager 的 InitializeGameplayCueManager 仍占位，配置也未指向项目 CueManager。准确结论是“自定义 Cue 管理/预加载未接通”，不是“原生 GAS 在任何情况下都不能播放 Cue”。
+HodgeGameplayCueManager 实现了资源管理相关逻辑，DefaultGame.ini 已通过 GlobalGameplayCueManagerClass 选择它；但 AssetManager 初始化钩子仍占位，常驻 GameplayCueNotifyPaths 仍注释，Policy 未注册 Cue 路径观察者。不能宣称预加载和 Feature Cue 路径全部接通。
 
 GlobalAbilitySystem 保存世界级授予，并对注册 ASC 应用。调用这些公共方法时仍需检查权威边界，不能把 WorldSubsystem 自动等同于仅服务器执行。
 

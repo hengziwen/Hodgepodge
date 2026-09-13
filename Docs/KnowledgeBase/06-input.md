@@ -1,5 +1,6 @@
 # Enhanced Input 与技能输入
 
+> 最近源码核对：2026-09-13。源码接入状态与运行验收分开记录。
 [返回首页](README.md)
 
 ## 两套映射分别负责什么
@@ -12,7 +13,7 @@ IMC 把物理按键/手柄轴映射到 InputAction，带触发器、修饰器和
 
 物理输入 → 活动 IMC → InputAction → HodgeInputComponent::BindNativeAction → HeroComponent 的 Move/Look → AddMovementInput / AddControllerYawInput / AddControllerPitchInput。
 
-Move 草稿用控制器 Yaw 计算世界方向，X 对应 Right、Y 对应 Forward。鼠标 Look 直接使用输入增量；手柄 Look 乘速率和 DeltaSeconds。实现时不要给鼠标再套同样的每秒速率逻辑而改变灵敏度语义。
+Move 实现用控制器 Yaw 计算世界方向，X 对应 Right、Y 对应 Forward。鼠标 Look 直接使用输入增量；手柄 Look 乘速率和 DeltaSeconds。实现时不要给鼠标再套同样的每秒速率逻辑而改变灵敏度语义。
 
 ## 技能输入目标链
 
@@ -30,20 +31,22 @@ flowchart LR
 
 AbilityInputTagPressed 遍历已授予 Spec，用动态源标签精确匹配。ProcessAbilityInput 根据策略处理持有和按下，尝试激活，然后处理释放并清理本帧缓存。它不是自动 Tick 的组件函数，需要显式调用。
 
-## 当前断点
+## 当前实现与剩余条件
 
-- HeroComponent 整份注释，没有有效 Native/Ability 绑定入口。
+- HeroComponent 已启用，绑定 Move、Look_Mouse、Look_Stick、Crouch、AutoRun 和 AbilityActions；AutoRun 回调的实际切换调用仍注释。
 - PawnExtension::SetupPlayerInputComponent 只重新检查状态。
 - HodgeInputComponent::AddInputMappings / RemoveInputMappings 只有参数 check，没有实际映射工作。
-- DefaultInput.ini 默认组件仍是引擎 EnhancedInputComponent。若后续 Cast 到 UHodgeInputComponent，必须配置或显式使用匹配类型。
-- PlayerController 没有调用 ProcessAbilityInput。
-- GameFeature 的 AddInputBinding 添加入口与 Hero 调用被注释；AddInputContextMapping 的 Controller 扩展添加分支也被注释。存在 AddMappingContext 函数体不代表入口可达。
+- DefaultInput.ini 已选择 HodgeInputComponent，LocalPlayerClassName 已选择 HodgeLocalPlayerBase。
+- 新 AHodgePlayerController 已在 PostProcessInput 调用 ProcessAbilityInput，GameMode 已选择该控制器。
+- 两个 GameFeature 输入 Action 的添加分支已启用，BindInputsNow 已发送；实际 Action 配置仍待资产验证。
+- Hero 在初始化开头 ClearAllMappings，且 AddMappingContext 位于 bRegisterWithSettings 条件内；该标志为 false、DefaultInputMappings 为空、软引用未加载或 InputConfig 为空都会影响映射。
+- 即使 InputConfig 为空或组件 Cast 失败，尾部仍可能置 bReadyToBindInputs 并发送事件；Ready 不等于实际绑定成功。
 
 ## 绑定和解绑的所有权
 
 基础玩家映射适合由 Hero 初始化负责；玩法扩展映射由对应 GameFeature 管；UI 模态映射将来由 UI 生命周期管。明确谁加谁删，比统一 ClearAllMappings 更容易兼容多玩法和 UI。
 
-绑定句柄应保存到与 InputComponent 生命周期一致的对象，移除额外配置时只删除自己的绑定。草稿里的 RemoveAdditionalInputConfig 是 TODO，不能在启用 GameFeature 热切换前忽略。
+当前基础和额外绑定的 BindHandles 为局部数组；绑定句柄应保存到与 InputComponent 生命周期一致的对象，移除额外配置时只删除自己的绑定。当前 RemoveAdditionalInputConfig 仍是 TODO，不能在启用 GameFeature 热切换前忽略。
 
 ## 最小排障顺序
 

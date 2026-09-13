@@ -61,6 +61,10 @@ void UGameFeatureAction_AddInputContextMapping::OnGameFeatureActivating(FGameFea
 		Reset(ActiveData);
 	}
 
+	// [HODGE-DBG] 临时诊断：确认该 GameFeature Action 是否被激活、以及配置了几条 IMC（定位后删除）。
+	UE_LOG(LogTemp, Warning, TEXT("[HODGE-DBG] GF AddInputContextMapping Activating InputMappings=%d"),
+	       InputMappings.Num());
+
 	// 执行父类的 GameFeature 激活逻辑。
 	Super::OnGameFeatureActivating(Context);
 }
@@ -370,6 +374,11 @@ void UGameFeatureAction_AddInputContextMapping::HandleControllerExtension(
 	else if ((EventName == UGameFrameworkComponentManager::NAME_ExtensionAdded) || (EventName ==
 		UHodgeHeroComponent::NAME_BindInputsNow))
 	{
+		// [HODGE-DBG] 临时诊断：确认 GameFeature 输入映射这条链路是否被触发（定位后删除）。
+		UE_LOG(LogTemp, Warning,
+		       TEXT("[HODGE-DBG] GF AddInputContextMapping HandleControllerExtension Event=%s Controller=%s"),
+		       *EventName.ToString(), *GetNameSafe(AsController));
+
 		AddInputMappingForPlayer(AsController->GetLocalPlayer(), ActiveData);
 	}
 }
@@ -384,6 +393,11 @@ void UGameFeatureAction_AddInputContextMapping::AddInputMappingForPlayer(UPlayer
 		if (UEnhancedInputLocalPlayerSubsystem* InputSystem = LocalPlayer->GetSubsystem<
 			UEnhancedInputLocalPlayerSubsystem>())
 		{
+			// [HODGE-DBG] 临时诊断：确认 GameFeature 路径实际处理的 IMC 数量（定位后删除）。
+			UE_LOG(LogTemp, Warning,
+			       TEXT("[HODGE-DBG] GF AddInputContextMapping AddInputMappingForPlayer LocalPlayer=%s Entries=%d"),
+			       *GetNameSafe(LocalPlayer), InputMappings.Num());
+
 			// 遍历当前 GameFeature 配置的所有输入映射。
 			for (const FInputMappingContextAndPriority& Entry : InputMappings)
 			{
@@ -392,6 +406,17 @@ void UGameFeatureAction_AddInputContextMapping::AddInputMappingForPlayer(UPlayer
 				{
 					// 将输入映射上下文添加到 Enhanced Input 系统，并使用配置的优先级。
 					InputSystem->AddMappingContext(IMC, Entry.Priority);
+
+					// [HODGE-DBG] 临时诊断：记录真正加入的 IMC（定位后删除）。
+					UE_LOG(LogTemp, Warning, TEXT("[HODGE-DBG] GF AddInputContextMapping ADD IMC=%s Priority=%d"),
+					       *IMC->GetName(), Entry.Priority);
+				}
+				else
+				{
+					// [HODGE-DBG] 临时诊断：软引用没加载时会静默跳过（定位后删除）。
+					UE_LOG(LogTemp, Warning,
+					       TEXT("[HODGE-DBG] GF AddInputContextMapping SKIP IMC (soft ref not loaded) Path=%s"),
+					       *Entry.InputMapping.ToString());
 				}
 			}
 		}

@@ -27,7 +27,7 @@ PawnExtension、相机、ASC 查询、移动标签、复制与死亡占位逻辑
 
 源码：[Source/Hodgepodge/Private/Character/HodgeCombatCharacter.cpp](../../../Source/Hodgepodge/Private/Character/HodgeCombatCharacter.cpp)
 
-项目内直接 include（不是运行调用关系）：[Character/HodgeCombatCharacter.h](../../../Source/Hodgepodge/Public/Character/HodgeCombatCharacter.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)、[Camera/HodgeCameraComponent.h](../../../Source/Hodgepodge/Public/Camera/HodgeCameraComponent.h)、[Component/HodgeCharacterMovementComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeCharacterMovementComponent.h)、[Component/HodgePawnExtensionComponent.h](../../../Source/Hodgepodge/Public/Component/HodgePawnExtensionComponent.h)、[Core/PlayerController/HodgePlayerControllerBase.h](../../../Source/Hodgepodge/Public/Core/PlayerController/HodgePlayerControllerBase.h)、[Core/PlayState/HodgePlayerState.h](../../../Source/Hodgepodge/Public/Core/PlayState/HodgePlayerState.h)
+项目内直接 include（不是运行调用关系）：[Character/HodgeCombatCharacter.h](../../../Source/Hodgepodge/Public/Character/HodgeCombatCharacter.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)、[Camera/HodgeCameraComponent.h](../../../Source/Hodgepodge/Public/Camera/HodgeCameraComponent.h)、[Component/HodgeCharacterMovementComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeCharacterMovementComponent.h)、[Component/HodgePawnExtensionComponent.h](../../../Source/Hodgepodge/Public/Component/HodgePawnExtensionComponent.h)、[Core/PlayerController/HodgePlayerController.h](../../../Source/Hodgepodge/Public/Core/PlayerController/HodgePlayerController.h)、[Core/PlayState/HodgePlayerState.h](../../../Source/Hodgepodge/Public/Core/PlayState/HodgePlayerState.h)
 
 定义候选（多行签名仅展示首行）：
 
@@ -39,7 +39,7 @@ PawnExtension、相机、ASC 查询、移动标签、复制与死亡占位逻辑
 - L220: `void AHodgeCombatCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const`
 - L232: `void AHodgeCombatCharacter::PreReplication(IRepChangedPropertyTracker& ChangedPropertyTracker)`
 - L259: `void AHodgeCombatCharacter::NotifyControllerChanged()`
-- L279: `AHodgePlayerControllerBase* AHodgeCombatCharacter::GetHodgePlayerController() const`
+- L279: `AHodgePlayerController* AHodgeCombatCharacter::GetHodgePlayerController() const`
 - L286: `AHodgePlayerState* AHodgeCombatCharacter::GetHodgePlayerState() const`
 - L293: `UHodgeAbilitySystemComponent* AHodgeCombatCharacter::GetHodgeAbilitySystemComponent() const`
 - L300: `UAbilitySystemComponent* AHodgeCombatCharacter::GetAbilitySystemComponent() const`
@@ -83,22 +83,28 @@ PawnExtension、相机、ASC 查询、移动标签、复制与死亡占位逻辑
 
 源码：[Source/Hodgepodge/Private/Character/HodgeEnemyCharacter.cpp](../../../Source/Hodgepodge/Private/Character/HodgeEnemyCharacter.cpp)
 
+项目内直接 include（不是运行调用关系）：[Character/HodgeEnemyCharacter.h](../../../Source/Hodgepodge/Public/Character/HodgeEnemyCharacter.h)
+
 定义候选（多行签名仅展示首行）：
 
+- L10: `AHodgeEnemyCharacter::AHodgeEnemyCharacter(const FObjectInitializer& ObjectInitializer): Super(ObjectInitializer)`
+- L41: `void AHodgeEnemyCharacter::BeginPlay()`
+- L46: `void AHodgeEnemyCharacter::PossessedBy(AController* NewController)`
+- L53: `void AHodgeEnemyCharacter::PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent)`
 
 ## HodgeHeroCharacter.cpp
 
-玩家角色，当前保留 PossessedBy / OnRep_PlayerState 直接初始化 ASC 的旧入口。
+构造挂载 HeroComponent；仍保留 PossessedBy/OnRep_PlayerState 直接初始化 ASC 的旧路径。
 
 源码：[Source/Hodgepodge/Private/Character/HodgeHeroCharacter.cpp](../../../Source/Hodgepodge/Private/Character/HodgeHeroCharacter.cpp)
 
-项目内直接 include（不是运行调用关系）：[Character/HodgeHeroCharacter.h](../../../Source/Hodgepodge/Public/Character/HodgeHeroCharacter.h)、[Core/PlayState/HodgePlayerState.h](../../../Source/Hodgepodge/Public/Core/PlayState/HodgePlayerState.h)
+项目内直接 include（不是运行调用关系）：[Character/HodgeHeroCharacter.h](../../../Source/Hodgepodge/Public/Character/HodgeHeroCharacter.h)、[Component/HodgeHeroComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeHeroComponent.h)、[Core/PlayState/HodgePlayerState.h](../../../Source/Hodgepodge/Public/Core/PlayState/HodgePlayerState.h)
 
 定义候选（多行签名仅展示首行）：
 
-- L22: `AHodgeHeroCharacter::AHodgeHeroCharacter(const FObjectInitializer& ObjectInitializer)`
-- L37: `void AHodgeHeroCharacter::PossessedBy(AController* NewController)`
-- L58: `void AHodgeHeroCharacter::OnRep_PlayerState()`
+- L23: `AHodgeHeroCharacter::AHodgeHeroCharacter(const FObjectInitializer& ObjectInitializer)`
+- L39: `void AHodgeHeroCharacter::PossessedBy(AController* NewController)`
+- L60: `void AHodgeHeroCharacter::OnRep_PlayerState()`
 
 ## HodgeCharacterBase.h
 
@@ -145,7 +151,7 @@ PawnExtension、相机、ASC 查询、移动标签、复制与死亡占位逻辑
    8: #include "HodgeCombatCharacter.generated.h"
   10: class UHodgePawnExtensionComponent;
   11: class UHodgeCameraComponent;
-  12: class AHodgePlayerControllerBase;
+  12: class AHodgePlayerController;
   13: class AHodgePlayerState;
   21: USTRUCT()
   22: struct FHodgeReplicatedAcceleration
@@ -196,7 +202,7 @@ PawnExtension、相机、ASC 查询、移动标签、复制与死亡占位逻辑
  118: public:
  120: 	AHodgeCombatCharacter(const FObjectInitializer& ObjectInitializer);
  123: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Character")
- 124: 	AHodgePlayerControllerBase* GetHodgePlayerController() const;
+ 124: 	AHodgePlayerController* GetHodgePlayerController() const;
  127: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Character")
  128: 	AHodgePlayerState* GetHodgePlayerState() const;
  131: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Character")
@@ -272,177 +278,33 @@ PawnExtension、相机、ASC 查询、移动标签、复制与死亡占位逻辑
 
 源码：[Source/Hodgepodge/Public/Character/HodgeEnemyCharacter.h](../../../Source/Hodgepodge/Public/Character/HodgeEnemyCharacter.h)
 
+项目内直接 include（不是运行调用关系）：[Character/HodgeCombatCharacter.h](../../../Source/Hodgepodge/Public/Character/HodgeCombatCharacter.h)
+
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   1: ��/ /   1 1 1 N\q\�Nxeg��
-   2:  
-   3:  
-   4:  
-   5:  # p r a g m a   o n c e 
-   6:  
-   7:  
-   8:  
-   9:  # i n c l u d e   " C o r e M i n i m a l . h " 
-  10:  
-  11:  # i n c l u d e   " C h a r a c t e r / H o d g e C o m b a t C h a r a c t e r . h " 
-  12:  
-  13:  # i n c l u d e   " H o d g e E n e m y C h a r a c t e r . g e n e r a t e d . h " 
-  14:  
-  15:  
-  16:  
-  17:  / * * 
-  18:  
-  19:    *   
-  20:  
-  21:    * / 
-  22:  
-  23:  U C L A S S ( ) 
-  24:  
-  25:  c l a s s   H O D G E P O D G E _ A P I   A H o d g e E n e m y C h a r a c t e r   :   p u b l i c   A H o d g e C o m b a t C h a r a c t e r 
-  26:  
-  27:  { 
-  28:  
-  29:  	 G E N E R A T E D _ B O D Y ( ) 
-  30:  
-  31:  
-  32:  
-  33:  p u b l i c : 
-  34:  
-  35:  	 e x p l i c i t   A H o d g e E n e m y C h a r a c t e r ( c o n s t   F O b j e c t I n i t i a l i z e r &   O b j e c t I n i t i a l i z e r ) ; 
-  36:  
-  37:  
-  38:  
-  39:  p r o t e c t e d : 
-  40:  
-  41:  	 / /   8nb _�Y�e�v
-  42: R�YS
-  43:  
-  44:  	 v i r t u a l   v o i d   B e g i n P l a y ( )   o v e r r i d e ; 
-  45:  
-  46:  
-  47:  
-  48:  	 / / ~ B e g i n   A P a w n   �c�S͑�Q
-  49:  
-  50:  	 / /   S_�c6RhV�b	gdk҉r��e�(u
-  51:  
-  52:  	 v i r t u a l   v o i d   P o s s e s s e d B y ( A C o n t r o l l e r *   N e w C o n t r o l l e r )   o v e r r i d e ; 
-  53:  
-  54:  	 / / ~ E n d   A P a w n   �c�S
-  55:  
-  56:  
-  57:  
-  58:  # i f   W I T H _ E D I T O R 
-  59:  
-  60:  	 / / ~ B e g i n   U O b j e c t   �c�S͑�Q
-  61:  
-  62:  	 / /   S_^\'`(W��hV-N9e�S�e�(u
-  63:  
-  64:  	 v i r t u a l   v o i d   P o s t E d i t C h a n g e P r o p e r t y ( s t r u c t   F P r o p e r t y C h a n g e d E v e n t &   P r o p e r t y C h a n g e d E v e n t )   o v e r r i d e ; 
-  65:  
-  66:  	 / / ~ E n d   U O b j e c t   �c�S
-  67:  
-  68:  # e n d i f 
-  69:  
-  70:  
-  71:  
-  72:  	 / /   	 / /   �]Kb�x�d�v�(u�Nяb;e�Q�hKm	�
-  73:  
-  74:  	 / /   	 U P R O P E R T Y ( V i s i b l e A n y w h e r e ,   B l u e p r i n t R e a d O n l y ,   C a t e g o r y = " C o m b a t " ) 
-  75:  
-  76:  	 / /   	 U B o x C o m p o n e n t *   L e f t H a n d C o l l i s i o n B o x ; 
-  77:  
-  78:  	 / / 
-  79:  
-  80:  	 / /   	 / /   �]Kb�x�d�vD��R�v����
-  81: T�y
-  82:  
-  83:  	 / /   	 U P R O P E R T Y ( E d i t D e f a u l t s O n l y ,   B l u e p r i n t R e a d O n l y ,   C a t e g o r y = " C o m b a t " ) 
-  84:  
-  85:  	 / /   	 F N a m e   L e f t H a n d C o l l i s i o n A t t a c h B o n e N a m e ; 
-  86:  
-  87:  	 / / 
-  88:  
-  89:  	 / /   	 / /   �SKb�x�d�v�(u�Nяb;e�Q�hKm	�
-  90:  
-  91:  	 / /   	 U P R O P E R T Y ( V i s i b l e A n y w h e r e ,   B l u e p r i n t R e a d O n l y ,   C a t e g o r y = " C o m b a t " ) 
-  92:  
-  93:  	 / /   	 U B o x C o m p o n e n t *   R i g h t H a n d C o l l i s i o n B o x ; 
-  94:  
-  95:  	 / / 
-  96:  
-  97:  	 / /   	 / /   �SKb�x�d�vD��R�v����
-  98: T�y
-  99:  
- 100:  	 / /   	 U P R O P E R T Y ( E d i t D e f a u l t s O n l y ,   B l u e p r i n t R e a d O n l y ,   C a t e g o r y = " C o m b a t " ) 
- 101:  
- 102:  	 / /   	 F N a m e   R i g h t H a n d C o l l i s i o n A t t a c h B o n e N a m e ; 
- 103:  
- 104:  	 / / 
- 105:  
- 106:  	 / /   	 / /   Le�N@�ag�c�N�~�N�>f:y(W҉r�
- 107: N�e	�
- 108:  
- 109:  	 / /   	 U P R O P E R T Y ( V i s i b l e A n y w h e r e ,   B l u e p r i n t R e a d O n l y ,   C a t e g o r y = " U I " ) 
- 110:  
- 111:  	 / /   	 U W i d g e t C o m p o n e n t *   E n e m y H e a l t h W i d g e t C o m p o n e n t ; 
- 112:  
- 113:  	 / / 
- 114:  
- 115:  	 / /   	 / /   �x�d�v͑�S�N�NYt�Qpe
- 116:  
- 117:  	 / /   	 U F U N C T I O N ( ) 
- 118:  
- 119:  	 / /   	 v i r t u a l   v o i d   O n C o m p o n e n t B e g i n O v e r l a p ( 
- 120:  
- 121:  	 / /   	 	 U P r i m i t i v e C o m p o n e n t *   O v e r l a p p e d C o m p o n e n t , 
- 122:  
- 123:  	 / /   	 	 A A c t o r *   O t h e r A c t o r , 
- 124:  
- 125:  	 / /   	 	 U P r i m i t i v e C o m p o n e n t *   O t h e r C o m p , 
- 126:  
- 127:  	 / /   	 	 i n t 3 2   O t h e r B o d y I n d e x , 
- 128:  
- 129:  	 / /   	 	 b o o l   b F r o m S w e e p , 
- 130:  
- 131:  	 / /   	 	 c o n s t   F H i t R e s u l t &   S w e e p R e s u l t 
- 132:  
- 133:  	 / /   	 ) ; 
- 134:  
- 135:  	 / / 
- 136:  
- 137:  	 / /   p r i v a t e : 
- 138:  
- 139:  	 / /   	 / /   
- 140: R�YSLe�N
- 141: R�Ypenc�_ek�R}�v^�^(u	�
- 142:  
- 143:  	 / /   	 v o i d   I n i t E n e m y S t a r t U p D a t a ( ) ; 
- 144:  
- 145:  	 / / 
- 146:  
- 147:  	 / /   p u b l i c : 
- 148:  
- 149:  	 / /   	 / /   ���SLe�Nb�e�~�N��QT��Qpe	�
- 150:  
- 151:  	 / /   	 F O R C E I N L I N E   U E n e m y C o m b a t C o m p o n e n t *   G e t E n e m y C o m b a t C o m p o n e n t ( )   c o n s t   {   r e t u r n   E n e m y C o m b a t C o m p o n e n t ;   } 
- 152:  
- 153:  	 / /   	 / /   ���S�]Kb�x�d�v
- 154:  
- 155:  	 / /   	 F O R C E I N L I N E   U B o x C o m p o n e n t *   G e t L e f t H a n d C o l l i s i o n B o x ( )   c o n s t   {   r e t u r n   L e f t H a n d C o l l i s i o n B o x ;   } 
- 156:  
- 157:  	 / /   	 / /   ���S�SKb�x�d�v
- 158:  
- 159:  	 / /   	 F O R C E I N L I N E   U B o x C o m p o n e n t *   G e t R i g h t H a n d C o l l i s i o n B o x ( )   c o n s t {   r e t u r n   R i g h t H a n d C o l l i s i o n B o x ; } 
- 160:  
- 161:  } ; 
- 162:  
- 163:  
+   3: #pragma once
+   5: #include "CoreMinimal.h"
+   6: #include "Character/HodgeCombatCharacter.h"
+   7: #include "HodgeEnemyCharacter.generated.h"
+  12: UCLASS()
+  13: class HODGEPODGE_API AHodgeEnemyCharacter : public AHodgeCombatCharacter
+  14: {
+  15: 	GENERATED_BODY()
+  17: public:
+  18: 	explicit AHodgeEnemyCharacter(const FObjectInitializer& ObjectInitializer);
+  20: protected:
+  22: 	virtual void BeginPlay() override;
+  26: 	virtual void PossessedBy(AController* NewController) override;
+  29: #if WITH_EDITOR
+  32: 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent) override;
+  34: #endif
+  78: };
 ```
 
 ## HodgeHeroCharacter.h
 
-玩家角色，当前保留 PossessedBy / OnRep_PlayerState 直接初始化 ASC 的旧入口。
+构造挂载 HeroComponent；仍保留 PossessedBy/OnRep_PlayerState 直接初始化 ASC 的旧路径。
 
 源码：[Source/Hodgepodge/Public/Character/HodgeHeroCharacter.h](../../../Source/Hodgepodge/Public/Character/HodgeHeroCharacter.h)
 
@@ -464,5 +326,8 @@ PawnExtension、相机、ASC 查询、移动标签、复制与死亡占位逻辑
   53: public:
   64: 	virtual void PossessedBy(AController* NewController) override;
   71: 	virtual void OnRep_PlayerState() override;
-  72: };
+  73: private:
+  75: 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hodge|Character", Meta = (AllowPrivateAccess = "true"))
+  76: 	TObjectPtr<UHodgeHeroComponent> HeroComponent = nullptr;
+  77: };
 ```

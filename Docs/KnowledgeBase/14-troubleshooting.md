@@ -1,5 +1,6 @@
 # 按症状定位的排障手册
 
+> 最近源码核对：2026-09-13。源码接入状态与运行验收分开记录。
 [返回首页](README.md)
 
 ## 启动加载失败或看不到玩家
@@ -10,7 +11,7 @@
 
 ## Init State 永远停在 Spawned
 
-在 PawnExtension::CanChangeInitState 看 PawnData 是否为空，再看 Controller。GameMode 的数据注入当前注释，是第一观察点。客户端单独失败时查 PawnData 是否复制到达及 OnRep 是否重试。
+在 PawnExtension::CanChangeInitState 看 PawnData 是否为空，再看 Controller。GameMode 的数据注入已经启用，检查是否实际执行、Pawn 是否含扩展组件、数据是否非空。客户端单独失败时查 PawnData 是否复制到达及 OnRep 是否重试。
 
 ## 显示 GameplayReady 但角色不能操作
 
@@ -18,7 +19,7 @@
 
 ## PlayerState 有 ASC，但角色返回空
 
-这是当前明确存在的双路径问题。直接 InitAbilityActorInfo 不会给 PawnExtension::AbilitySystemComponent 赋值。检查 InitializeAbilitySystem 是否真正从有效代码调用，不能只看注释草稿命中搜索结果。
+旧直接 InitAbilityActorInfo 不会保存 PawnExtension 指针；但当前 HeroComponent 已有有效接入调用。出现为空时优先检查 Hero 的 Init State 是否到达 DataInitialized、实际 Pawn 类是否含 HeroComponent，而非再次添加相同调用。
 
 ## 按键回调进来了，技能不激活
 
@@ -26,19 +27,19 @@
 
 ## 相机在原点、视角不跟随或旋转异常
 
-检查模式委托是否绑定、返回模式是否非空、栈内是否有模式、GetCameraView 是否覆写了空视图。再核对默认相机模式配置、目标 Pawn、PlayerCameraManager 类型。只改 CameraComponent 相对位置通常不能修复模式选择入口。
+当前模式绑定已有实现，检查状态是否到达、模式委托是否绑定、返回模式是否非空、栈内是否有模式、GetCameraView 是否覆写了空视图。再核对默认相机模式配置、目标 Pawn、PlayerCameraManager 类型。只改 CameraComponent 相对位置通常不能修复模式选择入口。
 
 ## 创建 GE Spec 触发 check
 
-若在 HodgeGameplayAbility::MakeEffectContext 的 check，检查实际 Context ScriptStruct；需要自定义 Globals 分配 Hodge Context。若是其他 check，记录完整调用栈，不要把所有 GAS 崩溃归为同一原因。
+若在 HodgeGameplayAbility::MakeEffectContext 的 check，检查实际 Context ScriptStruct；当前 Globals 类和分配配置均已存在；检查是否加载旧 DLL、配置是否被覆盖以及实际 Globals 类型。若是其他 check，记录完整调用栈，不要把所有 GAS 崩溃归为同一原因。
 
 ## 血量属性存在，但攻击不扣血
 
-确认服务器命中目标、目标 ASC、GE 是否应用、GE 修改哪个 Attribute。HealthSet::PostGameplayEffectExecute 主体目前注释，写入一个伤害量不会自动按注释里的公式扣 Health。先用最小 GE 验证属性，再接伤害转换。
+确认服务器命中目标、目标 ASC、GE 是否应用、GE 修改哪个 Attribute。HealthSet 现已实现 Damage/Healing 到 Health 转换。检查 GE 是否写入正确元属性、免疫/GodMode 是否拦截、目标是否真正有 HealthSet，再追踪命中和效果应用。
 
 ## 远端血量归零，但服务器没有死亡
 
-OnRep 可以在客户端触发耗尽事件；服务器权威处理不能依赖 OnRep。检查服务器 GE 结算后的耗尽广播与角色健康/死亡组件绑定，两者目前都不完整。
+OnRep 可以在客户端触发耗尽事件；服务器权威处理不能依赖 OnRep。服务器 GE 结算后的耗尽广播已经实现，下一观察点是角色健康/死亡组件订阅，后者仍停用。
 
 ## 动画不播放
 

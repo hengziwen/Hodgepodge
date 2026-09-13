@@ -1,5 +1,6 @@
 # 属性、伤害、战斗与死亡
 
+> 最近源码核对：2026-09-13。源码接入状态与运行验收分开记录。
 [返回首页](README.md)
 
 ## 已实现的属性基础
@@ -12,9 +13,9 @@ Health OnRep 会广播 OnHealthChanged，在血量首次到零时广播 OnOutOfH
 
 ## 不能误认为已经完成的部分
 
-PostGameplayEffectExecute 当前只有 Super 调用，后面的伤害、治疗转换与事件广播主体全部注释。注释中引用 Damage、Healing 等名称，也不能据此断言当前头文件已有匹配的元属性。
+当前头文件已声明 Damage、Healing 元属性。PostGameplayEffectExecute 已实现 Damage 扣 Health、Healing 加 Health、夹取、重置元属性、Health/MaxHealth 变化广播和 OnOutOfHealth 广播；PreGameplayEffectExecute 已加入免疫与非 Shipping GodMode 条件。伤害消息路由代码仍注释。
 
-因此需要区分：直接修改 Health 的 GE 可以走属性变更路径；“把伤害写入伤害属性，再自动转换为扣血、广播服务器死亡”没有完整实现。客户端 OnRep 的耗尽通知不能替代服务器权威死亡处理。
+因此当前已经有“GE 写 Damage/Healing → Health 结算 → 耗尽事件”的有效管线；但耗尽事件不是完整服务器死亡流程，角色 HealthComponent 和死亡绑定仍需接通。客户端 OnRep 的通知也不能替代权威端行为。
 
 CombatCharacter 的 HealthComponent 创建与绑定仍注释。角色存在 OnDeathStarted/Finished 等接口，不代表 HealthSet 零血量会自动调用这些接口。
 
@@ -39,12 +40,12 @@ flowchart LR
 
 1. 伤害量从哪里来：固定值、SetByCaller 或 ExecutionCalculation。
 2. 目标是哪一个 ASC：玩家来自 PlayerState，敌人需定义所有权。
-3. GE 直接改 Health，还是先写元属性再转换。
+3. 当前结算采用 Damage/Healing 元属性；具体 GE 如何填值以及是否允许直改 Health，应保持一致。
 4. 谁在服务器触发零血量事件，以及如何保证只触发一次。
 5. 死亡后哪些技能被取消，哪些 SurvivesDeath 能力保留。
 6. 重生重置哪些属性、Tag、输入、碰撞和动画状态。
 
-这些是待实现的设计决策。知识库不替项目选定一个尚未落地的伤害公式。
+其中元属性结算已经实现，其余伤害来源、目标和死亡策略仍需补全。知识库不替项目选定一个尚未落地的伤害公式。
 
 ## 命中与表现职责
 

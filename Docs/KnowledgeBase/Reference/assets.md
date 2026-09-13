@@ -7,6 +7,10 @@
 仅确认磁盘路径与大小，未解析二进制资产。IA 的轴类型、蓝图父类、DA 引用等请在编辑器验证。
 
 
+## Camera
+
+- [CM_Default.uasset](../../../Content/Main/Camera/CM_Default.uasset) — `/Game/Main/Camera/CM_Default`；5,793 字节
+
 ## Character/EnemyBase
 
 - [ABP_Enemy_Base.uasset](../../../Content/Main/Character/EnemyBase/ABP_Enemy_Base.uasset) — `/Game/Main/Character/EnemyBase/ABP_Enemy_Base`；94,427 字节
@@ -14,7 +18,7 @@
 
 ## Character/Hero/Anim
 
-- [ABP_Pover_Base.uasset](../../../Content/Main/Character/Hero/Anim/ABP_Pover_Base.uasset) — `/Game/Main/Character/Hero/Anim/ABP_Pover_Base`；1,436,540 字节
+- [ABP_Pover_Base.uasset](../../../Content/Main/Character/Hero/Anim/ABP_Pover_Base.uasset) — `/Game/Main/Character/Hero/Anim/ABP_Pover_Base`；1,436,223 字节
 - [AnimEnum_CardinalDirection.uasset](../../../Content/Main/Character/Hero/Anim/AnimEnum_CardinalDirection.uasset) — `/Game/Main/Character/Hero/Anim/AnimEnum_CardinalDirection`；3,363 字节
 - [AnimEnum_RootYawOffsetMode.uasset](../../../Content/Main/Character/Hero/Anim/AnimEnum_RootYawOffsetMode.uasset) — `/Game/Main/Character/Hero/Anim/AnimEnum_RootYawOffsetMode`；2,927 字节
 - [AnimStruct_CardinalDirections.uasset](../../../Content/Main/Character/Hero/Anim/AnimStruct_CardinalDirections.uasset) — `/Game/Main/Character/Hero/Anim/AnimStruct_CardinalDirections`；6,996 字节
@@ -22,7 +26,7 @@
 
 ## Character/Hero/Anim/Layer
 
-- [ABP_ItemAnimLayers_Pover_Base.uasset](../../../Content/Main/Character/Hero/Anim/Layer/ABP_ItemAnimLayers_Pover_Base.uasset) — `/Game/Main/Character/Hero/Anim/Layer/ABP_ItemAnimLayers_Pover_Base`；1,421,377 字节
+- [ABP_ItemAnimLayers_Pover_Base.uasset](../../../Content/Main/Character/Hero/Anim/Layer/ABP_ItemAnimLayers_Pover_Base.uasset) — `/Game/Main/Character/Hero/Anim/Layer/ABP_ItemAnimLayers_Pover_Base`；1,421,779 字节
 - [ABP_Pover_Dark.uasset](../../../Content/Main/Character/Hero/Anim/Layer/ABP_Pover_Dark.uasset) — `/Game/Main/Character/Hero/Anim/Layer/ABP_Pover_Dark`；40,186 字节
 - [ALI_ItemAnimLayers.uasset](../../../Content/Main/Character/Hero/Anim/Layer/ALI_ItemAnimLayers.uasset) — `/Game/Main/Character/Hero/Anim/Layer/ALI_ItemAnimLayers`；34,871 字节
 
@@ -31,10 +35,15 @@
 - [Pover.uasset](../../../Content/Main/Character/Hero/Anim/Pover.uasset) — `/Game/Main/Character/Hero/Anim/Pover`；34,597 字节
 - [UniformIndexableCurveCompressionSettings.uasset](../../../Content/Main/Character/Hero/Anim/UniformIndexableCurveCompressionSettings.uasset) — `/Game/Main/Character/Hero/Anim/UniformIndexableCurveCompressionSettings`；1,811 字节
 
+## Character/Hero
+
+- [BP_Hero_Pover.uasset](../../../Content/Main/Character/Hero/BP_Hero_Pover.uasset) — `/Game/Main/Character/Hero/BP_Hero_Pover`；46,018 字节
+- [BP_HeroBase.uasset](../../../Content/Main/Character/Hero/BP_HeroBase.uasset) — `/Game/Main/Character/Hero/BP_HeroBase`；25,447 字节
+
 ## Data
 
 - [DA_Dafult_GameData.uasset](../../../Content/Main/Data/DA_Dafult_GameData.uasset) — `/Game/Main/Data/DA_Dafult_GameData`；1,495 字节
-- [DA_Dafult_PawnData.uasset](../../../Content/Main/Data/DA_Dafult_PawnData.uasset) — `/Game/Main/Data/DA_Dafult_PawnData`；1,769 字节
+- [DA_Dafult_PawnData.uasset](../../../Content/Main/Data/DA_Dafult_PawnData.uasset) — `/Game/Main/Data/DA_Dafult_PawnData`；2,192 字节
 
 ## Experiences
 
@@ -42,7 +51,7 @@
 
 ## Input
 
-- [DA_HodgeInputConfig.uasset](../../../Content/Main/Input/DA_HodgeInputConfig.uasset) — `/Game/Main/Input/DA_HodgeInputConfig`；5,524 字节
+- [DA_HodgeInputConfig.uasset](../../../Content/Main/Input/DA_HodgeInputConfig.uasset) — `/Game/Main/Input/DA_HodgeInputConfig`；5,530 字节
 - [IMC_Default.uasset](../../../Content/Main/Input/IMC_Default.uasset) — `/Game/Main/Input/IMC_Default`；22,440 字节
 - [IMC_UI.uasset](../../../Content/Main/Input/IMC_UI.uasset) — `/Game/Main/Input/IMC_UI`；9,382 字节
 
@@ -71,8 +80,9 @@
 
 - `Assets`：645 个文件（包含源资源，不等于 UE 资产数）。
 - `Characters`：146 个文件（包含源资源，不等于 UE 资产数）。
+- `CodexText`：65 个文件（包含源资源，不等于 UE 资产数）。
 - `LevelPrototyping`：13 个文件（包含源资源，不等于 UE 资产数）。
-- `Main`：36 个文件（包含源资源，不等于 UE 资产数）。
+- `Main`：39 个文件（包含源资源，不等于 UE 资产数）。
 - `ThirdPerson`：8 个文件（包含源资源，不等于 UE 资产数）。
 - `Wuwa`：675 个文件（包含源资源，不等于 UE 资产数）。
 - `__ExternalActors__`：257 个文件（包含源资源，不等于 UE 资产数）。

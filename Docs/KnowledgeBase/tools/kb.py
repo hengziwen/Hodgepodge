@@ -20,6 +20,8 @@ REF = KB / 'Reference'
 SNAPSHOT = REF / 'snapshot.json'
 
 PURPOSE = {
+    'HodgeAbilitySystemGlobals': '分配 FHodgeGameplayEffectContext 的 GAS 全局类；已加入项目配置。',
+    'HodgePlayerController': '具体控制器：每帧消费 ASC 输入、相机管理、AutoRun、UnPossess Avatar 清理及 Replay 扩展。',
     'HodgeAssetManager': '资产入口、GameData 缓存、启动任务、同步加载和加载进度。Cue 初始化钩子仍需接通。',
     'HodgeAssetManagerStartupJob': '封装启动任务与进度权重，供 AssetManager 执行启动工作。',
     'HodgeGameData': '全局伤害、治疗、动态 Tag GE 的软类引用配置；需编辑器核对实际赋值。',
@@ -29,21 +31,21 @@ PURPOSE = {
     'HodgeExperienceActionSet': '复用 GameFeature 插件和动作配置的数据资产。',
     'HodgeExperienceManager': '管理编辑器等场景的 GameFeature 使用/停用协调，不是挂载在 GameState 的组件。',
     'HodgeExperienceManagerComponent': 'GameState 上的 Experience 复制、资源加载、插件激活、Action 执行与 Loaded 委托。',
-    'HodgeGameModeBase': '服务器玩法选择、等待 Experience、取得 PawnData、默认 Pawn 生成与重生。数据注入仍注释。',
+    'HodgeGameModeBase': '服务器选择玩法、等待加载、生成 Pawn，并在 FinishSpawning 前注入 PawnData；选用 HodgePlayerController。',
     'HodgeGameInstanceBase': '注册 Init State 顺序、主控制器访问和全局生命周期扩展。',
     'HodgeGameStateBase': 'GameState 基础扩展生命周期。',
     'HodgeGameState': '创建 ExperienceManager 和世界状态 ASC，处理游戏状态复制/扩展。',
     'HodgePlayerStateBase': 'PlayerState ModularGameplay Receiver 注册、注销及组件 Reset/CopyProperties。',
     'HodgePlayerState': '玩家 ASC、HealthSet、PawnData、阵营/标签栈等持有者。基础能力授予循环仍停用。',
-    'HodgePlayerControllerBase': '把控制器和 Pawn 生命周期桥接到 LocalPlayer 委托。技能输入每帧消费尚未接入。',
+    'HodgePlayerControllerBase': '控制器和 Pawn 生命周期桥接到 LocalPlayer 委托；具体输入消费在派生 HodgePlayerController。',
     'HodgeLocalPlayerBase': '本地玩家对象及控制器、PlayerState、Pawn 就绪事件桥。',
     'HodgeHUDBase': '项目 HUD 基类扩展入口，不代表 CommonUI 已完成。',
     'HodgeCharacterBase': '原生 Character 基础、替换移动组件、Receiver 生命周期。EndPlay 事件配对需修正。',
     'HodgeCombatCharacter': 'PawnExtension、相机、ASC 查询、移动标签、复制与死亡占位逻辑。',
-    'HodgeHeroCharacter': '玩家角色，当前保留 PossessedBy / OnRep_PlayerState 直接初始化 ASC 的旧入口。',
+    'HodgeHeroCharacter': '构造挂载 HeroComponent；仍保留 PossessedBy/OnRep_PlayerState 直接初始化 ASC 的旧路径。',
     'HodgeEnemyCharacter': '敌人移动与自动 AI 控制配置，尚未完成敌人 ASC 初始化。',
-    'HodgePawnExtensionComponent': 'Pawn 数据复制和 Init State 协调、ASC 关联与解除、就绪委托。',
-    'HodgeHeroComponent': '玩家初始化、输入与相机的迁移草稿；当前文件全部注释，不是有效反射类。',
+    'HodgePawnExtensionComponent': 'PawnData 复制、Init State、ASC 关联/解除、TagRelationshipMapping 与 ClearAbilityInput；需验证退出顺序。',
+    'HodgeHeroComponent': '已启用的玩家 Init State 协调、ASC 接入、输入与相机；额外输入移除仍为空，IMC 添加受设置注册条件影响。',
     'HodgeCharacterMovementComponent': 'CharacterMovement 扩展、地面距离、加速度和能力系统相关移动入口。',
     'HodgeActorComponentBase': '通用 ActorComponent 基础访问与扩展。',
     'HodgeCombatComponentBase': '战斗组件占位，当前构造关闭 Tick，尚无完整命中或连招实现。',
@@ -53,10 +55,10 @@ PURPOSE = {
     'HodgeGameplayAbility': '项目技能基类：激活策略、互斥组、额外 Cost、失败与 EffectContext 扩展。',
     'HodgeAbilityCost': '自定义额外能力消耗的扩展契约。',
     'HodgeAbilityTagRelationshipMapping': '数据驱动的能力阻断、取消与激活条件关系。',
-    'HodgeGameplayEffectContext': '项目 GE 上下文与序列化扩展；需要 Globals 分配入口配套。',
-    'HodgeGameplayCueManager': '项目 Cue 资源加载/预加载管理实现；默认管理器配置尚未接通。',
+    'HodgeGameplayEffectContext': '项目 GE 上下文与序列化扩展，已有 HodgeAbilitySystemGlobals 分配配套。',
+    'HodgeGameplayCueManager': '项目 Cue 管理类已配置；启动预加载及 Feature Cue 观察者生命周期仍未完整接通。',
     'HodgeGlobalAbilitySystem': '世界级全局能力/效果授予及 ASC 注册表。',
-    'HodgeHealthSet': 'Health、MaxHealth、BaseDamage、BaseHeal；复制与夹取有效，GE 结算主体注释。',
+    'HodgeHealthSet': 'Health/MaxHealth、BaseDamage/BaseHeal 和 Damage/Healing 元属性；有效结算、夹取、免疫和耗尽广播。',
     'HodgeAttributeSet': '项目 AttributeSet 基础和 ASC 访问。',
     'HodgeGameplayTags': '原生 GameplayTag 注册和移动状态标签映射。标签存在不等于对应玩法实现。',
     'GameplayTagStack': '带计数的标签栈及复制数据结构，区别于只判断有无的 TagContainer。',
@@ -70,7 +72,7 @@ PURPOSE = {
     'HodgeCameraMode': '相机视图、模式实例、混合和模式栈。',
     'HodgeCameraMode_ThirdPerson': '第三人称偏移与防穿透逻辑。',
     'HodgePenetrationAvoidanceFeeler': '相机防穿透探测参数结构。',
-    'HodgePlayerCameraManager': '项目相机管理器；实际控制器类选择需验证。',
+    'HodgePlayerCameraManager': '由 HodgePlayerController 构造选用的项目相机管理器；运行效果待验收。',
     'HodgeUICameraManagerComponent': 'UI 相机管理扩展，不代表 UI 系统已接入。',
     'HodgeCameraAssistInterface': '相机辅助接口契约。',
     'HodgeAnimInstance': 'ASC GameplayTag 属性映射和 GroundDistance 更新。',
@@ -79,17 +81,20 @@ PURPOSE = {
     'LoadingProcessInterface': '加载状态/原因查询契约；不是独立加载界面。',
     'GameFeatureAction_WorldActionBase': '按游戏世界和激活上下文组织 Action 生命周期。',
     'GameFeatureAction_AddAbilities': '面向配置 Actor 授予能力、属性与 AbilitySet，维护撤销句柄。',
-    'GameFeatureAction_AddInputBinding': '额外 InputConfig 扩展；依赖 Hero 的主体和添加分支仍注释。',
-    'GameFeatureAction_AddInputContextMapping': 'IMC 与本地玩家/设置集成，Controller 扩展添加分支仍注释。',
-    'GameFeatureAction_AddGameplayCuePath': '声明和校验 Cue 路径配置；Policy 内实际增删路径仍注释。',
+    'GameFeatureAction_AddInputBinding': '有效扩展事件添加/移除额外 InputConfig；Hero 的最终移除实现仍为空。',
+    'GameFeatureAction_AddInputContextMapping': '有效 Controller 扩展添加 IMC，包含设置注册与诊断日志；记录/撤销需验收。',
+    'GameFeatureAction_AddGameplayCuePath': '声明和校验 Cue 路径；Policy 添加路径主体已有，但观察者注册和注销清理仍缺。',
     'GameFeatureAction_AddWidget': 'Widget 注入迁移草稿，当前实现停用。',
     'GameFeatureAction_SplitscreenConfig': 'GameFeature 激活期间的分屏策略调整。',
-    'HodgeGameFeaturePolicy': 'GameFeature 项目策略和资源加载观察扩展。',
+    'HodgeGameFeaturePolicy': '已配置的 GameFeature 策略；Hotfix 观察者注册，Cue 路径观察者创建仍注释。',
 }
 
 
 def read(path: Path) -> str:
-    return path.read_text(encoding='utf-8-sig', errors='replace')
+    raw = path.read_bytes()
+    if raw.startswith((b'\xff\xfe', b'\xfe\xff')):
+        return raw.decode('utf-16')
+    return raw.decode('utf-8-sig', errors='replace')
 
 
 def code_only(text: str) -> str:
@@ -109,7 +114,9 @@ def files() -> list[Path]:
     result = list((ROOT / 'Source').rglob('*')) + list((ROOT / 'Config').rglob('*'))
     result += list((ROOT / 'Content/Main').rglob('*'))
     result += [ROOT / 'Hodgepodge.uproject', ROOT / 'README.md', ROOT / 'LYRA_RUNTIME_FLOW.md',
-               ROOT / 'LYRA_LEARNING_GUIDE.md', ROOT / 'UE5 开放世界动作 RPG 架构方案 V2.md']
+               ROOT / 'LYRA_LEARNING_GUIDE.md', ROOT / 'UE5 开放世界动作 RPG 架构方案 V2.md',
+               ROOT / 'AGENTS.md', ROOT / 'Docs/AI_DEVELOPMENT.md']
+    result += list((ROOT / 'Plugins').rglob('*.uplugin'))
     return sorted({p for p in result if p.is_file()})
 
 
@@ -177,7 +184,7 @@ def refresh() -> int:
                     r'^(?:[\w:<>,*&]+[ \t]+)*[AUFI]?\w+::[~\w]+\s*\(', line)]
                 body += ['定义候选（多行签名仅展示首行）：\n', *[f'- L{i}: `{s}`' for i, s in symbols], '']
         write(name, f'{group} 源码参考', '\n'.join(body))
-    ref_index += ['\n## 数据与配置\n', '- [源码总索引](source-index.md)', '- [GameplayTag](gameplay-tags.md)',
+    ref_index += ['\n## 数据与配置\n', '- [源码总索引](source-index.md)', '- [GameplayTag](gameplay-tags.md)', '- [插件描述](plugins.md)',
                   '- [资产文件清单](assets.md)', '- [配置索引](config.md)', '- [扫描快照](snapshot.md)']
     write('README.md', '自动参考索引', '\n'.join(ref_index))
 
@@ -226,10 +233,24 @@ def refresh() -> int:
         body.append('```\n')
     write('config.md', '配置逐节索引', '\n'.join(body))
 
+    body = ['仅提取本地插件描述和 uproject 显式选择，不确认实际加载、连接或编译。业务源码索引不包含这些插件实现。\n']
+    project = json.loads(read(ROOT / 'Hodgepodge.uproject'))
+    enabled = {item['Name']: item.get('Enabled') for item in project.get('Plugins', [])}
+    for path in sorted((ROOT / 'Plugins').rglob('*.uplugin')):
+        metadata = json.loads(read(path))
+        body += [f'## {path.stem}\n', f'[插件描述]({link(path)})\n',
+                 f'- 版本：{metadata.get("VersionName", "未声明")}',
+                 f'- EngineVersion：{metadata.get("EngineVersion", "未声明")}',
+                 f'- EnabledByDefault：{metadata.get("EnabledByDefault", "未声明")}',
+                 f'- uproject 显式 Enabled：{enabled.get(path.stem, "未声明")}',
+                 '- 模块：' + '；'.join(f'{m["Name"]} ({m.get("Type", "未声明")})' for m in metadata.get('Modules', [])),
+                 '- 插件依赖：' + '；'.join(f'{m["Name"]} (Enabled={m.get("Enabled", "未声明")})' for m in metadata.get('Plugins', [])), '']
+    write('plugins.md', '本地插件描述索引', '\n'.join(body))
+
     tracked = files()
     data = {'schema': 1, 'generated_at_utc': datetime.now(timezone.utc).isoformat(),
             'git_head': git('rev-parse', 'HEAD'),
-            'scope': 'Source/**, Config/**, Content/Main/**, uproject and four root documents; excludes third-party plugins',
+            'scope': 'Source/**, Config/**, Content/Main/**, uproject, root documents, AGENTS.md, Docs/AI_DEVELOPMENT.md, Plugins/**/*.uplugin; excludes plugin implementation',
             'files': {p.relative_to(ROOT).as_posix(): digest(p) for p in tracked}}
     SNAPSHOT.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     status = git('status', '--short', '--untracked-files=no')

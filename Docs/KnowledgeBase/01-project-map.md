@@ -1,5 +1,6 @@
 # 项目定位、目录与文档可信度
 
+> 最近源码核对：2026-09-13。源码接入状态与运行验收分开记录。
 [返回首页](README.md)
 
 ## 工程是什么
@@ -18,7 +19,8 @@
 - `Content/Main`：自有玩法数据、输入资源与角色动画；详见资产清单。
 - `Content/qiuyuan`、`Content/Wuwa`、`Content/Assets`：模型、动画、音效等资源集合。资源存在不证明已经被 Pawn 使用。
 - `Plugins/Developer/RiderLink`：开发工具插件，不计入游戏核心逻辑索引。
-- `Plugins/ALS-Refactored-4.15`：旧依赖参考目录；存在不代表当前启用。
+- `Plugins/ALS-Refactored-4.15`：主模块已移除直接代码依赖，但 ALS.uplugin 声明 EnabledByDefault=true，不能称插件已禁用。
+- `Plugins/UnrealMCP`：新增本地 Editor 插件描述，版本 1.0、默认启用；不能据此宣称编辑器连接已验证。
 - `Saved`、`Intermediate`、`Binaries`：运行或构建产物，不作为架构事实来源。
 
 `Core/PlayState` 的拼写是项目现状。知识库保留实际路径，不擅自改成 PlayerState。
@@ -27,11 +29,11 @@
 
 本地源码和配置回答“现在实现了什么”；资产编辑器回答“现在配了什么”；运行日志和验收回答“实际跑起来怎样”。项目 README 是历史状态摘要，Lyra 两篇文档是上游参考，V2 方案是目标设计。
 
-若 README 写“相机完整接入”，但没有有效的 `DetermineCameraModeDelegate` 绑定者，应记录为“相机实现存在，默认模式入口未接通”。若文档说 HeroComponent 不存在，而磁盘已有全部注释的文件，应记录为“草稿存在，类尚未启用”。
+2026-09-10 曾核对到 HeroComponent 全部注释、相机委托无调用者；2026-09-13 当前源码已启用两者。因此必须更新旧结论，不能继续沿用上次知识库的缺口描述。当前真实运行效果仍需独立验证。
 
 ## 当前工作区与提交基线
 
-知识库以读取时的磁盘内容为准。生成前已有 PawnData、HeroComponent 和 DefaultEngine.ini 修改，未由本次任务创建或覆盖。精确 Git HEAD、文件数量、SHA-256 和工作区列表见 [扫描快照](Reference/snapshot.md)。
+知识库以读取时的磁盘内容为准。本轮开始已有 HeroComponent.cpp 与 GameFeatureAction_AddInputContextMapping.cpp 未提交修改，均保留；其他变化已进入后续提交。精确 Git HEAD、文件数量、SHA-256 和工作区列表见 [扫描快照](Reference/snapshot.md)。
 
 这意味着 checkout 到旧提交后，人工章节可能描述得比代码超前；从磁盘删除或启用草稿后，旧索引也可能失效。维护工具可以提示文件变化，但不能替代语义复核。
 
@@ -44,4 +46,4 @@
 5. 检查调用是否在注释中、条件分支是否可达。
 6. 最后查资产配置和实际运行日志。
 
-例如找到 `InitializeAbilitySystem` 定义只能证明有初始化接口；若唯一调用写在全部注释的 HeroComponent 中，仍应判为没有有效调用入口。
+例如当前 InitializeAbilitySystem 已由有效 HeroComponent 调用，因此不再属于“零调用者”；仍需检查状态是否到达、组件是否挂载和实际生成的蓝图类型。

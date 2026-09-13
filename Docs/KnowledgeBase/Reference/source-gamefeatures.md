@@ -28,7 +28,7 @@
 
 ## GameFeatureAction_AddGameplayCuePath.cpp
 
-声明和校验 Cue 路径配置；Policy 内实际增删路径仍注释。
+声明和校验 Cue 路径；Policy 添加路径主体已有，但观察者注册和注销清理仍缺。
 
 源码：[Source/Hodgepodge/Private/GameFeatures/GameFeatureAction_AddGameplayCuePath.cpp](../../../Source/Hodgepodge/Private/GameFeatures/GameFeatureAction_AddGameplayCuePath.cpp)
 
@@ -41,49 +41,49 @@
 
 ## GameFeatureAction_AddInputBinding.cpp
 
-额外 InputConfig 扩展；依赖 Hero 的主体和添加分支仍注释。
+有效扩展事件添加/移除额外 InputConfig；Hero 的最终移除实现仍为空。
 
 源码：[Source/Hodgepodge/Private/GameFeatures/GameFeatureAction_AddInputBinding.cpp](../../../Source/Hodgepodge/Private/GameFeatures/GameFeatureAction_AddInputBinding.cpp)
 
-项目内直接 include（不是运行调用关系）：[GameFeatures/GameFeatureAction_AddInputBinding.h](../../../Source/Hodgepodge/Public/GameFeatures/GameFeatureAction_AddInputBinding.h)、[GameFeatures/GameFeatureAction_WorldActionBase.h](../../../Source/Hodgepodge/Public/GameFeatures/GameFeatureAction_WorldActionBase.h)、[Input/HodgeInputConfig.h](../../../Source/Hodgepodge/Public/Input/HodgeInputConfig.h)
+项目内直接 include（不是运行调用关系）：[GameFeatures/GameFeatureAction_AddInputBinding.h](../../../Source/Hodgepodge/Public/GameFeatures/GameFeatureAction_AddInputBinding.h)、[GameFeatures/GameFeatureAction_WorldActionBase.h](../../../Source/Hodgepodge/Public/GameFeatures/GameFeatureAction_WorldActionBase.h)、[Input/HodgeInputConfig.h](../../../Source/Hodgepodge/Public/Input/HodgeInputConfig.h)、[Component/HodgeHeroComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeHeroComponent.h)
 
 定义候选（多行签名仅展示首行）：
 
-- L50: `void UGameFeatureAction_AddInputBinding::OnGameFeatureActivating(FGameFeatureActivatingContext& Context)`
-- L68: `void UGameFeatureAction_AddInputBinding::OnGameFeatureDeactivating(FGameFeatureDeactivatingContext& Context)`
-- L86: `EDataValidationResult UGameFeatureAction_AddInputBinding::IsDataValid(FDataValidationContext& Context) const`
-- L118: `void UGameFeatureAction_AddInputBinding::AddToWorld(const FWorldContext& WorldContext,`
-- L153: `void UGameFeatureAction_AddInputBinding::Reset(FPerContextData& ActiveData)`
-- L179: `void UGameFeatureAction_AddInputBinding::HandlePawnExtension(AActor* Actor, FName EventName,`
-- L204: `void UGameFeatureAction_AddInputBinding::AddInputMappingForPlayer(APawn* Pawn, FPerContextData& ActiveData)`
-- L249: `void UGameFeatureAction_AddInputBinding::RemoveInputMapping(APawn* Pawn, FPerContextData& ActiveData)`
+- L52: `void UGameFeatureAction_AddInputBinding::OnGameFeatureActivating(FGameFeatureActivatingContext& Context)`
+- L70: `void UGameFeatureAction_AddInputBinding::OnGameFeatureDeactivating(FGameFeatureDeactivatingContext& Context)`
+- L88: `EDataValidationResult UGameFeatureAction_AddInputBinding::IsDataValid(FDataValidationContext& Context) const`
+- L120: `void UGameFeatureAction_AddInputBinding::AddToWorld(const FWorldContext& WorldContext,`
+- L155: `void UGameFeatureAction_AddInputBinding::Reset(FPerContextData& ActiveData)`
+- L181: `void UGameFeatureAction_AddInputBinding::HandlePawnExtension(AActor* Actor, FName EventName,`
+- L207: `void UGameFeatureAction_AddInputBinding::AddInputMappingForPlayer(APawn* Pawn, FPerContextData& ActiveData)`
+- L252: `void UGameFeatureAction_AddInputBinding::RemoveInputMapping(APawn* Pawn, FPerContextData& ActiveData)`
 
 ## GameFeatureAction_AddInputContextMapping.cpp
 
-IMC 与本地玩家/设置集成，Controller 扩展添加分支仍注释。
+有效 Controller 扩展添加 IMC，包含设置注册与诊断日志；记录/撤销需验收。
 
 源码：[Source/Hodgepodge/Private/GameFeatures/GameFeatureAction_AddInputContextMapping.cpp](../../../Source/Hodgepodge/Private/GameFeatures/GameFeatureAction_AddInputContextMapping.cpp)
 
-项目内直接 include（不是运行调用关系）：[GameFeatures/GameFeatureAction_AddInputContextMapping.h](../../../Source/Hodgepodge/Public/GameFeatures/GameFeatureAction_AddInputContextMapping.h)、[GameFeatures/GameFeatureAction_WorldActionBase.h](../../../Source/Hodgepodge/Public/GameFeatures/GameFeatureAction_WorldActionBase.h)、[Data/HodgeAssetManager.h](../../../Source/Hodgepodge/Public/Data/HodgeAssetManager.h)
+项目内直接 include（不是运行调用关系）：[GameFeatures/GameFeatureAction_AddInputContextMapping.h](../../../Source/Hodgepodge/Public/GameFeatures/GameFeatureAction_AddInputContextMapping.h)、[GameFeatures/GameFeatureAction_WorldActionBase.h](../../../Source/Hodgepodge/Public/GameFeatures/GameFeatureAction_WorldActionBase.h)、[Data/HodgeAssetManager.h](../../../Source/Hodgepodge/Public/Data/HodgeAssetManager.h)、[Component/HodgeHeroComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeHeroComponent.h)
 
 定义候选（多行签名仅展示首行）：
 
-- L39: `void UGameFeatureAction_AddInputContextMapping::OnGameFeatureRegistering()`
-- L49: `void UGameFeatureAction_AddInputContextMapping::OnGameFeatureActivating(FGameFeatureActivatingContext& Context)`
-- L67: `void UGameFeatureAction_AddInputContextMapping::OnGameFeatureDeactivating(FGameFeatureDeactivatingContext& Context)`
-- L84: `void UGameFeatureAction_AddInputContextMapping::OnGameFeatureUnregistering()`
-- L94: `void UGameFeatureAction_AddInputContextMapping::RegisterInputMappingContexts()`
-- L113: `void UGameFeatureAction_AddInputContextMapping::RegisterInputContextMappingsForGameInstance(UGameInstance* GameInstance)`
-- L137: `void UGameFeatureAction_AddInputContextMapping::RegisterInputMappingContextsForLocalPlayer(ULocalPlayer* LocalPlayer)`
-- L175: `void UGameFeatureAction_AddInputContextMapping::UnregisterInputMappingContexts()`
-- L196: `void UGameFeatureAction_AddInputContextMapping::UnregisterInputContextMappingsForGameInstance(`
-- L219: `void UGameFeatureAction_AddInputContextMapping::UnregisterInputMappingContextsForLocalPlayer(ULocalPlayer* LocalPlayer)`
-- L257: `EDataValidationResult UGameFeatureAction_AddInputContextMapping::IsDataValid(FDataValidationContext& Context) const`
-- L289: `void UGameFeatureAction_AddInputContextMapping::AddToWorld(const FWorldContext& WorldContext,`
-- L324: `void UGameFeatureAction_AddInputContextMapping::Reset(FPerContextData& ActiveData)`
-- L349: `void UGameFeatureAction_AddInputContextMapping::HandleControllerExtension(`
-- L375: `void UGameFeatureAction_AddInputContextMapping::AddInputMappingForPlayer(UPlayer* Player, FPerContextData& ActiveData)`
-- L407: `void UGameFeatureAction_AddInputContextMapping::RemoveInputMapping(APlayerController* PlayerController,`
+- L41: `void UGameFeatureAction_AddInputContextMapping::OnGameFeatureRegistering()`
+- L51: `void UGameFeatureAction_AddInputContextMapping::OnGameFeatureActivating(FGameFeatureActivatingContext& Context)`
+- L73: `void UGameFeatureAction_AddInputContextMapping::OnGameFeatureDeactivating(FGameFeatureDeactivatingContext& Context)`
+- L90: `void UGameFeatureAction_AddInputContextMapping::OnGameFeatureUnregistering()`
+- L100: `void UGameFeatureAction_AddInputContextMapping::RegisterInputMappingContexts()`
+- L119: `void UGameFeatureAction_AddInputContextMapping::RegisterInputContextMappingsForGameInstance(UGameInstance* GameInstance)`
+- L143: `void UGameFeatureAction_AddInputContextMapping::RegisterInputMappingContextsForLocalPlayer(ULocalPlayer* LocalPlayer)`
+- L181: `void UGameFeatureAction_AddInputContextMapping::UnregisterInputMappingContexts()`
+- L202: `void UGameFeatureAction_AddInputContextMapping::UnregisterInputContextMappingsForGameInstance(`
+- L225: `void UGameFeatureAction_AddInputContextMapping::UnregisterInputMappingContextsForLocalPlayer(ULocalPlayer* LocalPlayer)`
+- L263: `EDataValidationResult UGameFeatureAction_AddInputContextMapping::IsDataValid(FDataValidationContext& Context) const`
+- L295: `void UGameFeatureAction_AddInputContextMapping::AddToWorld(const FWorldContext& WorldContext,`
+- L330: `void UGameFeatureAction_AddInputContextMapping::Reset(FPerContextData& ActiveData)`
+- L355: `void UGameFeatureAction_AddInputContextMapping::HandleControllerExtension(`
+- L387: `void UGameFeatureAction_AddInputContextMapping::AddInputMappingForPlayer(UPlayer* Player, FPerContextData& ActiveData)`
+- L435: `void UGameFeatureAction_AddInputContextMapping::RemoveInputMapping(APlayerController* PlayerController,`
 
 ## GameFeatureAction_AddWidget.cpp
 
@@ -122,25 +122,25 @@ GameFeature 激活期间的分屏策略调整。
 
 ## HodgeGameFeaturePolicy.cpp
 
-GameFeature 项目策略和资源加载观察扩展。
+已配置的 GameFeature 策略；Hotfix 观察者注册，Cue 路径观察者创建仍注释。
 
 源码：[Source/Hodgepodge/Private/GameFeatures/HodgeGameFeaturePolicy.cpp](../../../Source/Hodgepodge/Private/GameFeatures/HodgeGameFeaturePolicy.cpp)
 
-项目内直接 include（不是运行调用关系）：[GameFeatures/HodgeGameFeaturePolicy.h](../../../Source/Hodgepodge/Public/GameFeatures/HodgeGameFeaturePolicy.h)、[GameFeatures/GameFeatureAction_AddGameplayCuePath.h](../../../Source/Hodgepodge/Public/GameFeatures/GameFeatureAction_AddGameplayCuePath.h)
+项目内直接 include（不是运行调用关系）：[GameFeatures/HodgeGameFeaturePolicy.h](../../../Source/Hodgepodge/Public/GameFeatures/HodgeGameFeaturePolicy.h)、[AbilitySystem/HodgeGameplayCueManager.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayCueManager.h)、[GameFeatures/GameFeatureAction_AddGameplayCuePath.h](../../../Source/Hodgepodge/Public/GameFeatures/GameFeatureAction_AddGameplayCuePath.h)
 
 定义候选（多行签名仅展示首行）：
 
-- L14: `UHodgeGameFeaturePolicy::UHodgeGameFeaturePolicy(const FObjectInitializer& ObjectInitializer)`
-- L23: `UHodgeGameFeaturePolicy& UHodgeGameFeaturePolicy::Get()`
-- L33: `void UHodgeGameFeaturePolicy::InitGameFeatureManager()`
-- L58: `void UHodgeGameFeaturePolicy::ShutdownGameFeatureManager()`
-- L78: `TArray<FPrimaryAssetId> UHodgeGameFeaturePolicy::GetPreloadAssetListForGameFeature(`
-- L91: `const TArray<FName> UHodgeGameFeaturePolicy::GetPreloadBundleStateForGameFeature() const`
-- L101: `void UHodgeGameFeaturePolicy::GetGameFeatureLoadingMode(`
-- L115: `bool UHodgeGameFeaturePolicy::IsPluginAllowed(const FString& PluginURL) const`
-- L127: `void UHodgeGameFeature_HotfixManager::OnGameFeatureLoading(`
-- L155: `void UHodgeGameFeature_AddGameplayCuePaths::OnGameFeatureRegistering(`
-- L239: `void UHodgeGameFeature_AddGameplayCuePaths::OnGameFeatureUnregistering(`
+- L15: `UHodgeGameFeaturePolicy::UHodgeGameFeaturePolicy(const FObjectInitializer& ObjectInitializer)`
+- L24: `UHodgeGameFeaturePolicy& UHodgeGameFeaturePolicy::Get()`
+- L34: `void UHodgeGameFeaturePolicy::InitGameFeatureManager()`
+- L59: `void UHodgeGameFeaturePolicy::ShutdownGameFeatureManager()`
+- L79: `TArray<FPrimaryAssetId> UHodgeGameFeaturePolicy::GetPreloadAssetListForGameFeature(`
+- L92: `const TArray<FName> UHodgeGameFeaturePolicy::GetPreloadBundleStateForGameFeature() const`
+- L102: `void UHodgeGameFeaturePolicy::GetGameFeatureLoadingMode(`
+- L116: `bool UHodgeGameFeaturePolicy::IsPluginAllowed(const FString& PluginURL) const`
+- L128: `void UHodgeGameFeature_HotfixManager::OnGameFeatureLoading(`
+- L156: `void UHodgeGameFeature_AddGameplayCuePaths::OnGameFeatureRegistering(`
+- L240: `void UHodgeGameFeature_AddGameplayCuePaths::OnGameFeatureUnregistering(`
 
 ## GameFeatureAction_AddAbilities.h
 
@@ -234,7 +234,7 @@ GameFeature 项目策略和资源加载观察扩展。
 
 ## GameFeatureAction_AddGameplayCuePath.h
 
-声明和校验 Cue 路径配置；Policy 内实际增删路径仍注释。
+声明和校验 Cue 路径；Policy 添加路径主体已有，但观察者注册和注销清理仍缺。
 
 源码：[Source/Hodgepodge/Public/GameFeatures/GameFeatureAction_AddGameplayCuePath.h](../../../Source/Hodgepodge/Public/GameFeatures/GameFeatureAction_AddGameplayCuePath.h)
 
@@ -264,7 +264,7 @@ GameFeature 项目策略和资源加载观察扩展。
 
 ## GameFeatureAction_AddInputBinding.h
 
-额外 InputConfig 扩展；依赖 Hero 的主体和添加分支仍注释。
+有效扩展事件添加/移除额外 InputConfig；Hero 的最终移除实现仍为空。
 
 源码：[Source/Hodgepodge/Public/GameFeatures/GameFeatureAction_AddInputBinding.h](../../../Source/Hodgepodge/Public/GameFeatures/GameFeatureAction_AddInputBinding.h)
 
@@ -311,7 +311,7 @@ GameFeature 项目策略和资源加载观察扩展。
 
 ## GameFeatureAction_AddInputContextMapping.h
 
-IMC 与本地玩家/设置集成，Controller 扩展添加分支仍注释。
+有效 Controller 扩展添加 IMC，包含设置注册与诊断日志；记录/撤销需验收。
 
 源码：[Source/Hodgepodge/Public/GameFeatures/GameFeatureAction_AddInputContextMapping.h](../../../Source/Hodgepodge/Public/GameFeatures/GameFeatureAction_AddInputContextMapping.h)
 
@@ -454,7 +454,7 @@ GameFeature 激活期间的分屏策略调整。
 
 ## HodgeGameFeaturePolicy.h
 
-GameFeature 项目策略和资源加载观察扩展。
+已配置的 GameFeature 策略；Hotfix 观察者注册，Cue 路径观察者创建仍注释。
 
 源码：[Source/Hodgepodge/Public/GameFeatures/HodgeGameFeaturePolicy.h](../../../Source/Hodgepodge/Public/GameFeatures/HodgeGameFeaturePolicy.h)
 

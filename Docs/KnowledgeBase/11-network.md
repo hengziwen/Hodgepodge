@@ -1,5 +1,6 @@
 # 网络、复制与 Dedicated Server
 
+> 最近源码核对：2026-09-13。源码接入状态与运行验收分开记录。
 [返回首页](README.md)
 
 ## 当前网络基础
@@ -18,7 +19,7 @@ Authority 决定最终游戏状态的权威执行端；OwnerActor 是 GAS 所属
 
 服务器可先拥有 PlayerState 后生成 Pawn；客户端可能先看到 Pawn，再收到 PlayerState、PawnData 或 Experience。可靠做法是各通知触发幂等状态检查，不是延迟固定秒数后假设所有对象已到齐。
 
-Hero 当前有 OnRep_PlayerState 初始化 ASC 的旧路径。迁移到 Init State 后，复制通知仍有价值，但其职责应改为唤醒协调组件而不是绕过统一入口。
+Hero 当前有 OnRep_PlayerState 初始化 ASC 的旧路径。当前 Init State 的 Hero 入口也已启用，复制通知仍有价值；建议收敛旧直接初始化，避免绕过统一协调。
 
 ## Dedicated Server 当前阻塞
 
@@ -34,7 +35,7 @@ FastSharedReplication 代码存在，但调度与启用链仍需确认。应先�
 
 ## 重生与销毁
 
-重生前解除旧 Pawn 对 ASC 的关联，清掉输入缓存、临时能力相机覆盖和不应保留的状态；重生后验证 ASC Owner 不变而 Avatar 更新。Health、死亡 Tag、临时 GE 是否恢复由业务规则确定。
+重生前解除旧 Pawn 对 ASC 的关联，核对输入缓存、临时能力相机覆盖和不应保留状态的清理。PawnExtension 已启用 ClearAbilityInput，但控制器 OnUnPossess 提前清空 Avatar，可能影响随后 PawnExtension 的 Avatar 条件分支；需按实际调用顺序验证；重生后验证 ASC Owner 不变而 Avatar 更新。Health、死亡 Tag、临时 GE 是否恢复由业务规则确定。
 
 CharacterBase Receiver 退出不对称和 Experience 部分加载清理都是生命周期风险，应在多次进入/退出 PIE 与换 Pawn 测试中覆盖。
 

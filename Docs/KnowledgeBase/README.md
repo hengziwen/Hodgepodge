@@ -1,6 +1,6 @@
 # Hodgepodge 本地知识库
 
-> 人工核对日期：2026-09-10。对象：本仓库当前工作区，包含未提交的修改。此知识库是项目本地文档，不依赖在线服务。
+> 人工核对日期：2026-09-13。对象：本仓库当前工作区，包含未提交的修改。此知识库是项目本地文档，不依赖在线服务。
 
 ## 从这里开始
 
@@ -43,6 +43,9 @@ Hodgepodge 是 UE 5.5 的个人动作 RPG 框架工程，正在将角色、GAS�
 - [验收场景与调试观察点](16-validation.md)
 - [术语、决策记录与维护规范](17-maintenance-glossary.md)
 - [常见问题](18-faq.md)
+- [2026-09-13 更新记录与验证边界](19-update-2026-09-13.md)
+- [项目 AI 开发流程](../AI_DEVELOPMENT.md)
+- [项目开发约定](../../AGENTS.md)
 
 ### 精确查代码与资源
 
@@ -51,6 +54,7 @@ Hodgepodge 是 UE 5.5 的个人动作 RPG 框架工程，正在将角色、GAS�
 - [GameplayTag 注册索引](Reference/gameplay-tags.md)
 - [Content/Main 资产清单](Reference/assets.md)
 - [配置逐节索引](Reference/config.md)
+- [插件描述与启用声明](Reference/plugins.md)
 - [扫描快照与源码漂移报告](Reference/snapshot.md)
 - [原始项目 README](../../README.md)
 - [Lyra 学习参考](../../LYRA_LEARNING_GUIDE.md)
@@ -59,7 +63,7 @@ Hodgepodge 是 UE 5.5 的个人动作 RPG 框架工程，正在将角色、GAS�
 
 ## 最新状态提示
 
-旧 README 中“PawnData 只剩 PawnClass”已不符合当前工作区：五个配置字段现已启用。HeroComponent 的 `.h/.cpp` 已存在，但全部是行注释，尚无有效类和运行入口。GameMode 的 PawnData 注入、技能输入每帧消费、默认相机模式选择等依然未接通。
+本轮已核对 HeroComponent 启用与挂载、GameMode 注入 PawnData、新 HodgePlayerController 消费技能输入和选择相机管理器、Globals/CueManager/LocalPlayer/Policy 配置，以及 HealthSet 的 Damage/Healing 结算。以上标为“源码已接入”，不代表本轮 PIE 或联机通过。仍需处理 AbilitySet 基础授予、IMC 条件、额外输入解绑、Cue 观察者注册、死亡衔接和专服启动。详见 [本次更新记录](19-update-2026-09-13.md)。
 
 不要把 Lyra 参考文档里的 ShooterCore、FrontEnd 地图、CommonUI 等当成本项目现有资源。
 

@@ -1,8 +1,9 @@
 # 新增角色、技能、玩法的操作手册
 
+> 最近源码核对：2026-09-13。源码接入状态与运行验收分开记录。
 [返回首页](README.md)
 
-> 以下是开发步骤和验收要求，不代表本轮已经执行。当前先完成 [接通清单](12-integration-backlog.md) 的基础依赖。
+> 以下是开发步骤和验收要求，不代表本轮已经执行。当前应按 [接通清单](12-integration-backlog.md) 验证已有基础并处理剩余缺口，不重复创建已启用的类。
 
 ## 新增可操作角色
 
@@ -25,7 +26,7 @@ Native 需要调用 BindNativeAction 绑定回调；Ability 需要 AbilitySet �
 
 ## 新增最小测试技能
 
-先补自定义 EffectContext 配套。创建 HodgeGameplayAbility 派生技能，明确激活策略、激活组、实例化和网络执行策略。第一版只做可观察的开始与正常结束，验证输入链后再增加 Montage 和 GE。
+自定义 EffectContext 与 Globals 配套现已存在，先确认运行时类型。创建 HodgeGameplayAbility 派生技能，明确激活策略、激活组、实例化和网络执行策略。第一版只做可观察的开始与正常结束，验证输入链后再增加 Montage 和 GE。
 
 在 AbilitySet 配置技能类、等级和 InputTag，由权威端授予。确认客户端 Spec 可见后按键测试；激活时记录 Owner/Avatar，结束后确认独占组恢复。随后增加 Cost/Cooldown 并验证失败结果。
 

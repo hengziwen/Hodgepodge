@@ -21,7 +21,7 @@ python Docs/KnowledgeBase/tools/kb.py check
 
 检查知识库 Markdown 中本地文件链接的存在性，以及快照范围内文件是否新增、删除或改变 SHA-256。任一链接错误或漂移返回退出码 1，全部通过返回 0。它不验证 Markdown 页内锚点、源码行号仍指向原符号或 UE 资源引用完整性。
 
-漂移范围是 Source、Config、Content/Main、uproject 和四份原始根目录文档。第三方插件、Saved、Intermediate、Binaries、Content 其他目录内容不做哈希跟踪。全 Content 只在资产参考页按顶层目录统计文件数。
+漂移范围是 Source、Config、Content/Main、uproject、四份原始根目录文档、AGENTS.md、Docs/AI_DEVELOPMENT.md 及本地 uplugin 描述。插件实现、Saved、Intermediate、Binaries、Content 其他目录内容不做哈希跟踪。全 Content 只在资产参考页按顶层目录统计文件数。
 
 ## 刷新
 
@@ -45,10 +45,10 @@ python Docs/KnowledgeBase/tools/kb.py refresh
 
 ## 索引解析边界
 
-脚本去掉 C++ 行注释和块注释，保留字符串和行号，提取常见顶层限定函数定义、头文件有效声明、项目内 include 和原生 Tag 宏。它不会展开宏、求值 WITH_EDITOR/UE_WITH_IRIS、处理完整 C++ AST 或读取 uasset。
+脚本读取 UTF-8/带 BOM 的 UTF-16 文本，再去掉 C++ 行注释和块注释，保留字符串和行号，提取常见顶层限定函数定义、头文件有效声明、项目内 include 和原生 Tag 宏。它不会展开宏、求值 WITH_EDITOR/UE_WITH_IRIS、处理完整 C++ AST 或读取 uasset。
 
 “定义候选”不是调用图。项目 include 链也不是运行时调用链。复杂模板、特殊宏、非标准排版可能漏检；跨源码和蓝图的行为必须人工核对。
 
 ## 本次实际验证
 
-已执行 refresh、check 和包含中文/英文类名的 search，检查了注释 Hero 文件不会产生有效定义，校正了 Super 调用误入定义索引的问题，并确认配置摘录隐藏凭据类字段。UE 编译、PIE、网络与资产内部值不在此工具验证范围内。
+已执行 refresh、check 和包含中文/英文类名的 search，历史版本检查过注释 Hero 文件不会产生有效定义；2026-09-13 已更新为有效 Hero 类的索引，校正了 Super 调用误入定义索引的问题，并确认配置摘录隐藏凭据类字段。UE 编译、PIE、网络与资产内部值不在此工具验证范围内。

@@ -30,30 +30,31 @@
 
 项目技能基类：激活策略、互斥组、额外 Cost、失败与 EffectContext 扩展。
 
-- `UHodgeGameplayAbility::UHodgeGameplayAbility` — L34
-- `UHodgeGameplayAbility::GetHodgeAbilitySystemComponentFromActorInfo` — L63
-- `UHodgeGameplayAbility::GetHodgePlayerControllerFromActorInfo` — L72
-- `UHodgeGameplayAbility::GetControllerFromActorInfo` — L79
-- `UHodgeGameplayAbility::GetHodgeCharacterFromActorInfo` — L117
-- `UHodgeGameplayAbility::NativeOnAbilityFailedToActivate` — L129
-- `UHodgeGameplayAbility::CanActivateAbility` — L182
-- `UHodgeGameplayAbility::SetCanBeCanceled` — L223
-- `UHodgeGameplayAbility::OnGiveAbility` — L242
-- `UHodgeGameplayAbility::OnRemoveAbility` — L255
-- `UHodgeGameplayAbility::ActivateAbility` — L266
-- `UHodgeGameplayAbility::EndAbility` — L276
-- `UHodgeGameplayAbility::CheckCost` — L289
-- `UHodgeGameplayAbility::ApplyCost` — L319
-- `UHodgeGameplayAbility::MakeEffectContext` — L402
-- `UHodgeGameplayAbility::ApplyAbilityTagsToGameplayEffectSpec` — L449
-- `UHodgeGameplayAbility::DoesAbilitySatisfyTagRequirements` — L468
-- `UHodgeGameplayAbility::OnPawnAvatarSet` — L624
-- `UHodgeGameplayAbility::GetAbilitySource` — L631
-- `UHodgeGameplayAbility::TryActivateAbilityOnSpawn` — L657
-- `UHodgeGameplayAbility::CanChangeActivationGroup` — L699
-- `UHodgeGameplayAbility::ChangeActivationGroup` — L737
-- `UHodgeGameplayAbility::SetCameraMode` — L770
-- `UHodgeGameplayAbility::ClearCameraMode` — L784
+- `UHodgeGameplayAbility::UHodgeGameplayAbility` — L36
+- `UHodgeGameplayAbility::GetHodgeAbilitySystemComponentFromActorInfo` — L65
+- `UHodgeGameplayAbility::GetHodgePlayerControllerFromActorInfo` — L74
+- `UHodgeGameplayAbility::GetControllerFromActorInfo` — L81
+- `UHodgeGameplayAbility::GetHodgeCharacterFromActorInfo` — L119
+- `UHodgeGameplayAbility::GetHeroComponentFromActorInfo` — L125
+- `UHodgeGameplayAbility::NativeOnAbilityFailedToActivate` — L132
+- `UHodgeGameplayAbility::CanActivateAbility` — L185
+- `UHodgeGameplayAbility::SetCanBeCanceled` — L226
+- `UHodgeGameplayAbility::OnGiveAbility` — L245
+- `UHodgeGameplayAbility::OnRemoveAbility` — L258
+- `UHodgeGameplayAbility::ActivateAbility` — L269
+- `UHodgeGameplayAbility::EndAbility` — L279
+- `UHodgeGameplayAbility::CheckCost` — L292
+- `UHodgeGameplayAbility::ApplyCost` — L322
+- `UHodgeGameplayAbility::MakeEffectContext` — L405
+- `UHodgeGameplayAbility::ApplyAbilityTagsToGameplayEffectSpec` — L452
+- `UHodgeGameplayAbility::DoesAbilitySatisfyTagRequirements` — L471
+- `UHodgeGameplayAbility::OnPawnAvatarSet` — L627
+- `UHodgeGameplayAbility::GetAbilitySource` — L634
+- `UHodgeGameplayAbility::TryActivateAbilityOnSpawn` — L660
+- `UHodgeGameplayAbility::CanChangeActivationGroup` — L702
+- `UHodgeGameplayAbility::ChangeActivationGroup` — L740
+- `UHodgeGameplayAbility::SetCameraMode` — L773
+- `UHodgeGameplayAbility::ClearCameraMode` — L787
 
 ## HodgeAttributeSet.cpp
 
@@ -61,28 +62,28 @@
 
 项目 AttributeSet 基础和 ASC 访问。
 
-- `UHodgeAttributeSet::UHodgeAttributeSet` — L18
-- `UHodgeAttributeSet::GetWorld` — L22
-- `UHodgeAttributeSet::GetHodgeAbilitySystemComponent` — L29
+- `UHodgeAttributeSet::UHodgeAttributeSet` — L23
+- `UHodgeAttributeSet::GetWorld` — L28
+- `UHodgeAttributeSet::GetHodgeAbilitySystemComponent` — L41
 
 ## HodgeHealthSet.cpp
 
 [Source/Hodgepodge/Private/AbilitySystem/AttributeSet/HodgeHealthSet.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/AttributeSet/HodgeHealthSet.cpp)
 
-Health、MaxHealth、BaseDamage、BaseHeal；复制与夹取有效，GE 结算主体注释。
+Health/MaxHealth、BaseDamage/BaseHeal 和 Damage/Healing 元属性；有效结算、夹取、免疫和耗尽广播。
 
-- `UHodgeHealthSet::UHodgeHealthSet` — L12
-- `UHodgeHealthSet::GetLifetimeReplicatedProps` — L22
-- `UHodgeHealthSet::OnRep_Health` — L32
-- `UHodgeHealthSet::OnRep_MaxHealth` — L54
-- `UHodgeHealthSet::OnRep_BaseDamage` — L64
-- `UHodgeHealthSet::OnRep_BaseHeal` — L69
-- `UHodgeHealthSet::PreGameplayEffectExecute` — L74
-- `UHodgeHealthSet::PostGameplayEffectExecute` — L115
-- `UHodgeHealthSet::PreAttributeBaseChange` — L192
-- `UHodgeHealthSet::PreAttributeChange` — L199
-- `UHodgeHealthSet::PostAttributeChange` — L206
-- `UHodgeHealthSet::ClampAttribute` — L228
+- `UHodgeHealthSet::UHodgeHealthSet` — L37
+- `UHodgeHealthSet::GetLifetimeReplicatedProps` — L53
+- `UHodgeHealthSet::OnRep_Health` — L72
+- `UHodgeHealthSet::OnRep_MaxHealth` — L108
+- `UHodgeHealthSet::OnRep_BaseDamage` — L125
+- `UHodgeHealthSet::OnRep_BaseHeal` — L132
+- `UHodgeHealthSet::PreGameplayEffectExecute` — L139
+- `UHodgeHealthSet::PostGameplayEffectExecute` — L197
+- `UHodgeHealthSet::PreAttributeBaseChange` — L334
+- `UHodgeHealthSet::PreAttributeChange` — L344
+- `UHodgeHealthSet::PostAttributeChange` — L354
+- `UHodgeHealthSet::ClampAttribute` — L386
 
 ## GameplayTagStack.cpp
 
@@ -103,6 +104,44 @@ Health、MaxHealth、BaseDamage、BaseHeal；复制与夹取有效，GE 结算�
 
 Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动态 Tag GE。
 
+- `UHodgeAbilitySystemComponent::UHodgeAbilitySystemComponent` — L27
+- `UHodgeAbilitySystemComponent::EndPlay` — L43
+- `UHodgeAbilitySystemComponent::InitAbilityActorInfo` — L55
+- `UHodgeAbilitySystemComponent::TryActivateAbilitiesOnSpawn` — L126
+- `UHodgeAbilitySystemComponent::CancelAbilitiesByFunc` — L143
+- `UHodgeAbilitySystemComponent::CancelInputActivatedAbilities` — L211
+- `UHodgeAbilitySystemComponent::AbilitySpecInputPressed` — L228
+- `UHodgeAbilitySystemComponent::AbilitySpecInputReleased` — L255
+- `UHodgeAbilitySystemComponent::AbilityInputTagPressed` — L282
+- `UHodgeAbilitySystemComponent::AbilityInputTagReleased` — L303
+- `UHodgeAbilitySystemComponent::ProcessAbilityInput` — L324
+- `UHodgeAbilitySystemComponent::ClearAbilityInput` — L454
+- `UHodgeAbilitySystemComponent::NotifyAbilityActivated` — L466
+- `UHodgeAbilitySystemComponent::NotifyAbilityFailed` — L480
+- `UHodgeAbilitySystemComponent::NotifyAbilityEnded` — L502
+- `UHodgeAbilitySystemComponent::ApplyAbilityBlockAndCancelTags` — L516
+- `UHodgeAbilitySystemComponent::HandleChangeAbilityCanBeCanceled` — L545
+- `UHodgeAbilitySystemComponent::GetAdditionalActivationTagRequirements` — L556
+- `UHodgeAbilitySystemComponent::SetTagRelationshipMapping` — L569
+- `UHodgeAbilitySystemComponent::ClientNotifyAbilityFailed_Implementation` — L575
+- `UHodgeAbilitySystemComponent::HandleAbilityFailed` — L582
+- `UHodgeAbilitySystemComponent::IsActivationGroupBlocked` — L595
+- `UHodgeAbilitySystemComponent::AddAbilityToActivationGroup` — L626
+- `UHodgeAbilitySystemComponent::RemoveAbilityFromActivationGroup` — L674
+- `UHodgeAbilitySystemComponent::CancelActivationGroupAbilities` — L687
+- `UHodgeAbilitySystemComponent::AddDynamicTagGameplayEffect` — L703
+- `UHodgeAbilitySystemComponent::RemoveDynamicTagGameplayEffect` — L739
+- `UHodgeAbilitySystemComponent::GetAbilityTargetData` — L764
+
+## HodgeAbilitySystemGlobals.cpp
+
+[Source/Hodgepodge/Private/AbilitySystem/HodgeAbilitySystemGlobals.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeAbilitySystemGlobals.cpp)
+
+分配 FHodgeGameplayEffectContext 的 GAS 全局类；已加入项目配置。
+
+- `UHodgeAbilitySystemGlobals::UHodgeAbilitySystemGlobals` — L15
+- `UHodgeAbilitySystemGlobals::AllocGameplayEffectContext` — L22
+
 ## HodgeAbilityTagRelationshipMapping.cpp
 
 [Source/Hodgepodge/Private/AbilitySystem/HodgeAbilityTagRelationshipMapping.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeAbilityTagRelationshipMapping.cpp)
@@ -117,7 +156,7 @@ Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动�
 
 [Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayCueManager.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayCueManager.cpp)
 
-项目 Cue 资源加载/预加载管理实现；默认管理器配置尚未接通。
+项目 Cue 管理类已配置；启动预加载及 Feature Cue 观察者生命周期仍未完整接通。
 
 - `UHodgeGameplayCueManager::UHodgeGameplayCueManager` — L68
 - `UHodgeGameplayCueManager::Get` — L74
@@ -142,7 +181,7 @@ Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动�
 
 [Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayEffectContext.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayEffectContext.cpp)
 
-项目 GE 上下文与序列化扩展；需要 Globals 分配入口配套。
+项目 GE 上下文与序列化扩展，已有 HodgeAbilitySystemGlobals 分配配套。
 
 - `FHodgeGameplayEffectContext::ExtractEffectContext` — L18
 - `FHodgeGameplayEffectContext::NetSerialize` — L37
@@ -181,6 +220,10 @@ Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动�
 [Source/Hodgepodge/Private/Actor/HodgeActorBase.cpp](../../../Source/Hodgepodge/Private/Actor/HodgeActorBase.cpp)
 
 项目 Actor 基类扩展。
+
+- `AHodgeActorBase::AHodgeActorBase` — L21
+- `AHodgeActorBase::BeginPlay` — L34
+- `AHodgeActorBase::Tick` — L45
 
 ## HodgeAnimInstance.cpp
 
@@ -244,19 +287,19 @@ ASC GameplayTag 属性映射和 GroundDistance 更新。
 第三人称偏移与防穿透逻辑。
 
 - `UHodgeCameraMode_ThirdPerson::UHodgeCameraMode_ThirdPerson` — L20
-- `UHodgeCameraMode_ThirdPerson::UpdateView` — L54
-- `UHodgeCameraMode_ThirdPerson::UpdateForTarget` — L109
-- `UHodgeCameraMode_ThirdPerson::DrawDebug` — L135
-- `UHodgeCameraMode_ThirdPerson::UpdatePreventPenetration` — L158
-- `UHodgeCameraMode_ThirdPerson::PreventCameraPenetration` — L249
-- `UHodgeCameraMode_ThirdPerson::SetTargetCrouchOffset` — L511
-- `UHodgeCameraMode_ThirdPerson::UpdateCrouchOffset` — L523
+- `UHodgeCameraMode_ThirdPerson::UpdateView` — L66
+- `UHodgeCameraMode_ThirdPerson::UpdateForTarget` — L121
+- `UHodgeCameraMode_ThirdPerson::DrawDebug` — L147
+- `UHodgeCameraMode_ThirdPerson::UpdatePreventPenetration` — L170
+- `UHodgeCameraMode_ThirdPerson::PreventCameraPenetration` — L261
+- `UHodgeCameraMode_ThirdPerson::SetTargetCrouchOffset` — L523
+- `UHodgeCameraMode_ThirdPerson::UpdateCrouchOffset` — L535
 
 ## HodgePlayerCameraManager.cpp
 
 [Source/Hodgepodge/Private/Camera/HodgePlayerCameraManager.cpp](../../../Source/Hodgepodge/Private/Camera/HodgePlayerCameraManager.cpp)
 
-项目相机管理器；实际控制器类选择需验证。
+由 HodgePlayerController 构造选用的项目相机管理器；运行效果待验收。
 
 - `AHodgePlayerCameraManager::AHodgePlayerCameraManager` — L17
 - `AHodgePlayerCameraManager::GetUICameraComponent` — L33
@@ -346,21 +389,33 @@ PawnExtension、相机、ASC 查询、移动标签、复制与死亡占位逻辑
 
 敌人移动与自动 AI 控制配置，尚未完成敌人 ASC 初始化。
 
+- `AHodgeEnemyCharacter::AHodgeEnemyCharacter` — L10
+- `AHodgeEnemyCharacter::BeginPlay` — L41
+- `AHodgeEnemyCharacter::PossessedBy` — L46
+- `AHodgeEnemyCharacter::PostEditChangeProperty` — L53
+
 ## HodgeHeroCharacter.cpp
 
 [Source/Hodgepodge/Private/Character/HodgeHeroCharacter.cpp](../../../Source/Hodgepodge/Private/Character/HodgeHeroCharacter.cpp)
 
-玩家角色，当前保留 PossessedBy / OnRep_PlayerState 直接初始化 ASC 的旧入口。
+构造挂载 HeroComponent；仍保留 PossessedBy/OnRep_PlayerState 直接初始化 ASC 的旧路径。
 
-- `AHodgeHeroCharacter::AHodgeHeroCharacter` — L22
-- `AHodgeHeroCharacter::PossessedBy` — L37
-- `AHodgeHeroCharacter::OnRep_PlayerState` — L58
+- `AHodgeHeroCharacter::AHodgeHeroCharacter` — L23
+- `AHodgeHeroCharacter::PossessedBy` — L39
+- `AHodgeHeroCharacter::OnRep_PlayerState` — L60
 
 ## HodgeActorComponentBase.cpp
 
 [Source/Hodgepodge/Private/Component/HodgeActorComponentBase.cpp](../../../Source/Hodgepodge/Private/Component/HodgeActorComponentBase.cpp)
 
 通用 ActorComponent 基础访问与扩展。
+
+- `UHodgeActorComponentBase::UHodgeActorComponentBase` — L21
+- `UHodgeActorComponentBase::BeginPlay` — L37
+- `UHodgeActorComponentBase::TickComponent` — L55
+- `UHodgeActorComponentBase::GetOwnerCharacter` — L67
+- `UHodgeActorComponentBase::InitializeComponent` — L78
+- `UHodgeActorComponentBase::OnReady` — L89
 
 ## HodgeCharacterMovementComponent.cpp
 
@@ -383,19 +438,62 @@ CharacterMovement 扩展、地面距离、加速度和能力系统相关移动�
 
 战斗组件占位，当前构造关闭 Tick，尚无完整命中或连招实现。
 
+- `UHodgeCombatComponentBase::UHodgeCombatComponentBase` — L23
+
 ## HodgeExperienceManagerComponent.cpp
 
 [Source/Hodgepodge/Private/Component/HodgeExperienceManagerComponent.cpp](../../../Source/Hodgepodge/Private/Component/HodgeExperienceManagerComponent.cpp)
 
 GameState 上的 Experience 复制、资源加载、插件激活、Action 执行与 Loaded 委托。
 
+- `UHodgeExperienceManagerComponent::UHodgeExperienceManagerComponent` — L63
+- `UHodgeExperienceManagerComponent::SetCurrentExperience` — L70
+- `UHodgeExperienceManagerComponent::CallOrRegister_OnExperienceLoaded_HighPriority` — L101
+- `UHodgeExperienceManagerComponent::CallOrRegister_OnExperienceLoaded` — L117
+- `UHodgeExperienceManagerComponent::CallOrRegister_OnExperienceLoaded_LowPriority` — L132
+- `UHodgeExperienceManagerComponent::GetCurrentExperienceChecked` — L148
+- `UHodgeExperienceManagerComponent::IsExperienceLoaded` — L161
+- `UHodgeExperienceManagerComponent::OnRep_CurrentExperience` — L168
+- `UHodgeExperienceManagerComponent::StartExperienceLoad` — L175
+- `UHodgeExperienceManagerComponent::OnExperienceLoadComplete` — L314
+- `UHodgeExperienceManagerComponent::OnGameFeaturePluginLoadComplete` — L399
+- `UHodgeExperienceManagerComponent::OnExperienceFullLoadCompleted` — L412
+- `UHodgeExperienceManagerComponent::OnActionDeactivationCompleted` — L511
+- `UHodgeExperienceManagerComponent::GetLifetimeReplicatedProps` — L527
+- `UHodgeExperienceManagerComponent::EndPlay` — L536
+- `UHodgeExperienceManagerComponent::ShouldShowLoadingScreen` — L627
+- `UHodgeExperienceManagerComponent::OnAllActionsDeactivated` — L645
+
 ## HodgeHeroComponent.cpp
 
 [Source/Hodgepodge/Private/Component/HodgeHeroComponent.cpp](../../../Source/Hodgepodge/Private/Component/HodgeHeroComponent.cpp)
 
-玩家初始化、输入与相机的迁移草稿；当前文件全部注释，不是有效反射类。
+已启用的玩家 Init State 协调、ASC 接入、输入与相机；额外输入移除仍为空，IMC 添加受设置注册条件影响。
 
-状态：文件无有效非注释内容。
+- `UHodgeHeroComponent::NAME_BindInputsNow` — L81
+- `UHodgeHeroComponent::NAME_ActorFeatureName` — L84
+- `UHodgeHeroComponent::UHodgeHeroComponent` — L87
+- `UHodgeHeroComponent::OnRegister` — L98
+- `UHodgeHeroComponent::CanChangeInitState` — L142
+- `UHodgeHeroComponent::HandleChangeInitState` — L247
+- `UHodgeHeroComponent::OnActorInitStateChanged` — L312
+- `UHodgeHeroComponent::CheckDefaultInitialization` — L328
+- `UHodgeHeroComponent::BeginPlay` — L346
+- `UHodgeHeroComponent::EndPlay` — L368
+- `UHodgeHeroComponent::InitializePlayerInput` — L378
+- `UHodgeHeroComponent::AddAdditionalInputConfig` — L596
+- `UHodgeHeroComponent::RemoveAdditionalInputConfig` — L650
+- `UHodgeHeroComponent::IsReadyToBindInputs` — L657
+- `UHodgeHeroComponent::Input_AbilityInputTagPressed` — L664
+- `UHodgeHeroComponent::Input_AbilityInputTagReleased` — L687
+- `UHodgeHeroComponent::Input_Move` — L715
+- `UHodgeHeroComponent::Input_LookMouse` — L773
+- `UHodgeHeroComponent::Input_LookStick` — L812
+- `UHodgeHeroComponent::Input_Crouch` — L859
+- `UHodgeHeroComponent::Input_AutoRun` — L872
+- `UHodgeHeroComponent::DetermineCameraMode` — L892
+- `UHodgeHeroComponent::SetAbilityCameraMode` — L925
+- `UHodgeHeroComponent::ClearAbilityCameraMode` — L940
 
 ## HodgeInteractionComponentBase.cpp
 
@@ -413,7 +511,7 @@ GameState 上的 Experience 复制、资源加载、插件激活、Action 执行
 
 [Source/Hodgepodge/Private/Component/HodgePawnExtensionComponent.cpp](../../../Source/Hodgepodge/Private/Component/HodgePawnExtensionComponent.cpp)
 
-Pawn 数据复制和 Init State 协调、ASC 关联与解除、就绪委托。
+PawnData 复制、Init State、ASC 关联/解除、TagRelationshipMapping 与 ClearAbilityInput；需验证退出顺序。
 
 - `UHodgePawnExtensionComponent::NAME_ActorFeatureName` — L18
 - `UHodgePawnExtensionComponent::UHodgePawnExtensionComponent` — L20
@@ -441,33 +539,38 @@ Pawn 数据复制和 Init State 协调、ASC 关联与解除、就绪委托。
 
 注册 Init State 顺序、主控制器访问和全局生命周期扩展。
 
+- `UHodgeGameInstanceBase::UHodgeGameInstanceBase` — L17
+- `UHodgeGameInstanceBase::GetPrimaryPlayerController` — L22
+- `UHodgeGameInstanceBase::Shutdown` — L28
+- `UHodgeGameInstanceBase::Init` — L34
+
 ## HodgeGameModeBase.cpp
 
 [Source/Hodgepodge/Private/Core/GameMode/HodgeGameModeBase.cpp](../../../Source/Hodgepodge/Private/Core/GameMode/HodgeGameModeBase.cpp)
 
-服务器玩法选择、等待 Experience、取得 PawnData、默认 Pawn 生成与重生。数据注入仍注释。
+服务器选择玩法、等待加载、生成 Pawn，并在 FinishSpawning 前注入 PawnData；选用 HodgePlayerController。
 
-- `AHodgeGameModeBase::AHodgeGameModeBase` — L20
-- `AHodgeGameModeBase::GetPawnDataForController` — L45
-- `AHodgeGameModeBase::InitGame` — L86
-- `AHodgeGameModeBase::HandleMatchAssignmentIfNotExpectingOne` — L95
-- `AHodgeGameModeBase::TryDedicatedServerLogin` — L192
-- `AHodgeGameModeBase::OnMatchAssignmentGiven` — L336
-- `AHodgeGameModeBase::OnExperienceLoaded` — L360
-- `AHodgeGameModeBase::IsExperienceLoaded` — L381
-- `AHodgeGameModeBase::GetDefaultPawnClassForController_Implementation` — L395
-- `AHodgeGameModeBase::SpawnDefaultPawnAtTransform_Implementation` — L411
-- `AHodgeGameModeBase::ShouldSpawnAtStartSpot` — L468
-- `AHodgeGameModeBase::HandleStartingNewPlayer_Implementation` — L474
-- `AHodgeGameModeBase::ChoosePlayerStart_Implementation` — L484
-- `AHodgeGameModeBase::FinishRestartPlayer` — L497
-- `AHodgeGameModeBase::PlayerCanRestart_Implementation` — L510
-- `AHodgeGameModeBase::ControllerCanRestart` — L516
-- `AHodgeGameModeBase::InitGameState` — L545
-- `AHodgeGameModeBase::GenericPlayerInitialization` — L560
-- `AHodgeGameModeBase::RequestPlayerRestartNextFrame` — L569
-- `AHodgeGameModeBase::UpdatePlayerStartSpot` — L590
-- `AHodgeGameModeBase::FailedToRestartPlayer` — L596
+- `AHodgeGameModeBase::AHodgeGameModeBase` — L21
+- `AHodgeGameModeBase::GetPawnDataForController` — L46
+- `AHodgeGameModeBase::InitGame` — L87
+- `AHodgeGameModeBase::HandleMatchAssignmentIfNotExpectingOne` — L96
+- `AHodgeGameModeBase::TryDedicatedServerLogin` — L193
+- `AHodgeGameModeBase::OnMatchAssignmentGiven` — L337
+- `AHodgeGameModeBase::OnExperienceLoaded` — L361
+- `AHodgeGameModeBase::IsExperienceLoaded` — L382
+- `AHodgeGameModeBase::GetDefaultPawnClassForController_Implementation` — L396
+- `AHodgeGameModeBase::SpawnDefaultPawnAtTransform_Implementation` — L412
+- `AHodgeGameModeBase::ShouldSpawnAtStartSpot` — L469
+- `AHodgeGameModeBase::HandleStartingNewPlayer_Implementation` — L475
+- `AHodgeGameModeBase::ChoosePlayerStart_Implementation` — L485
+- `AHodgeGameModeBase::FinishRestartPlayer` — L498
+- `AHodgeGameModeBase::PlayerCanRestart_Implementation` — L511
+- `AHodgeGameModeBase::ControllerCanRestart` — L517
+- `AHodgeGameModeBase::InitGameState` — L546
+- `AHodgeGameModeBase::GenericPlayerInitialization` — L561
+- `AHodgeGameModeBase::RequestPlayerRestartNextFrame` — L570
+- `AHodgeGameModeBase::UpdatePlayerStartSpot` — L591
+- `AHodgeGameModeBase::FailedToRestartPlayer` — L597
 
 ## HodgeGameState.cpp
 
@@ -496,6 +599,11 @@ Pawn 数据复制和 Init State 协调、ASC 关联与解除、就绪委托。
 
 GameState 基础扩展生命周期。
 
+- `AHodgeGameStateBase::AHodgeGameStateBase` — L14
+- `AHodgeGameStateBase::PreInitializeComponents` — L19
+- `AHodgeGameStateBase::BeginPlay` — L27
+- `AHodgeGameStateBase::EndPlay` — L36
+
 ## HodgeHUDBase.cpp
 
 [Source/Hodgepodge/Private/Core/HUD/HodgeHUDBase.cpp](../../../Source/Hodgepodge/Private/Core/HUD/HodgeHUDBase.cpp)
@@ -508,18 +616,71 @@ GameState 基础扩展生命周期。
 
 本地玩家对象及控制器、PlayerState、Pawn 就绪事件桥。
 
+- `UHodgeLocalPlayerBase::UHodgeLocalPlayerBase` — L20
+- `UHodgeLocalPlayerBase::CallAndRegister_OnPlayerControllerSet` — L37
+- `UHodgeLocalPlayerBase::CallAndRegister_OnPlayerStateSet` — L63
+- `UHodgeLocalPlayerBase::CallAndRegister_OnPlayerPawnSet` — L88
+- `UHodgeLocalPlayerBase::GetProjectionData` — L120
+
+## HodgePlayerController.cpp
+
+[Source/Hodgepodge/Private/Core/PlayerController/HodgePlayerController.cpp](../../../Source/Hodgepodge/Private/Core/PlayerController/HodgePlayerController.cpp)
+
+具体控制器：每帧消费 ASC 输入、相机管理、AutoRun、UnPossess Avatar 清理及 Replay 扩展。
+
+- `AHodgePlayerController::AHodgePlayerController` — L96
+- `AHodgePlayerController::PreInitializeComponents` — L109
+- `AHodgePlayerController::BeginPlay` — L116
+- `AHodgePlayerController::EndPlay` — L141
+- `AHodgePlayerController::GetLifetimeReplicatedProps` — L148
+- `AHodgePlayerController::ReceivedPlayer` — L171
+- `AHodgePlayerController::PlayerTick` — L178
+- `AHodgePlayerController::GetHodgePlayerState` — L243
+- `AHodgePlayerController::GetHodgeAbilitySystemComponent` — L250
+- `AHodgePlayerController::GetHodgeHUD` — L260
+- `AHodgePlayerController::TryToRecordClientReplay` — L267
+- `AHodgePlayerController::ShouldRecordClientReplay` — L296
+- `AHodgePlayerController::OnPlayerStateChangedTeam` — L363
+- `AHodgePlayerController::OnPlayerStateChanged` — L370
+- `AHodgePlayerController::BroadcastOnPlayerStateChanged` — L377
+- `AHodgePlayerController::InitPlayerState` — L422
+- `AHodgePlayerController::CleanupPlayerState` — L432
+- `AHodgePlayerController::OnRep_PlayerState` — L442
+- `AHodgePlayerController::SetPlayer` — L452
+- `AHodgePlayerController::AddCheats` — L475
+- `AHodgePlayerController::ServerCheat_Implementation` — L486
+- `AHodgePlayerController::ServerCheat_Validate` — L499
+- `AHodgePlayerController::ServerCheatAll_Implementation` — L506
+- `AHodgePlayerController::ServerCheatAll_Validate` — L526
+- `AHodgePlayerController::PreProcessInput` — L533
+- `AHodgePlayerController::PostProcessInput` — L540
+- `AHodgePlayerController::OnCameraPenetratingTarget` — L554
+- `AHodgePlayerController::OnPossess` — L561
+- `AHodgePlayerController::SetIsAutoRunning` — L586
+- `AHodgePlayerController::GetIsAutoRunning` — L609
+- `AHodgePlayerController::OnStartAutoRun` — L626
+- `AHodgePlayerController::OnEndAutoRun` — L640
+- `AHodgePlayerController::UpdateForceFeedback` — L654
+- `AHodgePlayerController::UpdateHiddenComponents` — L677
+- `AHodgePlayerController::OnUnPossess` — L787
+- `AHodgeReplayPlayerController::Tick` — L816
+- `AHodgeReplayPlayerController::SmoothTargetViewRotation` — L854
+- `AHodgeReplayPlayerController::ShouldRecordClientReplay` — L864
+- `AHodgeReplayPlayerController::RecorderPlayerStateUpdated` — L871
+- `AHodgeReplayPlayerController::OnPlayerStatePawnSet` — L891
+
 ## HodgePlayerControllerBase.cpp
 
 [Source/Hodgepodge/Private/Core/PlayerController/HodgePlayerControllerBase.cpp](../../../Source/Hodgepodge/Private/Core/PlayerController/HodgePlayerControllerBase.cpp)
 
-把控制器和 Pawn 生命周期桥接到 LocalPlayer 委托。技能输入每帧消费尚未接入。
+控制器和 Pawn 生命周期桥接到 LocalPlayer 委托；具体输入消费在派生 HodgePlayerController。
 
 - `AHodgePlayerControllerBase::AHodgePlayerControllerBase` — L22
-- `AHodgePlayerControllerBase::ReceivedPlayer` — L49
-- `AHodgePlayerControllerBase::SetPawn` — L80
-- `AHodgePlayerControllerBase::OnPossess` — L115
-- `AHodgePlayerControllerBase::OnUnPossess` — L146
-- `AHodgePlayerControllerBase::OnRep_PlayerState` — L184
+- `AHodgePlayerControllerBase::ReceivedPlayer` — L50
+- `AHodgePlayerControllerBase::SetPawn` — L81
+- `AHodgePlayerControllerBase::OnPossess` — L116
+- `AHodgePlayerControllerBase::OnUnPossess` — L147
+- `AHodgePlayerControllerBase::OnRep_PlayerState` — L185
 
 ## HodgePlayerState.cpp
 
@@ -584,6 +745,22 @@ PlayerState ModularGameplay Receiver 注册、注销及组件 Reset/CopyProperti
 
 资产入口、GameData 缓存、启动任务、同步加载和加载进度。Cue 初始化钩子仍需接通。
 
+- `FHodgeBundles::Equipped` — L10
+- `UHodgeAssetManager::UHodgeAssetManager` — L44
+- `UHodgeAssetManager::Get` — L50
+- `UHodgeAssetManager::DumpLoadedAssets` — L69
+- `UHodgeAssetManager::GetGameData` — L84
+- `UHodgeAssetManager::GetDefaultPawnData` — L90
+- `UHodgeAssetManager::SynchronousLoadAsset` — L96
+- `UHodgeAssetManager::ShouldLogAssetLoads` — L130
+- `UHodgeAssetManager::AddLoadedAsset` — L141
+- `UHodgeAssetManager::StartInitialLoading` — L154
+- `UHodgeAssetManager::LoadGameDataOfClass` — L175
+- `UHodgeAssetManager::DoAllStartupJobs` — L277
+- `UHodgeAssetManager::InitializeGameplayCueManager` — L366
+- `UHodgeAssetManager::UpdateInitialGameContentLoadPercent` — L377
+- `UHodgeAssetManager::PreBeginPIE` — L385
+
 ## HodgeAssetManagerStartupJob.cpp
 
 [Source/Hodgepodge/Private/Data/HodgeAssetManagerStartupJob.cpp](../../../Source/Hodgepodge/Private/Data/HodgeAssetManagerStartupJob.cpp)
@@ -598,11 +775,19 @@ PlayerState ModularGameplay Receiver 注册、注销及组件 Reset/CopyProperti
 
 复用 GameFeature 插件和动作配置的数据资产。
 
+- `UHodgeExperienceActionSet::UHodgeExperienceActionSet` — L16
+- `UHodgeExperienceActionSet::IsDataValid` — L23
+- `UHodgeExperienceActionSet::UpdateAssetBundleData` — L62
+
 ## HodgeExperienceDefinition.cpp
 
 [Source/Hodgepodge/Private/Data/HodgeExperienceDefinition.cpp](../../../Source/Hodgepodge/Private/Data/HodgeExperienceDefinition.cpp)
 
 声明玩法所需插件、默认 PawnData、直接 Actions 和组合 ActionSets。
+
+- `UHodgeExperienceDefinition::UHodgeExperienceDefinition` — L16
+- `UHodgeExperienceDefinition::IsDataValid` — L23
+- `UHodgeExperienceDefinition::UpdateAssetBundleData` — L97
 
 ## HodgeExperienceManager.cpp
 
@@ -610,11 +795,18 @@ PlayerState ModularGameplay Receiver 注册、注销及组件 Reset/CopyProperti
 
 管理编辑器等场景的 GameFeature 使用/停用协调，不是挂载在 GameState 的组件。
 
+- `UHodgeExperienceManager::OnPlayInEditorBegun` — L12
+- `UHodgeExperienceManager::NotifyOfPluginActivation` — L22
+- `UHodgeExperienceManager::RequestToDeactivatePlugin` — L42
+
 ## HodgeGameData.cpp
 
 [Source/Hodgepodge/Private/Data/HodgeGameData.cpp](../../../Source/Hodgepodge/Private/Data/HodgeGameData.cpp)
 
 全局伤害、治疗、动态 Tag GE 的软类引用配置；需编辑器核对实际赋值。
+
+- `UHodgeGameData::UHodgeGameData` — L8
+- `UHodgeGameData::Get` — L12
 
 ## HodgePawnData.cpp
 
@@ -644,7 +836,7 @@ PawnClass、AbilitySets、TagRelationshipMapping、InputConfig、DefaultCameraMo
 
 [Source/Hodgepodge/Private/GameFeatures/GameFeatureAction_AddGameplayCuePath.cpp](../../../Source/Hodgepodge/Private/GameFeatures/GameFeatureAction_AddGameplayCuePath.cpp)
 
-声明和校验 Cue 路径配置；Policy 内实际增删路径仍注释。
+声明和校验 Cue 路径；Policy 添加路径主体已有，但观察者注册和注销清理仍缺。
 
 - `UGameFeatureAction_AddGameplayCuePath::UGameFeatureAction_AddGameplayCuePath` — L18
 - `UGameFeatureAction_AddGameplayCuePath::IsDataValid` — L27
@@ -653,39 +845,39 @@ PawnClass、AbilitySets、TagRelationshipMapping、InputConfig、DefaultCameraMo
 
 [Source/Hodgepodge/Private/GameFeatures/GameFeatureAction_AddInputBinding.cpp](../../../Source/Hodgepodge/Private/GameFeatures/GameFeatureAction_AddInputBinding.cpp)
 
-额外 InputConfig 扩展；依赖 Hero 的主体和添加分支仍注释。
+有效扩展事件添加/移除额外 InputConfig；Hero 的最终移除实现仍为空。
 
-- `UGameFeatureAction_AddInputBinding::OnGameFeatureActivating` — L50
-- `UGameFeatureAction_AddInputBinding::OnGameFeatureDeactivating` — L68
-- `UGameFeatureAction_AddInputBinding::IsDataValid` — L86
-- `UGameFeatureAction_AddInputBinding::AddToWorld` — L118
-- `UGameFeatureAction_AddInputBinding::Reset` — L153
-- `UGameFeatureAction_AddInputBinding::HandlePawnExtension` — L179
-- `UGameFeatureAction_AddInputBinding::AddInputMappingForPlayer` — L204
-- `UGameFeatureAction_AddInputBinding::RemoveInputMapping` — L249
+- `UGameFeatureAction_AddInputBinding::OnGameFeatureActivating` — L52
+- `UGameFeatureAction_AddInputBinding::OnGameFeatureDeactivating` — L70
+- `UGameFeatureAction_AddInputBinding::IsDataValid` — L88
+- `UGameFeatureAction_AddInputBinding::AddToWorld` — L120
+- `UGameFeatureAction_AddInputBinding::Reset` — L155
+- `UGameFeatureAction_AddInputBinding::HandlePawnExtension` — L181
+- `UGameFeatureAction_AddInputBinding::AddInputMappingForPlayer` — L207
+- `UGameFeatureAction_AddInputBinding::RemoveInputMapping` — L252
 
 ## GameFeatureAction_AddInputContextMapping.cpp
 
 [Source/Hodgepodge/Private/GameFeatures/GameFeatureAction_AddInputContextMapping.cpp](../../../Source/Hodgepodge/Private/GameFeatures/GameFeatureAction_AddInputContextMapping.cpp)
 
-IMC 与本地玩家/设置集成，Controller 扩展添加分支仍注释。
+有效 Controller 扩展添加 IMC，包含设置注册与诊断日志；记录/撤销需验收。
 
-- `UGameFeatureAction_AddInputContextMapping::OnGameFeatureRegistering` — L39
-- `UGameFeatureAction_AddInputContextMapping::OnGameFeatureActivating` — L49
-- `UGameFeatureAction_AddInputContextMapping::OnGameFeatureDeactivating` — L67
-- `UGameFeatureAction_AddInputContextMapping::OnGameFeatureUnregistering` — L84
-- `UGameFeatureAction_AddInputContextMapping::RegisterInputMappingContexts` — L94
-- `UGameFeatureAction_AddInputContextMapping::RegisterInputContextMappingsForGameInstance` — L113
-- `UGameFeatureAction_AddInputContextMapping::RegisterInputMappingContextsForLocalPlayer` — L137
-- `UGameFeatureAction_AddInputContextMapping::UnregisterInputMappingContexts` — L175
-- `UGameFeatureAction_AddInputContextMapping::UnregisterInputContextMappingsForGameInstance` — L196
-- `UGameFeatureAction_AddInputContextMapping::UnregisterInputMappingContextsForLocalPlayer` — L219
-- `UGameFeatureAction_AddInputContextMapping::IsDataValid` — L257
-- `UGameFeatureAction_AddInputContextMapping::AddToWorld` — L289
-- `UGameFeatureAction_AddInputContextMapping::Reset` — L324
-- `UGameFeatureAction_AddInputContextMapping::HandleControllerExtension` — L349
-- `UGameFeatureAction_AddInputContextMapping::AddInputMappingForPlayer` — L375
-- `UGameFeatureAction_AddInputContextMapping::RemoveInputMapping` — L407
+- `UGameFeatureAction_AddInputContextMapping::OnGameFeatureRegistering` — L41
+- `UGameFeatureAction_AddInputContextMapping::OnGameFeatureActivating` — L51
+- `UGameFeatureAction_AddInputContextMapping::OnGameFeatureDeactivating` — L73
+- `UGameFeatureAction_AddInputContextMapping::OnGameFeatureUnregistering` — L90
+- `UGameFeatureAction_AddInputContextMapping::RegisterInputMappingContexts` — L100
+- `UGameFeatureAction_AddInputContextMapping::RegisterInputContextMappingsForGameInstance` — L119
+- `UGameFeatureAction_AddInputContextMapping::RegisterInputMappingContextsForLocalPlayer` — L143
+- `UGameFeatureAction_AddInputContextMapping::UnregisterInputMappingContexts` — L181
+- `UGameFeatureAction_AddInputContextMapping::UnregisterInputContextMappingsForGameInstance` — L202
+- `UGameFeatureAction_AddInputContextMapping::UnregisterInputMappingContextsForLocalPlayer` — L225
+- `UGameFeatureAction_AddInputContextMapping::IsDataValid` — L263
+- `UGameFeatureAction_AddInputContextMapping::AddToWorld` — L295
+- `UGameFeatureAction_AddInputContextMapping::Reset` — L330
+- `UGameFeatureAction_AddInputContextMapping::HandleControllerExtension` — L355
+- `UGameFeatureAction_AddInputContextMapping::AddInputMappingForPlayer` — L387
+- `UGameFeatureAction_AddInputContextMapping::RemoveInputMapping` — L435
 
 ## GameFeatureAction_AddWidget.cpp
 
@@ -718,19 +910,19 @@ GameFeature 激活期间的分屏策略调整。
 
 [Source/Hodgepodge/Private/GameFeatures/HodgeGameFeaturePolicy.cpp](../../../Source/Hodgepodge/Private/GameFeatures/HodgeGameFeaturePolicy.cpp)
 
-GameFeature 项目策略和资源加载观察扩展。
+已配置的 GameFeature 策略；Hotfix 观察者注册，Cue 路径观察者创建仍注释。
 
-- `UHodgeGameFeaturePolicy::UHodgeGameFeaturePolicy` — L14
-- `UHodgeGameFeaturePolicy::Get` — L23
-- `UHodgeGameFeaturePolicy::InitGameFeatureManager` — L33
-- `UHodgeGameFeaturePolicy::ShutdownGameFeatureManager` — L58
-- `UHodgeGameFeaturePolicy::GetPreloadAssetListForGameFeature` — L78
-- `UHodgeGameFeaturePolicy::GetPreloadBundleStateForGameFeature` — L91
-- `UHodgeGameFeaturePolicy::GetGameFeatureLoadingMode` — L101
-- `UHodgeGameFeaturePolicy::IsPluginAllowed` — L115
-- `UHodgeGameFeature_HotfixManager::OnGameFeatureLoading` — L127
-- `UHodgeGameFeature_AddGameplayCuePaths::OnGameFeatureRegistering` — L155
-- `UHodgeGameFeature_AddGameplayCuePaths::OnGameFeatureUnregistering` — L239
+- `UHodgeGameFeaturePolicy::UHodgeGameFeaturePolicy` — L15
+- `UHodgeGameFeaturePolicy::Get` — L24
+- `UHodgeGameFeaturePolicy::InitGameFeatureManager` — L34
+- `UHodgeGameFeaturePolicy::ShutdownGameFeatureManager` — L59
+- `UHodgeGameFeaturePolicy::GetPreloadAssetListForGameFeature` — L79
+- `UHodgeGameFeaturePolicy::GetPreloadBundleStateForGameFeature` — L92
+- `UHodgeGameFeaturePolicy::GetGameFeatureLoadingMode` — L102
+- `UHodgeGameFeaturePolicy::IsPluginAllowed` — L116
+- `UHodgeGameFeature_HotfixManager::OnGameFeatureLoading` — L128
+- `UHodgeGameFeature_AddGameplayCuePaths::OnGameFeatureRegistering` — L156
+- `UHodgeGameFeature_AddGameplayCuePaths::OnGameFeatureUnregistering` — L240
 
 ## HodgeAimSensitivityData.cpp
 
@@ -746,11 +938,20 @@ GameFeature 项目策略和资源加载观察扩展。
 
 基于 Tag 的 Native/Ability Action 绑定和句柄移除；映射辅助函数仍占位。
 
+- `UHodgeInputComponent::UHodgeInputComponent` — L23
+- `UHodgeInputComponent::AddInputMappings` — L39
+- `UHodgeInputComponent::RemoveInputMappings` — L59
+- `UHodgeInputComponent::RemoveBinds` — L81
+
 ## HodgeInputConfig.cpp
 
 [Source/Hodgepodge/Private/Input/HodgeInputConfig.cpp](../../../Source/Hodgepodge/Private/Input/HodgeInputConfig.cpp)
 
 NativeInputActions / AbilityInputActions 的 IA 与 Tag 数据配置及查询。
+
+- `UHodgeInputConfig::UHodgeInputConfig` — L22
+- `UHodgeInputConfig::FindNativeInputActionForTag` — L37
+- `UHodgeInputConfig::FindAbilityInputActionForTag` — L68
 
 ## HodgeInputModifiers.cpp
 
@@ -817,7 +1018,7 @@ Enhanced Input 用户设置派生入口；须核对实际设置类配置。
 
 [Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeHealthSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeHealthSet.h)
 
-Health、MaxHealth、BaseDamage、BaseHeal；复制与夹取有效，GE 结算主体注释。
+Health/MaxHealth、BaseDamage/BaseHeal 和 Damage/Healing 元属性；有效结算、夹取、免疫和耗尽广播。
 
 ## GameplayTagStack.h
 
@@ -831,6 +1032,12 @@ Health、MaxHealth、BaseDamage、BaseHeal；复制与夹取有效，GE 结算�
 
 Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动态 Tag GE。
 
+## HodgeAbilitySystemGlobals.h
+
+[Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemGlobals.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemGlobals.h)
+
+分配 FHodgeGameplayEffectContext 的 GAS 全局类；已加入项目配置。
+
 ## HodgeAbilityTagRelationshipMapping.h
 
 [Source/Hodgepodge/Public/AbilitySystem/HodgeAbilityTagRelationshipMapping.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilityTagRelationshipMapping.h)
@@ -841,13 +1048,13 @@ Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动�
 
 [Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayCueManager.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayCueManager.h)
 
-项目 Cue 资源加载/预加载管理实现；默认管理器配置尚未接通。
+项目 Cue 管理类已配置；启动预加载及 Feature Cue 观察者生命周期仍未完整接通。
 
 ## HodgeGameplayEffectContext.h
 
 [Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayEffectContext.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayEffectContext.h)
 
-项目 GE 上下文与序列化扩展；需要 Globals 分配入口配套。
+项目 GE 上下文与序列化扩展，已有 HodgeAbilitySystemGlobals 分配配套。
 
 ## HodgeGameplayTags.h
 
@@ -907,7 +1114,7 @@ ASC GameplayTag 属性映射和 GroundDistance 更新。
 
 [Source/Hodgepodge/Public/Camera/HodgePlayerCameraManager.h](../../../Source/Hodgepodge/Public/Camera/HodgePlayerCameraManager.h)
 
-项目相机管理器；实际控制器类选择需验证。
+由 HodgePlayerController 构造选用的项目相机管理器；运行效果待验收。
 
 ## HodgeUICameraManagerComponent.h
 
@@ -937,7 +1144,7 @@ PawnExtension、相机、ASC 查询、移动标签、复制与死亡占位逻辑
 
 [Source/Hodgepodge/Public/Character/HodgeHeroCharacter.h](../../../Source/Hodgepodge/Public/Character/HodgeHeroCharacter.h)
 
-玩家角色，当前保留 PossessedBy / OnRep_PlayerState 直接初始化 ASC 的旧入口。
+构造挂载 HeroComponent；仍保留 PossessedBy/OnRep_PlayerState 直接初始化 ASC 的旧路径。
 
 ## HodgeActorComponentBase.h
 
@@ -967,9 +1174,7 @@ GameState 上的 Experience 复制、资源加载、插件激活、Action 执行
 
 [Source/Hodgepodge/Public/Component/HodgeHeroComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeHeroComponent.h)
 
-玩家初始化、输入与相机的迁移草稿；当前文件全部注释，不是有效反射类。
-
-状态：文件无有效非注释内容。
+已启用的玩家 Init State 协调、ASC 接入、输入与相机；额外输入移除仍为空，IMC 添加受设置注册条件影响。
 
 ## HodgeInteractionComponentBase.h
 
@@ -987,7 +1192,7 @@ GameState 上的 Experience 复制、资源加载、插件激活、Action 执行
 
 [Source/Hodgepodge/Public/Component/HodgePawnExtensionComponent.h](../../../Source/Hodgepodge/Public/Component/HodgePawnExtensionComponent.h)
 
-Pawn 数据复制和 Init State 协调、ASC 关联与解除、就绪委托。
+PawnData 复制、Init State、ASC 关联/解除、TagRelationshipMapping 与 ClearAbilityInput；需验证退出顺序。
 
 ## HodgeGameInstanceBase.h
 
@@ -999,7 +1204,7 @@ Pawn 数据复制和 Init State 协调、ASC 关联与解除、就绪委托。
 
 [Source/Hodgepodge/Public/Core/GameMode/HodgeGameModeBase.h](../../../Source/Hodgepodge/Public/Core/GameMode/HodgeGameModeBase.h)
 
-服务器玩法选择、等待 Experience、取得 PawnData、默认 Pawn 生成与重生。数据注入仍注释。
+服务器选择玩法、等待加载、生成 Pawn，并在 FinishSpawning 前注入 PawnData；选用 HodgePlayerController。
 
 ## HodgeGameState.h
 
@@ -1025,11 +1230,17 @@ GameState 基础扩展生命周期。
 
 本地玩家对象及控制器、PlayerState、Pawn 就绪事件桥。
 
+## HodgePlayerController.h
+
+[Source/Hodgepodge/Public/Core/PlayerController/HodgePlayerController.h](../../../Source/Hodgepodge/Public/Core/PlayerController/HodgePlayerController.h)
+
+具体控制器：每帧消费 ASC 输入、相机管理、AutoRun、UnPossess Avatar 清理及 Replay 扩展。
+
 ## HodgePlayerControllerBase.h
 
 [Source/Hodgepodge/Public/Core/PlayerController/HodgePlayerControllerBase.h](../../../Source/Hodgepodge/Public/Core/PlayerController/HodgePlayerControllerBase.h)
 
-把控制器和 Pawn 生命周期桥接到 LocalPlayer 委托。技能输入每帧消费尚未接入。
+控制器和 Pawn 生命周期桥接到 LocalPlayer 委托；具体输入消费在派生 HodgePlayerController。
 
 ## HodgePlayerState.h
 
@@ -1054,6 +1265,9 @@ PlayerState ModularGameplay Receiver 注册、注销及组件 Reset/CopyProperti
 [Source/Hodgepodge/Public/Data/HodgeAssetManager.h](../../../Source/Hodgepodge/Public/Data/HodgeAssetManager.h)
 
 资产入口、GameData 缓存、启动任务、同步加载和加载进度。Cue 初始化钩子仍需接通。
+
+- `UHodgeAssetManager::GetAsset` — L139
+- `UHodgeAssetManager::GetSubclass` — L170
 
 ## HodgeAssetManagerStartupJob.h
 
@@ -1101,19 +1315,19 @@ PawnClass、AbilitySets、TagRelationshipMapping、InputConfig、DefaultCameraMo
 
 [Source/Hodgepodge/Public/GameFeatures/GameFeatureAction_AddGameplayCuePath.h](../../../Source/Hodgepodge/Public/GameFeatures/GameFeatureAction_AddGameplayCuePath.h)
 
-声明和校验 Cue 路径配置；Policy 内实际增删路径仍注释。
+声明和校验 Cue 路径；Policy 添加路径主体已有，但观察者注册和注销清理仍缺。
 
 ## GameFeatureAction_AddInputBinding.h
 
 [Source/Hodgepodge/Public/GameFeatures/GameFeatureAction_AddInputBinding.h](../../../Source/Hodgepodge/Public/GameFeatures/GameFeatureAction_AddInputBinding.h)
 
-额外 InputConfig 扩展；依赖 Hero 的主体和添加分支仍注释。
+有效扩展事件添加/移除额外 InputConfig；Hero 的最终移除实现仍为空。
 
 ## GameFeatureAction_AddInputContextMapping.h
 
 [Source/Hodgepodge/Public/GameFeatures/GameFeatureAction_AddInputContextMapping.h](../../../Source/Hodgepodge/Public/GameFeatures/GameFeatureAction_AddInputContextMapping.h)
 
-IMC 与本地玩家/设置集成，Controller 扩展添加分支仍注释。
+有效 Controller 扩展添加 IMC，包含设置注册与诊断日志；记录/撤销需验收。
 
 ## GameFeatureAction_AddWidget.h
 
@@ -1139,7 +1353,7 @@ GameFeature 激活期间的分屏策略调整。
 
 [Source/Hodgepodge/Public/GameFeatures/HodgeGameFeaturePolicy.h](../../../Source/Hodgepodge/Public/GameFeatures/HodgeGameFeaturePolicy.h)
 
-GameFeature 项目策略和资源加载观察扩展。
+已配置的 GameFeature 策略；Hotfix 观察者注册，Cue 路径观察者创建仍注释。
 
 ## HodgeAimSensitivityData.h
 

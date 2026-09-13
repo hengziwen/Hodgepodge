@@ -68,17 +68,17 @@
 定义候选（多行签名仅展示首行）：
 
 - L20: `UHodgeCameraMode_ThirdPerson::UHodgeCameraMode_ThirdPerson()`
-- L54: `void UHodgeCameraMode_ThirdPerson::UpdateView(float DeltaTime)`
-- L109: `void UHodgeCameraMode_ThirdPerson::UpdateForTarget(float DeltaTime)`
-- L135: `void UHodgeCameraMode_ThirdPerson::DrawDebug(UCanvas* Canvas) const`
-- L158: `void UHodgeCameraMode_ThirdPerson::UpdatePreventPenetration(float DeltaTime)`
-- L249: `void UHodgeCameraMode_ThirdPerson::PreventCameraPenetration(class AActor const& ViewTarget, FVector const& SafeLoc,`
-- L511: `void UHodgeCameraMode_ThirdPerson::SetTargetCrouchOffset(FVector NewTargetOffset)`
-- L523: `void UHodgeCameraMode_ThirdPerson::UpdateCrouchOffset(float DeltaTime)`
+- L66: `void UHodgeCameraMode_ThirdPerson::UpdateView(float DeltaTime)`
+- L121: `void UHodgeCameraMode_ThirdPerson::UpdateForTarget(float DeltaTime)`
+- L147: `void UHodgeCameraMode_ThirdPerson::DrawDebug(UCanvas* Canvas) const`
+- L170: `void UHodgeCameraMode_ThirdPerson::UpdatePreventPenetration(float DeltaTime)`
+- L261: `void UHodgeCameraMode_ThirdPerson::PreventCameraPenetration(class AActor const& ViewTarget, FVector const& SafeLoc,`
+- L523: `void UHodgeCameraMode_ThirdPerson::SetTargetCrouchOffset(FVector NewTargetOffset)`
+- L535: `void UHodgeCameraMode_ThirdPerson::UpdateCrouchOffset(float DeltaTime)`
 
 ## HodgePlayerCameraManager.cpp
 
-项目相机管理器；实际控制器类选择需验证。
+由 HodgePlayerController 构造选用的项目相机管理器；运行效果待验收。
 
 源码：[Source/Hodgepodge/Private/Camera/HodgePlayerCameraManager.cpp](../../../Source/Hodgepodge/Private/Camera/HodgePlayerCameraManager.cpp)
 
@@ -327,7 +327,7 @@ UI 相机管理扩展，不代表 UI 系统已接入。
    7: #include "HodgeCameraMode_ThirdPerson.generated.h"
   10: struct FHodgePenetrationAvoidanceFeeler;
   11: class UCurveVector;
-  16: UCLASS(Abstract, Blueprintable)
+  16: UCLASS(Blueprintable)
   17: class UHodgeCameraMode_ThirdPerson : public UHodgeCameraMode
   18: {
   19: 	GENERATED_BODY()
@@ -441,7 +441,7 @@ UI 相机管理扩展，不代表 UI 系统已接入。
 
 ## HodgePlayerCameraManager.h
 
-项目相机管理器；实际控制器类选择需验证。
+由 HodgePlayerController 构造选用的项目相机管理器；运行效果待验收。
 
 源码：[Source/Hodgepodge/Public/Camera/HodgePlayerCameraManager.h](../../../Source/Hodgepodge/Public/Camera/HodgePlayerCameraManager.h)
 

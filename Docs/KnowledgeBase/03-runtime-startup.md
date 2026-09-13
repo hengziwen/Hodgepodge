@@ -1,10 +1,11 @@
 # 从启动到生成玩家的调用链
 
+> 最近源码核对：2026-09-13。源码接入状态与运行验收分开记录。
 [返回首页](README.md)
 
 ## 启动前的选择
 
-DefaultEngine.ini 指向 ThirdPersonMap，并通过旧类名和 CoreRedirects 指定项目 GameMode、GameInstance。必须分别验证配置解析和地图 World Settings 覆盖。不要直接采用 Lyra 参考文档中的 FrontEnd 默认地图。
+DefaultEngine.ini 指向 ThirdPersonMap，GameMode 仍使用旧类名重定向，GameInstance 已直接指定 HodgeGameInstanceBase。必须分别验证配置解析和地图 World Settings 覆盖。不要直接采用 Lyra 参考文档中的 FrontEnd 默认地图。
 
 AssetManager 的启动任务调用 InitializeGameplayCueManager 和 GameData 加载。前者目前只有占位，不代表 Cue 预加载已经执行。GameData 加载失败存在 Fatal 路径，因此默认资源路径属于启动基础依赖。
 
@@ -50,7 +51,7 @@ GameMode 对 Experience 未完成的玩家暂缓 HandleStartingNewPlayer；完�
 
 GetPawnDataForController 按以下顺序取数据：PlayerState 上的数据 → 已加载 Experience 的 DefaultPawnData → AssetManager 默认 PawnData。Experience 尚未加载时返回空。
 
-GetDefaultPawnClassForController 优先 PawnData.PawnClass；空时回退构造函数的 AHodgeCharacterBase。SpawnDefaultPawnAtTransform 使用延迟构造，为 FinishSpawning 之前注入数据留了位置，但注入块目前仍注释。
+GetDefaultPawnClassForController 优先 PawnData.PawnClass；空时回退构造函数的 AHodgeCharacterBase。SpawnDefaultPawnAtTransform 使用延迟构造，为 FinishSpawning 之前注入数据留了位置，当前已经实际调用 PawnExtension::SetPawnData，然后 FinishSpawning。这一旧缺口已在源码接通；PawnClass 资产值仍需确认。
 
 ## 失败与退出边界
 

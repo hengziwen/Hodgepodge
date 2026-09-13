@@ -420,6 +420,55 @@ void UHodgeHeroComponent::InitializePlayerInput(UInputComponent* PlayerInputComp
 			// 获取 PawnData 配置的 InputConfig。
 			if (const UHodgeInputConfig* InputConfig = PawnData->InputConfig)
 			{
+				// [HODGE-DBG] 临时诊断：确认输入配置链是否齐全（定位后删除）。
+				UE_LOG(LogTemp, Warning,
+				       TEXT(
+					       "[HODGE-DBG] Hero input CONFIG PawnData=%s InputConfig=%s NativeActions=%d AbilityActions=%d DefaultInputMappings=%d AbilitySets=%d InputCompClass=%s"
+				       ),
+				       *GetNameSafe(PawnData), *GetNameSafe(InputConfig), InputConfig->NativeInputActions.Num(),
+				       InputConfig->AbilityInputActions.Num(), DefaultInputMappings.Num(), PawnData->AbilitySets.Num(),
+				       *GetNameSafe(PlayerInputComponent ? PlayerInputComponent->GetClass() : nullptr));
+
+				// [HODGE-DBG] 临时诊断：DefaultInputMappings 为空时不会有任何 IMC 被添加（定位后删除）。
+				if (DefaultInputMappings.Num() == 0)
+				{
+					UE_LOG(LogTemp, Warning,
+					       TEXT(
+						       "[HODGE-DBG] Hero input BLOCKED: DefaultInputMappings is empty -> no IMC will be added. Configure it on the HeroComponent of BP_Hero_Pover."
+					       ));
+				}
+
+				// [HODGE-DBG] 临时诊断：逐条打印 HeroComponent 上配置的 MappingContext（定位后删除）。
+				for (const FInputMappingContextAndPriority& DbgMapping : DefaultInputMappings)
+				{
+					// bRegisterWithSettings 为 false 时本函数不会调用 AddMappingContext，该 IMC 实际不会生效。
+					UE_LOG(LogTemp, Warning,
+					       TEXT(
+						       "[HODGE-DBG] Hero input IMC entry: IMC=%s Priority=%d RegisterWithSettings=%d (false means AddMappingContext is skipped!)"
+					       ),
+					       *GetNameSafe(DbgMapping.InputMapping.Get()), DbgMapping.Priority,
+					       DbgMapping.bRegisterWithSettings ? 1 : 0);
+				}
+
+				// [HODGE-DBG] 临时诊断：逐个 native tag 查 IA，查不到说明 DA_HodgeInputConfig 里缺配置（定位后删除）。
+				const TArray<FGameplayTag> DbgNativeTags = {
+					HodgeGameplayTags::InputTag_Move, HodgeGameplayTags::InputTag_Look_Mouse,
+					HodgeGameplayTags::InputTag_Look_Stick, HodgeGameplayTags::InputTag_Crouch,
+					HodgeGameplayTags::InputTag_AutoRun
+				};
+				for (const FGameplayTag& DbgTag : DbgNativeTags)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("[HODGE-DBG] Hero input native %s -> IA=%s"), *DbgTag.ToString(),
+					       *GetNameSafe(InputConfig->FindNativeInputActionForTag(DbgTag, false)));
+				}
+
+				// [HODGE-DBG] 临时诊断：打印 Ability 输入条目，InputTag 必须与 GA 上配置的一致（定位后删除）。
+				for (const FHodgeInputAction& DbgAbilityAction : InputConfig->AbilityInputActions)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("[HODGE-DBG] Hero input ability InputTag=%s -> IA=%s"),
+					       *DbgAbilityAction.InputTag.ToString(), *GetNameSafe(DbgAbilityAction.InputAction));
+				}
+
 				// 遍历 HeroComponent 自身配置的默认 MappingContext。
 				for (const FInputMappingContextAndPriority& Mapping : DefaultInputMappings)
 				{
@@ -509,6 +558,21 @@ void UHodgeHeroComponent::InitializePlayerInput(UInputComponent* PlayerInputComp
 					                          /*bLogIfNotFound=*/ false);
 				}
 			}
+			else
+			{
+				// [HODGE-DBG] 临时诊断：InputConfig 为空时整块被跳过，IMC 与所有输入都不会绑定（定位后删除）。
+				UE_LOG(LogTemp, Warning,
+				       TEXT(
+					       "[HODGE-DBG] Hero input BLOCKED: PawnData->InputConfig is null (PawnData=%s) -> assign DA_HodgeInputConfig on DA_Dafult_PawnData"
+				       ),
+				       *GetNameSafe(PawnData));
+			}
+		}
+		else
+		{
+			// [HODGE-DBG] 临时诊断：取不到 PawnData 时同样无法绑定输入（定位后删除）。
+			UE_LOG(LogTemp, Warning, TEXT("[HODGE-DBG] Hero input BLOCKED: PawnData is null (Pawn=%s)"),
+			       *GetNameSafe(Pawn));
 		}
 	}
 
@@ -599,6 +663,9 @@ bool UHodgeHeroComponent::IsReadyToBindInputs() const
 // Ability 类型输入按下时调用。
 void UHodgeHeroComponent::Input_AbilityInputTagPressed(FGameplayTag InputTag)
 {
+	// [HODGE-DBG] 临时诊断：确认 Ability 输入是否真的触发并转发给 ASC（定位后删除）。
+	UE_LOG(LogTemp, Warning, TEXT("[HODGE-DBG] Hero input CALLBACK AbilityPressed %s"), *InputTag.ToString());
+
 	// 获取当前 Pawn。
 	if (const APawn* Pawn = GetPawn<APawn>())
 	{
@@ -619,6 +686,9 @@ void UHodgeHeroComponent::Input_AbilityInputTagPressed(FGameplayTag InputTag)
 // Ability 类型输入松开时调用。
 void UHodgeHeroComponent::Input_AbilityInputTagReleased(FGameplayTag InputTag)
 {
+	// [HODGE-DBG] 临时诊断：确认 Ability 输入是否真的触发并转发给 ASC（定位后删除）。
+	UE_LOG(LogTemp, Warning, TEXT("[HODGE-DBG] Hero input CALLBACK AbilityReleased %s"), *InputTag.ToString());
+
 	// 获取当前 Pawn。
 	const APawn* Pawn = GetPawn<APawn>();
 
@@ -644,6 +714,17 @@ void UHodgeHeroComponent::Input_AbilityInputTagReleased(FGameplayTag InputTag)
 // 处理角色二维移动输入。
 void UHodgeHeroComponent::Input_Move(const FInputActionValue& InputActionValue)
 {
+	// [HODGE-DBG] 临时诊断：只在按下/松开移动时输出一次，避免 Triggered 每帧刷屏（定位后删除）。
+	static bool bDbgMoveActive = false;
+	const FVector2D DbgMoveValue = InputActionValue.Get<FVector2D>();
+	const bool bDbgMoveNow = !DbgMoveValue.IsNearlyZero();
+	if (bDbgMoveNow != bDbgMoveActive)
+	{
+		bDbgMoveActive = bDbgMoveNow;
+		UE_LOG(LogTemp, Warning, TEXT("[HODGE-DBG] Hero input CALLBACK Move %s Value=%s"),
+		       bDbgMoveNow ? TEXT("down") : TEXT("up"), *DbgMoveValue.ToString());
+	}
+
 	// 获取当前 Pawn。
 	APawn* Pawn = GetPawn<APawn>();
 
@@ -691,6 +772,17 @@ void UHodgeHeroComponent::Input_Move(const FInputActionValue& InputActionValue)
 // 处理鼠标视角输入。
 void UHodgeHeroComponent::Input_LookMouse(const FInputActionValue& InputActionValue)
 {
+	// [HODGE-DBG] 临时诊断：只在按下/松开鼠标视角时输出一次（定位后删除）。
+	static bool bDbgLookMouseActive = false;
+	const FVector2D DbgLookMouseValue = InputActionValue.Get<FVector2D>();
+	const bool bDbgLookMouseNow = !DbgLookMouseValue.IsNearlyZero();
+	if (bDbgLookMouseNow != bDbgLookMouseActive)
+	{
+		bDbgLookMouseActive = bDbgLookMouseNow;
+		UE_LOG(LogTemp, Warning, TEXT("[HODGE-DBG] Hero input CALLBACK LookMouse %s Value=%s"),
+		       bDbgLookMouseNow ? TEXT("down") : TEXT("up"), *DbgLookMouseValue.ToString());
+	}
+
 	// 获取当前 Pawn。
 	APawn* Pawn = GetPawn<APawn>();
 
@@ -719,6 +811,17 @@ void UHodgeHeroComponent::Input_LookMouse(const FInputActionValue& InputActionVa
 // 处理手柄摇杆视角输入。
 void UHodgeHeroComponent::Input_LookStick(const FInputActionValue& InputActionValue)
 {
+	// [HODGE-DBG] 临时诊断：只在按下/松开手柄视角时输出一次（定位后删除）。
+	static bool bDbgLookStickActive = false;
+	const FVector2D DbgLookStickValue = InputActionValue.Get<FVector2D>();
+	const bool bDbgLookStickNow = !DbgLookStickValue.IsNearlyZero();
+	if (bDbgLookStickNow != bDbgLookStickActive)
+	{
+		bDbgLookStickActive = bDbgLookStickNow;
+		UE_LOG(LogTemp, Warning, TEXT("[HODGE-DBG] Hero input CALLBACK LookStick %s Value=%s"),
+		       bDbgLookStickNow ? TEXT("down") : TEXT("up"), *DbgLookStickValue.ToString());
+	}
+
 	// 获取当前 Pawn。
 	APawn* Pawn = GetPawn<APawn>();
 
@@ -755,6 +858,9 @@ void UHodgeHeroComponent::Input_LookStick(const FInputActionValue& InputActionVa
 // 处理蹲伏输入。
 void UHodgeHeroComponent::Input_Crouch(const FInputActionValue& InputActionValue)
 {
+	// [HODGE-DBG] 临时诊断：确认蹲伏输入是否真的触发回调（定位后删除）。
+	UE_LOG(LogTemp, Warning, TEXT("[HODGE-DBG] Hero input CALLBACK Crouch"));
+
 	// 当前 Pawn 是 HodgeCombatCharacter 时切换蹲伏状态。
 	if (AHodgeCombatCharacter* Character = GetPawn<AHodgeCombatCharacter>())
 	{
@@ -765,6 +871,9 @@ void UHodgeHeroComponent::Input_Crouch(const FInputActionValue& InputActionValue
 // 处理自动奔跑输入。
 void UHodgeHeroComponent::Input_AutoRun(const FInputActionValue& InputActionValue)
 {
+	// [HODGE-DBG] 临时诊断：确认自动奔跑输入是否真的触发回调（定位后删除）。
+	UE_LOG(LogTemp, Warning, TEXT("[HODGE-DBG] Hero input CALLBACK AutoRun"));
+
 	// 获取当前 Pawn。
 	if (APawn* Pawn = GetPawn<APawn>())
 	{

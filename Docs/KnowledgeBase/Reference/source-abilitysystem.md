@@ -12,34 +12,35 @@
 
 源码：[Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility.cpp)
 
-项目内直接 include（不是运行调用关系）：[AbilitySystem/Abilities/HodgeGameplayAbility.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility.h)、[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)、[AbilitySystem/HodgeGameplayEffectContext.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayEffectContext.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)、[AbilitySystem/Abilities/HodgeAbilityCost.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeAbilityCost.h)、[Character/HodgeCombatCharacter.h](../../../Source/Hodgepodge/Public/Character/HodgeCombatCharacter.h)、[Interface/HodgeAbilitySourceInterface.h](../../../Source/Hodgepodge/Public/Interface/HodgeAbilitySourceInterface.h)
+项目内直接 include（不是运行调用关系）：[AbilitySystem/Abilities/HodgeGameplayAbility.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility.h)、[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)、[AbilitySystem/HodgeGameplayEffectContext.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayEffectContext.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)、[AbilitySystem/Abilities/HodgeAbilityCost.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeAbilityCost.h)、[Camera/HodgeCameraMode.h](../../../Source/Hodgepodge/Public/Camera/HodgeCameraMode.h)、[Character/HodgeCombatCharacter.h](../../../Source/Hodgepodge/Public/Character/HodgeCombatCharacter.h)、[Component/HodgeHeroComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeHeroComponent.h)、[Interface/HodgeAbilitySourceInterface.h](../../../Source/Hodgepodge/Public/Interface/HodgeAbilitySourceInterface.h)
 
 定义候选（多行签名仅展示首行）：
 
-- L34: `UHodgeGameplayAbility::UHodgeGameplayAbility(const FObjectInitializer& ObjectInitializer)`
-- L63: `UHodgeAbilitySystemComponent* UHodgeGameplayAbility::GetHodgeAbilitySystemComponentFromActorInfo() const`
-- L72: `AHodgePlayerControllerBase* UHodgeGameplayAbility::GetHodgePlayerControllerFromActorInfo() const`
-- L79: `AController* UHodgeGameplayAbility::GetControllerFromActorInfo() const`
-- L117: `AHodgeCombatCharacter* UHodgeGameplayAbility::GetHodgeCharacterFromActorInfo() const`
-- L129: `void UHodgeGameplayAbility::NativeOnAbilityFailedToActivate(const FGameplayTagContainer& FailedReason) const`
-- L182: `bool UHodgeGameplayAbility::CanActivateAbility(const FGameplayAbilitySpecHandle Handle,`
-- L223: `void UHodgeGameplayAbility::SetCanBeCanceled(bool bCanBeCanceled)`
-- L242: `void UHodgeGameplayAbility::OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec)`
-- L255: `void UHodgeGameplayAbility::OnRemoveAbility(const FGameplayAbilityActorInfo* ActorInfo,`
-- L266: `void UHodgeGameplayAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,`
-- L276: `void UHodgeGameplayAbility::EndAbility(const FGameplayAbilitySpecHandle Handle,`
-- L289: `bool UHodgeGameplayAbility::CheckCost(const FGameplayAbilitySpecHandle Handle,`
-- L319: `void UHodgeGameplayAbility::ApplyCost(const FGameplayAbilitySpecHandle Handle,`
-- L402: `FGameplayEffectContextHandle UHodgeGameplayAbility::MakeEffectContext(const FGameplayAbilitySpecHandle Handle,`
-- L449: `void UHodgeGameplayAbility::ApplyAbilityTagsToGameplayEffectSpec(FGameplayEffectSpec& Spec,`
-- L468: `bool UHodgeGameplayAbility::DoesAbilitySatisfyTagRequirements(const UAbilitySystemComponent& AbilitySystemComponent,`
-- L624: `void UHodgeGameplayAbility::OnPawnAvatarSet()`
-- L631: `void UHodgeGameplayAbility::GetAbilitySource(FGameplayAbilitySpecHandle Handle,`
-- L657: `void UHodgeGameplayAbility::TryActivateAbilityOnSpawn(const FGameplayAbilityActorInfo* ActorInfo,`
-- L699: `bool UHodgeGameplayAbility::CanChangeActivationGroup(EHodgeAbilityActivationGroup NewGroup) const`
-- L737: `bool UHodgeGameplayAbility::ChangeActivationGroup(EHodgeAbilityActivationGroup NewGroup)`
-- L770: `void UHodgeGameplayAbility::SetCameraMode(TSubclassOf<UHodgeCameraMode> CameraMode)`
-- L784: `void UHodgeGameplayAbility::ClearCameraMode()`
+- L36: `UHodgeGameplayAbility::UHodgeGameplayAbility(const FObjectInitializer& ObjectInitializer)`
+- L65: `UHodgeAbilitySystemComponent* UHodgeGameplayAbility::GetHodgeAbilitySystemComponentFromActorInfo() const`
+- L74: `AHodgePlayerController* UHodgeGameplayAbility::GetHodgePlayerControllerFromActorInfo() const`
+- L81: `AController* UHodgeGameplayAbility::GetControllerFromActorInfo() const`
+- L119: `AHodgeCombatCharacter* UHodgeGameplayAbility::GetHodgeCharacterFromActorInfo() const`
+- L125: `UHodgeHeroComponent* UHodgeGameplayAbility::GetHeroComponentFromActorInfo() const`
+- L132: `void UHodgeGameplayAbility::NativeOnAbilityFailedToActivate(const FGameplayTagContainer& FailedReason) const`
+- L185: `bool UHodgeGameplayAbility::CanActivateAbility(const FGameplayAbilitySpecHandle Handle,`
+- L226: `void UHodgeGameplayAbility::SetCanBeCanceled(bool bCanBeCanceled)`
+- L245: `void UHodgeGameplayAbility::OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec)`
+- L258: `void UHodgeGameplayAbility::OnRemoveAbility(const FGameplayAbilityActorInfo* ActorInfo,`
+- L269: `void UHodgeGameplayAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,`
+- L279: `void UHodgeGameplayAbility::EndAbility(const FGameplayAbilitySpecHandle Handle,`
+- L292: `bool UHodgeGameplayAbility::CheckCost(const FGameplayAbilitySpecHandle Handle,`
+- L322: `void UHodgeGameplayAbility::ApplyCost(const FGameplayAbilitySpecHandle Handle,`
+- L405: `FGameplayEffectContextHandle UHodgeGameplayAbility::MakeEffectContext(const FGameplayAbilitySpecHandle Handle,`
+- L452: `void UHodgeGameplayAbility::ApplyAbilityTagsToGameplayEffectSpec(FGameplayEffectSpec& Spec,`
+- L471: `bool UHodgeGameplayAbility::DoesAbilitySatisfyTagRequirements(const UAbilitySystemComponent& AbilitySystemComponent,`
+- L627: `void UHodgeGameplayAbility::OnPawnAvatarSet()`
+- L634: `void UHodgeGameplayAbility::GetAbilitySource(FGameplayAbilitySpecHandle Handle,`
+- L660: `void UHodgeGameplayAbility::TryActivateAbilityOnSpawn(const FGameplayAbilityActorInfo* ActorInfo,`
+- L702: `bool UHodgeGameplayAbility::CanChangeActivationGroup(EHodgeAbilityActivationGroup NewGroup) const`
+- L740: `bool UHodgeGameplayAbility::ChangeActivationGroup(EHodgeAbilityActivationGroup NewGroup)`
+- L773: `void UHodgeGameplayAbility::SetCameraMode(TSubclassOf<UHodgeCameraMode> CameraMode)`
+- L787: `void UHodgeGameplayAbility::ClearCameraMode()`
 
 ## HodgeAttributeSet.cpp
 
@@ -51,32 +52,32 @@
 
 定义候选（多行签名仅展示首行）：
 
-- L18: `UHodgeAttributeSet::UHodgeAttributeSet()`
-- L22: `UWorld* UHodgeAttributeSet::GetWorld() const`
-- L29: `UHodgeAbilitySystemComponent* UHodgeAttributeSet::GetHodgeAbilitySystemComponent() const`
+- L23: `UHodgeAttributeSet::UHodgeAttributeSet()`
+- L28: `UWorld* UHodgeAttributeSet::GetWorld() const`
+- L41: `UHodgeAbilitySystemComponent* UHodgeAttributeSet::GetHodgeAbilitySystemComponent() const`
 
 ## HodgeHealthSet.cpp
 
-Health、MaxHealth、BaseDamage、BaseHeal；复制与夹取有效，GE 结算主体注释。
+Health/MaxHealth、BaseDamage/BaseHeal 和 Damage/Healing 元属性；有效结算、夹取、免疫和耗尽广播。
 
 源码：[Source/Hodgepodge/Private/AbilitySystem/AttributeSet/HodgeHealthSet.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/AttributeSet/HodgeHealthSet.cpp)
 
-项目内直接 include（不是运行调用关系）：[AbilitySystem/AttributeSet/HodgeHealthSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeHealthSet.h)、[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)
+项目内直接 include（不是运行调用关系）：[AbilitySystem/AttributeSet/HodgeHealthSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeHealthSet.h)、[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)
 
 定义候选（多行签名仅展示首行）：
 
-- L12: `UHodgeHealthSet::UHodgeHealthSet() : Health(100.0f)`
-- L22: `void UHodgeHealthSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const`
-- L32: `void UHodgeHealthSet::OnRep_Health(const FGameplayAttributeData& OldValue)`
-- L54: `void UHodgeHealthSet::OnRep_MaxHealth(const FGameplayAttributeData& OldValue)`
-- L64: `void UHodgeHealthSet::OnRep_BaseDamage(const FGameplayAttributeData& OldValue)`
-- L69: `void UHodgeHealthSet::OnRep_BaseHeal(const FGameplayAttributeData& OldValue)`
-- L74: `bool UHodgeHealthSet::PreGameplayEffectExecute(FGameplayEffectModCallbackData& Data)`
-- L115: `void UHodgeHealthSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)`
-- L192: `void UHodgeHealthSet::PreAttributeBaseChange(const FGameplayAttribute& Attribute, float& NewValue) const`
-- L199: `void UHodgeHealthSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)`
-- L206: `void UHodgeHealthSet::PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue)`
-- L228: `void UHodgeHealthSet::ClampAttribute(const FGameplayAttribute& Attribute, float& NewValue) const`
+- L37: `UHodgeHealthSet::UHodgeHealthSet() : Health(100.0f)`
+- L53: `void UHodgeHealthSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const`
+- L72: `void UHodgeHealthSet::OnRep_Health(const FGameplayAttributeData& OldValue)`
+- L108: `void UHodgeHealthSet::OnRep_MaxHealth(const FGameplayAttributeData& OldValue)`
+- L125: `void UHodgeHealthSet::OnRep_BaseDamage(const FGameplayAttributeData& OldValue)`
+- L132: `void UHodgeHealthSet::OnRep_BaseHeal(const FGameplayAttributeData& OldValue)`
+- L139: `bool UHodgeHealthSet::PreGameplayEffectExecute(FGameplayEffectModCallbackData& Data)`
+- L197: `void UHodgeHealthSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)`
+- L334: `void UHodgeHealthSet::PreAttributeBaseChange(const FGameplayAttribute& Attribute, float& NewValue) const`
+- L344: `void UHodgeHealthSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)`
+- L354: `void UHodgeHealthSet::PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue)`
+- L386: `void UHodgeHealthSet::ClampAttribute(const FGameplayAttribute& Attribute, float& NewValue) const`
 
 ## GameplayTagStack.cpp
 
@@ -101,8 +102,51 @@ Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动�
 
 源码：[Source/Hodgepodge/Private/AbilitySystem/HodgeAbilitySystemComponent.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeAbilitySystemComponent.cpp)
 
+项目内直接 include（不是运行调用关系）：[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)、[AbilitySystem/HodgeAbilityTagRelationshipMapping.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilityTagRelationshipMapping.h)、[AbilitySystem/HodgeGlobalAbilitySystem.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGlobalAbilitySystem.h)、[Animation/HodgeAnimInstance.h](../../../Source/Hodgepodge/Public/Animation/HodgeAnimInstance.h)、[Data/HodgeAssetManager.h](../../../Source/Hodgepodge/Public/Data/HodgeAssetManager.h)、[Data/HodgeGameData.h](../../../Source/Hodgepodge/Public/Data/HodgeGameData.h)
+
 定义候选（多行签名仅展示首行）：
 
+- L27: `UHodgeAbilitySystemComponent::UHodgeAbilitySystemComponent(const FObjectInitializer& ObjectInitializer)`
+- L43: `void UHodgeAbilitySystemComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)`
+- L55: `void UHodgeAbilitySystemComponent::InitAbilityActorInfo(AActor* InOwnerActor, AActor* InAvatarActor)`
+- L126: `void UHodgeAbilitySystemComponent::TryActivateAbilitiesOnSpawn()`
+- L143: `void UHodgeAbilitySystemComponent::CancelAbilitiesByFunc(TShouldCancelAbilityFunc ShouldCancelFunc,`
+- L211: `void UHodgeAbilitySystemComponent::CancelInputActivatedAbilities(bool bReplicateCancelAbility)`
+- L228: `void UHodgeAbilitySystemComponent::AbilitySpecInputPressed(FGameplayAbilitySpec& Spec)`
+- L255: `void UHodgeAbilitySystemComponent::AbilitySpecInputReleased(FGameplayAbilitySpec& Spec)`
+- L282: `void UHodgeAbilitySystemComponent::AbilityInputTagPressed(const FGameplayTag& InputTag)`
+- L303: `void UHodgeAbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag& InputTag)`
+- L324: `void UHodgeAbilitySystemComponent::ProcessAbilityInput(float DeltaTime, bool bGamePaused)`
+- L454: `void UHodgeAbilitySystemComponent::ClearAbilityInput()`
+- L466: `void UHodgeAbilitySystemComponent::NotifyAbilityActivated(const FGameplayAbilitySpecHandle Handle,`
+- L480: `void UHodgeAbilitySystemComponent::NotifyAbilityFailed(const FGameplayAbilitySpecHandle Handle,`
+- L502: `void UHodgeAbilitySystemComponent::NotifyAbilityEnded(FGameplayAbilitySpecHandle Handle, UGameplayAbility* Ability,`
+- L516: `void UHodgeAbilitySystemComponent::ApplyAbilityBlockAndCancelTags(const FGameplayTagContainer& AbilityTags,`
+- L545: `void UHodgeAbilitySystemComponent::HandleChangeAbilityCanBeCanceled(const FGameplayTagContainer& AbilityTags,`
+- L556: `void UHodgeAbilitySystemComponent::GetAdditionalActivationTagRequirements(`
+- L569: `void UHodgeAbilitySystemComponent::SetTagRelationshipMapping(UHodgeAbilityTagRelationshipMapping* NewMapping)`
+- L575: `void UHodgeAbilitySystemComponent::ClientNotifyAbilityFailed_Implementation(`
+- L582: `void UHodgeAbilitySystemComponent::HandleAbilityFailed(const UGameplayAbility* Ability,`
+- L595: `bool UHodgeAbilitySystemComponent::IsActivationGroupBlocked(EHodgeAbilityActivationGroup Group) const`
+- L626: `void UHodgeAbilitySystemComponent::AddAbilityToActivationGroup(EHodgeAbilityActivationGroup Group,`
+- L674: `void UHodgeAbilitySystemComponent::RemoveAbilityFromActivationGroup(EHodgeAbilityActivationGroup Group,`
+- L687: `void UHodgeAbilitySystemComponent::CancelActivationGroupAbilities(EHodgeAbilityActivationGroup Group,`
+- L703: `void UHodgeAbilitySystemComponent::AddDynamicTagGameplayEffect(const FGameplayTag& Tag)`
+- L739: `void UHodgeAbilitySystemComponent::RemoveDynamicTagGameplayEffect(const FGameplayTag& Tag)`
+- L764: `void UHodgeAbilitySystemComponent::GetAbilityTargetData(const FGameplayAbilitySpecHandle AbilityHandle,`
+
+## HodgeAbilitySystemGlobals.cpp
+
+分配 FHodgeGameplayEffectContext 的 GAS 全局类；已加入项目配置。
+
+源码：[Source/Hodgepodge/Private/AbilitySystem/HodgeAbilitySystemGlobals.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeAbilitySystemGlobals.cpp)
+
+项目内直接 include（不是运行调用关系）：[AbilitySystem/HodgeAbilitySystemGlobals.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemGlobals.h)、[AbilitySystem/HodgeGameplayEffectContext.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayEffectContext.h)
+
+定义候选（多行签名仅展示首行）：
+
+- L15: `UHodgeAbilitySystemGlobals::UHodgeAbilitySystemGlobals(const FObjectInitializer& ObjectInitializer)`
+- L22: `FGameplayEffectContext* UHodgeAbilitySystemGlobals::AllocGameplayEffectContext() const`
 
 ## HodgeAbilityTagRelationshipMapping.cpp
 
@@ -120,7 +164,7 @@ Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动�
 
 ## HodgeGameplayCueManager.cpp
 
-项目 Cue 资源加载/预加载管理实现；默认管理器配置尚未接通。
+项目 Cue 管理类已配置；启动预加载及 Feature Cue 观察者生命周期仍未完整接通。
 
 源码：[Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayCueManager.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayCueManager.cpp)
 
@@ -149,7 +193,7 @@ Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动�
 
 ## HodgeGameplayEffectContext.cpp
 
-项目 GE 上下文与序列化扩展；需要 Globals 分配入口配套。
+项目 GE 上下文与序列化扩展，已有 HodgeAbilitySystemGlobals 分配配套。
 
 源码：[Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayEffectContext.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayEffectContext.cpp)
 
@@ -245,7 +289,7 @@ Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动�
 
 源码：[Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility.h)
 
-项目内直接 include（不是运行调用关系）：[Core/PlayerController/HodgePlayerControllerBase.h](../../../Source/Hodgepodge/Public/Core/PlayerController/HodgePlayerControllerBase.h)
+项目内直接 include（不是运行调用关系）：[Core/PlayerController/HodgePlayerController.h](../../../Source/Hodgepodge/Public/Core/PlayerController/HodgePlayerController.h)
 
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
@@ -253,129 +297,132 @@ Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动�
    3: #pragma once
    5: #include "CoreMinimal.h"
    6: #include "Abilities/GameplayAbility.h"
-   7: #include "Core/PlayerController/HodgePlayerControllerBase.h"
+   7: #include "Core/PlayerController/HodgePlayerController.h"
    8: #include "HodgeGameplayAbility.generated.h"
-  11: class UHodgeAbilityCost;
-  12: class UHodgeCameraMode;
-  13: class IHodgeAbilitySourceInterface;
-  14: class AHodgeCombatCharacter;
-  20: UENUM(BlueprintType)
-  21: enum class EHodgeAbilityActivationPolicy : uint8
-  22: {
-  24: 	OnInputTriggered,
-  27: 	WhileInputActive,
-  30: 	OnSpawn
-  31: };
-  39: UENUM(BlueprintType)
-  40: enum class EHodgeAbilityActivationGroup : uint8
-  41: {
-  43: 	Independent,
-  46: 	Exclusive_Replaceable,
-  49: 	Exclusive_Blocking,
-  52: 	MAX UMETA(Hidden)
-  53: };
-  56: USTRUCT(BlueprintType)
-  57: struct FHodgeAbilityMontageFailureMessage
-  58: {
-  59: 	GENERATED_BODY()
-  61: public:
-  63: 	UPROPERTY(BlueprintReadWrite)
-  64: 	TObjectPtr<APlayerController> PlayerController = nullptr;
-  67: 	UPROPERTY(BlueprintReadWrite)
-  68: 	TObjectPtr<AActor> AvatarActor = nullptr;
-  71: 	UPROPERTY(BlueprintReadWrite)
-  72: 	FGameplayTagContainer FailureTags;
-  75: 	UPROPERTY(BlueprintReadWrite)
-  76: 	TObjectPtr<UAnimMontage> FailureMontage = nullptr;
-  77: };
-  91: UCLASS(Abstract, HideCategories = Input,
-  92: 	Meta = (ShortTooltip = "The base gameplay ability class used by this project."))
-  93: class HODGEPODGE_API UHodgeGameplayAbility : public UGameplayAbility
-  94: {
-  95: 	GENERATED_BODY()
-  98: 	friend class UHodgeAbilitySystemComponent;
- 100: public:
- 102: 	UHodgeGameplayAbility(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
- 105: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Ability")
- 106: 	UHodgeAbilitySystemComponent* GetHodgeAbilitySystemComponentFromActorInfo() const;
- 109: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Ability")
- 110: 	AHodgePlayerControllerBase* GetHodgePlayerControllerFromActorInfo() const;
- 113: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Ability")
- 114: 	AController* GetControllerFromActorInfo() const;
- 117: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Ability")
- 118: 	AHodgeCombatCharacter* GetHodgeCharacterFromActorInfo() const;
- 121: 	EHodgeAbilityActivationPolicy GetActivationPolicy() const { return ActivationPolicy; }
- 124: 	EHodgeAbilityActivationGroup GetActivationGroup() const { return ActivationGroup; }
- 127: 	void TryActivateAbilityOnSpawn(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) const;
- 131: 	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "Hodge|Ability",
- 132: 		Meta = (ExpandBoolAsExecs = "ReturnValue"))
- 133: 	bool CanChangeActivationGroup(EHodgeAbilityActivationGroup NewGroup) const;
- 137: 	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "Hodge|Ability",
- 138: 		Meta = (ExpandBoolAsExecs = "ReturnValue"))
- 139: 	bool ChangeActivationGroup(EHodgeAbilityActivationGroup NewGroup);
- 142: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Ability")
- 143: 	void SetCameraMode(TSubclassOf<UHodgeCameraMode> CameraMode);
- 146: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Ability")
- 147: 	void ClearCameraMode();
- 150: 	void OnAbilityFailedToActivate(const FGameplayTagContainer& FailedReason) const
- 151: 	{
- 153: 		NativeOnAbilityFailedToActivate(FailedReason);
- 156: 		ScriptOnAbilityFailedToActivate(FailedReason);
- 157: 	}
- 159: protected:
- 161: 	virtual void NativeOnAbilityFailedToActivate(const FGameplayTagContainer& FailedReason) const;
- 164: 	UFUNCTION(BlueprintImplementableEvent)
- 165: 	void ScriptOnAbilityFailedToActivate(const FGameplayTagContainer& FailedReason) const;
- 169: 	virtual bool CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
- 170: 	                                const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags,
- 171: 	                                FGameplayTagContainer* OptionalRelevantTags) const override;
- 174: 	virtual void SetCanBeCanceled(bool bCanBeCanceled) override;
- 177: 	virtual void OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
- 180: 	virtual void OnRemoveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
- 183: 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
- 184: 	                             const FGameplayAbilityActivationInfo ActivationInfo,
- 185: 	                             const FGameplayEventData* TriggerEventData) override;
- 188: 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
- 189: 	                        const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility,
- 190: 	                        bool bWasCancelled) override;
- 193: 	virtual bool CheckCost(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
- 194: 	                       OUT FGameplayTagContainer* OptionalRelevantTags = nullptr) const override;
- 197: 	virtual void ApplyCost(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
- 198: 	                       const FGameplayAbilityActivationInfo ActivationInfo) const override;
- 201: 	virtual FGameplayEffectContextHandle MakeEffectContext(const FGameplayAbilitySpecHandle Handle,
- 202: 	                                                       const FGameplayAbilityActorInfo* ActorInfo) const override;
- 205: 	virtual void ApplyAbilityTagsToGameplayEffectSpec(FGameplayEffectSpec& Spec,
- 206: 	                                                  FGameplayAbilitySpec* AbilitySpec) const override;
- 209: 	virtual bool DoesAbilitySatisfyTagRequirements(const UAbilitySystemComponent& AbilitySystemComponent,
- 210: 	                                               const FGameplayTagContainer* SourceTags = nullptr,
- 211: 	                                               const FGameplayTagContainer* TargetTags = nullptr,
- 212: 	                                               OUT FGameplayTagContainer* OptionalRelevantTags = nullptr)
- 213: 	const override;
- 217: 	virtual void OnPawnAvatarSet();
- 220: 	virtual void GetAbilitySource(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
- 221: 	                              float& OutSourceLevel, const IHodgeAbilitySourceInterface*& OutAbilitySource,
- 222: 	                              AActor*& OutEffectCauser) const;
- 226: 	UFUNCTION(BlueprintImplementableEvent, Category = Ability, DisplayName = "OnAbilityAdded")
- 227: 	void K2_OnAbilityAdded();
- 231: 	UFUNCTION(BlueprintImplementableEvent, Category = Ability, DisplayName = "OnAbilityRemoved")
- 232: 	void K2_OnAbilityRemoved();
- 236: 	UFUNCTION(BlueprintImplementableEvent, Category = Ability, DisplayName = "OnPawnAvatarSet")
- 237: 	void K2_OnPawnAvatarSet();
- 239: protected:
- 241: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hodge|Ability Activation")
- 242: 	EHodgeAbilityActivationPolicy ActivationPolicy;
- 245: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hodge|Ability Activation")
- 246: 	EHodgeAbilityActivationGroup ActivationGroup;
- 249: 	UPROPERTY(EditDefaultsOnly, Instanced, Category = Costs)
- 250: 	TArray<TObjectPtr<UHodgeAbilityCost>> AdditionalCosts;
- 253: 	UPROPERTY(EditDefaultsOnly, Category = "Advanced")
- 254: 	TMap<FGameplayTag, FText> FailureTagToUserFacingMessages;
- 257: 	UPROPERTY(EditDefaultsOnly, Category = "Advanced")
- 258: 	TMap<FGameplayTag, TObjectPtr<UAnimMontage>> FailureTagToAnimMontage;
- 261: 	UPROPERTY(EditDefaultsOnly, Category = "Advanced")
- 262: 	bool bLogCancelation;
- 265: 	TSubclassOf<UHodgeCameraMode> ActiveCameraMode;
- 266: };
+  11: class UHodgeHeroComponent;
+  12: class UHodgeAbilityCost;
+  13: class UHodgeCameraMode;
+  14: class IHodgeAbilitySourceInterface;
+  15: class AHodgeCombatCharacter;
+  21: UENUM(BlueprintType)
+  22: enum class EHodgeAbilityActivationPolicy : uint8
+  23: {
+  25: 	OnInputTriggered,
+  28: 	WhileInputActive,
+  31: 	OnSpawn
+  32: };
+  40: UENUM(BlueprintType)
+  41: enum class EHodgeAbilityActivationGroup : uint8
+  42: {
+  44: 	Independent,
+  47: 	Exclusive_Replaceable,
+  50: 	Exclusive_Blocking,
+  53: 	MAX UMETA(Hidden)
+  54: };
+  57: USTRUCT(BlueprintType)
+  58: struct FHodgeAbilityMontageFailureMessage
+  59: {
+  60: 	GENERATED_BODY()
+  62: public:
+  64: 	UPROPERTY(BlueprintReadWrite)
+  65: 	TObjectPtr<APlayerController> PlayerController = nullptr;
+  68: 	UPROPERTY(BlueprintReadWrite)
+  69: 	TObjectPtr<AActor> AvatarActor = nullptr;
+  72: 	UPROPERTY(BlueprintReadWrite)
+  73: 	FGameplayTagContainer FailureTags;
+  76: 	UPROPERTY(BlueprintReadWrite)
+  77: 	TObjectPtr<UAnimMontage> FailureMontage = nullptr;
+  78: };
+  92: UCLASS(Abstract, HideCategories = Input,
+  93: 	Meta = (ShortTooltip = "The base gameplay ability class used by this project."))
+  94: class HODGEPODGE_API UHodgeGameplayAbility : public UGameplayAbility
+  95: {
+  96: 	GENERATED_BODY()
+  99: 	friend class UHodgeAbilitySystemComponent;
+ 101: public:
+ 103: 	UHodgeGameplayAbility(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+ 106: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Ability")
+ 107: 	UHodgeAbilitySystemComponent* GetHodgeAbilitySystemComponentFromActorInfo() const;
+ 110: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Ability")
+ 111: 	AHodgePlayerController* GetHodgePlayerControllerFromActorInfo() const;
+ 114: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Ability")
+ 115: 	AController* GetControllerFromActorInfo() const;
+ 118: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Ability")
+ 119: 	AHodgeCombatCharacter* GetHodgeCharacterFromActorInfo() const;
+ 122: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Ability")
+ 123: 	UHodgeHeroComponent* GetHeroComponentFromActorInfo() const;
+ 126: 	EHodgeAbilityActivationPolicy GetActivationPolicy() const { return ActivationPolicy; }
+ 129: 	EHodgeAbilityActivationGroup GetActivationGroup() const { return ActivationGroup; }
+ 132: 	void TryActivateAbilityOnSpawn(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) const;
+ 136: 	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "Hodge|Ability",
+ 137: 		Meta = (ExpandBoolAsExecs = "ReturnValue"))
+ 138: 	bool CanChangeActivationGroup(EHodgeAbilityActivationGroup NewGroup) const;
+ 142: 	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "Hodge|Ability",
+ 143: 		Meta = (ExpandBoolAsExecs = "ReturnValue"))
+ 144: 	bool ChangeActivationGroup(EHodgeAbilityActivationGroup NewGroup);
+ 147: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Ability")
+ 148: 	void SetCameraMode(TSubclassOf<UHodgeCameraMode> CameraMode);
+ 151: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Ability")
+ 152: 	void ClearCameraMode();
+ 155: 	void OnAbilityFailedToActivate(const FGameplayTagContainer& FailedReason) const
+ 156: 	{
+ 158: 		NativeOnAbilityFailedToActivate(FailedReason);
+ 161: 		ScriptOnAbilityFailedToActivate(FailedReason);
+ 162: 	}
+ 164: protected:
+ 166: 	virtual void NativeOnAbilityFailedToActivate(const FGameplayTagContainer& FailedReason) const;
+ 169: 	UFUNCTION(BlueprintImplementableEvent)
+ 170: 	void ScriptOnAbilityFailedToActivate(const FGameplayTagContainer& FailedReason) const;
+ 174: 	virtual bool CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+ 175: 	                                const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags,
+ 176: 	                                FGameplayTagContainer* OptionalRelevantTags) const override;
+ 179: 	virtual void SetCanBeCanceled(bool bCanBeCanceled) override;
+ 182: 	virtual void OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
+ 185: 	virtual void OnRemoveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
+ 188: 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+ 189: 	                             const FGameplayAbilityActivationInfo ActivationInfo,
+ 190: 	                             const FGameplayEventData* TriggerEventData) override;
+ 193: 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+ 194: 	                        const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility,
+ 195: 	                        bool bWasCancelled) override;
+ 198: 	virtual bool CheckCost(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+ 199: 	                       OUT FGameplayTagContainer* OptionalRelevantTags = nullptr) const override;
+ 202: 	virtual void ApplyCost(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+ 203: 	                       const FGameplayAbilityActivationInfo ActivationInfo) const override;
+ 206: 	virtual FGameplayEffectContextHandle MakeEffectContext(const FGameplayAbilitySpecHandle Handle,
+ 207: 	                                                       const FGameplayAbilityActorInfo* ActorInfo) const override;
+ 210: 	virtual void ApplyAbilityTagsToGameplayEffectSpec(FGameplayEffectSpec& Spec,
+ 211: 	                                                  FGameplayAbilitySpec* AbilitySpec) const override;
+ 214: 	virtual bool DoesAbilitySatisfyTagRequirements(const UAbilitySystemComponent& AbilitySystemComponent,
+ 215: 	                                               const FGameplayTagContainer* SourceTags = nullptr,
+ 216: 	                                               const FGameplayTagContainer* TargetTags = nullptr,
+ 217: 	                                               OUT FGameplayTagContainer* OptionalRelevantTags = nullptr)
+ 218: 	const override;
+ 222: 	virtual void OnPawnAvatarSet();
+ 225: 	virtual void GetAbilitySource(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+ 226: 	                              float& OutSourceLevel, const IHodgeAbilitySourceInterface*& OutAbilitySource,
+ 227: 	                              AActor*& OutEffectCauser) const;
+ 231: 	UFUNCTION(BlueprintImplementableEvent, Category = Ability, DisplayName = "OnAbilityAdded")
+ 232: 	void K2_OnAbilityAdded();
+ 236: 	UFUNCTION(BlueprintImplementableEvent, Category = Ability, DisplayName = "OnAbilityRemoved")
+ 237: 	void K2_OnAbilityRemoved();
+ 241: 	UFUNCTION(BlueprintImplementableEvent, Category = Ability, DisplayName = "OnPawnAvatarSet")
+ 242: 	void K2_OnPawnAvatarSet();
+ 244: protected:
+ 246: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hodge|Ability Activation")
+ 247: 	EHodgeAbilityActivationPolicy ActivationPolicy;
+ 250: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hodge|Ability Activation")
+ 251: 	EHodgeAbilityActivationGroup ActivationGroup;
+ 254: 	UPROPERTY(EditDefaultsOnly, Instanced, Category = Costs)
+ 255: 	TArray<TObjectPtr<UHodgeAbilityCost>> AdditionalCosts;
+ 258: 	UPROPERTY(EditDefaultsOnly, Category = "Advanced")
+ 259: 	TMap<FGameplayTag, FText> FailureTagToUserFacingMessages;
+ 262: 	UPROPERTY(EditDefaultsOnly, Category = "Advanced")
+ 263: 	TMap<FGameplayTag, TObjectPtr<UAnimMontage>> FailureTagToAnimMontage;
+ 266: 	UPROPERTY(EditDefaultsOnly, Category = "Advanced")
+ 267: 	bool bLogCancelation;
+ 270: 	TSubclassOf<UHodgeCameraMode> ActiveCameraMode;
+ 271: };
 ```
 
 ## HodgeAttributeSet.h
@@ -388,33 +435,37 @@ Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动�
 
 ```cpp
    9: #pragma once
-  11: #include "CoreMinimal.h"
-  12: #include "AttributeSet.h"
-  13: #include "HodgeAttributeSet.generated.h"
-  58: #define ATTRIBUTE_ACCESSORS(ClassName, PropertyName) \
-  59: GAMEPLAYATTRIBUTE_PROPERTY_GETTER(ClassName, PropertyName) \
-  60: GAMEPLAYATTRIBUTE_VALUE_GETTER(PropertyName) \
-  61: GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
-  62: GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
-  64: struct FGameplayEffectSpec;
-  65: class UHodgeAbilitySystemComponent;
-  75: DECLARE_MULTICAST_DELEGATE_SixParams(FHodgeAttributeEvent, AActor*                     , AActor*                 ,
-  76:                                      const FGameplayEffectSpec*               , float                    ,
-  77:                                      float             , float             );
-  84: UCLASS()
-  85: class HODGEPODGE_API UHodgeAttributeSet : public UAttributeSet
-  86: {
-  87: 	GENERATED_BODY()
-  89: public:
-  90: 	UHodgeAttributeSet();
-  92: 	virtual UWorld* GetWorld() const override;
-  94: 	UHodgeAbilitySystemComponent* GetHodgeAbilitySystemComponent() const;
-  95: };
+  12: #include "CoreMinimal.h"
+  15: #include "AttributeSet.h"
+  17: #include "HodgeAttributeSet.generated.h"
+  64: #define ATTRIBUTE_ACCESSORS(ClassName, PropertyName) \
+  65:                                                                  \
+  66: GAMEPLAYATTRIBUTE_PROPERTY_GETTER(ClassName, PropertyName) \
+  67:                              \
+  68: GAMEPLAYATTRIBUTE_VALUE_GETTER(PropertyName) \
+  69:                                \
+  70: GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
+  71:                              \
+  72: GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
+  75: struct FGameplayEffectSpec;
+  78: class UHodgeAbilitySystemComponent;
+ 102: DECLARE_MULTICAST_DELEGATE_SixParams(FHodgeAttributeEvent, AActor*                     , AActor*                 ,
+ 103:                                      const FGameplayEffectSpec*               , float                    ,
+ 104:                                      float             , float             );
+ 114: UCLASS()
+ 115: class HODGEPODGE_API UHodgeAttributeSet : public UAttributeSet
+ 116: {
+ 117: 	GENERATED_BODY()
+ 119: public:
+ 121: 	UHodgeAttributeSet();
+ 124: 	virtual UWorld* GetWorld() const override;
+ 127: 	UHodgeAbilitySystemComponent* GetHodgeAbilitySystemComponent() const;
+ 128: };
 ```
 
 ## HodgeHealthSet.h
 
-Health、MaxHealth、BaseDamage、BaseHeal；复制与夹取有效，GE 结算主体注释。
+Health/MaxHealth、BaseDamage/BaseHeal 和 Damage/Healing 元属性；有效结算、夹取、免疫和耗尽广播。
 
 源码：[Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeHealthSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeHealthSet.h)
 
@@ -424,61 +475,61 @@ Health、MaxHealth、BaseDamage、BaseHeal；复制与夹取有效，GE 结算�
 
 ```cpp
    3: #pragma once
-   5: #include "CoreMinimal.h"
-   6: #include "AbilitySystemComponent.h"
-   7: #include "AbilitySystem/AttributeSet/HodgeAttributeSet.h"
-   8: #include "HodgeHealthSet.generated.h"
-  13: UCLASS()
-  14: class HODGEPODGE_API UHodgeHealthSet : public UHodgeAttributeSet
-  15: {
-  16: 	GENERATED_BODY()
-  18: public:
-  19: 	UHodgeHealthSet();
-  21: 	ATTRIBUTE_ACCESSORS(UHodgeHealthSet, Health);
-  22: 	ATTRIBUTE_ACCESSORS(UHodgeHealthSet, MaxHealth);
-  23: 	ATTRIBUTE_ACCESSORS(UHodgeHealthSet, Healing);
-  24: 	ATTRIBUTE_ACCESSORS(UHodgeHealthSet, Damage);
-  25: 	ATTRIBUTE_ACCESSORS(UHodgeHealthSet, BaseDamage);
-  26: 	ATTRIBUTE_ACCESSORS(UHodgeHealthSet, BaseHeal);
-  29: 	mutable FHodgeAttributeEvent OnHealthChanged;
-  32: 	mutable FHodgeAttributeEvent OnMaxHealthChanged;
-  35: 	mutable FHodgeAttributeEvent OnOutOfHealth;
-  37: protected:
-  38: 	UFUNCTION()
-  39: 	void OnRep_Health(const FGameplayAttributeData& OldValue);
-  41: 	UFUNCTION()
-  42: 	void OnRep_MaxHealth(const FGameplayAttributeData& OldValue);
-  44: 	UFUNCTION()
-  45: 	void OnRep_BaseDamage(const FGameplayAttributeData& OldValue);
-  47: 	UFUNCTION()
-  48: 	void OnRep_BaseHeal(const FGameplayAttributeData& OldValue);
-  50: 	virtual bool PreGameplayEffectExecute(FGameplayEffectModCallbackData& Data) override;
-  51: 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
-  53: 	virtual void PreAttributeBaseChange(const FGameplayAttribute& Attribute, float& NewValue) const override;
-  54: 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
-  55: 	virtual void PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue) override;
-  57: 	void ClampAttribute(const FGameplayAttribute& Attribute, float& NewValue) const;
-  59: private:
-  61: 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Health, Category = "Hodge|Health",
-  62: 		Meta = (HideFromModifiers, AllowPrivateAccess = true))
-  63: 	FGameplayAttributeData Health;
-  66: 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxHealth, Category = "Hodge|Health",
-  67: 		Meta = (AllowPrivateAccess = true))
-  68: 	FGameplayAttributeData MaxHealth;
-  71: 	bool bOutOfHealth;
-  74: 	float MaxHealthBeforeAttributeChange;
-  75: 	float HealthBeforeAttributeChange;
-  82: 	UPROPERTY(BlueprintReadOnly, Category="Hodge|Health", Meta=(AllowPrivateAccess=true))
-  83: 	FGameplayAttributeData Healing;
-  86: 	UPROPERTY(BlueprintReadOnly, Category="Hodge|Health", Meta=(HideFromModifiers, AllowPrivateAccess=true))
-  87: 	FGameplayAttributeData Damage;
-  90: 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_BaseDamage, Category = "Hodge|Combat",
-  91: 		Meta = (AllowPrivateAccess = true))
-  92: 	FGameplayAttributeData BaseDamage;
-  94: 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_BaseHeal, Category = "Hodge|Combat",
-  95: 		Meta = (AllowPrivateAccess = true))
-  96: 	FGameplayAttributeData BaseHeal;
-  97: };
+   6: #include "CoreMinimal.h"
+   9: #include "AbilitySystemComponent.h"
+  12: #include "AbilitySystem/AttributeSet/HodgeAttributeSet.h"
+  14: #include "HodgeHealthSet.generated.h"
+  23: UCLASS()
+  24: class HODGEPODGE_API UHodgeHealthSet : public UHodgeAttributeSet
+  25: {
+  26: 	GENERATED_BODY()
+  28: public:
+  30: 	UHodgeHealthSet();
+  33: 	ATTRIBUTE_ACCESSORS(UHodgeHealthSet, Health);
+  36: 	ATTRIBUTE_ACCESSORS(UHodgeHealthSet, MaxHealth);
+  39: 	ATTRIBUTE_ACCESSORS(UHodgeHealthSet, Healing);
+  42: 	ATTRIBUTE_ACCESSORS(UHodgeHealthSet, Damage);
+  45: 	ATTRIBUTE_ACCESSORS(UHodgeHealthSet, BaseDamage);
+  48: 	ATTRIBUTE_ACCESSORS(UHodgeHealthSet, BaseHeal);
+  52: 	mutable FHodgeAttributeEvent OnHealthChanged;
+  56: 	mutable FHodgeAttributeEvent OnMaxHealthChanged;
+  60: 	mutable FHodgeAttributeEvent OnOutOfHealth;
+  62: protected:
+  64: 	UFUNCTION()
+  65: 	void OnRep_Health(const FGameplayAttributeData& OldValue);
+  68: 	UFUNCTION()
+  69: 	void OnRep_MaxHealth(const FGameplayAttributeData& OldValue);
+  72: 	UFUNCTION()
+  73: 	void OnRep_BaseDamage(const FGameplayAttributeData& OldValue);
+  76: 	UFUNCTION()
+  77: 	void OnRep_BaseHeal(const FGameplayAttributeData& OldValue);
+  80: 	virtual bool PreGameplayEffectExecute(FGameplayEffectModCallbackData& Data) override;
+  83: 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
+  86: 	virtual void PreAttributeBaseChange(const FGameplayAttribute& Attribute, float& NewValue) const override;
+  89: 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
+  92: 	virtual void PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue) override;
+  95: 	void ClampAttribute(const FGameplayAttribute& Attribute, float& NewValue) const;
+  97: private:
+ 101: 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Health, Category = "Hodge|Health",
+ 102: 		Meta = (HideFromModifiers, AllowPrivateAccess = true))
+ 103: 	FGameplayAttributeData Health;
+ 107: 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxHealth, Category = "Hodge|Health",
+ 108: 		Meta = (AllowPrivateAccess = true))
+ 109: 	FGameplayAttributeData MaxHealth;
+ 113: 	bool bOutOfHealth;
+ 117: 	float MaxHealthBeforeAttributeChange;
+ 120: 	float HealthBeforeAttributeChange;
+ 129: 	UPROPERTY(BlueprintReadOnly, Category="Hodge|Health", Meta=(AllowPrivateAccess=true))
+ 130: 	FGameplayAttributeData Healing;
+ 134: 	UPROPERTY(BlueprintReadOnly, Category="Hodge|Health", Meta=(HideFromModifiers, AllowPrivateAccess=true))
+ 135: 	FGameplayAttributeData Damage;
+ 139: 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_BaseDamage, Category = "Hodge|Combat",
+ 140: 		Meta = (AllowPrivateAccess = true))
+ 141: 	FGameplayAttributeData BaseDamage;
+ 144: 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_BaseHeal, Category = "Hodge|Combat",
+ 145: 		Meta = (AllowPrivateAccess = true))
+ 146: 	FGameplayAttributeData BaseHeal;
+ 147: };
 ```
 
 ## GameplayTagStack.h
@@ -566,351 +617,92 @@ Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动�
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   1: ��# p r a g m a   o n c e 
-   2:  
-   3:  
-   4:  
-   5:  # i n c l u d e   " C o r e M i n i m a l . h " 
-   6:  
-   7:  # i n c l u d e   " A b i l i t y S y s t e m C o m p o n e n t . h " 
-   8:  
-   9:  # i n c l u d e   " N a t i v e G a m e p l a y T a g s . h " 
-  10:  
-  11:  # i n c l u d e   " A b i l i t i e s / H o d g e G a m e p l a y A b i l i t y . h " 
-  12:  
-  13:  # i n c l u d e   " H o d g e A b i l i t y S y s t e m C o m p o n e n t . g e n e r a t e d . h " 
-  14:  
-  15:  
-  16:  
-  17:  / /   A b i l i t y   h~{sQ�| f\h�
-  18: �(u�NƖ-N�{t  A b i l i t y   KN���v�o;m0;�^X�T�S�msQ�|0
-  19:  
-  20:  c l a s s   U H o d g e A b i l i t y T a g R e l a t i o n s h i p M a p p i n g ; 
-  21:  
-  22:  
-  23:  
-  24:  / /   h�:y  A b i l i t y   ��eQS_MR��;�^X�v  G a m e p l a y T a g 0
-  25:  
-  26:  H O D G E P O D G E _ A P I   U E _ D E C L A R E _ G A M E P L A Y _ T A G _ E X T E R N ( T A G _ G a m e p l a y _ A b i l i t y I n p u t B l o c k e d ) ; 
-  27:  
-  28:  
-  29:  
-  30:  / * * 
-  31:  
-  32:    *   U H o d g e A b i l i t y S y s t e m C o m p o n e n t 
-  33:  
-  34:    * 
-  35:  
-  36:    *   y��vꁚ[IN�v  A b i l i t y S y s t e m C o m p o n e n t   �W{|0
-  37:  
-  38:    * 
-  39:  
-  40:    *   (W  U A b i l i t y S y s t e m C o m p o n e n t   �v�W@x
-  41: N;N��ibU\�
-  42:  
-  43:    *   A b i l i t y   ��eQYt0A c t i v a t i o n G r o u p   �{t0T a g R e l a t i o n s h i p 0A b i l i t y   �o;m1Y%���wI{y��v;���0
-  44:  
-  45:    * 
-  46:  
-  47:    *   U H o d g e A b i l i t y S y s t e m C o m p o n e n t 
-  48:  
-  49:    * 
-  50:  
-  51:    *     B a s e   a b i l i t y   s y s t e m   c o m p o n e n t   c l a s s   u s e d   b y   t h i s   p r o j e c t . 
-  52:  
-  53:    * / 
-  54:  
-  55:  U C L A S S ( ) 
-  56:  
-  57:  c l a s s   H O D G E P O D G E _ A P I   U H o d g e A b i l i t y S y s t e m C o m p o n e n t   :   p u b l i c   U A b i l i t y S y s t e m C o m p o n e n t 
-  58:  
-  59:  { 
-  60:  
-  61:  	 G E N E R A T E D _ B O D Y ( ) 
-  62:  
-  63:  
-  64:  
-  65:  p u b l i c : 
-  66:  
-  67:  	 / /   
-  68: R�YSy��vꁚ[IN  A b i l i t y S y s t e m C o m p o n e n t 0
-  69:  
-  70:  	 U H o d g e A b i l i t y S y s t e m C o m p o n e n t ( c o n s t   F O b j e c t I n i t i a l i z e r &   O b j e c t I n i t i a l i z e r   =   F O b j e c t I n i t i a l i z e r : : G e t ( ) ) ; 
-  71:  
-  72:  
-  73:  
-  74:  	 / / ~ U A c t o r C o m p o n e n t   i n t e r f a c e 
-  75:  
-  76:  	 / /   A c t o r C o m p o n e n t   sS\�~_g�d>e�eۏL�nt0
-  77:  
-  78:  	 v i r t u a l   v o i d   E n d P l a y ( c o n s t   E E n d P l a y R e a s o n : : T y p e   E n d P l a y R e a s o n )   o v e r r i d e ; 
-  79:  
-  80:  	 / / ~ E n d   o f   U A c t o r C o m p o n e n t   i n t e r f a c e 
-  81:  
-  82:  
-  83:  
-  84:  	 / /   
-  85: R�YS  A S C   N  O w n e r A c t o r 0A v a t a r A c t o r   KN���vsQ�|0
-  86:  
-  87:  	 v i r t u a l   v o i d   I n i t A b i l i t y A c t o r I n f o ( A A c t o r *   I n O w n e r A c t o r ,   A A c t o r *   I n A v a t a r A c t o r )   o v e r r i d e ; 
-  88:  
-  89:  
-  90:  
-  91:  	 / /   (u�N$R�e�g*N  A b i l i t y   /f&T�^勫��S�m�v�Qpe�[a�{|�W0
-  92:  
-  93:  	 t y p e d e f   T F u n c t i o n R e f < b o o l ( c o n s t   U H o d g e G a m e p l a y A b i l i t y *   H o d g e A b i l i t y ,   F G a m e p l a y A b i l i t y S p e c H a n d l e   H a n d l e ) > 
-  94:  
-  95:  	 T S h o u l d C a n c e l A b i l i t y F u n c ; 
-  96:  
-  97:  
-  98:  
-  99:  	 / /   9hncꁚ[INag�N�S�mS_MR  A S C   -N&{Tag�N�v  A b i l i t y 0
- 100:  
- 101:  	 v o i d   C a n c e l A b i l i t i e s B y F u n c ( T S h o u l d C a n c e l A b i l i t y F u n c   S h o u l d C a n c e l F u n c ,   b o o l   b R e p l i c a t e C a n c e l A b i l i t y ) ; 
- 102:  
- 103:  
- 104:  
- 105:  	 / /   �S�m@b	g1u��eQ�o;m�v  A b i l i t y 0
- 106:  
- 107:  	 v o i d   C a n c e l I n p u t A c t i v a t e d A b i l i t i e s ( b o o l   b R e p l i c a t e C a n c e l A b i l i t y ) ; 
- 108:  
- 109:  
- 110:  
- 111:  	 / /   ��U_�g*N  A b i l i t y   ��eQh~{��	c
- 112: N0
- 113:  
- 114:  	 v o i d   A b i l i t y I n p u t T a g P r e s s e d ( c o n s t   F G a m e p l a y T a g &   I n p u t T a g ) ; 
- 115:  
- 116:  
- 117:  
- 118:  	 / /   ��U_�g*N  A b i l i t y   ��eQh~{��ʑ>e0
- 119:  
- 120:  	 v o i d   A b i l i t y I n p u t T a g R e l e a s e d ( c o n s t   F G a m e p l a y T a g &   I n p u t T a g ) ; 
- 121:  
- 122:  
- 123:  
- 124:  	 / /   �k'^Yt  A b i l i t y   ��eQ�r`v^
- 125: \Ջ�o;m�[�^  A b i l i t y 0
- 126:  
- 127:  	 v o i d   P r o c e s s A b i l i t y I n p u t ( f l o a t   D e l t a T i m e ,   b o o l   b G a m e P a u s e d ) ; 
- 128:  
- 129:  
- 130:  
- 131:  	 / /   nzzS_MR'^�y/}�v  A b i l i t y   ��eQ�r`0
- 132:  
- 133:  	 v o i d   C l e a r A b i l i t y I n p u t ( ) ; 
- 134:  
- 135:  
- 136:  
- 137:  	 / /   $R�ec�[  A c t i v a t i o n G r o u p   S_MR/f&T��vQ�N  A b i l i t y   ;�^X0
- 138:  
- 139:  	 b o o l   I s A c t i v a t i o n G r o u p B l o c k e d ( E H o d g e A b i l i t y A c t i v a t i o n G r o u p   G r o u p )   c o n s t ; 
- 140:  
- 141:  
- 142:  
- 143:  	 / /   \  A b i l i t y   �ReQc�[�v  A c t i v a t i o n G r o u p 0
- 144:  
- 145:  	 v o i d   A d d A b i l i t y T o A c t i v a t i o n G r o u p ( E H o d g e A b i l i t y A c t i v a t i o n G r o u p   G r o u p ,   U H o d g e G a m e p l a y A b i l i t y *   H o d g e A b i l i t y ) ; 
- 146:  
- 147:  
- 148:  
- 149:  	 / /   \  A b i l i t y   �Nc�[�v  A c t i v a t i o n G r o u p   -N�yd�0
- 150:  
- 151:  	 v o i d   R e m o v e A b i l i t y F r o m A c t i v a t i o n G r o u p ( E H o d g e A b i l i t y A c t i v a t i o n G r o u p   G r o u p ,   U H o d g e G a m e p l a y A b i l i t y *   H o d g e A b i l i t y ) ; 
- 152:  
- 153:  
- 154:  
- 155:  	 / /   �S�mc�[  A c t i v a t i o n G r o u p   -N�v  A b i l i t y 
- 156: �v^�S�N�_eu N*Nc�[  A b i l i t y 0
- 157:  
- 158:  	 v o i d   C a n c e l A c t i v a t i o n G r o u p A b i l i t i e s ( E H o d g e A b i l i t y A c t i v a t i o n G r o u p   G r o u p ,   U H o d g e G a m e p l a y A b i l i t y *   I g n o r e H o d g e A b i l i t y , 
- 159:  
- 160:  	                                                                         b o o l   b R e p l i c a t e C a n c e l A b i l i t y ) ; 
- 161:  
- 162:  
- 163:  
- 164:  	 / /   U s e s   a   g a m e p l a y   e f f e c t   t o   a d d   t h e   s p e c i f i e d   d y n a m i c   g r a n t e d   t a g . 
- 165:  
- 166:  	 / /   O(u  G a m e p l a y E f f e c t   �R`�c�Nc�[�v  G a m e p l a y T a g 0
- 167:  
- 168:  	 v o i d   A d d D y n a m i c T a g G a m e p l a y E f f e c t ( c o n s t   F G a m e p l a y T a g &   T a g ) ; 
- 169:  
- 170:  
- 171:  
- 172:  	 / /   R e m o v e s   a l l   a c t i v e   i n s t a n c e s   o f   t h e   g a m e p l a y   e f f e c t   t h a t   w a s   u s e d   t o   a d d   t h e   s p e c i f i e d   d y n a m i c   g r a n t e d   t a g . 
- 173:  
- 174:  	 / /   �yd�@b	g(u�N�c�Nc�[  G a m e p l a y T a g   �v�R`  G a m e p l a y E f f e c t   �[�O0
- 175:  
- 176:  	 v o i d   R e m o v e D y n a m i c T a g G a m e p l a y E f f e c t ( c o n s t   F G a m e p l a y T a g &   T a g ) ; 
- 177:  
- 178:  
- 179:  
- 180:  	 / * *   G e t s   t h e   a b i l i t y   t a r g e t   d a t a   a s s o c i a t e d   w i t h   t h e   g i v e n   a b i l i t y   h a n d l e   a n d   a c t i v a t i o n   i n f o   * / 
- 181:  
- 182:  	 / /   ���Sc�[  A b i l i t y H a n d l e   �T  A c t i v a t i o n I n f o   �[�^�v  T a r g e t D a t a 0
- 183:  
- 184:  	 v o i d   G e t A b i l i t y T a r g e t D a t a ( c o n s t   F G a m e p l a y A b i l i t y S p e c H a n d l e   A b i l i t y H a n d l e , 
- 185:  
- 186:  	                                                     F G a m e p l a y A b i l i t y A c t i v a t i o n I n f o   A c t i v a t i o n I n f o , 
- 187:  
- 188:  	                                                     F G a m e p l a y A b i l i t y T a r g e t D a t a H a n d l e &   O u t T a r g e t D a t a H a n d l e ) ; 
- 189:  
- 190:  
- 191:  
- 192:  	 / * *   S e t s   t h e   c u r r e n t   t a g   r e l a t i o n s h i p   m a p p i n g ,   i f   n u l l   i t   w i l l   c l e a r   i t   o u t   * / 
- 193:  
- 194:  	 / /   ��nS_MRO(u�v  A b i l i t y T a g R e l a t i o n s h i p M a p p i n g 
- 195: � OeQ  n u l l p t r   �end�S_MR f\0
- 196:  
- 197:  	 v o i d   S e t T a g R e l a t i o n s h i p M a p p i n g ( U H o d g e A b i l i t y T a g R e l a t i o n s h i p M a p p i n g *   N e w M a p p i n g ) ; 
- 198:  
- 199:  
- 200:  
- 201:  	 / * *   L o o k s   a t   a b i l i t y   t a g s   a n d   g a t h e r s   a d d i t i o n a l   r e q u i r e d   a n d   b l o c k i n g   t a g s   * / 
- 202:  
- 203:  	 / /   9hnc  A b i l i t y   ꁫ��vh~{sQ�|
- 204: ����S��Y�v  R e q u i r e d T a g s   �T  B l o c k e d T a g s 0
- 205:  
- 206:  	 v o i d   G e t A d d i t i o n a l A c t i v a t i o n T a g R e q u i r e m e n t s ( c o n s t   F G a m e p l a y T a g C o n t a i n e r &   A b i l i t y T a g s , 
- 207:  
- 208:  	                                                                                         F G a m e p l a y T a g C o n t a i n e r &   O u t A c t i v a t i o n R e q u i r e d , 
- 209:  
- 210:  	                                                                                         F G a m e p l a y T a g C o n t a i n e r &   O u t A c t i v a t i o n B l o c k e d )   c o n s t ; 
- 211:  
- 212:  
- 213:  
- 214:  p r o t e c t e d : 
- 215:  
- 216:  	 / /   �g~bv^
- 217: \Ջ�o;m@b	gM�n:N  O n S p a w n   �v  A b i l i t y 0
- 218:  
- 219:  	 v o i d   T r y A c t i v a t e A b i l i t i e s O n S p a w n ( ) ; 
- 220:  
- 221:  
- 222:  
- 223:  	 / /   A b i l i t y   ��eQ	c
- 224: N�e�f�e�[�^  A b i l i t y S p e c   �v��eQ�r`0
- 225:  
- 226:  	 v i r t u a l   v o i d   A b i l i t y S p e c I n p u t P r e s s e d ( F G a m e p l a y A b i l i t y S p e c &   S p e c )   o v e r r i d e ; 
- 227:  
- 228:  
- 229:  
- 230:  	 / /   A b i l i t y   ��eQʑ>e�e�f�e�[�^  A b i l i t y S p e c   �v��eQ�r`0
- 231:  
- 232:  	 v i r t u a l   v o i d   A b i l i t y S p e c I n p u t R e l e a s e d ( F G a m e p l a y A b i l i t y S p e c &   S p e c )   o v e r r i d e ; 
- 233:  
- 234:  
- 235:  
- 236:  	 / /   A b i l i t y   b�R�o;mT��w  A S C 0
- 237:  
- 238:  	 v i r t u a l   v o i d   N o t i f y A b i l i t y A c t i v a t e d ( c o n s t   F G a m e p l a y A b i l i t y S p e c H a n d l e   H a n d l e ,   U G a m e p l a y A b i l i t y *   A b i l i t y )   o v e r r i d e ; 
- 239:  
- 240:  
- 241:  
- 242:  	 / /   A b i l i t y   �o;m1Y%�T��w  A S C 0
- 243:  
- 244:  	 v i r t u a l   v o i d   N o t i f y A b i l i t y F a i l e d ( c o n s t   F G a m e p l a y A b i l i t y S p e c H a n d l e   H a n d l e ,   U G a m e p l a y A b i l i t y *   A b i l i t y , 
- 245:  
- 246:  	                                                                   c o n s t   F G a m e p l a y T a g C o n t a i n e r &   F a i l u r e R e a s o n )   o v e r r i d e ; 
- 247:  
- 248:  
- 249:  
- 250:  	 / /   A b i l i t y   �~_gT��w  A S C 
- 251: �v^�c�O/f&T���S�m�v�Oo`0
- 252:  
- 253:  	 v i r t u a l   v o i d   N o t i f y A b i l i t y E n d e d ( F G a m e p l a y A b i l i t y S p e c H a n d l e   H a n d l e ,   U G a m e p l a y A b i l i t y *   A b i l i t y , 
- 254:  
- 255:  	                                                                 b o o l   b W a s C a n c e l l e d )   o v e r r i d e ; 
- 256:  
- 257:  
- 258:  
- 259:  	 / /   9hnc  A b i l i t y   �v  B l o c k   /   C a n c e l   T a g s 
- 260: ��[vQ�N  A b i l i t y   gbL�;�^X�T�S�mYt0
- 261:  
- 262:  	 v i r t u a l   v o i d   A p p l y A b i l i t y B l o c k A n d C a n c e l T a g s ( c o n s t   F G a m e p l a y T a g C o n t a i n e r &   A b i l i t y T a g s , 
- 263:  
- 264:  	                                                                                         U G a m e p l a y A b i l i t y *   R e q u e s t i n g A b i l i t y ,   b o o l   b E n a b l e B l o c k T a g s , 
- 265:  
- 266:  	                                                                                         c o n s t   F G a m e p l a y T a g C o n t a i n e r &   B l o c k T a g s ,   b o o l   b E x e c u t e C a n c e l T a g s , 
- 267:  
- 268:  	                                                                                         c o n s t   F G a m e p l a y T a g C o n t a i n e r &   C a n c e l T a g s )   o v e r r i d e ; 
- 269:  
- 270:  
- 271:  
- 272:  	 / /   S_  A b i l i t y   �v�S�S�m�r`�Su�SS�e
- 273: ���wvQ�N�vsQ  A b i l i t y 0
- 274:  
- 275:  	 v i r t u a l   v o i d   H a n d l e C h a n g e A b i l i t y C a n B e C a n c e l e d ( c o n s t   F G a m e p l a y T a g C o n t a i n e r &   A b i l i t y T a g s , 
- 276:  
- 277:  	                                                                                             U G a m e p l a y A b i l i t y *   R e q u e s t i n g A b i l i t y ,   b o o l   b C a n B e C a n c e l e d )   o v e r r i d e ; 
- 278:  
- 279:  
- 280:  
- 281:  	 / * *   N o t i f y   c l i e n t   t h a t   a n   a b i l i t y   f a i l e d   t o   a c t i v a t e   * / 
- 282:  
- 283:  	 / /   (W
- 284: g�RhV�hKm0R  A b i l i t y   �o;m1Y%��e��w�[7b�z0
- 285:  
- 286:  	 U F U N C T I O N ( C l i e n t ,   U n r e l i a b l e ) 
- 287:  
- 288:  	 v o i d   C l i e n t N o t i f y A b i l i t y F a i l e d ( c o n s t   U G a m e p l a y A b i l i t y *   A b i l i t y ,   c o n s t   F G a m e p l a y T a g C o n t a i n e r &   F a i l u r e R e a s o n ) ; 
- 289:  
- 290:  
- 291:  
- 292:  	 / /   (W,g0W�~ NYt  A b i l i t y   �o;m1Y%�0
- 293:  
- 294:  	 v o i d   H a n d l e A b i l i t y F a i l e d ( c o n s t   U G a m e p l a y A b i l i t y *   A b i l i t y ,   c o n s t   F G a m e p l a y T a g C o n t a i n e r &   F a i l u r e R e a s o n ) ; 
- 295:  
- 296:  
- 297:  
- 298:  p r o t e c t e d : 
- 299:  
- 300:  	 / /   S_MR  A S C   O(u�v  A b i l i t y T a g R e l a t i o n s h i p M a p p i n g 0
- 301:  
- 302:  	 / /   (u�N9hnc  A b i l i t y T a g s   �R`ibU\  R e q u i r e d T a g s 0B l o c k e d T a g s 0C a n c e l T a g s   �T  B l o c k T a g s 0
- 303:  
- 304:  	 / /   I f   s e t ,   t h i s   t a b l e   i s   u s e d   t o   l o o k   u p   t a g   r e l a t i o n s h i p s   f o r   a c t i v a t e   a n d   c a n c e l 
- 305:  
- 306:  	 U P R O P E R T Y ( ) 
- 307:  
- 308:  	 T O b j e c t P t r < U H o d g e A b i l i t y T a g R e l a t i o n s h i p M a p p i n g >   T a g R e l a t i o n s h i p M a p p i n g ; 
- 309:  
- 310:  
- 311:  
- 312:  	 / /   S_MR'^�Su��eQ	c
- 313: N�v  A b i l i t y S p e c H a n d l e 0
- 314:  
- 315:  	 / /   H a n d l e s   t o   a b i l i t i e s   t h a t   h a d   t h e i r   i n p u t   p r e s s e d   t h i s   f r a m e . 
- 316:  
- 317:  	 T A r r a y < F G a m e p l a y A b i l i t y S p e c H a n d l e >   I n p u t P r e s s e d S p e c H a n d l e s ; 
- 318:  
- 319:  
- 320:  
- 321:  	 / /   S_MR'^�Su��eQʑ>e�v  A b i l i t y S p e c H a n d l e 0
- 322:  
- 323:  	 / /   H a n d l e s   t o   a b i l i t i e s   t h a t   h a d   t h e i r   i n p u t   r e l e a s e d   t h i s   f r a m e . 
- 324:  
- 325:  	 T A r r a y < F G a m e p l a y A b i l i t y S p e c H a n d l e >   I n p u t R e l e a s e d S p e c H a n d l e s ; 
- 326:  
- 327:  
- 328:  
- 329:  	 / /   S_MR�N6qY�N��eQ�Oc�r`�v  A b i l i t y S p e c H a n d l e 0
- 330:  
- 331:  	 / /   H a n d l e s   t o   a b i l i t i e s   t h a t   h a v e   t h e i r   i n p u t   h e l d . 
- 332:  
- 333:  	 T A r r a y < F G a m e p l a y A b i l i t y S p e c H a n d l e >   I n p u t H e l d S p e c H a n d l e s ; 
- 334:  
- 335:  
- 336:  
- 337:  	 / /   �k*N  A c t i v a t i o n G r o u p   S_MRck(WЏL��v  A b i l i t y   peϑ0
- 338:  
- 339:  	 / /   N u m b e r   o f   a b i l i t i e s   r u n n i n g   i n   e a c h   a c t i v a t i o n   g r o u p . 
- 340:  
- 341:  	 i n t 3 2   A c t i v a t i o n G r o u p C o u n t s [ ( u i n t 8 ) E H o d g e A b i l i t y A c t i v a t i o n G r o u p : : M A X ] ; 
- 342:  
- 343:  } ; 
- 344:  
- 345:  
+   1: #pragma once
+   3: #include "CoreMinimal.h"
+   4: #include "AbilitySystemComponent.h"
+   5: #include "NativeGameplayTags.h"
+   6: #include "Abilities/HodgeGameplayAbility.h"
+   7: #include "HodgeAbilitySystemComponent.generated.h"
+  10: class UHodgeAbilityTagRelationshipMapping;
+  13: HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_AbilityInputBlocked);
+  27: UCLASS()
+  28: class HODGEPODGE_API UHodgeAbilitySystemComponent : public UAbilitySystemComponent
+  29: {
+  30: 	GENERATED_BODY()
+  32: public:
+  34: 	UHodgeAbilitySystemComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+  38: 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+  42: 	virtual void InitAbilityActorInfo(AActor* InOwnerActor, AActor* InAvatarActor) override;
+  45: 	typedef TFunctionRef<bool(const UHodgeGameplayAbility* HodgeAbility, FGameplayAbilitySpecHandle Handle)>
+  46: 	TShouldCancelAbilityFunc;
+  49: 	void CancelAbilitiesByFunc(TShouldCancelAbilityFunc ShouldCancelFunc, bool bReplicateCancelAbility);
+  52: 	void CancelInputActivatedAbilities(bool bReplicateCancelAbility);
+  55: 	void AbilityInputTagPressed(const FGameplayTag& InputTag);
+  58: 	void AbilityInputTagReleased(const FGameplayTag& InputTag);
+  61: 	void ProcessAbilityInput(float DeltaTime, bool bGamePaused);
+  64: 	void ClearAbilityInput();
+  67: 	bool IsActivationGroupBlocked(EHodgeAbilityActivationGroup Group) const;
+  70: 	void AddAbilityToActivationGroup(EHodgeAbilityActivationGroup Group, UHodgeGameplayAbility* HodgeAbility);
+  73: 	void RemoveAbilityFromActivationGroup(EHodgeAbilityActivationGroup Group, UHodgeGameplayAbility* HodgeAbility);
+  76: 	void CancelActivationGroupAbilities(EHodgeAbilityActivationGroup Group, UHodgeGameplayAbility* IgnoreHodgeAbility,
+  77: 	                                    bool bReplicateCancelAbility);
+  81: 	void AddDynamicTagGameplayEffect(const FGameplayTag& Tag);
+  85: 	void RemoveDynamicTagGameplayEffect(const FGameplayTag& Tag);
+  89: 	void GetAbilityTargetData(const FGameplayAbilitySpecHandle AbilityHandle,
+  90: 	                          FGameplayAbilityActivationInfo ActivationInfo,
+  91: 	                          FGameplayAbilityTargetDataHandle& OutTargetDataHandle);
+  95: 	void SetTagRelationshipMapping(UHodgeAbilityTagRelationshipMapping* NewMapping);
+  99: 	void GetAdditionalActivationTagRequirements(const FGameplayTagContainer& AbilityTags,
+ 100: 	                                            FGameplayTagContainer& OutActivationRequired,
+ 101: 	                                            FGameplayTagContainer& OutActivationBlocked) const;
+ 103: protected:
+ 105: 	void TryActivateAbilitiesOnSpawn();
+ 108: 	virtual void AbilitySpecInputPressed(FGameplayAbilitySpec& Spec) override;
+ 111: 	virtual void AbilitySpecInputReleased(FGameplayAbilitySpec& Spec) override;
+ 114: 	virtual void NotifyAbilityActivated(const FGameplayAbilitySpecHandle Handle, UGameplayAbility* Ability) override;
+ 117: 	virtual void NotifyAbilityFailed(const FGameplayAbilitySpecHandle Handle, UGameplayAbility* Ability,
+ 118: 	                                 const FGameplayTagContainer& FailureReason) override;
+ 121: 	virtual void NotifyAbilityEnded(FGameplayAbilitySpecHandle Handle, UGameplayAbility* Ability,
+ 122: 	                                bool bWasCancelled) override;
+ 125: 	virtual void ApplyAbilityBlockAndCancelTags(const FGameplayTagContainer& AbilityTags,
+ 126: 	                                            UGameplayAbility* RequestingAbility, bool bEnableBlockTags,
+ 127: 	                                            const FGameplayTagContainer& BlockTags, bool bExecuteCancelTags,
+ 128: 	                                            const FGameplayTagContainer& CancelTags) override;
+ 131: 	virtual void HandleChangeAbilityCanBeCanceled(const FGameplayTagContainer& AbilityTags,
+ 132: 	                                              UGameplayAbility* RequestingAbility, bool bCanBeCanceled) override;
+ 136: 	UFUNCTION(Client, Unreliable)
+ 137: 	void ClientNotifyAbilityFailed(const UGameplayAbility* Ability, const FGameplayTagContainer& FailureReason);
+ 140: 	void HandleAbilityFailed(const UGameplayAbility* Ability, const FGameplayTagContainer& FailureReason);
+ 142: protected:
+ 146: 	UPROPERTY()
+ 147: 	TObjectPtr<UHodgeAbilityTagRelationshipMapping> TagRelationshipMapping;
+ 151: 	TArray<FGameplayAbilitySpecHandle> InputPressedSpecHandles;
+ 155: 	TArray<FGameplayAbilitySpecHandle> InputReleasedSpecHandles;
+ 159: 	TArray<FGameplayAbilitySpecHandle> InputHeldSpecHandles;
+ 163: 	int32 ActivationGroupCounts[(uint8)EHodgeAbilityActivationGroup::MAX];
+ 164: };
+```
+
+## HodgeAbilitySystemGlobals.h
+
+分配 FHodgeGameplayEffectContext 的 GAS 全局类；已加入项目配置。
+
+源码：[Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemGlobals.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemGlobals.h)
+
+有效头文件声明摘录（未展开宏，未求值预处理分支）：
+
+```cpp
+   3: #pragma once
+   6: #include "AbilitySystemGlobals.h"
+   8: #include "HodgeAbilitySystemGlobals.generated.h"
+  11: class UObject;
+  14: struct FGameplayEffectContext;
+  18: UCLASS(Config=Game)
+  19: class UHodgeAbilitySystemGlobals : public UAbilitySystemGlobals
+  20: {
+  21: 	GENERATED_UCLASS_BODY()
+  26: 	virtual FGameplayEffectContext* AllocGameplayEffectContext() const override;
+  29: };
 ```
 
 ## HodgeAbilityTagRelationshipMapping.h
@@ -961,7 +753,7 @@ Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动�
 
 ## HodgeGameplayCueManager.h
 
-项目 Cue 资源加载/预加载管理实现；默认管理器配置尚未接通。
+项目 Cue 管理类已配置；启动预加载及 Feature Cue 观察者生命周期仍未完整接通。
 
 源码：[Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayCueManager.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayCueManager.h)
 
@@ -1027,7 +819,7 @@ Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动�
 
 ## HodgeGameplayEffectContext.h
 
-项目 GE 上下文与序列化扩展；需要 Globals 分配入口配套。
+项目 GE 上下文与序列化扩展，已有 HodgeAbilitySystemGlobals 分配配套。
 
 源码：[Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayEffectContext.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayEffectContext.h)
 
@@ -1198,59 +990,61 @@ Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动�
  160: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Weapon_Reload);
  165: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Move);
  166: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Look);
- 167: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Crouch);
- 168: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_AutoRun);
- 176: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Sprint);
- 177: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Walk);
- 178: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Aim);
- 179: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Ragdoll);
- 180: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Roll);
- 181: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_RotationMode);
- 182: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_ViewMode);
- 183: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_SwitchShoulder);
- 188: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InitState_Spawned);
- 189: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InitState_DataAvailable);
- 190: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InitState_DataInitialized);
- 191: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InitState_GameplayReady);
- 196: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Lyra_Damage_Taken_Message);
- 197: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Lyra_HUD_PlayerHUD);
- 198: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Lyra_HUD_TempTopWidgets);
- 199: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Lyra_Player);
- 204: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_BinauralSettingControlledByOS);
- 205: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_CanExitApplication);
- 206: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_Input_PrimarlyController);
- 207: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_Input_HasStrictControllerPairing);
- 208: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_Input_PrimarlyTouchScreen);
- 209: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_Input_SupportsMouseAndKeyboard);
- 210: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_Input_HardwareCursor);
- 211: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_SupportsBackgroundAudio);
- 212: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_SupportsChangingAudioOutputDevice);
- 213: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_SupportsWindowedMode);
- 218: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(ShooterGame_GamePhase_MatchBeginCountdown);
- 223: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_SpawningIn);
- 224: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Crouching);
- 225: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_AutoRunning);
- 226: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Death);
- 227: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Death_Dying);
- 228: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Death_Dead);
- 233: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(SetByCaller_Damage);
- 234: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(SetByCaller_Heal);
- 239: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cheat_GodMode);
- 240: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cheat_UnlimitedHealth);
- 245: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Action_Back);
- 246: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Layer_Game);
- 247: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Layer_GameMenu);
- 248: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Layer_Menu);
- 249: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Layer_Modal);
- 254: 	HODGEPODGE_API extern const TMap<uint8, FGameplayTag> MovementModeTagMap;
- 255: 	HODGEPODGE_API extern const TMap<uint8, FGameplayTag> CustomMovementModeTagMap;
- 257: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Mode_Walking);
- 258: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Mode_NavWalking);
- 259: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Mode_Falling);
- 260: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Mode_Swimming);
- 261: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Mode_Flying);
- 262: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Mode_Custom);
- 263: };
+ 167: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Look_Mouse);
+ 168: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Look_Stick);
+ 169: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Crouch);
+ 170: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_AutoRun);
+ 178: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Sprint);
+ 179: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Walk);
+ 180: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Aim);
+ 181: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Ragdoll);
+ 182: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Roll);
+ 183: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_RotationMode);
+ 184: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_ViewMode);
+ 185: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_SwitchShoulder);
+ 190: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InitState_Spawned);
+ 191: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InitState_DataAvailable);
+ 192: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InitState_DataInitialized);
+ 193: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InitState_GameplayReady);
+ 198: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Hodge_Damage_Taken_Message);
+ 199: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Hodge_HUD_PlayerHUD);
+ 200: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Hodge_HUD_TempTopWidgets);
+ 201: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Hodge_Player);
+ 206: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_BinauralSettingControlledByOS);
+ 207: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_CanExitApplication);
+ 208: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_Input_PrimarlyController);
+ 209: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_Input_HasStrictControllerPairing);
+ 210: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_Input_PrimarlyTouchScreen);
+ 211: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_Input_SupportsMouseAndKeyboard);
+ 212: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_Input_HardwareCursor);
+ 213: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_SupportsBackgroundAudio);
+ 214: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_SupportsChangingAudioOutputDevice);
+ 215: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_SupportsWindowedMode);
+ 220: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(ShooterGame_GamePhase_MatchBeginCountdown);
+ 225: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_SpawningIn);
+ 226: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Crouching);
+ 227: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_AutoRunning);
+ 228: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Death);
+ 229: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Death_Dying);
+ 230: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Death_Dead);
+ 235: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(SetByCaller_Damage);
+ 236: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(SetByCaller_Heal);
+ 241: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cheat_GodMode);
+ 242: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cheat_UnlimitedHealth);
+ 247: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Action_Back);
+ 248: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Layer_Game);
+ 249: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Layer_GameMenu);
+ 250: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Layer_Menu);
+ 251: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Layer_Modal);
+ 256: 	HODGEPODGE_API extern const TMap<uint8, FGameplayTag> MovementModeTagMap;
+ 257: 	HODGEPODGE_API extern const TMap<uint8, FGameplayTag> CustomMovementModeTagMap;
+ 259: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Mode_Walking);
+ 260: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Mode_NavWalking);
+ 261: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Mode_Falling);
+ 262: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Mode_Swimming);
+ 263: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Mode_Flying);
+ 264: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Mode_Custom);
+ 265: };
 ```
 
 ## HodgeGlobalAbilitySystem.h
