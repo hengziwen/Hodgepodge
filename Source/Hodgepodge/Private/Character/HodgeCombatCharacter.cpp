@@ -89,8 +89,8 @@ AHodgeCombatCharacter::AHodgeCombatCharacter(const FObjectInitializer& ObjectIni
 	// 不使用 Controller 的期望旋转控制角色朝向
 	HodgeMoveComp->bUseControllerDesiredRotation = false;
 
-	// 不根据移动方向自动旋转角色
-	HodgeMoveComp->bOrientRotationToMovement = false;
+	// 根据移动方向自动旋转角色（动作 RPG 模式：角色只朝移动方向转）
+	HodgeMoveComp->bOrientRotationToMovement = true;
 
 	// 设置角色旋转速度
 	HodgeMoveComp->RotationRate = FRotator(0.0f, 720.0f, 0.0f);
@@ -137,8 +137,8 @@ AHodgeCombatCharacter::AHodgeCombatCharacter(const FObjectInitializer& ObjectIni
 	// Pitch 不跟随 Controller 旋转
 	bUseControllerRotationPitch = false;
 
-	// Yaw 跟随 Controller 旋转
-	bUseControllerRotationYaw = true;
+	// Yaw 不跟随 Controller 旋转（镜头可自由转动，角色朝向由移动方向决定）
+	bUseControllerRotationYaw = false;
 
 	// Roll 不跟随 Controller 旋转
 	bUseControllerRotationRoll = false;
