@@ -177,4 +177,14 @@ protected:
 	/** True when player input bindings have been applied, will never be true for non - players */
 	// 标记本地玩家输入绑定是否已经完成；非玩家控制 Pawn 永远不会为 true。
 	bool bReadyToBindInputs;
+
+	/**
+	 * 保存 AddAdditionalInputConfig 产生的 Ability 输入绑定句柄，键为对应的 InputConfig。
+	 * RemoveAdditionalInputConfig 通过它精确解绑，避免句柄丢失导致额外输入无法移除。
+	 *
+	 * 说明：这里刻意不用 UPROPERTY。InputConfig 指针为 const，UHT 不支持
+	 * TObjectPtr<const T> 作为反射属性；InputConfig 的生命周期由 GameFeature/Experience
+	 * 的软引用资产链持有，本 map 只作为查找键，不延长其生命周期。
+	 */
+	TMap<const UHodgeInputConfig*, TArray<uint32>> AdditionalInputConfigHandles;
 };

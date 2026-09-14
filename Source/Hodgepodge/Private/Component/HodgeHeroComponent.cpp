@@ -367,6 +367,20 @@ void UHodgeHeroComponent::BeginPlay()
 // HeroComponent 生命周期结束时调用。
 void UHodgeHeroComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	// 解绑所有通过 AddAdditionalInputConfig 动态追加的输入，避免 Pawn 更换、热重载或
+	// GameFeature 未走正常停用路径时残留绑定句柄。
+	if (const APawn* Pawn = GetPawn<APawn>())
+	{
+		if (UHodgeInputComponent* HodgeIC = Pawn->FindComponentByClass<UHodgeInputComponent>())
+		{
+			for (TPair<const UHodgeInputConfig*, TArray<uint32>>& Pair : AdditionalInputConfigHandles)
+			{
+				HodgeIC->RemoveBinds(Pair.Value);
+			}
+		}
+	}
+	AdditionalInputConfigHandles.Reset();
+
 	// 从 GameFramework InitState 系统中注销当前 Feature。
 	UnregisterInitStateFeature();
 
@@ -595,35 +609,60 @@ void UHodgeHeroComponent::InitializePlayerInput(UInputComponent* PlayerInputComp
 // 动态为当前玩家添加额外的 Ability 输入配置。
 void UHodgeHeroComponent::AddAdditionalInputConfig(const UHodgeInputConfig* InputConfig)
 {
-	// 保存本次新增输入绑定产生的句柄。
-	TArray<uint32> BindHandles;
-
 	// 获取当前 Pawn。
 	const APawn* Pawn = GetPawn<APawn>();
 
 	// Pawn 不存在时不能添加输入绑定。
 	if (!Pawn)
 	{
+		UE_LOG(LogTemp, Warning,
+		       TEXT("[HODGE-DBG] Hero AddAdditionalInputConfig skipped: no Pawn. InputConfig=%s"),
+		       *GetNameSafe(InputConfig));
 		return;
 	}
 
 	// 获取当前 Pawn 的 PlayerController。
 	const APlayerController* PC = GetController<APlayerController>();
 
-	// 动态输入绑定只应该发生在有效 PlayerController 上。
-	check(PC);
+	// 动态输入绑定只应该发生在本地玩家控制的有效 PlayerController 上；
+	// 服务器或模拟代理没有本地输入，直接跳过而不是崩溃。
+	if (!PC)
+	{
+		UE_LOG(LogTemp, Warning,
+		       TEXT(
+			       "[HODGE-DBG] Hero AddAdditionalInputConfig skipped: no PlayerController (server/simulated proxy). Pawn=%s InputConfig=%s"
+		       ),
+		       *GetNameSafe(Pawn), *GetNameSafe(InputConfig));
+		return;
+	}
 
 	// 获取当前本地玩家。
 	const ULocalPlayer* LP = PC->GetLocalPlayer();
 
-	// LocalPlayer 必须有效。
-	check(LP);
+	// 服务器或非本地玩家控制 Pawn 没有 LocalPlayer，无本地输入可绑定。
+	if (!LP)
+	{
+		UE_LOG(LogTemp, Warning,
+		       TEXT(
+			       "[HODGE-DBG] Hero AddAdditionalInputConfig skipped: no LocalPlayer. Pawn=%s PC=%s InputConfig=%s"
+		       ),
+		       *GetNameSafe(Pawn), *GetNameSafe(PC), *GetNameSafe(InputConfig));
+		return;
+	}
 
 	// 获取 Enhanced Input 本地玩家子系统。
 	UEnhancedInputLocalPlayerSubsystem* Subsystem = LP->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
 
 	// Enhanced Input 子系统必须有效。
-	check(Subsystem);
+	if (!Subsystem)
+	{
+		UE_LOG(LogTemp, Warning,
+		       TEXT(
+			       "[HODGE-DBG] Hero AddAdditionalInputConfig skipped: no EnhancedInput subsystem. Pawn=%s InputConfig=%s"
+		       ),
+		       *GetNameSafe(Pawn), *GetNameSafe(InputConfig));
+		return;
+	}
 
 	// 确保 Pawn 存在 PawnExtensionComponent。
 	if (const UHodgePawnExtensionComponent* PawnExtComp =
@@ -639,9 +678,21 @@ void UHodgeHeroComponent::AddAdditionalInputConfig(const UHodgeInputConfig* Inpu
 				"Unexpected Input Component class! The Gameplay Abilities will not be bound to their inputs. Change the input component to UHodgeInputComponent or a subclass of it."
 			)))
 		{
+			// 保存本次新增输入绑定产生的句柄。
+			TArray<uint32> BindHandles;
+
 			// 将额外 InputConfig 中的 Ability 输入动态绑定到当前 HeroComponent。
 			HodgeIC->BindAbilityActions(InputConfig, this, &ThisClass::Input_AbilityInputTagPressed,
 			                            &ThisClass::Input_AbilityInputTagReleased, /*out*/ BindHandles);
+
+			// 同一 InputConfig 若被重复添加，先解绑旧句柄，避免句柄累积。
+			if (TArray<uint32>* OldHandles = AdditionalInputConfigHandles.Find(InputConfig))
+			{
+				HodgeIC->RemoveBinds(*OldHandles);
+			}
+
+			// 持久化本次句柄，供 RemoveAdditionalInputConfig 精确解绑。
+			AdditionalInputConfigHandles.Add(InputConfig, MoveTemp(BindHandles));
 		}
 	}
 }
@@ -649,8 +700,30 @@ void UHodgeHeroComponent::AddAdditionalInputConfig(const UHodgeInputConfig* Inpu
 // 移除之前动态添加的额外输入配置。
 void UHodgeHeroComponent::RemoveAdditionalInputConfig(const UHodgeInputConfig* InputConfig)
 {
-	//@TODO: Implement me!
-	// 当前尚未实现对应输入绑定的解除逻辑。
+	// 查找该 InputConfig 对应的绑定句柄记录。
+	TArray<uint32>* BindHandles = AdditionalInputConfigHandles.Find(InputConfig);
+
+	// 没有记录过该 InputConfig 时无需处理。
+	if (!BindHandles)
+	{
+		return;
+	}
+
+	// 获取当前 Pawn。
+	const APawn* Pawn = GetPawn<APawn>();
+
+	// Pawn 仍然存在时，从它的 InputComponent 上真正移除绑定。
+	if (Pawn)
+	{
+		if (UHodgeInputComponent* HodgeIC = Pawn->FindComponentByClass<UHodgeInputComponent>())
+		{
+			// RemoveBinds 内部会逐个 RemoveBindingByHandle 并 Reset 句柄数组。
+			HodgeIC->RemoveBinds(*BindHandles);
+		}
+	}
+
+	// 无论 Pawn 是否还在，都清除记录，避免句柄累积。
+	AdditionalInputConfigHandles.Remove(InputConfig);
 }
 
 // 返回当前 HeroComponent 是否已经完成基础玩家输入初始化。
