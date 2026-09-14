@@ -1,0 +1,25 @@
+import unreal
+m=unreal.load_asset('/Game/CodexText/Survivor/M_EnemyCrimson')
+c=unreal.MaterialEditingLibrary.create_material_expression(m,unreal.MaterialExpressionConstant3Vector,0,240)
+c.set_editor_property('constant',unreal.LinearColor(.14,.008,.018,1))
+unreal.MaterialEditingLibrary.connect_material_property(c,'',unreal.MaterialProperty.MP_EMISSIVE_COLOR)
+unreal.MaterialEditingLibrary.recompile_material(m)
+unreal.EditorAssetLibrary.save_loaded_asset(m,False)
+mat=unreal.AssetToolsHelpers.get_asset_tools().create_asset('M_HeroIvory','/Game/CodexText/Survivor',unreal.Material,unreal.MaterialFactoryNew())
+for color,prop,y in [((.75,.82,.9),unreal.MaterialProperty.MP_BASE_COLOR,0),((.13,.16,.20),unreal.MaterialProperty.MP_EMISSIVE_COLOR,120)]:
+ e=unreal.MaterialEditingLibrary.create_material_expression(mat,unreal.MaterialExpressionConstant3Vector,0,y)
+ e.set_editor_property('constant',unreal.LinearColor(*color,1))
+ unreal.MaterialEditingLibrary.connect_material_property(e,'',prop)
+unreal.MaterialEditingLibrary.recompile_material(mat)
+unreal.EditorAssetLibrary.save_loaded_asset(mat,False)
+bp=unreal.load_asset('/Game/CodexText/Survivor/BP_SurvivorHero')
+cdo=unreal.get_default_object(bp.generated_class())
+mesh=cdo.get_component_by_class(unreal.SkeletalMeshComponent)
+for i in range(mesh.get_num_materials()):mesh.set_material(i,mat)
+unreal.BlueprintEditorLibrary.compile_blueprint(bp)
+unreal.EditorAssetLibrary.save_loaded_asset(bp,False)
+for a in unreal.get_editor_subsystem(unreal.EditorActorSubsystem).get_all_level_actors():
+ if isinstance(a,unreal.PostProcessVolume):
+  s=a.get_editor_property('settings');s.set_editor_property('auto_exposure_bias',0);a.set_editor_property('settings',s)
+unreal.EditorLoadingAndSavingUtils.save_current_level()
+print('Hero contrast and arena lighting updated')

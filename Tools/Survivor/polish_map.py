@@ -1,0 +1,18 @@
+import unreal
+actors=unreal.get_editor_subsystem(unreal.EditorActorSubsystem)
+lights=[a for a in actors.get_all_level_actors() if isinstance(a,unreal.DirectionalLight)]
+lights[0].light_component.set_editor_property('forward_shading_priority',1)
+lights[1].light_component.set_editor_property('forward_shading_priority',0)
+pp=actors.spawn_actor_from_class(unreal.PostProcessVolume,unreal.Vector(0,0,0))
+pp.set_actor_label('SurvivorExposure')
+pp.set_editor_property('unbound',True)
+s=pp.get_editor_property('settings')
+s.set_editor_property('override_auto_exposure_min_brightness',True)
+s.set_editor_property('override_auto_exposure_max_brightness',True)
+s.set_editor_property('auto_exposure_min_brightness',1.0)
+s.set_editor_property('auto_exposure_max_brightness',1.0)
+s.set_editor_property('override_auto_exposure_bias',True)
+s.set_editor_property('auto_exposure_bias',-1.0)
+pp.set_editor_property('settings',s)
+w=unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_editor_world()
+print(unreal.EditorLoadingAndSavingUtils.save_map(w,'/Game/CodexText/Survivor/L_Survivor'))

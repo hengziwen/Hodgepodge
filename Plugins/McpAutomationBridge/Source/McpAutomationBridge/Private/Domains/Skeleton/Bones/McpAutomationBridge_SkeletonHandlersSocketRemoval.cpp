@@ -1,0 +1,83 @@
+#include "Domains/Skeleton/Assets/McpAutomationBridge_SkeletonHandlersAssetLoading.h"
+#include "Domains/Skeleton/Assets/McpAutomationBridge_SkeletonHandlersPayload.h"
+
+#include "Animation/Skeleton.h"
+#include "Engine/SkeletalMesh.h"
+#include "Engine/SkeletalMeshSocket.h"
+#include "Foundation/BridgeHelpers/Security/McpAutomationBridgeHelpersSafeOperationsFacade.h"
+#include "McpAutomationBridgeSubsystem.h"
+#include "Transport/WebSocket/McpBridgeWebSocket.h"
+#include "Foundation/HandlerUtils/McpHandlerUtils.h"
+
+#if WITH_EDITOR
+using namespace McpSkeletonHandlers;
+
+bool UMcpAutomationBridgeSubsystem::HandleDeleteSocket(
+    const FString& RequestId,
+    const TSharedPtr<FJsonObject>& Payload,
+    TSharedPtr<FMcpBridgeWebSocket> RequestingSocket)
+{
+    FString SkeletalMeshPath = GetJsonStringField(Payload, TEXT("skeletalMeshPath"));
+    FString SkeletonPath = GetJsonStringField(Payload, TEXT("skeletonPath"));
+    FString SocketName = GetJsonStringField(Payload, TEXT("socketName"));
+
+    if (SocketName.IsEmpty())
+    {
+        SendAutomationError(RequestingSocket, RequestId, TEXT("socketName is required"), TEXT("MISSING_PARAM"));
+        return true;
+    }
+
+    USkeleton* Skeleton = nullptr;
+    FString Error;
+    if (!SkeletalMeshPath.IsEmpty())
+    {
+        USkeletalMesh* Mesh = LoadSkeletalMeshFromPathSkel(SkeletalMeshPath, Error);
+        if (!Mesh)
+        {
+            SendAutomationError(RequestingSocket, RequestId, Error, TEXT("MESH_NOT_FOUND"));
+            return true;
+        }
+        Skeleton = Mesh->GetSkeleton();
+    }
+    else if (!SkeletonPath.IsEmpty())
+    {
+        Skeleton = LoadSkeletonFromPathSkel(SkeletonPath, Error);
+        if (!Skeleton)
+        {
+            SendAutomationError(RequestingSocket, RequestId, Error, TEXT("SKELETON_NOT_FOUND"));
+            return true;
+        }
+    }
+    else
+    {
+        SendAutomationError(RequestingSocket, RequestId,
+            TEXT("skeletalMeshPath or skeletonPath is required"), TEXT("MISSING_PARAM"));
+        return true;
+    }
+
+    const int32 SocketIndex = Skeleton
+        ? Skeleton->Sockets.IndexOfByPredicate(
+              [&SocketName](const USkeletalMeshSocket* S) { return S && S->SocketName == FName(*SocketName); })
+        : INDEX_NONE;
+    if (SocketIndex == INDEX_NONE)
+    {
+        SendAutomationError(RequestingSocket, RequestId,
+            FString::Printf(TEXT("Socket '%s' not found"), *SocketName), TEXT("SOCKET_NOT_FOUND"));
+        return true;
+    }
+
+    Skeleton->Modify();
+    Skeleton->Sockets.RemoveAt(SocketIndex);
+    McpSafeAssetSave(Skeleton);
+
+    TSharedPtr<FJsonObject> Result = McpHandlerUtils::CreateResultObject();
+    Result->SetStringField(TEXT("socketName"), SocketName);
+    Result->SetStringField(TEXT("skeletonPath"), Skeleton->GetPathName());
+    Result->SetNumberField(TEXT("remainingSockets"), Skeleton->Sockets.Num());
+
+    SendAutomationResponse(RequestingSocket, RequestId, true,
+        FString::Printf(TEXT("Socket '%s' deleted"), *SocketName), Result);
+    return true;
+}
+
+#endif // WITH_EDITOR

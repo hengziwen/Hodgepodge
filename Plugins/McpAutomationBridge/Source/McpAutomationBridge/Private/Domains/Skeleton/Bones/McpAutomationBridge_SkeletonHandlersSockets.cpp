@@ -1,0 +1,219 @@
+#include "Domains/Skeleton/Assets/McpAutomationBridge_SkeletonHandlersAssetLoading.h"
+#include "Domains/Skeleton/Assets/McpAutomationBridge_SkeletonHandlersPayload.h"
+
+#include "Animation/Skeleton.h"
+#include "Engine/SkeletalMesh.h"
+#include "Engine/SkeletalMeshSocket.h"
+#include "Foundation/BridgeHelpers/Security/McpAutomationBridgeHelpersSafeOperationsFacade.h"
+#include "McpAutomationBridgeSubsystem.h"
+#include "Transport/WebSocket/McpBridgeWebSocket.h"
+#include "Foundation/HandlerUtils/McpHandlerUtils.h"
+
+#if WITH_EDITOR
+using namespace McpSkeletonHandlers;
+
+bool UMcpAutomationBridgeSubsystem::HandleListSockets(
+    const FString& RequestId,
+    const TSharedPtr<FJsonObject>& Payload,
+    TSharedPtr<FMcpBridgeWebSocket> RequestingSocket)
+{
+    FString SkeletonPath = GetJsonStringField(Payload, TEXT("skeletonPath"));
+    if (SkeletonPath.IsEmpty())
+    {
+        SkeletonPath = GetJsonStringField(Payload, TEXT("skeletalMeshPath"));
+    }
+
+    FString Error;
+    USkeleton* Skeleton = LoadSkeletonOrMeshSkeleton(SkeletonPath, Error);
+
+    if (!Skeleton)
+    {
+        SendAutomationError(RequestingSocket, RequestId, Error, TEXT("SKELETON_NOT_FOUND"));
+        return true;
+    }
+
+    TArray<TSharedPtr<FJsonValue>> SocketArray;
+    for (USkeletalMeshSocket* Socket : Skeleton->Sockets)
+    {
+        if (!Socket) continue;
+
+        TSharedPtr<FJsonObject> SocketObj = McpHandlerUtils::CreateResultObject();
+        SocketObj->SetStringField(TEXT("name"), Socket->SocketName.ToString());
+        SocketObj->SetStringField(TEXT("boneName"), Socket->BoneName.ToString());
+
+        SocketObj->SetObjectField(TEXT("relativeLocation"), McpHandlerUtils::VectorToJson(Socket->RelativeLocation));
+        SocketObj->SetObjectField(TEXT("relativeRotation"), McpHandlerUtils::RotatorToJson(Socket->RelativeRotation));
+        SocketObj->SetObjectField(TEXT("relativeScale"), McpHandlerUtils::VectorToJson(Socket->RelativeScale));
+
+        SocketArray.Add(MakeShared<FJsonValueObject>(SocketObj));
+    }
+
+    TSharedPtr<FJsonObject> Result = McpHandlerUtils::CreateResultObject();
+    Result->SetArrayField(TEXT("sockets"), SocketArray);
+    Result->SetNumberField(TEXT("count"), SocketArray.Num());
+
+    SendAutomationResponse(RequestingSocket, RequestId, true, TEXT("Sockets listed"), Result);
+    return true;
+}
+
+bool UMcpAutomationBridgeSubsystem::HandleCreateSocket(
+    const FString& RequestId,
+    const TSharedPtr<FJsonObject>& Payload,
+    TSharedPtr<FMcpBridgeWebSocket> RequestingSocket)
+{
+    FString SkeletonPath = GetJsonStringField(Payload, TEXT("skeletonPath"));
+    if (SkeletonPath.IsEmpty())
+    {
+        SkeletonPath = GetJsonStringField(Payload, TEXT("skeletalMeshPath"));
+    }
+
+    FString SocketName = GetJsonStringField(Payload, TEXT("socketName"));
+    FString BoneName = GetJsonStringField(Payload, TEXT("attachBoneName"));
+    if (BoneName.IsEmpty())
+    {
+        BoneName = GetJsonStringField(Payload, TEXT("boneName"));
+    }
+
+    if (SocketName.IsEmpty())
+    {
+        SendAutomationError(RequestingSocket, RequestId, TEXT("socketName is required"), TEXT("MISSING_PARAM"));
+        return true;
+    }
+
+    if (BoneName.IsEmpty())
+    {
+        SendAutomationError(RequestingSocket, RequestId, TEXT("attachBoneName or boneName is required"), TEXT("MISSING_PARAM"));
+        return true;
+    }
+
+    FString Error;
+    USkeleton* Skeleton = LoadSkeletonOrMeshSkeleton(SkeletonPath, Error);
+
+    if (!Skeleton)
+    {
+        SendAutomationError(RequestingSocket, RequestId, Error, TEXT("SKELETON_NOT_FOUND"));
+        return true;
+    }
+
+    if (Skeleton->GetReferenceSkeleton().FindBoneIndex(FName(*BoneName)) == INDEX_NONE)
+    {
+        // A socket on a bone that does not exist is silently dead; refuse it.
+        SendAutomationError(RequestingSocket, RequestId,
+            FString::Printf(TEXT("Bone %s not found on skeleton %s (use list_bones)"), *BoneName, *Skeleton->GetPathName()),
+            TEXT("BONE_NOT_FOUND"));
+        return true;
+    }
+    for (USkeletalMeshSocket* ExistingSocket : Skeleton->Sockets)
+    {
+        if (ExistingSocket && ExistingSocket->SocketName == FName(*SocketName))
+        {
+            SendAutomationError(RequestingSocket, RequestId,
+                FString::Printf(TEXT("Socket '%s' already exists"), *SocketName),
+                TEXT("SOCKET_EXISTS"));
+            return true;
+        }
+    }
+
+    USkeletalMeshSocket* NewSocket = NewObject<USkeletalMeshSocket>(Skeleton);
+    if (!NewSocket)
+    {
+        SendAutomationError(RequestingSocket, RequestId, TEXT("Failed to create socket object"), TEXT("CREATION_FAILED"));
+        return true;
+    }
+    NewSocket->SocketName = FName(*SocketName);
+    NewSocket->RelativeLocation = ParseVectorFromJson(Payload, TEXT("relativeLocation"));
+    NewSocket->RelativeRotation = ParseRotatorFromJson(Payload, TEXT("relativeRotation"));
+    NewSocket->RelativeScale = ParseVectorFromJson(Payload, TEXT("relativeScale"), FVector::OneVector);
+    NewSocket->BoneName = FName(*BoneName);
+
+    Skeleton->Sockets.Add(NewSocket);
+    McpSafeAssetSave(Skeleton);
+
+    TSharedPtr<FJsonObject> Result = McpHandlerUtils::CreateResultObject();
+    Result->SetStringField(TEXT("socketName"), SocketName);
+    Result->SetStringField(TEXT("boneName"), BoneName);
+    Result->SetStringField(TEXT("skeletonPath"), Skeleton->GetPathName());
+
+    SendAutomationResponse(RequestingSocket, RequestId, true,
+        FString::Printf(TEXT("Socket '%s' created on bone '%s'"), *SocketName, *BoneName), Result);
+    return true;
+}
+
+bool UMcpAutomationBridgeSubsystem::HandleConfigureSocket(
+    const FString& RequestId,
+    const TSharedPtr<FJsonObject>& Payload,
+    TSharedPtr<FMcpBridgeWebSocket> RequestingSocket)
+{
+    FString SkeletonPath = GetJsonStringField(Payload, TEXT("skeletonPath"));
+    if (SkeletonPath.IsEmpty())
+    {
+        SkeletonPath = GetJsonStringField(Payload, TEXT("skeletalMeshPath"));
+    }
+
+    FString SocketName = GetJsonStringField(Payload, TEXT("socketName"));
+    if (SocketName.IsEmpty())
+    {
+        SendAutomationError(RequestingSocket, RequestId, TEXT("socketName is required"), TEXT("MISSING_PARAM"));
+        return true;
+    }
+
+    FString Error;
+    USkeleton* Skeleton = LoadSkeletonOrMeshSkeleton(SkeletonPath, Error);
+
+    if (!Skeleton)
+    {
+        SendAutomationError(RequestingSocket, RequestId, Error, TEXT("SKELETON_NOT_FOUND"));
+        return true;
+    }
+
+    USkeletalMeshSocket* Socket = nullptr;
+    for (USkeletalMeshSocket* S : Skeleton->Sockets)
+    {
+        if (S && S->SocketName == FName(*SocketName))
+        {
+            Socket = S;
+            break;
+        }
+    }
+
+    if (!Socket)
+    {
+        SendAutomationError(RequestingSocket, RequestId,
+            FString::Printf(TEXT("Socket '%s' not found"), *SocketName),
+            TEXT("SOCKET_NOT_FOUND"));
+        return true;
+    }
+
+    FString NewBoneName = GetJsonStringField(Payload, TEXT("attachBoneName"));
+    if (!NewBoneName.IsEmpty())
+    {
+        Socket->BoneName = FName(*NewBoneName);
+    }
+
+    if (Payload->HasField(TEXT("relativeLocation")))
+    {
+        Socket->RelativeLocation = ParseVectorFromJson(Payload, TEXT("relativeLocation"));
+    }
+
+    if (Payload->HasField(TEXT("relativeRotation")))
+    {
+        Socket->RelativeRotation = ParseRotatorFromJson(Payload, TEXT("relativeRotation"));
+    }
+
+    if (Payload->HasField(TEXT("relativeScale")))
+    {
+        Socket->RelativeScale = ParseVectorFromJson(Payload, TEXT("relativeScale"), FVector::OneVector);
+    }
+
+    McpSafeAssetSave(Skeleton);
+
+    TSharedPtr<FJsonObject> Result = McpHandlerUtils::CreateResultObject();
+    Result->SetStringField(TEXT("socketName"), SocketName);
+    Result->SetStringField(TEXT("skeletonPath"), Skeleton->GetPathName());
+
+    SendAutomationResponse(RequestingSocket, RequestId, true,
+        FString::Printf(TEXT("Socket '%s' configured"), *SocketName), Result);
+    return true;
+}
+
+#endif // WITH_EDITOR

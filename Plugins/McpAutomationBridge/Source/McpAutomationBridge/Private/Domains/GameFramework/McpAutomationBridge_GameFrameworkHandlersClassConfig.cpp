@@ -1,0 +1,222 @@
+#include "Domains/GameFramework/McpAutomationBridge_GameFrameworkHandlersContext.h"
+#include "Engine/World.h"
+#include "GameFramework/WorldSettings.h"
+#include "GameFramework/GameModeBase.h"
+#include "GameMapsSettings.h"
+
+namespace McpGameFrameworkHandlers
+{
+#if WITH_EDITOR
+static void PersistEffectiveGameFramework(FActionContext& Context, UBlueprint* GameModeBlueprint)
+{
+    if (!GameModeBlueprint || !GameModeBlueprint->GeneratedClass) return;
+    UClass* GameModeClass = GameModeBlueprint->GeneratedClass;
+    if (UGameMapsSettings* GameMapsSettings = UGameMapsSettings::GetGameMapsSettings())
+    {
+        GConfig->SetString(TEXT("/Script/EngineSettings.GameMapsSettings"), TEXT("GlobalDefaultGameMode"),
+            *GameModeClass->GetPathName(), GEngineIni);
+        GConfig->Flush(false, GEngineIni);
+        GameMapsSettings->ReloadConfig();
+    }
+    if (GEditor && GEditor->GetEditorWorldContext().World())
+    {
+        if (AWorldSettings* WorldSettings = GEditor->GetEditorWorldContext().World()->GetWorldSettings())
+        {
+            WorldSettings->DefaultGameMode = GameModeClass;
+            WorldSettings->MarkPackageDirty();
+        }
+    }
+}
+
+static int32 SetOptionalClassCounted(UBlueprint* Blueprint, const FActionContext& Context, const FString& FieldName, const FName& PropertyName, FString& Error)
+{
+    const FString ClassPath = GetStringField(Context.Payload, FieldName);
+    if (ClassPath.IsEmpty()) return 0;
+
+    UClass* ClassToSet = LoadClassFromPath(ClassPath);
+    if (!ClassToSet)
+    {
+        Error = FString::Printf(TEXT("Could not load class '%s' for %s"), *ClassPath, *FieldName);
+        return 0;
+    }
+    if (!SetClassProperty(Blueprint, PropertyName, ClassToSet, Error))
+    {
+        return 0;
+    }
+    return 1;
+}
+
+// Not static: McpAutomationBridge_GameFrameworkHandlersCreation.cpp links against
+// this helper so create_game_mode can apply the class overrides and report any
+// that failed to resolve instead of silently dropping them.
+int32 ApplyGameModeClassOverrides(FActionContext& Context, UBlueprint* Blueprint, FString& Error)
+{
+    int32 Applied = 0;
+    Applied += SetOptionalClassCounted(Blueprint, Context, TEXT("defaultPawnClass"), TEXT("DefaultPawnClass"), Error);
+    Applied += SetOptionalClassCounted(Blueprint, Context, TEXT("playerControllerClass"), TEXT("PlayerControllerClass"), Error);
+    Applied += SetOptionalClassCounted(Blueprint, Context, TEXT("gameStateClass"), TEXT("GameStateClass"), Error);
+    Applied += SetOptionalClassCounted(Blueprint, Context, TEXT("playerStateClass"), TEXT("PlayerStateClass"), Error);
+    Applied += SetOptionalClassCounted(Blueprint, Context, TEXT("hudClass"), TEXT("HUDClass"), Error);
+    return Applied;
+}
+
+static bool SetGameModeClass(
+    FActionContext& Context,
+    const FString& ClassPath,
+    const FName& PropertyName,
+    const FString& MissingMessage,
+    const FString& NotFoundLabel,
+    const FString& SuccessLabel)
+{
+    if (!RequireGameModePath(Context)) return true;
+    if (ClassPath.IsEmpty())
+    {
+        Context.SendError(MissingMessage, TEXT("INVALID_ARGUMENT"));
+        return true;
+    }
+
+    UBlueprint* Blueprint = LoadRequiredGameMode(Context);
+    if (!Blueprint) return true;
+
+    UClass* ClassToSet = LoadClassFromPath(ClassPath);
+    if (!ClassToSet)
+    {
+        Context.SendError(FString::Printf(TEXT("Failed to load %s class: %s"), *NotFoundLabel, *ClassPath), TEXT("NOT_FOUND"));
+        return true;
+    }
+
+    FString Error;
+    if (!SetClassProperty(Blueprint, PropertyName, ClassToSet, Error))
+    {
+        Context.SendError(Error, TEXT("SET_PROPERTY_FAILED"));
+        return true;
+    }
+
+    McpSafeCompileBlueprint(Blueprint);
+    PersistEffectiveGameFramework(Context, Blueprint);
+    if (Context.bSave)
+    {
+        McpSafeAssetSave(Blueprint);
+    }
+
+    Context.SendSuccess(MakeBlueprintResponse(FString::Printf(TEXT("Set %s to %s"), *SuccessLabel, *ClassPath), Blueprint));
+    return true;
+}
+
+static bool ConfigureGameRules(FActionContext& Context)
+{
+    if (!RequireGameModePath(Context)) return true;
+
+    UBlueprint* Blueprint = LoadRequiredGameMode(Context);
+    if (!Blueprint) return true;
+    if (!Blueprint->GeneratedClass)
+    {
+        Context.SendError(
+            FString::Printf(TEXT("Failed to load GameMode: %s"), *Context.GameModeBlueprint),
+            TEXT("NOT_FOUND"));
+        return true;
+    }
+
+    UObject* CDO = Blueprint->GeneratedClass->GetDefaultObject();
+    if (!CDO)
+    {
+        Context.SendError(TEXT("Failed to get CDO."), TEXT("INTERNAL_ERROR"));
+        return true;
+    }
+
+    bool bModified = false;
+    if (Context.Payload->HasField(TEXT("bDelayedStart")))
+    {
+        FBoolProperty* Prop = CastField<FBoolProperty>(Blueprint->GeneratedClass->FindPropertyByName(TEXT("bDelayedStart")));
+        if (Prop)
+        {
+            Prop->SetPropertyValue_InContainer(CDO, GetBoolField(Context.Payload, TEXT("bDelayedStart")));
+            bModified = true;
+        }
+    }
+
+    if (Context.Payload->HasField(TEXT("startPlayersNeeded")))
+    {
+        Context.SendError(
+            TEXT("startPlayersNeeded is not a native GameMode property and is not implemented as a generated Blueprint variable."),
+            TEXT("UNSUPPORTED_FIELD"));
+        return true;
+    }
+
+    if (bModified)
+    {
+        CDO->MarkPackageDirty();
+        McpSafeCompileBlueprint(Blueprint);
+    }
+    if (Context.bSave)
+    {
+        McpSafeAssetSave(Blueprint);
+    }
+
+    Context.SendSuccess(MakeBlueprintResponse(TEXT("Configured game rules"), Blueprint));
+    return true;
+}
+
+bool HandleGameModeConfigAction(FActionContext& Context)
+{
+    if (Context.SubAction == TEXT("set_default_pawn_class"))
+    {
+        FString PawnClassPath = GetStringField(Context.Payload, TEXT("pawnClass"));
+        if (PawnClassPath.IsEmpty()) PawnClassPath = GetStringField(Context.Payload, TEXT("defaultPawnClass"));
+        return SetGameModeClass(
+            Context,
+            PawnClassPath,
+            TEXT("DefaultPawnClass"),
+            TEXT("Missing 'pawnClass' or 'defaultPawnClass'."),
+            TEXT("pawn"),
+            TEXT("DefaultPawnClass"));
+    }
+    if (Context.SubAction == TEXT("set_player_controller_class"))
+    {
+        return SetGameModeClass(
+            Context,
+            GetStringField(Context.Payload, TEXT("playerControllerClass")),
+            TEXT("PlayerControllerClass"),
+            TEXT("Missing 'playerControllerClass'."),
+            TEXT("PlayerController"),
+            TEXT("PlayerControllerClass"));
+    }
+    if (Context.SubAction == TEXT("set_game_state_class"))
+    {
+        return SetGameModeClass(
+            Context,
+            GetStringField(Context.Payload, TEXT("gameStateClass")),
+            TEXT("GameStateClass"),
+            TEXT("Missing 'gameStateClass'."),
+            TEXT("GameState"),
+            TEXT("GameStateClass"));
+    }
+    if (Context.SubAction == TEXT("set_player_state_class"))
+    {
+        return SetGameModeClass(
+            Context,
+            GetStringField(Context.Payload, TEXT("playerStateClass")),
+            TEXT("PlayerStateClass"),
+            TEXT("Missing 'playerStateClass'."),
+            TEXT("PlayerState"),
+            TEXT("PlayerStateClass"));
+    }
+    if (Context.SubAction == TEXT("set_hud_class"))
+    {
+        FString HudClassPath = GetStringField(Context.Payload, TEXT("hudClass"));
+        return SetGameModeClass(
+            Context,
+            HudClassPath,
+            TEXT("HUDClass"),
+            TEXT("Missing 'hudClass'."),
+            TEXT("HUD"),
+            TEXT("HUDClass"));
+    }
+    if (Context.SubAction == TEXT("configure_game_rules"))
+    {
+        return ConfigureGameRules(Context);
+    }
+    return false;
+}
+#endif
+}

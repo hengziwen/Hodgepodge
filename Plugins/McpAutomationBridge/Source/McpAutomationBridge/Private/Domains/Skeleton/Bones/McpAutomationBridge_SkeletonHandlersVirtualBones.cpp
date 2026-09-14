@@ -1,0 +1,269 @@
+#include "Domains/Skeleton/Assets/McpAutomationBridge_SkeletonHandlersAssetLoading.h"
+#include "Domains/Skeleton/Assets/McpAutomationBridge_SkeletonHandlersPayload.h"
+
+#include "Animation/Skeleton.h"
+#include "Engine/SkeletalMesh.h"
+#include "Foundation/BridgeHelpers/Security/McpAutomationBridgeHelpersSafeOperationsFacade.h"
+#include "McpAutomationBridgeSubsystem.h"
+#include "Transport/WebSocket/McpBridgeWebSocket.h"
+#include "Foundation/HandlerUtils/McpHandlerUtils.h"
+
+#if WITH_EDITOR
+using namespace McpSkeletonHandlers;
+
+bool UMcpAutomationBridgeSubsystem::HandleCreateVirtualBone(
+    const FString& RequestId,
+    const TSharedPtr<FJsonObject>& Payload,
+    TSharedPtr<FMcpBridgeWebSocket> RequestingSocket)
+{
+    FString SkeletonPath = GetJsonStringField(Payload, TEXT("skeletonPath"));
+    FString SourceBone = GetJsonStringField(Payload, TEXT("sourceBoneName"));
+    FString TargetBone = GetJsonStringField(Payload, TEXT("targetBoneName"));
+    FString VirtualBoneName = GetJsonStringField(Payload, TEXT("boneName"));
+
+    if (SkeletonPath.IsEmpty())
+    {
+        SendAutomationError(RequestingSocket, RequestId, TEXT("skeletonPath is required"), TEXT("MISSING_PARAM"));
+        return true;
+    }
+
+    if (SourceBone.IsEmpty() || TargetBone.IsEmpty())
+    {
+        SendAutomationError(RequestingSocket, RequestId, TEXT("sourceBoneName and targetBoneName are required"), TEXT("MISSING_PARAM"));
+        return true;
+    }
+
+    FString Error;
+    USkeleton* Skeleton = LoadSkeletonFromPathSkel(SkeletonPath, Error);
+    if (!Skeleton)
+    {
+        SendAutomationError(RequestingSocket, RequestId, Error, TEXT("SKELETON_NOT_FOUND"));
+        return true;
+    }
+
+    if (VirtualBoneName.IsEmpty())
+    {
+        VirtualBoneName = FString::Printf(TEXT("VB_%s_to_%s"), *SourceBone, *TargetBone);
+    }
+
+    // AddNewVirtualBone does not check that the bones exist; a dangling
+    // virtual bone gets saved into the skeleton and later crashes the engine
+    // (index -1 during animation compression). Validate first.
+    const FReferenceSkeleton& RefSkeleton = Skeleton->GetReferenceSkeleton();
+    const TArray<FString> RequiredBones = {SourceBone, TargetBone};
+    for (const FString& Bone : RequiredBones)
+    {
+        if (RefSkeleton.FindBoneIndex(FName(*Bone)) == INDEX_NONE)
+        {
+            SendAutomationError(RequestingSocket, RequestId,
+                FString::Printf(TEXT("Bone '%s' not found on skeleton %s (use list_bones)"), *Bone, *Skeleton->GetPathName()),
+                TEXT("BONE_NOT_FOUND"));
+            return true;
+        }
+    }
+
+    FName NewVirtualBoneName;
+    bool bSuccess = Skeleton->AddNewVirtualBone(FName(*SourceBone), FName(*TargetBone), NewVirtualBoneName);
+
+    if (!bSuccess)
+    {
+        SendAutomationError(RequestingSocket, RequestId,
+            TEXT("Failed to create virtual bone. Check that source and target bones exist."),
+            TEXT("VIRTUAL_BONE_FAILED"));
+        return true;
+    }
+
+    // Rename if custom name provided
+    if (!VirtualBoneName.IsEmpty() && NewVirtualBoneName.ToString() != VirtualBoneName)
+    {
+        Skeleton->RenameVirtualBone(NewVirtualBoneName, FName(*VirtualBoneName));
+        NewVirtualBoneName = FName(*VirtualBoneName);
+    }
+
+    McpSafeAssetSave(Skeleton);
+
+    TSharedPtr<FJsonObject> Result = McpHandlerUtils::CreateResultObject();
+    Result->SetStringField(TEXT("virtualBoneName"), NewVirtualBoneName.ToString());
+    Result->SetStringField(TEXT("sourceBone"), SourceBone);
+    Result->SetStringField(TEXT("targetBone"), TargetBone);
+    Result->SetStringField(TEXT("skeletonPath"), Skeleton->GetPathName());
+
+    SendAutomationResponse(RequestingSocket, RequestId, true,
+        FString::Printf(TEXT("Virtual bone '%s' created"), *NewVirtualBoneName.ToString()), Result);
+    return true;
+}
+
+bool UMcpAutomationBridgeSubsystem::HandleRenameBone(
+    const FString& RequestId,
+    const TSharedPtr<FJsonObject>& Payload,
+    TSharedPtr<FMcpBridgeWebSocket> RequestingSocket)
+{
+    FString SkeletonPath = GetJsonStringField(Payload, TEXT("skeletonPath"));
+    FString BoneName = GetJsonStringField(Payload, TEXT("boneName"));
+    FString NewBoneName = GetJsonStringField(Payload, TEXT("newBoneName"));
+
+    if (SkeletonPath.IsEmpty() || BoneName.IsEmpty() || NewBoneName.IsEmpty())
+    {
+        SendAutomationError(RequestingSocket, RequestId,
+            TEXT("skeletonPath, boneName, and newBoneName are required"), TEXT("MISSING_PARAM"));
+        return true;
+    }
+
+    FString Error;
+    USkeleton* Skeleton = LoadSkeletonFromPathSkel(SkeletonPath, Error);
+    if (!Skeleton)
+    {
+        SendAutomationError(RequestingSocket, RequestId, Error, TEXT("SKELETON_NOT_FOUND"));
+        return true;
+    }
+
+    const TArray<FVirtualBone>& VirtualBones = Skeleton->GetVirtualBones();
+    bool bIsVirtualBone = false;
+    for (const FVirtualBone& VB : VirtualBones)
+    {
+        if (VB.VirtualBoneName == FName(*BoneName))
+        {
+            bIsVirtualBone = true;
+            break;
+        }
+    }
+
+    if (bIsVirtualBone)
+    {
+        Skeleton->RenameVirtualBone(FName(*BoneName), FName(*NewBoneName));
+        McpSafeAssetSave(Skeleton);
+
+        TSharedPtr<FJsonObject> Result = McpHandlerUtils::CreateResultObject();
+        Result->SetStringField(TEXT("oldName"), BoneName);
+        Result->SetStringField(TEXT("newName"), NewBoneName);
+        Result->SetBoolField(TEXT("isVirtualBone"), true);
+
+        SendAutomationResponse(RequestingSocket, RequestId, true,
+            FString::Printf(TEXT("Virtual bone renamed from '%s' to '%s'"), *BoneName, *NewBoneName), Result);
+        return true;
+    }
+
+    // For regular bones, renaming is not directly supported without reimporting
+    // We can rename bone mappings in animation assets though
+    SendAutomationError(RequestingSocket, RequestId,
+        TEXT("Renaming non-virtual bones is not supported. Only virtual bones can be renamed at runtime. To rename regular bones, reimport the skeletal mesh with updated bone names."),
+        TEXT("OPERATION_NOT_SUPPORTED"));
+    return true;
+}
+
+bool UMcpAutomationBridgeSubsystem::HandleListVirtualBones(
+    const FString& RequestId,
+    const TSharedPtr<FJsonObject>& Payload,
+    TSharedPtr<FMcpBridgeWebSocket> RequestingSocket)
+{
+    FString SkeletonPath = GetJsonStringField(Payload, TEXT("skeletonPath"));
+    FString SkeletalMeshPath = GetJsonStringField(Payload, TEXT("skeletalMeshPath"));
+
+    USkeleton* Skeleton = nullptr;
+
+    if (!SkeletonPath.IsEmpty())
+    {
+        FString Error;
+        Skeleton = LoadSkeletonFromPathSkel(SkeletonPath, Error);
+        if (!Skeleton)
+        {
+            SendAutomationError(RequestingSocket, RequestId, Error, TEXT("SKELETON_NOT_FOUND"));
+            return true;
+        }
+    }
+    else if (!SkeletalMeshPath.IsEmpty())
+    {
+        FString Error;
+        USkeletalMesh* Mesh = LoadSkeletalMeshFromPathSkel(SkeletalMeshPath, Error);
+        if (!Mesh)
+        {
+            SendAutomationError(RequestingSocket, RequestId, Error, TEXT("MESH_NOT_FOUND"));
+            return true;
+        }
+        Skeleton = Mesh->GetSkeleton();
+    }
+
+    if (!Skeleton)
+    {
+        SendAutomationError(RequestingSocket, RequestId,
+            TEXT("skeletonPath or skeletalMeshPath is required"), TEXT("MISSING_PARAM"));
+        return true;
+    }
+
+    TArray<TSharedPtr<FJsonValue>> VirtualBoneArray;
+    for (const FVirtualBone& VB : Skeleton->GetVirtualBones())
+    {
+        TSharedPtr<FJsonObject> VBObj = McpHandlerUtils::CreateResultObject();
+        VBObj->SetStringField(TEXT("name"), VB.VirtualBoneName.ToString());
+        VBObj->SetStringField(TEXT("sourceBone"), VB.SourceBoneName.ToString());
+        VBObj->SetStringField(TEXT("targetBone"), VB.TargetBoneName.ToString());
+        VirtualBoneArray.Add(MakeShared<FJsonValueObject>(VBObj));
+    }
+
+    TSharedPtr<FJsonObject> Result = McpHandlerUtils::CreateResultObject();
+    Result->SetStringField(TEXT("skeletonPath"), Skeleton->GetPathName());
+    Result->SetArrayField(TEXT("virtualBones"), VirtualBoneArray);
+    Result->SetNumberField(TEXT("count"), VirtualBoneArray.Num());
+
+    SendAutomationResponse(RequestingSocket, RequestId, true,
+        FString::Printf(TEXT("Found %d virtual bones"), VirtualBoneArray.Num()), Result);
+    return true;
+}
+
+bool UMcpAutomationBridgeSubsystem::HandleDeleteVirtualBone(
+    const FString& RequestId,
+    const TSharedPtr<FJsonObject>& Payload,
+    TSharedPtr<FMcpBridgeWebSocket> RequestingSocket)
+{
+    FString SkeletonPath = GetJsonStringField(Payload, TEXT("skeletonPath"));
+    FString VirtualBoneName = GetJsonStringField(Payload, TEXT("virtualBoneName"));
+
+    if (SkeletonPath.IsEmpty() || VirtualBoneName.IsEmpty())
+    {
+        SendAutomationError(RequestingSocket, RequestId,
+            TEXT("skeletonPath and virtualBoneName are required"), TEXT("MISSING_PARAM"));
+        return true;
+    }
+
+    FString Error;
+    USkeleton* Skeleton = LoadSkeletonFromPathSkel(SkeletonPath, Error);
+    if (!Skeleton)
+    {
+        SendAutomationError(RequestingSocket, RequestId, Error, TEXT("SKELETON_NOT_FOUND"));
+        return true;
+    }
+
+    const TArray<FVirtualBone>& VirtualBones = Skeleton->GetVirtualBones();
+    int32 FoundIndex = INDEX_NONE;
+    for (int32 i = 0; i < VirtualBones.Num(); ++i)
+    {
+        if (VirtualBones[i].VirtualBoneName == FName(*VirtualBoneName))
+        {
+            FoundIndex = i;
+            break;
+        }
+    }
+
+    if (FoundIndex == INDEX_NONE)
+    {
+        SendAutomationError(RequestingSocket, RequestId,
+            FString::Printf(TEXT("Virtual bone '%s' not found"), *VirtualBoneName), TEXT("VBONE_NOT_FOUND"));
+        return true;
+    }
+
+    TArray<FName> BonesToRemove;
+    BonesToRemove.Add(FName(*VirtualBoneName));
+    Skeleton->RemoveVirtualBones(BonesToRemove);
+    McpSafeAssetSave(Skeleton);
+
+    TSharedPtr<FJsonObject> Result = McpHandlerUtils::CreateResultObject();
+    Result->SetStringField(TEXT("skeletonPath"), SkeletonPath);
+    Result->SetStringField(TEXT("virtualBoneName"), VirtualBoneName);
+    Result->SetNumberField(TEXT("remainingVirtualBones"), Skeleton->GetVirtualBones().Num());
+
+    SendAutomationResponse(RequestingSocket, RequestId, true,
+        FString::Printf(TEXT("Virtual bone '%s' deleted"), *VirtualBoneName), Result);
+    return true;
+}
+
+#endif // WITH_EDITOR

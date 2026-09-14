@@ -1,0 +1,162 @@
+#include "Domains/Geometry/McpAutomationBridge_GeometryHandlers.h"
+
+#if WITH_EDITOR && MCP_HAS_FULL_GEOMETRY_SCRIPT
+
+namespace McpGeometryHandlers
+{
+bool HandleWeldVertices(UMcpAutomationBridgeSubsystem* Self, const FString& RequestId,
+                               const TSharedPtr<FJsonObject>& Payload, TSharedPtr<FMcpBridgeWebSocket> Socket)
+{
+    FString ActorName = GetJsonStringField(Payload, TEXT("actorName"));
+    double Tolerance = GetJsonNumberField(Payload, TEXT("tolerance"), 0.0001);
+
+    ADynamicMeshActor* TargetActor = nullptr;
+    UDynamicMeshComponent* DMC = nullptr;
+    UDynamicMesh* Mesh = nullptr;
+    if (!ResolveDynamicMeshForGeometry(Self, RequestId, ActorName, Socket, TargetActor, DMC, Mesh))
+    {
+        return true;
+    }
+
+    FGeometryScriptWeldEdgesOptions WeldOptions;
+    WeldOptions.Tolerance = Tolerance;
+    WeldOptions.bOnlyUniquePairs = true;
+
+    UGeometryScriptLibrary_MeshRepairFunctions::WeldMeshEdges(
+        Mesh, WeldOptions, nullptr);
+
+    DMC->NotifyMeshUpdated();
+
+    TSharedPtr<FJsonObject> Result = McpHandlerUtils::CreateResultObject();
+    Result->SetStringField(TEXT("actorName"), ActorName);
+    Self->SendAutomationResponse(Socket, RequestId, true, TEXT("Vertices welded"), Result);
+    return true;
+}
+
+bool HandleFillHoles(UMcpAutomationBridgeSubsystem* Self, const FString& RequestId,
+                            const TSharedPtr<FJsonObject>& Payload, TSharedPtr<FMcpBridgeWebSocket> Socket)
+{
+    FString ActorName = GetJsonStringField(Payload, TEXT("actorName"));
+
+    ADynamicMeshActor* TargetActor = nullptr;
+    UDynamicMeshComponent* DMC = nullptr;
+    UDynamicMesh* Mesh = nullptr;
+    if (!ResolveDynamicMeshForGeometry(Self, RequestId, ActorName, Socket, TargetActor, DMC, Mesh))
+    {
+        return true;
+    }
+
+    FGeometryScriptFillHolesOptions FillOptions;
+    FillOptions.FillMethod = EGeometryScriptFillHolesMethod::Automatic;
+
+    // UE 5.7: FillAllMeshHoles now takes 5 arguments (added NumFilledHoles and NumFailedHoleFills out params)
+    int32 NumFilledHoles = 0;
+    int32 NumFailedHoleFills = 0;
+
+    // Filling must only add geometry. On a mesh whose only loops are its real
+    // silhouette (e.g. one open triangle) the repair discarded everything, so
+    // keep a copy and restore it if any triangle disappears.
+    const int32 TriangleCountBefore = Mesh->GetTriangleCount();
+    UE::Geometry::FDynamicMesh3 Backup;
+    Mesh->ProcessMesh([&Backup](const UE::Geometry::FDynamicMesh3& Source) { Backup = Source; });
+
+    UGeometryScriptLibrary_MeshRepairFunctions::FillAllMeshHoles(
+        Mesh, FillOptions, NumFilledHoles, NumFailedHoleFills, nullptr);
+
+    if (Mesh->GetTriangleCount() < TriangleCountBefore)
+    {
+        Mesh->SetMesh(MoveTemp(Backup));
+        DMC->NotifyMeshUpdated();
+        TSharedPtr<FJsonObject> Aborted = McpHandlerUtils::CreateResultObject();
+        Aborted->SetStringField(TEXT("actorName"), ActorName);
+        Aborted->SetNumberField(TEXT("triangleCount"), TriangleCountBefore);
+        Self->SendAutomationResponse(Socket, RequestId, false,
+            TEXT("fill_holes would have removed existing triangles; the mesh was left unchanged (no fillable hole loops)."),
+            Aborted, TEXT("FILL_ABORTED"));
+        return true;
+    }
+
+    DMC->NotifyMeshUpdated();
+
+    TSharedPtr<FJsonObject> Result = McpHandlerUtils::CreateResultObject();
+    Result->SetStringField(TEXT("actorName"), ActorName);
+    Result->SetNumberField(TEXT("filledHoles"), NumFilledHoles);
+    Result->SetNumberField(TEXT("failedHoles"), NumFailedHoleFills);
+    Self->SendAutomationResponse(Socket, RequestId, true, TEXT("Holes filled"), Result);
+    return true;
+}
+
+bool HandleRemoveDegenerates(UMcpAutomationBridgeSubsystem* Self, const FString& RequestId,
+                                    const TSharedPtr<FJsonObject>& Payload, TSharedPtr<FMcpBridgeWebSocket> Socket)
+{
+    FString ActorName = GetJsonStringField(Payload, TEXT("actorName"));
+
+    ADynamicMeshActor* TargetActor = nullptr;
+    UDynamicMeshComponent* DMC = nullptr;
+    UDynamicMesh* Mesh = nullptr;
+    if (!ResolveDynamicMeshForGeometry(Self, RequestId, ActorName, Socket, TargetActor, DMC, Mesh))
+    {
+        return true;
+    }
+
+    FGeometryScriptDegenerateTriangleOptions Options;
+    Options.Mode = EGeometryScriptRepairMeshMode::RepairOrDelete;
+
+    UGeometryScriptLibrary_MeshRepairFunctions::RepairMeshDegenerateGeometry(
+        Mesh, Options, nullptr);
+
+    DMC->NotifyMeshUpdated();
+
+    TSharedPtr<FJsonObject> Result = McpHandlerUtils::CreateResultObject();
+    Result->SetStringField(TEXT("actorName"), ActorName);
+    Self->SendAutomationResponse(Socket, RequestId, true, TEXT("Degenerate geometry removed"), Result);
+    return true;
+}
+
+bool HandleMergeVertices(UMcpAutomationBridgeSubsystem* Self, const FString& RequestId,
+                                const TSharedPtr<FJsonObject>& Payload, TSharedPtr<FMcpBridgeWebSocket> Socket)
+{
+    FString ActorName = GetJsonStringField(Payload, TEXT("actorName"));
+    double Tolerance = GetJsonNumberField(Payload, TEXT("tolerance"), 0.001);
+    bool bCompactMesh = GetJsonBoolField(Payload, TEXT("compact"), true);
+
+    ADynamicMeshActor* TargetActor = nullptr;
+    UDynamicMeshComponent* DMC = nullptr;
+    UDynamicMesh* Mesh = nullptr;
+    if (!ResolveDynamicMeshForGeometry(Self, RequestId, ActorName, Socket, TargetActor, DMC, Mesh))
+    {
+        return true;
+    }
+
+    // UE 5.7: GetVertexCount() is not a member of UDynamicMesh - use MeshQueryFunctions
+    int32 VertsBefore = UGeometryScriptLibrary_MeshQueryFunctions::GetVertexCount(Mesh);
+
+    // UE 5.7: FGeometryScriptMergeVerticesOptions and MergeIdenticalMeshVertices were removed
+    // Use WeldMeshEdges with FGeometryScriptWeldEdgesOptions instead
+    FGeometryScriptWeldEdgesOptions WeldOptions;
+    WeldOptions.Tolerance = Tolerance;
+    WeldOptions.bOnlyUniquePairs = true;
+    UGeometryScriptLibrary_MeshRepairFunctions::WeldMeshEdges(Mesh, WeldOptions, nullptr);
+
+    if (bCompactMesh)
+    {
+        // UE 5.7: CompactMesh moved to MeshRepairFunctions
+        UGeometryScriptLibrary_MeshRepairFunctions::CompactMesh(Mesh, nullptr);
+    }
+
+    int32 VertsAfter = UGeometryScriptLibrary_MeshQueryFunctions::GetVertexCount(Mesh);
+    DMC->NotifyMeshUpdated();
+
+    TSharedPtr<FJsonObject> Result = McpHandlerUtils::CreateResultObject();
+    Result->SetStringField(TEXT("actorName"), ActorName);
+    Result->SetNumberField(TEXT("tolerance"), Tolerance);
+    Result->SetNumberField(TEXT("verticesBefore"), VertsBefore);
+    Result->SetNumberField(TEXT("verticesAfter"), VertsAfter);
+    Result->SetNumberField(TEXT("merged"), VertsBefore - VertsAfter);
+    Self->SendAutomationResponse(Socket, RequestId, true, TEXT("Vertices merged"), Result);
+    return true;
+}
+
+} // namespace McpGeometryHandlers
+
+#endif // WITH_EDITOR && MCP_HAS_FULL_GEOMETRY_SCRIPT

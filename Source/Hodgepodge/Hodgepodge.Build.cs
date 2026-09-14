@@ -26,7 +26,9 @@ public class Hodgepodge : ModuleRules
 			"NetCore",
 			"AnimGraphRuntime",
 			"RigVM",
-			"ControlRig"
+			"ControlRig",
+			"UMG",
+			"SlateCore"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[]

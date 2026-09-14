@@ -1,0 +1,254 @@
+diff --git a/plugins/McpAutomationBridge/Source/McpAutomationBridge/Private/Domains/AssetWorkflow/Operations/McpAutomationBridge_AssetWorkflowFabLibrary.cpp b/plugins/McpAutomationBridge/Source/McpAutomationBridge/Private/Domains/AssetWorkflow/Operations/McpAutomationBridge_AssetWorkflowFabLibrary.cpp
+index 4fef0fa..87f6a6c 100644
+--- a/plugins/McpAutomationBridge/Source/McpAutomationBridge/Private/Domains/AssetWorkflow/Operations/McpAutomationBridge_AssetWorkflowFabLibrary.cpp
++++ b/plugins/McpAutomationBridge/Source/McpAutomationBridge/Private/Domains/AssetWorkflow/Operations/McpAutomationBridge_AssetWorkflowFabLibrary.cpp
+@@ -6,7 +6,7 @@
+ #include "Dom/JsonObject.h"
+ 
+ #if WITH_EDITOR
+-#if MCP_HAS_TEDS
++#if MCP_HAS_TEDS && __has_include("DataStorage/Features.h")
+ #include "DataStorage/Features.h"
+ #include "Elements/Framework/TypedElementQueryBuilder.h"
+ #include "Elements/Interfaces/TypedElementDataStorageInterface.h"
+@@ -56,7 +56,7 @@ TSharedPtr<FJsonObject> ReadStructAsJson(const UScriptStruct* Type, const void*
+ bool UMcpAutomationBridgeSubsystem::HandleListFabLibrary(
+     const FString &RequestId, const TSharedPtr<FJsonObject> &Payload,
+     TSharedPtr<FMcpBridgeWebSocket> Socket) {
+-#if MCP_HAS_TEDS
++#if MCP_HAS_TEDS && __has_include("DataStorage/Features.h")
+   using namespace UE::Editor::DataStorage;
+   using namespace UE::Editor::DataStorage::Queries;
+ 
+@@ -165,3 +165,4 @@ bool UMcpAutomationBridgeSubsystem::HandleListFabLibrary(
+   return true;
+ }
+ #endif
++
+diff --git a/plugins/McpAutomationBridge/Source/McpAutomationBridge/Private/Domains/AudioAuthoring/McpAutomationBridge_AudioAuthoringHandlersMetaSoundInterfaces.cpp b/plugins/McpAutomationBridge/Source/McpAutomationBridge/Private/Domains/AudioAuthoring/McpAutomationBridge_AudioAuthoringHandlersMetaSoundInterfaces.cpp
+index bbe7b84..795a1c3 100644
+--- a/plugins/McpAutomationBridge/Source/McpAutomationBridge/Private/Domains/AudioAuthoring/McpAutomationBridge_AudioAuthoringHandlersMetaSoundInterfaces.cpp
++++ b/plugins/McpAutomationBridge/Source/McpAutomationBridge/Private/Domains/AudioAuthoring/McpAutomationBridge_AudioAuthoringHandlersMetaSoundInterfaces.cpp
+@@ -1,4 +1,4 @@
+-#include "Core/Compatibility/McpVersionCompatibility.h"
++﻿#include "Core/Compatibility/McpVersionCompatibility.h"
+ #include "Domains/AudioAuthoring/McpAutomationBridge_AudioAuthoringHandlersPrivate.h"
+ 
+ #if WITH_EDITOR
+@@ -196,7 +196,11 @@ TSharedPtr<FJsonObject> HandleMetaSoundInterfaceActions(const FString& SubAction
+ 				Response->SetStringField(TEXT("code"), TEXT("INPUT_NOT_FOUND"));
+ 				TArray<TSharedPtr<FJsonValue>> InputArray;
+ 				const FMetasoundFrontendDocument& Doc = Builder.GetConstDocumentChecked();
++				#if ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION <= 5
++				for (const FMetasoundFrontendClassInput& Input : Doc.RootGraph.Interface.Inputs)
++#else
+ 				for (const FMetasoundFrontendClassInput& Input : Doc.RootGraph.GetDefaultInterface().Inputs)
++#endif
+ 				{
+ 					TSharedPtr<FJsonObject> InputObj = McpHandlerUtils::CreateResultObject();
+ 					InputObj->SetStringField(TEXT("inputName"), Input.Name.ToString());
+diff --git a/plugins/McpAutomationBridge/Source/McpAutomationBridge/Private/Domains/Blueprint/Queries/McpAutomationBridge_BlueprintHandlersCompile.cpp b/plugins/McpAutomationBridge/Source/McpAutomationBridge/Private/Domains/Blueprint/Queries/McpAutomationBridge_BlueprintHandlersCompile.cpp
+index 0c9d570..6943b93 100644
+--- a/plugins/McpAutomationBridge/Source/McpAutomationBridge/Private/Domains/Blueprint/Queries/McpAutomationBridge_BlueprintHandlersCompile.cpp
++++ b/plugins/McpAutomationBridge/Source/McpAutomationBridge/Private/Domains/Blueprint/Queries/McpAutomationBridge_BlueprintHandlersCompile.cpp
+@@ -50,7 +50,9 @@ bool HandleBlueprintCompile(const FBlueprintActionContext &Context) {
+     bool bSaveSkipped = false;
+     if (bSaveAfterCompile) {
+       if (bCompiled) {
+-        bSaved = SaveLoadedAssetThrottled(BP);
++        // An explicit compile-and-save must persist the final graph, even if
++        // preceding node edits saved within the throttle window.
++        bSaved = SaveLoadedAssetThrottled(BP, -1.0, true);
+       } else {
+         // Don't persist a blueprint that just failed to compile.
+         bSaveSkipped = true;
+diff --git a/plugins/McpAutomationBridge/Source/McpAutomationBridge/Private/Domains/ConsoleCommand/McpAutomationBridge_ConsoleCommandHandlers.cpp b/plugins/McpAutomationBridge/Source/McpAutomationBridge/Private/Domains/ConsoleCommand/McpAutomationBridge_ConsoleCommandHandlers.cpp
+index 5bf6605..87f1bff 100644
+--- a/plugins/McpAutomationBridge/Source/McpAutomationBridge/Private/Domains/ConsoleCommand/McpAutomationBridge_ConsoleCommandHandlers.cpp
++++ b/plugins/McpAutomationBridge/Source/McpAutomationBridge/Private/Domains/ConsoleCommand/McpAutomationBridge_ConsoleCommandHandlers.cpp
+@@ -11,7 +11,7 @@
+ #include "Engine/World.h"
+ #include "GameFramework/PlayerController.h"
+ #include "Kismet/GameplayStatics.h"
+-#include "Misc/StringOutputDevice.h"
++#include "Misc/OutputDevice.h"
+ #endif
+ 
+ DEFINE_LOG_CATEGORY(LogMcpConsoleHandlers);
+@@ -254,3 +254,4 @@ bool UMcpAutomationBridgeSubsystem::HandleConsoleCommandAction(
+     return true;
+ #endif
+ }
++
+diff --git a/plugins/McpAutomationBridge/Source/McpAutomationBridge/Private/Domains/NiagaraAuthoring/McpAutomationBridge_NiagaraAuthoringHandlersStackIssues.cpp b/plugins/McpAutomationBridge/Source/McpAutomationBridge/Private/Domains/NiagaraAuthoring/McpAutomationBridge_NiagaraAuthoringHandlersStackIssues.cpp
+index 4c3274d..d3e7c81 100644
+--- a/plugins/McpAutomationBridge/Source/McpAutomationBridge/Private/Domains/NiagaraAuthoring/McpAutomationBridge_NiagaraAuthoringHandlersStackIssues.cpp
++++ b/plugins/McpAutomationBridge/Source/McpAutomationBridge/Private/Domains/NiagaraAuthoring/McpAutomationBridge_NiagaraAuthoringHandlersStackIssues.cpp
+@@ -1,4 +1,4 @@
+-#include "Domains/NiagaraAuthoring/McpAutomationBridge_NiagaraAuthoringHandlersContext.h"
++﻿#include "Domains/NiagaraAuthoring/McpAutomationBridge_NiagaraAuthoringHandlersContext.h"
+ 
+ #if WITH_EDITOR
+ #include "ViewModels/NiagaraSystemViewModel.h"
+@@ -73,7 +73,9 @@ void CollectNiagaraSystemStackIssues(
+         Options.bCanAutoCompile = false;
+         Options.bCanModifyEmittersFromTimeline = false;
+         Options.bCanSimulate = false;
++#if ENGINE_MAJOR_VERSION > 5 || (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 6)
+         Options.bCompileForEdit = false;
++#endif
+         Options.bIsForDataProcessingOnly = false;
+         Options.EditMode = ENiagaraSystemViewModelEditMode::SystemAsset;
+         // Initialize() -> RefreshAll() subscribes to the Niagara message manager keyed by this GUID;
+diff --git a/plugins/McpAutomationBridge/Source/McpAutomationBridge/Private/Domains/WidgetAuthoring/Support/McpAutomationBridge_WidgetAuthoringAnimationKeys.cpp b/plugins/McpAutomationBridge/Source/McpAutomationBridge/Private/Domains/WidgetAuthoring/Support/McpAutomationBridge_WidgetAuthoringAnimationKeys.cpp
+index 7b4ae29..c7e5849 100644
+--- a/plugins/McpAutomationBridge/Source/McpAutomationBridge/Private/Domains/WidgetAuthoring/Support/McpAutomationBridge_WidgetAuthoringAnimationKeys.cpp
++++ b/plugins/McpAutomationBridge/Source/McpAutomationBridge/Private/Domains/WidgetAuthoring/Support/McpAutomationBridge_WidgetAuthoringAnimationKeys.cpp
+@@ -3,6 +3,7 @@
+ // Dogfood #38: add_animation_keyframe used to refuse with NOT_SUPPORTED. It now finds or creates the
+ // widget binding + property track, adds a section, and writes real channel keys for RenderOpacity,
+ // ColorAndOpacity and (in AnimationKeysTransform.cpp) the RenderTransform.
++#include "Domains/WidgetAuthoring/Support/McpAutomationBridge_WidgetAuthoringAnimationKeys.h"
+ #include "Domains/WidgetAuthoring/Support/McpAutomationBridge_WidgetAuthoringAnimationKeysInternal.h"
+ 
+ #include "Animation/WidgetAnimation.h"
+@@ -177,3 +178,4 @@ bool McpAuthorWidgetAnimationKey(UWidgetBlueprint* WidgetBP, UWidgetAnimation* A
+     return true;
+ }
+ } // namespace WidgetAuthoringHelpers
++
+diff --git a/plugins/McpAutomationBridge/Source/McpAutomationBridge/Private/Domains/WidgetAuthoring/Support/McpAutomationBridge_WidgetAuthoringManipulation.cpp b/plugins/McpAutomationBridge/Source/McpAutomationBridge/Private/Domains/WidgetAuthoring/Support/McpAutomationBridge_WidgetAuthoringManipulation.cpp
+index fd0e181..a5d9961 100644
+--- a/plugins/McpAutomationBridge/Source/McpAutomationBridge/Private/Domains/WidgetAuthoring/Support/McpAutomationBridge_WidgetAuthoringManipulation.cpp
++++ b/plugins/McpAutomationBridge/Source/McpAutomationBridge/Private/Domains/WidgetAuthoring/Support/McpAutomationBridge_WidgetAuthoringManipulation.cpp
+@@ -1,4 +1,4 @@
+-#include "Domains/WidgetAuthoring/McpAutomationBridge_WidgetAuthoringActions.h"
++﻿#include "Domains/WidgetAuthoring/McpAutomationBridge_WidgetAuthoringActions.h"
+ #include "Domains/WidgetAuthoring/Support/McpAutomationBridge_WidgetAuthoringBlueprintLoading.h"
+ 
+ #include "Blueprint/WidgetTree.h"
+@@ -101,11 +101,15 @@ bool HandleWidgetAuthoringManipulation(
+         TargetWidget->Modify();
+         TargetWidget->Rename(*NewName, nullptr, REN_DontCreateRedirectors);
+         TargetWidget->SetDisplayLabel(NewName);
++
++#if ENGINE_MAJOR_VERSION > 5 || (ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 6)
+         FGuid WidgetGuid;
+         if (WidgetBP->WidgetVariableNameToGuidMap.RemoveAndCopyValue(OldFName, WidgetGuid))
+         {
+             WidgetBP->WidgetVariableNameToGuidMap.Add(NewFName, WidgetGuid);
+         }
++
++#endif
+         if (TargetWidget->bIsVariable)
+         {
+             FBlueprintEditorUtils::ReplaceVariableReferences(WidgetBP, OldFName, NewFName);
+diff --git a/plugins/McpAutomationBridge/Source/McpAutomationBridgeFab/McpAutomationBridgeFab.Build.cs b/plugins/McpAutomationBridge/Source/McpAutomationBridgeFab/McpAutomationBridgeFab.Build.cs
+index 93144ce..ba95377 100644
+--- a/plugins/McpAutomationBridge/Source/McpAutomationBridgeFab/McpAutomationBridgeFab.Build.cs
++++ b/plugins/McpAutomationBridge/Source/McpAutomationBridgeFab/McpAutomationBridgeFab.Build.cs
+@@ -1,4 +1,4 @@
+-// Copyright (c) 2024 MCP Automation Bridge Contributors
++﻿// Copyright (c) 2024 MCP Automation Bridge Contributors
+ 
+ using System;
+ using System.IO;
+@@ -44,7 +44,7 @@ public class McpAutomationBridgeFab : ModuleRules
+         {
+             string EngineDir = Path.GetFullPath(Target.RelativeEnginePath);
+ 
+-            bool bHasFab = AddOptionalModuleGroup(Target, EngineDir, "Fab", new string[] { "Fab" });
++            bool bHasFab = File.Exists(Path.Combine(EngineDir, "Plugins", "Fab", "Source", "Fab", "Public", "FabDownloader.h")) && AddOptionalModuleGroup(Target, EngineDir, "Fab", new string[] { "Fab" });
+             PublicDefinitions.Add(bHasFab ? "MCP_FAB_ADAPTER_HAS_FAB=1" : "MCP_FAB_ADAPTER_HAS_FAB=0");
+ 
+             bool bHasMegascans = AddOptionalModuleGroup(Target, EngineDir, "MegascansPlugin", new string[] { "MegascansPlugin" });
+diff --git a/plugins/McpAutomationBridge/Source/McpAutomationBridgeFab/Private/McpFabAddToProject.cpp b/plugins/McpAutomationBridge/Source/McpAutomationBridgeFab/Private/McpFabAddToProject.cpp
+index 26a759f..9e7f813 100644
+--- a/plugins/McpAutomationBridge/Source/McpAutomationBridgeFab/Private/McpFabAddToProject.cpp
++++ b/plugins/McpAutomationBridge/Source/McpAutomationBridgeFab/Private/McpFabAddToProject.cpp
+@@ -1,4 +1,4 @@
+-// Copyright (c) 2024 MCP Automation Bridge Contributors
++﻿// Copyright (c) 2024 MCP Automation Bridge Contributors
+ 
+ // The whole add-to-project chain, run inside Fab's authenticated page.
+ //
+@@ -49,7 +49,8 @@ bool IsSafeListingId(const FString& Value)
+  */
+ FString BuildAddScriptImpl(const FString& RequestId, const FString& ListingId, const FString& EngineVersion)
+ {
+-	return FString::Printf(TEXT(R"JS(
++	FString Script;
++Script += FString::Printf(TEXT(R"JS(
+ (function () {
+   var id = "%s", listing = "%s", engine = "%s";
+   function shape(v, d) {
+@@ -94,7 +95,8 @@ FString BuildAddScriptImpl(const FString& RequestId, const FString& ListingId, c
+       out.isQuixel = /quixel/i.test(String(seller));
+ 
+       // Preference order mirrors that same dispatch: a packaged unreal-engine
+-      // build goes through FPackImportWorkflow, and gltf/glb/fbx go through the
++)JS"), *RequestId, *ListingId, *EngineVersion);
++Script += TEXT(R"JS(      // build goes through FPackImportWorkflow, and gltf/glb/fbx go through the
+       // Quixel or generic Interchange workflow. Demanding unreal-engine here
+       // rejected every listing that ships source formats -- the whole
+       // Megascans library -- even though Fab's own UI imports them through
+@@ -139,7 +141,8 @@ FString BuildAddScriptImpl(const FString& RequestId, const FString& ListingId, c
+         return null;
+       }
+       var found = findOffer(listingJson, 0, "listing");
+-      out.offerIds = found ? [String(found.id)] : [];
++)JS");
++Script += TEXT(R"JS(      out.offerIds = found ? [String(found.id)] : [];
+       out.offerFoundAt = found ? found.at : "";
+       if (!found) {
+         out.offerShape = Object.keys(listingJson).slice(0, 40);
+@@ -187,7 +190,8 @@ FString BuildAddScriptImpl(const FString& RequestId, const FString& ListingId, c
+ 
+       var claim = Promise.resolve(null);
+       if (out.offerIds.length) {
+-        var form = new FormData();
++)JS");
++Script += TEXT(R"JS(        var form = new FormData();
+         form.append("offer_id", out.offerIds[0]);
+         if (csrf) { form.append("csrfmiddlewaretoken", csrf); }
+         var headers = csrf ? { "X-CSRFToken": csrf } : {};
+@@ -237,7 +241,8 @@ FString BuildAddScriptImpl(const FString& RequestId, const FString& ListingId, c
+       // versioned by engine, so this is a second shape to read rather than a
+       // field that went missing -- treating it as missing is what produced
+       // NO_VERSION for every gltf and fbx listing.
+-      if (!chosen) {
++)JS");
++Script += TEXT(R"JS(      if (!chosen) {
+         var files = fmt.files || [];
+         var ready = files.filter(function (f) {
+           return f && f.uid && String(f.status || "").toUpperCase() !== "FAILED";
+@@ -283,7 +288,8 @@ FString BuildAddScriptImpl(const FString& RequestId, const FString& ListingId, c
+       // the endpoint actually wanted.
+       // Both the platform-filtered and bare forms 404 for a source format, so
+       // the failing segment is an identifier rather than the query. A file
+-      // entry carries both uid and artifactTag; which one the download-info
++)JS");
++Script += TEXT(R"JS(      // entry carries both uid and artifactTag; which one the download-info
+       // path wants is the open question, so try each and record every status.
+       // Fab returns its reason in `detail`, which shape() hides because it
+       // reports types -- that message is the thing worth reading.
+@@ -327,7 +333,8 @@ FString BuildAddScriptImpl(const FString& RequestId, const FString& ListingId, c
+       var info = (dl.downloadInfo && dl.downloadInfo.length) ? dl.downloadInfo[0] : dl;
+       var url = info.url || info.downloadUrl || info.signedUrl || info.href;
+       var bases = info.distributionPointBaseUrls || info.baseUrls
+-               || dl.distributionPointBaseUrls || [];
++)JS");
++Script += TEXT(R"JS(               || dl.distributionPointBaseUrls || [];
+       if (!url) { out.error = "NO_DOWNLOAD_URL"; send(out); return; }
+       // AssetType carries the resolved format, because it is the value the
+       // plugin switches on. Sending a constant "unreal-engine" for a gltf
+@@ -346,7 +353,8 @@ FString BuildAddScriptImpl(const FString& RequestId, const FString& ListingId, c
+     })
+     .catch(fail);
+ })();
+-)JS"), *RequestId, *ListingId, *EngineVersion);
++)JS");
++	return Script;
+ }
+ } // namespace
+ 
