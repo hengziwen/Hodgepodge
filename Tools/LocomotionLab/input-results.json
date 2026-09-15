@@ -1,0 +1,50 @@
+[
+  {
+    "direction": 0,
+    "speed": 420.00000000000006,
+    "world_angle": 89.99999930282699,
+    "passed": true
+  },
+  {
+    "direction": 45,
+    "speed": 419.9999999999997,
+    "world_angle": 134.9999992589774,
+    "passed": true
+  },
+  {
+    "direction": 90,
+    "speed": 420.00000000000006,
+    "world_angle": 179.99999925358082,
+    "passed": true
+  },
+  {
+    "direction": 135,
+    "speed": 419.99999999999835,
+    "world_angle": -135.0000007442088,
+    "passed": true
+  },
+  {
+    "direction": 180,
+    "speed": 420.00000000000006,
+    "world_angle": -90.00000074639401,
+    "passed": true
+  },
+  {
+    "direction": -135,
+    "speed": 419.9999999999997,
+    "world_angle": -45.0000007452087,
+    "passed": true
+  },
+  {
+    "direction": -90,
+    "speed": 420.00000000000006,
+    "world_angle": -7.462215883586435e-07,
+    "passed": true
+  },
+  {
+    "direction": -45,
+    "speed": 419.9999999999997,
+    "world_angle": 44.99999925903136,
+    "passed": true
+  }
+]

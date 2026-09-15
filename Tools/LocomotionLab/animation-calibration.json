@@ -1,0 +1,74 @@
+[
+  {
+    "animation": "Walk_F",
+    "source_speed": 89.88300802050527,
+    "actor_direction": 0.023445353104276253,
+    "rate_scale": 2.002603205701973
+  },
+  {
+    "animation": "Walk_B",
+    "source_speed": 87.20544351189012,
+    "actor_direction": 179.97071711566957,
+    "rate_scale": 2.0640913313565994
+  },
+  {
+    "animation": "Walk_LF",
+    "source_speed": 85.59811983260602,
+    "actor_direction": -87.69360446116127,
+    "rate_scale": 2.102849926517129
+  },
+  {
+    "animation": "Walk_LB",
+    "source_speed": 87.35189093685605,
+    "actor_direction": -90.34115087726235,
+    "rate_scale": 2.06063083545743
+  },
+  {
+    "animation": "Walk_RF",
+    "source_speed": 88.24585019708239,
+    "actor_direction": 87.26394726126539,
+    "rate_scale": 2.039755972637807
+  },
+  {
+    "animation": "Walk_RB",
+    "source_speed": 82.27038179000729,
+    "actor_direction": 91.28036520781099,
+    "rate_scale": 2.1879076781173166
+  },
+  {
+    "animation": "Run_F",
+    "source_speed": 380.65040213374306,
+    "actor_direction": -0.1676520854244639,
+    "rate_scale": 1.1033746388961683
+  },
+  {
+    "animation": "Run_B",
+    "source_speed": 378.35328871767877,
+    "actor_direction": 179.31297042104902,
+    "rate_scale": 1.1100736071925552
+  },
+  {
+    "animation": "Run_LF",
+    "source_speed": 349.99624334397373,
+    "actor_direction": -89.02622240216992,
+    "rate_scale": 1.2000128801017647
+  },
+  {
+    "animation": "Run_LB",
+    "source_speed": 359.19491771890046,
+    "actor_direction": -89.73994460005447,
+    "rate_scale": 1.1692815774433771
+  },
+  {
+    "animation": "Run_RF",
+    "source_speed": 360.0675759120222,
+    "actor_direction": 88.3595277634089,
+    "rate_scale": 1.1664477117556997
+  },
+  {
+    "animation": "Run_RB",
+    "source_speed": 358.6310166201481,
+    "actor_direction": 90.66990693387781,
+    "rate_scale": 1.1711201221751888
+  }
+]

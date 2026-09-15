@@ -41,6 +41,11 @@ public class Hodgepodge : ModuleRules
 
 		SetupIrisSupport(Target);
 
+		if (Target.bBuildEditor)
+		{
+			PrivateDependencyModuleNames.AddRange(new string[] { "UnrealEd", "AnimGraph", "BlueprintGraph" });
+		}
+
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
 

@@ -1,0 +1,128 @@
+{
+  "passed": true,
+  "steps": [
+    [
+      {
+        "state": "Idle",
+        "time": 0.0,
+        "cross": 0.0
+      },
+      {
+        "state": "Backward",
+        "time": 0.010711900889873505,
+        "cross": 0.0
+      },
+      {
+        "state": "LeftForward",
+        "time": 0.0195344015955925,
+        "cross": 0.0011407827259972692
+      }
+    ],
+    [
+      {
+        "state": "LeftForward",
+        "time": 0.0,
+        "cross": 0.0
+      },
+      {
+        "state": "RightBackward",
+        "time": 0.08058750256896019,
+        "cross": 0.0
+      },
+      {
+        "state": "RightForward",
+        "time": 0.2813616022467613,
+        "cross": 0.08859769999980927
+      }
+    ],
+    [
+      {
+        "state": "RightForward",
+        "time": 0.0,
+        "cross": 0.999999463558197
+      },
+      {
+        "state": "LeftBackward",
+        "time": 0.0787786990404129,
+        "cross": 0.999999463558197
+      },
+      {
+        "state": "LeftForward",
+        "time": 0.46311649680137634,
+        "cross": 0.00072093476774171
+      }
+    ],
+    [
+      {
+        "state": "LeftForward",
+        "time": 0.0,
+        "cross": 0.986205518245697
+      },
+      {
+        "state": "RightBackward",
+        "time": 0.08333439752459526,
+        "cross": 0.999999463558197
+      },
+      {
+        "state": "RightForward",
+        "time": 0.2850671000778675,
+        "cross": 0.08885101974010468
+      }
+    ],
+    [
+      {
+        "state": "RightForward",
+        "time": 0.0,
+        "cross": 0.0
+      },
+      {
+        "state": "LeftBackward",
+        "time": 0.08333420008420944,
+        "cross": 0.0
+      }
+    ],
+    [
+      {
+        "state": "LeftBackward",
+        "time": 0.0,
+        "cross": 0.0
+      },
+      {
+        "state": "RightForward",
+        "time": 0.08374499902129173,
+        "cross": 0.0
+      }
+    ],
+    [
+      {
+        "state": "RightForward",
+        "time": 0.0,
+        "cross": 0.999999463558197
+      },
+      {
+        "state": "RightBackward",
+        "time": 0.10184590145945549,
+        "cross": 0.19304104149341583
+      }
+    ],
+    [
+      {
+        "state": "RightBackward",
+        "time": 0.0,
+        "cross": 0.0
+      },
+      {
+        "state": "LeftForward",
+        "time": 0.08381029963493347,
+        "cross": 0.0
+      }
+    ]
+  ],
+  "sample_count": 1566,
+  "checks": [
+    "LF->RB->RF",
+    "RF->LB->LF",
+    "positive and negative hip biases",
+    "posture recovery only below FeetCrossing 0.2"
+  ]
+}
