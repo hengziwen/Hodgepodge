@@ -221,7 +221,8 @@ flowchart TB
         RM[HodgeAbilityTagRelationshipMapping<br/>阻塞 / 取消 / 优先级]
     end
 
-    TK -->|PlayMontage| MT
+    GA --> MTK[PlayMontageAndWait<br/>只管表现]
+    MTK --> MT
     TK -->|HandleGameplayEvent| GA
     TK -->|授予 / 撤销| AG
     GA -->|读写| CP
@@ -539,6 +540,52 @@ if (StartSectionName != NAME_None)
 
 另外必须明确：**`StartOffset` 是 Timeline 逻辑时间，不是 Montage 全局时间**。
 两者的映射规则见 7.2 节。
+
+**`SyncDurationFromMontage()` 与 `MontageSection` 的关系（v1 就会碰到）**
+
+即使不做运行时调速，v1 的 `SyncDurationFromMontage()` 也会撞上"长度取哪一个"的问题。
+`UAnimMontage` 提供的接口是（`AnimMontage.h:796` / `:800` / `:808`，**已核实**）：
+
+```cpp
+float GetPlayLength() const;                        // 整条 Montage
+float GetSectionLength(int32 SectionIndex) const;   // 单个 Section
+int32 GetSectionIndex(FName InSectionName) const;
+int32 GetNumSections() const;
+```
+
+假设一条 Montage 被切成三段：
+
+```
+AM_NormalAttack
+    Section A1 : 0.0 - 0.8
+    Section A2 : 0.8 - 1.5
+    Section A3 : 1.5 - 2.4
+```
+
+而 `TL_A2` 配了 `MontageSection = A2`。如果 `SyncDurationFromMontage()` 直接取
+`GetPlayLength()`，会得到 **2.4**，而 `TL_A2` 真正需要的是 **0.7**——长度校验与事件点立刻全错。
+
+**v1 的规定（刻意收窄）**
+
+> **每个攻击节点独占一条 Montage**（或一条 Montage 中只有一段用于该节点）。
+> `MontageSection` 仅作**可选的起播标记**，不改变有效长度；
+> `SyncDurationFromMontage()` 与长度校验统一使用 `Montage->GetPlayLength()`。
+
+配套校验见 11.2：`MontageSection` 非空且 `Montage->GetNumSections() > 1` 直接报 Error。
+
+**为什么 v1 不做 `GetEffectiveMontageLength()`**
+
+不是因为难（`GetSectionLength` 一行就能取到），而是因为**它解决不了根问题**：
+多段共用时 `StartTimeSeconds` 必须换算成 **Montage 全局时间**，而
+`PlayMontageAndWait` 的 `StartSection` 参数会**覆盖** `StartTimeSeconds`（见上一节）。
+也就是说，一旦要支持"多段共用 + 中途起播"，就**不能再传 `StartSection`**，
+必须自己算绝对时间——这已经超出 v1 范围。
+
+**将来要打开这条限制时，改动点是固定的三步**：
+
+1. 引入 `GetEffectiveMontageLength()`（`MontageSection` 非空时取 `GetSectionLength`）；
+2. `StartTimeSeconds = SectionStartTime + StartOffset`（策略 A、不调速时）；
+3. **不再传 `PlayMontageAndWait` 的 `StartSection`**，否则第 2 步被覆盖。
 
 ### 4.5 字段取舍说明
 
@@ -893,6 +940,12 @@ public:
 
     /**
      * 启动时间轴。
+     *
+     * 前置条件（不满足时记录 Error 并返回 nullptr，**不创建 Task**）：
+     *   - Timeline 非空
+     *   - InitialPlayRate > 0
+     *   - 0 <= StartOffset < Timeline->Duration
+     *
      * @param OwningAbility   所属能力
      * @param Timeline        时间轴资产
      * @param AttackID        当前攻击节点标识，随事件载荷广播（见 4.3）
@@ -936,10 +989,14 @@ protected:
     virtual void OnDestroy(bool bInOwnerFinished) override;
 
     /**
-     * 初始化。与 AdvanceTimeline 完全分开：
-     *   - 查询并直接进入 StartOffset 处已生效的阶段
-     *   - 把事件游标定位到第一个 Time >= StartOffset 的事件
+     * 初始化。与 AdvanceTimeline 完全分开，做三件事：
+     *   - 阶段：查询并**直接进入** StartOffset 处已生效的阶段（不依赖"进入"事件）
+     *   - 事件游标：跳过 Time < StartOffset
+     *   - 起点事件：**显式消费** Time <= StartOffset 的全部事件
+     *
+     * 之后推进循环只负责左开右闭区间 (PreviousTime, CurrentTime]。
      * 不做区间推进，因此不会漏掉 t == 0（或 t == StartOffset）的事件。
+     * 详见 6.4 铁律 1。
      */
     void InitializeTimeline(float InStartOffset);
 
@@ -994,6 +1051,16 @@ protected:
 
 **Montage 的播放不在本 Task 内。** 第一版由两个 Task 协作：`PlayMontageAndWait` 管动画，
 `PlayTimeline` 管逻辑。理由见 7.2 节。
+
+**三个参数校验为什么是硬性的**
+
+| 校验 | 不做的后果 |
+|---|---|
+| `Timeline != nullptr` | Task 空转，或 `TickTask` 每帧空解引用 |
+| `InitialPlayRate > 0` | **会造出一条永远不会 `NaturalEnd` 的 Timeline**——v1 没有"运行中恢复速率"的能力（见 5.3），`InitialPlayRate = 0` 之后时间轴永久停在那里，既不走完也不结束 |
+| `0 <= StartOffset < Duration` | `StartOffset >= Duration` 时"只消费末尾事件然后立刻结束"与"直接拒绝"是两种语义，v1 **选择直接拒绝**，简单且不会掩盖配置错误 |
+
+实现上建议用 `ensure` 而不是静默 clamp——这些属于**调用方写错**，不是运行时可恢复的异常。
 
 ### 6.3 执行时序
 
@@ -1304,6 +1371,20 @@ void UAbilityTask_PlayMontageAndWait::ExternalCancel()
 
 **结论一：`OnInterrupted` 不能当作"被外力抢占"的同义词**——Ability 被取消时引擎发的也是它。
 所以"由回调推导停止原因"这条路线**从根上不成立**。
+
+**更要紧的是：Epic 的头文件注释与实现不一致。**
+同一个文件的头文件（`AbilityTask_PlayMontageAndWait.h:54-55`，**已核实**）写的是：
+
+```
+ * OnInterrupted is called if another montage overwrites this,
+   and OnCancelled is called if the ability or task is cancelled
+```
+
+而实现里"Ability 被取消"走的是 `OnGameplayAbilityCancelled()` → **`OnInterrupted`**。
+
+**这个不一致本身就是不要依赖回调语义的正式理由**：头文件说一套、代码做一套，
+而且跨引擎版本还可能再变。稳定的做法只有一个——**GA 先声明意图，回调只做身份校验**
+（见下节规则），而不是把"某个回调 == 某个原因"写进设计。
 
 **结论二：`OnInterrupted` 在正常连段路径上必然发生。**
 `ASC::PlayMontage` 的执行顺序是（`AbilitySystemComponent_Abilities.cpp:2998` 与 `3028`，**已核实**）：
@@ -1825,7 +1906,8 @@ ActivateAbility
   ├── StartID = ResolveStartAttackID()     // 起手节点（两端共用实现，见 8.3）
   ├── Node = ComboSet->FindNode(StartID)
   │
-  ├── ① WaitGameplayEvent(GameplayEvent.Attack.*)     // 必须先订阅
+  ├── ① WaitGameplayEvent(GameplayEvent.Attack, OnlyTriggerOnce=false, OnlyMatchExact=false)
+  │                                          // 必须先订阅；父 Tag + 关闭精确匹配，见下方说明
   ├── ② PlayMontageAndWait(Node.Timeline.Montage, Rate = InitialPlayRate)
   └── ③ PlayTimeline(Node.Timeline, Node.AttackID, StartOffset, InitialPlayRate)
                                           │
@@ -1849,6 +1931,38 @@ Timeline 的 `Activate()` 会**立刻**派发起点事件（`t == 0` / `t == Sta
 以及 `ComboWindow.Open`。如果 `WaitGameplayEvent` 排在它后面注册，**这些启动事件会被直接丢掉**。
 这也是为什么 6.4 铁律 1 的修正必须与本节顺序一起改：只改一处，会把"漏起点事件"
 换成一个更难查的 bug。
+
+**`WaitGameplayEvent` 的参数必须写对。**
+
+`GameplayTag` 没有 `GameplayEvent.Attack.*` 这种通配写法。要收全部子标签，正确做法是
+**监听父标签并关闭精确匹配**（`AbilityTask_WaitGameplayEvent.h:23-29`，**已核实**）：
+
+```cpp
+UAbilityTask_WaitGameplayEvent* EventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(
+    this,
+    HodgeGameplayTags::GameplayEvent_Attack,   // 父标签，不是通配
+    nullptr,                                   // OptionalExternalTarget
+    /*OnlyTriggerOnce=*/false,
+    /*OnlyMatchExact=*/false);                 // ← 默认是 true，不改收不到子标签
+```
+
+引擎头文件注释原文（**已核实**）：
+
+> *"It will keep listening as long as `OnlyTriggerOnce = false`"*
+> *"If `OnlyMatchExact = false` it will trigger for nested tags"*
+
+于是下面这些都能被同一个 Task 收到，再按 `Payload.EventTag` 分发：
+
+```
+GameplayEvent.Attack.ComboWindow.Open / .Close
+GameplayEvent.Attack.ComboTransition
+GameplayEvent.Attack.Timeline.End
+GameplayEvent.Attack.Interrupted
+GameplayEvent.Attack.HitCheck
+```
+
+**`OnlyMatchExact` 的默认值是 `true`**，这是第一版最容易踩的坑：不改它，
+只会收到"标签完全相等"的那一条，症状是"为什么只触发了一次 / 子标签收不到"。
 
 **每次起段都要换一个新的执行身份**（见 7.2）。旧段的 Montage 回调在起新段时
 **必然同步触发一次**，身份校验是它不误伤新段的唯一保障。
@@ -1908,8 +2022,10 @@ flowchart TB
     NODE --> MTK[PlayMontageAndWait<br/>表现]
     NODE --> TASK[PlayTimeline Task<br/>逻辑]
     TASK -->|阶段区间| ST["Status.Attack.*<br/>loose tag，不复制"]
-    TASK -->|时间点| EV[GameplayEvent.Attack.*]
-    MTK -.OnInterrupted / OnCancelled.-> STOP["StopTimeline(Interrupted)"]
+    TASK -->|时间点| EV["GameplayEvent.Attack 下的子标签"]
+    MTK -.Montage 回调.-> IDCHK["身份校验 + 已声明原因"]
+    IDCHK -.旧执行 / 原因已声明.-> IGNORE[忽略]
+    IDCHK -.仍属当前执行且未声明.-> STOP["StopTimeline(Interrupted)"]
     EV --> GA[GA_NormalAttack]
     ST --> ANIM[动画层 / 互斥判定]
     GA -->|ComboTransition<br/>先 Stop(ComboTransition) 再起新| NEXTNODE[下一节点]
@@ -1970,22 +2086,57 @@ void AHodgeCharacterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 | `ComboExpireServerTime` | ASC 所有权相关信息 |
 | `bComboActive` | 当前 Timeline / Task 指针 |
 
-**复制策略必须显式决定。** 组件由 `UGameFeatureAction_AddComponents` 动态添加时，
-`CreateComponentOnInstance` 会按组件 CDO 的 `GetIsReplicated()` 分岔
-（`GameFrameworkComponentManager.cpp:484`，**已核实**）：
+**复制策略：不复制，但 Authority 与 Owning Client 各自维护一份。**
+
+组件由 `UGameFeatureAction_AddComponents` 动态添加时，`CreateComponentOnInstance` 会按
+组件 CDO 的 `GetIsReplicated()` 分岔（`GameFrameworkComponentManager.cpp:484`，**已核实**）：
 
 | 组件设置 | 结果 |
 |---|---|
 | **未标记复制**（默认） | **每台机器各自创建一个独立实例**，互不同步 |
 | `SetIsReplicatedByDefault(true)` | **只在 Authority 创建**，客户端靠组件复制拿到 |
 
-对本组件的建议：**标记为不复制，但只让服务器写入与读取**（`bComboActive` /
-`ExpireServerTime` 是服务器裁决用的）。理由：连击段数按 8.3 是"两端各自确定性推导"，
-不需要复制；而一旦标记复制，就要处理"运行时添加的组件能否可靠复制到客户端"
-这个额外变量。**若将来确认客户端需要读服务器侧的过期为，再改成复制并单独验收。**
+**本组件采用"未标记复制"，但绝**不是**"只让服务器读写"**——那会直接打断 8.3 的架构：
 
-> **待验证**：无论选哪种，都要在 2 人 PIE 下确认客户端身上组件确实存在且行为符合预期
-> （见 13.3 步骤 6）。
+```
+GA_NormalAttack 是 LocalPredicted
+Owning Client 激活 → ResolveStartAttackID() → 读 CombatComponent
+```
+
+如果客户端从不维护 `NextAttackID`，它只能回退到 `Attack.Entry.Default`（A1），
+而服务器可能因为 `NextAttackID = A3` 而直接起手 A3 —— 两端分歧，
+"相同输入 + 相同规则 + 同步时钟 ⇒ 相同结果"这条前提当场失效。
+
+正确形态是**两端各自维护、调用同一套函数**：
+
+| 端 | 是否持有组件 | 是否参与 Combo 推导 |
+|---|---|---|
+| Authority | 是 | **是**（写入 + 读取） |
+| Owning Client | 是 | **是**（写入 + 读取，供 Local Prediction 用） |
+| Simulated Proxy | 是（组件存在） | **否**（不参与，也不读） |
+
+这和第 8.4 节阶段标签的思路完全一致：
+
+> **不是复制，而是两端跑同一个确定性算法各算各的。**
+
+`ComboExpireServerTime` 客户端也可以直接用，因为
+`AGameStateBase::GetServerWorldTimeSeconds()` 本身就是"与服务器同步的服务端时间"（Q3）。
+
+**实现要求**
+
+- 所有写入必须走**同一套函数**（如 `OnAttackFinished(NextAttackID, WindowSeconds)`），
+  两端共用；**不允许"客户端一套、服务器一套"**——和 8.3 的推导规则是同一条纪律。
+- 写入点必须**可判定**：目前只有 `ComboTransition` 提交与 `Timeline.End` 两处。
+- 组件 Tick 保持关闭，超时用惰性判定（见下方"时间注意"）。
+
+**这是一处需要预留扩展的地方**
+
+如果将来出现**客户端无法自行确定**的服务器事实（例如 `HitConfirm` 失败要改变下一刀），
+那类分支必须**单独设计修正机制**（服务器下发覆盖值 + 客户端接受），
+**而不是现在就把整个 CombatComponent 改成复制**。留到真的出现时再解决。
+
+> **待验证**：2 人 PIE 下确认两端 `NextAttackID` 在"正常连段"与"跳段"
+> 两条路径上都不分歧（见 13.3 步骤 6）。
 
 > **时间注意**：`ComboExpireServerTime` 用 `GetServerWorldTimeSeconds()`（Q3），
 > 而**不是** Timeline 用的 `GetWorld()->GetTimeSeconds()`。两个时钟解决两个不同问题：
@@ -2053,6 +2204,7 @@ UHodgeAbilityTimeline（具体资产，覆盖时间点）
 | 同一时间点重复 `EventTag` | Warning | 通常是复制粘贴错误 |
 | 全部事件的 `NetPolicy` 相同 | Info | 提示规划（通常是没细分）；不阻断 |
 | `MontageSection` 非空 | Info | 提示：该节点的接续段不能用 `StartOffset`（见 4.4 节末） |
+| `MontageSection` 非空且 `Montage->GetNumSections() > 1` | Error | v1 不支持多攻击节点共用一条多 Section Montage；`SyncDurationFromMontage()` 会取到整条长度（见 4.4 节末） |
 
 `UHodgeComboSet` 另有独立校验：
 
@@ -2245,7 +2397,7 @@ Q1 采用 `AttackID` 后需要两组新标签。它们**不复用 `InputTag` 根
 
 | 步骤 | 内容 | 依赖 |
 |---|---|---|
-| **1** | 标签组：`Status.Attack.*` + `GameplayEvent.Attack.*`（含 `ComboTransition` / `Interrupted` / `HitCheck`）+ `Status.AttackMode.*`，以及 `Attack.*`（节点标识）与 `Input.*`（转移键）标签，声明到 `HodgeGameplayTags.h` / `.cpp` | 无 |
+| **1** | 标签组：`Status.Attack.*` + `GameplayEvent.Attack.*`（含 `ComboTransition` / `Interrupted` / `HitCheck`）+ `Status.AttackMode.*`，以及 `Attack.*`（节点标识）、`Attack.Transition.*`（转移键）、`Attack.Entry.*`（连击入口）标签，声明到 `HodgeGameplayTags.h` / `.cpp` | 无 |
 | **2** | 资产类：`UHodgeAbilityTimeline` + 两个 USTRUCT + `EHodgeTimelineEventNetPolicy` + `IsDataValid` + `PostEditChangeProperty` + `SyncDurationFromMontage` + `UpdateAssetBundleData`（收集 Montage 进 Bundle） | 步骤 1 |
 | **3** | Task：`UHodgeAbilityTask_PlayTimeline`，实现初始化 / 推进分离、区间判定、游标、`InitialPlayRate`、阶段标签 loose tag 授予与清理、`StopTimeline(Reason)`、`NetPolicy` 分派、`Timeline.End` 自动产生 | 步骤 2 |
 | **4** | 输入闭环：`WaitInputPress` 在 `ComboBufferWindow` 内创建 / 取消，验证**按键真的能到达服务器** | 步骤 3 |
@@ -2301,6 +2453,10 @@ Q1 采用 `AttackID` 后需要两组新标签。它们**不复用 `InputTag` 根
 | **`Time == Duration` 的事件被系统 End 吃掉** | 最后一下伤害偶尔没有 | 铁律 1：先推进到 `Duration`，再 `StopTimeline(NaturalEnd)` |
 | **旧段 Montage 回调误伤新段** | 正常连段每次都误广播 `Attack.Interrupted`，或新段被停 | 攻击段执行身份 + 回调身份校验；原因由 GA 声明、不由回调反推（见 7.2） |
 | **启动事件因订阅顺序被丢** | `ComboWindow.Open` 等起点事件收不到 | 9.2：严格按"先 `WaitGameplayEvent`、再 Montage、再 Timeline" |
+| **`WaitGameplayEvent` 未关闭精确匹配** | 只收到一条事件；症状是"窗口偶尔不开 / 只触发一次" | 监听父标签 + `OnlyTriggerOnce=false, OnlyMatchExact=false`（见 9.2） |
+| **`InitialPlayRate` 为 0** | 造出一条永不 `NaturalEnd` 的 Timeline | `PlayTimeline` 前置校验直接拒绝（见 6.2） |
+| **多节点共用一条多 Section Montage** | `Duration` 偏大，事件点与窗口整体错位 | v1 规定每节点独占 Montage；校验直接报 Error（见 4.4 节末 / 11.2） |
+| 客户端不维护 Combat Runtime State | 客户端起手 A1、服务器起手 A3 | 两端各自维护同一套状态与函数（见 9.5） |
 | `AttackID` 悬空 | 运行时找不到节点，连击断链 | `IsDataValid` 校验 `Entries` / `Transitions`；`Attack.Entry.Default` 缺失即 Error（见 11.2） |
 | 等值判定丢事件 | 偶发丢失伤害 / 窗口，极难复现 | 铁律 1：一律区间判定 |
 | **Montage 被中断但 Timeline 继续** | "站着挨打却打出伤害" | 默认中断即停 Timeline（见 7.2）；`OnCompleted` / `OnBlendOut` 不算中断 |
@@ -2343,6 +2499,12 @@ Q1 采用 `AttackID` 后需要两组新标签。它们**不复用 `InputTag` 根
 20. 用 `Nodes[0]` 之类的位置回退表达"默认入口" —— 让数组顺序重新获得业务含义（见 9.1）。
 21. 把 `AttackID` 塞进 `FGameplayEventData` 的标签容器 —— 该结构没有上下文标签字段，
     `InstigatorTags` / `TargetTags` 语义也不符（见 4.3）。
+22. 用 `GameplayEvent.Attack.*` 这种通配标签去订阅 —— GameplayTag 不支持通配，
+    且 `OnlyMatchExact` 默认为 `true`，不改收不到子标签（见 9.2）。
+23. 让 `InitialPlayRate` 允许为 0 —— v1 无法恢复速率，会造出一条永不结束的 Timeline（见 6.2）。
+24. 把 CombatComponent 做成"只有服务器读写" —— 客户端 LocalPredicted 起手会与服务器分歧，
+    直接破坏 8.3 的两端确定性推导（见 9.5）。
+25. 多个攻击节点共用一条多 Section Montage —— v1 的 `Duration` 会取到整条长度（见 4.4 节末）。
 
 ---
 
@@ -2415,3 +2577,4 @@ Q1 采用 `AttackID` 后需要两组新标签。它们**不复用 `InputTag` 根
 | 2026-09-16 | **修订一（评审后）**。修掉 4 处地基问题：①阶段标签改用 non-replicated loose tag；②修正 `StartOffset` 语义并把"初始化"与"推进"拆开（含起点阶段 / 起点事件规则）；③新增 Montage 中断通道与默认策略；④把连击推进从 `Timeline.End` 拆出为 `ComboTransition`。另修正措辞与命名（`FireTrace` → `HitCheck`）、`bAuthorityOnly` → `EHodgeTimelineEventNetPolicy`、补 `PlayRate` 与时间基准说明、补软引用预加载约定、新增 4.8 `Presentation` 拆分提案与 Q7 / Q8。涉及章节：3.1、4.3、4.4、4.5、4.8、5.3、5.4、6.2、6.3、6.4、6.5、7.2、7.4、8.3、8.4、9.2、9.3、9.4、11.2、11.3、12.3、13、14、15、16。 |
 | 2026-09-16 | **修订二（二轮评审后）**。**属修正的部分**：①新增 8.5"连击输入如何到达服务器"——核出 `InvokeReplicatedEvent` 不发 RPC，必须由 `WaitInputPress` 调 `ServerSetReplicatedEvent` 才能真正到达服务器；②`PlayRate` 降级为 v1 只做 `InitialPlayRate`，并与 Montage 同源传入（5.3 / 6.2 / 7.2）；③新增 `EHodgeTimelineStopReason`，"先停旧、再起新"（6.2 / 6.5 / 7.2 / 9.2）；④`StartOffset` 与 Montage 起播位置的映射，以及 `MontageSection` 覆盖 `StartTimeSeconds` 的引擎约束（4.4 / 7.2 / 11.2）；⑤事件载荷带 `AttackID` + `OptionalObject` 身份（4.3）；⑥明确"配置事件 / 派发标签 / 系统事件"三类边界（4.2 / 9.2 / 12.3）；⑦Phase 字段改为 `PhaseTag` 自动 + `AdditionalGrantedTags`，删掉 `bCancelableWindow`（4.2 / 4.5）；⑧`NetPolicy` 运行时分派算法（含 listen server 只 Fire 一次，8.3）；⑨预加载落地到 `UpdateAssetBundleData` 并加验收项（4.4 / 13.3）。**属决策定稿的部分**：Q1 采用 `AttackID` + `AttackNode` + `Transitions`（9.1）、Q7 v1 不拆 `Presentation`（4.8）、Q2/Q3/Q4/Q5/Q6/Q8 定稿（15 章，并改章名为"决策记录"）。**依据修正**：Q4 挂载位置改为 Pawn（9.5，KB-12 已修复）；`UGameFeatureAction_AddComponents` 与 `FGameplayEventData` 字段范围、`PlayMontage` 的 Section 覆盖行为均已在引擎源码核实。 |
 | 2026-09-16 | **修订三（三轮评审后）**。**修正类**：①`InitializeTimeline` 显式消费起点事件，统一 `(PreviousTime, CurrentTime]` 语义，并规定 `NaturalEnd` 必须排在最后一次 `Advance` 之后（6.4 铁律 1 / 5.4）；②**删除不存在的字段 `FGameplayEventData::ContextTags`**（上一版凭印象写成，会编译不过），改为 `OptionalObject` + `Task->GetAttackID()`，并补上该结构的完整真实字段清单与三个不可用候选的说明（4.3 / 12.3）；③新增"攻击段执行身份（Execution）+ 回调身份校验"规则，并依据引擎源码纠正 Montage 回调来源表——`OnInterrupted` 在 Ability 取消时也会发，且正常连段时**必然同步触发一次**（6.2 / 6.3 / 7.2 / 9.2）；④`9.2` 流程改为"先订阅、再表现、再逻辑"（否则起点事件被丢）；⑤删除 `bMatchMontagePlayRate` 字段（v1 只做策略 A），把正确的策略 B 公式与两个未解决前提降级为 v2 备注（4.4 / 4.5 / 5.2 / 11.2 / 13.1）；⑥连击转移键改用 `Attack.Transition.*` / `Attack.Entry.*`，不再复用或新开输入根；删除 `Nodes[0]` 回退（9.1 / 11.2 / 12.4）；⑦术语表把"Input Buffer"改为与 v1 行为一致的表述（16.1）。**新增**：9.5 补 `UHodgeCombatComponent` 的复制策略取舍（依据 `FrameworkComponentManager.cpp:484`）；14.1 / 14.2 补 6 条风险与 6 条反模式。 |
+| 2026-09-16 | **修订四（四轮评审后）**。**修正类**：①**9.5 的 `UHodgeCombatComponent` 复制策略自相矛盾**——原写"不复制但只让服务器读写"会让客户端 LocalPredicted 起手与服务器分歧，破坏 8.3 的两端确定性推导；改为"不复制，但 Authority 与 Owning Client 各自维护一份、共用同一套函数"，并补三端职责表与将来 `HitConfirm` 类服务器事实的预留说明；②`PlayMontageAndWait` 的回调来源补上"**头文件注释与实现不一致**"这一事实（`AbilityTask_PlayMontageAndWait.h:54-55` 说 `OnCancelled` 对应 Ability 取消，实现却走 `OnGameplayAbilityCancelled` → `OnInterrupted`），并把它作为"不要依赖回调语义"的正式理由（7.2）；③`WaitGameplayEvent` 改为真实 API：监听父标签 `GameplayEvent.Attack` + `OnlyTriggerOnce=false` / **`OnlyMatchExact=false`**（默认 `true`，不改收不到子标签）（9.2）；④`PlayTimeline` 补三条前置校验（`Timeline` 非空、`InitialPlayRate > 0`、`0 <= StartOffset < Duration`），并说明 `InitialPlayRate = 0` 会造出永不结束的时间轴（6.2）；⑤明确 `SyncDurationFromMontage()` 与 `MontageSection` 的关系：v1 规定每个攻击节点独占一条 Montage，多 Section 共用直接报 Error，并给出将来打开限制的三步（4.4 / 11.2）。**文档残留清理**：3.3 分层图不再让 Timeline Task 播 Montage（改为 `GA → PlayMontageAndWait → Montage`）；13.2 步骤 1 的 `Input.*` 改为 `Attack.Transition.*` / `Attack.Entry.*`；6.2 的 `InitializeTimeline` 注释同步为"跳过 + 显式消费起点事件"；9.4 流程图补上"身份校验 + 已声明原因"这一层。14.1 / 14.2 各补 4 条。 |
