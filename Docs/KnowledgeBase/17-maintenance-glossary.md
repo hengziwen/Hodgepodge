@@ -22,9 +22,9 @@
 - CDO：类默认对象；Experience 加载方式会读取它。
 - PrimaryAssetId：由类型和名称组成的资产标识，不等同于文件路径。
 - Mixed：GAS 效果复制策略；并不意味着所有数据只复制给拥有者。
-- Timeline：AbilityTimeline，描述阶段区间与时间点事件的 UPrimaryDataAsset；本身不播动画。
-- ComboSet：一套攻击形态的节点集合，持有 Timeline 并定义入口与转移。
-- Bundle：PrimaryAsset 的可命名资源分组；项目用 `FHodgeBundles::Equipped` 承载进战斗前要预加载的 Montage。
+- Timeline（⚠️ **已回退**）：~~AbilityTimeline，描述阶段区间与时间点事件的 UPrimaryDataAsset；本身不播动画。~~ 当前工作区无该类，此词仅出现在历史记录与设计草案中。
+- ComboSet（⚠️ **已回退**）：~~一套攻击形态的节点集合，持有 Timeline 并定义入口与转移。~~ 当前工作区无该类。
+- Bundle：PrimaryAsset 的可命名资源分组；项目用 `FHodgeBundles::Equipped` 声明 Experience 需要加载的资源集合（`UHodgeExperienceManagerComponent::StartExperienceLoad()`）。⚠️ 早先"承载进战斗前要预加载的 Montage"的说法依赖已回退的授予期预加载。
 - loose tag：不经过 GE、直接加到 ASC 的标签；Timeline 阶段标签用非复制的 loose tag。
 - PrimaryAsset 预加载：按 PrimaryAssetId + Bundle 同步加载一组资产并保存句柄，区别于普通 `LoadObject`。
 

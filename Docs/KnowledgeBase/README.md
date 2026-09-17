@@ -65,7 +65,11 @@ Hodgepodge 是 UE 5.5 的个人动作 RPG 框架工程，正在将角色、GAS�
 
 ## 最新状态提示
 
-2026-09-17 本轮已核对：ASC 接入收敛到 HeroComponent→PawnExtension 单一入口（Hero 的 PossessedBy/OnRep_PlayerState 只调 Super）；CharacterBase Receiver 生命周期成对；PlayerState::SetPawnData 已在权威端授予 PawnData->AbilitySets（未记录句柄）；HeroComponent 的额外输入移除已实现并在 EndPlay 统一解绑；新增 AbilityTimeline / ComboSet / PlayTimeline 数据与 Task（有实现、无 C++ 调用点）与 PreloadPrimaryAssetBundles 同步预加载；相机资产换为 CM_ThirdPerson / CM_ThirdPerson_Death；新增 CodexText 独立实验模块与 Editor-only MCP 插件。以上均为源码/配置/磁盘核对，不代表编译、PIE 或联机通过。剩余重点：技能授予句柄与撤销、Cue 路径注册与预加载、死亡衔接、敌人 ASC、专服启动、Timeline 的 BP 接线。详见 [本次更新记录](21-update-2026-09-17.md)。
+2026-09-17 本轮已核对：ASC 接入收敛到 HeroComponent→PawnExtension 单一入口（Hero 的 PossessedBy/OnRep_PlayerState 只调 Super）；CharacterBase Receiver 生命周期成对；PlayerState::SetPawnData 已在权威端授予 PawnData->AbilitySets（未记录句柄）；HeroComponent 的额外输入移除已实现并在 EndPlay 统一解绑；相机资产换为 CM_ThirdPerson / CM_ThirdPerson_Death；新增 CodexText 独立实验模块与 Editor-only MCP 插件。以上均为源码/配置/磁盘核对，不代表编译、PIE 或联机通过。
+
+> ⚠️ **回退补记**：本轮曾记录"新增 AbilityTimeline / ComboSet / PlayTimeline 数据与 Task + PreloadPrimaryAssetBundles 同步预加载 + Attack 相关 Tag"，这批内容属于当时**工作区的未提交改动**，随后已被丢弃。当前工作区不存在这些源码、配置扫描项与 Tag（已全量搜索确认），`GA_Melee` / `Content/Main/Character/Hero/Ability/` 也不再存在。**时间轴/连击需要从零实现**，不要在 BP 侧找现成接线。
+
+剩余重点：技能授予句柄与撤销、Cue 路径注册与预加载、死亡衔接、敌人 ASC、专服启动、第一个 C++ 攻击 Ability（含时间轴/连击的从零实现）。详见 [本次更新记录](21-update-2026-09-17.md) 的回退标注。
 
 不要把 Lyra 参考文档里的 ShooterCore、FrontEnd 地图、CommonUI 等当成本项目现有资源。
 

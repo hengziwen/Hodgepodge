@@ -17,10 +17,6 @@
 - [ABP_Enemy_Base.uasset](../../../Content/Main/Character/EnemyBase/ABP_Enemy_Base.uasset) — `/Game/Main/Character/EnemyBase/ABP_Enemy_Base`；94,427 字节
 - [ALI_Enemy.uasset](../../../Content/Main/Character/EnemyBase/ALI_Enemy.uasset) — `/Game/Main/Character/EnemyBase/ALI_Enemy`；12,717 字节
 
-## Character/Hero/Ability
-
-- [GA_Melee.uasset](../../../Content/Main/Character/Hero/Ability/GA_Melee.uasset) — `/Game/Main/Character/Hero/Ability/GA_Melee`；44,733 字节
-
 ## Character/Hero/Anim
 
 - [ABP_Pover_Base.uasset](../../../Content/Main/Character/Hero/Anim/ABP_Pover_Base.uasset) — `/Game/Main/Character/Hero/Anim/ABP_Pover_Base`；1,436,223 字节
@@ -42,13 +38,15 @@
 
 ## Character/Hero
 
-- [BP_Hero_Pover.uasset](../../../Content/Main/Character/Hero/BP_Hero_Pover.uasset) — `/Game/Main/Character/Hero/BP_Hero_Pover`；53,156 字节
+- [BP_Hero_Pover.uasset](../../../Content/Main/Character/Hero/BP_Hero_Pover.uasset) — `/Game/Main/Character/Hero/BP_Hero_Pover`；53,177 字节
 - [BP_HeroBase.uasset](../../../Content/Main/Character/Hero/BP_HeroBase.uasset) — `/Game/Main/Character/Hero/BP_HeroBase`；25,447 字节
+- [GA_Attack.uasset](../../../Content/Main/Character/Hero/GA_Attack.uasset) — `/Game/Main/Character/Hero/GA_Attack`；95,308 字节
 
 ## Data
 
 - [DA_Dafult_GameData.uasset](../../../Content/Main/Data/DA_Dafult_GameData.uasset) — `/Game/Main/Data/DA_Dafult_GameData`；1,495 字节
-- [DA_Dafult_PawnData.uasset](../../../Content/Main/Data/DA_Dafult_PawnData.uasset) — `/Game/Main/Data/DA_Dafult_PawnData`；2,200 字节
+- [DA_Dafult_PawnData.uasset](../../../Content/Main/Data/DA_Dafult_PawnData.uasset) — `/Game/Main/Data/DA_Dafult_PawnData`；2,441 字节
+- [DA_Pover.uasset](../../../Content/Main/Data/DA_Pover.uasset) — `/Game/Main/Data/DA_Pover`；2,314 字节
 
 ## Experiences
 
@@ -56,13 +54,14 @@
 
 ## Input
 
-- [DA_HodgeInputConfig.uasset](../../../Content/Main/Input/DA_HodgeInputConfig.uasset) — `/Game/Main/Input/DA_HodgeInputConfig`；5,530 字节
-- [IMC_Default.uasset](../../../Content/Main/Input/IMC_Default.uasset) — `/Game/Main/Input/IMC_Default`；22,440 字节
+- [DA_HodgeInputConfig.uasset](../../../Content/Main/Input/DA_HodgeInputConfig.uasset) — `/Game/Main/Input/DA_HodgeInputConfig`；5,934 字节
+- [IMC_Default.uasset](../../../Content/Main/Input/IMC_Default.uasset) — `/Game/Main/Input/IMC_Default`；23,634 字节
 - [IMC_UI.uasset](../../../Content/Main/Input/IMC_UI.uasset) — `/Game/Main/Input/IMC_UI`；9,382 字节
 
 ## Input/InputAction
 
 - [IA_Aim.uasset](../../../Content/Main/Input/InputAction/IA_Aim.uasset) — `/Game/Main/Input/InputAction/IA_Aim`；2,187 字节
+- [IA_Attack.uasset](../../../Content/Main/Input/InputAction/IA_Attack.uasset) — `/Game/Main/Input/InputAction/IA_Attack`；2,008 字节
 - [IA_Crouch.uasset](../../../Content/Main/Input/InputAction/IA_Crouch.uasset) — `/Game/Main/Input/InputAction/IA_Crouch`；2,012 字节
 - [IA_Jump.uasset](../../../Content/Main/Input/InputAction/IA_Jump.uasset) — `/Game/Main/Input/InputAction/IA_Jump`；2,196 字节
 - [IA_Look.uasset](../../../Content/Main/Input/InputAction/IA_Look.uasset) — `/Game/Main/Input/InputAction/IA_Look`；2,201 字节
@@ -85,10 +84,10 @@
 
 - `Assets`：645 个文件（包含源资源，不等于 UE 资产数）。
 - `Characters`：148 个文件（包含源资源，不等于 UE 资产数）。
-- `CodexText`：470 个文件（包含源资源，不等于 UE 资产数）。
+- `CodexText`：475 个文件（包含源资源，不等于 UE 资产数）。
 - `LevelPrototyping`：13 个文件（包含源资源，不等于 UE 资产数）。
-- `Main`：41 个文件（包含源资源，不等于 UE 资产数）。
-- `ThirdPerson`：8 个文件（包含源资源，不等于 UE 资产数）。
+- `Main`：43 个文件（包含源资源，不等于 UE 资产数）。
+- `ThirdPerson`：7 个文件（包含源资源，不等于 UE 资产数）。
 - `Wuwa`：675 个文件（包含源资源，不等于 UE 资产数）。
 - `__ExternalActors__`：257 个文件（包含源资源，不等于 UE 资产数）。
 - `__ExternalObjects__`：19 个文件（包含源资源，不等于 UE 资产数）。

@@ -55,13 +55,17 @@
 
 记录完整 Editor 构建，再测试所需 Game/Server 和打包资源。通过条件：无缺类、无旧重定向目标失效、默认地图和数据资产可加载。PIE 成功不能替代此项。
 
-## V13：攻击时间轴与连击数据
+## ~~V13：攻击时间轴与连击数据~~（⚠️ 已回退，暂不适用）
 
-通过 BP 配置一个使用 `UHodgeAbilityTask_PlayTimeline` 的攻击技能（源码内暂无 C++ 调用点）。观察：Task 是否创建、逻辑时间是否推进、阶段标签是否随进/出加删、ComboWindow 事件与系统事件（Timeline.End / Interrupted）的端与次数。通过条件：自然结束与打断各只结束一次、EndTask 后无 loose tag 残留、重复激活不累积标签。当前为未执行。
+> 本项依赖的 `UHodgeAbilityTask_PlayTimeline` / `UHodgeComboSet` / `Attack.*` 标签**当前工作区不存在**（详见 [回退标注](21-update-2026-09-17.md)）。等时间轴与连击重新实现后，本节验收步骤才需要恢复为有效项。
 
-## V14：Bundle 预加载
+~~通过 BP 配置一个使用 `UHodgeAbilityTask_PlayTimeline` 的攻击技能（源码内暂无 C++ 调用点）。观察：Task 是否创建、逻辑时间是否推进、阶段标签是否随进/出加删、ComboWindow 事件与系统事件（Timeline.End / Interrupted）的端与次数。通过条件：自然结束与打断各只结束一次、EndTask 后无 loose tag 残留、重复激活不累积标签。当前为未执行。~~
 
-在授予配置了 `PreloadPrimaryAssetsOnGrant` 的技能前后记录耗时与 `PreloadHandles` 数量。通过条件：预加载只发生在授予时、Montage 在首次播放前已就绪、卸载后句柄不泄漏。本项依赖 V13 的 BP 接线，当前为未执行。
+## ~~V14：Bundle 预加载~~（⚠️ 已回退，暂不适用）
+
+> 本项依赖的 `PreloadPrimaryAssetsOnGrant` / `PreloadHandles` **当前工作区不存在**。仍需验证的相关项是 Experience 的 `Equipped` Bundle 加载（见 [数据资产章节](05-data-assets.md)）。
+
+~~在授予配置了 `PreloadPrimaryAssetsOnGrant` 的技能前后记录耗时与 `PreloadHandles` 数量。通过条件：预加载只发生在授予时、Montage 在首次播放前已就绪、卸载后句柄不泄漏。本项依赖 V13 的 BP 接线，当前为未执行。~~
 
 ## 验收记录模板
 

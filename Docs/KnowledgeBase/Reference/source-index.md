@@ -28,34 +28,33 @@
 
 [Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility.cpp)
 
-项目技能基类：激活策略、互斥组、额外 Cost、失败与 EffectContext 扩展；PreloadPrimaryAssetsOnGrant 在授予时预加载 Bundle。
+项目技能基类：激活策略、互斥组、额外 Cost、失败与 EffectContext 扩展。（PreloadPrimaryAssetsOnGrant 已随未提交改动回退，当前不存在。）
 
-- `UHodgeGameplayAbility::UHodgeGameplayAbility` — L37
-- `UHodgeGameplayAbility::GetHodgeAbilitySystemComponentFromActorInfo` — L66
-- `UHodgeGameplayAbility::GetHodgePlayerControllerFromActorInfo` — L75
-- `UHodgeGameplayAbility::GetControllerFromActorInfo` — L82
-- `UHodgeGameplayAbility::GetHodgeCharacterFromActorInfo` — L120
-- `UHodgeGameplayAbility::GetHeroComponentFromActorInfo` — L126
-- `UHodgeGameplayAbility::NativeOnAbilityFailedToActivate` — L133
-- `UHodgeGameplayAbility::CanActivateAbility` — L186
-- `UHodgeGameplayAbility::SetCanBeCanceled` — L227
-- `UHodgeGameplayAbility::OnGiveAbility` — L246
-- `UHodgeGameplayAbility::PreloadConfiguredPrimaryAssets` — L264
-- `UHodgeGameplayAbility::OnRemoveAbility` — L306
-- `UHodgeGameplayAbility::ActivateAbility` — L317
-- `UHodgeGameplayAbility::EndAbility` — L327
-- `UHodgeGameplayAbility::CheckCost` — L340
-- `UHodgeGameplayAbility::ApplyCost` — L370
-- `UHodgeGameplayAbility::MakeEffectContext` — L453
-- `UHodgeGameplayAbility::ApplyAbilityTagsToGameplayEffectSpec` — L500
-- `UHodgeGameplayAbility::DoesAbilitySatisfyTagRequirements` — L519
-- `UHodgeGameplayAbility::OnPawnAvatarSet` — L675
-- `UHodgeGameplayAbility::GetAbilitySource` — L682
-- `UHodgeGameplayAbility::TryActivateAbilityOnSpawn` — L708
-- `UHodgeGameplayAbility::CanChangeActivationGroup` — L750
-- `UHodgeGameplayAbility::ChangeActivationGroup` — L788
-- `UHodgeGameplayAbility::SetCameraMode` — L821
-- `UHodgeGameplayAbility::ClearCameraMode` — L835
+- `UHodgeGameplayAbility::UHodgeGameplayAbility` — L36
+- `UHodgeGameplayAbility::GetHodgeAbilitySystemComponentFromActorInfo` — L65
+- `UHodgeGameplayAbility::GetHodgePlayerControllerFromActorInfo` — L74
+- `UHodgeGameplayAbility::GetControllerFromActorInfo` — L81
+- `UHodgeGameplayAbility::GetHodgeCharacterFromActorInfo` — L119
+- `UHodgeGameplayAbility::GetHeroComponentFromActorInfo` — L125
+- `UHodgeGameplayAbility::NativeOnAbilityFailedToActivate` — L132
+- `UHodgeGameplayAbility::CanActivateAbility` — L185
+- `UHodgeGameplayAbility::SetCanBeCanceled` — L226
+- `UHodgeGameplayAbility::OnGiveAbility` — L245
+- `UHodgeGameplayAbility::OnRemoveAbility` — L258
+- `UHodgeGameplayAbility::ActivateAbility` — L269
+- `UHodgeGameplayAbility::EndAbility` — L279
+- `UHodgeGameplayAbility::CheckCost` — L292
+- `UHodgeGameplayAbility::ApplyCost` — L322
+- `UHodgeGameplayAbility::MakeEffectContext` — L405
+- `UHodgeGameplayAbility::ApplyAbilityTagsToGameplayEffectSpec` — L452
+- `UHodgeGameplayAbility::DoesAbilitySatisfyTagRequirements` — L471
+- `UHodgeGameplayAbility::OnPawnAvatarSet` — L627
+- `UHodgeGameplayAbility::GetAbilitySource` — L634
+- `UHodgeGameplayAbility::TryActivateAbilityOnSpawn` — L660
+- `UHodgeGameplayAbility::CanChangeActivationGroup` — L702
+- `UHodgeGameplayAbility::ChangeActivationGroup` — L740
+- `UHodgeGameplayAbility::SetCameraMode` — L773
+- `UHodgeGameplayAbility::ClearCameraMode` — L787
 
 ## HodgeAttributeSet.cpp
 
@@ -215,41 +214,6 @@ Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动�
 - `UHodgeGlobalAbilitySystem::RemoveEffectFromAll` — L172
 - `UHodgeGlobalAbilitySystem::RegisterASC` — L189
 - `UHodgeGlobalAbilitySystem::UnregisterASC` — L210
-
-## HodgeAbilityTask_PlayTimeline.cpp
-
-[Source/Hodgepodge/Private/AbilitySystem/Timeline/HodgeAbilityTask_PlayTimeline.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/Timeline/HodgeAbilityTask_PlayTimeline.cpp)
-
-驱动时间轴的 AbilityTask：逻辑时间推进、阶段 loose tag、GameplayEvent 分派与自动 EndTask。
-
-- `UHodgeAbilityTask_PlayTimeline::UHodgeAbilityTask_PlayTimeline` — L17
-- `UHodgeAbilityTask_PlayTimeline::PlayTimeline` — L24
-- `UHodgeAbilityTask_PlayTimeline::Activate` — L43
-- `UHodgeAbilityTask_PlayTimeline::InitializeTimeline` — L111
-- `UHodgeAbilityTask_PlayTimeline::TickTask` — L141
-- `UHodgeAbilityTask_PlayTimeline::AdvanceTimeline` — L183
-- `UHodgeAbilityTask_PlayTimeline::EnterPhase` — L223
-- `UHodgeAbilityTask_PlayTimeline::ExitPhase` — L260
-- `UHodgeAbilityTask_PlayTimeline::ClearAllPhaseTags` — L297
-- `UHodgeAbilityTask_PlayTimeline::FireEvent` — L330
-- `UHodgeAbilityTask_PlayTimeline::FireEventTag` — L335
-- `UHodgeAbilityTask_PlayTimeline::ShouldExecuteOnThisEndpoint` — L369
-- `UHodgeAbilityTask_PlayTimeline::StopTimeline` — L398
-- `UHodgeAbilityTask_PlayTimeline::OnDestroy` — L434
-
-## HodgeAbilityTimeline.cpp
-
-[Source/Hodgepodge/Private/AbilitySystem/Timeline/HodgeAbilityTimeline.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/Timeline/HodgeAbilityTimeline.cpp)
-
-攻击时间轴数据资产：阶段区间、时间点事件、Montage 软引用与 Bundle 收集；有实现、无 C++ 调用点。
-
-- `UHodgeAbilityTimeline::GetActivePhases` — L19
-- `UHodgeAbilityTimeline::SortPhasesByTime` — L37
-- `UHodgeAbilityTimeline::SortEventsByTime` — L45
-- `UHodgeAbilityTimeline::PostEditChangeProperty` — L53
-- `UHodgeAbilityTimeline::SyncDurationFromMontage` — L74
-- `UHodgeAbilityTimeline::IsDataValid` — L92
-- `UHodgeAbilityTimeline::UpdateAssetBundleData` — L271
 
 ## HodgeActorBase.cpp
 
@@ -871,24 +835,23 @@ PlayerState ModularGameplay Receiver 注册、注销及组件 Reset/CopyProperti
 
 [Source/Hodgepodge/Private/Data/HodgeAssetManager.cpp](../../../Source/Hodgepodge/Private/Data/HodgeAssetManager.cpp)
 
-资产入口、GameData 缓存、启动任务、同步加载、加载进度与 PreloadPrimaryAssetBundles 的 Bundle 预加载。Cue 初始化钩子仍需接通。
+资产入口、GameData 缓存、启动任务、同步加载、加载进度。Cue 初始化钩子仍需接通。（PreloadPrimaryAssetBundles 已随未提交改动回退，当前不存在。）
 
 - `FHodgeBundles::Equipped` — L10
 - `UHodgeAssetManager::UHodgeAssetManager` — L44
 - `UHodgeAssetManager::Get` — L50
-- `UHodgeAssetManager::PreloadPrimaryAssetBundles` — L69
-- `UHodgeAssetManager::DumpLoadedAssets` — L115
-- `UHodgeAssetManager::GetGameData` — L130
-- `UHodgeAssetManager::GetDefaultPawnData` — L136
-- `UHodgeAssetManager::SynchronousLoadAsset` — L142
-- `UHodgeAssetManager::ShouldLogAssetLoads` — L176
-- `UHodgeAssetManager::AddLoadedAsset` — L187
-- `UHodgeAssetManager::StartInitialLoading` — L200
-- `UHodgeAssetManager::LoadGameDataOfClass` — L221
-- `UHodgeAssetManager::DoAllStartupJobs` — L323
-- `UHodgeAssetManager::InitializeGameplayCueManager` — L412
-- `UHodgeAssetManager::UpdateInitialGameContentLoadPercent` — L423
-- `UHodgeAssetManager::PreBeginPIE` — L431
+- `UHodgeAssetManager::DumpLoadedAssets` — L69
+- `UHodgeAssetManager::GetGameData` — L84
+- `UHodgeAssetManager::GetDefaultPawnData` — L90
+- `UHodgeAssetManager::SynchronousLoadAsset` — L96
+- `UHodgeAssetManager::ShouldLogAssetLoads` — L130
+- `UHodgeAssetManager::AddLoadedAsset` — L141
+- `UHodgeAssetManager::StartInitialLoading` — L154
+- `UHodgeAssetManager::LoadGameDataOfClass` — L175
+- `UHodgeAssetManager::DoAllStartupJobs` — L277
+- `UHodgeAssetManager::InitializeGameplayCueManager` — L366
+- `UHodgeAssetManager::UpdateInitialGameContentLoadPercent` — L377
+- `UHodgeAssetManager::PreBeginPIE` — L385
 
 ## HodgeAssetManagerStartupJob.cpp
 
@@ -897,16 +860,6 @@ PlayerState ModularGameplay Receiver 注册、注销及组件 Reset/CopyProperti
 封装启动任务与进度权重，供 AssetManager 执行启动工作。
 
 - `FHodgeAssetManagerStartupJob::DoJob` — L13
-
-## HodgeComboSet.cpp
-
-[Source/Hodgepodge/Private/Data/HodgeComboSet.cpp](../../../Source/Hodgepodge/Private/Data/HodgeComboSet.cpp)
-
-攻击形态节点集合：AttackID→Timeline、入口与转移；FindNode 暂无 C++ 调用点。
-
-- `UHodgeComboSet::FindNode` — L21
-- `UHodgeComboSet::IsDataValid` — L36
-- `UHodgeComboSet::UpdateAssetBundleData` — L183
 
 ## HodgeExperienceActionSet.cpp
 
@@ -1145,7 +1098,7 @@ Enhanced Input 用户设置派生入口；须核对实际设置类配置。
 
 [Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility.h)
 
-项目技能基类：激活策略、互斥组、额外 Cost、失败与 EffectContext 扩展；PreloadPrimaryAssetsOnGrant 在授予时预加载 Bundle。
+项目技能基类：激活策略、互斥组、额外 Cost、失败与 EffectContext 扩展。（PreloadPrimaryAssetsOnGrant 已随未提交改动回退，当前不存在。）
 
 ## HodgeAttributeSet.h
 
@@ -1206,18 +1159,6 @@ Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动�
 [Source/Hodgepodge/Public/AbilitySystem/HodgeGlobalAbilitySystem.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGlobalAbilitySystem.h)
 
 世界级全局能力/效果授予及 ASC 注册表。
-
-## HodgeAbilityTask_PlayTimeline.h
-
-[Source/Hodgepodge/Public/AbilitySystem/Timeline/HodgeAbilityTask_PlayTimeline.h](../../../Source/Hodgepodge/Public/AbilitySystem/Timeline/HodgeAbilityTask_PlayTimeline.h)
-
-驱动时间轴的 AbilityTask：逻辑时间推进、阶段 loose tag、GameplayEvent 分派与自动 EndTask。
-
-## HodgeAbilityTimeline.h
-
-[Source/Hodgepodge/Public/AbilitySystem/Timeline/HodgeAbilityTimeline.h](../../../Source/Hodgepodge/Public/AbilitySystem/Timeline/HodgeAbilityTimeline.h)
-
-攻击时间轴数据资产：阶段区间、时间点事件、Montage 软引用与 Bundle 收集；有实现、无 C++ 调用点。
 
 ## HodgeActorBase.h
 
@@ -1439,22 +1380,16 @@ PlayerState ModularGameplay Receiver 注册、注销及组件 Reset/CopyProperti
 
 [Source/Hodgepodge/Public/Data/HodgeAssetManager.h](../../../Source/Hodgepodge/Public/Data/HodgeAssetManager.h)
 
-资产入口、GameData 缓存、启动任务、同步加载、加载进度与 PreloadPrimaryAssetBundles 的 Bundle 预加载。Cue 初始化钩子仍需接通。
+资产入口、GameData 缓存、启动任务、同步加载、加载进度。Cue 初始化钩子仍需接通。（PreloadPrimaryAssetBundles 已随未提交改动回退，当前不存在。）
 
-- `UHodgeAssetManager::GetAsset` — L162
-- `UHodgeAssetManager::GetSubclass` — L193
+- `UHodgeAssetManager::GetAsset` — L139
+- `UHodgeAssetManager::GetSubclass` — L170
 
 ## HodgeAssetManagerStartupJob.h
 
 [Source/Hodgepodge/Public/Data/HodgeAssetManagerStartupJob.h](../../../Source/Hodgepodge/Public/Data/HodgeAssetManagerStartupJob.h)
 
 封装启动任务与进度权重，供 AssetManager 执行启动工作。
-
-## HodgeComboSet.h
-
-[Source/Hodgepodge/Public/Data/HodgeComboSet.h](../../../Source/Hodgepodge/Public/Data/HodgeComboSet.h)
-
-攻击形态节点集合：AttackID→Timeline、入口与转移；FindNode 暂无 C++ 调用点。
 
 ## HodgeExperienceActionSet.h
 

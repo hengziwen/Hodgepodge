@@ -50,7 +50,7 @@ ASC 接入已收敛到组件路径，不再是双路径并存；但控制器先�
 
 ## 攻击时间轴、ComboSet 现在能用了吗？
 
-源码里类型、校验和 Task 实现都已存在，但没有 C++ 攻击 Ability 调用 `PlayTimeline`，也没有代码查询 `ComboSet::FindNode`。所以是"有实现、无调用点"：需要在 BP 里接线并跑 V13/V14 才能说可用。详见 [本轮变更](21-update-2026-09-17.md)。
+**不能 —— 它们当前根本不存在。** ⚠️ 早先的记录是"源码里类型、校验和 Task 实现都已存在，只是没有 C++ 调用点"，但那批改动属于当时工作区的**未提交改动，随后已被丢弃**：当前 `Source/Hodgepodge` 搜不到 `HodgeAbilityTimeline` / `HodgeComboSet` / `PlayTimeline`，`Config/DefaultGame.ini` 也没有对应 PrimaryAssetTypesToScan，`Attack.*` 标签未注册，`GA_Melee` 与 `Content/Main/Character/Hero/Ability/` 也不存在。攻击闭环需要**从零实现**。详见 [本轮变更](21-update-2026-09-17.md) 的回退标注与 [接通清单](12-integration-backlog.md) KB-15。
 
 ## 知识库是否验证了当前编译和运行？
 

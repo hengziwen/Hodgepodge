@@ -22,7 +22,7 @@ SNAPSHOT = REF / 'snapshot.json'
 PURPOSE = {
     'HodgeAbilitySystemGlobals': '分配 FHodgeGameplayEffectContext 的 GAS 全局类；已加入项目配置。',
     'HodgePlayerController': '具体控制器：每帧消费 ASC 输入、相机管理、AutoRun、UnPossess Avatar 清理及 Replay 扩展。',
-    'HodgeAssetManager': '资产入口、GameData 缓存、启动任务、同步加载、加载进度与 PreloadPrimaryAssetBundles 的 Bundle 预加载。Cue 初始化钩子仍需接通。',
+    'HodgeAssetManager': '资产入口、GameData 缓存、启动任务、同步加载、加载进度。Cue 初始化钩子仍需接通。（PreloadPrimaryAssetBundles 已随未提交改动回退，当前不存在。）',
     'HodgeAssetManagerStartupJob': '封装启动任务与进度权重，供 AssetManager 执行启动工作。',
     'HodgeGameData': '全局伤害、治疗、动态 Tag GE 的软类引用配置；需编辑器核对实际赋值。',
     'HodgePawnData': 'PawnClass、AbilitySets、TagRelationshipMapping、InputConfig、DefaultCameraMode 配置。',
@@ -52,7 +52,7 @@ PURPOSE = {
     'HodgeInteractionComponentBase': '交互组件基础占位；完整扫描、交互规则与 UI 需另行实现。',
     'HodgeMovementComponentBase': '通用移动组件基础占位，与 CharacterMovement 派生类需区分。',
     'HodgeAbilitySystemComponent': 'Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动态 Tag GE。',
-    'HodgeGameplayAbility': '项目技能基类：激活策略、互斥组、额外 Cost、失败与 EffectContext 扩展；PreloadPrimaryAssetsOnGrant 在授予时预加载 Bundle。',
+    'HodgeGameplayAbility': '项目技能基类：激活策略、互斥组、额外 Cost、失败与 EffectContext 扩展。（PreloadPrimaryAssetsOnGrant 已随未提交改动回退，当前不存在。）',
     'HodgeAbilityCost': '自定义额外能力消耗的扩展契约。',
     'HodgeAbilityTagRelationshipMapping': '数据驱动的能力阻断、取消与激活条件关系。',
     'HodgeGameplayEffectContext': '项目 GE 上下文与序列化扩展，已有 HodgeAbilitySystemGlobals 分配配套。',
@@ -87,9 +87,8 @@ PURPOSE = {
     'GameFeatureAction_AddWidget': 'Widget 注入迁移草稿，当前实现停用。',
     'GameFeatureAction_SplitscreenConfig': 'GameFeature 激活期间的分屏策略调整。',
     'HodgeGameFeaturePolicy': '已配置的 GameFeature 策略；Hotfix 观察者注册，Cue 路径观察者创建仍注释。',
-    'HodgeAbilityTimeline': '攻击时间轴数据资产：阶段区间、时间点事件、Montage 软引用与 Bundle 收集；有实现、无 C++ 调用点。',
-    'HodgeAbilityTask_PlayTimeline': '驱动时间轴的 AbilityTask：逻辑时间推进、阶段 loose tag、GameplayEvent 分派与自动 EndTask。',
-    'HodgeComboSet': '攻击形态节点集合：AttackID→Timeline、入口与转移；FindNode 暂无 C++ 调用点。',
+    # 注意：HodgeAbilityTimeline / HodgeAbilityTask_PlayTimeline / HodgeComboSet 曾于 2026-09-17
+    # 出现在未提交的工作区改动中，随后已回退；源码中不存在这些文件，故此处不再保留对应条目。
     'HodgeALSLocomotion': 'CodexText 实验：6 向地面运动动画实例，不属于主 Hero 动画链。',
     'HodgeGroundedLocomotion': 'CodexText 实验：在 ALS 基础动画上增加平地起停/转身/脚锁。',
     'HodgeLocomotionLabComponent': 'CodexText 实验：面向/走跑切换与每帧旋转修正的测试组件。',

@@ -21,7 +21,7 @@ CombatCharacter 的 HealthComponent 创建与绑定仍注释。角色存在 OnDe
 
 CombatComponentBase 没有武器 Trace、连招状态或命中去重主体。EnemyCharacter 没有自己的完整 ASC/AttributeSet 创建与初始化。当前无法以 C++ 证据确认完整的攻击怪物闭环。
 
-攻击侧进展：连招数据（`UHodgeComboSet`）与时间轴 Task（`UHodgeAbilityTask_PlayTimeline`）已有实现，但**没有任何 C++ 攻击 Ability 调用它们**；`Content/Main/Character/Hero/Ability/GA_Melee.uasset` 是本轮未跟踪的新资产，其父类、Montage、命中配置未解析。技能授予路径本身已接通（PlayerState::SetPawnData），所以缺的是"具体攻击 Ability + 命中判定 + 目标 ASC"这三环。详见 [GAS 章节](07-gas.md)。
+攻击侧进展（⚠️ **已修正**）：~~连招数据（`UHodgeComboSet`）与时间轴 Task（`UHodgeAbilityTask_PlayTimeline`）已有实现，但没有任何 C++ 攻击 Ability 调用它们~~ —— 实际是连招与时间轴**已随未提交改动回退，当前工作区不存在**；`GA_Melee.uasset` 与 `Content/Main/Character/Hero/Ability/` 目录同样不存在，当前 Hero 目录下是 `GA_Attack.uasset`（工作区未提交，父类 / Montage / 命中配置未解析）。技能授予路径本身已接通（PlayerState::SetPawnData），所以缺的仍是"**具体攻击 Ability（含时间轴/连击的从零实现）+ 命中判定 + 目标 ASC**"这三环。详见 [GAS 章节](07-gas.md) 与 [回退标注](21-update-2026-09-17.md)。
 
 ## 推荐最小战斗闭环
 

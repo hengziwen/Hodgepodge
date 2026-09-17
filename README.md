@@ -4,75 +4,77 @@
 
 | 项目 | 值 |
 |---|---|
-| 引擎版本 | Unreal Engine **5.5** |
-| 主模块 | `Hodgepodge`（Runtime，单模块） |
-| 代码规模 | `Source/Hodgepodge` 共 **131 个 C++ 文件**（67 `.h` + 64 `.cpp`）+ 3 个 `.cs`，约 **17900 行** |
-| 核心依赖 | GameplayAbilities、GameFeatures、EnhancedInput、**ModularGameplay**、AnimationWarping、ControlRig |
-| 项目阶段 | ⚠️ **能编译、能启动；输入链路已就位，但角色是否能操控取决于 HeroComponent 是否挂上** —— 见下方当前状态 |
-| 相关文档 | [`LYRA_LEARNING_GUIDE.md`](LYRA_LEARNING_GUIDE.md)（学什么）、[`LYRA_RUNTIME_FLOW.md`](LYRA_RUNTIME_FLOW.md)（怎么跑）、[`UE5 开放世界动作 RPG 架构方案 V2.md`](UE5%20开放世界动作%20RPG%20架构方案%20V2.md)（总体方案） |
-| 代码基线 | 提交 `4db0536` |
+| 引擎版本 | Unreal Engine **5.5**（本机核实 5.5.4） |
+| 主模块 | `Hodgepodge`（Runtime，单模块；另有 `CodexText` 实验代码同模块内） |
+| 代码规模 | `Source/Hodgepodge` 共 **143 个 C++ 文件**（72 `.h` + 71 `.cpp`）+ 3 个 `.cs`，约 **19700 行** |
+| 核心依赖 | GameplayAbilities、GameFeatures、EnhancedInput、**ModularGameplay**、AnimationWarping、ControlRig、**UMG / SlateCore** |
+| 项目阶段 | 🚧 **框架层已完成 Lyra 化；玩家初始化的主链（输入 / 相机 / 角色侧 ASC）已在源码接通**，战斗闭环尚未开始 |
+| 相关文档 | [`Docs/KnowledgeBase/README.md`](Docs/KnowledgeBase/README.md)（**已核对的当前事实、断点与验证边界**）、[`LYRA_LEARNING_GUIDE.md`](LYRA_LEARNING_GUIDE.md)（学什么）、[`LYRA_RUNTIME_FLOW.md`](LYRA_RUNTIME_FLOW.md)（怎么跑）、[`UE5 开放世界动作 RPG 架构方案 V2.md`](UE5%20开放世界动作%20RPG%20架构方案%20V2.md)（总体方案） |
+| 代码基线 | 提交 `5847f99` + 工作区未提交的 `Main` / `CodexText` 资产改动 |
 
 ---
 
 ## 当前状态
 
-项目处于 **Lyra 化重构的收尾阶段**：框架层（Experience / AssetManager / GAS / 角色 / 相机 / 输入 / PlayerController）已基本是 Lyra 的等价实现，**这一轮把"角色接电"的三处接口都接上了**，现在只差最后一环 —— `UHodgeHeroComponent` 是否真的挂到了 Pawn 上。
+项目处于 **Lyra 化重构的收尾阶段**：框架层（Experience / AssetManager / GAS / 角色 / 相机 / 输入 / PlayerController）基本是 Lyra 的等价实现。**上一版 README 里最大的未知项 —— "`UHodgeHeroComponent` 到底挂没挂" —— 已经确认解决**：
 
-**编译状态**：✅ 通过（`4db0536`，Development Editor）
+- `AHodgeHeroCharacter` 构造函数里直接 `CreateDefaultSubobject<UHodgeHeroComponent>(TEXT("HeroComponent"))`（`Private/Character/HodgeHeroCharacter.cpp:26`），不再依赖蓝图手加。
+- 随之而来，`AHodgeHeroCharacter::PossessedBy` / `OnRep_PlayerState` 里的双入口 ASC 绑定已退化为**只调 `Super`**（源码里那段 JSDoc 注释已过期，属遗留）；角色侧 ASC 统一由 **HeroComponent → `PawnExtension::InitializeAbilitySystem`** 单一入口接入。
 
-### 本轮改动（`8df7f52` → `4db0536`）
+**编译/运行状态**：⚠️ 本版 README 只做文档更新，**未执行 UE Editor/Game 构建、蓝图 Compile、PIE、联机或打包**。所有"已接通"均指**源码/配置已存在**，不等于运行验收通过；运行结论请以 [`Docs/KnowledgeBase/16-validation.md`](Docs/KnowledgeBase/16-validation.md) 的验收流程为准。
+
+### 相对 `4db0536` 之后的主要变化
 
 | 变更 | 说明 |
 |---|---|
-| **主 PlayerController** 🆕 | 新增 `AHodgePlayerController`（`ALyraPlayerController` 移植，含 `AHodgeReplayPlayerController`）：设置 `PlayerCameraManagerClass`、输入处理的最后一环 `PostProcessInput → ASC->ProcessAbilityInput`、观战视角同步、客户端 Replay、自动奔跑、相机穿模隐藏、`ServerCheat`。见 [§6.15](#615-playercontroller) |
-| **默认 PC 已接上** ✅ | `AHodgeGameModeBase` 构造里 `PlayerControllerClass = AHodgePlayerController`；`DefaultEngine.ini` 补 `LocalPlayerClassName` 并把 `GameInstanceClass` 改成新类名 |
-| **`DefaultInputComponentClass` 已改对** ✅ | `Config/DefaultInput.ini:94` = `/Script/Hodgepodge.HodgeInputComponent`（上一版的 P0 之一） |
-| **相机接入数据层** ✅ | `DA_Dafult_PawnData` 配上 `DefaultCameraMode`；新增 `Content/Main/Camera/CM_Default.uasset`；`UHodgeCameraMode_ThirdPerson` 构造函数写入默认曲线，**不依赖蓝图子类也能直接用** |
-| **Hero 蓝图** | 新增 `Content/Main/Character/Hero/BP_Hero_Pover.uasset`（`BP_HeroBase` 也已更新） |
-| **代码清理** | 多处 `AHodgePlayerControllerBase` → `AHodgePlayerController`（`CastChecked` 收敛到具体类）；`HodgeGameplayAbility` 增加 `GetHeroComponentFromActorInfo`；HeroComponent / CombatCharacter 里加了一批 `[HODGE-DBG]` 调试日志 |
+| **HeroComponent 改为 C++ 挂载** ✅ | `AHodgeHeroCharacter` 构造中创建 `UHodgeHeroComponent`；输入、相机模式选择、角色侧 ASC 三件事从此有确定入口 |
+| **ASC 接入收敛为单入口** ✅ | Hero 的 `PossessedBy` / `OnRep_PlayerState` 只调 `Super`；`InitializeAbilitySystem` 由 HeroComponent 在 PawnExtension 到达 `DataInitialized` 后触发。`PlayerState::PreInitializeComponents` 里 `InitAbilityActorInfo(this, GetPawn())` 仍作占位首绑 |
+| **AbilitySet 授予已接通** ✅ | `AHodgePlayerState::SetPawnData` 在权威端遍历 `PawnData->AbilitySets` 调用 `GiveToAbilitySystem(ASC, nullptr)`，随后发 `NAME_HodgeAbilityReady` 并 `ForceNetUpdate()`。**未记录 `GrantedHandles`** → 目前无法撤销、也无法按来源防重（只靠"已有 PawnData 就提前返回"） |
+| **额外输入移除已实现** ✅ | `UHodgeHeroComponent::RemoveAdditionalInputConfig` 按 InputConfig 精确解绑；句柄持久化在 `AdditionalInputConfigHandles`，`EndPlay` 统一解绑并清空 |
+| **Receiver 生命周期修复** ✅ | `AHodgeCharacterBase` 现在是 PreInit 注册 / BeginPlay 发 `GameActorReady` / EndPlay 移除，成对（此前 EndPlay 重复发事件的缺陷已修） |
+| **相机资产换代** ✅ | `Content/Main/Camera/` 现在是 `CM_ThirdPerson` / `CM_ThirdPerson_Death`，旧 `CM_Default` 已删除；`UHodgeCameraMode_ThirdPerson` 的 C++ 默认 `TargetOffsetCurve` 置空，相机偏移改由蓝图 `RuntimeFloatCurves` / 曲线资产提供 |
+| **CodexText 实验模块** 🆕 | `Source/Hodgepodge/{Public,Private}/CodexText/`：ALS 风格 6 向动画（`UHodgeALSLocomotion`）、平地起停 / 脚锁（`UHodgeGroundedLocomotion`）与编辑器 Authoring 库、`AHodgeLocomotionLabMode`（复用 `AHodgeGameModeBase`）、`AHodgeSurvivorHero` / `AHodgeSurvivorMode` / `UHodgeSurvivorHUD`（直接继承引擎类，绕开 Hodge GAS/Experience）。主体系无 C++ 引用，见 [§6.16](#616-codextext-实验模块) |
+| **攻击相关资产** 🆕 | 工作区新增（**未提交**）`Main/Input/InputAction/IA_Attack`、`Main/Character/Hero/GA_Attack`、`Main/Data/DA_Pover`、`CodexText/Montage/AM_Attack01~05_Montage`；二进制内容与接线需在编辑器确认 |
+| **构建与插件** | `Build.cs` Public 增加 `UMG` / `SlateCore`，Editor 专用依赖 `UnrealEd` / `AnimGraph` / `BlueprintGraph`；`.uproject` 新增 `McpAutomationBridge`（Editor-only），`UNTLink` 显式禁用；`Config/DefaultGameplayTags.ini` 新增（当前只有 `a`、`Ability.Attack` 两条） |
+| **配置** | `DefaultEngine.ini` 编辑器启动图改为 `/Game/CodexText/L_MainMenu`（实验内容）；游戏默认图仍是 `/Game/ThirdPerson/Maps/ThirdPersonMap` |
 
 ### 已通电 ✅ / 未通电 ❌
 
 | 系统 | 状态 | 说明 |
 |---|---|---|
-| Experience 全链路 | ✅ | 状态机、Bundle 加载、GameFeature 激活、GameMode 流程全部跑通，有资产实例 |
+| Experience 全链路 | ✅ | 状态机、Bundle 加载、GameFeature 激活、GameMode 流程；资产 `Exp_HodgeDefaultExperience` |
 | AssetManager | ✅ | StartupJob 进度、GameData 缓存、常驻资源池、PIE 预加载 |
-| 玩家 ASC | ✅ | `AHodgePlayerState` 持有，双入口绑定 Avatar（`PossessedBy` / `OnRep_PlayerState`） |
+| 玩家 ASC | ✅ | `AHodgePlayerState` 持有；Avatar 由 **HeroComponent → PawnExtension** 单一入口绑定 |
 | 游戏级 ASC | ✅ | `AHodgeGameState` 持有（Owner = Avatar = GameState），暂无使用者 |
-| Init State 链 | ✅ | `UHodgePawnExtensionComponent` 已挂载，PawnData 由 GameMode 注入 |
+| Init State 链 | ✅ | `PawnExtension` 与 `Hero` 两个 Feature 均已挂载，PawnData 由 GameMode 注入 |
 | AbilitySystemGlobals | ✅ | 自定义 Globals 已配，EffectContext 的 `check` 崩溃已消除 |
-| 伤害 / 治疗结算 | ✅ | `UHodgeHealthSet` 的 Meta 属性闭环 + 死亡判定 + Clamp |
-| 主 PlayerController | ✅ | `AHodgePlayerController` 已建 + 设为默认；相机管理器 / 观战 / Replay / `ProcessAbilityInput` 就位 |
-| 输入组件类型 | ✅ | `DefaultInputComponentClass` 已指向 `UHodgeInputComponent`，`CastChecked` 不会再失败 |
-| 相机数据配置 | ✅ | `PawnData->DefaultCameraMode` + `CM_Default` 资产就绪，第三人称模式可独立使用 |
-| **HeroComponent 挂载** | ❓ | **C++ 侧确认没有** `CreateDefaultSubobject`；`BP_HeroBase` / `BP_Hero_Pover` 蓝图内部是否加了该组件，从文本无法确认 —— 这是当前唯一的关键未知项 |
-| 输入 / 相机 / 角色侧 ASC | ❓ | 三者都依赖 HeroComponent 的 `HandleChangeInitState`，挂上则通、不挂则全断 |
-| Pawn 生成 | ❓ | `DefaultPawnClass` 仍是基类 `AHodgeCharacterBase`；需 `PawnData->PawnClass` 指向 Hero 蓝图才会变成正确 Pawn |
-| 战斗 / UI / AI / 背包 | ❌ | 完全未建 |
+| 伤害 / 治疗结算 | ✅ | `UHodgeHealthSet` 的 Meta 属性闭环 + 死亡判定 + Clamp（**属性结算本身通，触发链条未通**） |
+| 输入主链 | ✅ | HeroComponent 绑定原生 / 能力输入，`AHodgePlayerController::PostProcessInput` 调 `ProcessAbilityInput`（❓ 资产配置与运行效果待编辑器 / PIE 验证） |
+| 相机主链 | ✅ | `DetermineCameraModeDelegate` 由 HeroComponent 绑定；模式资产 `CM_ThirdPerson` / `CM_ThirdPerson_Death`（❓ PawnData 实际指向待确认） |
+| AbilitySet 基础授予 | ✅ | 权威端遍历 `PawnData->AbilitySets` 授予（**无句柄，不可撤销**） |
+| 主 PlayerController | ✅ | `AHodgePlayerController` 为默认 PC；相机管理器 / 观战 / Replay / `ProcessAbilityInput` 就位 |
+| Pawn 生成 | ❓ | `AHodgeGameModeBase` 构造的 `DefaultPawnClass` 回退仍是 `AHodgeCharacterBase`；最终用哪个 Pawn 由 `PawnData->PawnClass` 决定，**需在编辑器确认** |
+| 命中 → 死亡 | ❌ | `OnHealthChanged` / `OnOutOfHealth` 无消费者；`CombatCharacter` 的 HealthComponent 创建与绑定仍注释 |
+| 攻击 / 连击 | ❌ | 只有 `GA_Attack` 等资产，无 C++ 攻击 Ability、命中判定或连招容器 |
+| 敌人 ASC | ❌ | `AHodgeEnemyCharacter` 只设置 AI 自动控制 |
+| Cue 路径增删 | ❌ | Observer 注册行仍是注释，预加载钩子空实现 |
+| UI / Load Screen / AI / 背包 | ❌ | 完全没有（CodexText 的 UMG 是独立实验，不复用框架） |
+| Dedicated Server | ❌ | `TryDedicatedServerLogin` 占位，无 Server Target |
 
-### 唯一的卡点：HeroComponent 到底挂没挂？
-
-```
-谁创建 UHodgeHeroComponent？
-  ├─ C++：❌ 全工程没有一处 CreateDefaultSubobject
-  └─ 蓝图：BP_HeroBase / BP_Hero_Pover —— 无法从文本确认（二进制资产）
-        ↓ 若确实挂了，下面三条全部自动打通；若没挂，则全断
-InitializePlayerInput()                   → Move / Look / Crouch / AbilityInputTag 绑定
-DetermineCameraModeDelegate.BindUObject() → 相机模式栈开始出画面
-PawnExtComp->InitializeAbilitySystem()    → 角色侧 ASC 不再为空
-```
-
-**怎么确认**：打开 `BP_Hero_Pover` 看组件列表里有没有 `Hero` 组件（`UHodgeHeroComponent`）；或运行时看日志有没有 `[HODGE-DBG] Hero->DataAvailable BLOCKED` / `Hero bound camera delegate`。
-
-### 三个 P0
+### 当前剩余的关键缺口
 
 | 缺口 | 说明 |
 |---|---|
-| **确认 / 补上 HeroComponent** 🔥 | 最稳的做法是**在 C++ 里挂**：`AHodgeHeroCharacter` 构造中 `CreateDefaultSubobject<UHodgeHeroComponent>(TEXT("HeroComponent"))`。同时确认蓝图里没有重复添加 |
-| **让 PawnData 指向正确的 Pawn** | `DA_Dafult_PawnData.PawnClass` 要指向 `AHodgeHeroCharacter` 或 Hero 蓝图（`BP_Hero_Pover`），否则生成基类 → 没有 PawnExtensionComponent → `SetPawnData` 静默跳过 |
-| **确认 PawnData 的 `InputConfig`（IMC）** | `UHodgeHeroComponent::InitializePlayerInput` 会读 `PawnData->InputConfig` 与 `DefaultInputMappings`；`DA_HodgeInputConfig` 本轮也改过，需确认里面配了 Move / Look_Mouse / Look_Stick / Crouch / AutoRun 这些 InputAction |
+| **AbilitySet 只授不撤** 🔴 | `GiveToAbilitySystem(ASC, nullptr)` 没收集 `GrantedHandles`；换装 / 重生 / 撤销前必须补上按来源保存的句柄 |
+| **命中 → 死亡链路断在中间** 🔴 | `HealthSet` 会广播 `OnHealthChanged` / `OnOutOfHealth`，但没人监听；`CombatCharacter` 的 HealthComponent 创建与事件绑定仍是注释 |
+| **Cue 路径没注册** 🟠 | `HodgeGameFeaturePolicy.cpp:39` 创建 `UHodgeGameFeature_AddGameplayCuePaths` Observer 的那行仍注释；`OnGameFeatureUnregistering` 与 `UHodgeAssetManager::InitializeGameplayCueManager()` 仍是空实现 |
+| **敌人 ASC 缺初始化** 🟠 | 先定 ASC 所有者（PlayerState 还是 Character），再验服务器伤害目标与远端状态 |
+| **专服启动有提前返回风险** 🟠 | `TryDedicatedServerLogin` 默认地图条件满足时返回 true，实际登录与回调仍停用 |
+| **待编辑器确认的二进制项** 🟠 | `DA_Dafult_PawnData` 的 `PawnClass` / `InputConfig` / `DefaultCameraMode` / `AbilitySets`；`BP_Hero_Pover` 的 `DefaultInputMappings`；`DA_HodgeInputConfig` 的 Native/Ability 映射；`GA_Attack` / `IA_Attack` 的接线。文本无法读取 `.uasset` 内部值 |
 
 > Experience 链路本身完好，默认 Experience 是 `Exp_HodgeDefaultExperience`，换玩法用 `-Experience=<资产名>`。
+
+> ⚠️ 关于"攻击时间轴 / 连击（AbilityTimeline / ComboSet）"：`Docs/KnowledgeBase/21-update-2026-09-17.md` 记录过这套实现，但它属于**当时工作区的未提交改动**，当前工作区已不存在对应源码与配置扫描项（全仓库搜不到 `HodgeAbilityTimeline` / `HodgeComboSet` / `PlayTimeline`）。本 README 以**实际工作区**为准；设计意图另见 [`Docs/Design/ability-timeline.md`](Docs/Design/ability-timeline.md)。
 
 ---
 
@@ -116,22 +118,22 @@ Hodgepodge（大杂烩）是一个**用来长本事的框架工程**，不是一
 | # | 信条 | 本项目对应实现 | 状态 |
 |---|---|---|---|
 | 1 | **一套代码，多种玩法** | `UHodgeExperienceDefinition` + `AHodgeGameModeBase` 完整流程 | ✅ 已跑通 |
-| 2 | **数据驱动** | `UHodgePawnData`（5 字段）/ `UHodgeGameData` / `UHodgeInputConfig` | 🚧 字段齐了，但资产未配、授予代码仍注释 |
-| 3 | **插件化扩展** | `UHodgeGameFeaturePolicy` + `GameFeatureAction_*` | 🚧 Policy 完成，4 个 Action 可用，还没有插件实例 |
+| 2 | **数据驱动** | `UHodgePawnData`（`PawnClass` / `AbilitySets` / `TagRelationshipMapping` / `InputConfig` / `DefaultCameraMode`）/ `UHodgeGameData` / `UHodgeInputConfig` | 🚧 结构齐了，`AbilitySets` 也真的会被授予；资产内部赋值待编辑器确认 |
+| 3 | **插件化扩展** | `UHodgeGameFeaturePolicy` + `GameFeatureAction_*` | 🚧 Policy 完成，5 个 Action 可用（`_AddWidget` 仍注释），还没有插件实例 |
 | 4 | **GameplayTag 作万能胶水** | `HodgeGameplayTags.h` + `FGameplayTagStackContainer` | ✅ |
 | 5 | **组合优于继承** | `PawnData` 决定 Pawn 类、ModularGameplay 组件化 | ✅ |
 | 6 | **服务器权威** | ASC 放 PlayerState、`Mixed` 复制模式 | ✅ |
 | 7 | **Base / Concrete 分层** | `HodgeGameStateBase → HodgeGameState`、`HodgePlayerStateBase → HodgePlayerState` | ✅ |
-| 8 | **Init State 链解耦异步依赖** | `UGameFrameworkComponentManager` + 4 个 InitState Tag + `PawnExtensionComponent` / `HeroComponent` | 🚧 链通了，但 HeroComponent 的挂载状态待确认 → 目前仍靠双入口兜底 ASC |
+| 8 | **Init State 链解耦异步依赖** | `UGameFrameworkComponentManager` + 4 个 InitState Tag + `PawnExtensionComponent` / `HeroComponent` | ✅ 两个 Feature 都已挂载，角色侧 ASC 走单一入口 |
 
 ### 1.4 与 Lyra 的关键分歧
 
 | 维度 | Lyra | Hodgepodge | 原因 |
 |---|---|---|---|
-| **Locomotion** | 自研 `LyraCharacterMovementComponent` + 完整动画层 | `UHodgeCharacterMovementComponent` 只做地面信息缓存与移动扩展；动画层靠 `UHodgeAnimInstance` 的 Tag 驱动重建 | 移动与动画是自研的重点方向，目前仍是引擎默认物理 + 少量扩展 |
-| **Camera** | 相机模式栈（`LyraCamera` 模块） | **完整移植**：`UHodgeCameraComponent` + `UHodgeCameraMode` + `UHodgeCameraMode_ThirdPerson` + `AHodgePlayerCameraManager` | 相机是 Lyra 里最独立、最好移植的部分之一 |
-| **Pawn 与 GAS 的协调** | `ULyraPawnExtensionComponent` + `ULyraHeroComponent` 双 Feature | 两个 Feature 类都写完了，但 **HeroComponent 没挂载** → 实际仍走双入口 | 迁移只差最后一步 |
-| **UI / 设置 / 登录** | CommonUI + UIExtension + GameSettings + CommonUser 全家桶 | **全部没有** | 体量大、非核心矛盾，延后引入 |
+| **Locomotion** | 自研 `LyraCharacterMovementComponent` + 完整动画层 | `UHodgeCharacterMovementComponent` 只做地面信息缓存与移动扩展；动画层靠 `UHodgeAnimInstance` 的 Tag 驱动重建。此外仓库内带了完整 **ALS-Refactored 4.15 插件**，并在 `CodexText` 里做了 ALS 风格动画实验（见 [§6.16](#616-codextext-实验模块)） | 移动与动画是自研重点，目前仍是引擎默认物理 + 少量扩展 |
+| **Camera** | 相机模式栈（`LyraCamera` 模块） | **完整移植**：`UHodgeCameraComponent` + `UHodgeCameraMode` + `UHodgeCameraMode_ThirdPerson` + `AHodgePlayerCameraManager`；默认偏移改由蓝图曲线提供 | 相机是 Lyra 里最独立、最好移植的部分之一 |
+| **Pawn 与 GAS 的协调** | `ULyraPawnExtensionComponent` + `ULyraHeroComponent` 双 Feature | 两个 Feature 都已在 C++ 挂载，HeroComponent 统一负责输入 / 相机 / ASC 入口 | 已与 Lyra 对齐，仅换 Pawn 与重生的清理顺序待运行验证 |
+| **UI / 设置 / 登录** | CommonUI + UIExtension + GameSettings + CommonUser 全家桶 | **框架层全部没有**；`CodexText` 实验模块自带一套纯 UMG 界面 | 体量大、非核心矛盾，延后引入 |
 
 ---
 
@@ -146,13 +148,17 @@ PublicDependencyModuleNames:  Core, CoreUObject, Engine, InputCore,
                               GameplayAbilities, GameplayTags, GameplayTasks,
                               ModularGameplay, GameFeatures,
                               AIModule, EngineSettings, NetCore,
-                              AnimGraphRuntime, RigVM, ControlRig
+                              AnimGraphRuntime, RigVM, ControlRig,
+                              UMG, SlateCore
 PrivateDependencyModuleNames: EnhancedInput, PhysicsCore, Niagara, SignificanceManager
+Editor 专用（Target.bBuildEditor）: UnrealEd, AnimGraph, BlueprintGraph
 ```
 
-`Hodgepodge.uproject` 启用的插件：`GameFeatures`、`GameplayAbilities`、`ModelingToolsEditorMode`（仅 Editor）、`AnimationLocomotionLibrary`、`AnimationWarping`。
+另外 `SetupIrisSupport(Target)` 只在构建层打开 Iris 支持，**不代表运行时已启用 Iris**。
 
-> ⚠️ 一个小警告（不影响编译）：模块依赖 `ModularGameplay` / `SignificanceManager`，但 `.uproject` 的 `Plugins` 段没把这两个**引擎插件**声明出来（代码级依赖能过，只是 UBT 会提示）。
+`Hodgepodge.uproject` 启用的插件：`GameplayAbilities`、`GameFeatures`、`AnimationLocomotionLibrary`、`AnimationWarping`、`ModelingToolsEditorMode`（仅 Editor）、`McpAutomationBridge`（仅 Editor）；并显式 **禁用 `UNTLink`**。
+
+> ⚠️ 两个小提示（不影响编译）：① 模块依赖 `ModularGameplay` / `SignificanceManager`，但 `.uproject` 的 `Plugins` 段没把这两个**引擎插件**声明出来，UBT 可能提示；② ALS-Refactored 是插件目录里的本地插件，**没有写进 `.uproject`**，靠其 `EnabledByDefault=true` 生效。
 
 ### 2.2 插件清单
 
@@ -162,8 +168,11 @@ PrivateDependencyModuleNames: EnhancedInput, PhysicsCore, Niagara, SignificanceM
 | **GameFeatures** | 引擎自带 | 引擎插件 | ✅ 玩法热插拔 |
 | **AnimationWarping** | 引擎自带 | 引擎插件 | ✅ 动画变形 / 步法 |
 | **AnimationLocomotionLibrary** | 引擎自带 | 引擎插件 | ✅ 动画 locomotion 工具库 |
-| **RiderLink** | — | `Plugins/Developer/RiderLink/` | Rider 联动，不参与游戏逻辑 |
+| **ALS-Refactored** | 4.15（`EngineVersion 5.5.0`） | `Plugins/ALS-Refactored-4.15/ALS-Refactored-4.15/` | 第三方动画 / 角色移动插件（`ALS`/`ALSCamera`/`ALSExtras` Runtime + `ALSEditor` UncookedOnly），`EnabledByDefault=true`。主模块不依赖它；`CodexText` 的 ALS 实验以此为参考 |
+| **McpAutomationBridge** 🆕 | 第三方 | `Plugins/McpAutomationBridge/` | 编辑器 MCP 桥（Editor-only）。见 [§12.6](#126-ai-辅助开发工具链) |
+| **RiderLink** | 2025.2.2.1 | `Plugins/Developer/RiderLink/` | Rider 联动，不参与游戏逻辑 |
 | **UnrealMCP** | 第三方（MIT） | `Plugins/UnrealMCP/` | 编辑器 MCP 服务端（`127.0.0.1:55557`，仅 Editor，主模块不依赖）。见 [§12.6](#126-ai-辅助开发工具链) |
+| **UNTLink** | — | — | ⚠️ `.uproject` 中 `Enabled: false`，已显式禁用 |
 
 ### 2.3 未引入的 Lyra 子系统
 
@@ -184,8 +193,8 @@ Source/
 └── Hodgepodge/
     ├── Hodgepodge.Build.cs
     ├── Hodgepodge.h / Hodgepodge.cpp
-    ├── Public/       ← 67 个头文件
-    └── Private/      ← 64 个实现文件，与 Public 大体镜像
+    ├── Public/       ← 71 个头文件
+    └── Private/      ← 70 个实现文件，与 Public 大体镜像
 ```
 
 | 目录 | 文件数 | 职责 | 重要度 |
@@ -198,6 +207,7 @@ Source/
 | `Character/` | 4 | 角色继承链（Base → Combat → Hero / Enemy） | ★★★★★ |
 | `Input/` | 6 | InputConfig（数据）+ InputComponent（绑定）+ UserSettings / MappableKeyProfile / Modifiers / AimSensitivity | ★★★★ |
 | `GameFeatures/` | 8 | 7 个 GameFeatureAction + Policy | ★★（4 个可用） |
+| `CodexText/` 🆕 | 4 | **隔离实验模块**：ALS 6 向动画 / 平地起停脚锁 / LocomotionLab / Survivor 小玩法，直接继承引擎类，主体系无引用（见 [§6.16](#616-codextext-实验模块)） | ★（实验） |
 | `Interface/` | 2 | `AbilitySourceInterface` + `LoadingProcessInterface` | ★ |
 | `Animation/` | 1 | `UHodgeAnimInstance`（GameplayTag 映射动画变量） | ★★★★ |
 | `Actor/` | 1 | Actor 基类 | ★ |
@@ -206,23 +216,24 @@ Source/
 
 ```
 Content/
-├── Main/                    ★ 项目自有内容，新东西放这里
+├── Main/                    ★ 项目自有内容，新东西放这里（43 个资产）
 │   ├── Experiences/         Exp_HodgeDefaultExperience（当前默认）
-│   ├── Data/                DA_Dafult_GameData / DA_Dafult_PawnData（含 DefaultCameraMode）
-│   ├── Camera/              CM_Default（默认相机模式资产）
-│   ├── Input/               DA_HodgeInputConfig / IMC_Default / IMC_UI / InputAction/
-│   └── Character/           BP_HeroBase / BP_Hero_Pover（玩家蓝图）+ 动画蓝图
-│       ├── Hero/            Anim/ABP_Pover_Base（漂泊者动画蓝图）
-│       └── EnemyBase/       ABP_Enemy_Base
-├── CodexText/               ⚠️ AI / MCP 演练产物，非正式内容（见 §12.6）
-│                            5 个蓝图 + 4 个关卡 + 4 个 UMG + 53 张贴图
-├── qiuyuan/                 漂泊者角色资源
-├── Wuwa/                    鸣潮风格资源包（含 322 个 fbx 模型）
+│   ├── Data/                DA_Dafult_GameData / DA_Dafult_PawnData / DA_Pover 🆕
+│   ├── Camera/              CM_ThirdPerson / CM_ThirdPerson_Death（旧 CM_Default 已删）
+│   ├── Input/               DA_HodgeInputConfig / IMC_Default / IMC_UI
+│   │   └── InputAction/     IA_Move / IA_Look / IA_Aim / IA_Crouch / IA_Sprint / … / IA_Attack 🆕
+│   └── Character/           BP_HeroBase / BP_Hero_Pover / GA_Attack 🆕
+│       ├── Hero/            Anim/ABP_Pover_Base（漂泊者动画蓝图）+ Anim/Layer/
+│       └── EnemyBase/       ABP_Enemy_Base / ALI_Enemy
+├── CodexText/               ⚠️ AI / MCP 演练 + 动画实验产物（469 资产 + 6 关卡，见 §6.16 / §12.6）
+│                            L_MainMenu / L_Character / L_SurvivalHUD / L_Terminal + WBP_* UMG + Montage/
+├── qiuyuan/                 漂泊者角色资源（285）
+├── Wuwa/                    鸣潮风格资源包（675，含 322 个 fbx 模型）
 ├── Assets/                  通用资产：Enemies / HeroCharacter / Weapons /
-│                            Niagara / Sounds / Textures / Meshes / MaterialFunctions
-├── Characters/              角色资源（146）
+│                            Niagara / Sounds / Textures / Meshes / MaterialFunctions（645）
+├── Characters/              角色资源（148）
 ├── Collections/ Developers/ LevelPrototyping/   编辑器辅助目录
-└── ThirdPerson/             UE 模板内容（当前默认地图在这里）
+└── ThirdPerson/             UE 模板内容（游戏默认地图在这里）
 ```
 
 > `__ExternalActors__/`、`__ExternalObjects__/` 是启用世界分区（World Partition）后关卡对象外置产生的，别手动改。
@@ -230,12 +241,20 @@ Content/
 ### 3.3 仓库根目录的其他内容
 
 ```
-Plugins/UnrealMCP/        编辑器 MCP 插件（第三方，MIT）
-Tools/UnrealMCP/          Python MCP 前端（server.py + README）
-AGENTS.md                 AI 协作规则（项目级）
-.agents/                  工程事实快照（给 AI 读）
-.cursor/rules/            Cursor 规则指针
-.codex/config.toml        Codex 的 MCP 服务端注册
+Plugins/
+├── ALS-Refactored-4.15/   第三方 ALS 动画 / 移动插件（EnabledByDefault，未写进 .uproject）
+├── McpAutomationBridge/   编辑器 MCP 桥（Editor-only）
+├── UnrealMCP/             编辑器 MCP 插件（第三方，MIT）
+└── Developer/RiderLink/   Rider 联动
+Tools/                     MCP 与实验工具前端（UnrealMCP / ChiR24MCP / LocomotionLab / ModelRepair）
+Docs/
+├── KnowledgeBase/         ★ 已核对的本地知识库（架构、启动链、输入、GAS、验收、索引）
+├── Design/                未实现的设计草案（ability-timeline.md）
+└── AI_DEVELOPMENT.md      AI 开发与验证流程
+AGENTS.md                  AI 协作规则（项目级）
+.agents/                   工程事实快照（给 AI 读）
+.cursor/rules/             Cursor 规则指针
+.codex/config.toml         Codex 的 MCP 服务端注册
 ```
 
 ---
@@ -253,23 +272,29 @@ AGENTS.md                 AI 协作规则（项目级）
 
 ### 4.2 编译与运行
 
-```powershell
-# 1) 生成解决方案（引擎装在 E:\UE\UE_5.5，按你的实际位置调整）
-& "E:\UE\UE_5.5\Engine\Build\BatchFiles\GenerateProjectFiles.bat" `
-    -projectfiles -project="e:\Project\Git\Hodgepodge\Hodgepodge.uproject" -game -engine
+以下命令取自 [`Docs/AI_DEVELOPMENT.md`](Docs/AI_DEVELOPMENT.md) 的验证流程，**路径按本机实测填写（`D:\UE_5.5` + `D:\Hodgepodge`），换机器必须改**。外部构建前先保存并关闭本项目编辑器，避免 DLL 占用。
 
-# 2) 编译
-& "E:\UE\UE_5.5\Engine\Build\BatchFiles\Build.bat" `
-    HodgepodgeEditor Win64 Development -project="e:\Project\Git\Hodgepodge\Hodgepodge.uproject"
+```powershell
+$ueRoot      = 'D:\UE_5.5'
+$projectFile = 'D:\Hodgepodge\Hodgepodge.uproject'
+
+# 1) Editor 构建（日常改 C++ 走这条，按需跑 UHT / 编译 / 链接）
+& "$ueRoot\Engine\Build\BatchFiles\Build.bat" HodgepodgeEditor Win64 Development "-Project=$projectFile" -WaitMutex -architecture=x64
+if ($LASTEXITCODE -ne 0) { throw "Editor build failed: $LASTEXITCODE" }
+
+# 2) Game 构建（改动 Runtime 代码 / 模块依赖 / 插件 / 平台条件后再跑，避免 Editor 环境掩盖依赖问题）
+& "$ueRoot\Engine\Build\BatchFiles\Build.bat" Hodgepodge Win64 Development "-Project=$projectFile" -WaitMutex -architecture=x64
+if ($LASTEXITCODE -ne 0) { throw "Game build failed: $LASTEXITCODE" }
 
 # 3) 打开编辑器
-& "E:\UE\UE_5.5\Engine\Binaries\Win64\UnrealEditor.exe" `
-    "e:\Project\Git\Hodgepodge\Hodgepodge.uproject"
+& "$ueRoot\Engine\Binaries\Win64\UnrealEditor.exe" $projectFile
 ```
+
+> 新增 / 删除 C++ 文件、Target、模块或插件后，用 `.uproject` 的 “Generate Visual Studio project files” 刷新 IDE 工程（本机未发现可用的 `GenerateProjectFiles.bat` 脚本路径，别照抄旧命令）。现有 `.sln` 与 `Intermediate` 是生成物，不手工改。
 
 ### 4.3 运行检查清单
 
-项目可编译可启动。如果启动异常，按这个顺序查：
+**未在本版 README 中执行过构建 / 启动**。如果启动异常，按这个顺序查：
 
 1. **Experience 扫得到吗？** 日志搜 `Identified experience ... (Source: Default)`。
    扫不到就检查 `DefaultGame.ini` 里 `HodgeExperienceDefinition` 的扫描目录是否是 `/Game/Main/Experiences`，以及 `Exp_HodgeDefaultExperience.uasset` 是否在那儿。
@@ -296,7 +321,9 @@ AGENTS.md                 AI 协作规则（项目级）
 
 7. **`GlobalDefaultGameMode` 用的是旧类名** `/Script/Hodgepodge.HodgepodgeGameModeBase`，靠 `[CoreRedirects]` 生效。能跑，但建议改成 `HodgeGameModeBase`。
 
-8. **启动地图**：`GameDefaultMap` / `EditorStartupMap` 都是 `/Game/ThirdPerson/Maps/ThirdPersonMap`。项目目前还没有自己的关卡。
+8. **地图**：`GameDefaultMap` = `/Game/ThirdPerson/Maps/ThirdPersonMap`（仍是 UE 模板图，项目还没有自己的正式关卡）；`EditorStartupMap` = `/Game/CodexText/L_MainMenu`（CodexText 实验关卡，**两者已经不一致**）。
+
+9. **HeroComponent 不需要在蓝图里加**：`UHodgeHeroComponent` 已由 `AHodgeHeroCharacter` 构造在 C++ 挂载。若蓝图 `BP_HeroBase` / `BP_Hero_Pover` 里也手工加过，会出现两个组件，需在编辑器里清掉一个。
 
 ### 4.4 切换玩法
 
@@ -396,9 +423,11 @@ UnrealEditor.exe Hodgepodge.uproject -game -Experience=Exp_HodgeDefaultExperienc
 
 ⑨ AHodgePlayerState::OnExperienceLoaded()   （非客户端，注册于 PreInitializeComponents）
      └─ SetPawnData(GameMode->GetPawnDataForController(...))
+          ├─ 判重：已有 PawnData → 报错并返回（目前唯一的防重手段）
           ├─ MARK_PROPERTY_DIRTY_FROM_NAME + 赋值
-          ├─ [注释] AbilitySet->GiveToAbilitySystem()
-          └─ SendGameFrameworkComponentExtensionEvent(NAME_HodgeAbilityReady)
+          ├─ 遍历 PawnData->AbilitySets → GiveToAbilitySystem(ASC, nullptr)   ← 基础授予（无句柄）
+          ├─ SendGameFrameworkComponentExtensionEvent(NAME_HodgeAbilityReady)
+          └─ ForceNetUpdate()
 ```
 
 ### 5.3 为什么 Pawn 要等 Experience 加载完才生成
@@ -449,7 +478,7 @@ UnrealEditor.exe Hodgepodge.uproject -game -Experience=Exp_HodgeDefaultExperienc
 |---|---|---|
 | `UHodgeExperienceDefinition` | `Data/HodgeExperienceDefinition.h` | `GameFeaturesToEnable[]`、`DefaultPawnData`、`Actions[]`（Instanced）、`ActionSets[]` |
 | `UHodgeExperienceActionSet` | `Data/HodgeExperienceActionSet.h` | 可复用的 `Actions[]` + `GameFeaturesToEnable[]` |
-| `UHodgePawnData` | `Data/HodgePawnData.h` | **5 个字段**：`PawnClass` / `AbilitySets[]` / `TagRelationshipMapping` / `InputConfig` / `DefaultCameraMode`（资产里目前未填） |
+| `UHodgePawnData` | `Data/HodgePawnData.h` | **5 个字段**：`PawnClass` / `AbilitySets[]` / `TagRelationshipMapping` / `InputConfig` / `DefaultCameraMode`。字段均 `EditDefaultsOnly` 且全部生效；`AbilitySets` 现在真的会被授予（见 [§6.4](#64-playerstate玩家状态主体)）。资产内部是否填完整**需编辑器确认** |
 
 #### 加载状态机
 
@@ -513,20 +542,33 @@ Unloaded → Loading → LoadingGameFeatures → LoadingChaosTestingDelay
 |---|---|
 | `AbilitySystemComponent` | 玩家 ASC，构造时创建，`Mixed` 模式，`NetUpdateFrequency = 100.f` |
 | `HealthSet` | 构造时 `CreateDefaultSubobject` |
-| `PawnData` | `ReplicatedUsing = OnRep_PawnData`，由 `OnExperienceLoaded` 设置 |
+| `PawnData` | `ReplicatedUsing = OnRep_PawnData`，由 `OnExperienceLoaded` → `SetPawnData()` 设置；同时在该函数里**授予 `PawnData->AbilitySets`** |
 | `MyPlayerConnectionType` | `EHodgePlayerConnectionType`：Player / LiveSpectator / ReplaySpectator / InactivePlayer |
 | `MyTeamID` / `MySquadID` | 队伍 / 小队 ID（`FGenericTeamId`），复制回调目前是空的 |
 | `StatTags` | `FGameplayTagStackContainer`，Tag + 数量的统计容器 |
 | `ReplicatedViewRotation` | 观战用视角旋转，`COND_SkipOwner` |
 | `NAME_HodgeAbilityReady` | 静态 `FName("HodgeAbilitiesReady")`，SetPawnData 后发送该扩展事件 |
 
+**`SetPawnData()` 是玩家侧的数据与能力总入口**（权威端）：
+
+```cpp
+// 先判重：已有 PawnData 就直接报错返回，这也是目前唯一的"防重"手段
+if (PawnData) { UE_LOG(..., Error, TEXT("Trying to set PawnData [...] that already has valid PawnData...")); return; }
+MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, PawnData, this);
+PawnData = InPawnData;
+for (const UHodgeAbilitySet* AbilitySet : PawnData->AbilitySets)   // ← 基础授予
+    if (AbilitySet) AbilitySet->GiveToAbilitySystem(AbilitySystemComponent, nullptr);  // ⚠️ 未收集 GrantedHandles
+UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent(this, NAME_HodgeAbilityReady);
+ForceNetUpdate();
+```
+
 **生命周期要点**：
 
 ```cpp
 // PreInitializeComponents
 AbilitySystemComponent->InitAbilityActorInfo(this, GetPawn());
-// ⚠️ 这行只是兜底：PlayerState 创建早于 Pawn，GetPawn() 此时是 nullptr。
-//    真正的 Avatar 绑定在 AHodgeHeroCharacter 的双入口里（见 §6.8）。
+// ⚠️ 这行只是占位兜底：PlayerState 创建早于 Pawn，GetPawn() 此时是 nullptr。
+//    真正的 Avatar 绑定由 HeroComponent → PawnExtension::InitializeAbilitySystem 完成（见 §6.6 / §6.8）。
 ExperienceComponent->CallOrRegister_OnExperienceLoaded(...);
 ```
 
@@ -566,7 +608,7 @@ struct FGameplayTagStackContainer : public FFastArraySerializer
 | Feature | FeatureName | 挂载情况 |
 |---|---|---|
 | `UHodgePawnExtensionComponent` | `PawnExtension` | ✅ 由 `AHodgeCombatCharacter` 构造时创建 |
-| `UHodgeHeroComponent` | `Hero` | ❓ **C++ 侧没有创建**；`BP_HeroBase` / `BP_Hero_Pover` 蓝图里是否添加了该组件待确认（见顶部"唯一的卡点"） |
+| `UHodgeHeroComponent` | `Hero` | ✅ 由 `AHodgeHeroCharacter` 构造时创建（Hero 层，与 Lyra 一致） |
 
 **状态注册**（`UHodgeGameInstanceBase::Init()`）：
 
@@ -613,7 +655,9 @@ InitializePlayerInput(Pawn->InputComponent);                                    
 DetermineCameraModeDelegate.BindUObject(this, &ThisClass::DetermineCameraMode);   // ③ 相机模式选择
 ```
 
-⚠️ 如果 HeroComponent 最终没有挂到 Pawn 上，这三行**一行都不会执行**。
+✅ 这三行现在都会执行（HeroComponent 已由 `AHodgeHeroCharacter` 构造挂载）。但**"执行"不等于"运行正确"**：换 Pawn / 重生 / 观战时的清理顺序仍需运行验证。
+
+> ⚠️ 一个已知条件：`InitializePlayerInput` 里 `AddMappingContext` 被 `bRegisterWithSettings` 相关条件包住，且会先 `ClearAllMappings()`。若资产里该开关为 false，IMC 会被跳过，**不能只凭"函数被调用"就断定输入已生效**。
 
 #### PlayerState 侧的 Receiver
 
@@ -626,21 +670,21 @@ Reset()                   → 转发给所有 UPlayerStateComponent
 CopyProperties()          → 按类型+名字匹配，逐个复制 UPlayerStateComponent 的数据
 ```
 
-#### 两个待修的坑
+#### 还剩两个坑
 
 ```
-① PawnData 注入了，可 Pawn 是基类
+① 默认 PawnClass 仍是基类（GameMode 兜底路径）
    AHodgeGameModeBase 构造里 DefaultPawnClass = AHodgeCharacterBase::StaticClass()
    → 基类没有 PawnExtensionComponent（只在 CombatCharacter 里建）
    → FindPawnExtensionComponent() 返回 nullptr → SetPawnData 静默跳过
-   ✔ 修法：DA_Dafult_PawnData 的 PawnClass 指向 AHodgeHeroCharacter / BP_Hero_Pover
+   ✔ 实际用哪个 Pawn 由 PawnData->PawnClass 决定，需在编辑器确认指向 Hero 蓝图
 
-② 链走到 GameplayReady 也没人接棒
-   → 让 UHodgeHeroComponent 真正挂到 Pawn 上，它才会在 DataInitialized 时
-     初始化 ASC / 绑定输入 / 设相机
+② 换 Pawn / 重生的清理顺序未验证
+   → HeroComponent 的初始化已闭环，但 UHodgePlayerController::OnUnPossess
+     会先清 ASC Avatar，可能让 PawnExtension 中依赖 Avatar 匹配的清理分支跳过
 ```
 
-> 调试提示：HeroComponent 里已加了 `[HODGE-DBG]` 日志（`CanChangeInitState` 各分支、`bound camera delegate`），运行时过滤 `HODGE-DBG` 就能看到链走到了哪一步、被什么条件挡住。
+> 调试提示：HeroComponent 里加了 `[HODGE-DBG]` 日志（`CanChangeInitState` 各分支、IMC 条目、`BLOCKED`、`CALLBACK`、相机绑定），运行时过滤 `HODGE-DBG` 就能看到链走到了哪一步、被什么条件挡住（这些日志是临时诊断，定位完成后应删除）。
 
 ### 6.7 角色体系
 
@@ -651,23 +695,23 @@ AHodgeCharacterBase              ← 构造时 SetDefaultSubobjectClass 换装�
     ↓
 AHodgeCombatCharacter            ← Lyra Character 移植（相机 / FastShared / 死亡 / Team）
     ↓                             并创建 UHodgePawnExtensionComponent
-    ├── AHodgeHeroCharacter      ← 玩家：双入口绑定 ASC（⚠️ 缺 HeroComponent）
+    ├── AHodgeHeroCharacter      ← 玩家：构造挂 UHodgeHeroComponent（输入 / 相机 / ASC 入口）
     └── AHodgeEnemyCharacter     ← 敌人：骨架实现
 ```
 
 | 类 | 文件 | 关键点 |
 |---|---|---|
-| `AHodgeCharacterBase` | `Character/HodgeCharacterBase.h` | 生命周期扩展点基类。构造里 `SetDefaultSubobjectClass` 把默认 `CharacterMovement` 换成 `UHodgeCharacterMovementComponent`；移动参数交给蓝图 / 数据资产。**刻意不依赖 GAS** |
+| `AHodgeCharacterBase` | `Character/HodgeCharacterBase.h` | 生命周期扩展点基类。构造里 `SetDefaultSubobjectClass` 把默认 `CharacterMovement` 换成 `UHodgeCharacterMovementComponent`；移动参数交给蓝图 / 数据资产。**刻意不依赖 GAS**。<br>Receiver 生命周期：`PreInitializeComponents` 注册 → `BeginPlay` 发 `GameActorReady` → `EndPlay` 移除 |
 | `AHodgeCombatCharacter` | `Character/HodgeCombatCharacter.h` | Lyra `ALyraCharacter` 移植：`UHodgeCameraComponent`（摆位 `-300, 0, 75`）、`bUseControllerRotationYaw`、`FSharedRepMovement`、死亡流程（`OnDeathStarted/Finished` + `UninitAndDestroy`，HealthComponent 仍注释）、移动模式→GameplayTag、`IGenericTeamAgentInterface`。<br>并创建 `UHodgePawnExtensionComponent`，把 `PossessedBy`/`UnPossessed`/`OnRep_Controller` → `HandleControllerChanged()`、`OnRep_PlayerState` → `HandlePlayerStateReplicated()`、`SetupPlayerInputComponent` 都转发给它 |
-| `AHodgeHeroCharacter` | `Character/HodgeHeroCharacter.h` | 玩家角色：`PossessedBy` / `OnRep_PlayerState` **双入口绑定玩家 ASC 的 Avatar**。❓ HeroComponent 是否挂在蓝图（`BP_HeroBase` / `BP_Hero_Pover`）里待确认（C++ 侧未创建） |
-| `AHodgeEnemyCharacter` | `Character/HodgeEnemyCharacter.h` | 继承 `AHodgeCombatCharacter`。骨架：碰撞盒 / 血条 / 战斗组件全部注释 |
-| `UHodgeHeroComponent` | `Component/HodgeHeroComponent.h` | `ULyraHeroComponent` 移植。已实现：`InitializePlayerInput`（Move / Look_Mouse / Look_Stick / Crouch / AutoRun + AbilityInputTag）、`AbilityCameraMode`、`DetermineCameraMode`（能力相机优先，回落 `PawnData->DefaultCameraMode`）、`AddAdditionalInputConfig`、`IsReadyToBindInputs`。<br>空实现/注释：`RemoveAdditionalInputConfig`（TODO）、`Input_AutoRun` 内部逻辑、**没有死亡重生**。<br>❓ **C++ 侧无人创建它**；蓝图 `BP_HeroBase` / `BP_Hero_Pover` 里是否添加待确认 |
+| `AHodgeHeroCharacter` | `Character/HodgeHeroCharacter.h` | 玩家角色。**构造里 `CreateDefaultSubobject<UHodgeHeroComponent>(TEXT("HeroComponent"))`**（`HeroComponent` 为 `VisibleAnywhere` 私有属性），输入 / 相机 / ASC 三件事从此有确定入口；`PossessedBy` / `OnRep_PlayerState` 已退化为只调 `Super`（头文件注释尚未同步，属遗留） |
+| `AHodgeEnemyCharacter` | `Character/HodgeEnemyCharacter.h` | 继承 `AHodgeCombatCharacter`。只设置 AI 自动控制（`AutoPossessAI`）；碰撞盒 / 血条 / 战斗组件全部注释，**没有自己的 ASC 初始化** |
+| `UHodgeHeroComponent` | `Component/HodgeHeroComponent.h` | `ULyraHeroComponent` 移植。已实现：`InitializePlayerInput`（Move / Look_Mouse / Look_Stick / Crouch / AutoRun + AbilityInputTag）、`AbilityCameraMode`、`DetermineCameraMode`（能力相机优先，回落 `PawnData->DefaultCameraMode`）、`AddAdditionalInputConfig`、**`RemoveAdditionalInputConfig`**（按 InputConfig 解绑）、`IsReadyToBindInputs`。<br>剩余：`Input_AutoRun` 内部逻辑、**没有死亡重生** |
 
 要点：
 
 - **相机与 PawnExtension 都在 CombatCharacter 层**：Hero / Enemy 共享。
-- **HeroComponent 应该落在 HeroCharacter 层**（Lyra 就是这么做的），挂上之后输入、相机模式选择、角色侧 ASC 会一起通电。
-- **输入仍然没绑**：`SetupPlayerInputComponent()` 转发给 PawnExtension 后只调 `CheckDefaultInitialization()`；真正的绑定逻辑在 HeroComponent 的 `InitializePlayerInput()` 里（见 [§6.9](#69-输入)）。
+- **HeroComponent 落在 HeroCharacter 层**（与 Lyra 一致），并由 C++ 挂载 → 输入、相机模式选择、角色侧 ASC 三项一起生效。
+- **输入绑定入口**：`SetupPlayerInputComponent()` 转发给 PawnExtension 后只调 `CheckDefaultInitialization()`；真正的绑定逻辑在 HeroComponent 的 `InitializePlayerInput()` 里（见 [§6.9](#69-输入)）。
 
 ### 6.8 GAS
 
@@ -675,13 +719,13 @@ GAS 整套是 Lyra 实现的移植。先给类表，再看初始化链路与结�
 
 | 类 | Lyra 原型 | 职责 | 状态 |
 |---|---|---|---|
-| `UHodgeAbilitySystemComponent` | `ULyraAbilitySystemComponent` | 项目 ASC：输入缓冲（`ProcessAbilityInput` / `AbilityInputTagPressed/Released`）、`ActivationGroup`、`CancelAbilitiesByFunc`、TagRelationship 查询、`TryActivateAbilitiesOnSpawn` | ✅ PlayerState 构造 + 双入口初始化；`ProcessAbilityInput` 由 `AHodgePlayerController::PostProcessInput` 每帧驱动 |
-| `UHodgeGameplayAbility` | `ULyraGameplayAbility` | Ability 基类：`ActivationPolicy` / `ActivationGroup`、`OnPawnAvatarSet`、`MakeEffectContext` 重写；`ActiveCameraMode` + `Set/ClearCameraMode`；`AdditionalCosts`（命中才付费 `ShouldOnlyApplyCostOnHit`） | ✅ 已接入，但**没有任何子类**；`ActivateAbility` 仍只调 `Super::` |
+| `UHodgeAbilitySystemComponent` | `ULyraAbilitySystemComponent` | 项目 ASC：输入缓冲（`ProcessAbilityInput` / `AbilityInputTagPressed/Released`）、`ActivationGroup`、`CancelAbilitiesByFunc`、TagRelationship 查询、`TryActivateAbilitiesOnSpawn` | ✅ PlayerState 构造；初始化由 **HeroComponent → PawnExtension 单入口**完成；`ProcessAbilityInput` 由 `AHodgePlayerController::PostProcessInput` 每帧驱动 |
+| `UHodgeGameplayAbility` | `ULyraGameplayAbility` | Ability 基类：`ActivationPolicy` / `ActivationGroup`、`OnPawnAvatarSet`、`MakeEffectContext` 重写；`ActiveCameraMode` + `Set/ClearCameraMode`；`AdditionalCosts`（命中才付费 `ShouldOnlyApplyCostOnHit`）；`GetHeroComponentFromActorInfo` | ✅ 已接入，但 **C++ 侧没有任何子类**（`Main/Character/Hero/GA_Attack` 是蓝图资产，待确认父类与接线） |
 | `UHodgeAbilityCost` | `ULyraAbilityCost` | 可插拔消耗项（`CheckCost` / `ApplyCost`） | ⚠️ 循环已解开，但无子类 |
 | `UHodgeAbilityTagRelationshipMapping` | 同名 | DataAsset：AbilityTag 的 Block / Cancel / Required 关系 | ⚠️ ASC 会查询，但 `SetTagRelationshipMapping` 调用点被注释 |
-| `UHodgeAbilitySet` | `ULyraAbilitySet` | "能力包"：Ability + Effect + AttributeSet 一次性授予/回收 | ✅ GameFeature 路径可用；`SetPawnData` 路径仍注释 |
+| `UHodgeAbilitySet` | `ULyraAbilitySet` | "能力包"：Ability + Effect + AttributeSet 一次性授予/回收 | ✅ GameFeature 与 `SetPawnData` 两条路径均已授予；**授予时未记录句柄，回收/撤销不可用** |
 | `UHodgeGlobalAbilitySystem` | `ULyraGlobalAbilitySystem` | `UWorldSubsystem`，对世界内所有 ASC 批量授予/移除 | ✅ 自动实例化，但 `Apply*ToAll` 无调用者 |
-| `UHodgeAbilitySystemGlobals` 🆕 | —（Lyra 无） | `UAbilitySystemGlobals` 子类，重写 `AllocGameplayEffectContext()` | ✅ ini 已配，见下 |
+| `UHodgeAbilitySystemGlobals` | —（Lyra 无） | `UAbilitySystemGlobals` 子类，重写 `AllocGameplayEffectContext()` | ✅ ini 已配，见下 |
 | `FHodgeGameplayEffectContext` | `FLyraGameplayEffectContext` | 自定义 EffectContext，携带 AbilitySource + 等级 | ✅ 由上面的 Globals 分配 |
 | `IHodgeAbilitySourceInterface` | 同名 | 武器/投射物提供距离衰减、物理材质衰减 | ❌ 无实现类 |
 | `UHodgeGameplayCueManager` | `ULyraGameplayCueManager` | Cue 预加载 / 延迟加载 / 常驻管理 | ⚠️ ini 已指向它，但增删路径没通（见下） |
@@ -718,41 +762,37 @@ GameFeaturesManagerClassName=/Script/Hodgepodge.HodgeGameFeaturePolicy
 
 **仍未通**：Cue 路径的增删 —— `HodgeGameFeaturePolicy.cpp:39` 注册 `UHodgeGameFeature_AddGameplayCuePaths` Observer 的那行仍是注释，导致写好的 `OnGameFeatureRegistering` 不执行；`OnGameFeatureUnregistering` 整段注释；`UHodgeAssetManager::InitializeGameplayCueManager()` 仍是空实现。
 
-#### 初始化链路：三处并存
+#### 初始化链路：单入口 + 一个占位首绑
 
 ```cpp
-// ① AHodgePlayerState::PreInitializeComponents() —— GetPawn() 还是 nullptr，只算兜底
+// ① AHodgePlayerState::PreInitializeComponents() —— GetPawn() 还是 nullptr，只算占位兜底
 AbilitySystemComponent->InitAbilityActorInfo(this, GetPawn());
 
-// ② 服务端：Pawn 被 Possess 时
+// ② 真正的入口：HeroComponent 在 PawnExtension 到达 DataInitialized 后触发
+PawnExtComp->InitializeAbilitySystem(PS->GetHodgeAbilitySystemComponent(), PS);
+
+// ③ AHodgeHeroCharacter::PossessedBy / OnRep_PlayerState —— 现在只调 Super，不再各自绑 Avatar
 void AHodgeHeroCharacter::PossessedBy(AController* NewController)
 {
     Super::PossessedBy(NewController);
-    if (AHodgePlayerState* PS = GetPlayerState<AHodgePlayerState>())
-        PS->GetAbilitySystemComponent()->InitAbilityActorInfo(PS, this);
 }
-
-// ③ 客户端：PlayerState 复制到位时
 void AHodgeHeroCharacter::OnRep_PlayerState()
 {
     Super::OnRep_PlayerState();
-    if (AHodgePlayerState* PS = GetPlayerState<AHodgePlayerState>())
-        PS->GetAbilitySystemComponent()->InitAbilityActorInfo(PS, this);
 }
 ```
 
-- ②③ 各管一条路，**玩家 ASC 是好的，GAS 没坏**。
-- Lyra 的统一入口是 `UHodgePawnExtensionComponent::InitializeAbilitySystem()`，但它的唯一调用者在 HeroComponent 里 → 只要该组件没真正挂上 Pawn，角色侧 `GetAbilitySystemComponent()` 就是 nullptr、`OnAbilitySystemInitialized` 不会触发。
-
-**迁移路径**：挂载 HeroComponent 后它会自动调 `InitializeAbilitySystem()`，届时 ②③ 双入口就可以删掉。Lyra 这套能覆盖换 Pawn / 死亡重生 / 观战。
+- Lyra 的统一入口 `UHodgePawnExtensionComponent::InitializeAbilitySystem()` 现在真的会被调用（HeroComponent 已挂载），角色侧 `GetAbilitySystemComponent()` 与 `OnAbilitySystemInitialized` 均有确定来源。
+- ① 仍保留：它是 Pawn 尚未就绪时的占位首绑，**不是**最终 Avatar。
+- 待运行验证：换 Pawn / 重生时 `UninitializeAbilitySystem` 的清理顺序；控制器 `OnUnPossess` 会先清 ASC Avatar，可能让 PawnExtension 中依赖 Avatar 匹配的清理分支跳过。
 
 #### 三套 ASC 现状
 
 | ASC | 宿主 | 状态 |
 |---|---|---|
-| `AHodgePlayerState::AbilitySystemComponent` | 玩家 | ✅ 有效，Avatar 由双入口绑定 |
+| `AHodgePlayerState::AbilitySystemComponent` | 玩家 | ✅ 有效，Avatar 由 HeroComponent → PawnExtension 绑定 |
 | `AHodgeGameState::AbilitySystemComponent` | 游戏全局 | ✅ 有效，暂无使用者 |
-| 角色侧 `AHodgeCombatCharacter::GetAbilitySystemComponent()` | — | ⚠️ 转发给 `PawnExtComponent`，实际恒 nullptr |
+| 角色侧 `AHodgeCombatCharacter::GetAbilitySystemComponent()` | — | ✅ 转发给 `PawnExtComponent`，PawnExtension 初始化后不再为空 |
 
 #### 伤害 / 治疗闭环 ✅
 
@@ -811,20 +851,25 @@ HodgeIC->BindNativeAction(InputConfig, InputTag_Crouch,     Triggered, this, &In
 HodgeIC->BindNativeAction(InputConfig, InputTag_AutoRun,    Triggered, this, &Input_AutoRun);
 ```
 
-**它只有在 HeroComponent 挂到 Pawn 上之后才会执行**。当前的转发链是：
+**它现在会执行**（HeroComponent 已挂载）。从 Pawn 到绑定的转发路径：
 
 ```
 AHodgeCombatCharacter::SetupPlayerInputComponent()
   └─ PawnExtComponent->SetupPlayerInputComponent()
-       └─ 只调 CheckDefaultInitialization()   ← 不绑任何 Action
+       └─ 只调 CheckDefaultInitialization()     ← 不绑任何 Action
+          ↓ HeroComponent 在 DataInitialized 时接管
+          InitializePlayerInput(Pawn->InputComponent)   ← 真正的绑定
 ```
 
-接回清单（本轮已完成前两条）：
+当前状态与剩余待确认项：
 
-1. ✅ `Config/DefaultInput.ini:94` 的 `DefaultInputComponentClass` 已改成 `/Script/Hodgepodge.HodgeInputComponent`（`CastChecked` 不会再失败）
-2. ✅ 默认 PlayerController 已换成 `AHodgePlayerController` —— 它的 `PostProcessInput → ASC->ProcessAbilityInput` 是把缓冲的输入真正喂给 GAS 的最后一环（见 [§6.15](#615-playercontroller)）
-3. ❓ 确认 `UHodgeHeroComponent` 已挂到 Pawn（C++ 或蓝图）
-4. ❓ 确认 `PawnData->InputConfig`（`DA_HodgeInputConfig`）里配了 Move / Look_Mouse / Look_Stick / Crouch / AutoRun 这几条 InputAction，并给 `DefaultInputMappings` 填上 `IMC_Default`
+1. ✅ `Config/DefaultInput.ini:94` 的 `DefaultInputComponentClass` 已指向 `/Script/Hodgepodge.HodgeInputComponent`（`CastChecked` 不会失败）
+2. ✅ 默认 PlayerController 已换成 `AHodgePlayerController` —— 它的 `PostProcessInput → ASC->ProcessAbilityInput` 是把缓冲输入喂给 GAS 的最后一环（见 [§6.15](#615-playercontroller)）
+3. ✅ `UHodgeHeroComponent` 已由 C++ 挂在 Hero 层
+4. ✅ `RemoveAdditionalInputConfig` 已实现：按 InputConfig 精确解绑，句柄存在 `AdditionalInputConfigHandles`，`EndPlay` 统一清理
+5. ❓ `PawnData->InputConfig`（`DA_HodgeInputConfig`）是否配齐 Move / Look / Crouch / AutoRun 等标签，以及 `DefaultInputMappings` 是否填了 `IMC_Default`
+6. ⚠️ `AddMappingContext` 被 `Mapping.bRegisterWithSettings` 条件包住：**该开关为 false 时对应 IMC 会被跳过**；并且函数开头 `ClearAllMappings()` 会清掉其他来源的 Mapping
+7. ⚠️ `HodgeInputComponent::AddInputMappings` / `RemoveInputMappings` **仍是空壳**（只有 `check` + 注释），IMC 增删目前只有 HeroComponent 这一条路径
 
 **其它输入类**（Lyra 移植，目前均无人使用）：
 
@@ -847,11 +892,11 @@ AHodgeCombatCharacter::SetupPlayerInputComponent()
 | `GameFeatureAction_SplitscreenConfig.h` | ✅ 可用 | Lyra 原版 |
 | `GameFeatureAction_AddAbilities.h` | ✅ 可用 | 依赖的 `UHodgeAbilitySet` 已建，授予/回收逻辑完整 |
 | `GameFeatureAction_AddGameplayCuePath.h` | ✅ 可用 | 只有构造 + `IsDataValid` |
-| `GameFeatureAction_AddInputContextMapping.h` | ✅ 可用 | 用 `UEnhancedInputLocalPlayerSubsystem` + `UHodgeAssetManager` |
-| `GameFeatureAction_AddInputBinding.h` | ⚠️ 能编译但没效果 | `AddInputMappingForPlayer` 主体与 `HandlePawnExtension` 的 `NAME_ExtensionAdded` 分支仍是注释 |
+| `GameFeatureAction_AddInputContextMapping.h` | ✅ 可用 | 用 `UEnhancedInputLocalPlayerSubsystem` + `UHodgeAssetManager`；注册 / 注销均已实现。⚠️ 源码里有 TODO：`ControllersAddedTo` 与 LocalPlayer 混用、该列表实际没被写入记录，撤销路径需复核 |
+| `GameFeatureAction_AddInputBinding.h` | ✅ 已可用 | `AddInputMappingForPlayer` 主体与 `HandlePawnExtension` 的 `NAME_ExtensionAdded` / `NAME_BindInputsNow` 分支均已启用，撤销分支（`NAME_ExtensionRemoved` / `NAME_BindInputsNow 失效`）走 `RemoveInputMapping` |
 | `GameFeatureAction_AddWidget.h` | ❌ 仍注释 | 需要 UIExtension + CommonUI |
 
-**结论**：4 个能用了，但**还没有任何 GameFeature 插件实例**去用它们（`Content/` 下无 `.uplugin`）。
+**结论**：除 `_AddWidget` 外基本可用，但**还没有任何 GameFeature 插件实例**去用它们（`Content/` 下无 `.uplugin`），所以这些 Action 目前都没有运行验证。
 
 ### 6.11 其他框架类
 
@@ -951,12 +996,13 @@ Result = Lerp(Result, 栈顶.View,   栈顶.BlendWeight)
 
 > 多个 Mode 的权重**不会相加超过 1** —— 它是层叠覆盖，不是平均。权重描述"我覆盖下面多少"。
 
-**当前状态：数据层已就位，等 HeroComponent 绑委托**：
+**当前状态：委托已绑定，剩下的是资产与运行验证**：
 
-- ✅ `DA_Dafult_PawnData` 已配 `DefaultCameraMode`；新增资产 `Content/Main/Camera/CM_Default.uasset`
-- ✅ `UHodgeCameraMode_ThirdPerson` 构造函数写入了默认曲线（`bUseRuntimeFloatCurves` + X/Z 关键帧），**不依赖蓝图子类也能直接当 `DefaultCameraMode` 用**
-- ✅ `UHodgeHeroComponent::DetermineCameraMode()` 的逻辑就绪：能力相机（`AbilityCameraMode`）优先，否则回落 `PawnData->DefaultCameraMode`
-- ❓ 唯一缺口：绑定这句 `DetermineCameraModeDelegate.BindUObject(...)` 在 `UHodgeHeroComponent::HandleChangeInitState` 里 —— **组件挂上才会绑**，栈才会出画面，否则 `BlendStack` 直接 return，画面退化成 `CameraComponent` 的默认相对位姿（`-300, 0, 75`）
+- ✅ `DetermineCameraModeDelegate.BindUObject(...)` 在 `UHodgeHeroComponent::HandleChangeInitState` 里执行（HeroComponent 已挂载），`CameraModeStack` 会真正出画面
+- ✅ 模式资产为 `Content/Main/Camera/CM_ThirdPerson` / `CM_ThirdPerson_Death`；旧 `CM_Default` 已删除
+- ✅ `UHodgeCameraMode_ThirdPerson` 构造函数**不再写默认偏移曲线**（`TargetOffsetCurve = nullptr`，仅保留默认穿透射线）；偏移改由蓝图 `bUseRuntimeFloatCurves` / 曲线资产提供 → 第三人称模式现在**依赖蓝图子类或曲线资产**
+- ✅ `DetermineCameraMode()` 逻辑：能力相机（`AbilityCameraMode`）优先，否则回落 `PawnData->DefaultCameraMode`
+- ❓ 剩余：`DA_Dafult_PawnData.DefaultCameraMode` 实际指向哪个资产（应为 `CM_ThirdPerson`）、模式资产里的曲线数值是否合意，需在编辑器 / PIE 确认
 
 ### 6.14 动画实例
 
@@ -967,7 +1013,7 @@ Result = Lerp(Result, 栈顶.View,   栈顶.BlendWeight)
 - `NativeInitializeAnimation`：自动找 Owner 的 ASC 并 `InitializeWithAbilitySystem`。
 - 编辑器 `IsDataValid`：校验映射表，防止运行时才炸。
 
-> 待补：动画蓝图要在 `ABP_Pover_Base` 里用 Tag 映射 + 引擎原生动画系统重建整套 locomotion 状态节点。
+> 待补：动画蓝图要在 `ABP_Pover_Base` 里用 Tag 映射 + 引擎原生动画系统重建整套 locomotion 状态节点。`CodexText` 里另有一套 ALS 风格实验实现（见 [§6.16](#616-codextext-实验模块)），**与 `UHodgeAnimInstance` 的 Tag 驱动路线是两套东西，不要混用**。
 
 ### 6.15 PlayerController
 
@@ -996,7 +1042,22 @@ AHodgePlayerController         ← 具体逻辑：相机 / 观战 / Replay / 自
 
 **接法**：`AHodgeGameModeBase` 构造里 `PlayerControllerClass = AHodgePlayerController`；`DefaultEngine.ini` 里配了 `LocalPlayerClassName = UHodgeLocalPlayerBase`。
 
-> 注意：`AHodgeCombatCharacter::GetHodgePlayerController()` 与 `AHodgePlayerState::GetHodgePlayerController()` 本轮从 `CastChecked<AHodgePlayerControllerBase>` 收敛成了 `CastChecked<AHodgePlayerController>` —— 这些接口现在**要求必须是 Concrete 层**，自定义的非 Hodge 子类会 Cast 失败。
+> 注意：`AHodgeCombatCharacter::GetHodgePlayerController()` 与 `AHodgePlayerState::GetHodgePlayerController()` 已从 `CastChecked<AHodgePlayerControllerBase>` 收敛成 `CastChecked<AHodgePlayerController>` —— 这些接口现在**要求必须是 Concrete 层**，自定义的非 Hodge 子类会 Cast 失败。
+
+### 6.16 CodexText 实验模块
+
+`Source/Hodgepodge/{Public,Private}/CodexText/` 是一块**隔离实验区**：直接继承引擎类（`ACharacter` / `AGameModeBase` / `UUserWidget`），**不接入 Hodge 的 Experience / GAS / PlayerState**，主体系也没有任何 C++ 引用。
+
+| 类 | 文件 | 用途 |
+|---|---|---|
+| `UHodgeALSLocomotion` | `CodexText/HodgeALSLocomotion.*` | ALS 风格 6 向动画（方向 / 步态 / 脚锁等变量驱动） |
+| `UHodgeGroundedLocomotion` + `UHodgeGroundedAuthoring` | `CodexText/HodgeGroundedLocomotion.*`、`HodgeGroundedAuthoring.cpp` | 平地起停 / 脚锁；Authoring 是编辑器专用脚本库 |
+| `UHodgeLocomotionLabComponent` / `AHodgeLocomotionLabMode` / `UHodgeLocomotionLabAuthoring` | `CodexText/HodgeLocomotionLab.*` | 移动实验组件 + **复用 `AHodgeGameModeBase`** 的独立实验关卡 GameMode + 编辑器工具 |
+| `AHodgeSurvivorHero` / `AHodgeSurvivorMode` / `UHodgeSurvivorHUD` | `CodexText/HodgeSurvivor.*` | 一个自包含的"幸存者类"小玩法（自建输入、刷怪、升级、纯 UMG HUD） |
+
+配套内容在 `Content/CodexText/`（469 个资产 + 6 个关卡，含 `L_MainMenu` / `L_Character` / `L_SurvivalHUD` / `L_Terminal` 与对应 `WBP_*` UMG）；`Config/DefaultEngine.ini` 的 `EditorStartupMap` 就指向 `L_MainMenu`。
+
+> 定位：**AI / MCP 演练 + 动画实验**产物，不是正式玩法。要清理时先确认 `L_*` 关卡与 `BP_*Host` / `WBP_*` 没有被引用，再整体删除。
 
 ---
 
@@ -1013,42 +1074,46 @@ AHodgePlayerController         ← 具体逻辑：相机 / 观战 / Replay / 自
 | **Base / Concrete 分层** | `GameStateBase → GameState`、`PlayerStateBase → PlayerState`、`PlayerControllerBase → PlayerController` |
 | **玩家状态主体** | PawnData 复制、连接类型枚举、队伍/小队、StatTags、观战视角、Push Model |
 | **游戏级 ASC** | `AHodgeGameState` 持有全局 ASC |
-| **玩家 ASC + 双入口** | PlayerState 持有 ASC，`PossessedBy` / `OnRep_PlayerState` 绑定 Avatar |
-| **主 PlayerController** 🆕 | `AHodgePlayerController`（`ALyraPlayerController` 移植）：相机管理器 / 观战 / Replay / 自动奔跑 / `PostProcessInput → ProcessAbilityInput`；已设为默认 PC |
+| **玩家 ASC（单入口）** | PlayerState 持有 ASC；Avatar 由 HeroComponent → `PawnExtension::InitializeAbilitySystem` 初始化 |
+| **主 PlayerController** | `AHodgePlayerController`（`ALyraPlayerController` 移植）：相机管理器 / 观战 / Replay / 自动奔跑 / `PostProcessInput → ProcessAbilityInput`；已设为默认 PC |
 | **GameplayTagStack** | Tag + 数量的 FastArray 增量复制容器 |
-| **ModularGameplay 基础设施** | 4 个 Init State 注册、PlayerState Receiver、PawnExtension 挂载、PawnData 注入 |
-| **HeroComponent（类）** | `UHodgeHeroComponent` 完整实现（输入 / 相机 / ASC 入口），❓ 是否挂载待确认 |
+| **ModularGameplay 基础设施** | 4 个 Init State 注册；Character / PlayerState 双侧 Receiver（生命周期成对）；PawnExtension + HeroComponent 双 Feature 均已挂载；PawnData 注入 |
+| **HeroComponent** ✅ | `UHodgeHeroComponent` 完整实现（输入 / 相机 / ASC 入口）并由 C++ 挂载；额外输入增删闭环 |
+| **AbilitySet 基础授予** | `PlayerState::SetPawnData` 在权威端遍历 `PawnData->AbilitySets` 授予（**未记录句柄，不可撤销**） |
 | **GAS 全套 Lyra 化** | ASC / Ability / AbilityCost / AbilitySet / GlobalAbilitySystem / EffectContext / CueManager / TagRelationship / AbilitySourceInterface |
 | **AbilitySystemGlobals** | 自定义 Globals + ini 配置，自定义 EffectContext 生效 |
 | **伤害 / 治疗闭环** | `UHodgeHealthSet` 的 Pre/Post 结算 + 死亡判定 + Clamp + MaxHealth 压制 |
-| **相机系统** | `Camera/` 7 类完整移植；`PawnData->DefaultCameraMode` + `CM_Default` 已配，第三人称模式可独立使用（❓ 委托待 HeroComponent 绑） |
-| **输入框架** | `UHodgeInputComponent`（`DefaultInputComponentClass` 已指向它）+ InputConfig + 4 个 Lyra 输入类（❓ 绑定调用待 HeroComponent） |
+| **相机系统** | `Camera/` 7 类完整移植；模式资产 `CM_ThirdPerson` / `CM_ThirdPerson_Death`，委托由 HeroComponent 绑定（默认偏移改由蓝图曲线提供） |
+| **输入框架** | `UHodgeInputComponent`（`DefaultInputComponentClass` 已指向它）+ InputConfig + HeroComponent 绑定 + 额外输入增删（❓ 资产配置待验证） |
 | **移动组件 / 动画实例** | `UHodgeCharacterMovementComponent` + `UHodgeAnimInstance` |
-| **GameFeatureAction** | `_AddAbilities` / `_AddGameplayCuePath` / `_AddInputContextMapping` 可用 |
-| **GameplayTag 体系** | 100+ 原生 Tag |
-| **UnrealMCP + AI 工具链** | 编辑器 MCP 插件 + Python 前端 + `AGENTS.md` / `.cursor/rules` / `.codex/config.toml` |
+| **GameFeatureAction** | `_AddAbilities` / `_AddGameplayCuePath` / `_AddInputContextMapping` / `_AddInputBinding` 可用（`_AddWidget` 仍注释），但无插件实例、未运行验证 |
+| **GameplayTag 体系** | `HodgeGameplayTags.h` 原生 Tag + 新增 `Config/DefaultGameplayTags.ini`（目前仅 `a` / `Ability.Attack` 两条） |
+| **AI 工具链** | `UnrealMCP` + `McpAutomationBridge` 两个 Editor-only 插件 + `Tools/` 前端 + `AGENTS.md` / `.cursor/rules` / `.codex/config.toml` |
+| **本地知识库** | `Docs/KnowledgeBase/`（含 `kb.py` 的 `check` / `search` / `refresh` 工具） |
+| **CodexText 实验模块** | ALS 风格动画、LocomotionLab、Survivor 小玩法（隔离，不影响主体系） |
 | **编译优化** | 全项目 `.gen.cpp` 改 `#include UE_INLINE_GENERATED_CPP_BY_NAME(ClassName)` |
 
 ### 7.2 未完成 🚧
 
 | 优先级 | 事项 | 说明 |
 |---|---|---|
-| 🔴 P0 | **确认 / 补上 HeroComponent** 🔥 | C++ 侧没有 `CreateDefaultSubobject`，蓝图是否添加待确认。最稳是直接在 `AHodgeHeroCharacter` 构造里挂上（一行点亮输入 / 相机 / 角色侧 ASC） |
-| 🔴 P0 | **让 PawnData 指向正确的 Pawn** | `DA_Dafult_PawnData.PawnClass` 要指向 `AHodgeHeroCharacter` / `BP_Hero_Pover`，否则生成基类（无 PawnExtension）→ `SetPawnData` 静默跳过 |
-| 🔴 P0 | **确认 PawnData 的 `InputConfig`** | 要让 `InitializePlayerInput` 找得到 Move / Look_Mouse / Look_Stick / Crouch / AutoRun，并给 `DefaultInputMappings` 填 `IMC_Default` |
+| 🔴 P0 | **AbilitySet 授予补句柄** | 现在只授不撤；换装 / 重生 / 撤销前必须有按来源保存的 `GrantedHandles`，否则无法回收也无法真正防重 |
+| 🔴 P0 | **编辑器确认资产接线** | `DA_Dafult_PawnData`（`PawnClass` / `InputConfig` / `DefaultCameraMode`）、`BP_Hero_Pover` 的 `DefaultInputMappings`、`DA_HodgeInputConfig` 的映射、`GA_Attack` / `IA_Attack` —— 文本无法读取 `.uasset` 内部值 |
+| 🔴 P0 | **跑一次 PIE 验收主链** | 输入 / 相机 / 角色侧 ASC / AbilitySet 授予目前都只是"源码已接通"，尚未运行验证 |
+| 🟠 P1 | **命中 → 死亡闭环** | `OnHealthChanged` / `OnOutOfHealth` 无消费者；`CombatCharacter` 的 HealthComponent 创建与事件绑定仍注释 |
+| 🟠 P1 | **第一个 C++ 攻击 Ability** | `UHodgeGameplayAbility` 无 C++ 子类；`GA_Attack` 蓝图资产的父类与命中判定待定 |
 | 🟠 P1 | **接上 Cue 路径增删** | `HodgeGameFeaturePolicy.cpp:39` 的 Observer 注册是注释；`OnGameFeatureUnregistering` 与 `InitializeGameplayCueManager()` 空实现 |
-| 🟠 P1 | **ASC 初始化迁到 PawnExtension** | HeroComponent 生效后自动完成，然后删掉双入口 |
-| 🟠 P1 | **建立独立 Log Category** | 全部用 `LogTemp`（目前还靠 `[HODGE-DBG]` 调试日志），`HodgeLogChannels.h` 不存在 |
-| 🟠 P1 | **清理过时注释** | 部分注释还写着已删除的旧函数名 |
-| 🟡 P2 | **第一个 Ability 子类 + AbilitySet 资产** | `UHodgeGameplayAbility` 无子类，`Content/` 无 AbilitySet / GA 资产 |
-| 🟡 P2 | **给死亡事件接消费者** | `OnHealthChanged` / `OnOutOfHealth` 无人监听，死亡流程走不起来 |
-| 🟡 P2 | **解开 AbilitySets 授予循环** | `HodgePlayerState::SetPawnData` 里的循环仍注释（GameFeature 路径是通的） |
+| 🟠 P1 | **敌人 ASC** | 先定 ASC 所有者（PlayerState 还是 Character），再验服务器伤害目标与远端状态 |
+| 🟠 P1 | **建立独立 Log Category** | 全部用 `LogTemp`（还靠 `[HODGE-DBG]` 临时日志），`HodgeLogChannels.h` 不存在 |
+| 🟠 P1 | **清理过时注释与临时日志** | `HodgeHeroCharacter` 的双入口注释、`[HODGE-DBG]` 诊断日志、已删函数名的残留说明 |
+| 🟡 P2 | **换 Pawn / 重生清理顺序运行验证** | 控制器 `OnUnPossess` 先清 ASC Avatar，可能跳过 PawnExtension 中依赖 Avatar 匹配的分支 |
 | 🟡 P2 | 建 `UHodgeWorldSettings` | 让地图能指定默认 Experience |
 | 🟡 P2 | 建第一个 GameFeature 插件实例 | 4 个 Action 已可用 |
-| 🟡 P2 | 战斗系统 | `HodgeCombatComponentBase` 空的；`HodgeEnemyCharacter` 全注释 |
+| 🟡 P2 | 战斗系统 | `HodgeCombatComponentBase` 空的；`HodgeEnemyCharacter` 只有 AI 自动控制 |
 | 🟡 P2 | Loading Screen | `ILoadingProcessInterface` 与 `UpdateInitialGameContentLoadPercent` 无消费者 |
-| 🟡 P2 | UI 系统 | 完全没有 |
-| 🟡 P2 | 清理 `Content/CodexText/` | AI 演练产物，无引用 |
+| 🟡 P2 | UI 系统 | 框架层完全没有（CodexText 的 UMG 是独立实验） |
+| 🟡 P2 | 统一 `EditorStartupMap` 与 `GameDefaultMap` | 前者指向 `CodexText/L_MainMenu`，后者仍是 UE 模板图 |
+| 🟡 P2 | 清理 `Content/CodexText/` | AI 演练 + 动画实验产物，确认无引用后清理 |
 | 🟢 P3 | Equipment / Inventory / Weapon 三段式模型 | 待建 |
 | 🟢 P3 | Teams 阵营系统 | `MyTeamID` 有了，但子系统没有 |
 | 🟢 P3 | AI（AIController / BehaviorTree / EQS） | 待建（AIModule 依赖已加） |
@@ -1058,20 +1123,21 @@ AHodgePlayerController         ← 具体逻辑：相机 / 观战 / Replay / 自
 ### 7.3 路线图
 
 ```
-阶段 A（当前）：把角色接电 —— 从"能编译"到"能操控"
-  ├─ 确认/挂载 UHodgeHeroComponent（C++ 或蓝图）      ★ 一行点亮输入/相机/ASC
-  ├─ DA_Dafult_PawnData 配 PawnClass（Hero 蓝图）
-  ├─ DA_HodgeInputConfig 配齐 Move/Look/Crouch/AutoRun + IMC_Default
-  └─ 验证：能跑动、能转视角、能切相机模式；确认后删掉双入口
+阶段 A（源码已完成，待运行验收）：把角色接电
+  ├─ ✅ UHodgeHeroComponent 由 C++ 挂载（输入 / 相机 / ASC 三件事有确定入口）
+  ├─ ✅ ASC 单入口 + AbilitySet 基础授予 + 额外输入增删闭环
+  ├─ ✅ Character / PlayerState 双侧 Receiver 生命周期成对
+  └─ ⏳ 编辑器确认资产接线 → PIE 验证能跑动 / 转视角 / 切相机 → 记录验收结果
 
-阶段 B（2~3 周）：战斗闭环
-  ├─ 第一个 GameplayAbility 子类 + AbilitySet 资产 → GE 伤害 → 死亡
-  ├─ 接上 HealthSet 的 OnOutOfHealth（当前无消费者）
-  └─ 解注释 AbilitySets 授予循环 + Cue 路径 Observer
+阶段 B：战斗闭环
+  ├─ 第一个 C++ GameplayAbility + AbilitySet 资产 → GE 伤害 → 死亡
+  ├─ 接上 HealthSet 的 OnHealthChanged / OnOutOfHealth
+  ├─ AbilitySet 引入 GrantedHandles（可撤销、可防重）
+  └─ 解注释 Cue 路径 Observer
 
 阶段 C：联机验证 + 内容层
-  ├─ Dedicated Server + 2 Client 验证同步
-  ├─ 建 GameFeature 插件，验证热插拔
+  ├─ Dedicated Server + 2 Client 验证同步（需先补 Server Target）
+  ├─ 建 GameFeature 插件，验证激活 / 停用 / 再次激活
   └─ Equipment / Inventory 三段式模型
 ```
 
@@ -1140,6 +1206,7 @@ ExperienceComponent->CallOrRegister_OnExperienceLoaded(...)
 
 | 文档 | 回答什么问题 | 什么时候读 |
 |---|---|---|
+| [`Docs/KnowledgeBase/README.md`](Docs/KnowledgeBase/README.md) | **本项目当前到底是什么状态**、断点在哪、怎么验收 | **每次动手前先读**，它区分"源码已实现 / 未接通 / 待编辑器验证 / 建议" |
 | [`LYRA_LEARNING_GUIDE.md`](LYRA_LEARNING_GUIDE.md) | **学什么**、按什么顺序学、哪些重要 | 规划学习路线时 |
 | [`LYRA_RUNTIME_FLOW.md`](LYRA_RUNTIME_FLOW.md) | **怎么跑**、执行顺序、各系统生命周期、调试技巧 | 读 Experience / Init State 代码时边读边对照 |
 
@@ -1168,7 +1235,8 @@ ExperienceComponent->CallOrRegister_OnExperienceLoaded(...)
 
 ### 9.3 第一个月：参与修复与扩展
 
-- 完成 [§7.3 路线图](#73-路线图) 阶段 A：确认/挂上 `UHodgeHeroComponent`、`PawnClass` 指向 Hero 蓝图、`InputConfig` 配齐 Move / Look / Crouch / AutoRun 与 `IMC_Default`（做完项目就从"能编译"变成"能操控"）
+- 接手 [§7.3 路线图](#73-路线图) 阶段 A 的**验收**：编辑器里确认 `DA_Dafult_PawnData`（`PawnClass` / `InputConfig` / `DefaultCameraMode`）与 `BP_Hero_Pover` 的 `DefaultInputMappings`，再 PIE 验证能跑动 / 转视角 / 切相机模式；做完这一步才算从"源码已接通"变成"能操控"
+- 先读 [`Docs/KnowledgeBase/12-integration-backlog.md`](Docs/KnowledgeBase/12-integration-backlog.md)（当前接通清单）与 [`Docs/KnowledgeBase/16-validation.md`](Docs/KnowledgeBase/16-validation.md)（验收场景），再动代码 —— 它们区分了"源码已实现 / 待编辑器验证 / 建议"，能省掉大量猜测
 - 配套阅读：`LYRA_RUNTIME_FLOW.md` 第 7 章（四个状态、`CanChangeInitState`、协作式推进）和第 8.1 节（ASC 初始化）—— 本项目的 PawnExtension / HeroComponent 就是照它写的
 - 对照阅读 Lyra 源码：`LyraCharacter` / `LyraCamera` / `LyraHeroComponent` / `LyraAnimInstance` —— 本项目新代码基本是它们的移植，有疑问回原版查最准
 
@@ -1192,7 +1260,8 @@ ExperienceComponent->CallOrRegister_OnExperienceLoaded(...)
 - [ ] 能解释为什么 Pawn 要等 Experience 加载完才生成
 - [ ] 能说出 `GetPawnDataForController` 的三级回退顺序
 - [ ] 能解释 Base / Concrete 分层的好处
-- [ ] 能说出双入口与 `InitializeAbilitySystem` 的差别，以及 Init State 链为什么更优
+- [ ] 能说出 HeroComponent 在 `DataInitialized` 做的三件事（角色侧 ASC / 输入绑定 / 相机模式），以及 Init State 链为什么优于各处手动初始化
+- [ ] 能解释 `AbilitySet->GiveToAbilitySystem(ASC, nullptr)` 里"没有句柄"会带来什么问题
 - [ ] 能解释 HealthSet 里 Damage 为什么是 Meta 属性
 - [ ] 能说出 Push Model 下改属性必须做什么
 - [ ] 能解释 GameplayTagStack 为什么用 FastArray
@@ -1226,6 +1295,7 @@ ExperienceComponent->CallOrRegister_OnExperienceLoaded(...)
 | `Failed to identify experience, loading screen will stay up forever` | `OnMatchAssignmentGiven` | Experience Id 无效 |
 | `EXPERIENCE: Wanted to use %s but couldn't find it` | `HandleMatchAssignmentIfNotExpectingOne` | 指定的 Experience 找不到，已回退默认 |
 | `OW GameInstance Init` | `UHodgeGameInstanceBase::Init` | 确认 GameInstance 初始化 |
+| `HODGE-DBG` 系列 | `UHodgeHeroComponent`（**临时诊断日志**） | 过滤 `HODGE-DBG` 可见：逐条 IMC 条目与 `RegisterWithSettings`（false 表示该 IMC 不会生效）、缺失的 native tag、`CanChangeInitState` 的 `BLOCKED` 分支、相机绑定 `CALLBACK`。定位完成后应删除这些日志 |
 
 ### 10.4 关键断点位置
 
@@ -1239,12 +1309,13 @@ ExperienceComponent->CallOrRegister_OnExperienceLoaded(...)
 | Pawn 何时生成 / 用哪个类 | `AHodgeGameModeBase::OnExperienceLoaded()` / `GetDefaultPawnClassForController_Implementation()` |
 | PawnData 何时设置 | `AHodgePlayerState::SetPawnData()` |
 | PawnExtension 拿到 PawnData 了吗 | `AHodgeGameModeBase::SpawnDefaultPawnAtTransform_Implementation()` |
-| ASC 的 Avatar 何时绑定 | `AHodgeHeroCharacter::PossessedBy()` / `OnRep_PlayerState()` |
+| ASC 的 Avatar 何时绑定 | `UHodgeHeroComponent::HandleChangeInitState()` → `UHodgePawnExtensionComponent::InitializeAbilitySystem()`（`PossessedBy` / `OnRep_PlayerState` 现在只调 Super，不适合下断点） |
 | GameData 何时加载 | `UHodgeAssetManager::LoadGameDataOfClass()` |
 | 伤害如何结算 | `UHodgeHealthSet::PostGameplayEffectExecute()` |
-| Init State 链推进到哪 | `UHodgePawnExtensionComponent::CanChangeInitState()` |
-| 输入绑定是否执行 | `UHodgeHeroComponent::InitializePlayerInput()`（**断点不命中 = 组件没挂上**） |
-| 角色侧 ASC 为什么是空 | `UHodgeHeroComponent::HandleChangeInitState()` → `InitializeAbilitySystem()` |
+| Init State 链推进到哪 | `UHodgePawnExtensionComponent::CanChangeInitState()` / `UHodgeHeroComponent::CanChangeInitState()` |
+| 输入绑定是否执行 | `UHodgeHeroComponent::InitializePlayerInput()`（不命中说明 Hero 的 Init State 没走到 `DataInitialized`） |
+| 角色侧 ASC 为什么是空 | `UHodgePawnExtensionComponent::InitializeAbilitySystem()` 是否被调到 |
+| AbilitySet 授予是否发生 | `AHodgePlayerState::SetPawnData()` 里的 `GiveToAbilitySystem` 循环 |
 | HeroComponent 链卡在哪 | 过滤日志 `HODGE-DBG`，看 `CanChangeInitState` 是哪个条件返回了 false |
 
 ### 10.5 推荐实验
@@ -1264,7 +1335,8 @@ ExperienceComponent->CallOrRegister_OnExperienceLoaded(...)
 | 4 | PawnData 有了吗？ | 断点 `AHodgePlayerState::SetPawnData()` |
 | 5 | Pawn 类对不对？ | 断点 `GetDefaultPawnClassForController_Implementation()` |
 | 6 | PawnExtension 拿到 PawnData 了吗？ | 看 `SpawnDefaultPawnAtTransform` 里 `FindPawnExtensionComponent` 是否为 nullptr |
-| 7 | ASC 的 Avatar 绑上了吗？ | 断点 `PossessedBy()` / `OnRep_PlayerState()` |
+| 7 | ASC 的 Avatar 绑上了吗？ | 断点 `UHodgePawnExtensionComponent::InitializeAbilitySystem()`；确认 HeroComponent 走到了 `DataInitialized` |
+| 8 | 输入 / 相机为什么没反应？ | 过滤 `HODGE-DBG`：IMC 是否因 `RegisterWithSettings=false` 被跳过、native tag 是否缺配置、相机 `CALLBACK` 有没有打出来 |
 
 ---
 
@@ -1276,29 +1348,32 @@ ExperienceComponent->CallOrRegister_OnExperienceLoaded(...)
 
 | 问题 | 影响 | 位置 |
 |---|---|---|
-| **`UHodgeHeroComponent` 挂载状态未确认** 🔴 | C++ 侧没人 `CreateDefaultSubobject`；若蓝图也没加，则 `InitializePlayerInput` / `DetermineCameraModeDelegate` / `InitializeAbilitySystem` 三件事全不执行，**输入、相机、角色侧 ASC 一起瘫痪** | `Private/Character/HodgeHeroCharacter.cpp`、`Content/Main/Character/Hero/BP_Hero_*.uasset` |
-| **`DefaultPawnClass` 是基类** | GameMode 构造里仍是 `AHodgeCharacterBase`（没有 PawnExtensionComponent）→ `SetPawnData` 静默跳过 | `Private/Core/GameMode/HodgeGameModeBase.cpp` |
-| **PawnData 的 `PawnClass` 未配（待确认）** | 若没指向 Hero 蓝图，生成的 Pawn 是基类，相机 / 双入口全落空 | `Content/Main/Data/DA_Dafult_PawnData.uasset` |
-| **角色侧 ASC 恒 nullptr** | 转发给 PawnExtension，但 `InitializeAbilitySystem()` 的唯一调用者在 HeroComponent 里（未确认挂载） | `Private/Character/HodgeCombatCharacter.cpp` |
-| **相机模式栈可能空转** | 数据层（`PawnData->DefaultCameraMode` + `CM_Default`）已就位，只差 HeroComponent 绑委托 | 见 [§6.13](#613-camera-系统) |
+| **AbilitySet 只授不撤** 🔴 | `GiveToAbilitySystem(ASC, nullptr)` 未收集 `GrantedHandles` → 无法撤销、无法换装、无法按来源防重（目前只靠 `SetPawnData` 的提前返回） | `HodgePlayerState.cpp::SetPawnData` |
+| **命中 → 死亡链路断在中间** | `HealthSet` 会广播 `OnHealthChanged` / `OnOutOfHealth`，但没有消费者；`CombatCharacter` 的 HealthComponent 创建与事件绑定仍是注释 | `HodgeHealthSet.cpp`、`HodgeCombatCharacter.cpp` |
 | **Cue 路径增删没生效** | Observer 注册行是注释；`OnGameFeatureUnregistering` 与 `InitializeGameplayCueManager()` 空实现 | `HodgeGameFeaturePolicy.cpp:39`、`HodgeAssetManager.cpp` |
-| **死亡事件无消费者** | `OnHealthChanged` / `OnOutOfHealth` 有人广播、没人监听；`OnDeathStarted` 的触发者（HealthComponent）仍是注释 | `HodgeHealthSet.cpp`、`HodgeCombatCharacter.cpp` |
-| **`UHodgeGameplayAbility` 没有子类** | Ability 体系还没真正用起来；`UHodgeAbilityCost` 同理 | `AbilitySystem/Abilities/` |
-| **PawnData 5 个字段都没配上** | 资产里没填、AbilitySets 授予代码注释 → 数据驱动只在纸面上 | `DA_Dafult_PawnData.uasset` |
+| **`DefaultPawnClass` 回退是基类** | GameMode 构造里仍是 `AHodgeCharacterBase`（没有 PawnExtensionComponent）→ 若 `PawnData->PawnClass` 也没配，`SetPawnData` 静默跳过 | `HodgeGameModeBase.cpp` |
+| **敌人没有 ASC 初始化** | `AHodgeEnemyCharacter` 只设置 `AutoPossessAI`，没有 ASC 创建 / 关联 → 服务器伤害目标与远端状态无从谈起 | `HodgeEnemyCharacter.cpp` |
+| **`UHodgeGameplayAbility` 没有 C++ 子类** | Ability 体系在 C++ 侧没真正被使用；`UHodgeAbilityCost` 同理（`GA_Attack` 是蓝图资产，父类与逻辑待确认） | `AbilitySystem/Abilities/` |
+| **IMC 会被条件跳过** | `AddMappingContext` 被 `bRegisterWithSettings` 包住，为 false 时 IMC 不生效；且开头 `ClearAllMappings()` 会清掉其他来源的 Mapping | `HodgeHeroComponent.cpp::InitializePlayerInput` |
+| **`AddInputMappings` / `RemoveInputMappings` 是空壳** | IMC 增删没地方做（只剩 HeroComponent 一条路径） | `Input/HodgeInputComponent.cpp` |
 | **属性集不是配置驱动** | 靠 `CreateDefaultSubobject` 写死，不再由 `AttributeSetClasses` 配置 | `AHodgePlayerState` 构造 |
 | `OnRep_PawnData()` / `OnRep_MyTeamID()` / `OnRep_MySquadID()` 是空的 | 复制后无响应 | `HodgePlayerState.cpp` |
-| `AddInputMappings` / `RemoveInputMappings` 是空壳 | IMC 增删没地方做 | `Input/HodgeInputComponent.cpp` |
 | 4 个 Lyra 输入类是空壳 | `AimSensitivityData` / `InputUserSettings` / `MappableKeyProfile` / `InputModifiers` 均无使用者 | `Input/` |
+| **PawnData 字段是否填全未知** | 资产是二进制，`PawnClass` / `InputConfig` / `DefaultCameraMode` / `AbilitySets` 的实际赋值只能在编辑器确认 | `DA_Dafult_PawnData.uasset` |
+| **诊断日志未清理** | HeroComponent / CombatCharacter 里的 `[HODGE-DBG]` 是临时定位用日志 | `HodgeHeroComponent.cpp` 等 |
+| **换 Pawn / 重生清理顺序未验证** | 控制器 `OnUnPossess` 先清 ASC Avatar，可能让 PawnExtension 中依赖 Avatar 匹配的清理分支跳过 | `HodgePlayerController.cpp`、`HodgePawnExtensionComponent.cpp` |
 
 ### 11.2 配置与命名
 
 | 问题 | 说明 |
 |---|---|
-| `GlobalDefaultGameMode` 用旧类名 | `/Script/Hodgepodge.HodgepodgeGameModeBase`，靠 `[CoreRedirects]` 生效（`GameInstanceClass` 已在本轮改成新类名 `HodgeGameInstanceBase`） |
-| 资产名拼写错误 | `DA_Dafult_GameData` / `DA_DafultPawnData`（`Dafult` 应为 `Default`），已写进 ini，改名要同步 |
-| GameData 资产重复 | `Content/Main/Data/` 下同时有 `DA_Dafult_GameData` 和 `DA_DafultGameData` |
+| `GlobalDefaultGameMode` 用旧类名 | `/Script/Hodgepodge.HodgepodgeGameModeBase`，靠 `[CoreRedirects]` 生效（`GameInstanceClass` 已改成新类名 `HodgeGameInstanceBase`） |
+| 资产名拼写错误 | `DA_Dafult_GameData` / `DA_Dafult_PawnData`（`Dafult` 应为 `Default`），已写进 ini / 代码，改名要同步 |
 | 目录名拼写错误 | `Core/PlayState/` 应为 `Core/PlayerState/` |
 | 引擎插件依赖没写全 | 模块用了 `ModularGameplay` / `SignificanceManager` 但 `.uproject` 的 `Plugins` 段没声明（只是 UBT 警告） |
+| `UNTLink` 状态 | `.uproject` 中 `Enabled: false`（显式禁用），但插件自身的 `EnabledByDefault` 仍为 true，别误以为还在使用 |
+| 编辑器 / 游戏启动图不一致 | `EditorStartupMap=/Game/CodexText/L_MainMenu`，`GameDefaultMap=/Game/ThirdPerson/Maps/ThirdPersonMap` |
+| `.codex/config.toml` 路径写死 | 指向 `D:\Hodgepodge\...`，换机器要改 |
 
 ### 11.3 安全隐患
 
@@ -1312,8 +1387,11 @@ ExperienceComponent->CallOrRegister_OnExperienceLoaded(...)
 |---|---|
 | 日志全部用 `LogTemp` | 无独立 Log Category，`HodgeLogChannels.h` 不存在 |
 | 注释机器翻译痕迹 | `Actor`→"演员"、`GameplayAbility`→"能力" 等中英混排 |
+| 过时注释 | `HodgeHeroCharacter.h/.cpp` 仍写着"GAS 双初始化入口"，实际已只调 Super |
+| `[HODGE-DBG]` 临时日志 | HeroComponent 等处的诊断日志，定位后应清理 |
 | 死代码未清理 | `HodgeEnemyCharacter` 大段注释、`MotionWarpingComponent` 注释、`HostDedicatedServerMatch` 整段注释 |
-| `Content/CodexText/` 是 AI 演练产物 | 5 蓝图 + 4 关卡 + 4 UMG + 53 贴图，全仓库无引用 |
+| `Content/CodexText/` 是演练 + 实验产物 | 469 个资产 + 6 个关卡（含 `WBP_*` UMG）与 `Source` 里的 `CodexText` 模块，主体系无引用 |
+| 输入资产疑似 ALS 遗留 | `Main/Input/InputAction/` 共 17 个 IA，其中 `IA_Ragdoll` / `IA_Slomo` / `IA_OverlayModeMenu` 等偏 ALS 命名，是否被 InputConfig 引用需在编辑器确认 |
 | Lyra 遗留 Tag | `HodgeGameplayTags.h` 里有 `Lyra_*`、`ShooterGame_*` 前缀的 Tag |
 | `// 111屎山代码来袭` | 多个文件顶部的自嘲注释，无害 |
 
@@ -1324,7 +1402,9 @@ ExperienceComponent->CallOrRegister_OnExperienceLoaded(...)
 | Locomotion 先留白 | 不立即自研全套；先用引擎默认移动 + `UHodgeAnimInstance` 的 Tag 驱动重建动画层 |
 | 不引入 CommonUI / UIExtension / GameSettings / CommonUser | 体量大、非核心矛盾，延后 |
 | 保留注释掉的 `_AddWidget` | 作为参考实现，启用前需先补依赖 |
-| 走 Init State 链而非简单双入口 | 依赖会越来越多（PawnData / InputConfig / AbilitySet），双入口会失控。当前处于迁移中途 |
+| 走 Init State 链而非各处手动初始化 | 依赖会越来越多（PawnData / InputConfig / AbilitySet），手动入口会失控。现已按 Lyra 落地，旧的 ASC 双入口已移除 |
+| 主模块不依赖 ALS 插件 | ALS-Refactored 仅作为动画参考与实验素材；主体系的移动 / 动画仍走 `UHodgeCharacterMovementComponent` + `UHodgeAnimInstance` |
+| CodexText 用独立实现而非接入框架 | 实验内容（含 UMG、自建输入）刻意绕开 Experience / GAS，避免污染主体系 |
 
 ---
 
@@ -1341,7 +1421,8 @@ Source/Hodgepodge/Private/Core/PlayState/HodgePlayerState.cpp              玩�
 Source/Hodgepodge/Private/Core/GameState/HodgeGameState.cpp                Experience 宿主 + 全局 ASC
 Source/Hodgepodge/Private/Core/GameInstance/HodgeGameInstanceBase.cpp      Init State 链注册
 Source/Hodgepodge/Private/Component/HodgePawnExtensionComponent.cpp        Init State 节点 + ASC 容器 ★★★
-Source/Hodgepodge/Private/Component/HodgeHeroComponent.cpp                 输入 / 相机 / ASC 入口（❓ 挂载待确认）★★★
+Source/Hodgepodge/Private/Component/HodgeHeroComponent.cpp                 输入 / 相机 / ASC 入口（✅ 已挂载）★★★
+Source/Hodgepodge/Private/Character/HodgeHeroCharacter.cpp                 玩家角色：挂 HeroComponent（原双入口已退化）★★★
 Source/Hodgepodge/Private/Core/PlayerController/HodgePlayerController.cpp  主 PC：相机 / 观战 / ProcessAbilityInput ★★★
 Source/Hodgepodge/Private/AbilitySystem/AttributeSet/HodgeHealthSet.cpp    伤害治疗结算 + 死亡判定 ★★★
 Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h       Lyra ASC：输入缓冲 / ActivationGroup
@@ -1362,18 +1443,24 @@ Source/Hodgepodge/Public/Interface/LoadingProcessInterface.h     极简接口设
 
 ```
 Config/DefaultEngine.ini     AssetManagerClassName、GlobalDefaultGameMode（旧类名）、
-                             GameInstanceClass（已改新类名）、
+                             GameInstanceClass（新类名）、
                              LocalPlayerClassName=/Script/Hodgepodge.HodgeLocalPlayerBase、
+                             EditorStartupMap=/Game/CodexText/L_MainMenu、
                              [CoreRedirects]（勿删）
 Config/DefaultGame.ini       [/Script/HodgePodge.HodgeAssetManager] 数据路径、
                              PrimaryAssetTypesToScan ★ 共 7 项：
                                Map / PrimaryAssetLabel / HodgeGameData /
                                GameFeatureData / HodgeExperienceDefinition /
                                HodgePawnData / HodgeExperienceActionSet
-                             [/Script/GameplayAbilities.AbilitySystemGlobals] ★ 新增：
+                             [/Script/GameplayAbilities.AbilitySystemGlobals]：
                                AbilitySystemGlobalsClassName / GlobalGameplayCueManagerClass /
                                GameFeaturesManagerClassName / ActivateFail*Tag 等
-Config/DefaultInput.ini      Enhanced Input 按键映射
+                             [/Script/GameFeatures.GameFeaturesSubsystemSettings]：
+                               GameFeaturesManagerClassName
+                             [/Script/McpAutomationBridge.McpAutomationBridgeSettings]：
+                               NativeMCPPort=3016 / ListenPorts=8116
+Config/DefaultInput.ini      DefaultInputComponentClass=/Script/Hodgepodge.HodgeInputComponent
+Config/DefaultGameplayTags.ini  🆕 GameplayTagList（当前仅 a / Ability.Attack）
 ```
 
 > 新建 Experience 蓝图放在 `/Game/Main/Experiences/` 即自动被扫到，无需改 ini。
@@ -1411,18 +1498,19 @@ ULocalPlayer
 ACharacter
 └── AHodgeCharacterBase                  ← 构造换装 UHodgeCharacterMovementComponent
     └── AHodgeCombatCharacter            ← Lyra Character 移植（相机 / FastShared / 死亡 / Team）
-        ├── AHodgeHeroCharacter          ← 玩家（⚠️ 缺 HeroComponent）
+        ├── AHodgeHeroCharacter          ← 玩家（构造挂 UHodgeHeroComponent）
         └── AHodgeEnemyCharacter         ← 骨架
 
 UActorComponent
 └── UHodgeActorComponentBase
     ├── UHodgeCombatComponentBase
     ├── UHodgeInteractionComponentBase
-    └── UHodgeMovementComponentBase      （空壳，别用）
+    ├── UHodgeLocomotionLabComponent       （CodexText 实验）
+    └── UHodgeMovementComponentBase        （空壳，别用）
 
 UPawnComponent + IGameFrameworkInitStateInterface
 ├── UHodgePawnExtensionComponent         （Feature ①：PawnData + ASC 容器）
-└── UHodgeHeroComponent                  （Feature ②：输入 + 相机 + ASC 入口，❓ 挂载待确认）
+└── UHodgeHeroComponent                  （Feature ②：输入 + 相机 + ASC 入口）
 
 UCharacterMovementComponent
 └── UHodgeCharacterMovementComponent     （GroundInfo / MovementStopped）
@@ -1462,21 +1550,38 @@ UPrimaryDataAsset
 UDataAsset
 ├── UHodgeInputConfig                    （InputAction ↔ InputTag）
 └── UHodgeAbilityTagRelationshipMapping  （AbilityTag 的 Block/Cancel 关系）
+
+UHodgeAnimInstance
+├── UHodgeALSLocomotion                  （CodexText：ALS 风格 6 向动画）
+│   └── UHodgeGroundedLocomotion         （CodexText：平地起停 / 脚锁）
+ACharacter
+└── AHodgeSurvivorHero                   （CodexText：自包含小玩法英雄）
+AGameModeBase
+└── AHodgeSurvivorMode                   （CodexText：不接 Hodge 框架）
+AHodgeGameModeBase
+└── AHodgeLocomotionLabMode              （CodexText：复用 Hodge 框架的独立实验关卡）
+UActorComponent
+└── UHodgeLocomotionLabComponent         （CodexText）
+UUserWidget
+└── UHodgeSurvivorHUD                    （CodexText）
 ```
 
 ### 12.5 参考文档
 
-> 前两份是 **Lyra 原版**的学习文档（讲 Lyra 自己怎么跑）。本项目大量直接移植 Lyra，把类名前缀 `Lyra` 换成 `Hodge` 基本就能对应上。
+> 前两份是 **Lyra 原版**的学习文档（讲 Lyra 自己怎么跑）。本项目大量直接移植 Lyra，把类名前缀 `Lyra` 换成 `Hodge` 基本就能对应上。**本项目自身的现状**以 `Docs/KnowledgeBase/` 为准。
 
 | 文档 | 内容 | 本项目对应关系 |
 |---|---|---|
+| [`Docs/KnowledgeBase/README.md`](Docs/KnowledgeBase/README.md) | **本项目**本地知识库：架构、启动链、初始化、输入 / GAS / 战斗 / 相机 / 网络、验收手册、源码与配置索引 | 全篇；[`12-integration-backlog.md`](Docs/KnowledgeBase/12-integration-backlog.md) 是当前断点清单，[`16-validation.md`](Docs/KnowledgeBase/16-validation.md) 是验收手册 |
 | [`LYRA_LEARNING_GUIDE.md`](LYRA_LEARNING_GUIDE.md) | Lyra 架构学习指南：学什么、按什么顺序学。第 4 章的十大理念是本项目的设计宪法 | 全部理念的来源 |
 | [`LYRA_RUNTIME_FLOW.md`](LYRA_RUNTIME_FLOW.md) | Lyra 运行时执行链路：Experience 决策、加载状态机、启动时序、Pawn Init State 链、调试技巧 | §6.2 Experience（第 4~6 章）、§6.6 Init State（第 7 章）、§6.8 ASC 初始化（第 8.1 节） |
 | [`UE5 开放世界动作 RPG 架构方案 V2.md`](UE5%20开放世界动作%20RPG%20架构方案%20V2.md) | 总体方案与 Phase 划分，含角色职责、组件设计、DS 路线 | §7 进度的 Phase 依据 |
+| [`Docs/Design/ability-timeline.md`](Docs/Design/ability-timeline.md) | **未实现的设计草案**：攻击逻辑时间轴与表现分离 | 设计意图参考，**不是现状** |
+| [`Docs/AI_DEVELOPMENT.md`](Docs/AI_DEVELOPMENT.md) | AI 开发与验证流程（构建命令、验证边界） | §4.2 构建命令的来源 |
 
 ### 12.6 AI 辅助开发工具链
 
-本仓库引入了一套"让 AI 直接操作 UE 编辑器"的工具链。**不影响游戏运行时**，主模块 `Hodgepodge` 不依赖其中任何一个。
+本仓库引入了两套"让 AI 直接操作 UE 编辑器"的插件链。**不影响游戏运行时**，主模块 `Hodgepodge` 的 `Build.cs` 里没有它们。
 
 ```
 AI 客户端（Codex / Cursor / 其它 MCP 客户端）
@@ -1486,19 +1591,25 @@ Tools/UnrealMCP/server.py        Python MCP 前端（FastMCP），只暴露 15 �
 Plugins/UnrealMCP/               UE 编辑器插件（UEditorSubsystem），命令派发到游戏线程
    ↓
 编辑器：创建蓝图 / 加组件 / 编译 / UMG / 资产查看 …
+
+另一条独立链路：Plugins/McpAutomationBridge/（Editor-only；端口在 DefaultGame.ini 配置：
+NativeMCPPort=3016 / ListenPorts=8116，默认只监听回环且要求能力令牌）
 ```
 
 | 组成 | 说明 |
 |---|---|
 | `Plugins/UnrealMCP/` | **第三方开源**（`github.com/voodoofox/unreal-mcp`，MIT），本地做过 UE5.5 适配：修 include、关掉 Niagara 能力、`EnabledByDefault=true`。`Type: Editor`，只在编辑器生效 |
+| `Plugins/McpAutomationBridge/` 🆕 | 另一套编辑器 MCP 桥（Editor-only，`.uproject` 中 `TargetAllowList: ["Editor"]`）。开关与端口见 `Config/DefaultGame.ini` 的 `[/Script/McpAutomationBridge.McpAutomationBridgeSettings]` |
 | `Tools/UnrealMCP/server.py` | Python MCP 服务端。**刻意不暴露任意 Python / 控制台执行**；每次调用先 `identity()` 校验是不是本工程；README 强制"改动前先 duplicate 备份、先读 Pin 再连线、编译成功才保存" |
+| `Tools/`（其它） | `ChiR24MCP` / `LocomotionLab` / `ModelRepair` 等脚本与说明 |
 | `AGENTS.md` | 项目级 AI 协作规则：以现有源码为准、UE 5.5 不改引擎、单模块 + `Hodge` 命名、GAS/PlayerState 所有权、交付需说明验证情况 |
 | `.agents/ue-project-context.md` | 英文工程事实快照（模块 / 类 / UI / 输入 / 动画现状），给 AI 读的"当前状态说明书" |
 | `.cursor/rules/project.mdc` | `alwaysApply: true` 的指针文件，指向 `AGENTS.md` |
 | `.codex/config.toml` | 注册 `mcp_servers.hodge_blueprints`，用 venv 的 python 启动 `server.py` |
+| `Docs/KnowledgeBase/` | AI 维护的本地知识库，附带 `kb.py` 的 `check` / `search` / `refresh` 工具 |
 
-> ⚠️ 两处待办：① `.codex/config.toml` 里写死的路径是 `D:\Hodgepodge\...`，和当前工作区 `e:\Project\Git\Hodgepodge` 不一致，换机器要改；② `Content/CodexText/` 是这套工具链的演练产物（示例数据、非正式玩法），全仓库无引用，确认无用后删掉。
+> ⚠️ 注意：`Content/CodexText/` 与 `Source/Hodgepodge/{Public,Private}/CodexText/` 是这套工具链 + 动画实验的产物（示例关卡、UMG、独立玩法），主体系无引用；删除前先确认 `L_*` / `BP_*Host` / `WBP_*` 没有被引用。
 
 ---
 
-*本 README 基于 UE 5.5 + Hodgepodge 当前代码状态（提交 `4db0536`）整理。项目处于活跃的 Lyra 化重构中，**[§7 进度](#7-当前进度) 请优先关注并定期更新**。*
+*本 README 基于 UE 5.5 + Hodgepodge 当前工作区（提交 `5847f99` + 未提交的 `Main` / `CodexText` 资产改动）整理。项目处于活跃的 Lyra 化重构中，**[§7 进度](#7-当前进度) 与 [`Docs/KnowledgeBase`](Docs/KnowledgeBase/README.md) 请优先关注并定期更新**。本次只做文档更新，未执行构建 / 蓝图编译 / PIE / 联机 / 打包验证；文中"已接通"一律指**源码与配置已存在**，不代表运行验收通过。*

@@ -47,7 +47,11 @@ HodgeGameplayAbility::MakeEffectContext 调用父类创建句柄后，尝试提�
 
 当前自定义 Context 的 NetSerialize 复用父类，额外本地字段不会因此自动复制。Iris 路径也转发父类序列化；将来加入必须联网的自定义字段时，需要同步设计序列化和验证。
 
-## 攻击时间轴与 ComboSet（已实现，尚无 C++ 调用点）
+## 攻击时间轴与 ComboSet（⚠️ 已回退，当前不存在）
+
+> **本节内容已作废（历史记录）。** `UHodgeAbilityTimeline`、`UHodgeAbilityTask_PlayTimeline`、`UHodgeComboSet`、`UHodgeAssetManager::PreloadPrimaryAssetBundles`、`HodgeGameplayAbility::PreloadPrimaryAssetsOnGrant` 与 `Attack.*` 系列 Tag 都来自 2026-09-17 核对时的**工作区未提交改动**，随后已被丢弃：当前 `Source/Hodgepodge` 搜不到这些符号，`Config/DefaultGame.ini` 没有 `HodgeAbilityTimeline` / `HodgeComboSet` 扫描项，`HodgeGameplayTags.h` 也搜不到 `Attack`。**攻击/连击目前是"尚未实现"，而不是"有实现缺调用点"。** 下面保留原文仅供了解当时的设计。
+>
+> 未实现的设计意图见 [AbilityTimeline 设计方案](../Design/ability-timeline.md)；回退依据见 [本轮变更](21-update-2026-09-17.md)。
 
 `UHodgeAbilityTimeline`（UPrimaryDataAsset）描述阶段区间（`FHodgeTimelinePhase`）、时间点事件（`FHodgeTimelineEvent`，带 `EHodgeTimelineEventNetPolicy`）和 Montage 软引用，提供 `GetActivePhases` 与编辑器校验/Bundle 收集。`UHodgeComboSet`（UPrimaryDataAsset）持有 `FHodgeAttackNode` 数组和入口表，`FindNode` 按 AttackID 查找。
 
@@ -55,7 +59,7 @@ HodgeGameplayAbility::MakeEffectContext 调用父类创建句柄后，尝试提�
 
 配套的 `HodgeGameplayTags` 分组：`Attack.Entry.*` / `Attack.Transition.*`（数据层入口与转移键）、`GameplayEvent.Attack.*`（ComboWindow Open/Close、HitCheck、JumpSection、Timeline.End、Interrupted、Phase Enter/Exit）、`Status.Attack.*`（阶段 loose tag，含 ComboWindow/Invincible/SuperArmor）、`Status.AttackMode.*`（服务器权威 GE 授予并复制）。
 
-**当前完成度**：类、校验、Bundle 收集与 `UHodgeAssetManager::PreloadPrimaryAssetBundles` 均有有效实现，但源码内**没有任何 Ability 调用 `PlayTimeline`，也没有代码调用 `ComboSet::FindNode`**——即“有实现、无 C++ 调用点”，BP 侧是否接线未验证。设计依据见 [AbilityTimeline 设计方案](../Design/ability-timeline.md)。
+**当前完成度**（已作废）：~~类、校验、Bundle 收集与 `UHodgeAssetManager::PreloadPrimaryAssetBundles` 均有有效实现，但源码内没有任何 Ability 调用 `PlayTimeline`，也没有代码调用 `ComboSet::FindNode`——即“有实现、无 C++ 调用点”，BP 侧是否接线未验证。~~ **实际状态：上述实现全部已回退，当前工作区不存在；攻击闭环需要从零开始。**
 
 ## Cue 与全局能力
 

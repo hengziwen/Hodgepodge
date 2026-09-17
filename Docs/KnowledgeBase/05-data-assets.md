@@ -53,13 +53,15 @@ Cook 规则与 PIE 是两回事。PIE 能加载，不说明打包一定包含资
 
 一句话记法：会被「按类型 / 按 ID」点名加载的，必须注册；只被别的资产引用带出来的，不注册。
 
-### 新增：AbilityTimeline 与 ComboSet 的按名登记
+### ~~新增：AbilityTimeline 与 ComboSet 的按名登记~~（⚠️ 已回退）
 
-`Config/DefaultGame.ini` 已把 `HodgeAbilityTimeline` 与 `HodgeComboSet` 加入 PrimaryAssetTypesToScan（目录 `/Game/Main`）。它们会被"点名预加载"，符合上面的注册原则。
+> **本节已作废。** `Config/DefaultGame.ini` **没有** `HodgeAbilityTimeline` / `HodgeComboSet` 两个 PrimaryAssetTypesToScan（仍是 7 项：Map、PrimaryAssetLabel、HodgeGameData、GameFeatureData、HodgeExperienceDefinition、HodgePawnData、HodgeExperienceActionSet）。
 
-`UHodgeAssetManager::PreloadPrimaryAssetBundles(AssetIds, Bundles, bLoadRecursive=true)`：内部 `PreloadPrimaryAssets` + `WaitUntilComplete()` **同步阻塞**加载，并把 `FStreamableHandle` 存入 `PreloadHandles` 防止被 GC，失败记 Error 日志。`UHodgeGameplayAbility::PreloadPrimaryAssetsOnGrant` 在 `OnGiveAbility` 时对它配置的资产同步预加载 `FHodgeBundles::Equipped` Bundle；`UHodgeAbilityTimeline` / `UHodgeComboSet` 的 `UpdateAssetBundleData` 会把 Montage 拍平进同一 Bundle，从而在进战斗前就绪。
+~~`Config/DefaultGame.ini` 已把 `HodgeAbilityTimeline` 与 `HodgeComboSet` 加入 PrimaryAssetTypesToScan（目录 `/Game/Main`）。它们会被"点名预加载"，符合上面的注册原则。~~
 
-注意这是同步加载：只应发生在技能被授予时，不要把它放进 Tick 或输入回调。使用方式见 [GAS 章节](07-gas.md)、验收见 [V14](16-validation.md)。
+> 具体缺失的是 `UHodgeAssetManager::PreloadPrimaryAssetBundles`、`UHodgeGameplayAbility::PreloadPrimaryAssetsOnGrant` 以及 Timeline/ComboSet 的 Bundle 收集（源码全量搜索 0 命中）。**`FHodgeBundles::Equipped` 本身仍存在**，并且被 `UHodgeExperienceManagerComponent::StartExperienceLoad()` 用于按端加载 Experience Bundle——这一点不受回退影响。
+>
+> 上面的"注册原则"本身仍然成立，但本节引用的预加载实现已随改动回退。回退依据见 [本轮变更](21-update-2026-09-17.md)。
 
 ## 资产编辑检查单
 

@@ -25,7 +25,7 @@
 
 ## HodgeAssetManager.cpp
 
-资产入口、GameData 缓存、启动任务、同步加载、加载进度与 PreloadPrimaryAssetBundles 的 Bundle 预加载。Cue 初始化钩子仍需接通。
+资产入口、GameData 缓存、启动任务、同步加载、加载进度。Cue 初始化钩子仍需接通。（PreloadPrimaryAssetBundles 已随未提交改动回退，当前不存在。）
 
 源码：[Source/Hodgepodge/Private/Data/HodgeAssetManager.cpp](../../../Source/Hodgepodge/Private/Data/HodgeAssetManager.cpp)
 
@@ -36,19 +36,18 @@
 - L10: `const FName FHodgeBundles::Equipped("Equipped");`
 - L44: `UHodgeAssetManager::UHodgeAssetManager()`
 - L50: `UHodgeAssetManager& UHodgeAssetManager::Get()`
-- L69: `bool UHodgeAssetManager::PreloadPrimaryAssetBundles(`
-- L115: `void UHodgeAssetManager::DumpLoadedAssets()`
-- L130: `const UHodgeGameData& UHodgeAssetManager::GetGameData()`
-- L136: `const UHodgePawnData* UHodgeAssetManager::GetDefaultPawnData() const`
-- L142: `UObject* UHodgeAssetManager::SynchronousLoadAsset(const FSoftObjectPath& AssetPath)`
-- L176: `bool UHodgeAssetManager::ShouldLogAssetLoads()`
-- L187: `void UHodgeAssetManager::AddLoadedAsset(const UObject* Asset)`
-- L200: `void UHodgeAssetManager::StartInitialLoading()`
-- L221: `UPrimaryDataAsset* UHodgeAssetManager::LoadGameDataOfClass(`
-- L323: `void UHodgeAssetManager::DoAllStartupJobs()`
-- L412: `void UHodgeAssetManager::InitializeGameplayCueManager()`
-- L423: `void UHodgeAssetManager::UpdateInitialGameContentLoadPercent(`
-- L431: `void UHodgeAssetManager::PreBeginPIE(bool bStartSimulate)`
+- L69: `void UHodgeAssetManager::DumpLoadedAssets()`
+- L84: `const UHodgeGameData& UHodgeAssetManager::GetGameData()`
+- L90: `const UHodgePawnData* UHodgeAssetManager::GetDefaultPawnData() const`
+- L96: `UObject* UHodgeAssetManager::SynchronousLoadAsset(const FSoftObjectPath& AssetPath)`
+- L130: `bool UHodgeAssetManager::ShouldLogAssetLoads()`
+- L141: `void UHodgeAssetManager::AddLoadedAsset(const UObject* Asset)`
+- L154: `void UHodgeAssetManager::StartInitialLoading()`
+- L175: `UPrimaryDataAsset* UHodgeAssetManager::LoadGameDataOfClass(`
+- L277: `void UHodgeAssetManager::DoAllStartupJobs()`
+- L366: `void UHodgeAssetManager::InitializeGameplayCueManager()`
+- L377: `void UHodgeAssetManager::UpdateInitialGameContentLoadPercent(`
+- L385: `void UHodgeAssetManager::PreBeginPIE(bool bStartSimulate)`
 
 ## HodgeAssetManagerStartupJob.cpp
 
@@ -61,20 +60,6 @@
 定义候选（多行签名仅展示首行）：
 
 - L13: `TSharedPtr<FStreamableHandle> FHodgeAssetManagerStartupJob::DoJob() const`
-
-## HodgeComboSet.cpp
-
-攻击形态节点集合：AttackID→Timeline、入口与转移；FindNode 暂无 C++ 调用点。
-
-源码：[Source/Hodgepodge/Private/Data/HodgeComboSet.cpp](../../../Source/Hodgepodge/Private/Data/HodgeComboSet.cpp)
-
-项目内直接 include（不是运行调用关系）：[Data/HodgeComboSet.h](../../../Source/Hodgepodge/Public/Data/HodgeComboSet.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)、[AbilitySystem/Timeline/HodgeAbilityTimeline.h](../../../Source/Hodgepodge/Public/AbilitySystem/Timeline/HodgeAbilityTimeline.h)、[Data/HodgeAssetManager.h](../../../Source/Hodgepodge/Public/Data/HodgeAssetManager.h)
-
-定义候选（多行签名仅展示首行）：
-
-- L21: `const FHodgeAttackNode* UHodgeComboSet::FindNode(const FGameplayTag& InAttackID) const`
-- L36: `EDataValidationResult UHodgeComboSet::IsDataValid(FDataValidationContext& Context) const`
-- L183: `void UHodgeComboSet::UpdateAssetBundleData()`
 
 ## HodgeExperienceActionSet.cpp
 
@@ -231,7 +216,7 @@ PawnClass、AbilitySets、TagRelationshipMapping、InputConfig、DefaultCameraMo
 
 ## HodgeAssetManager.h
 
-资产入口、GameData 缓存、启动任务、同步加载、加载进度与 PreloadPrimaryAssetBundles 的 Bundle 预加载。Cue 初始化钩子仍需接通。
+资产入口、GameData 缓存、启动任务、同步加载、加载进度。Cue 初始化钩子仍需接通。（PreloadPrimaryAssetBundles 已随未提交改动回退，当前不存在。）
 
 源码：[Source/Hodgepodge/Public/Data/HodgeAssetManager.h](../../../Source/Hodgepodge/Public/Data/HodgeAssetManager.h)
 
@@ -262,95 +247,90 @@ PawnClass、AbilitySets、TagRelationshipMapping、InputConfig、DefaultCameraMo
   43:     template <typename AssetType>
   44:     static TSubclassOf<AssetType> GetSubclass(const TSoftClassPtr<AssetType>& AssetPointer, bool bKeepInMemory = true);
   47:     static void DumpLoadedAssets();
-  63:     static bool PreloadPrimaryAssetBundles(
-  64:         const TArray<FPrimaryAssetId>& AssetIds,
-  65:         const TArray<FName>& Bundles,
-  66:         bool bLoadRecursive = true);
-  69:     const UHodgeGameData& GetGameData();
-  72:     const UHodgePawnData* GetDefaultPawnData() const;
-  74: protected:
-  77:     template <typename GameDataClass>
-  78:     const GameDataClass& GetOrLoadTypedGameData(const TSoftObjectPtr<GameDataClass>& DataPath)
-  79:     {
-  81:        if (TObjectPtr<UPrimaryDataAsset> const* pResult = GameDataMap.Find(GameDataClass::StaticClass()))
-  82:        {
-  83:           return *CastChecked<GameDataClass>(*pResult);
-  84:        }
-  87:        return *CastChecked<const GameDataClass>(
-  88:           LoadGameDataOfClass(GameDataClass::StaticClass(), DataPath, GameDataClass::StaticClass()->GetFName()));
-  89:     }
-  93:     static UObject* SynchronousLoadAsset(const FSoftObjectPath& AssetPath);
-  96:     static bool ShouldLogAssetLoads();
-  99:     void AddLoadedAsset(const UObject* Asset);
- 103:     virtual void StartInitialLoading() override;
- 105: #if WITH_EDITOR
- 107:     virtual void PreBeginPIE(bool bStartSimulate) override;
- 108: #endif
- 112:     UPrimaryDataAsset* LoadGameDataOfClass(
- 113:         TSubclassOf<UPrimaryDataAsset> DataClass,
- 114:         const TSoftObjectPtr<UPrimaryDataAsset>& DataClassPath,
- 115:         FPrimaryAssetType PrimaryAssetType
- 116:     );
- 118: protected:
- 121:     UPROPERTY(Config)
- 122:     TSoftObjectPtr<UHodgeGameData> HodgeGameDataPath;
- 125:     UPROPERTY(Transient)
- 126:     TMap<TObjectPtr<UClass>, TObjectPtr<UPrimaryDataAsset>> GameDataMap;
- 129:     UPROPERTY(Config)
- 130:     TSoftObjectPtr<UHodgePawnData> DefaultPawnData;
- 132: private:
- 135:     void DoAllStartupJobs();
- 138:     void InitializeGameplayCueManager();
- 141:     void UpdateInitialGameContentLoadPercent(float GameContentPercent);
- 144:     TArray<FHodgeAssetManagerStartupJob> StartupJobs;
- 146: private:
- 149:     UPROPERTY()
- 150:     TSet<TObjectPtr<const UObject>> LoadedAssets;
- 154:     TArray<TSharedPtr<FStreamableHandle>> PreloadHandles;
- 157:     FCriticalSection LoadedAssetsCritical;
- 158: };
- 161: template <typename AssetType>
- 162: AssetType* UHodgeAssetManager::GetAsset(const TSoftObjectPtr<AssetType>& AssetPointer, bool bKeepInMemory)
- 163: {
- 164:     AssetType* LoadedAsset = nullptr;
- 167:     const FSoftObjectPath& AssetPath = AssetPointer.ToSoftObjectPath();
- 169:     if (AssetPath.IsValid())
- 170:     {
- 172:        LoadedAsset = AssetPointer.Get();
- 175:        if (!LoadedAsset)
- 176:        {
- 177:           LoadedAsset = Cast<AssetType>(SynchronousLoadAsset(AssetPath));
- 178:           ensureAlwaysMsgf(LoadedAsset, TEXT("Failed to load asset [%s]"), *AssetPointer.ToString());
- 179:        }
- 182:        if (LoadedAsset && bKeepInMemory)
- 183:        {
- 184:           Get().AddLoadedAsset(Cast<UObject>(LoadedAsset));
- 185:        }
- 186:     }
- 188:     return LoadedAsset;
- 189: }
- 192: template <typename AssetType>
- 193: TSubclassOf<AssetType> UHodgeAssetManager::GetSubclass(
- 194:     const TSoftClassPtr<AssetType>& AssetPointer,
- 195:     bool bKeepInMemory)
- 196: {
- 197:     TSubclassOf<AssetType> LoadedSubclass;
- 200:     const FSoftObjectPath& AssetPath = AssetPointer.ToSoftObjectPath();
- 202:     if (AssetPath.IsValid())
- 203:     {
- 205:        LoadedSubclass = AssetPointer.Get();
- 208:        if (!LoadedSubclass)
- 209:        {
- 210:           LoadedSubclass = Cast<UClass>(SynchronousLoadAsset(AssetPath));
- 211:           ensureAlwaysMsgf(LoadedSubclass, TEXT("Failed to load asset class [%s]"), *AssetPointer.ToString());
- 212:        }
- 215:        if (LoadedSubclass && bKeepInMemory)
- 216:        {
- 217:           Get().AddLoadedAsset(Cast<UObject>(LoadedSubclass));
- 218:        }
- 219:     }
- 221:     return LoadedSubclass;
- 222: }
+  50:     const UHodgeGameData& GetGameData();
+  53:     const UHodgePawnData* GetDefaultPawnData() const;
+  55: protected:
+  58:     template <typename GameDataClass>
+  59:     const GameDataClass& GetOrLoadTypedGameData(const TSoftObjectPtr<GameDataClass>& DataPath)
+  60:     {
+  62:        if (TObjectPtr<UPrimaryDataAsset> const* pResult = GameDataMap.Find(GameDataClass::StaticClass()))
+  63:        {
+  64:           return *CastChecked<GameDataClass>(*pResult);
+  65:        }
+  68:        return *CastChecked<const GameDataClass>(
+  69:           LoadGameDataOfClass(GameDataClass::StaticClass(), DataPath, GameDataClass::StaticClass()->GetFName()));
+  70:     }
+  74:     static UObject* SynchronousLoadAsset(const FSoftObjectPath& AssetPath);
+  77:     static bool ShouldLogAssetLoads();
+  80:     void AddLoadedAsset(const UObject* Asset);
+  84:     virtual void StartInitialLoading() override;
+  86: #if WITH_EDITOR
+  88:     virtual void PreBeginPIE(bool bStartSimulate) override;
+  89: #endif
+  93:     UPrimaryDataAsset* LoadGameDataOfClass(
+  94:         TSubclassOf<UPrimaryDataAsset> DataClass,
+  95:         const TSoftObjectPtr<UPrimaryDataAsset>& DataClassPath,
+  96:         FPrimaryAssetType PrimaryAssetType
+  97:     );
+  99: protected:
+ 102:     UPROPERTY(Config)
+ 103:     TSoftObjectPtr<UHodgeGameData> HodgeGameDataPath;
+ 106:     UPROPERTY(Transient)
+ 107:     TMap<TObjectPtr<UClass>, TObjectPtr<UPrimaryDataAsset>> GameDataMap;
+ 110:     UPROPERTY(Config)
+ 111:     TSoftObjectPtr<UHodgePawnData> DefaultPawnData;
+ 113: private:
+ 116:     void DoAllStartupJobs();
+ 119:     void InitializeGameplayCueManager();
+ 122:     void UpdateInitialGameContentLoadPercent(float GameContentPercent);
+ 125:     TArray<FHodgeAssetManagerStartupJob> StartupJobs;
+ 127: private:
+ 130:     UPROPERTY()
+ 131:     TSet<TObjectPtr<const UObject>> LoadedAssets;
+ 134:     FCriticalSection LoadedAssetsCritical;
+ 135: };
+ 138: template <typename AssetType>
+ 139: AssetType* UHodgeAssetManager::GetAsset(const TSoftObjectPtr<AssetType>& AssetPointer, bool bKeepInMemory)
+ 140: {
+ 141:     AssetType* LoadedAsset = nullptr;
+ 144:     const FSoftObjectPath& AssetPath = AssetPointer.ToSoftObjectPath();
+ 146:     if (AssetPath.IsValid())
+ 147:     {
+ 149:        LoadedAsset = AssetPointer.Get();
+ 152:        if (!LoadedAsset)
+ 153:        {
+ 154:           LoadedAsset = Cast<AssetType>(SynchronousLoadAsset(AssetPath));
+ 155:           ensureAlwaysMsgf(LoadedAsset, TEXT("Failed to load asset [%s]"), *AssetPointer.ToString());
+ 156:        }
+ 159:        if (LoadedAsset && bKeepInMemory)
+ 160:        {
+ 161:           Get().AddLoadedAsset(Cast<UObject>(LoadedAsset));
+ 162:        }
+ 163:     }
+ 165:     return LoadedAsset;
+ 166: }
+ 169: template <typename AssetType>
+ 170: TSubclassOf<AssetType> UHodgeAssetManager::GetSubclass(
+ 171:     const TSoftClassPtr<AssetType>& AssetPointer,
+ 172:     bool bKeepInMemory)
+ 173: {
+ 174:     TSubclassOf<AssetType> LoadedSubclass;
+ 177:     const FSoftObjectPath& AssetPath = AssetPointer.ToSoftObjectPath();
+ 179:     if (AssetPath.IsValid())
+ 180:     {
+ 182:        LoadedSubclass = AssetPointer.Get();
+ 185:        if (!LoadedSubclass)
+ 186:        {
+ 187:           LoadedSubclass = Cast<UClass>(SynchronousLoadAsset(AssetPath));
+ 188:           ensureAlwaysMsgf(LoadedSubclass, TEXT("Failed to load asset class [%s]"), *AssetPointer.ToString());
+ 189:        }
+ 192:        if (LoadedSubclass && bKeepInMemory)
+ 193:        {
+ 194:           Get().AddLoadedAsset(Cast<UObject>(LoadedSubclass));
+ 195:        }
+ 196:     }
+ 198:     return LoadedSubclass;
+ 199: }
 ```
 
 ## HodgeAssetManagerStartupJob.h
@@ -417,57 +397,6 @@ PawnClass、AbilitySets、TagRelationshipMapping、InputConfig、DefaultCameraMo
  211: 		}
  212: 	}
  213: };
-```
-
-## HodgeComboSet.h
-
-攻击形态节点集合：AttackID→Timeline、入口与转移；FindNode 暂无 C++ 调用点。
-
-源码：[Source/Hodgepodge/Public/Data/HodgeComboSet.h](../../../Source/Hodgepodge/Public/Data/HodgeComboSet.h)
-
-有效头文件声明摘录（未展开宏，未求值预处理分支）：
-
-```cpp
-  15: #pragma once
-  17: #include "CoreMinimal.h"
-  18: #include "Engine/DataAsset.h"
-  19: #include "GameplayTagContainer.h"
-  20: #include "HodgeComboSet.generated.h"
-  22: class UHodgeAbilityTimeline;
-  30: USTRUCT(BlueprintType)
-  31: struct HODGEPODGE_API FHodgeAttackNode
-  32: {
-  33: 	GENERATED_BODY()
-  40: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(Categories="Attack"))
-  41: 	FGameplayTag AttackID;
-  44: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-  45: 	TObjectPtr<UHodgeAbilityTimeline> Timeline;
-  48: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-  49: 	float DamageMultiplier = 1.f;
-  52: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(Categories="GameplayEffect.DamageType"))
-  53: 	FGameplayTag AttackType;
-  59: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(Categories="Attack"))
-  60: 	FGameplayTag DefaultNextAttack;
-  76: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-  77: 	TMap<FGameplayTag, FGameplayTag> Transitions;
-  78: };
-  86: UCLASS(BlueprintType, Const)
-  87: class HODGEPODGE_API UHodgeComboSet : public UPrimaryDataAsset
-  88: {
-  89: 	GENERATED_BODY()
-  91: public:
-  93: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(TitleProperty=AttackID))
-  94: 	TArray<FHodgeAttackNode> Nodes;
- 104: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
- 105: 	TMap<FGameplayTag, FGameplayTag> Entries;
- 108: 	const FHodgeAttackNode* FindNode(const FGameplayTag& InAttackID) const;
- 110: #if WITH_EDITOR
- 112: 	virtual EDataValidationResult IsDataValid(class FDataValidationContext& Context) const override;
- 113: #endif
- 115: #if WITH_EDITORONLY_DATA
- 123: 	virtual void UpdateAssetBundleData() override;
- 124: #endif
- 125: };
 ```
 
 ## HodgeExperienceActionSet.h

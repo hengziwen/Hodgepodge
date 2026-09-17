@@ -46,7 +46,7 @@ GlobalGameplayCueManagerClass 已配置；Policy 观察者的添加路径回调�
 
 ### KB-08：Health 结算——主体已有，角色死亡衔接仍缺
 
-HealthSet 已有 Damage/Healing 元属性、转换、免疫/调试条件和耗尽广播。CombatCharacter 的 HealthComponent 创建与事件绑定仍注释；CombatComponentBase 无命中/连招主体。连招数据与时间轴 Task 已有实现（见 KB-15）但没有 C++ 攻击 Ability 调用。剩余工作是技能命中→GE→耗尽→角色死亡/重生。
+HealthSet 已有 Damage/Healing 元属性、转换、免疫/调试条件和耗尽广播。CombatCharacter 的 HealthComponent 创建与事件绑定仍注释；CombatComponentBase 无命中/连招主体。⚠️ 连招与时间轴**已回退、当前不存在**（见 KB-15），所以攻击侧是**从零开始**而不是"只差接线"。剩余工作是具体攻击 Ability → 技能命中→GE→耗尽→角色死亡/重生。
 
 ### KB-09：敌人 ASC——仍缺完整初始化
 
@@ -60,20 +60,22 @@ TryDedicatedServerLogin 在默认地图条件满足时返回 true，实际登录
 
 AddInputBinding、AddInputContextMapping 的扩展添加分支均已启用。Hero::RemoveAdditionalInputConfig 已实现（按 InputConfig 解绑并移除记录），EndPlay 统一解绑，绑定句柄已持久化。ContextMapping 的 ControllersAddedTo 记录路径仍需复核。验收必须覆盖激活、停用、再次激活和多世界。
 
-### KB-15：攻击时间轴与 ComboSet——有实现、无 C++ 调用点
+### KB-15：攻击时间轴与 ComboSet——⚠️ 已回退，当前不存在
 
-`UHodgeAbilityTimeline`、`UHodgeAbilityTask_PlayTimeline`、`UHodgeComboSet` 均已实现（含编辑器校验与 Bundle 收集）；`UHodgeAssetManager::PreloadPrimaryAssetBundles` 与 `HodgeGameplayAbility::PreloadPrimaryAssetsOnGrant` 打通了授予期同步预加载。但 `PlayTimeline` 与 `FindNode` 都没有调用者：需要在 BP 攻击技能里接线。设计见 [AbilityTimeline 设计方案](../Design/ability-timeline.md)，验收见 V13/V14。
+> **回退标注**：本节原结论（"有实现、无 C++ 调用点"）已作废。`UHodgeAbilityTimeline`、`UHodgeAbilityTask_PlayTimeline`、`UHodgeComboSet`、`UHodgeAssetManager::PreloadPrimaryAssetBundles`、`HodgeGameplayAbility::PreloadPrimaryAssetsOnGrant` 都属于 2026-09-17 核对时的**工作区未提交改动**，随后已被丢弃。当前 `Source/Hodgepodge` 搜不到这些符号，`DefaultGame.ini` 也没有对应 PrimaryAssetTypesToScan，`Attack.*` 等 Tag 未注册。
+
+当前真实状态：**攻击/连击在 C++ 侧完全不存在**（不是"有实现缺调用点"）。设计意图仍见 [AbilityTimeline 设计方案](../Design/ability-timeline.md)（草案，未实现）；V13/V14 验收项在实现落地前不适用。相关依据见 [本轮变更](21-update-2026-09-17.md) 的"回退标注"。
 
 ## 编辑器资产检查步骤
 
 1. 打开 `/Game/Main/Data/DA_Dafult_PawnData`，确认 PawnClass 是目标 Hero 蓝图、InputConfig、DefaultCameraMode 指向 `Main/Camera/CM_ThirdPerson`（旧 CM_Default 已删除）。AbilitySets 现在会被授予，可以实际填写。
 2. 打开 `/Game/Main/Character/Hero/BP_Hero_Pover`，检查父类/继承组件、HeroComponent 的 DefaultInputMappings。选择 `/Game/Main/Input/IMC_Default`，核对优先级和 RegisterWithSettings；当前代码 false 会跳过添加，不能误当成只关闭设置注册。
 3. 打开 InputConfig，确认 NativeInputActions 的 Move/Look 等标签匹配；打开 IMC 检查键位、轴类型和修饰器。
-4. 打开 `/Game/Main/Character/Hero/Ability/GA_Melee`，确认父类、Montage 以及是否使用 PlayTimeline/ComboSet；打开 Timeline / ComboSet 资产核对 Duration、Phases、Entries、DefaultNextAttack。
+4. 打开 `/Game/Main/Character/Hero/GA_Attack`（工作区未提交），确认父类与 Montage。⚠️ 原步骤中的 `GA_Melee`、`Main/Character/Hero/Ability/` 目录与 Timeline / ComboSet 资产**均已不存在**，不必再核对。
 5. PIE 观察 HODGE-DBG 的 CONFIG、IMC entry、BLOCKED、CALLBACK 和相机绑定日志。期望实际映射存在、回调有值、相机跟随；本轮未执行这些操作。
 
 ## 当前开发顺序
 
-先验收玩家输入/相机主链并确认 AbilitySet 授予；再做第一个攻击 Ability（接线 Timeline + 命中判定）；随后连接敌人 ASC、命中和死亡；再完善 Cue 路径与预加载；进入联机/热卸载前覆盖 KB-10、KB-12、KB-14。
+先验收玩家输入/相机主链并确认 AbilitySet 授予；再做第一个攻击 Ability（C++ 子类 + 命中判定，**时间轴/连击需要从零实现**）；随后连接敌人 ASC、命中和死亡；再完善 Cue 路径与预加载；进入联机/热卸载前覆盖 KB-10、KB-12、KB-14。
 
 本页只更新知识，不修改游戏实现。所有未执行的构建、蓝图编译、PIE、联机、Cook/打包保持“未验证”。

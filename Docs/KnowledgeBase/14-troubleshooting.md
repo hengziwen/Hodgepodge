@@ -25,13 +25,19 @@
 
 按顺序看 Spec 是否授予、动态 InputTag 精确匹配、Pressed/Held 缓存、ProcessAbilityInput 是否每帧执行，再看 CanActivateAbility 的失败标签、Cost、Cooldown、ActivationGroup。若第一次成功第二次失败，重点看 EndAbility 和组计数。
 
-## 攻击时间轴不推进或阶段标签残留
+## ~~攻击时间轴不推进或阶段标签残留~~（⚠️ 已回退，不适用）
 
-`UHodgeAbilityTask_PlayTimeline` 依赖 World 时间差累加：先确认 Task 是否被创建（源码内没有 C++ 调用 `PlayTimeline`，需确认 BP 是否接线）、Timeline 资产 Duration 是否大于 0、InitialPlayRate 是否大于 0。标签残留优先看 `OnDestroy` 是否执行到 `ClearAllPhaseTags`，以及是否有别的来源在加同名 loose tag。事件没到客户端时按 `EHodgeTimelineEventNetPolicy` 区分端，不要假设 `HandleGameplayEvent` 会自动 RPC。
+> **本节已作废**：`UHodgeAbilityTask_PlayTimeline`、`EHodgeTimelineEventNetPolicy` 等**当前工作区不存在**（详见 [回退标注](21-update-2026-09-17.md)）。如果出现"时间轴不推进"，说明你手上的分支还带着那批未提交改动，或自己重新实现了同类 Task —— 请以实际分支为准排查。
 
-## 首次进战斗卡顿或 Montage 未加载
+~~`UHodgeAbilityTask_PlayTimeline` 依赖 World 时间差累加：先确认 Task 是否被创建（源码内没有 C++ 调用 `PlayTimeline`，需确认 BP 是否接线）、Timeline 资产 Duration 是否大于 0、InitialPlayRate 是否大于 0。标签残留优先看 `OnDestroy` 是否执行到 `ClearAllPhaseTags`，以及是否有别的来源在加同名 loose tag。事件没到客户端时按 `EHodgeTimelineEventNetPolicy` 区分端，不要假设 `HandleGameplayEvent` 会自动 RPC。~~
 
-`PreloadPrimaryAssetBundles` 是同步阻塞加载，正常只在 Ability 被授予时发生。若卡顿出现在输入或 Tick，检查是否把预加载放错位置；若 Montage 缺失，检查 HodgeAbilityTimeline / HodgeComboSet 的 `UpdateAssetBundleData` 是否收集了该 Montage，以及 DefaultGame.ini 是否登记了两个 PrimaryAssetType。
+## ~~首次进战斗卡顿或 Montage 未加载~~（⚠️ 预加载部分已回退）
+
+> `PreloadPrimaryAssetBundles` / `PreloadPrimaryAssetsOnGrant` 与 Timeline / ComboSet 的 Bundle 收集**当前不存在**，所以"预加载放错位置"这类排查暂不适用。
+>
+> 仍然有效的相关机制：`FHodgeBundles::Equipped` 存在，`UHodgeExperienceManagerComponent::StartExperienceLoad()` 会按端加载 Experience 的 `Equipped` Bundle；进战斗卡顿要先从 Experience Bundle 与 `-LogAssetLoads` 入手。
+
+~~`PreloadPrimaryAssetBundles` 是同步阻塞加载，正常只在 Ability 被授予时发生。若卡顿出现在输入或 Tick，检查是否把预加载放错位置；若 Montage 缺失，检查 HodgeAbilityTimeline / HodgeComboSet 的 `UpdateAssetBundleData` 是否收集了该 Montage，以及 DefaultGame.ini 是否登记了两个 PrimaryAssetType。~~
 
 ## 相机在原点、视角不跟随或旋转异常
 
