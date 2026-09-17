@@ -8,7 +8,7 @@
 
 ## HodgeCharacterBase.cpp
 
-原生 Character 基础、替换移动组件、Receiver 生命周期。EndPlay 事件配对需修正。
+原生 Character 基础、替换移动组件；Receiver 在 PreInit 注册、EndPlay 成对移除。
 
 源码：[Source/Hodgepodge/Private/Character/HodgeCharacterBase.cpp](../../../Source/Hodgepodge/Private/Character/HodgeCharacterBase.cpp)
 
@@ -19,7 +19,7 @@
 - L29: `AHodgeCharacterBase::AHodgeCharacterBase(const FObjectInitializer& ObjectInitializer)`
 - L41: `void AHodgeCharacterBase::PreInitializeComponents()`
 - L55: `void AHodgeCharacterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)`
-- L69: `void AHodgeCharacterBase::BeginPlay()`
+- L68: `void AHodgeCharacterBase::BeginPlay()`
 
 ## HodgeCombatCharacter.cpp
 
@@ -79,7 +79,7 @@ PawnExtension、相机、ASC 查询、移动标签、复制与死亡占位逻辑
 
 ## HodgeEnemyCharacter.cpp
 
-敌人移动与自动 AI 控制配置，尚未完成敌人 ASC 初始化。
+仅设置 AI 自动控制；旋转/移动参数继承 Combat 基类，尚未完成敌人 ASC 初始化。
 
 源码：[Source/Hodgepodge/Private/Character/HodgeEnemyCharacter.cpp](../../../Source/Hodgepodge/Private/Character/HodgeEnemyCharacter.cpp)
 
@@ -94,7 +94,7 @@ PawnExtension、相机、ASC 查询、移动标签、复制与死亡占位逻辑
 
 ## HodgeHeroCharacter.cpp
 
-构造挂载 HeroComponent；仍保留 PossessedBy/OnRep_PlayerState 直接初始化 ASC 的旧路径。
+构造挂载 HeroComponent；PossessedBy/OnRep_PlayerState 只调用 Super，ASC 接入已收敛。
 
 源码：[Source/Hodgepodge/Private/Character/HodgeHeroCharacter.cpp](../../../Source/Hodgepodge/Private/Character/HodgeHeroCharacter.cpp)
 
@@ -104,11 +104,11 @@ PawnExtension、相机、ASC 查询、移动标签、复制与死亡占位逻辑
 
 - L23: `AHodgeHeroCharacter::AHodgeHeroCharacter(const FObjectInitializer& ObjectInitializer)`
 - L39: `void AHodgeHeroCharacter::PossessedBy(AController* NewController)`
-- L60: `void AHodgeHeroCharacter::OnRep_PlayerState()`
+- L55: `void AHodgeHeroCharacter::OnRep_PlayerState()`
 
 ## HodgeCharacterBase.h
 
-原生 Character 基础、替换移动组件、Receiver 生命周期。EndPlay 事件配对需修正。
+原生 Character 基础、替换移动组件；Receiver 在 PreInit 注册、EndPlay 成对移除。
 
 源码：[Source/Hodgepodge/Public/Character/HodgeCharacterBase.h](../../../Source/Hodgepodge/Public/Character/HodgeCharacterBase.h)
 
@@ -274,7 +274,7 @@ PawnExtension、相机、ASC 查询、移动标签、复制与死亡占位逻辑
 
 ## HodgeEnemyCharacter.h
 
-敌人移动与自动 AI 控制配置，尚未完成敌人 ASC 初始化。
+仅设置 AI 自动控制；旋转/移动参数继承 Combat 基类，尚未完成敌人 ASC 初始化。
 
 源码：[Source/Hodgepodge/Public/Character/HodgeEnemyCharacter.h](../../../Source/Hodgepodge/Public/Character/HodgeEnemyCharacter.h)
 
@@ -304,7 +304,7 @@ PawnExtension、相机、ASC 查询、移动标签、复制与死亡占位逻辑
 
 ## HodgeHeroCharacter.h
 
-构造挂载 HeroComponent；仍保留 PossessedBy/OnRep_PlayerState 直接初始化 ASC 的旧路径。
+构造挂载 HeroComponent；PossessedBy/OnRep_PlayerState 只调用 Super，ASC 接入已收敛。
 
 源码：[Source/Hodgepodge/Public/Character/HodgeHeroCharacter.h](../../../Source/Hodgepodge/Public/Character/HodgeHeroCharacter.h)
 

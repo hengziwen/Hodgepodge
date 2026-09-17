@@ -1,6 +1,6 @@
 # Experience 与 GameFeature 扩展
 
-> 最近源码核对：2026-09-13。源码接入状态与运行验收分开记录。
+> 最近源码核对：2026-09-17。源码接入状态与运行验收分开记录。
 [返回首页](README.md)
 
 ## 概念边界
@@ -25,7 +25,7 @@ WorldActionBase 为需要参与世界生命周期的 Action 提供上下文和 W
 
 ## AddInputBinding
 
-依赖 HeroComponent 的 Ready 状态和额外 InputConfig 增删。当前扩展添加分支、查找 Hero、增删额外配置调用均已启用。但 Hero 的 RemoveAdditionalInputConfig 仍为空，绑定句柄是局部数组；撤销闭环仍不完整。PawnsAddedTo 记录不能替代绑定成功证据。
+依赖 HeroComponent 的 Ready 状态和额外 InputConfig 增删。扩展添加分支、查找 Hero、增删额外配置调用均已启用；Hero 的 RemoveAdditionalInputConfig 已实现（按 InputConfig 解绑并移除记录），HeroComponent::EndPlay 也会统一解绑并清空记录，撤销闭环已补上。仍需运行验证"激活→停用→再激活"与多 PIE 隔离；PawnsAddedTo 记录不能替代绑定成功证据。
 
 ## AddGameplayCuePath 与 Policy
 
@@ -37,9 +37,9 @@ Policy 中保留了上游迁移注释；检查实际激活类配置及有效函�
 
 AddWidget 当前仍是注释实现，不能视为完整 HUD 注入。SplitscreenConfig 的职责是分屏策略，而非输入和玩家生成。项目使用专用 HUD 基类不等于已经接入 Lyra UIExtension。
 
-## Receiver 生命周期问题
+## Receiver 生命周期
 
-CharacterBase 在 PreInitializeComponents 注册 Receiver，在 BeginPlay 发送 GameActorReady。但 EndPlay 当前又发送 GameActorReady，未像 PlayerStateBase 那样移除 Receiver。这是需要修复的生命周期不对称，可能影响扩展撤销。
+CharacterBase 在 PreInitializeComponents 注册 Receiver、BeginPlay 发送 GameActorReady、EndPlay 成对调用 `RemoveGameFrameworkComponentReceiver`，生命周期已对称（此前"EndPlay 又发 GameActorReady"的问题已在 2026-09-15 的 `2a9c69e` 修复）。GameFeature 撤销的真实证据仍要来自"激活→停用→再激活"的运行验证，代码对称本身不构成通过。
 
 ## 新增扩展的验收原则
 

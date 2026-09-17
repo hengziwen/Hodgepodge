@@ -59,7 +59,7 @@
 
 ## HodgeCameraMode_ThirdPerson.cpp
 
-第三人称偏移与防穿透逻辑。
+第三人称偏移与防穿透逻辑；C++ 不设默认偏移曲线，改由蓝图/PawnData 提供。
 
 源码：[Source/Hodgepodge/Private/Camera/HodgeCameraMode_ThirdPerson.cpp](../../../Source/Hodgepodge/Private/Camera/HodgeCameraMode_ThirdPerson.cpp)
 
@@ -68,13 +68,13 @@
 定义候选（多行签名仅展示首行）：
 
 - L20: `UHodgeCameraMode_ThirdPerson::UHodgeCameraMode_ThirdPerson()`
-- L66: `void UHodgeCameraMode_ThirdPerson::UpdateView(float DeltaTime)`
-- L121: `void UHodgeCameraMode_ThirdPerson::UpdateForTarget(float DeltaTime)`
-- L147: `void UHodgeCameraMode_ThirdPerson::DrawDebug(UCanvas* Canvas) const`
-- L170: `void UHodgeCameraMode_ThirdPerson::UpdatePreventPenetration(float DeltaTime)`
-- L261: `void UHodgeCameraMode_ThirdPerson::PreventCameraPenetration(class AActor const& ViewTarget, FVector const& SafeLoc,`
-- L523: `void UHodgeCameraMode_ThirdPerson::SetTargetCrouchOffset(FVector NewTargetOffset)`
-- L535: `void UHodgeCameraMode_ThirdPerson::UpdateCrouchOffset(float DeltaTime)`
+- L54: `void UHodgeCameraMode_ThirdPerson::UpdateView(float DeltaTime)`
+- L109: `void UHodgeCameraMode_ThirdPerson::UpdateForTarget(float DeltaTime)`
+- L135: `void UHodgeCameraMode_ThirdPerson::DrawDebug(UCanvas* Canvas) const`
+- L158: `void UHodgeCameraMode_ThirdPerson::UpdatePreventPenetration(float DeltaTime)`
+- L249: `void UHodgeCameraMode_ThirdPerson::PreventCameraPenetration(class AActor const& ViewTarget, FVector const& SafeLoc,`
+- L511: `void UHodgeCameraMode_ThirdPerson::SetTargetCrouchOffset(FVector NewTargetOffset)`
+- L523: `void UHodgeCameraMode_ThirdPerson::UpdateCrouchOffset(float DeltaTime)`
 
 ## HodgePlayerCameraManager.cpp
 
@@ -314,7 +314,7 @@ UI 相机管理扩展，不代表 UI 系统已接入。
 
 ## HodgeCameraMode_ThirdPerson.h
 
-第三人称偏移与防穿透逻辑。
+第三人称偏移与防穿透逻辑；C++ 不设默认偏移曲线，改由蓝图/PawnData 提供。
 
 源码：[Source/Hodgepodge/Public/Camera/HodgeCameraMode_ThirdPerson.h](../../../Source/Hodgepodge/Public/Camera/HodgeCameraMode_ThirdPerson.h)
 
@@ -327,7 +327,7 @@ UI 相机管理扩展，不代表 UI 系统已接入。
    7: #include "HodgeCameraMode_ThirdPerson.generated.h"
   10: struct FHodgePenetrationAvoidanceFeeler;
   11: class UCurveVector;
-  16: UCLASS(Blueprintable)
+  16: UCLASS(Abstract, Blueprintable)
   17: class UHodgeCameraMode_ThirdPerson : public UHodgeCameraMode
   18: {
   19: 	GENERATED_BODY()

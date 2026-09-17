@@ -1,6 +1,6 @@
 # Enhanced Input 与技能输入
 
-> 最近源码核对：2026-09-13。源码接入状态与运行验收分开记录。
+> 最近源码核对：2026-09-17。源码接入状态与运行验收分开记录。
 [返回首页](README.md)
 
 ## 两套映射分别负责什么
@@ -46,7 +46,7 @@ AbilityInputTagPressed 遍历已授予 Spec，用动态源标签精确匹配。P
 
 基础玩家映射适合由 Hero 初始化负责；玩法扩展映射由对应 GameFeature 管；UI 模态映射将来由 UI 生命周期管。明确谁加谁删，比统一 ClearAllMappings 更容易兼容多玩法和 UI。
 
-当前基础和额外绑定的 BindHandles 为局部数组；绑定句柄应保存到与 InputComponent 生命周期一致的对象，移除额外配置时只删除自己的绑定。当前 RemoveAdditionalInputConfig 仍是 TODO，不能在启用 GameFeature 热切换前忽略。
+额外配置的绑定句柄现已保存到 HeroComponent 的 `AdditionalInputConfigHandles`（按 InputConfig 分组，非 UPROPERTY，生命周期由软引用资产链持有）。`RemoveAdditionalInputConfig` 已实现：按 InputConfig 找到句柄、对仍存在的 Pawn 调用 `HodgeInputComponent::RemoveBinds`，再从记录中移除；`HeroComponent::EndPlay` 也会统一解绑并清空记录。重复添加同一 InputConfig 会先解绑旧句柄，避免累积。基础玩家映射的 BindHandles 仍为局部数组。
 
 ## 最小排障顺序
 

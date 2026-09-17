@@ -1,8 +1,8 @@
 # PawnExtension 与 Hero 初始化
 
-[返回首页](README.md) · [输入](06-input.md) · [GAS](07-gas.md)
+[返回首页](README.md) · [输入](06-input.md) · [GAS](07-gas.md) · [本轮变更](21-update-2026-09-17.md)
 
-> 最近源码核对：2026-09-13。两个组件现在都已启用，以下描述有效源码；本轮未执行 PIE。
+> 最近源码核对：2026-09-17。两个组件现在都已启用，以下描述有效源码；本轮未执行 PIE。
 
 ## 创建与所有权
 
@@ -24,11 +24,11 @@ PawnExtension OnRegister 注册 Feature；BeginPlay 监听其他 Feature，进�
 
 ## Hero 的实际装配动作
 
-HandleChangeInitState 从 PawnExtension 获取 PawnData，调用 InitializeAbilitySystem(HodgePS ASC, HodgePS)。如果控制器类型和输入组件满足条件，调用 InitializePlayerInput；随后绑定 CameraComponent.DetermineCameraModeDelegate。
+HandleChangeInitState 在 PawnExtension 到达 DataInitialized 之后执行，从 PawnExtension 获取 PawnData，调用 InitializeAbilitySystem(HodgePS ASC, HodgePS)。这是当前唯一的 ASC 接入入口。如果控制器类型和输入组件满足条件，调用 InitializePlayerInput；随后绑定 CameraComponent.DetermineCameraModeDelegate。
 
 初始化输入需要 HodgeLocalPlayerBase 和 EnhancedInput 子系统；DefaultEngine.ini 已选择这个 LocalPlayer 类。网络服务器没有 LocalPlayer，必须验证当前分支不会在无本地输入的 Pawn 上进入本地初始化。
 
-角色旧 PossessedBy / OnRep_PlayerState 直接 InitAbilityActorInfo 仍保留，所以现在是“组件入口已接入，但旧路径未收敛”，不再是“InitializeAbilitySystem 零调用者”。两条路径对动画、OnSpawn 能力和回调的先后仍需运行核对。
+Hero 的 PossessedBy / OnRep_PlayerState 现在只调用 Super，不再直接 InitAbilityActorInfo，旧双路径已收敛。PlayerState::PreInitializeComponents 仍会用 GetPawn() 做一次占位首绑，随后由 PawnExtension 重绑为真正的 Pawn；两处 ActorInfo 设置的最终结果仍需运行核对。
 
 ## PawnExtension 的 ASC 接入
 
@@ -40,7 +40,7 @@ UninitializeAbilitySystem 在当前 Avatar 仍属于自己时取消不保留的�
 
 新 HodgePlayerController::OnUnPossess 会先把匹配的 ASC Avatar 清空，再调用父类。PawnExtension 解除主体又要求 Avatar 等于自己，因此应核对实际执行顺序：提前清空 Avatar 可能使取消技能、清输入、移 Cue 和广播分支被跳过。此处是静态条件风险，本轮未复现。
 
-Hero::EndPlay 只注销 Feature 并调用父类；额外输入句柄持久化、额外输入移除和相机覆盖清理仍需独立验证。不要把“有 Uninitialize 函数”当成所有退出路径都会走到它。
+Hero::EndPlay 注销 Feature、对本组件记录的全部额外输入句柄调用 RemoveBinds 并清空记录，再调用父类；RemoveAdditionalInputConfig 也已实现按 InputConfig 解绑并移除记录。相机覆盖是否随技能结束/换 Pawn 恢复仍需独立验证。不要把“有 Uninitialize 函数”当成所有退出路径都会走到它。
 
 ## 已有调试入口
 

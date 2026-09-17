@@ -1,6 +1,6 @@
 # 属性、伤害、战斗与死亡
 
-> 最近源码核对：2026-09-13。源码接入状态与运行验收分开记录。
+> 最近源码核对：2026-09-17。源码接入状态与运行验收分开记录。
 [返回首页](README.md)
 
 ## 已实现的属性基础
@@ -20,6 +20,8 @@ Health OnRep 会广播 OnHealthChanged，在血量首次到零时广播 OnOutOfH
 CombatCharacter 的 HealthComponent 创建与绑定仍注释。角色存在 OnDeathStarted/Finished 等接口，不代表 HealthSet 零血量会自动调用这些接口。
 
 CombatComponentBase 没有武器 Trace、连招状态或命中去重主体。EnemyCharacter 没有自己的完整 ASC/AttributeSet 创建与初始化。当前无法以 C++ 证据确认完整的攻击怪物闭环。
+
+攻击侧进展：连招数据（`UHodgeComboSet`）与时间轴 Task（`UHodgeAbilityTask_PlayTimeline`）已有实现，但**没有任何 C++ 攻击 Ability 调用它们**；`Content/Main/Character/Hero/Ability/GA_Melee.uasset` 是本轮未跟踪的新资产，其父类、Montage、命中配置未解析。技能授予路径本身已接通（PlayerState::SetPawnData），所以缺的是"具体攻击 Ability + 命中判定 + 目标 ASC"这三环。详见 [GAS 章节](07-gas.md)。
 
 ## 推荐最小战斗闭环
 

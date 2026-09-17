@@ -8,39 +8,40 @@
 
 ## HodgeGameplayAbility.cpp
 
-项目技能基类：激活策略、互斥组、额外 Cost、失败与 EffectContext 扩展。
+项目技能基类：激活策略、互斥组、额外 Cost、失败与 EffectContext 扩展；PreloadPrimaryAssetsOnGrant 在授予时预加载 Bundle。
 
 源码：[Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility.cpp)
 
-项目内直接 include（不是运行调用关系）：[AbilitySystem/Abilities/HodgeGameplayAbility.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility.h)、[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)、[AbilitySystem/HodgeGameplayEffectContext.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayEffectContext.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)、[AbilitySystem/Abilities/HodgeAbilityCost.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeAbilityCost.h)、[Camera/HodgeCameraMode.h](../../../Source/Hodgepodge/Public/Camera/HodgeCameraMode.h)、[Character/HodgeCombatCharacter.h](../../../Source/Hodgepodge/Public/Character/HodgeCombatCharacter.h)、[Component/HodgeHeroComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeHeroComponent.h)、[Interface/HodgeAbilitySourceInterface.h](../../../Source/Hodgepodge/Public/Interface/HodgeAbilitySourceInterface.h)
+项目内直接 include（不是运行调用关系）：[AbilitySystem/Abilities/HodgeGameplayAbility.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility.h)、[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)、[AbilitySystem/HodgeGameplayEffectContext.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayEffectContext.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)、[AbilitySystem/Abilities/HodgeAbilityCost.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeAbilityCost.h)、[Camera/HodgeCameraMode.h](../../../Source/Hodgepodge/Public/Camera/HodgeCameraMode.h)、[Character/HodgeCombatCharacter.h](../../../Source/Hodgepodge/Public/Character/HodgeCombatCharacter.h)、[Component/HodgeHeroComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeHeroComponent.h)、[Data/HodgeAssetManager.h](../../../Source/Hodgepodge/Public/Data/HodgeAssetManager.h)、[Interface/HodgeAbilitySourceInterface.h](../../../Source/Hodgepodge/Public/Interface/HodgeAbilitySourceInterface.h)
 
 定义候选（多行签名仅展示首行）：
 
-- L36: `UHodgeGameplayAbility::UHodgeGameplayAbility(const FObjectInitializer& ObjectInitializer)`
-- L65: `UHodgeAbilitySystemComponent* UHodgeGameplayAbility::GetHodgeAbilitySystemComponentFromActorInfo() const`
-- L74: `AHodgePlayerController* UHodgeGameplayAbility::GetHodgePlayerControllerFromActorInfo() const`
-- L81: `AController* UHodgeGameplayAbility::GetControllerFromActorInfo() const`
-- L119: `AHodgeCombatCharacter* UHodgeGameplayAbility::GetHodgeCharacterFromActorInfo() const`
-- L125: `UHodgeHeroComponent* UHodgeGameplayAbility::GetHeroComponentFromActorInfo() const`
-- L132: `void UHodgeGameplayAbility::NativeOnAbilityFailedToActivate(const FGameplayTagContainer& FailedReason) const`
-- L185: `bool UHodgeGameplayAbility::CanActivateAbility(const FGameplayAbilitySpecHandle Handle,`
-- L226: `void UHodgeGameplayAbility::SetCanBeCanceled(bool bCanBeCanceled)`
-- L245: `void UHodgeGameplayAbility::OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec)`
-- L258: `void UHodgeGameplayAbility::OnRemoveAbility(const FGameplayAbilityActorInfo* ActorInfo,`
-- L269: `void UHodgeGameplayAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,`
-- L279: `void UHodgeGameplayAbility::EndAbility(const FGameplayAbilitySpecHandle Handle,`
-- L292: `bool UHodgeGameplayAbility::CheckCost(const FGameplayAbilitySpecHandle Handle,`
-- L322: `void UHodgeGameplayAbility::ApplyCost(const FGameplayAbilitySpecHandle Handle,`
-- L405: `FGameplayEffectContextHandle UHodgeGameplayAbility::MakeEffectContext(const FGameplayAbilitySpecHandle Handle,`
-- L452: `void UHodgeGameplayAbility::ApplyAbilityTagsToGameplayEffectSpec(FGameplayEffectSpec& Spec,`
-- L471: `bool UHodgeGameplayAbility::DoesAbilitySatisfyTagRequirements(const UAbilitySystemComponent& AbilitySystemComponent,`
-- L627: `void UHodgeGameplayAbility::OnPawnAvatarSet()`
-- L634: `void UHodgeGameplayAbility::GetAbilitySource(FGameplayAbilitySpecHandle Handle,`
-- L660: `void UHodgeGameplayAbility::TryActivateAbilityOnSpawn(const FGameplayAbilityActorInfo* ActorInfo,`
-- L702: `bool UHodgeGameplayAbility::CanChangeActivationGroup(EHodgeAbilityActivationGroup NewGroup) const`
-- L740: `bool UHodgeGameplayAbility::ChangeActivationGroup(EHodgeAbilityActivationGroup NewGroup)`
-- L773: `void UHodgeGameplayAbility::SetCameraMode(TSubclassOf<UHodgeCameraMode> CameraMode)`
-- L787: `void UHodgeGameplayAbility::ClearCameraMode()`
+- L37: `UHodgeGameplayAbility::UHodgeGameplayAbility(const FObjectInitializer& ObjectInitializer)`
+- L66: `UHodgeAbilitySystemComponent* UHodgeGameplayAbility::GetHodgeAbilitySystemComponentFromActorInfo() const`
+- L75: `AHodgePlayerController* UHodgeGameplayAbility::GetHodgePlayerControllerFromActorInfo() const`
+- L82: `AController* UHodgeGameplayAbility::GetControllerFromActorInfo() const`
+- L120: `AHodgeCombatCharacter* UHodgeGameplayAbility::GetHodgeCharacterFromActorInfo() const`
+- L126: `UHodgeHeroComponent* UHodgeGameplayAbility::GetHeroComponentFromActorInfo() const`
+- L133: `void UHodgeGameplayAbility::NativeOnAbilityFailedToActivate(const FGameplayTagContainer& FailedReason) const`
+- L186: `bool UHodgeGameplayAbility::CanActivateAbility(const FGameplayAbilitySpecHandle Handle,`
+- L227: `void UHodgeGameplayAbility::SetCanBeCanceled(bool bCanBeCanceled)`
+- L246: `void UHodgeGameplayAbility::OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec)`
+- L264: `void UHodgeGameplayAbility::PreloadConfiguredPrimaryAssets()`
+- L306: `void UHodgeGameplayAbility::OnRemoveAbility(const FGameplayAbilityActorInfo* ActorInfo,`
+- L317: `void UHodgeGameplayAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,`
+- L327: `void UHodgeGameplayAbility::EndAbility(const FGameplayAbilitySpecHandle Handle,`
+- L340: `bool UHodgeGameplayAbility::CheckCost(const FGameplayAbilitySpecHandle Handle,`
+- L370: `void UHodgeGameplayAbility::ApplyCost(const FGameplayAbilitySpecHandle Handle,`
+- L453: `FGameplayEffectContextHandle UHodgeGameplayAbility::MakeEffectContext(const FGameplayAbilitySpecHandle Handle,`
+- L500: `void UHodgeGameplayAbility::ApplyAbilityTagsToGameplayEffectSpec(FGameplayEffectSpec& Spec,`
+- L519: `bool UHodgeGameplayAbility::DoesAbilitySatisfyTagRequirements(const UAbilitySystemComponent& AbilitySystemComponent,`
+- L675: `void UHodgeGameplayAbility::OnPawnAvatarSet()`
+- L682: `void UHodgeGameplayAbility::GetAbilitySource(FGameplayAbilitySpecHandle Handle,`
+- L708: `void UHodgeGameplayAbility::TryActivateAbilityOnSpawn(const FGameplayAbilityActorInfo* ActorInfo,`
+- L750: `bool UHodgeGameplayAbility::CanChangeActivationGroup(EHodgeAbilityActivationGroup NewGroup) const`
+- L788: `bool UHodgeGameplayAbility::ChangeActivationGroup(EHodgeAbilityActivationGroup NewGroup)`
+- L821: `void UHodgeGameplayAbility::SetCameraMode(TSubclassOf<UHodgeCameraMode> CameraMode)`
+- L835: `void UHodgeGameplayAbility::ClearCameraMode()`
 
 ## HodgeAttributeSet.cpp
 
@@ -242,6 +243,49 @@ Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动�
 - L189: `void UHodgeGlobalAbilitySystem::RegisterASC(UHodgeAbilitySystemComponent* ASC)`
 - L210: `void UHodgeGlobalAbilitySystem::UnregisterASC(UHodgeAbilitySystemComponent* ASC)`
 
+## HodgeAbilityTask_PlayTimeline.cpp
+
+驱动时间轴的 AbilityTask：逻辑时间推进、阶段 loose tag、GameplayEvent 分派与自动 EndTask。
+
+源码：[Source/Hodgepodge/Private/AbilitySystem/Timeline/HodgeAbilityTask_PlayTimeline.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/Timeline/HodgeAbilityTask_PlayTimeline.cpp)
+
+项目内直接 include（不是运行调用关系）：[AbilitySystem/Timeline/HodgeAbilityTask_PlayTimeline.h](../../../Source/Hodgepodge/Public/AbilitySystem/Timeline/HodgeAbilityTask_PlayTimeline.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)
+
+定义候选（多行签名仅展示首行）：
+
+- L17: `UHodgeAbilityTask_PlayTimeline::UHodgeAbilityTask_PlayTimeline(const FObjectInitializer& ObjectInitializer)`
+- L24: `UHodgeAbilityTask_PlayTimeline* UHodgeAbilityTask_PlayTimeline::PlayTimeline(`
+- L43: `void UHodgeAbilityTask_PlayTimeline::Activate()`
+- L111: `void UHodgeAbilityTask_PlayTimeline::InitializeTimeline(float InStartOffset)`
+- L141: `void UHodgeAbilityTask_PlayTimeline::TickTask(float DeltaTime)`
+- L183: `void UHodgeAbilityTask_PlayTimeline::AdvanceTimeline(float InPreviousTime, float InCurrentTime)`
+- L223: `void UHodgeAbilityTask_PlayTimeline::EnterPhase(int32 PhaseIndex)`
+- L260: `void UHodgeAbilityTask_PlayTimeline::ExitPhase(int32 PhaseIndex)`
+- L297: `void UHodgeAbilityTask_PlayTimeline::ClearAllPhaseTags()`
+- L330: `void UHodgeAbilityTask_PlayTimeline::FireEvent(const FHodgeTimelineEvent& Event)`
+- L335: `void UHodgeAbilityTask_PlayTimeline::FireEventTag(const FGameplayTag& EventTag, EHodgeTimelineEventNetPolicy NetPolicy, float EventTime)`
+- L369: `bool UHodgeAbilityTask_PlayTimeline::ShouldExecuteOnThisEndpoint(EHodgeTimelineEventNetPolicy NetPolicy) const`
+- L398: `void UHodgeAbilityTask_PlayTimeline::StopTimeline(EHodgeTimelineStopReason Reason)`
+- L434: `void UHodgeAbilityTask_PlayTimeline::OnDestroy(bool bInOwnerFinished)`
+
+## HodgeAbilityTimeline.cpp
+
+攻击时间轴数据资产：阶段区间、时间点事件、Montage 软引用与 Bundle 收集；有实现、无 C++ 调用点。
+
+源码：[Source/Hodgepodge/Private/AbilitySystem/Timeline/HodgeAbilityTimeline.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/Timeline/HodgeAbilityTimeline.cpp)
+
+项目内直接 include（不是运行调用关系）：[AbilitySystem/Timeline/HodgeAbilityTimeline.h](../../../Source/Hodgepodge/Public/AbilitySystem/Timeline/HodgeAbilityTimeline.h)、[Data/HodgeAssetManager.h](../../../Source/Hodgepodge/Public/Data/HodgeAssetManager.h)
+
+定义候选（多行签名仅展示首行）：
+
+- L19: `void UHodgeAbilityTimeline::GetActivePhases(float Time, TArray<int32>& OutPhaseIndices) const`
+- L37: `void UHodgeAbilityTimeline::SortPhasesByTime()`
+- L45: `void UHodgeAbilityTimeline::SortEventsByTime()`
+- L53: `void UHodgeAbilityTimeline::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)`
+- L74: `void UHodgeAbilityTimeline::SyncDurationFromMontage()`
+- L92: `EDataValidationResult UHodgeAbilityTimeline::IsDataValid(FDataValidationContext& Context) const`
+- L271: `void UHodgeAbilityTimeline::UpdateAssetBundleData()`
+
 ## HodgeAbilityCost.h
 
 自定义额外能力消耗的扩展契约。
@@ -285,7 +329,7 @@ Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动�
 
 ## HodgeGameplayAbility.h
 
-项目技能基类：激活策略、互斥组、额外 Cost、失败与 EffectContext 扩展。
+项目技能基类：激活策略、互斥组、额外 Cost、失败与 EffectContext 扩展；PreloadPrimaryAssetsOnGrant 在授予时预加载 Bundle。
 
 源码：[Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility.h)
 
@@ -304,125 +348,129 @@ Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动�
   13: class UHodgeCameraMode;
   14: class IHodgeAbilitySourceInterface;
   15: class AHodgeCombatCharacter;
-  21: UENUM(BlueprintType)
-  22: enum class EHodgeAbilityActivationPolicy : uint8
-  23: {
-  25: 	OnInputTriggered,
-  28: 	WhileInputActive,
-  31: 	OnSpawn
-  32: };
-  40: UENUM(BlueprintType)
-  41: enum class EHodgeAbilityActivationGroup : uint8
-  42: {
-  44: 	Independent,
-  47: 	Exclusive_Replaceable,
-  50: 	Exclusive_Blocking,
-  53: 	MAX UMETA(Hidden)
-  54: };
-  57: USTRUCT(BlueprintType)
-  58: struct FHodgeAbilityMontageFailureMessage
-  59: {
-  60: 	GENERATED_BODY()
-  62: public:
-  64: 	UPROPERTY(BlueprintReadWrite)
-  65: 	TObjectPtr<APlayerController> PlayerController = nullptr;
-  68: 	UPROPERTY(BlueprintReadWrite)
-  69: 	TObjectPtr<AActor> AvatarActor = nullptr;
-  72: 	UPROPERTY(BlueprintReadWrite)
-  73: 	FGameplayTagContainer FailureTags;
-  76: 	UPROPERTY(BlueprintReadWrite)
-  77: 	TObjectPtr<UAnimMontage> FailureMontage = nullptr;
-  78: };
-  92: UCLASS(Abstract, HideCategories = Input,
-  93: 	Meta = (ShortTooltip = "The base gameplay ability class used by this project."))
-  94: class HODGEPODGE_API UHodgeGameplayAbility : public UGameplayAbility
-  95: {
-  96: 	GENERATED_BODY()
-  99: 	friend class UHodgeAbilitySystemComponent;
- 101: public:
- 103: 	UHodgeGameplayAbility(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
- 106: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Ability")
- 107: 	UHodgeAbilitySystemComponent* GetHodgeAbilitySystemComponentFromActorInfo() const;
- 110: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Ability")
- 111: 	AHodgePlayerController* GetHodgePlayerControllerFromActorInfo() const;
- 114: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Ability")
- 115: 	AController* GetControllerFromActorInfo() const;
- 118: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Ability")
- 119: 	AHodgeCombatCharacter* GetHodgeCharacterFromActorInfo() const;
- 122: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Ability")
- 123: 	UHodgeHeroComponent* GetHeroComponentFromActorInfo() const;
- 126: 	EHodgeAbilityActivationPolicy GetActivationPolicy() const { return ActivationPolicy; }
- 129: 	EHodgeAbilityActivationGroup GetActivationGroup() const { return ActivationGroup; }
- 132: 	void TryActivateAbilityOnSpawn(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) const;
- 136: 	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "Hodge|Ability",
- 137: 		Meta = (ExpandBoolAsExecs = "ReturnValue"))
- 138: 	bool CanChangeActivationGroup(EHodgeAbilityActivationGroup NewGroup) const;
- 142: 	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "Hodge|Ability",
- 143: 		Meta = (ExpandBoolAsExecs = "ReturnValue"))
- 144: 	bool ChangeActivationGroup(EHodgeAbilityActivationGroup NewGroup);
- 147: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Ability")
- 148: 	void SetCameraMode(TSubclassOf<UHodgeCameraMode> CameraMode);
- 151: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Ability")
- 152: 	void ClearCameraMode();
- 155: 	void OnAbilityFailedToActivate(const FGameplayTagContainer& FailedReason) const
- 156: 	{
- 158: 		NativeOnAbilityFailedToActivate(FailedReason);
- 161: 		ScriptOnAbilityFailedToActivate(FailedReason);
- 162: 	}
- 164: protected:
- 166: 	virtual void NativeOnAbilityFailedToActivate(const FGameplayTagContainer& FailedReason) const;
- 169: 	UFUNCTION(BlueprintImplementableEvent)
- 170: 	void ScriptOnAbilityFailedToActivate(const FGameplayTagContainer& FailedReason) const;
- 174: 	virtual bool CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
- 175: 	                                const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags,
- 176: 	                                FGameplayTagContainer* OptionalRelevantTags) const override;
- 179: 	virtual void SetCanBeCanceled(bool bCanBeCanceled) override;
- 182: 	virtual void OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
- 185: 	virtual void OnRemoveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
- 188: 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
- 189: 	                             const FGameplayAbilityActivationInfo ActivationInfo,
- 190: 	                             const FGameplayEventData* TriggerEventData) override;
- 193: 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
- 194: 	                        const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility,
- 195: 	                        bool bWasCancelled) override;
- 198: 	virtual bool CheckCost(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
- 199: 	                       OUT FGameplayTagContainer* OptionalRelevantTags = nullptr) const override;
- 202: 	virtual void ApplyCost(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
- 203: 	                       const FGameplayAbilityActivationInfo ActivationInfo) const override;
- 206: 	virtual FGameplayEffectContextHandle MakeEffectContext(const FGameplayAbilitySpecHandle Handle,
- 207: 	                                                       const FGameplayAbilityActorInfo* ActorInfo) const override;
- 210: 	virtual void ApplyAbilityTagsToGameplayEffectSpec(FGameplayEffectSpec& Spec,
- 211: 	                                                  FGameplayAbilitySpec* AbilitySpec) const override;
- 214: 	virtual bool DoesAbilitySatisfyTagRequirements(const UAbilitySystemComponent& AbilitySystemComponent,
- 215: 	                                               const FGameplayTagContainer* SourceTags = nullptr,
- 216: 	                                               const FGameplayTagContainer* TargetTags = nullptr,
- 217: 	                                               OUT FGameplayTagContainer* OptionalRelevantTags = nullptr)
- 218: 	const override;
- 222: 	virtual void OnPawnAvatarSet();
- 225: 	virtual void GetAbilitySource(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
- 226: 	                              float& OutSourceLevel, const IHodgeAbilitySourceInterface*& OutAbilitySource,
- 227: 	                              AActor*& OutEffectCauser) const;
- 231: 	UFUNCTION(BlueprintImplementableEvent, Category = Ability, DisplayName = "OnAbilityAdded")
- 232: 	void K2_OnAbilityAdded();
- 236: 	UFUNCTION(BlueprintImplementableEvent, Category = Ability, DisplayName = "OnAbilityRemoved")
- 237: 	void K2_OnAbilityRemoved();
- 241: 	UFUNCTION(BlueprintImplementableEvent, Category = Ability, DisplayName = "OnPawnAvatarSet")
- 242: 	void K2_OnPawnAvatarSet();
- 244: protected:
- 246: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hodge|Ability Activation")
- 247: 	EHodgeAbilityActivationPolicy ActivationPolicy;
- 250: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hodge|Ability Activation")
- 251: 	EHodgeAbilityActivationGroup ActivationGroup;
- 254: 	UPROPERTY(EditDefaultsOnly, Instanced, Category = Costs)
- 255: 	TArray<TObjectPtr<UHodgeAbilityCost>> AdditionalCosts;
- 258: 	UPROPERTY(EditDefaultsOnly, Category = "Advanced")
- 259: 	TMap<FGameplayTag, FText> FailureTagToUserFacingMessages;
- 262: 	UPROPERTY(EditDefaultsOnly, Category = "Advanced")
- 263: 	TMap<FGameplayTag, TObjectPtr<UAnimMontage>> FailureTagToAnimMontage;
- 266: 	UPROPERTY(EditDefaultsOnly, Category = "Advanced")
- 267: 	bool bLogCancelation;
- 270: 	TSubclassOf<UHodgeCameraMode> ActiveCameraMode;
- 271: };
+  16: class UPrimaryDataAsset;
+  22: UENUM(BlueprintType)
+  23: enum class EHodgeAbilityActivationPolicy : uint8
+  24: {
+  26: 	OnInputTriggered,
+  29: 	WhileInputActive,
+  32: 	OnSpawn
+  33: };
+  41: UENUM(BlueprintType)
+  42: enum class EHodgeAbilityActivationGroup : uint8
+  43: {
+  45: 	Independent,
+  48: 	Exclusive_Replaceable,
+  51: 	Exclusive_Blocking,
+  54: 	MAX UMETA(Hidden)
+  55: };
+  58: USTRUCT(BlueprintType)
+  59: struct FHodgeAbilityMontageFailureMessage
+  60: {
+  61: 	GENERATED_BODY()
+  63: public:
+  65: 	UPROPERTY(BlueprintReadWrite)
+  66: 	TObjectPtr<APlayerController> PlayerController = nullptr;
+  69: 	UPROPERTY(BlueprintReadWrite)
+  70: 	TObjectPtr<AActor> AvatarActor = nullptr;
+  73: 	UPROPERTY(BlueprintReadWrite)
+  74: 	FGameplayTagContainer FailureTags;
+  77: 	UPROPERTY(BlueprintReadWrite)
+  78: 	TObjectPtr<UAnimMontage> FailureMontage = nullptr;
+  79: };
+  93: UCLASS(Abstract, HideCategories = Input,
+  94: 	Meta = (ShortTooltip = "The base gameplay ability class used by this project."))
+  95: class HODGEPODGE_API UHodgeGameplayAbility : public UGameplayAbility
+  96: {
+  97: 	GENERATED_BODY()
+ 100: 	friend class UHodgeAbilitySystemComponent;
+ 102: public:
+ 104: 	UHodgeGameplayAbility(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+ 107: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Ability")
+ 108: 	UHodgeAbilitySystemComponent* GetHodgeAbilitySystemComponentFromActorInfo() const;
+ 111: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Ability")
+ 112: 	AHodgePlayerController* GetHodgePlayerControllerFromActorInfo() const;
+ 115: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Ability")
+ 116: 	AController* GetControllerFromActorInfo() const;
+ 119: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Ability")
+ 120: 	AHodgeCombatCharacter* GetHodgeCharacterFromActorInfo() const;
+ 123: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Ability")
+ 124: 	UHodgeHeroComponent* GetHeroComponentFromActorInfo() const;
+ 127: 	EHodgeAbilityActivationPolicy GetActivationPolicy() const { return ActivationPolicy; }
+ 130: 	EHodgeAbilityActivationGroup GetActivationGroup() const { return ActivationGroup; }
+ 133: 	void TryActivateAbilityOnSpawn(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) const;
+ 137: 	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "Hodge|Ability",
+ 138: 		Meta = (ExpandBoolAsExecs = "ReturnValue"))
+ 139: 	bool CanChangeActivationGroup(EHodgeAbilityActivationGroup NewGroup) const;
+ 143: 	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "Hodge|Ability",
+ 144: 		Meta = (ExpandBoolAsExecs = "ReturnValue"))
+ 145: 	bool ChangeActivationGroup(EHodgeAbilityActivationGroup NewGroup);
+ 148: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Ability")
+ 149: 	void SetCameraMode(TSubclassOf<UHodgeCameraMode> CameraMode);
+ 152: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Ability")
+ 153: 	void ClearCameraMode();
+ 156: 	void OnAbilityFailedToActivate(const FGameplayTagContainer& FailedReason) const
+ 157: 	{
+ 159: 		NativeOnAbilityFailedToActivate(FailedReason);
+ 162: 		ScriptOnAbilityFailedToActivate(FailedReason);
+ 163: 	}
+ 165: protected:
+ 167: 	virtual void NativeOnAbilityFailedToActivate(const FGameplayTagContainer& FailedReason) const;
+ 170: 	UFUNCTION(BlueprintImplementableEvent)
+ 171: 	void ScriptOnAbilityFailedToActivate(const FGameplayTagContainer& FailedReason) const;
+ 175: 	virtual bool CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+ 176: 	                                const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags,
+ 177: 	                                FGameplayTagContainer* OptionalRelevantTags) const override;
+ 180: 	virtual void SetCanBeCanceled(bool bCanBeCanceled) override;
+ 183: 	virtual void OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
+ 186: 	virtual void OnRemoveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
+ 189: 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+ 190: 	                             const FGameplayAbilityActivationInfo ActivationInfo,
+ 191: 	                             const FGameplayEventData* TriggerEventData) override;
+ 194: 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+ 195: 	                        const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility,
+ 196: 	                        bool bWasCancelled) override;
+ 199: 	virtual bool CheckCost(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+ 200: 	                       OUT FGameplayTagContainer* OptionalRelevantTags = nullptr) const override;
+ 203: 	virtual void ApplyCost(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+ 204: 	                       const FGameplayAbilityActivationInfo ActivationInfo) const override;
+ 207: 	virtual FGameplayEffectContextHandle MakeEffectContext(const FGameplayAbilitySpecHandle Handle,
+ 208: 	                                                       const FGameplayAbilityActorInfo* ActorInfo) const override;
+ 211: 	virtual void ApplyAbilityTagsToGameplayEffectSpec(FGameplayEffectSpec& Spec,
+ 212: 	                                                  FGameplayAbilitySpec* AbilitySpec) const override;
+ 215: 	virtual bool DoesAbilitySatisfyTagRequirements(const UAbilitySystemComponent& AbilitySystemComponent,
+ 216: 	                                               const FGameplayTagContainer* SourceTags = nullptr,
+ 217: 	                                               const FGameplayTagContainer* TargetTags = nullptr,
+ 218: 	                                               OUT FGameplayTagContainer* OptionalRelevantTags = nullptr)
+ 219: 	const override;
+ 223: 	virtual void OnPawnAvatarSet();
+ 226: 	virtual void GetAbilitySource(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+ 227: 	                              float& OutSourceLevel, const IHodgeAbilitySourceInterface*& OutAbilitySource,
+ 228: 	                              AActor*& OutEffectCauser) const;
+ 232: 	UFUNCTION(BlueprintImplementableEvent, Category = Ability, DisplayName = "OnAbilityAdded")
+ 233: 	void K2_OnAbilityAdded();
+ 237: 	UFUNCTION(BlueprintImplementableEvent, Category = Ability, DisplayName = "OnAbilityRemoved")
+ 238: 	void K2_OnAbilityRemoved();
+ 242: 	UFUNCTION(BlueprintImplementableEvent, Category = Ability, DisplayName = "OnPawnAvatarSet")
+ 243: 	void K2_OnPawnAvatarSet();
+ 245: protected:
+ 247: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hodge|Ability Activation")
+ 248: 	EHodgeAbilityActivationPolicy ActivationPolicy;
+ 251: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hodge|Ability Activation")
+ 252: 	EHodgeAbilityActivationGroup ActivationGroup;
+ 255: 	UPROPERTY(EditDefaultsOnly, Instanced, Category = Costs)
+ 256: 	TArray<TObjectPtr<UHodgeAbilityCost>> AdditionalCosts;
+ 259: 	UPROPERTY(EditDefaultsOnly, Category = "Advanced")
+ 260: 	TMap<FGameplayTag, FText> FailureTagToUserFacingMessages;
+ 263: 	UPROPERTY(EditDefaultsOnly, Category = "Advanced")
+ 264: 	TMap<FGameplayTag, TObjectPtr<UAnimMontage>> FailureTagToAnimMontage;
+ 267: 	UPROPERTY(EditDefaultsOnly, Category = "Advanced")
+ 268: 	bool bLogCancelation;
+ 271: 	TSubclassOf<UHodgeCameraMode> ActiveCameraMode;
+ 285: 	UPROPERTY(EditDefaultsOnly, Category = "Hodge|Ability")
+ 286: 	TArray<TObjectPtr<UPrimaryDataAsset>> PreloadPrimaryAssetsOnGrant;
+ 289: 	void PreloadConfiguredPrimaryAssets();
+ 290: };
 ```
 
 ## HodgeAttributeSet.h
@@ -932,119 +980,152 @@ Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动�
   54: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Type_StatusChange);
   55: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Type_StatusChange_Death);
   56: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Type_StatusChange_Spawning);
-  61: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cosmetic);
-  62: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cosmetic_AnimationStyle_Feminine);
-  63: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cosmetic_AnimationStyle_Masculine);
-  64: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cosmetic_BodyStyle_Medium);
-  69: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Gameplay_Zone_WeakSpot);
-  74: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Character_DamageTaken);
-  75: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Character_Dash);
-  76: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Character_Dash_Cooldown);
-  77: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Character_Death);
-  78: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Character_Heal);
-  79: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Character_Melee_Cooldown);
-  84: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Test_Burst);
-  85: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Test_BurstLatent);
-  86: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Test_Looping);
-  91: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Weapon_Grenade_Cooldown);
-  92: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Weapon_Grenade_Detonate);
-  93: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Weapon_Melee_Hit);
-  94: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Weapon_Melee_Impact);
-  95: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Weapon_Pistol_Fire);
-  96: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Weapon_Rifle_Fire);
-  97: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Weapon_Rifle_Impact);
-  98: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Weapon_Shotgun_Fire);
- 103: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_World_Launcher_Activate);
- 104: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_World_Teleporter_Activate);
- 109: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEffect_DamageTrait_Instant);
- 110: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEffect_DamageTrait_Periodic);
- 111: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEffect_DamageType_Basic);
- 112: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEffect_DamageType_Grenade);
- 113: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEffect_DamageType_Melee);
- 114: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEffect_DamageType_Pistol);
- 115: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEffect_DamageType_Rifle);
- 116: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEffect_DamageType_Shotgun);
- 117: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEffect_Heal_Instant);
- 118: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEffect_Heal_Periodic);
- 123: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_MeleeHit);
- 124: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Death);
- 125: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Reset);
- 126: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_RequestReset);
- 131: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameSettings_Action_EditSafeZone);
- 136: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(HUD_Slot_ExtraEquipment);
- 137: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(HUD_Slot_InfrequentAbilities);
- 138: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(HUD_Slot_LeftSideTouchInputs);
- 139: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(HUD_Slot_LeftSideTouchRegion);
- 140: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(HUD_Slot_RespawnTimer);
- 141: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(HUD_Slot_RightSideTouchInputs);
- 142: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(HUD_Slot_RightSideTouchRegion);
- 147: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Ability_Dash);
- 148: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Ability_Heal);
- 149: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Ability_Melee);
- 150: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Ability_Quickslot_Drop);
- 151: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Jump);
- 156: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Weapon_ADS);
- 157: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Weapon_Fire);
- 158: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Weapon_FireAuto);
- 159: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Weapon_Grenade);
- 160: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Weapon_Reload);
- 165: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Move);
- 166: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Look);
- 167: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Look_Mouse);
- 168: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Look_Stick);
- 169: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Crouch);
- 170: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_AutoRun);
- 178: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Sprint);
- 179: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Walk);
- 180: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Aim);
- 181: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Ragdoll);
- 182: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Roll);
- 183: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_RotationMode);
- 184: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_ViewMode);
- 185: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_SwitchShoulder);
- 190: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InitState_Spawned);
- 191: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InitState_DataAvailable);
- 192: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InitState_DataInitialized);
- 193: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InitState_GameplayReady);
- 198: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Hodge_Damage_Taken_Message);
- 199: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Hodge_HUD_PlayerHUD);
- 200: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Hodge_HUD_TempTopWidgets);
- 201: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Hodge_Player);
- 206: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_BinauralSettingControlledByOS);
- 207: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_CanExitApplication);
- 208: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_Input_PrimarlyController);
- 209: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_Input_HasStrictControllerPairing);
- 210: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_Input_PrimarlyTouchScreen);
- 211: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_Input_SupportsMouseAndKeyboard);
- 212: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_Input_HardwareCursor);
- 213: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_SupportsBackgroundAudio);
- 214: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_SupportsChangingAudioOutputDevice);
- 215: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_SupportsWindowedMode);
- 220: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(ShooterGame_GamePhase_MatchBeginCountdown);
- 225: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_SpawningIn);
- 226: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Crouching);
- 227: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_AutoRunning);
- 228: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Death);
- 229: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Death_Dying);
- 230: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Death_Dead);
- 235: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(SetByCaller_Damage);
- 236: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(SetByCaller_Heal);
- 241: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cheat_GodMode);
- 242: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cheat_UnlimitedHealth);
- 247: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Action_Back);
- 248: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Layer_Game);
- 249: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Layer_GameMenu);
- 250: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Layer_Menu);
- 251: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Layer_Modal);
- 256: 	HODGEPODGE_API extern const TMap<uint8, FGameplayTag> MovementModeTagMap;
- 257: 	HODGEPODGE_API extern const TMap<uint8, FGameplayTag> CustomMovementModeTagMap;
- 259: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Mode_Walking);
- 260: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Mode_NavWalking);
- 261: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Mode_Falling);
- 262: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Mode_Swimming);
- 263: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Mode_Flying);
- 264: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Mode_Custom);
- 265: };
+  65: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attack);
+  66: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attack_Transition);
+  67: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attack_Transition_Normal);
+  68: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attack_Transition_Heavy);
+  69: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attack_Transition_Dodge);
+  70: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attack_Transition_HitConfirm);
+  71: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attack_Transition_Airborne);
+  72: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attack_Transition_AfterSkill);
+  73: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attack_Entry);
+  74: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attack_Entry_Default);
+  75: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attack_Entry_AfterSkill);
+  76: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attack_Entry_AfterDodge);
+  81: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cosmetic);
+  82: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cosmetic_AnimationStyle_Feminine);
+  83: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cosmetic_AnimationStyle_Masculine);
+  84: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cosmetic_BodyStyle_Medium);
+  89: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Gameplay_Zone_WeakSpot);
+  94: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Character_DamageTaken);
+  95: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Character_Dash);
+  96: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Character_Dash_Cooldown);
+  97: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Character_Death);
+  98: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Character_Heal);
+  99: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Character_Melee_Cooldown);
+ 104: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Test_Burst);
+ 105: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Test_BurstLatent);
+ 106: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Test_Looping);
+ 111: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Weapon_Grenade_Cooldown);
+ 112: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Weapon_Grenade_Detonate);
+ 113: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Weapon_Melee_Hit);
+ 114: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Weapon_Melee_Impact);
+ 115: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Weapon_Pistol_Fire);
+ 116: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Weapon_Rifle_Fire);
+ 117: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Weapon_Rifle_Impact);
+ 118: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Weapon_Shotgun_Fire);
+ 123: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_World_Launcher_Activate);
+ 124: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_World_Teleporter_Activate);
+ 129: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEffect_DamageTrait_Instant);
+ 130: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEffect_DamageTrait_Periodic);
+ 131: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEffect_DamageType_Basic);
+ 132: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEffect_DamageType_Grenade);
+ 133: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEffect_DamageType_Melee);
+ 134: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEffect_DamageType_Pistol);
+ 135: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEffect_DamageType_Rifle);
+ 136: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEffect_DamageType_Shotgun);
+ 137: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEffect_Heal_Instant);
+ 138: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEffect_Heal_Periodic);
+ 143: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_MeleeHit);
+ 144: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Death);
+ 145: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Reset);
+ 146: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_RequestReset);
+ 151: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Attack);
+ 154: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Attack_ComboWindow_Open);
+ 155: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Attack_ComboWindow_Close);
+ 158: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Attack_ComboTransition);
+ 159: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Attack_HitCheck);
+ 160: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Attack_CameraShake);
+ 161: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Attack_JumpSection);
+ 164: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Attack_Timeline_End);
+ 165: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Attack_Interrupted);
+ 168: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Attack_Phase_Enter);
+ 169: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Attack_Phase_Exit);
+ 174: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameSettings_Action_EditSafeZone);
+ 179: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(HUD_Slot_ExtraEquipment);
+ 180: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(HUD_Slot_InfrequentAbilities);
+ 181: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(HUD_Slot_LeftSideTouchInputs);
+ 182: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(HUD_Slot_LeftSideTouchRegion);
+ 183: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(HUD_Slot_RespawnTimer);
+ 184: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(HUD_Slot_RightSideTouchInputs);
+ 185: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(HUD_Slot_RightSideTouchRegion);
+ 190: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Ability_Dash);
+ 191: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Ability_Heal);
+ 192: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Ability_Melee);
+ 193: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Ability_Quickslot_Drop);
+ 194: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Jump);
+ 199: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Weapon_ADS);
+ 200: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Weapon_Fire);
+ 201: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Weapon_FireAuto);
+ 202: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Weapon_Grenade);
+ 203: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Weapon_Reload);
+ 208: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Move);
+ 209: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Look);
+ 210: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Look_Mouse);
+ 211: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Look_Stick);
+ 212: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Crouch);
+ 213: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_AutoRun);
+ 221: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Sprint);
+ 222: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Walk);
+ 223: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Aim);
+ 224: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Ragdoll);
+ 225: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Roll);
+ 226: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_RotationMode);
+ 227: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_ViewMode);
+ 228: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_SwitchShoulder);
+ 233: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InitState_Spawned);
+ 234: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InitState_DataAvailable);
+ 235: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InitState_DataInitialized);
+ 236: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InitState_GameplayReady);
+ 241: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Hodge_Damage_Taken_Message);
+ 242: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Hodge_HUD_PlayerHUD);
+ 243: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Hodge_HUD_TempTopWidgets);
+ 244: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Hodge_Player);
+ 249: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_BinauralSettingControlledByOS);
+ 250: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_CanExitApplication);
+ 251: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_Input_PrimarlyController);
+ 252: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_Input_HasStrictControllerPairing);
+ 253: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_Input_PrimarlyTouchScreen);
+ 254: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_Input_SupportsMouseAndKeyboard);
+ 255: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_Input_HardwareCursor);
+ 256: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_SupportsBackgroundAudio);
+ 257: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_SupportsChangingAudioOutputDevice);
+ 258: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_SupportsWindowedMode);
+ 263: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(ShooterGame_GamePhase_MatchBeginCountdown);
+ 268: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_SpawningIn);
+ 269: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Crouching);
+ 270: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_AutoRunning);
+ 271: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Death);
+ 272: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Death_Dying);
+ 273: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Death_Dead);
+ 278: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Attack);
+ 279: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Attack_Windup);
+ 280: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Attack_Active);
+ 281: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Attack_Recovery);
+ 282: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Attack_ComboWindow);
+ 283: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Attack_Invincible);
+ 284: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Attack_SuperArmor);
+ 288: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_AttackMode);
+ 289: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_AttackMode_Normal);
+ 290: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_AttackMode_Enhanced);
+ 295: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(SetByCaller_Damage);
+ 296: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(SetByCaller_Heal);
+ 301: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cheat_GodMode);
+ 302: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cheat_UnlimitedHealth);
+ 307: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Action_Back);
+ 308: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Layer_Game);
+ 309: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Layer_GameMenu);
+ 310: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Layer_Menu);
+ 311: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Layer_Modal);
+ 316: 	HODGEPODGE_API extern const TMap<uint8, FGameplayTag> MovementModeTagMap;
+ 317: 	HODGEPODGE_API extern const TMap<uint8, FGameplayTag> CustomMovementModeTagMap;
+ 319: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Mode_Walking);
+ 320: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Mode_NavWalking);
+ 321: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Mode_Falling);
+ 322: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Mode_Swimming);
+ 323: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Mode_Flying);
+ 324: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Mode_Custom);
+ 325: };
 ```
 
 ## HodgeGlobalAbilitySystem.h
@@ -1113,4 +1194,163 @@ Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动�
  112: 	UPROPERTY()
  113: 	TArray<TObjectPtr<UHodgeAbilitySystemComponent>> RegisteredASCs;
  114: };
+```
+
+## HodgeAbilityTask_PlayTimeline.h
+
+驱动时间轴的 AbilityTask：逻辑时间推进、阶段 loose tag、GameplayEvent 分派与自动 EndTask。
+
+源码：[Source/Hodgepodge/Public/AbilitySystem/Timeline/HodgeAbilityTask_PlayTimeline.h](../../../Source/Hodgepodge/Public/AbilitySystem/Timeline/HodgeAbilityTask_PlayTimeline.h)
+
+项目内直接 include（不是运行调用关系）：[AbilitySystem/Timeline/HodgeAbilityTimeline.h](../../../Source/Hodgepodge/Public/AbilitySystem/Timeline/HodgeAbilityTimeline.h)
+
+有效头文件声明摘录（未展开宏，未求值预处理分支）：
+
+```cpp
+  16: #pragma once
+  18: #include "CoreMinimal.h"
+  19: #include "Abilities/Tasks/AbilityTask.h"
+  20: #include "GameplayTagContainer.h"
+  21: #include "AbilitySystem/Timeline/HodgeAbilityTimeline.h"
+  22: #include "HodgeAbilityTask_PlayTimeline.generated.h"
+  34: UENUM(BlueprintType)
+  35: enum class EHodgeTimelineStopReason : uint8
+  36: {
+  38: 	None UMETA(DisplayName = "未声明"),
+  41: 	NaturalEnd UMETA(DisplayName = "自然结束"),
+  44: 	ComboTransition UMETA(DisplayName = "连击提交"),
+  47: 	Interrupted UMETA(DisplayName = "被外力抢占"),
+  50: 	AbilityCancelled UMETA(DisplayName = "能力被取消")
+  51: };
+  54: DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHodgeTimelineStoppedDelegate, EHodgeTimelineStopReason, StopReason);
+  62: UCLASS()
+  63: class HODGEPODGE_API UHodgeAbilityTask_PlayTimeline : public UAbilityTask
+  64: {
+  65: 	GENERATED_BODY()
+  67: public:
+  68: 	UHodgeAbilityTask_PlayTimeline(const FObjectInitializer& ObjectInitializer);
+  71: 	UPROPERTY(BlueprintAssignable)
+  72: 	FHodgeTimelineStoppedDelegate OnTimelineStopped;
+  87: 	UFUNCTION(BlueprintCallable, Category="Hodge|Ability|Tasks",
+  88: 		meta=(HidePin="OwningAbility", DefaultToSelf="OwningAbility", BlueprintInternalUseOnly="TRUE",
+  89: 			AdvancedDisplay="StartOffset,InitialPlayRate"))
+  90: 	static UHodgeAbilityTask_PlayTimeline* PlayTimeline(
+  91: 		UGameplayAbility* OwningAbility,
+  92: 		UHodgeAbilityTimeline* Timeline,
+  93: 		FGameplayTag AttackID,
+  94: 		float StartOffset = 0.f,
+  95: 		float InitialPlayRate = 1.f);
+ 104: 	UFUNCTION(BlueprintCallable, Category="Hodge|Ability|Tasks")
+ 105: 	void StopTimeline(EHodgeTimelineStopReason Reason);
+ 112: 	UFUNCTION(BlueprintPure, Category="Hodge|Ability|Tasks")
+ 113: 	FGameplayTag GetAttackID() const { return AttackID; }
+ 116: 	UFUNCTION(BlueprintPure, Category="Hodge|Ability|Tasks")
+ 117: 	bool IsTimelineStopped() const { return bStopped; }
+ 120: 	UFUNCTION(BlueprintPure, Category="Hodge|Ability|Tasks")
+ 121: 	float GetElapsedTime() const { return ElapsedTime; }
+ 123: protected:
+ 124: 	virtual void Activate() override;
+ 125: 	virtual void TickTask(float DeltaTime) override;
+ 126: 	virtual void OnDestroy(bool bInOwnerFinished) override;
+ 137: 	void InitializeTimeline(float InStartOffset);
+ 140: 	void AdvanceTimeline(float InPreviousTime, float InCurrentTime);
+ 142: 	void EnterPhase(int32 PhaseIndex);
+ 143: 	void ExitPhase(int32 PhaseIndex);
+ 146: 	void ClearAllPhaseTags();
+ 149: 	void FireEvent(const FHodgeTimelineEvent& Event);
+ 152: 	void FireEventTag(const FGameplayTag& EventTag, EHodgeTimelineEventNetPolicy NetPolicy, float EventTime);
+ 155: 	bool ShouldExecuteOnThisEndpoint(EHodgeTimelineEventNetPolicy NetPolicy) const;
+ 157: protected:
+ 158: 	UPROPERTY()
+ 159: 	TObjectPtr<UHodgeAbilityTimeline> TimelineAsset;
+ 162: 	FGameplayTag AttackID;
+ 165: 	float StartOffset = 0.f;
+ 171: 	float InitialPlayRate = 1.f;
+ 174: 	float LastUpdateWorldTime = 0.f;
+ 177: 	float LogicalElapsed = 0.f;
+ 180: 	float ElapsedTime = 0.f;
+ 183: 	float PreviousTime = 0.f;
+ 186: 	int32 NextEventIndex = 0;
+ 189: 	TArray<int32> ActivePhaseIndices;
+ 192: 	bool bStopped = false;
+ 193: };
+```
+
+## HodgeAbilityTimeline.h
+
+攻击时间轴数据资产：阶段区间、时间点事件、Montage 软引用与 Bundle 收集；有实现、无 C++ 调用点。
+
+源码：[Source/Hodgepodge/Public/AbilitySystem/Timeline/HodgeAbilityTimeline.h](../../../Source/Hodgepodge/Public/AbilitySystem/Timeline/HodgeAbilityTimeline.h)
+
+有效头文件声明摘录（未展开宏，未求值预处理分支）：
+
+```cpp
+  13: #pragma once
+  15: #include "CoreMinimal.h"
+  16: #include "Engine/DataAsset.h"
+  17: #include "GameplayTagContainer.h"
+  18: #include "HodgeAbilityTimeline.generated.h"
+  20: class UAnimMontage;
+  31: UENUM(BlueprintType)
+  32: enum class EHodgeTimelineEventNetPolicy : uint8
+  33: {
+  35: 	LocalAndAuthority UMETA(DisplayName = "两端各自执行"),
+  38: 	AuthorityOnly UMETA(DisplayName = "仅服务器"),
+  41: 	LocallyControlledOnly UMETA(DisplayName = "仅本地控制端")
+  42: };
+  52: USTRUCT(BlueprintType)
+  53: struct HODGEPODGE_API FHodgeTimelinePhase
+  54: {
+  55: 	GENERATED_BODY()
+  58: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(Categories="Status.Attack"))
+  59: 	FGameplayTag PhaseTag;
+  62: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ClampMin=0.0, UIMin=0.0, Units="s"))
+  63: 	float StartTime = 0.f;
+  66: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ClampMin=0.0, UIMin=0.0, Units="s"))
+  67: 	float EndTime = 0.f;
+  75: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(Categories="Status"))
+  76: 	FGameplayTagContainer AdditionalGrantedTags;
+  77: };
+  85: USTRUCT(BlueprintType)
+  86: struct HODGEPODGE_API FHodgeTimelineEvent
+  87: {
+  88: 	GENERATED_BODY()
+  91: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ClampMin=0.0, UIMin=0.0, Units="s"))
+  92: 	float Time = 0.f;
+  95: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(Categories="GameplayEvent.Attack"))
+  96: 	FGameplayTag EventTag;
+  99: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+ 100: 	EHodgeTimelineEventNetPolicy NetPolicy = EHodgeTimelineEventNetPolicy::LocalAndAuthority;
+ 101: };
+ 109: UCLASS(BlueprintType, Const)
+ 110: class HODGEPODGE_API UHodgeAbilityTimeline : public UPrimaryDataAsset
+ 111: {
+ 112: 	GENERATED_BODY()
+ 114: public:
+ 121: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ClampMin=0.01, Units="s"))
+ 122: 	float Duration = 1.0f;
+ 131: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(Categories="Animation"))
+ 132: 	TSoftObjectPtr<UAnimMontage> Montage;
+ 135: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+ 136: 	FName MontageSection;
+ 139: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ClampMin=0.0, Units="s"))
+ 140: 	float LengthMismatchTolerance = 0.05f;
+ 147: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(TitleProperty=PhaseTag))
+ 148: 	TArray<FHodgeTimelinePhase> Phases;
+ 156: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(TitleProperty=EventTag))
+ 157: 	TArray<FHodgeTimelineEvent> Events;
+ 160: 	void GetActivePhases(float Time, TArray<int32>& OutPhaseIndices) const;
+ 163: 	const TSoftObjectPtr<UAnimMontage>& GetMontage() const { return Montage; }
+ 165: #if WITH_EDITOR
+ 167: 	virtual EDataValidationResult IsDataValid(class FDataValidationContext& Context) const override;
+ 170: 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent) override;
+ 173: 	UFUNCTION(CallInEditor, Category="Hodge|Timeline", meta=(DisplayName="从 Montage 同步 Duration"))
+ 174: 	void SyncDurationFromMontage();
+ 177: 	void SortPhasesByTime();
+ 180: 	void SortEventsByTime();
+ 181: #endif
+ 183: #if WITH_EDITORONLY_DATA
+ 185: 	virtual void UpdateAssetBundleData() override;
+ 186: #endif
+ 187: };
 ```

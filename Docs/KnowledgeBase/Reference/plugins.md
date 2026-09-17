@@ -28,6 +28,17 @@
 - 模块：RD (EditorNoCommandlet)；RiderLink (EditorNoCommandlet)；RiderLogging (EditorNoCommandlet)；RiderBlueprint (EditorNoCommandlet)；RiderGameControl (EditorNoCommandlet)；RiderShaderInfo (EditorNoCommandlet)；RiderLC (EditorNoCommandlet)；RiderDebuggerSupport (EditorNoCommandlet)
 - 插件依赖：
 
+## McpAutomationBridge
+
+[插件描述](../../../Plugins/McpAutomationBridge/McpAutomationBridge.uplugin)
+
+- 版本：0.5.30
+- EngineVersion：5.5.0
+- EnabledByDefault：未声明
+- uproject 显式 Enabled：True
+- 模块：McpAutomationBridge (Editor)；McpAutomationBridgeFab (Editor)
+- 插件依赖：PythonScriptPlugin (Enabled=True)；EditorScriptingUtilities (Enabled=True)；LevelSequenceEditor (Enabled=True)；Niagara (Enabled=True)；NiagaraEditor (Enabled=True)；BehaviorTreeEditor (Enabled=True)；EnvironmentQueryEditor (Enabled=True)；ControlRig (Enabled=True)；RigVM (Enabled=True)；IKRig (Enabled=True)；ChaosVehiclesPlugin (Enabled=True)；AnimationData (Enabled=True)；ProceduralMeshComponent (Enabled=True)；Interchange (Enabled=True)；InterchangeOpenUSD (Enabled=True)；DataValidation (Enabled=True)；EnhancedInput (Enabled=True)；GeometryScripting (Enabled=True)；GeometryProcessing (Enabled=True)；ChaosCloth (Enabled=True)；GameplayAbilities (Enabled=True)；Metasound (Enabled=True)；StateTree (Enabled=True)；SmartObjects (Enabled=True)；MassGameplay (Enabled=True)；OnlineSubsystem (Enabled=True)；OnlineSubsystemUtils (Enabled=True)；Synthesis (Enabled=True)；PCG (Enabled=True)；MovieRenderPipeline (Enabled=True)；MoviePipelineMaskRenderPass (Enabled=True)；Takes (Enabled=True)；ElectraPlayer (Enabled=True)；StructUtils (Enabled=True)；Fab (Enabled=True)；Bridge (Enabled=True)
+
 ## UnrealMCP
 
 [插件描述](../../../Plugins/UnrealMCP/UnrealMCP.uplugin)

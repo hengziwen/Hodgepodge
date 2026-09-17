@@ -1,9 +1,12 @@
 # AbilityTimeline 设计方案：逻辑时间轴与表现分离
 
-> **文档状态：设计草案（未实现）**。撰写日期 2026-09-16。
-> 本文描述的是**目标设计**，不是已完成功能。文中出现的 `UHodgeAbilityTimeline`、
-> `UHodgeAbilityTask_PlayTimeline`、`UHodgeComboSet` 等类型**当前在源码中不存在**。
-> 本次未编译、未运行编辑器、未修改任何 C++ 或资产。
+> **文档状态：设计草案（类型已落地，尚未接线）**。撰写日期 2026-09-16，最近状态更新 2026-09-17。
+> 本文描述的是**目标设计**。文中出现的 `UHodgeAbilityTimeline`、`UHodgeAbilityTask_PlayTimeline`、
+> `UHodgeComboSet` 等类型**现已在 `Source/Hodgepodge/*/AbilitySystem/Timeline/` 与 `Data/HodgeComboSet` 中实现**
+> （含编辑器校验、Bundle 收集与 `PlayTimeline` 工厂、`PreloadPrimaryAssetBundles` 预加载链路），
+> 但**没有任何 C++ Ability 调用它们**，BP 是否接线未知，本设计的验收步骤仍未执行。
+> 当前真实状态以 [知识库 GAS 与接通清单](../KnowledgeBase/12-integration-backlog.md)为准；
+> 本文的历史修订记录保留原样，不作为"已实现/已验证"的证据。
 
 **相关文档**
 
@@ -112,12 +115,12 @@ GA_NormalAttack 用 WaitGameplayEvent 接
 | ASC 扩展 | **源码已实现** | `UHodgeAbilitySystemComponent`，含输入缓存、激活组、TagRelationship、动态 Tag GE 辅助 |
 | 标签声明体系 | **源码已实现** | `HodgeGameplayTags.h` 用 `UE_DECLARE_GAMEPLAY_TAG_EXTERN` 集中声明，`.cpp` 用 `UE_DEFINE_GAMEPLAY_TAG` 定义 |
 | 能力授予链 | **源码已接入**（据项目 owner 确认） | `PawnData.AbilitySets` → `GiveToAbilitySystem` 已打通 |
-| 单个普攻资产 | **待编辑器验证** | `Content/Main/Character/Hero/Ability/GA_Melee.uasset`（未跟踪） |
-| **AbilityTask 使用** | **当前为零** | 全工程没有一处 `UAbilityTask` 派生或使用；也无 `PlayMontage` 调用 |
+| 单个普攻资产 | **已存在，未解析** | `Content/Main/Character/Hero/Ability/GA_Melee.uasset`（未跟踪），父类/Montage/是否用 Timeline 待编辑器确认 |
+| **AbilityTask 使用** | **源码已实现，无调用点** | `UHodgeAbilityTask_PlayTimeline` 已有完整实现；但全工程没有 C++ Ability 调用 `PlayTimeline` |
 | 连击状态组件 | **未接通** | `UHodgeCombatComponentBase` 仅有构造函数并关闭 Tick |
-| ComboSet 数据资产 | **不存在** | 需新建 |
+| ComboSet 数据资产 | **类型已实现，资产待创建** | `UHodgeComboSet` 已实现并有 `IsDataValid`；尚无资产确认 |
 | 命中检测 / 伤害闭环 | **未接通** | 见知识库 KB-08 / KB-09 |
-| GameplayEvent 攻击标签 | **不存在** | 现有仅 `GameplayEvent.MeleeHit` / `Death` / `Reset` / `RequestReset` |
+| GameplayEvent 攻击标签 | **已注册** | `GameplayEvent.Attack.*`（ComboWindow Open/Close、HitCheck、JumpSection、Timeline.End、Interrupted、Phase Enter/Exit）已在 HodgeGameplayTags 注册；旧的 `GameplayEvent.MeleeHit` 等仍在 |
 
 ### 1.4 为什么现在做
 
@@ -248,7 +251,7 @@ flowchart TB
 
 ## 4. 数据模型
 
-> **本章全部为「建议 / 目标」，对应类型当前不存在。**
+> **本章类型已实现**（见 `Source/Hodgepodge/*/AbilitySystem/Timeline/` 与 `Data/HodgeComboSet`），字段与语义仍以本设计为准，业务接线尚未完成。
 
 ### 4.1 总览
 

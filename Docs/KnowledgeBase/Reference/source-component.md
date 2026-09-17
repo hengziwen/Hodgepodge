@@ -84,7 +84,7 @@ GameState 上的 Experience 复制、资源加载、插件激活、Action 执行
 
 ## HodgeHeroComponent.cpp
 
-已启用的玩家 Init State 协调、ASC 接入、输入与相机；额外输入移除仍为空，IMC 添加受设置注册条件影响。
+玩家 Init State 协调、ASC 接入、输入与相机；额外输入句柄持久化并在移除/EndPlay 解绑。
 
 源码：[Source/Hodgepodge/Private/Component/HodgeHeroComponent.cpp](../../../Source/Hodgepodge/Private/Component/HodgeHeroComponent.cpp)
 
@@ -102,20 +102,20 @@ GameState 上的 Experience 复制、资源加载、插件激活、Action 执行
 - L328: `void UHodgeHeroComponent::CheckDefaultInitialization()`
 - L346: `void UHodgeHeroComponent::BeginPlay()`
 - L368: `void UHodgeHeroComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)`
-- L378: `void UHodgeHeroComponent::InitializePlayerInput(UInputComponent* PlayerInputComponent)`
-- L596: `void UHodgeHeroComponent::AddAdditionalInputConfig(const UHodgeInputConfig* InputConfig)`
-- L650: `void UHodgeHeroComponent::RemoveAdditionalInputConfig(const UHodgeInputConfig* InputConfig)`
-- L657: `bool UHodgeHeroComponent::IsReadyToBindInputs() const`
-- L664: `void UHodgeHeroComponent::Input_AbilityInputTagPressed(FGameplayTag InputTag)`
-- L687: `void UHodgeHeroComponent::Input_AbilityInputTagReleased(FGameplayTag InputTag)`
-- L715: `void UHodgeHeroComponent::Input_Move(const FInputActionValue& InputActionValue)`
-- L773: `void UHodgeHeroComponent::Input_LookMouse(const FInputActionValue& InputActionValue)`
-- L812: `void UHodgeHeroComponent::Input_LookStick(const FInputActionValue& InputActionValue)`
-- L859: `void UHodgeHeroComponent::Input_Crouch(const FInputActionValue& InputActionValue)`
-- L872: `void UHodgeHeroComponent::Input_AutoRun(const FInputActionValue& InputActionValue)`
-- L892: `TSubclassOf<UHodgeCameraMode> UHodgeHeroComponent::DetermineCameraMode() const`
-- L925: `void UHodgeHeroComponent::SetAbilityCameraMode(TSubclassOf<UHodgeCameraMode> CameraMode,`
-- L940: `void UHodgeHeroComponent::ClearAbilityCameraMode(const FGameplayAbilitySpecHandle& OwningSpecHandle)`
+- L392: `void UHodgeHeroComponent::InitializePlayerInput(UInputComponent* PlayerInputComponent)`
+- L610: `void UHodgeHeroComponent::AddAdditionalInputConfig(const UHodgeInputConfig* InputConfig)`
+- L701: `void UHodgeHeroComponent::RemoveAdditionalInputConfig(const UHodgeInputConfig* InputConfig)`
+- L730: `bool UHodgeHeroComponent::IsReadyToBindInputs() const`
+- L737: `void UHodgeHeroComponent::Input_AbilityInputTagPressed(FGameplayTag InputTag)`
+- L760: `void UHodgeHeroComponent::Input_AbilityInputTagReleased(FGameplayTag InputTag)`
+- L788: `void UHodgeHeroComponent::Input_Move(const FInputActionValue& InputActionValue)`
+- L846: `void UHodgeHeroComponent::Input_LookMouse(const FInputActionValue& InputActionValue)`
+- L885: `void UHodgeHeroComponent::Input_LookStick(const FInputActionValue& InputActionValue)`
+- L932: `void UHodgeHeroComponent::Input_Crouch(const FInputActionValue& InputActionValue)`
+- L945: `void UHodgeHeroComponent::Input_AutoRun(const FInputActionValue& InputActionValue)`
+- L965: `TSubclassOf<UHodgeCameraMode> UHodgeHeroComponent::DetermineCameraMode() const`
+- L998: `void UHodgeHeroComponent::SetAbilityCameraMode(TSubclassOf<UHodgeCameraMode> CameraMode,`
+- L1013: `void UHodgeHeroComponent::ClearAbilityCameraMode(const FGameplayAbilitySpecHandle& OwningSpecHandle)`
 
 ## HodgeInteractionComponentBase.cpp
 
@@ -353,7 +353,7 @@ GameState 上的 Experience 复制、资源加载、插件激活、Action 执行
 
 ## HodgeHeroComponent.h
 
-已启用的玩家 Init State 协调、ASC 接入、输入与相机；额外输入移除仍为空，IMC 添加受设置注册条件影响。
+玩家 Init State 协调、ASC 接入、输入与相机；额外输入句柄持久化并在移除/EndPlay 解绑。
 
 源码：[Source/Hodgepodge/Public/Component/HodgeHeroComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeHeroComponent.h)
 
@@ -427,7 +427,8 @@ GameState 上的 Experience 复制、资源加载、插件激活、Action 执行
  171: 	TSubclassOf<UHodgeCameraMode> AbilityCameraMode;
  175: 	FGameplayAbilitySpecHandle AbilityCameraModeOwningSpecHandle;
  179: 	bool bReadyToBindInputs;
- 180: };
+ 189: 	TMap<const UHodgeInputConfig*, TArray<uint32>> AdditionalInputConfigHandles;
+ 190: };
 ```
 
 ## HodgeInteractionComponentBase.h

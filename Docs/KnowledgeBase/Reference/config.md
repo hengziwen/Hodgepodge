@@ -23,7 +23,7 @@
 ```ini
    3: [/Script/EngineSettings.GameMapsSettings]
    4: GameDefaultMap=/Game/ThirdPerson/Maps/ThirdPersonMap.ThirdPersonMap
-   5: EditorStartupMap=/Game/ThirdPerson/Maps/ThirdPersonMap.ThirdPersonMap
+   5: EditorStartupMap=/Game/CodexText/L_MainMenu.L_MainMenu
    6: GlobalDefaultGameMode=/Script/Hodgepodge.HodgepodgeGameModeBase
    7: GameInstanceClass=/Script/Hodgepodge.HodgeGameInstanceBase
    9: [/Script/Engine.Engine]
@@ -171,12 +171,24 @@
   44: +PrimaryAssetTypesToScan=(PrimaryAssetType="HodgeExperienceDefinition",AssetBaseClass="/Script/Hodgepodge.HodgeExperienceDefinition",bHasBlueprintClasses=True,bIsEditorOnly=False,Directories=((Path="/Game/Main/Experiences")),SpecificAssets=,Rules=(Priority=-1,ChunkId=-1,bApplyRecursively=True,CookRule=AlwaysCook))
   45: +PrimaryAssetTypesToScan=(PrimaryAssetType="HodgePawnData",AssetBaseClass="/Script/Hodgepodge.HodgePawnData",bHasBlueprintClasses=False,bIsEditorOnly=False,Directories=((Path="/Game/Main/Data")),SpecificAssets=,Rules=(Priority=-1,ChunkId=-1,bApplyRecursively=True,CookRule=AlwaysCook))
   46: +PrimaryAssetTypesToScan=(PrimaryAssetType="HodgeExperienceActionSet",AssetBaseClass="/Script/Hodgepodge.HodgeExperienceActionSet",bHasBlueprintClasses=True,bIsEditorOnly=False,Directories=((Path="/Game/Main/Experiences")),SpecificAssets=,Rules=(Priority=-1,ChunkId=-1,bApplyRecursively=True,CookRule=AlwaysCook))
-  47: bOnlyCookProductionAssets=False
-  48: bShouldManagerDetermineTypeAndName=False
-  49: bShouldGuessTypeAndNameInEditor=True
-  50: bShouldAcquireMissingChunksOnLoad=False
-  51: bShouldWarnAboutInvalidAssets=True
-  52: MetaDataTagsForAssetRegistry=()
+  47: ; 攻击时间轴与攻击节点集合。两者都是 UPrimaryDataAsset，需要注册才能被
+  48: ; UHodgeAssetManager::PreloadPrimaryAssetBundles 按 Bundle 加载（编辑器内的类型猜测不能替代注册）。
+  49: +PrimaryAssetTypesToScan=(PrimaryAssetType="HodgeAbilityTimeline",AssetBaseClass="/Script/Hodgepodge.HodgeAbilityTimeline",bHasBlueprintClasses=False,bIsEditorOnly=False,Directories=((Path="/Game/Main")),SpecificAssets=,Rules=(Priority=-1,ChunkId=-1,bApplyRecursively=True,CookRule=AlwaysCook))
+  50: +PrimaryAssetTypesToScan=(PrimaryAssetType="HodgeComboSet",AssetBaseClass="/Script/Hodgepodge.HodgeComboSet",bHasBlueprintClasses=False,bIsEditorOnly=False,Directories=((Path="/Game/Main")),SpecificAssets=,Rules=(Priority=-1,ChunkId=-1,bApplyRecursively=True,CookRule=AlwaysCook))
+  51: bOnlyCookProductionAssets=False
+  52: bShouldManagerDetermineTypeAndName=False
+  53: bShouldGuessTypeAndNameInEditor=True
+  54: bShouldAcquireMissingChunksOnLoad=False
+  55: bShouldWarnAboutInvalidAssets=True
+  56: MetaDataTagsForAssetRegistry=()
+  58: [/Script/McpAutomationBridge.McpAutomationBridgeSettings]
+  59: bEnableNativeMCP=True
+  60: NativeMCPPort=3016
+  61: bLoadAllToolsOnStart=True
+  62: ListenPorts=8116
+  63: bMultiListen=False
+  64: bAllowNonLoopback=False
+  65: bRequireCapabilityToken=[REDACTED]
 ```
 
 ## DefaultInput.ini

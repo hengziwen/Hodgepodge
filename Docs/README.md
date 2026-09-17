@@ -5,3 +5,9 @@
 知识库包含项目架构、启动和初始化链、输入/GAS/战斗/动画/网络详解、现有断点、开发与验收指南，以及可更新的源码、Tag、资产和配置索引。
 
 从当前行为出发请先看 [接通清单](KnowledgeBase/12-integration-backlog.md)；精确定位代码请看 [源码索引](KnowledgeBase/Reference/source-index.md)。
+
+## 设计文档
+
+`Design/` 存放**尚未实现的设计草案**，与知识库的"已核实当前状态"严格区分。
+
+- [AbilityTimeline 设计方案：逻辑时间轴与表现分离](Design/ability-timeline.md)

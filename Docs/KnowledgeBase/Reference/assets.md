@@ -9,12 +9,17 @@
 
 ## Camera
 
-- [CM_Default.uasset](../../../Content/Main/Camera/CM_Default.uasset) — `/Game/Main/Camera/CM_Default`；5,793 字节
+- [CM_ThirdPerson.uasset](../../../Content/Main/Camera/CM_ThirdPerson.uasset) — `/Game/Main/Camera/CM_ThirdPerson`；7,953 字节
+- [CM_ThirdPerson_Death.uasset](../../../Content/Main/Camera/CM_ThirdPerson_Death.uasset) — `/Game/Main/Camera/CM_ThirdPerson_Death`；5,791 字节
 
 ## Character/EnemyBase
 
 - [ABP_Enemy_Base.uasset](../../../Content/Main/Character/EnemyBase/ABP_Enemy_Base.uasset) — `/Game/Main/Character/EnemyBase/ABP_Enemy_Base`；94,427 字节
 - [ALI_Enemy.uasset](../../../Content/Main/Character/EnemyBase/ALI_Enemy.uasset) — `/Game/Main/Character/EnemyBase/ALI_Enemy`；12,717 字节
+
+## Character/Hero/Ability
+
+- [GA_Melee.uasset](../../../Content/Main/Character/Hero/Ability/GA_Melee.uasset) — `/Game/Main/Character/Hero/Ability/GA_Melee`；44,733 字节
 
 ## Character/Hero/Anim
 
@@ -37,17 +42,17 @@
 
 ## Character/Hero
 
-- [BP_Hero_Pover.uasset](../../../Content/Main/Character/Hero/BP_Hero_Pover.uasset) — `/Game/Main/Character/Hero/BP_Hero_Pover`；46,018 字节
+- [BP_Hero_Pover.uasset](../../../Content/Main/Character/Hero/BP_Hero_Pover.uasset) — `/Game/Main/Character/Hero/BP_Hero_Pover`；53,156 字节
 - [BP_HeroBase.uasset](../../../Content/Main/Character/Hero/BP_HeroBase.uasset) — `/Game/Main/Character/Hero/BP_HeroBase`；25,447 字节
 
 ## Data
 
 - [DA_Dafult_GameData.uasset](../../../Content/Main/Data/DA_Dafult_GameData.uasset) — `/Game/Main/Data/DA_Dafult_GameData`；1,495 字节
-- [DA_Dafult_PawnData.uasset](../../../Content/Main/Data/DA_Dafult_PawnData.uasset) — `/Game/Main/Data/DA_Dafult_PawnData`；2,192 字节
+- [DA_Dafult_PawnData.uasset](../../../Content/Main/Data/DA_Dafult_PawnData.uasset) — `/Game/Main/Data/DA_Dafult_PawnData`；2,200 字节
 
 ## Experiences
 
-- [Exp_HodgeDefaultExperience.uasset](../../../Content/Main/Experiences/Exp_HodgeDefaultExperience.uasset) — `/Game/Main/Experiences/Exp_HodgeDefaultExperience`；4,736 字节
+- [Exp_HodgeDefaultExperience.uasset](../../../Content/Main/Experiences/Exp_HodgeDefaultExperience.uasset) — `/Game/Main/Experiences/Exp_HodgeDefaultExperience`；6,484 字节
 
 ## Input
 
@@ -79,10 +84,10 @@
 ## Content 顶层资源分布
 
 - `Assets`：645 个文件（包含源资源，不等于 UE 资产数）。
-- `Characters`：146 个文件（包含源资源，不等于 UE 资产数）。
-- `CodexText`：65 个文件（包含源资源，不等于 UE 资产数）。
+- `Characters`：148 个文件（包含源资源，不等于 UE 资产数）。
+- `CodexText`：470 个文件（包含源资源，不等于 UE 资产数）。
 - `LevelPrototyping`：13 个文件（包含源资源，不等于 UE 资产数）。
-- `Main`：39 个文件（包含源资源，不等于 UE 资产数）。
+- `Main`：41 个文件（包含源资源，不等于 UE 资产数）。
 - `ThirdPerson`：8 个文件（包含源资源，不等于 UE 资产数）。
 - `Wuwa`：675 个文件（包含源资源，不等于 UE 资产数）。
 - `__ExternalActors__`：257 个文件（包含源资源，不等于 UE 资产数）。

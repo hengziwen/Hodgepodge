@@ -8,6 +8,7 @@
 - 优先沿用 Experience、PawnData、GameFeature、GAS 和 Init State 设计；修改前追踪实际调用链，不把 Lyra 示例当成本项目现状。
 - 玩家 ASC 的 PlayerState 所有权、服务器权限与客户端复制入口必须同时考虑；新增初始化需处理重复调用、解绑和 Pawn 更换。
 - 遵循相邻代码风格、UE 类型前缀和反射宏；`.generated.h` 放在头文件 include 末尾，反射实现沿用 `UE_INLINE_GENERATED_CPP_BY_NAME`。
+- 中文注释以“一行说明一件事”为原则：函数体内的 `//` 内联注释单个块最多 3 行，禁止 4 行及以上；文件头/类头的 `/** */` Doxygen 注释不受此限；不逐行翻译代码、不为排版凑行数。
 - UObject 持有关系考虑 GC；公开头文件暴露的模块类型需核实 Build.cs 依赖可见性；Runtime 模块不得无条件依赖 Editor 模块。
 - 修改类名、属性、GameplayTag、资产路径前核对蓝图引用、配置和 CoreRedirects。不要顺手修正 `Dafult`、`PlayState` 等已有拼写。
 - 第三方 ALS、RiderLink 和二进制资产不做顺手重构或清理；需要修改时明确关联当前任务及验证办法。

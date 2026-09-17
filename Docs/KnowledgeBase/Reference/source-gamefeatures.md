@@ -41,7 +41,7 @@
 
 ## GameFeatureAction_AddInputBinding.cpp
 
-有效扩展事件添加/移除额外 InputConfig；Hero 的最终移除实现仍为空。
+有效扩展事件添加/移除额外 InputConfig；Hero 侧移除已实现并与 EndPlay 清理配套。
 
 源码：[Source/Hodgepodge/Private/GameFeatures/GameFeatureAction_AddInputBinding.cpp](../../../Source/Hodgepodge/Private/GameFeatures/GameFeatureAction_AddInputBinding.cpp)
 
@@ -264,7 +264,7 @@ GameFeature 激活期间的分屏策略调整。
 
 ## GameFeatureAction_AddInputBinding.h
 
-有效扩展事件添加/移除额外 InputConfig；Hero 的最终移除实现仍为空。
+有效扩展事件添加/移除额外 InputConfig；Hero 侧移除已实现并与 EndPlay 清理配套。
 
 源码：[Source/Hodgepodge/Public/GameFeatures/GameFeatureAction_AddInputBinding.h](../../../Source/Hodgepodge/Public/GameFeatures/GameFeatureAction_AddInputBinding.h)
 

@@ -190,39 +190,39 @@ GameState 基础扩展生命周期。
 
 ## HodgePlayerState.cpp
 
-玩家 ASC、HealthSet、PawnData、阵营/标签栈等持有者。基础能力授予循环仍停用。
+玩家 ASC、HealthSet、PawnData、阵营/标签栈等持有者；SetPawnData 在权威端授予 AbilitySets（未记录句柄）。
 
 源码：[Source/Hodgepodge/Private/Core/PlayState/HodgePlayerState.cpp](../../../Source/Hodgepodge/Private/Core/PlayState/HodgePlayerState.cpp)
 
-项目内直接 include（不是运行调用关系）：[Core/PlayState/HodgePlayerState.h](../../../Source/Hodgepodge/Public/Core/PlayState/HodgePlayerState.h)、[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)、[AbilitySystem/AttributeSet/HodgeHealthSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeHealthSet.h)、[Component/HodgeExperienceManagerComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeExperienceManagerComponent.h)、[Core/GameMode/HodgeGameModeBase.h](../../../Source/Hodgepodge/Public/Core/GameMode/HodgeGameModeBase.h)、[Core/PlayerController/HodgePlayerController.h](../../../Source/Hodgepodge/Public/Core/PlayerController/HodgePlayerController.h)
+项目内直接 include（不是运行调用关系）：[Core/PlayState/HodgePlayerState.h](../../../Source/Hodgepodge/Public/Core/PlayState/HodgePlayerState.h)、[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)、[AbilitySystem/AttributeSet/HodgeHealthSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeHealthSet.h)、[Component/HodgeExperienceManagerComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeExperienceManagerComponent.h)、[Core/GameMode/HodgeGameModeBase.h](../../../Source/Hodgepodge/Public/Core/GameMode/HodgeGameModeBase.h)、[Core/PlayerController/HodgePlayerController.h](../../../Source/Hodgepodge/Public/Core/PlayerController/HodgePlayerController.h)、[Component/HodgePawnExtensionComponent.h](../../../Source/Hodgepodge/Public/Component/HodgePawnExtensionComponent.h)、[Data/HodgeAbilitySet.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilitySet.h)、[Data/HodgePawnData.h](../../../Source/Hodgepodge/Public/Data/HodgePawnData.h)
 
 定义候选（多行签名仅展示首行）：
 
-- L16: `const FName AHodgePlayerState::NAME_HodgeAbilityReady("HodgeAbilitiesReady");`
-- L18: `AHodgePlayerState::AHodgePlayerState(const FObjectInitializer& ObjectInitializer)`
-- L35: `AHodgePlayerController* AHodgePlayerState::GetHodgePlayerController() const`
-- L40: `UAbilitySystemComponent* AHodgePlayerState::GetAbilitySystemComponent() const`
-- L45: `void AHodgePlayerState::SetPawnData(const UHodgePawnData* InPawnData)`
-- L78: `void AHodgePlayerState::PreInitializeComponents()`
-- L97: `void AHodgePlayerState::PostInitializeComponents()`
-- L102: `void AHodgePlayerState::Reset()`
-- L107: `void AHodgePlayerState::ClientInitialize(AController* C)`
-- L117: `void AHodgePlayerState::CopyProperties(APlayerState* PlayerState)`
-- L123: `void AHodgePlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const`
-- L141: `void AHodgePlayerState::OnDeactivated()`
-- L166: `void AHodgePlayerState::OnReactivated()`
-- L175: `void AHodgePlayerState::SetPlayerConnectionType(EHodgePlayerConnectionType NewType)`
-- L181: `void AHodgePlayerState::SetSquadID(int32 NewSquadID)`
-- L191: `void AHodgePlayerState::AddStatTagStack(FGameplayTag Tag, int32 StackCount)`
-- L196: `void AHodgePlayerState::RemoveStatTagStack(FGameplayTag Tag, int32 StackCount)`
-- L201: `int32 AHodgePlayerState::GetStatTagStackCount(FGameplayTag Tag) const`
-- L206: `bool AHodgePlayerState::HasStatTag(FGameplayTag Tag) const`
-- L211: `FRotator AHodgePlayerState::GetReplicatedViewRotation() const`
-- L216: `void AHodgePlayerState::SetReplicatedViewRotation(const FRotator& NewRotation)`
-- L225: `void AHodgePlayerState::OnExperienceLoaded(const UHodgeExperienceDefinition* CurrentExperience)`
-- L243: `void AHodgePlayerState::OnRep_PawnData()`
-- L247: `void AHodgePlayerState::OnRep_MyTeamID(FGenericTeamId OldTeamID)`
-- L252: `void AHodgePlayerState::OnRep_MySquadID()`
+- L34: `const FName AHodgePlayerState::NAME_HodgeAbilityReady("HodgeAbilitiesReady");`
+- L37: `AHodgePlayerState::AHodgePlayerState(const FObjectInitializer& ObjectInitializer)`
+- L65: `AHodgePlayerController* AHodgePlayerState::GetHodgePlayerController() const`
+- L72: `UAbilitySystemComponent* AHodgePlayerState::GetAbilitySystemComponent() const`
+- L79: `void AHodgePlayerState::SetPawnData(const UHodgePawnData* InPawnData)`
+- L124: `void AHodgePlayerState::PreInitializeComponents()`
+- L162: `void AHodgePlayerState::PostInitializeComponents()`
+- L169: `void AHodgePlayerState::Reset()`
+- L176: `void AHodgePlayerState::ClientInitialize(AController* C)`
+- L189: `void AHodgePlayerState::CopyProperties(APlayerState* PlayerState)`
+- L199: `void AHodgePlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const`
+- L233: `void AHodgePlayerState::OnDeactivated()`
+- L269: `void AHodgePlayerState::OnReactivated()`
+- L283: `void AHodgePlayerState::SetPlayerConnectionType(EHodgePlayerConnectionType NewType)`
+- L293: `void AHodgePlayerState::SetSquadID(int32 NewSquadID)`
+- L307: `void AHodgePlayerState::AddStatTagStack(FGameplayTag Tag, int32 StackCount)`
+- L314: `void AHodgePlayerState::RemoveStatTagStack(FGameplayTag Tag, int32 StackCount)`
+- L321: `int32 AHodgePlayerState::GetStatTagStackCount(FGameplayTag Tag) const`
+- L328: `bool AHodgePlayerState::HasStatTag(FGameplayTag Tag) const`
+- L335: `FRotator AHodgePlayerState::GetReplicatedViewRotation() const`
+- L342: `void AHodgePlayerState::SetReplicatedViewRotation(const FRotator& NewRotation)`
+- L356: `void AHodgePlayerState::OnExperienceLoaded(const UHodgeExperienceDefinition* CurrentExperience)`
+- L379: `void AHodgePlayerState::OnRep_PawnData()`
+- L385: `void AHodgePlayerState::OnRep_MyTeamID(FGenericTeamId OldTeamID)`
+- L392: `void AHodgePlayerState::OnRep_MySquadID()`
 
 ## HodgePlayerStateBase.cpp
 
@@ -581,7 +581,7 @@ GameState 基础扩展生命周期。
 
 ## HodgePlayerState.h
 
-玩家 ASC、HealthSet、PawnData、阵营/标签栈等持有者。基础能力授予循环仍停用。
+玩家 ASC、HealthSet、PawnData、阵营/标签栈等持有者；SetPawnData 在权威端授予 AbilitySets（未记录句柄）。
 
 源码：[Source/Hodgepodge/Public/Core/PlayState/HodgePlayerState.h](../../../Source/Hodgepodge/Public/Core/PlayState/HodgePlayerState.h)
 

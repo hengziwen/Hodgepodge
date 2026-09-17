@@ -1,6 +1,6 @@
 # 数据资产与 AssetManager
 
-> 最近源码核对：2026-09-13。源码接入状态与运行验收分开记录。
+> 最近源码核对：2026-09-17。源码接入状态与运行验收分开记录。
 [返回首页](README.md)
 
 ## 三层配置的区别
@@ -12,7 +12,7 @@ GameData 是全局通用资源入口；ExperienceDefinition 是一套玩法的�
 当前工作区已启用以下五个 UPROPERTY，早期文档的“仅一个字段”已过时：
 
 - PawnClass：生成类。建议指向 AHodgeHeroCharacter 派生蓝图；构造默认空。
-- AbilitySets：配置要授予的能力集合。字段已存在，但 PlayerState 的授予循环仍注释。
+- AbilitySets：配置要授予的能力集合。PlayerState::SetPawnData 现已在权威端遍历并授予（未记录 GrantedHandles）。
 - TagRelationshipMapping：能力阻断、取消和附加激活条件关系；组件初始化时已调用 ASC::SetTagRelationshipMapping。
 - InputConfig：InputAction 与 GameplayTag 的映射，不等价于 IMC；构造默认空。
 - DefaultCameraMode：默认相机模式类；构造默认空，已由有效 HeroComponent::DetermineCameraMode 消费。
@@ -46,6 +46,20 @@ DefaultGame.ini 指向 `/Game/Main/Data/DA_Dafult_GameData.DA_Dafult_GameData` �
 PrimaryAssetTypesToScan 包含 GameData、PawnData、ExperienceDefinition、ExperienceActionSet、GameFeatureData 及地图/标签。检查三件事：目录或 SpecificAssets 对不对；AssetBaseClass 是否正确；bHasBlueprintClasses 是否符合资源形态。
 
 Cook 规则与 PIE 是两回事。PIE 能加载，不说明打包一定包含资源。Map 扫描目录 `/Game/Maps` 与默认 ThirdPerson 地图位置不同，应在打包验证中明确地图收集来源，不能仅看扫描项判断成功或必然失败。
+
+### 注册原则：只登记需要"点名加载"的资产
+
+硬引用链 ExperienceDefinition → PawnData → AbilitySets / InputConfig 在烘焙时会作为依赖一起被 cook，所以它们不需要在扫描表登记；登记反而会给它们生成不必要的 PrimaryAssetId，并影响 Chunk 划分。
+
+一句话记法：会被「按类型 / 按 ID」点名加载的，必须注册；只被别的资产引用带出来的，不注册。
+
+### 新增：AbilityTimeline 与 ComboSet 的按名登记
+
+`Config/DefaultGame.ini` 已把 `HodgeAbilityTimeline` 与 `HodgeComboSet` 加入 PrimaryAssetTypesToScan（目录 `/Game/Main`）。它们会被"点名预加载"，符合上面的注册原则。
+
+`UHodgeAssetManager::PreloadPrimaryAssetBundles(AssetIds, Bundles, bLoadRecursive=true)`：内部 `PreloadPrimaryAssets` + `WaitUntilComplete()` **同步阻塞**加载，并把 `FStreamableHandle` 存入 `PreloadHandles` 防止被 GC，失败记 Error 日志。`UHodgeGameplayAbility::PreloadPrimaryAssetsOnGrant` 在 `OnGiveAbility` 时对它配置的资产同步预加载 `FHodgeBundles::Equipped` Bundle；`UHodgeAbilityTimeline` / `UHodgeComboSet` 的 `UpdateAssetBundleData` 会把 Montage 拍平进同一 Bundle，从而在进战斗前就绪。
+
+注意这是同步加载：只应发生在技能被授予时，不要把它放进 Tick 或输入回调。使用方式见 [GAS 章节](07-gas.md)、验收见 [V14](16-validation.md)。
 
 ## 资产编辑检查单
 

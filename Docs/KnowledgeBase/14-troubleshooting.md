@@ -1,6 +1,6 @@
 # 按症状定位的排障手册
 
-> 最近源码核对：2026-09-13。源码接入状态与运行验收分开记录。
+> 最近源码核对：2026-09-17。源码接入状态与运行验收分开记录。
 [返回首页](README.md)
 
 ## 启动加载失败或看不到玩家
@@ -24,6 +24,14 @@
 ## 按键回调进来了，技能不激活
 
 按顺序看 Spec 是否授予、动态 InputTag 精确匹配、Pressed/Held 缓存、ProcessAbilityInput 是否每帧执行，再看 CanActivateAbility 的失败标签、Cost、Cooldown、ActivationGroup。若第一次成功第二次失败，重点看 EndAbility 和组计数。
+
+## 攻击时间轴不推进或阶段标签残留
+
+`UHodgeAbilityTask_PlayTimeline` 依赖 World 时间差累加：先确认 Task 是否被创建（源码内没有 C++ 调用 `PlayTimeline`，需确认 BP 是否接线）、Timeline 资产 Duration 是否大于 0、InitialPlayRate 是否大于 0。标签残留优先看 `OnDestroy` 是否执行到 `ClearAllPhaseTags`，以及是否有别的来源在加同名 loose tag。事件没到客户端时按 `EHodgeTimelineEventNetPolicy` 区分端，不要假设 `HandleGameplayEvent` 会自动 RPC。
+
+## 首次进战斗卡顿或 Montage 未加载
+
+`PreloadPrimaryAssetBundles` 是同步阻塞加载，正常只在 Ability 被授予时发生。若卡顿出现在输入或 Tick，检查是否把预加载放错位置；若 Montage 缺失，检查 HodgeAbilityTimeline / HodgeComboSet 的 `UpdateAssetBundleData` 是否收集了该 Montage，以及 DefaultGame.ini 是否登记了两个 PrimaryAssetType。
 
 ## 相机在原点、视角不跟随或旋转异常
 
@@ -51,7 +59,9 @@ OnRep 可以在客户端触发耗尽事件；服务器权威处理不能依赖 O
 
 ## GameFeature 停用后仍有内容
 
-查授予句柄是否按上下文保存，Actor Receiver 是否正常移除，输入额外配置是否有实际 Remove 实现。CharacterBase EndPlay 事件不对称和 Hero 额外输入移除 TODO 是现有观察点。
+查授予句柄是否按上下文保存，Actor Receiver 是否正常移除，输入额外配置是否解绑。CharacterBase Receiver 已配对、Hero 额外输入移除已实现并在 EndPlay 统一清理，所以先怀疑运行时顺序（Pawn 已换、记录被提前清空）和记录未覆盖的来源，而不是再看 TODO。
+
+PlayerState::SetPawnData 授予 AbilitySet 时未记录句柄，GameFeature 或重生想撤销玩家基础能力时无可撤销对象——这属于设计缺口，不是运行时 bug。
 
 ## 日志取证模板
 

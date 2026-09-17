@@ -1,11 +1,11 @@
 # 从启动到生成玩家的调用链
 
-> 最近源码核对：2026-09-13。源码接入状态与运行验收分开记录。
+> 最近源码核对：2026-09-17。源码接入状态与运行验收分开记录。
 [返回首页](README.md)
 
 ## 启动前的选择
 
-DefaultEngine.ini 指向 ThirdPersonMap，GameMode 仍使用旧类名重定向，GameInstance 已直接指定 HodgeGameInstanceBase。必须分别验证配置解析和地图 World Settings 覆盖。不要直接采用 Lyra 参考文档中的 FrontEnd 默认地图。
+DefaultEngine.ini 的 GameDefaultMap 指向 ThirdPersonMap，编辑器启动图已改为 `/Game/CodexText/L_MainMenu`（属于 CodexText 实验内容）；GameMode 仍使用旧类名重定向（HodgepodgeGameModeBase → HodgeGameModeBase），GameInstance 已直接指定 HodgeGameInstanceBase。必须分别验证配置解析和地图 World Settings 覆盖。不要直接采用 Lyra 参考文档中的 FrontEnd 默认地图。
 
 AssetManager 的启动任务调用 InitializeGameplayCueManager 和 GameData 加载。前者目前只有占位，不代表 Cue 预加载已经执行。GameData 加载失败存在 Fatal 路径，因此默认资源路径属于启动基础依赖。
 

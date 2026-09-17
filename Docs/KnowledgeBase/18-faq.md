@@ -2,7 +2,7 @@
 
 [返回首页](README.md)
 
-> 最近源码核对：2026-09-13。
+> 最近源码核对：2026-09-17。
 
 ## 现在还要从零接 HeroComponent 吗？
 
@@ -18,7 +18,7 @@
 
 ## 为什么按键到了 ASC 但没有技能？
 
-PlayerState 的基础 AbilitySet 授予循环仍注释。先证明 Spec 已由权威入口授予，再检查动态 InputTag 精确匹配、Cost、Cooldown 和激活组。
+PlayerState::SetPawnData 现已在权威端遍历 PawnData->AbilitySets 授予技能（未记录 GrantedHandles）。先确认 Spec 确实被授予，再检查动态 InputTag 精确匹配、Cost、Cooldown 和激活组；重生或重复初始化时注意没有句柄可供撤销。
 
 ## PawnData 现在有哪些字段？
 
@@ -34,19 +34,23 @@ HealthSet 已实现 Damage/Healing 转换和耗尽广播；完整命中、敌人
 
 ## GameFeature 和 Cue 是否全部好了？
 
-输入 Action 添加分支已恢复，但 Hero 额外输入移除为空。CueManager 和 Policy 已配置，但 Cue 路径观察者创建仍注释，注销移除和预加载也不完整。
+输入 Action 添加分支已恢复，Hero 额外输入移除也已实现并在 EndPlay 统一解绑。CueManager 和 Policy 已配置，但 Cue 路径观察者创建仍注释，注销移除和预加载仍不完整。
 
 ## 为什么还要查重生？
 
-旧 Hero 直接 ASC 初始化和新组件路径并存；控制器先清 Avatar 与 PawnExtension 条件清理可能相互影响。还需验证输入句柄、状态、Cue 和旧 Pawn 的解绑。
+ASC 接入已收敛到组件路径，不再是双路径并存；但控制器先清 Avatar 与 PawnExtension 条件清理的相对顺序仍可能相互影响。还需验证输入句柄、状态、Cue 和旧 Pawn 的解绑。
 
-## 新的 BP 和 CM_Default 可以证明资产都配好了？
+## 新的 BP 和相机模式资产可以证明资产都配好了？
 
-只能证明文件存在。内部父类、Mesh、AnimClass、默认字段和实际地图使用仍需编辑器验证。本轮未解析二进制资产。
+只能证明文件存在。内部父类、Mesh、AnimClass、默认字段和实际地图使用仍需编辑器验证。本轮未解析二进制资产。相机模式现为 `CM_ThirdPerson` / `CM_ThirdPerson_Death`，旧的 `CM_Default` 已删除。
 
 ## 插件是否都跟 README 一样？
 
-以描述文件为准：UNTLink 当前禁用；ALS 描述默认启用，即使主模块不再直接依赖；还发现默认启用的 UnrealMCP Editor 插件。它们的加载结果和连接功能本轮未验证。
+以描述文件为准：UNTLink 当前禁用；ALS 描述默认启用，即使主模块不再直接依赖；UnrealMCP 与 McpAutomationBridge 均为 Editor-only 插件。它们的加载结果、连接与工具调用本轮未验证。
+
+## 攻击时间轴、ComboSet 现在能用了吗？
+
+源码里类型、校验和 Task 实现都已存在，但没有 C++ 攻击 Ability 调用 `PlayTimeline`，也没有代码查询 `ComboSet::FindNode`。所以是"有实现、无调用点"：需要在 BP 里接线并跑 V13/V14 才能说可用。详见 [本轮变更](21-update-2026-09-17.md)。
 
 ## 知识库是否验证了当前编译和运行？
 

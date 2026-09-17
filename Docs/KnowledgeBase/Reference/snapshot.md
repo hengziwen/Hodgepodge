@@ -6,17 +6,20 @@
 
 ## 生成信息
 
-- UTC：2026-09-13T13:43:14.290145+00:00
-- Git HEAD：`8fe5ac8f5b00b9968bd704385a9896b5aee07812`
-- 源文件（h/cpp/cs）：136
-- Content/Main 文件：39
-- 原生标签注册条目：152
-- 漂移跟踪文件：189
+- UTC：2026-09-17T02:13:37.446563+00:00
+- Git HEAD：`2606b0cf9f54178c778a4e4c96e317c9f048ddd4`
+- 源文件（h/cpp/cs）：152
+- Content/Main 文件：41
+- 原生标签注册条目：185
+- 漂移跟踪文件：208
 
 ## 生成时已有的受 Git 跟踪修改
 
 ```text
-M Docs/KnowledgeBase/01-project-map.md
+M Config/DefaultGame.ini
+ M Content/Main/Character/Hero/BP_Hero_Pover.uasset
+ M Docs/Design/ability-timeline.md
+ M Docs/KnowledgeBase/01-project-map.md
  M Docs/KnowledgeBase/02-architecture.md
  M Docs/KnowledgeBase/03-runtime-startup.md
  M Docs/KnowledgeBase/04-pawn-initialization.md
@@ -30,7 +33,6 @@ M Docs/KnowledgeBase/01-project-map.md
  M Docs/KnowledgeBase/12-integration-backlog.md
  M Docs/KnowledgeBase/13-build-config.md
  M Docs/KnowledgeBase/14-troubleshooting.md
- M Docs/KnowledgeBase/15-development-recipes.md
  M Docs/KnowledgeBase/16-validation.md
  M Docs/KnowledgeBase/17-maintenance-glossary.md
  M Docs/KnowledgeBase/18-faq.md
@@ -39,9 +41,9 @@ M Docs/KnowledgeBase/01-project-map.md
  M Docs/KnowledgeBase/Reference/assets.md
  M Docs/KnowledgeBase/Reference/config.md
  M Docs/KnowledgeBase/Reference/gameplay-tags.md
+ M Docs/KnowledgeBase/Reference/plugins.md
  M Docs/KnowledgeBase/Reference/snapshot.json
  M Docs/KnowledgeBase/Reference/source-abilitysystem.md
- M Docs/KnowledgeBase/Reference/source-actor.md
  M Docs/KnowledgeBase/Reference/source-camera.md
  M Docs/KnowledgeBase/Reference/source-character.md
  M Docs/KnowledgeBase/Reference/source-component.md
@@ -49,13 +51,14 @@ M Docs/KnowledgeBase/01-project-map.md
  M Docs/KnowledgeBase/Reference/source-data.md
  M Docs/KnowledgeBase/Reference/source-gamefeatures.md
  M Docs/KnowledgeBase/Reference/source-index.md
- M Docs/KnowledgeBase/Reference/source-input.md
- M Docs/KnowledgeBase/Reference/source-interface.md
- M Docs/KnowledgeBase/Reference/source-module.md
- M Docs/KnowledgeBase/tools/README.md
  M Docs/KnowledgeBase/tools/kb.py
- M Source/Hodgepodge/Private/Component/HodgeHeroComponent.cpp
- M Source/Hodgepodge/Private/GameFeatures/GameFeatureAction_AddInputContextMapping.cpp
+ M Docs/README.md
+ M Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility.cpp
+ M Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp
+ M Source/Hodgepodge/Private/Data/HodgeAssetManager.cpp
+ M Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility.h
+ M Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h
+ M Source/Hodgepodge/Public/Data/HodgeAssetManager.h
 ```
 
 这里只记录已跟踪路径状态，未跟踪知识库自身不包含在此列表。HEAD 不足以还原 dirty 工作区；[snapshot.json](snapshot.json) 保存扫描范围的 SHA-256。

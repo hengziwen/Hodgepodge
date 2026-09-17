@@ -1,6 +1,6 @@
 # 术语、决策记录与维护规范
 
-> 最近源码核对：2026-09-13。源码接入状态与运行验收分开记录。
+> 最近源码核对：2026-09-17。源码接入状态与运行验收分开记录。
 [返回首页](README.md)
 
 ## 项目术语
@@ -22,12 +22,17 @@
 - CDO：类默认对象；Experience 加载方式会读取它。
 - PrimaryAssetId：由类型和名称组成的资产标识，不等同于文件路径。
 - Mixed：GAS 效果复制策略；并不意味着所有数据只复制给拥有者。
+- Timeline：AbilityTimeline，描述阶段区间与时间点事件的 UPrimaryDataAsset；本身不播动画。
+- ComboSet：一套攻击形态的节点集合，持有 Timeline 并定义入口与转移。
+- Bundle：PrimaryAsset 的可命名资源分组；项目用 `FHodgeBundles::Equipped` 承载进战斗前要预加载的 Montage。
+- loose tag：不经过 GE、直接加到 ASC 的标签；Timeline 阶段标签用非复制的 loose tag。
+- PrimaryAsset 预加载：按 PrimaryAssetId + Bundle 同步加载一组资产并保存句柄，区别于普通 `LoadObject`。
 
 ## 现有架构选择及依据
 
 ### 玩家 ASC 放 PlayerState
 
-依据：PlayerState 构造创建 ASC，Hero 双入口以 PS 为 Owner。收益是玩家数据与身体分离。后续必须定义换 Pawn 的重绑定、属性重置与能力保留策略。
+依据：PlayerState 构造创建 ASC，PawnExtension 以 PS 为 Owner、当前 Pawn 为 Avatar 完成绑定。收益是玩家数据与身体分离。能力授予与防重现已由 PlayerState::SetPawnData 承担（未记录句柄）；换 Pawn 的重绑定、属性重置与能力保留策略仍需明确。
 
 ### 使用 Experience 控制玩法
 
@@ -35,7 +40,7 @@
 
 ### 使用组件协调初始化
 
-依据：PawnExtension 与 HeroComponent 现均有有效状态机，Hero 构造已挂载组件；旧 HeroCharacter 双入口尚未移除，迁移剩余问题是统一入口和清理。
+依据：PawnExtension 与 HeroComponent 均有有效状态机，Hero 构造已挂载组件；HeroCharacter 的 PossessedBy/OnRep_PlayerState 已退化为只调用 Super，ASC 接入统一到组件路径。剩余问题是换 Pawn/重生时的清理验证。
 
 ### 移除 ALS 代码依赖
 
@@ -43,7 +48,7 @@
 
 ## 待决策事项
 
-HealthSet 已采用 Damage/Healing 元属性转换，仍需确定具体 GE/Execution 的数值来源；敌人 ASC 放哪个对象；玩家重生保留哪些效果；基础输入与玩法输入各由谁管理；在线 Session 是否近期引入；临时能力如何持有回收句柄。这些未形成完整实现，不能伪装成既定规范。
+HealthSet 已采用 Damage/Healing 元属性转换，仍需确定具体 GE/Execution 的数值来源；敌人 ASC 放哪个对象；玩家重生保留哪些效果；基础输入与玩法输入各由谁管理；在线 Session 是否近期引入；PlayerState::SetPawnData 授予技能时未记录 GrantedHandles，撤销与防重策略待定。这些未形成完整实现，不能伪装成既定规范。
 
 ## 文档维护规则
 
