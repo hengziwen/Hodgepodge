@@ -42,6 +42,7 @@
 | 只想理解"为什么要这么拆" | 第 1、3 章 |
 | 要评审数据结构和字段 | 第 4、5 章 |
 | 要开工写代码 | 第 6、12、13 章 |
+| **只做第一阶段（Timeline + 驱动 Task），不碰连击 / Montage / 网络** | [第一阶段最小闭环设计](ability-timeline-stage1.md) —— 该文件独立成篇，并对本文的算法与措辞有 9 处修正 |
 | 关心联机和预测 | 第 8 章 |
 | 关心能不能长期维护 | 第 10、11、14 章 |
 
@@ -251,7 +252,15 @@ flowchart TB
 
 ## 4. 数据模型
 
-> **本章类型已实现**（见 `Source/Hodgepodge/*/AbilitySystem/Timeline/` 与 `Data/HodgeComboSet`），字段与语义仍以本设计为准，业务接线尚未完成。
+> ⚠️ **本章的 `Phases` + `Events` 双数组模型已被取代，保留作历史记录。**
+> 第一阶段改用**统一事件模型**（单一 `Events` 数组，`Kind = Window / Point`，一条 Window 同时驱动
+> `EventTag` 与 `GameplayEffectClass`，并新增 `EventID` / `DisplayName` / `Priority`），
+> 理由是双数组让跨数组的相对顺序不可见、且无法表达"一段区间同时带状态标签与游戏效果"，
+> 而 `AnimNotifyState` / `AnimNotify` 本来就该一对一映射成时间轴上的 Window / Point。
+> **以 [第一阶段最小闭环设计](ability-timeline-stage1.md) 为准**，其附录 A 列出了逐条差异。
+>
+> 另：原文"本章类型已实现"的说法已失效——那批改动属于当时工作区的未提交改动，随后已被丢弃，
+> 当前工作区不存在 `AbilitySystem/Timeline/` 与 `Data/HodgeComboSet` 源码。
 
 ### 4.1 总览
 
@@ -2567,6 +2576,7 @@ Q1 采用 `AttackID` 后需要两组新标签。它们**不复用 `InputTag` 根
 | 文档 | 职责 |
 |---|---|
 | 本文 | Timeline 的结构、语义、驱动、校验 |
+| [第一阶段最小闭环设计](ability-timeline-stage1.md) | 只覆盖 `UHodgeAbilityTimeline` + `UHodgeAbilityTask_PlayTimeline`：本阶段范围、时间节点序列算法、初始化语义、验收清单。**该文件的算法与校验条目优先于本文对应章节**，差异清单见其附录 A |
 | 连击系统设计文档（待撰写） | `FHodgeAttackNode` 的具体编排、`Transitions` 语义细化、`CombatComponent` 运行时状态机、形态切换的具体规则。**Q1/Q2/Q3/Q4/Q5/Q7/Q8 已在本文定稿**（见第 15 章），该文档不再重复决策 |
 | [知识库 07](../KnowledgeBase/07-gas.md) | 已实现的 GAS 能力、ASC、AbilitySet |
 | [知识库 08](../KnowledgeBase/08-combat-health.md) | 已实现的属性与伤害结算 |

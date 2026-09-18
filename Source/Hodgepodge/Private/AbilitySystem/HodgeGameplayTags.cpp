@@ -130,6 +130,14 @@ namespace HodgeGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_RequestReset, "GameplayEvent.RequestReset");
 
 	// =============================================================================
+	// GameplayEvent.Attack Tags（AbilityTimeline 第一阶段）
+	// =============================================================================
+	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_Attack, "GameplayEvent.Attack");
+	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_Attack_Test, "GameplayEvent.Attack.Test");
+	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_Attack_Timeline_End, "GameplayEvent.Attack.Timeline.End");
+	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_Attack_Interrupted, "GameplayEvent.Attack.Interrupted");
+
+	// =============================================================================
 	// GameSettings Tags
 	// =============================================================================
 	UE_DEFINE_GAMEPLAY_TAG(GameSettings_Action_EditSafeZone, "GameSettings.Action.EditSafeZone");
@@ -233,6 +241,12 @@ namespace HodgeGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Status_Death, "Status.Death");
 	UE_DEFINE_GAMEPLAY_TAG(Status_Death_Dying, "Status.Death.Dying");
 	UE_DEFINE_GAMEPLAY_TAG(Status_Death_Dead, "Status.Death.Dead");
+
+	// 攻击阶段标签：由 Timeline Task 按区间自动加减（loose tag，不复制）
+	UE_DEFINE_GAMEPLAY_TAG(Status_Attack, "Status.Attack");
+	UE_DEFINE_GAMEPLAY_TAG(Status_Attack_Windup, "Status.Attack.Windup");
+	UE_DEFINE_GAMEPLAY_TAG(Status_Attack_Active, "Status.Attack.Active");
+	UE_DEFINE_GAMEPLAY_TAG(Status_Attack_Recovery, "Status.Attack.Recovery");
 
 	// =============================================================================
 	// SetByCaller Tags

@@ -11,3 +11,4 @@
 `Design/` 存放**尚未实现的设计草案**，与知识库的"已核实当前状态"严格区分。
 
 - [AbilityTimeline 设计方案：逻辑时间轴与表现分离](Design/ability-timeline.md)
+- [Timeline 与 PlayTimeline AbilityTask：第一阶段最小闭环设计](Design/ability-timeline-stage1.md)
