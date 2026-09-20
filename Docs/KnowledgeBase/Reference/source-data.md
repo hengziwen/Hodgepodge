@@ -23,6 +23,19 @@
 - L76: `UHodgeAbilitySet::UHodgeAbilitySet(const FObjectInitializer& ObjectInitializer)`
 - L82: `void UHodgeAbilitySet::GiveToAbilitySystem(UHodgeAbilitySystemComponent* HodgeASC,`
 
+## HodgeAbilityTimeline.cpp
+
+技能逻辑时间轴数据资产（统一事件模型：单一 Events[]，Kind = Window / Point）。只描述“何时发生什么”，不含业务判断；没有 Montage 字段、不做 Bundle 收集。
+
+源码：[Source/Hodgepodge/Private/Data/HodgeAbilityTimeline.cpp](../../../Source/Hodgepodge/Private/Data/HodgeAbilityTimeline.cpp)
+
+项目内直接 include（不是运行调用关系）：[Data/HodgeAbilityTimeline.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilityTimeline.h)
+
+定义候选（多行签名仅展示首行）：
+
+- L46: `EDataValidationResult UHodgeAbilityTimeline::IsDataValid(FDataValidationContext& Context) const`
+- L321: `void UHodgeAbilityTimeline::PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent)`
+
 ## HodgeAssetManager.cpp
 
 资产入口、GameData 缓存、启动任务、同步加载、加载进度。Cue 初始化钩子仍需接通。（PreloadPrimaryAssetBundles 已随未提交改动回退，当前不存在。）
@@ -212,6 +225,85 @@ PawnClass、AbilitySets、TagRelationshipMapping、InputConfig、DefaultCameraMo
  150: 	UPROPERTY(EditDefaultsOnly, Category = "Attribute Sets", meta=(TitleProperty=AttributeSet))
  151: 	TArray<FHodgeAbilitySet_AttributeSet> GrantedAttributes;
  152: };
+```
+
+## HodgeAbilityTimeline.h
+
+技能逻辑时间轴数据资产（统一事件模型：单一 Events[]，Kind = Window / Point）。只描述“何时发生什么”，不含业务判断；没有 Montage 字段、不做 Bundle 收集。
+
+源码：[Source/Hodgepodge/Public/Data/HodgeAbilityTimeline.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilityTimeline.h)
+
+有效头文件声明摘录（未展开宏，未求值预处理分支）：
+
+```cpp
+  18: #pragma once
+  20: #include "CoreMinimal.h"
+  21: #include "Engine/DataAsset.h"
+  22: #include "GameplayTagContainer.h"
+  23: #include "Templates/SubclassOf.h"
+  25: #include "HodgeAbilityTimeline.generated.h"
+  27: class UGameplayEffect;
+  35: UENUM(BlueprintType)
+  36: enum class EHodgeTimelineEventNetPolicy : uint8
+  37: {
+  39: 	LocalAndAuthority,
+  42: 	AuthorityOnly,
+  46: 	LocallyControlledOnly
+  47: };
+  54: UENUM(BlueprintType)
+  55: enum class EHodgeTimelineEventKind : uint8
+  56: {
+  58: 	Window,
+  61: 	Point
+  62: };
+  75: USTRUCT(BlueprintType)
+  76: struct FHodgeTimelineEvent
+  77: {
+  78: 	GENERATED_BODY()
+  81: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+  82: 	EHodgeTimelineEventKind Kind = EHodgeTimelineEventKind::Window;
+  88: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+  89: 	FName EventID;
+  92: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ClampMin=0.0, UIMin=0.0, Units="s"))
+  93: 	float StartTime = 0.f;
+  96: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,
+  97: 		meta=(ClampMin=0.0, UIMin=0.0, Units="s",
+  98: 			  EditCondition="Kind==EHodgeTimelineEventKind::Window", EditConditionHides))
+  99: 	float EndTime = 0.f;
+ 103: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+ 104: 	int32 Priority = 0;
+ 110: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,
+ 111: 		meta=(Categories="Status",
+ 112: 			  EditCondition="Kind==EHodgeTimelineEventKind::Window", EditConditionHides))
+ 113: 	FGameplayTag WindowTag;
+ 117: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,
+ 118: 		meta=(EditCondition="Kind==EHodgeTimelineEventKind::Window", EditConditionHides))
+ 119: 	TSubclassOf<UGameplayEffect> WindowEffectClass;
+ 124: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,
+ 125: 		meta=(Categories="GameplayEvent",
+ 126: 			  EditCondition="Kind==EHodgeTimelineEventKind::Point", EditConditionHides))
+ 127: 	FGameplayTag PointEventTag;
+ 134: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,
+ 135: 		meta=(EditCondition="Kind==EHodgeTimelineEventKind::Point", EditConditionHides))
+ 136: 	TSubclassOf<UGameplayEffect> PointEffectClass;
+ 139: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,
+ 140: 		meta=(EditCondition="Kind==EHodgeTimelineEventKind::Point", EditConditionHides))
+ 141: 	EHodgeTimelineEventNetPolicy NetPolicy = EHodgeTimelineEventNetPolicy::LocalAndAuthority;
+ 142: };
+ 152: UCLASS(BlueprintType, Const)
+ 153: class HODGEPODGE_API UHodgeAbilityTimeline : public UPrimaryDataAsset
+ 154: {
+ 155: 	GENERATED_BODY()
+ 157: public:
+ 159: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ClampMin=0.01, Units="s"))
+ 160: 	float Duration = 1.0f;
+ 164: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(TitleProperty=EventID))
+ 165: 	TArray<FHodgeTimelineEvent> Events;
+ 167: #if WITH_EDITOR
+ 170: 	virtual EDataValidationResult IsDataValid(class FDataValidationContext& Context) const override;
+ 173: 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent) override;
+ 175: #endif
+ 176: };
 ```
 
 ## HodgeAssetManager.h

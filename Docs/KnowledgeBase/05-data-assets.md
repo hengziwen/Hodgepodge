@@ -1,6 +1,6 @@
 # 数据资产与 AssetManager
 
-> 最近源码核对：2026-09-17。源码接入状态与运行验收分开记录。
+> 最近源码核对：2026-09-19。源码接入状态与运行验收分开记录。
 [返回首页](README.md)
 
 ## 三层配置的区别
@@ -53,15 +53,15 @@ Cook 规则与 PIE 是两回事。PIE 能加载，不说明打包一定包含资
 
 一句话记法：会被「按类型 / 按 ID」点名加载的，必须注册；只被别的资产引用带出来的，不注册。
 
-### ~~新增：AbilityTimeline 与 ComboSet 的按名登记~~（⚠️ 已回退）
+### ~~新增：AbilityTimeline 与 ComboSet 的按名登记~~（⚠️ 未落地）
 
-> **本节已作废。** `Config/DefaultGame.ini` **没有** `HodgeAbilityTimeline` / `HodgeComboSet` 两个 PrimaryAssetTypesToScan（仍是 7 项：Map、PrimaryAssetLabel、HodgeGameData、GameFeatureData、HodgeExperienceDefinition、HodgePawnData、HodgeExperienceActionSet）。
+> **本节仍未生效。** `Config/DefaultGame.ini` **没有** `HodgeAbilityTimeline` / `HodgeComboSet` 两个 PrimaryAssetTypesToScan（仍是 7 项：Map、PrimaryAssetLabel、HodgeGameData、GameFeatureData、HodgeExperienceDefinition、HodgePawnData、HodgeExperienceActionSet）。时间轴的测试件 `DA_TimelineTest` / `GA_TimelineTest` 走实验区直接引用，不依赖按名加载。
 
 ~~`Config/DefaultGame.ini` 已把 `HodgeAbilityTimeline` 与 `HodgeComboSet` 加入 PrimaryAssetTypesToScan（目录 `/Game/Main`）。它们会被"点名预加载"，符合上面的注册原则。~~
 
-> 具体缺失的是 `UHodgeAssetManager::PreloadPrimaryAssetBundles`、`UHodgeGameplayAbility::PreloadPrimaryAssetsOnGrant` 以及 Timeline/ComboSet 的 Bundle 收集（源码全量搜索 0 命中）。**`FHodgeBundles::Equipped` 本身仍存在**，并且被 `UHodgeExperienceManagerComponent::StartExperienceLoad()` 用于按端加载 Experience Bundle——这一点不受回退影响。
+> 具体缺失的是 `UHodgeAssetManager::PreloadPrimaryAssetBundles`、`UHodgeGameplayAbility::PreloadPrimaryAssetsOnGrant` 以及 Timeline / ComboSet 的 Bundle 收集（源码全量搜索 0 命中）。⚠️ **注意**：`UHodgeAbilityTimeline` 类本身已随 HEAD `77b7dba` 存在（见 [GAS 章节](07-gas.md)），但它**没有 Montage 字段、也不做 Bundle 收集**——所以"按名登记 + 预加载"这套设计仍然完全没有落地。**`FHodgeBundles::Equipped` 本身仍存在**，并且被 `UHodgeExperienceManagerComponent::StartExperienceLoad()` 用于按端加载 Experience Bundle——这一点不受影响。
 >
-> 上面的"注册原则"本身仍然成立，但本节引用的预加载实现已随改动回退。回退依据见 [本轮变更](21-update-2026-09-17.md)。
+> 上面的"注册原则"本身仍然成立，但本节引用的预加载实现从未落地。历史依据见 [2026-09-17 记录](21-update-2026-09-17.md)。
 
 ## 资产编辑检查单
 

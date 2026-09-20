@@ -1,6 +1,6 @@
 # 属性、伤害、战斗与死亡
 
-> 最近源码核对：2026-09-17。源码接入状态与运行验收分开记录。
+> 最近源码核对：2026-09-19。源码接入状态与运行验收分开记录。
 [返回首页](README.md)
 
 ## 已实现的属性基础
@@ -21,7 +21,7 @@ CombatCharacter 的 HealthComponent 创建与绑定仍注释。角色存在 OnDe
 
 CombatComponentBase 没有武器 Trace、连招状态或命中去重主体。EnemyCharacter 没有自己的完整 ASC/AttributeSet 创建与初始化。当前无法以 C++ 证据确认完整的攻击怪物闭环。
 
-攻击侧进展（⚠️ **已修正**）：~~连招数据（`UHodgeComboSet`）与时间轴 Task（`UHodgeAbilityTask_PlayTimeline`）已有实现，但没有任何 C++ 攻击 Ability 调用它们~~ —— 实际是连招与时间轴**已随未提交改动回退，当前工作区不存在**；`GA_Melee.uasset` 与 `Content/Main/Character/Hero/Ability/` 目录同样不存在，当前 Hero 目录下是 `GA_Attack.uasset`（工作区未提交，父类 / Montage / 命中配置未解析）。技能授予路径本身已接通（PlayerState::SetPawnData），所以缺的仍是"**具体攻击 Ability（含时间轴/连击的从零实现）+ 命中判定 + 目标 ASC**"这三环。详见 [GAS 章节](07-gas.md) 与 [回退标注](21-update-2026-09-17.md)。
+攻击侧进展（⚠️ **已再次修正**）：时间轴 Task `UHodgeAbilityTask_PlayTimeline` 及其数据资产 `UHodgeAbilityTimeline` **已按统一事件模型重新实现**，四个源文件随 HEAD `77b7dba` 提交，调度器与标签账本已在 PIE 实测（见 [本轮记录](22-update-2026-09-19.md)）；**窗口 GE 的施加 / 移除**与 **Point / `Timeline.End` 事件派发已补测通过**（GE 实例数 `0 → 1 → 0`），但仍**没有任何 C++ 攻击 Ability 调用它**；**中途取消的清理也已验证**，但重入类时序（`EnterWindow` 两道防线 / `ExitWindow` 不对称 / GE 施加失败补偿）以及跨端分派、时钟倒退**仍未验证**。连招数据 `UHodgeComboSet` **仍不存在**；`Status.Attack.*` / `GameplayEvent.Attack.*` 原生标签**已集中声明**（`HodgeGameplayTags.h/.cpp`），但 `GA_Attack` 是否已消费它们仍未在资产层确认。`GA_Melee.uasset` 与 `Content/Main/Character/Hero/Ability/` 目录不存在，当前 Hero 目录下是 `GA_Attack.uasset`（工作区未提交，父类 / Montage / 命中配置未解析）。技能授予路径本身已接通（PlayerState::SetPawnData），所以缺的仍是"**具体攻击 Ability + 命中判定 + 目标 ASC**"这三环（连击仍需从零实现）。详见 [GAS 章节](07-gas.md) 与 [接通清单 KB-15](12-integration-backlog.md)。
 
 ## 推荐最小战斗闭环
 

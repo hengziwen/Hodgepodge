@@ -1,6 +1,6 @@
 # 术语、决策记录与维护规范
 
-> 最近源码核对：2026-09-17。源码接入状态与运行验收分开记录。
+> 最近源码核对：2026-09-19。源码接入状态与运行验收分开记录。
 [返回首页](README.md)
 
 ## 项目术语
@@ -22,9 +22,9 @@
 - CDO：类默认对象；Experience 加载方式会读取它。
 - PrimaryAssetId：由类型和名称组成的资产标识，不等同于文件路径。
 - Mixed：GAS 效果复制策略；并不意味着所有数据只复制给拥有者。
-- Timeline（⚠️ **已回退**）：~~AbilityTimeline，描述阶段区间与时间点事件的 UPrimaryDataAsset；本身不播动画。~~ 当前工作区无该类，此词仅出现在历史记录与设计草案中。
-- ComboSet（⚠️ **已回退**）：~~一套攻击形态的节点集合，持有 Timeline 并定义入口与转移。~~ 当前工作区无该类。
-- Bundle：PrimaryAsset 的可命名资源分组；项目用 `FHodgeBundles::Equipped` 声明 Experience 需要加载的资源集合（`UHodgeExperienceManagerComponent::StartExperienceLoad()`）。⚠️ 早先"承载进战斗前要预加载的 Montage"的说法依赖已回退的授予期预加载。
+- Timeline：AbilityTimeline，描述“什么时候发生什么”的 `UPrimaryDataAsset`（`UHodgeAbilityTimeline`），由唯一消费者 `UHodgeAbilityTask_PlayTimeline` 驱动；本身不播动画、不推进连击。已随 HEAD `77b7dba` 提交并部分验证（**窗口 GE 与 Point 派发尚未验证**）。⚠️ 2026-09-17 那版**双数组**（`Phases[]` + `Events[]`）实现已丢弃，与本词条不是同一套模型。
+- ComboSet（⚠️ **仍不存在**）：一套攻击形态的节点集合，持有 Timeline 并定义入口与转移（`UHodgeComboSet` / `FindNode`）。当前工作区无该类，连击需从零实现。
+- Bundle：PrimaryAsset 的可命名资源分组；项目用 `FHodgeBundles::Equipped` 声明 Experience 需要加载的资源集合（`UHodgeExperienceManagerComponent::StartExperienceLoad()`）。⚠️ 早先"承载进战斗前要预加载的 Montage"的说法依赖**从未落地**的授予期预加载（`PreloadPrimaryAssetsOnGrant`）。
 - loose tag：不经过 GE、直接加到 ASC 的标签；Timeline 阶段标签用非复制的 loose tag。
 - PrimaryAsset 预加载：按 PrimaryAssetId + Bundle 同步加载一组资产并保存句柄，区别于普通 `LoadObject`。
 

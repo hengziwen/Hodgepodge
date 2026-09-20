@@ -1,6 +1,6 @@
 # 项目定位、目录与文档可信度
 
-> 最近源码核对：2026-09-17。源码接入状态与运行验收分开记录。
+> 最近源码核对：2026-09-19。源码接入状态与运行验收分开记录。
 [返回首页](README.md)
 
 ## 工程是什么
@@ -19,7 +19,7 @@
 - `Content/Main`：自有玩法数据、输入资源与角色动画；详见资产清单。
 - `Content/qiuyuan`、`Content/Wuwa`、`Content/Assets`：模型、动画、音效等资源集合。资源存在不证明已经被 Pawn 使用。
 - `Content/CodexText` 与 `Source/Hodgepodge/*/CodexText`：独立的 ALS 风格动画实验与 Survivor 小玩法；除 `AHodgeLocomotionLabMode` 复用 HodgeGameModeBase 外不继承主角色体系，主模块不引用它们。
-- `Content/Main/Character/Hero/GA_Attack.uasset`（工作区未提交）与 `Content/Main/Input/InputAction/IA_Attack.uasset`：攻击相关资产；⚠️ 旧的 `Content/Main/Character/Hero/Ability/` 目录与 `GA_Melee` **已不存在**。存在不等于已接线。
+- `Content/Main/Character/Hero/GA_Attack.uasset`（工作区未提交）、`Content/Main/Character/Hero/DA_TimeLineText.uasset`（工作区新增，旧字段模型的废数据）、`Content/Main/Input/InputAction/IA_Attack.uasset` 与 `Content/Main/Data/DA_Pover.uasset`（`HodgeAbilitySet`）：攻击相关资产；⚠️ 旧的 `Content/Main/Character/Hero/Ability/` 目录与 `GA_Melee` **已不存在**。存在不等于已接线。
 - `Plugins/Developer/RiderLink`：开发工具插件，不计入游戏核心逻辑索引。
 - `Plugins/ALS-Refactored-4.15`：主模块已移除直接代码依赖，但 ALS.uplugin 声明 EnabledByDefault=true，不能称插件已禁用。
 - `Plugins/UnrealMCP`、`Plugins/McpAutomationBridge`：两个 Editor-only 自动化/MCP 插件，默认启用；不能据此宣称编辑器连接或工具调用已验证。
@@ -35,9 +35,9 @@
 
 ## 当前工作区与提交基线
 
-知识库以读取时的磁盘内容为准。2026-09-17 本轮开始时 HEAD 为 `2606b0c`，工作区有未提交的 `AbilitySystem/Timeline`、`Data/HodgeComboSet`、HodgeGameplayAbility/Tags、HodgeAssetManager、DefaultGame.ini 与 GA_Melee 等改动，全部保留。精确 Git HEAD、文件数量、SHA-256 和工作区列表见 [扫描快照](Reference/snapshot.md)。
+知识库以读取时的磁盘内容为准。**当前 HEAD 为 `77b7dba`**（"update:TimeLine和AbilityTask_PlayTimeline分离的表现与逻辑"），它已提交按统一事件模型重写的四个时间轴源文件（`Public/Data/HodgeAbilityTimeline.h`、`Private/Data/HodgeAbilityTimeline.cpp`、`Public/AbilitySystem/Abilities/HodgeAbilityTask_PlayTimeline.h`、`Private/AbilitySystem/Abilities/HodgeAbilityTask_PlayTimeline.cpp`）以及 `HodgeGameplayTags.h/.cpp` 中的 `Status.Attack.*` / `GameplayEvent.Attack.*`。工作区仍有未提交改动：`GA_Attack.uasset`（修改）、`DA_Pover.uasset` 与 `IA_Attack.uasset`（新增）、`DA_TimeLineText.uasset`（新增）、实验区 `/Game/CodexText/Timeline/` 的测试资产与 `Config/DefaultGameplayTags.ini`。精确 Git HEAD、文件数量、SHA-256 和工作区列表见 [扫描快照](Reference/snapshot.md)。
 
-> ⚠️ **回退补记**：上述 `AbilitySystem/Timeline`、`Data/HodgeComboSet`、`GA_Melee` 等改动**随后已被丢弃**。当前工作区没有 Timeline / ComboSet 源码、没有对应的 `DefaultGame.ini` 扫描项、没有 `Attack.*` 标签，`Content/Main/Character/Hero/` 下是 `GA_Attack.uasset`。凡引用这些符号的章节均按已回退处理，详见 [本轮变更](21-update-2026-09-17.md)。
+> ⚠️ **旧回退补记已作废**：2026-09-17 那版**双数组**（`Phases[]` + `Events[]`）Timeline / `HodgeComboSet` / `GA_Melee` 确实曾被丢弃；但"当前工作区没有 Timeline 源码、没有 `Attack.*` 标签"的结论**已不成立** —— Timeline 已按统一事件模型重写并提交，`Status.Attack.*` / `GameplayEvent.Attack.*` 也已集中声明。**仍然不存在**的是 `HodgeComboSet`、Bundle 预加载（`PreloadPrimaryAssetBundles` / `PreloadPrimaryAssetsOnGrant`）与旧设计的 `Attack.Entry.*` / `Attack.Transition.*` / `Status.AttackMode.*`。详见 [2026-09-19 记录](22-update-2026-09-19.md)。
 
 这意味着 checkout 到旧提交后，人工章节可能描述得比代码超前；从磁盘删除或启用草稿后，旧索引也可能失效。维护工具可以提示文件变化，但不能替代语义复核。
 

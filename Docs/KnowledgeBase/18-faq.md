@@ -2,7 +2,7 @@
 
 [返回首页](README.md)
 
-> 最近源码核对：2026-09-17。
+> 最近源码核对：2026-09-19。
 
 ## 现在还要从零接 HeroComponent 吗？
 
@@ -50,7 +50,14 @@ ASC 接入已收敛到组件路径，不再是双路径并存；但控制器先�
 
 ## 攻击时间轴、ComboSet 现在能用了吗？
 
-**不能 —— 它们当前根本不存在。** ⚠️ 早先的记录是"源码里类型、校验和 Task 实现都已存在，只是没有 C++ 调用点"，但那批改动属于当时工作区的**未提交改动，随后已被丢弃**：当前 `Source/Hodgepodge` 搜不到 `HodgeAbilityTimeline` / `HodgeComboSet` / `PlayTimeline`，`Config/DefaultGame.ini` 也没有对应 PrimaryAssetTypesToScan，`Attack.*` 标签未注册，`GA_Melee` 与 `Content/Main/Character/Hero/Ability/` 也不存在。攻击闭环需要**从零实现**。详见 [本轮变更](21-update-2026-09-17.md) 的回退标注与 [接通清单](12-integration-backlog.md) KB-15。
+**时间轴能跑调度器，但不能算攻击闭环；连击（ComboSet）仍不存在。**
+
+- `UHodgeAbilityTimeline` + `UHodgeAbilityTask_PlayTimeline` 已按统一事件模型实现，并**随 HEAD `77b7dba` 提交**；数据校验与调度器（窗口进入/退出、自然结束清理、起点接续不重放历史）已 PIE 实测。
+- ⚠️ **未验证**：窗口 GE 的施加/移除、Point 事件派发、取消清理、重入防线、`NetPolicy` 分端、时钟倒退——"窗口带 GE""点派发事件"两条主用途一次都没执行过。
+- **仍不存在**：`UHodgeComboSet`（连击需从零实现）、`Attack.Entry.*` / `Attack.Transition.*` / `Status.AttackMode.*`、Bundle 预加载。
+- ✅ **已存在**：`Status.Attack`（`.Windup` / `.Active` / `.Recovery`）与 `GameplayEvent.Attack`（`.Test` / `.Timeline.End` / `.Interrupted`）已在 `HodgeGameplayTags.h/.cpp` 集中声明；`GA_Melee` 与 `Content/Main/Character/Hero/Ability/` 仍不存在，实际消费方目前只有 CodexText 实验区的 `GA_TimelineTest`（`GA_Attack` 是否改用它仍未在资产层确认）。
+
+详见 [本轮记录](22-update-2026-09-19.md) 与 [接通清单 KB-15](12-integration-backlog.md)。
 
 ## 知识库是否验证了当前编译和运行？
 

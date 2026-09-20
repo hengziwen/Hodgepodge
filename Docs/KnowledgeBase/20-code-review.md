@@ -352,3 +352,16 @@
 7. **R3 验证**：`git status` 确认 Montage 迁移后 `GA_Attack` 引用与 `BP_Hero_Pover` 的 AnimClass 指向新路径；跑一次 Cook 或 Content Browser 的 Reference Viewer 确认 `Main` 不再引用 `CodexText`（如果选择迁移）。
 
 **验证边界**：本节所有结论来自磁盘资产与编辑器只读读取（`GA_Attack` 图 22 个节点、各节点引脚默认值、相关 CDO 与 Montage 属性均已核对），**没有**执行 C++ 构建、蓝图编译、PIE、联机或打包；`A3` 中的"预期表现"是静态推导，必须按上述步骤实测后才可写成"通过"。
+
+---
+
+## A4. 后续进展（2026-09-19 补记）
+
+> A0–A3 是 2026-09-17 的评审快照，保留原样。以下是针对同一批资产与标签的**当前状态更新**。
+
+- **R4（`Status.Attack.*` 标签与互斥配置）**：**源码侧已部分落地** —— `Status.Attack` / `.Windup` / `.Active` / `.Recovery` 与 `GameplayEvent.Attack` / `.Test` / `.Timeline.End` / `.Interrupted` 已在 `HodgeGameplayTags.h/.cpp` 集中声明（随 HEAD `77b7dba` 提交）。**仍未确认**：`GA_Attack` CDO 是否已配 `ActivationOwnedTags` / `CancelAbilitiesWithTag` / `BlockAbilitiesWithTag`（二进制资产未解析），以及是否已改用 `UHodgeAbilityTask_PlayTimeline`。
+- **R5（`Ability.Attack` 注册方式）**：**未处理** —— `Config/DefaultGameplayTags.ini` 仍是 `Tag="a"` 与 `Tag="Ability.Attack"` 两条，`Ability.Attack` 仍是 ini 标签而非原生标签。
+- **R1 / R2 / R6（连击接段、命中闭环、空 `WaitGameplayEvent` 死节点）**：**未处理** —— 本阶段只实现了 `UHodgeAbilityTimeline` + `UHodgeAbilityTask_PlayTimeline` 的调度器与标签账本（见 [2026-09-19 记录](22-update-2026-09-19.md)），窗口 GE 与 Point 派发尚未验证；`GA_Attack` 仍无命中判定。
+- **R3 / R10（资产归属、命名、孤儿资产）**：**未处理** —— 攻击 Montage 仍在 `/Game/CodexText/Montage/`，`DA_Pover` 仍是 `HodgeAbilitySet`。
+
+时间轴的实现与验证边界以 [2026-09-19 记录](22-update-2026-09-19.md) 为准。

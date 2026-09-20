@@ -1,6 +1,6 @@
 # Hodgepodge 本地知识库
 
-> 人工核对日期：2026-09-17。对象：本仓库当前工作区，包含未提交的修改。此知识库是项目本地文档，不依赖在线服务。
+> 人工核对日期：2026-09-19。对象：本仓库当前工作区（HEAD `77b7dba`），包含未提交的修改。此知识库是项目本地文档，不依赖在线服务。
 
 ## 从这里开始
 
@@ -46,6 +46,7 @@ Hodgepodge 是 UE 5.5 的个人动作 RPG 框架工程，正在将角色、GAS�
 - [2026-09-13 更新记录与验证边界](19-update-2026-09-13.md)
 - [代码评审顺序与检查清单](20-code-review.md)
 - [2026-09-17 更新记录与验证边界](21-update-2026-09-17.md)
+- [2026-09-19 更新记录：AbilityTimeline 实现与验证边界](22-update-2026-09-19.md)
 - [项目 AI 开发流程](../AI_DEVELOPMENT.md)
 - [项目开发约定](../../AGENTS.md)
 
@@ -65,11 +66,19 @@ Hodgepodge 是 UE 5.5 的个人动作 RPG 框架工程，正在将角色、GAS�
 
 ## 最新状态提示
 
-2026-09-17 本轮已核对：ASC 接入收敛到 HeroComponent→PawnExtension 单一入口（Hero 的 PossessedBy/OnRep_PlayerState 只调 Super）；CharacterBase Receiver 生命周期成对；PlayerState::SetPawnData 已在权威端授予 PawnData->AbilitySets（未记录句柄）；HeroComponent 的额外输入移除已实现并在 EndPlay 统一解绑；相机资产换为 CM_ThirdPerson / CM_ThirdPerson_Death；新增 CodexText 独立实验模块与 Editor-only MCP 插件。以上均为源码/配置/磁盘核对，不代表编译、PIE 或联机通过。
+2026-09-19 本轮：**AbilityTimeline 统一事件模型已实现并实测**（详见 [本轮记录](22-update-2026-09-19.md)）。`UHodgeAbilityTimeline` + `UHodgeAbilityTask_PlayTimeline` 已按 [第一阶段设计](../Design/ability-timeline-stage1.md) 重写并**编译通过**；数据校验规则、以及调度器（窗口进入/退出、自然结束清理、起点接续不重放历史）已在编辑器与 PIE 实测通过。
 
-> ⚠️ **回退补记**：本轮曾记录"新增 AbilityTimeline / ComboSet / PlayTimeline 数据与 Task + PreloadPrimaryAssetBundles 同步预加载 + Attack 相关 Tag"，这批内容属于当时**工作区的未提交改动**，随后已被丢弃。当前工作区不存在这些源码、配置扫描项与 Tag（已全量搜索确认），`GA_Melee` / `Content/Main/Character/Hero/Ability/` 也不再存在。**时间轴/连击需要从零实现**，不要在 BP 侧找现成接线。
+> ✅ **两条主用途已补测通过**：窗口 GE 的施加 / 移除（GE 实例数 `0 → 1 → 0`，无泄漏）与 Point / `Timeline.End` 事件派发都已在 PIE 实测通过（见 [本轮记录](22-update-2026-09-19.md) 的证据表）。
+> ✅ **中途取消的清理也已通过**：`clear_ability(handle)` 打断后窗口标签与 GE 均归零、时间轴不再推进（`Interrupted` 不派发符合设计）。
+> ⚠️ 仍未验证的是**重入类时序**：`EnterWindow` 两道防线、`ExitWindow` 不对称约束、清理幂等、GE 施加失败补偿，以及 `NetPolicy` 跨端分派、时钟倒退、`Interrupted` 派发分支（本阶段无触发者）。**"在回调里重入"这一类最刁钻的时序零运行证据**，别把"PIE 跑过"当成功能可用。
 
-剩余重点：技能授予句柄与撤销、Cue 路径注册与预加载、死亡衔接、敌人 ASC、专服启动、第一个 C++ 攻击 Ability（含时间轴/连击的从零实现）。详见 [本次更新记录](21-update-2026-09-17.md) 的回退标注。
+2026-09-17 已核对（仍然有效）：ASC 接入收敛到 HeroComponent→PawnExtension 单一入口（Hero 的 PossessedBy/OnRep_PlayerState 只调 Super）；CharacterBase Receiver 生命周期成对；PlayerState::SetPawnData 已在权威端授予 PawnData->AbilitySets（未记录句柄）；HeroComponent 的额外输入移除已实现并在 EndPlay 统一解绑；相机资产换为 CM_ThirdPerson / CM_ThirdPerson_Death；新增 CodexText 独立实验模块与 Editor-only MCP 插件（**MCP 连接与工具调用已于 2026-09-19 实测通过**，坑见 [排障手册](14-troubleshooting.md)）。
+
+> ⚠️ **旧回退标注已部分失效**：[21-update-2026-09-17.md](21-update-2026-09-17.md) 的"AbilityTimeline / PlayTimeline 已丢弃、需从零实现"只对**当时的双数组版本**成立。当前 **HEAD（`77b7dba`）已提交**按统一事件模型重写的 Timeline 与 PlayTimeline（`Public/Data/HodgeAbilityTimeline.h`、`Public/AbilitySystem/Abilities/HodgeAbilityTask_PlayTimeline.h` 及对应 `.cpp`）；但 `HodgeComboSet`、Bundle 预加载（`PreloadPrimaryAssetBundles` / `PreloadPrimaryAssetsOnGrant`）**仍然不存在**。
+
+> ✅ **"没有 Attack 标签"的旧结论已作废**：`HodgeGameplayTags.h/.cpp` 现已集中声明 `Status.Attack`（`.Windup` / `.Active` / `.Recovery`）与 `GameplayEvent.Attack`（`.Test` / `.Timeline.End` / `.Interrupted`）。**仍不存在**的是旧设计的 `Attack.Entry.*` / `Attack.Transition.*` / `Status.AttackMode.*`，以及 ComboWindow / HitCheck / JumpSection / Phase 系列事件标签。
+
+剩余重点：窗口 GE 与 Point 派发的实测、取消与重入路径、技能授予句柄与撤销、Cue 路径注册与预加载、死亡衔接、敌人 ASC、专服启动、正式的攻击 Ability（连击仍需从零实现）。
 
 不要把 Lyra 参考文档里的 ShooterCore、FrontEnd 地图、CommonUI 等当成本项目现有资源。
 

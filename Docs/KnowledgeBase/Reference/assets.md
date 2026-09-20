@@ -40,7 +40,8 @@
 
 - [BP_Hero_Pover.uasset](../../../Content/Main/Character/Hero/BP_Hero_Pover.uasset) — `/Game/Main/Character/Hero/BP_Hero_Pover`；53,177 字节
 - [BP_HeroBase.uasset](../../../Content/Main/Character/Hero/BP_HeroBase.uasset) — `/Game/Main/Character/Hero/BP_HeroBase`；25,447 字节
-- [GA_Attack.uasset](../../../Content/Main/Character/Hero/GA_Attack.uasset) — `/Game/Main/Character/Hero/GA_Attack`；95,308 字节
+- [DA_TimeLineText.uasset](../../../Content/Main/Character/Hero/DA_TimeLineText.uasset) — `/Game/Main/Character/Hero/DA_TimeLineText`；2,735 字节
+- [GA_Attack.uasset](../../../Content/Main/Character/Hero/GA_Attack.uasset) — `/Game/Main/Character/Hero/GA_Attack`；91,435 字节
 
 ## Data
 
@@ -84,9 +85,9 @@
 
 - `Assets`：645 个文件（包含源资源，不等于 UE 资产数）。
 - `Characters`：148 个文件（包含源资源，不等于 UE 资产数）。
-- `CodexText`：475 个文件（包含源资源，不等于 UE 资产数）。
+- `CodexText`：479 个文件（包含源资源，不等于 UE 资产数）。
 - `LevelPrototyping`：13 个文件（包含源资源，不等于 UE 资产数）。
-- `Main`：43 个文件（包含源资源，不等于 UE 资产数）。
+- `Main`：44 个文件（包含源资源，不等于 UE 资产数）。
 - `ThirdPerson`：7 个文件（包含源资源，不等于 UE 资产数）。
 - `Wuwa`：675 个文件（包含源资源，不等于 UE 资产数）。
 - `__ExternalActors__`：257 个文件（包含源资源，不等于 UE 资产数）。

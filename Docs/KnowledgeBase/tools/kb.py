@@ -60,7 +60,7 @@ PURPOSE = {
     'HodgeGlobalAbilitySystem': '世界级全局能力/效果授予及 ASC 注册表。',
     'HodgeHealthSet': 'Health/MaxHealth、BaseDamage/BaseHeal 和 Damage/Healing 元属性；有效结算、夹取、免疫和耗尽广播。',
     'HodgeAttributeSet': '项目 AttributeSet 基础和 ASC 访问。',
-    'HodgeGameplayTags': '原生 GameplayTag 注册和移动状态标签映射。标签存在不等于对应玩法实现。',
+    'HodgeGameplayTags': '原生 GameplayTag 注册和移动状态标签映射；含攻击时间轴依赖的 Status.Attack.* 与 GameplayEvent.Attack.*。标签存在不等于对应玩法实现。',
     'GameplayTagStack': '带计数的标签栈及复制数据结构，区别于只判断有无的 TagContainer。',
     'HodgeInputComponent': '基于 Tag 的 Native/Ability Action 绑定和句柄移除；映射辅助函数仍占位。',
     'HodgeInputConfig': 'NativeInputActions / AbilityInputActions 的 IA 与 Tag 数据配置及查询。',
@@ -87,8 +87,10 @@ PURPOSE = {
     'GameFeatureAction_AddWidget': 'Widget 注入迁移草稿，当前实现停用。',
     'GameFeatureAction_SplitscreenConfig': 'GameFeature 激活期间的分屏策略调整。',
     'HodgeGameFeaturePolicy': '已配置的 GameFeature 策略；Hotfix 观察者注册，Cue 路径观察者创建仍注释。',
-    # 注意：HodgeAbilityTimeline / HodgeAbilityTask_PlayTimeline / HodgeComboSet 曾于 2026-09-17
-    # 出现在未提交的工作区改动中，随后已回退；源码中不存在这些文件，故此处不再保留对应条目。
+    'HodgeAbilityTimeline': '技能逻辑时间轴数据资产（统一事件模型：单一 Events[]，Kind = Window / Point）。只描述“何时发生什么”，不含业务判断；没有 Montage 字段、不做 Bundle 收集。',
+    'HodgeAbilityTask_PlayTimeline': '驱动 HodgeAbilityTimeline 的唯一 AbilityTask：初始化与 Tick 共用 CollectNodes + SortNodes 统一 Scheduler，推进逻辑时间，维护 WindowTag 与 GE 两个账本，派发 Point 与系统事件。窗口 GE 与 Point 派发路径尚未验证。',
+    # 注意：UHodgeComboSet 曾于 2026-09-17 出现在未提交的工作区改动中，随后已回退，源码中仍不存在。
+    # 时间轴本身（HodgeAbilityTimeline / HodgeAbilityTask_PlayTimeline）已按统一事件模型重写并随 HEAD 77b7dba 提交，见上面两条。
     'HodgeALSLocomotion': 'CodexText 实验：6 向地面运动动画实例，不属于主 Hero 动画链。',
     'HodgeGroundedLocomotion': 'CodexText 实验：在 ALS 基础动画上增加平地起停/转身/脚锁。',
     'HodgeLocomotionLabComponent': 'CodexText 实验：面向/走跑切换与每帧旋转修正的测试组件。',

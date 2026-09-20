@@ -1,7 +1,7 @@
 # GAS、AbilitySet 与技能生命周期
 
-> 最近源码核对：2026-09-17。源码接入状态与运行验收分开记录。
-[返回首页](README.md) · [伤害系统](08-combat-health.md) · [本轮变更](21-update-2026-09-17.md)
+> 最近源码核对：2026-09-19。源码接入状态与运行验收分开记录。
+[返回首页](README.md) · [伤害系统](08-combat-health.md) · [本轮变更](22-update-2026-09-19.md)
 
 ## ASC 的项目职责
 
@@ -47,19 +47,20 @@ HodgeGameplayAbility::MakeEffectContext 调用父类创建句柄后，尝试提�
 
 当前自定义 Context 的 NetSerialize 复用父类，额外本地字段不会因此自动复制。Iris 路径也转发父类序列化；将来加入必须联网的自定义字段时，需要同步设计序列化和验证。
 
-## 攻击时间轴与 ComboSet（⚠️ 已回退，当前不存在）
+## 攻击时间轴与 ComboSet（时间轴已实现并部分验证；连击仍不存在）
 
-> **本节内容已作废（历史记录）。** `UHodgeAbilityTimeline`、`UHodgeAbilityTask_PlayTimeline`、`UHodgeComboSet`、`UHodgeAssetManager::PreloadPrimaryAssetBundles`、`HodgeGameplayAbility::PreloadPrimaryAssetsOnGrant` 与 `Attack.*` 系列 Tag 都来自 2026-09-17 核对时的**工作区未提交改动**，随后已被丢弃：当前 `Source/Hodgepodge` 搜不到这些符号，`Config/DefaultGame.ini` 没有 `HodgeAbilityTimeline` / `HodgeComboSet` 扫描项，`HodgeGameplayTags.h` 也搜不到 `Attack`。**攻击/连击目前是"尚未实现"，而不是"有实现缺调用点"。** 下面保留原文仅供了解当时的设计。
->
-> 未实现的设计意图见 [AbilityTimeline 设计方案](../Design/ability-timeline.md)；回退依据见 [本轮变更](21-update-2026-09-17.md)。
+**当前事实（2026-09-19，HEAD `77b7dba` 已提交）**：时间轴按**统一事件模型**（单一 `Events[]`，`Kind = Window / Point`）实现 —— `UHodgeAbilityTimeline`（`UPrimaryDataAsset`）只描述"什么时候发生什么"，`UHodgeAbilityTask_PlayTimeline` 是唯一消费者。四个源码文件均已提交：`Public/Data/HodgeAbilityTimeline.h` / `Private/Data/HodgeAbilityTimeline.cpp` / `Public/AbilitySystem/Abilities/HodgeAbilityTask_PlayTimeline.h` / `Private/AbilitySystem/Abilities/HodgeAbilityTask_PlayTimeline.cpp`。数据校验规则与调度器（窗口进入/退出、自然结束清理、起点接续不重放历史）已在编辑器与 PIE 实测；**但窗口的 GE 施加/移除与 Point 事件派发尚未验证**。详见 [本轮记录](22-update-2026-09-19.md) 与 [第一阶段设计](../Design/ability-timeline-stage1.md)。
 
-`UHodgeAbilityTimeline`（UPrimaryDataAsset）描述阶段区间（`FHodgeTimelinePhase`）、时间点事件（`FHodgeTimelineEvent`，带 `EHodgeTimelineEventNetPolicy`）和 Montage 软引用，提供 `GetActivePhases` 与编辑器校验/Bundle 收集。`UHodgeComboSet`（UPrimaryDataAsset）持有 `FHodgeAttackNode` 数组和入口表，`FindNode` 按 AttackID 查找。
+- `UHodgeAbilityTimeline`：`Duration` + 混排 `Events`（`FHodgeTimelineEvent`，`Kind = Window / Point`，含 `EHodgeTimelineEventNetPolicy`）；字段按 Kind 用 `EditConditionHides` 拆开（`WindowTag` / `WindowEffectClass` 与 `PointEventTag` / `PointEffectClass`）；编辑器校验按 Kind 分流，`PostEditChangeProperty` 只做 `StableSort`。**没有 Montage 字段、没有 `GetActivePhases`、没有 Bundle 收集**。
+- `UHodgeAbilityTask_PlayTimeline`：`bTickingTask = true`，用世界时间差累加逻辑时间；`CollectNodes` + `SortNodes`（`Time → NodeKind → Priority → EventIndex`）是初始化与 Tick 共用的统一 Scheduler；Window 进入/退出加/减 **non-replicated loose tag** 并按需施加 Infinite GE，Point 用 `HandleGameplayEvent` 派发 `PointEventTag` 并按需施加一次性 GE；`StopTimeline(NaturalEnd)` 与 `OnDestroy` 都走 `ClearAllWindowState()`（幂等）。`Timeline.End` / `Interrupted` 系统事件复用同一派发通道。
 
-`UHodgeAbilityTask_PlayTimeline` 是驱动 Task：`bTickingTask = true`，用世界时间差累加逻辑时间；进入/退出阶段时对 ASC 加/减 **non-replicated loose tag**；到时间点用 `HandleGameplayEvent` 派发 `GameplayEvent.Attack.*`；`ElapsedTime >= Duration` 时 `StopTimeline(NaturalEnd)` → `EndTask()`。`OnDestroy` 无条件 `ClearAllPhaseTags()`，广播前有 `ShouldBroadcastAbilityTaskDelegates()` 守卫；事件按 `NetPolicy` 决定在哪些端执行，不使用 PredictionKey（`FGameplayEventData` 本身没有该字段）。
+**仍不存在**：`UHodgeComboSet`、`UHodgeAssetManager::PreloadPrimaryAssetBundles`、`HodgeGameplayAbility::PreloadPrimaryAssetsOnGrant`，以及旧设计的 `Attack.Entry.*` / `Attack.Transition.*` / `Status.AttackMode.*` 与 ComboWindow / HitCheck / JumpSection / Phase 系列事件标签。连击与预加载仍需从零实现。
 
-配套的 `HodgeGameplayTags` 分组：`Attack.Entry.*` / `Attack.Transition.*`（数据层入口与转移键）、`GameplayEvent.Attack.*`（ComboWindow Open/Close、HitCheck、JumpSection、Timeline.End、Interrupted、Phase Enter/Exit）、`Status.Attack.*`（阶段 loose tag，含 ComboWindow/Invincible/SuperArmor）、`Status.AttackMode.*`（服务器权威 GE 授予并复制）。
+**已存在的攻击相关原生标签**（`HodgeGameplayTags.h/.cpp`，HEAD `77b7dba` 提交）：`Status.Attack`、`Status.Attack.Windup`、`Status.Attack.Active`、`Status.Attack.Recovery`（窗口 loose tag，由 Timeline 自动加减）；`GameplayEvent.Attack`、`GameplayEvent.Attack.Test`、`GameplayEvent.Attack.Timeline.End`、`GameplayEvent.Attack.Interrupted`（Point 与系统事件）。它们服务的是时间轴的标签账本；`GA_Attack` 是否已配 `ActivationOwnedTags` 仍属资产层待确认项。
 
-**当前完成度**（已作废）：~~类、校验、Bundle 收集与 `UHodgeAssetManager::PreloadPrimaryAssetBundles` 均有有效实现，但源码内没有任何 Ability 调用 `PlayTimeline`，也没有代码调用 `ComboSet::FindNode`——即“有实现、无 C++ 调用点”，BP 侧是否接线未验证。~~ **实际状态：上述实现全部已回退，当前工作区不存在；攻击闭环需要从零开始。**
+> **历史记录（旧双数组版，已丢弃）**：2026-09-17 曾有一版 `Phases[]` + `Events[]` 双数组实现（`FHodgeTimelinePhase` / `GetActivePhases` / `EnterPhase` / `ExitPhase` / `ClearAllPhaseTags` / `AdditionalGrantedTags`、`UHodgeComboSet`、`FindNode`、Bundle 预加载），随后被丢弃。旧字段名已全量搜索确认 0 命中，保留于 [21-update-2026-09-17.md](21-update-2026-09-17.md) 仅作历史。
+
+**当前完成度**：时间轴已完成实现并通过 PIE 实测 —— 窗口标签进出、**窗口 GE 的施加 / 移除**、**Point 与 `Timeline.End` 事件派发**、自然结束零残留均已验证；**未验证的是重入类时序与跨端**（`EnterWindow` 两道防线、`ExitWindow` 不对称、GE 施加失败补偿、`NetPolicy` 分端、时钟倒退；`Interrupted` 派发分支本阶段无触发者）——中途取消的清理已验证通过，因此仍不能声称攻击闭环可用。
 
 ## Cue 与全局能力
 

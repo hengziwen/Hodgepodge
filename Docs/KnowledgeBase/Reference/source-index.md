@@ -24,6 +24,30 @@
 
 模块定义或基础代码；请查看对应文件。
 
+## HodgeAbilityTask_PlayTimeline.cpp
+
+[Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeAbilityTask_PlayTimeline.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeAbilityTask_PlayTimeline.cpp)
+
+驱动 HodgeAbilityTimeline 的唯一 AbilityTask：初始化与 Tick 共用 CollectNodes + SortNodes 统一 Scheduler，推进逻辑时间，维护 WindowTag 与 GE 两个账本，派发 Point 与系统事件。窗口 GE 与 Point 派发路径尚未验证。
+
+- `UHodgeAbilityTask_PlayTimeline::UHodgeAbilityTask_PlayTimeline` — L36
+- `UHodgeAbilityTask_PlayTimeline::PlayTimeline` — L43
+- `UHodgeAbilityTask_PlayTimeline::Activate` — L56
+- `UHodgeAbilityTask_PlayTimeline::TickTask` — L98
+- `UHodgeAbilityTask_PlayTimeline::CollectNodes` — L161
+- `UHodgeAbilityTask_PlayTimeline::SortNodes` — L220
+- `UHodgeAbilityTask_PlayTimeline::InitializeTimeline` — L254
+- `UHodgeAbilityTask_PlayTimeline::AdvanceTimeline` — L290
+- `UHodgeAbilityTask_PlayTimeline::HasAuthorityOnAvatar` — L341
+- `UHodgeAbilityTask_PlayTimeline::EnterWindow` — L347
+- `UHodgeAbilityTask_PlayTimeline::ExitWindow` — L407
+- `UHodgeAbilityTask_PlayTimeline::ApplyTimelineEffect` — L456
+- `UHodgeAbilityTask_PlayTimeline::FirePointEvent` — L480
+- `UHodgeAbilityTask_PlayTimeline::FireSystemEvent` — L543
+- `UHodgeAbilityTask_PlayTimeline::ClearAllWindowState` — L556
+- `UHodgeAbilityTask_PlayTimeline::StopTimeline` — L599
+- `UHodgeAbilityTask_PlayTimeline::OnDestroy` — L631
+
 ## HodgeGameplayAbility.cpp
 
 [Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility.cpp)
@@ -193,7 +217,7 @@ Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动�
 
 [Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp)
 
-原生 GameplayTag 注册和移动状态标签映射。标签存在不等于对应玩法实现。
+原生 GameplayTag 注册和移动状态标签映射；含攻击时间轴依赖的 Status.Attack.* 与 GameplayEvent.Attack.*。标签存在不等于对应玩法实现。
 
 ## HodgeGlobalAbilitySystem.cpp
 
@@ -831,6 +855,15 @@ PlayerState ModularGameplay Receiver 注册、注销及组件 Reset/CopyProperti
 - `UHodgeAbilitySet::UHodgeAbilitySet` — L76
 - `UHodgeAbilitySet::GiveToAbilitySystem` — L82
 
+## HodgeAbilityTimeline.cpp
+
+[Source/Hodgepodge/Private/Data/HodgeAbilityTimeline.cpp](../../../Source/Hodgepodge/Private/Data/HodgeAbilityTimeline.cpp)
+
+技能逻辑时间轴数据资产（统一事件模型：单一 Events[]，Kind = Window / Point）。只描述“何时发生什么”，不含业务判断；没有 Montage 字段、不做 Bundle 收集。
+
+- `UHodgeAbilityTimeline::IsDataValid` — L46
+- `UHodgeAbilityTimeline::PostEditChangeProperty` — L321
+
 ## HodgeAssetManager.cpp
 
 [Source/Hodgepodge/Private/Data/HodgeAssetManager.cpp](../../../Source/Hodgepodge/Private/Data/HodgeAssetManager.cpp)
@@ -1094,6 +1127,12 @@ Enhanced Input 用户设置派生入口；须核对实际设置类配置。
 
 自定义额外能力消耗的扩展契约。
 
+## HodgeAbilityTask_PlayTimeline.h
+
+[Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeAbilityTask_PlayTimeline.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeAbilityTask_PlayTimeline.h)
+
+驱动 HodgeAbilityTimeline 的唯一 AbilityTask：初始化与 Tick 共用 CollectNodes + SortNodes 统一 Scheduler，推进逻辑时间，维护 WindowTag 与 GE 两个账本，派发 Point 与系统事件。窗口 GE 与 Point 派发路径尚未验证。
+
 ## HodgeGameplayAbility.h
 
 [Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility.h)
@@ -1152,7 +1191,7 @@ Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动�
 
 [Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)
 
-原生 GameplayTag 注册和移动状态标签映射。标签存在不等于对应玩法实现。
+原生 GameplayTag 注册和移动状态标签映射；含攻击时间轴依赖的 Status.Attack.* 与 GameplayEvent.Attack.*。标签存在不等于对应玩法实现。
 
 ## HodgeGlobalAbilitySystem.h
 
@@ -1375,6 +1414,12 @@ PlayerState ModularGameplay Receiver 注册、注销及组件 Reset/CopyProperti
 [Source/Hodgepodge/Public/Data/HodgeAbilitySet.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilitySet.h)
 
 权威端批量授予属性集、技能和 GE，并用句柄集合撤销。
+
+## HodgeAbilityTimeline.h
+
+[Source/Hodgepodge/Public/Data/HodgeAbilityTimeline.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilityTimeline.h)
+
+技能逻辑时间轴数据资产（统一事件模型：单一 Events[]，Kind = Window / Point）。只描述“何时发生什么”，不含业务判断；没有 Montage 字段、不做 Bundle 收集。
 
 ## HodgeAssetManager.h
 

@@ -36,7 +36,7 @@ DefaultInput.ini：DefaultPlayerInputClass 为 EnhancedPlayerInput；DefaultInpu
 
 ## 插件
 
-uproject 启用 GameplayAbilities、GameFeatures、AnimationLocomotionLibrary、AnimationWarping、ModelingToolsEditorMode（Editor）、UnrealMCP（Editor）和 McpAutomationBridge（Editor，`TargetAllowList: ["Editor"]`）；UNTLink 当前显式禁用。ALS.uplugin 默认启用，主模块不引用 ALS 不等于插件停用。两个 MCP 插件均为 Editor-only 模块（McpAutomationBridge 含 McpAutomationBridge / McpAutomationBridgeFab 两个 Editor 模块），不进 Runtime 构建，也未验证连接或工具调用。
+uproject 启用 GameplayAbilities、GameFeatures、AnimationLocomotionLibrary、AnimationWarping、ModelingToolsEditorMode（Editor）、UnrealMCP（Editor）和 McpAutomationBridge（Editor，`TargetAllowList: ["Editor"]`）；UNTLink 当前显式禁用。ALS.uplugin 默认启用，主模块不引用 ALS 不等于插件停用。两个 MCP 插件均为 Editor-only 模块（McpAutomationBridge 含 McpAutomationBridge / McpAutomationBridgeFab 两个 Editor 模块），不进 Runtime 构建。**连接与工具调用已于 2026-09-19 实测通过**（UnrealMCP 55557；McpAutomationBridge 原生 MCP `POST /mcp` 3016，需 `X-MCP-Capability-Token`），实操坑见 [排障手册的 MCP 一节](14-troubleshooting.md)。注意桥**不能编译 C++**，也不注册新增 `UCLASS`。
 
 模块依赖和 uproject 插件声明是不同层级。出现插件依赖警告时对照引擎插件所属模块修正，不能仅删除 Build.cs 依赖来消除警告。
 
