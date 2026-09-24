@@ -1,6 +1,6 @@
 # 按症状定位的排障手册
 
-> 最近源码核对：2026-09-19。源码接入状态与运行验收分开记录。
+> 最近源码核对：2026-09-22。源码接入状态与运行验收分开记录。
 [返回首页](README.md)
 
 ## 启动加载失败或看不到玩家
@@ -43,6 +43,8 @@
 **事件没到客户端**：按 `EHodgeTimelineEventNetPolicy` 区分端，不要假设 `HandleGameplayEvent` 会自动 RPC。特别注意 `PointEffectClass + LocallyControlledOnly` 已被校验定为 **Error**：该组合下 listen server 主机自己控制的角色会施加 GE，而远程客户端不会。
 
 **要主动打断时间轴做验证**：`asc.clear_ability(handle)`（用法见下面 MCP 一节）。取消后 `Status.Attack.*` 与窗口 GE 都应归零，且**此后不应再出现后续窗口标签或 Point 派发**（出现就是"停不下来还在 tick"）。注意 `GameplayEvent.Attack.Interrupted` **在取消时不会派发**，这是设计约定（`AbilityCancelled` 不广播；`Interrupted` 只给"被外力抢占"，本阶段没有触发者）——别把它当成漏派发的 bug 去查。
+
+**移动取消不生效（推杆没有取消后摇）**：`UHodgeAbilityTask_WaitMoveCancel` 需要三条链同时成立——① 资产里确实有 Window 授予 `Status.Attack.Cancel.Move`；② 任务被真正创建且 C++ 调用方**自己调了 `ReadyForActivation()`**（漏了静默不跑）；③ 攻击 Ability 在 `OnMoveCancel` 回调里结束自己。缺任一条都不生效。**AI / 模拟代理 Pawn 上永远不生效是设计**（移动意图只在本地控制端存在）。另注意：若用 `SetIgnoreMoveInput` / `DisableMovement` 实现攻击期间禁移，`Input_Move` 不再回调、移动意图恒为 `false`，取消逻辑会**静默失效**。⚠️ 该任务目前未编译、未验证，先别把它当成已可用功能（见 [2026-09-22 记录](23-update-2026-09-22.md)）。
 
 ## ~~首次进战斗卡顿或 Montage 未加载~~（⚠️ 预加载实现不存在）
 
@@ -96,7 +98,7 @@ PlayerState::SetPawnData 授予 AbilitySet 时未记录句柄，GameFeature 或�
 | PIE 里 `PlayerState` 是普通类、`PAWN=None`、`ASC_COUNT=0` | PIE 起在 `EditorStartupMap`（当前是 `L_MainMenu`），那里面没有 Hodge 链 | 先用 `control_editor.open_asset` 把编辑器关卡切到 `ThirdPersonMap` 再 `play` |
 | Python 造不出 `FGameplayTag` | `TagName` 只读、构造函数不收 `TagName`、`make_literal_gameplay_tag` 收 tag、`add_gameplay_tag(_to_container)` 收 container | 直接从数据资产里取现成的 tag 对象（如 `Events[i].WindowTag`），用 `GameplayTagLibrary.get_tag_name()` 读名字 |
 | 想让桥编译 C++ 或触发 Live Coding | 桥**没有构建入口**（只有 `blueprint.compile`、`material.compile_material`） | C++ 变更走编辑器外构建或 Ctrl+Alt+F11；新增 `UCLASS` 还必须**重启编辑器**才会进反射 |
-| 调完 `manage_gas.add_ability_task(taskType="PlayTimeline")` 读图表只有两个事件节点 | 它会建出真正的 `K2Node_LatentAbilityCall`（自动补 `ReadyForActivation`），但**不是立刻**出现在 `get_blueprint_graph` 结果里 | 别急着判"只加了变量"；重新读一次图表再下结论 |
+| 调完 `manage_gas.add_ability_task(taskType="PlayTimeline")` 读图表只有两个事件节点 | ⚠️ **这条以前记错了，已纠正**：读桥源码（`Plugins/McpAutomationBridge/.../Domains/GAS/McpAutomationBridge_GASHandlersAbilityTasks.cpp`）确认，`add_ability_task` **从头到尾只加成员变量、从不建任何图节点** —— 它按 `taskType` 走一串 `if/else if`，每个分支只决定加哪些配置变量（`WaitDelay` / `PlayMontageAndWait` / `WaitGameplayEvent` …）。当年看到的那个 `K2Node_LatentAbilityCall` 是**手工接的**，不是这个能力建的 | 别指望它建节点：`bTask_*` / `Task_*_Class` 变量**就是它的全部产物**，不是"节点还没出现"。要节点只能在蓝图里手工加 |
 
 桥暴露的是**单工具网关**（只有一个 `unreal` 工具，四个操作 `search` → `describe` → `execute` → `configure`），并且明令**不许猜** capability / tool / action / 参数名：先用 `search` 拿行、再用行里的 `nextCall` 原样 `describe` 拿契约。父工具名与能力前缀**不一致**是常见坑：`blueprint.*` 的父工具是 `manage_blueprint`、`asset.validate` 的父工具是 `manage_asset`，猜错只会得到空的 `CAP None`。
 
@@ -122,6 +124,17 @@ PlayerState::SetPawnData 授予 AbilitySet 时未记录句柄，GameFeature 或�
 **怎么在 PIE 里主动"打断"一个正在跑的能力**：`asc.clear_ability(handle)`（返回 `None`，void）。它会连带取消活动中的实例 —— `CancelAbility` → Task `EndTask` → `OnDestroy` 清理，实测取消后窗口标签与 GE 都归零、且时间轴不再推进。跨调用传递句柄时注意 **`FGameplayAbilitySpecHandle.Handle` 是私有属性**（`get_editor_property("Handle")` 直接抛异常），用 `handle.export_text()` / `import_text()` 往返（文本形如 `(Handle=17)`）。
 
 另外两点小坑：**编辑器进程的 CWD 不是项目根**，Python 里 `open("Saved/...")` 会 `FileNotFoundError`，写文件要用绝对路径（桥自己的 `file` 参数倒是吃项目相对路径）；`manage_blueprint` 的 `get_graph_details` 能一次读出全部节点与引脚（含 `linkedTo`），但要先用 `tool=manage_blueprint` + `action=get_graph_details`，**没有** `get_blueprint_graph`。
+
+**怎么在 PIE 里模拟玩家输入**：`control_editor.simulate_input`（参数 `type` = `key_down` / `key_up` / `mouse_click` / `mouse_move`，`key` = `W` 之类）。它把事件真正投递给 PIE（返回值就写着 `delivered to PIE`），走的是完整输入链。用它验证过 `HodgeHeroComponent` 的移动意图：无输入 `False` → `key_down W` 变 `True` 且原始值 `(0, 1.0)` → `key_up W` 回到 `False`。依赖"玩家意图"的功能（取消窗口、输入缓冲等）基本只能靠它做自动化验证。
+
+**三个 PIE 相关的坑**：
+
+- **PIE 运行中 `save_loaded_asset` 会返回 `False`**（引擎日志：`The Editor is currently in a play mode.`），改动只在内存里。**停止 PIE 之后必须再存一次**并核对 `does_asset_exist`，否则下次启动拿到的还是旧数据。
+- **切关卡后立刻打 PIE 可能撞 `EDITOR_BLOCKED`**（"the editor game thread has not ticked for over 15 s"）：等几秒重试即可，通常是关卡加载 / 着色器编译占着游戏线程。
+- **`manage_gas.add_ability_task(taskType=...)` 对任何 taskType 都只加变量、不建节点**（源码依据见上表那一行）：产物是一组 `bTask_<X>_Active` / `Task_<X>_Class` / `Task_<X>_Name` 变量。**AbilityTask 节点只能在蓝图里手工加**（latent 节点由编辑器里的 ability-task spawner 创建，MCP 没有这条通路）。给自定义任务类型调用它还会凭空留下几个用不到的变量，记得顺手清掉。
+  - 补充实测（2026-09-20）：想绕过它、用通用接口建节点也走不通 —— `blueprint.create_node(nodeType="K2Node_LatentAbilityCall", memberClass/targetClass=..., memberName/functionName=...)` 会**建出一个残节点**：标题显示"异步任务（缺失函数）"，引擎日志 `ProxyFactoryClass null in K2Node_LatentAbilityCall ... Was a class deleted or saved on a non promoted build?`，而且只有 `execute` / `then` 两个引脚，任务自己的参数与**委托引脚一个都没有**。换成 `K2Node_CallFunction` 也不行（`BlueprintInternalUseOnly` 的工厂函数本来就不该以普通调用节点的形式存在）。
+  - `blueprint.list_node_types` 能列出桥支持的节点类型（返回的是 `K2Node_*` 类名，如 `K2Node_CallFunction` / `K2Node_CustomEvent` / `K2Node_AssignDelegate`）；`create_node` 的必填参数是 `nodeType` + `posX` + `posY`（少了 `posX` 只会报 `MISSING_REQUIRED_PARAMETER`）。
+  - **`blueprint.delete_node` 需要显式同意**：不带 `consent` 直接调用会返回 `CONSENT_REQUIRED: requires 'explicit' consent naming that exact capability`；正确写法是在请求里加 `consent: {capability: "blueprint.delete_node", acknowledge: "explicit"}`。另外**节点 id 每次创建都会变**，删之前先读图表拿当前 `nodeId`（沿用旧 id 会得到 `NODE_NOT_FOUND`），而且残节点一旦被多建一次就会多留一个 —— 别忘了一起清掉再重编译确认。**注意：残节点不阻止 `compile_blueprint` 返回成功**（只在引擎日志里报错），所以"编译通过"不能证明图是干净的。
 
 ## 日志取证模板
 

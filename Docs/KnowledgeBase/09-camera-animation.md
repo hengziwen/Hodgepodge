@@ -1,6 +1,6 @@
 # 相机、移动与动画
 
-> 最近源码核对：2026-09-17。源码接入状态与运行验收分开记录。
+> 最近源码核对：2026-09-22。源码接入状态与运行验收分开记录。
 [返回首页](README.md)
 
 ## 相机实现结构
@@ -31,6 +31,8 @@ CharacterBase 在构造中通过 SetDefaultSubobjectClass 替换 CharacterMoveme
 
 组件提供 GroundInfo、地面距离、模拟代理加速度及与 ASC/Tag 关联的行为入口。角色侧 ASC 为空时，依赖接口查询的移动状态逻辑不会得到预期数据。
 
+`UHodgeHeroComponent` 另新增**移动意图**信号（`HasMoveIntent` / `GetMoveIntent` / `OnMoveIntentChanged`，记录 `Input_Move` 的原始输入量并在 `Completed`/`Canceled` 清零），供"移动取消后摇"消费；它属输入层，不改变 CharacterMovement 本体。
+
 CombatCharacter 有压缩加速度和 FastSharedReplication 支持代码。函数存在不等于额外快速复制调度已接好；普通 CharacterMovement 复制与自定义优化是两层。其构造设置为 `bOrientRotationToMovement=true`、`RotationRate=(0,720,0)`、Mesh 相对旋转 (0,-90,0)；Enemy 自身的旋转/移动参数已注释，改为继承该设置。
 
 ## 动画实例
@@ -41,7 +43,7 @@ NativeUpdateAnimation 从 HodgeCharacterMovementComponent 取得 GroundDistance�
 
 Content/Main 中有 ABP_Pover_Base、动画层和敌人动画资源，但本轮只确认文件存在。Mesh Skeleton 是否匹配、AnimClass 是否赋值、曲线名称和 Slot 是否一致都待编辑器验证。
 
-`Content/CodexText` 与 `Source/Hodgepodge/*/CodexText` 是独立的 ALS 风格动画实验（`UHodgeALSLocomotion`、`UHodgeGroundedLocomotion` 及各自的编辑器 Authoring 库，外加 Survivor 小玩法）。它们继承项目 `UHodgeAnimInstance` 或引擎类，但不属于主 Hero 动画链，主体系没有 C++ 引用；主角色动画仍是 ABP 配置驱动。
+`Content/CodexText` 与 `Source/Hodgepodge/*/CodexText` 是独立的 ALS 风格动画实验（`UHodgeALSLocomotion`、`UHodgeGroundedLocomotion` 及各自的编辑器 Authoring 库，外加 Survivor 小玩法）。它们继承项目 `UHodgeAnimInstance` 或引擎类，但不属于主 Hero 动画链，主体系没有 C++ 引用；主角色动画仍是 ABP 配置驱动。实验区在工作区继续扩展：`UHodgeGroundedLocomotion` 增加上半身 Overlay、左手握持（`SetLeftHandGrip`）、步幅 / 地形 IK 字段，`UHodgeGroundedAuthoring` 增加 `RefineGroundedTransitions` / `AddStrideLayer` / `AddTerrainLayer` / `AddCombatLayer`，因此 `Hodgepodge.Build.cs` 的**编辑器块**新增 `AnimationWarpingRuntime` / `AnimationWarpingEditor`（Editor-only，不进 Runtime 构建）。资产与验证细节见 [CodexText 地面运动实验说明](../../Tools/LocomotionLab/README.md)，**不代表主 Hero 动画链或 GAS 战斗回归**。
 
 ## 建议验收顺序
 

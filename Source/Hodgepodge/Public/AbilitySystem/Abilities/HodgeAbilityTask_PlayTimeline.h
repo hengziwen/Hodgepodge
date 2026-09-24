@@ -164,6 +164,8 @@ protected:
 	bool HasAuthorityOnAvatar() const;
 
 private:
+	friend struct FHodgeTimelineTestAccess;
+
 	UPROPERTY()
 	TObjectPtr<UHodgeAbilityTimeline> TimelineAsset;
 

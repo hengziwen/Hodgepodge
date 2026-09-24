@@ -1,0 +1,77 @@
+{
+  "checks": {
+    "directions_32": true,
+    "hodge_input_8": true,
+    "four_stop_actions": true,
+    "stops_finish_idle": true,
+    "turns_90": true,
+    "turn_interrupts_to_move": true,
+    "fall_releases_feet": true,
+    "teleport_releases_feet": true,
+    "turn_locked_drift_under_1cm": true,
+    "montage_releases_feet": true,
+    "montage_exit_relocks": true,
+    "crouch_disabled": true,
+    "reversal_holds_opposite_hip": true,
+    "30fps_turns_and_lock": true,
+    "stop_interrupts_to_move": true
+  },
+  "passed": true,
+  "grounded_frames": 5896,
+  "reversal_frames": 1341,
+  "turn_lock_windows": [
+    {
+      "case": 8,
+      "side": 0,
+      "frames": 30,
+      "drift_cm": 4.40880173115618e-14
+    },
+    {
+      "case": 8,
+      "side": 0,
+      "frames": 59,
+      "drift_cm": 1.2340567156857757e-13
+    },
+    {
+      "case": 8,
+      "side": 1,
+      "frames": 1,
+      "drift_cm": 0.0
+    },
+    {
+      "case": 8,
+      "side": 1,
+      "frames": 103,
+      "drift_cm": 3.4536324191989076e-14
+    },
+    {
+      "case": 9,
+      "side": 0,
+      "frames": 1,
+      "drift_cm": 0.0
+    },
+    {
+      "case": 9,
+      "side": 0,
+      "frames": 115,
+      "drift_cm": 8.996506481722548e-14
+    },
+    {
+      "case": 9,
+      "side": 1,
+      "frames": 30,
+      "drift_cm": 0.4210349786047712
+    },
+    {
+      "case": 9,
+      "side": 1,
+      "frames": 51,
+      "drift_cm": 1.2510711099090289e-13
+    }
+  ],
+  "30fps_max_locked_drift_cm": 0.8799412379993541,
+  "turn_end_yaw": [
+    90.01493072509766,
+    -90.01522064208986
+  ]
+}

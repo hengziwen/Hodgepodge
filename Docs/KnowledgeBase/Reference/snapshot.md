@@ -6,29 +6,43 @@
 
 ## 生成信息
 
-- UTC：2026-09-19T15:41:42.274241+00:00
-- Git HEAD：`77b7dba934b442dfd4918bfb3bf6ac68cc0085ae`
-- 源文件（h/cpp/cs）：150
+- UTC：2026-09-22T01:52:07.722014+00:00
+- Git HEAD：`993a9eb8bef49afc7c78b5081e681883de4c401a`
+- 源文件（h/cpp/cs）：152
 - Content/Main 文件：44
-- 原生标签注册条目：160
-- 漂移跟踪文件：210
+- 原生标签注册条目：162
+- 漂移跟踪文件：212
 
 ## 生成时已有的受 Git 跟踪修改
 
 ```text
-M Content/CodexText/AnimInstance/ALS/ABP_ALS_Grounded.uasset
-AM Content/CodexText/Timeline/DA_TimelineTest.uasset
-AM Content/CodexText/Timeline/DA_TimelineTest_Bad.uasset
-AM Content/CodexText/Timeline/GA_TimelineTest.uasset
-A  Content/CodexText/Timeline/GE_TimelineTest_Infinite.uasset
- M Content/Main/Character/Hero/BP_Hero_Pover.uasset
- M Content/Main/Data/DA_Dafult_PawnData.uasset
- M Content/Main/Input/DA_HodgeInputConfig.uasset
- M Content/Main/Input/IMC_Default.uasset
+M Content/CodexText/Anim/Grounded/Run_B.uasset
+ M Content/CodexText/Anim/Grounded/Run_F.uasset
+ M Content/CodexText/Anim/Grounded/Run_LB.uasset
+ M Content/CodexText/Anim/Grounded/Run_LF.uasset
+ M Content/CodexText/Anim/Grounded/Run_RB.uasset
+ M Content/CodexText/Anim/Grounded/Run_RF.uasset
+ M Content/CodexText/Anim/Grounded/Stand1.uasset
+ M Content/CodexText/Anim/Grounded/Stand1_Turn_L90D.uasset
+ M Content/CodexText/Anim/Grounded/Stand1_Turn_R90D.uasset
+ M Content/CodexText/Anim/Grounded/Stop_Run_L.uasset
+ M Content/CodexText/Anim/Grounded/Stop_Run_R.uasset
+ M Content/CodexText/Anim/Grounded/Stop_Walk_L.uasset
+ M Content/CodexText/Anim/Grounded/Stop_Walk_R.uasset
+ M Content/CodexText/Anim/Grounded/Walk_B.uasset
+ M Content/CodexText/Anim/Grounded/Walk_F.uasset
+ M Content/CodexText/Anim/Grounded/Walk_LB.uasset
+ M Content/CodexText/Anim/Grounded/Walk_LF.uasset
+ M Content/CodexText/Anim/Grounded/Walk_RB.uasset
+ M Content/CodexText/Anim/Grounded/Walk_RF.uasset
+ M Content/CodexText/AnimInstance/ALS/ABP_ALS_Grounded.uasset
+ M Content/CodexText/Locomotion/BP_LocomotionHero.uasset
+ M Content/CodexText/Locomotion/L_LocomotionLab.umap
+ M Content/CodexText/Timeline/DA_TimelineTest.uasset
+ M Content/CodexText/Timeline/GA_TimelineTest.uasset
  M Docs/KnowledgeBase/01-project-map.md
- M Docs/KnowledgeBase/05-data-assets.md
  M Docs/KnowledgeBase/07-gas.md
- M Docs/KnowledgeBase/08-combat-health.md
+ M Docs/KnowledgeBase/09-camera-animation.md
  M Docs/KnowledgeBase/12-integration-backlog.md
  M Docs/KnowledgeBase/13-build-config.md
  M Docs/KnowledgeBase/14-troubleshooting.md
@@ -42,9 +56,20 @@ A  Content/CodexText/Timeline/GE_TimelineTest_Infinite.uasset
  M Docs/KnowledgeBase/Reference/gameplay-tags.md
  M Docs/KnowledgeBase/Reference/snapshot.json
  M Docs/KnowledgeBase/Reference/source-abilitysystem.md
- M Docs/KnowledgeBase/Reference/source-data.md
+ M Docs/KnowledgeBase/Reference/source-codextext.md
+ M Docs/KnowledgeBase/Reference/source-component.md
  M Docs/KnowledgeBase/Reference/source-index.md
  M Docs/KnowledgeBase/tools/kb.py
+ M Source/Hodgepodge/Hodgepodge.Build.cs
+ M Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp
+ M Source/Hodgepodge/Private/CodexText/HodgeGroundedAuthoring.cpp
+ M Source/Hodgepodge/Private/CodexText/HodgeGroundedLocomotion.cpp
+ M Source/Hodgepodge/Private/CodexText/HodgeLocomotionLab.cpp
+ M Source/Hodgepodge/Private/Component/HodgeHeroComponent.cpp
+ M Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h
+ M Source/Hodgepodge/Public/CodexText/HodgeGroundedLocomotion.h
+ M Source/Hodgepodge/Public/Component/HodgeHeroComponent.h
+ M Tools/LocomotionLab/README.md
 ```
 
 这里只记录已跟踪路径状态，未跟踪知识库自身不包含在此列表。HEAD 不足以还原 dirty 工作区；[snapshot.json](snapshot.json) 保存扫描范围的 SHA-256。

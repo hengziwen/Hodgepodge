@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "NativeGameplayTags.h"
 
@@ -242,6 +242,16 @@ namespace HodgeGameplayTags
 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Attack_Windup);
 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Attack_Active);
 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Attack_Recovery);
+
+	// 取消窗口标签：同样由 UHodgeAbilityTask_PlayTimeline 按区间自动加减（loose tag，不复制）。
+	// 它与上面的"阶段标签"是两件事：
+	//   Status.Attack.Recovery   = 当前处于后摇（状态描述）
+	//   Status.Attack.Cancel.*   = 当前允许因为某种意图而结束这次攻击（授权）
+	// 两者会分叉（例如后摇 [0.45,0.90) 而移动取消只开 [0.60,0.90)），所以必须各自配 Window。
+	// 具体是哪种意图由子标签表达，便于以后并列扩展 Dodge / Jump / NextAttack。
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Attack_Cancel);
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Attack_Cancel_Move);
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Attack_Cancel_NextAttack);
 
 	// =============================================================================
 	// SetByCaller 标签

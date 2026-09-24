@@ -1,0 +1,13 @@
+{
+  "date": "2026-09-21",
+  "fresh_spawn_passed": true,
+  "observed_frames": 334,
+  "min_lateral_separation_cm": 26.381385627472696,
+  "max_idle_pose_error_cm": 0.03778995861301007,
+  "grounded_regression_passed": true,
+  "turn30_max_lock_drift_cm": 0.4286477076095974,
+  "editor_build_exit": 0,
+  "game_build_exit": 6,
+  "game_build_blocker": "Existing HodgeEnemyCharacter.cpp:53 PostEditChangeProperty WITH_EDITOR guard missing",
+  "screenshot": "D:/CodexUE55Lab/idle-fixed.png"
+}

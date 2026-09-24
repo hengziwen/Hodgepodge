@@ -2,7 +2,7 @@
 
 [返回首页](README.md)
 
-> 最近源码核对：2026-09-19。
+> 最近源码核对：2026-09-22。
 
 ## 现在还要从零接 HeroComponent 吗？
 
@@ -53,11 +53,20 @@ ASC 接入已收敛到组件路径，不再是双路径并存；但控制器先�
 **时间轴能跑调度器，但不能算攻击闭环；连击（ComboSet）仍不存在。**
 
 - `UHodgeAbilityTimeline` + `UHodgeAbilityTask_PlayTimeline` 已按统一事件模型实现，并**随 HEAD `77b7dba` 提交**；数据校验与调度器（窗口进入/退出、自然结束清理、起点接续不重放历史）已 PIE 实测。
-- ⚠️ **未验证**：窗口 GE 的施加/移除、Point 事件派发、取消清理、重入防线、`NetPolicy` 分端、时钟倒退——"窗口带 GE""点派发事件"两条主用途一次都没执行过。
+- ✅ **已通过**：窗口 GE 的施加/移除（GE 实例数 `0 → 1 → 0`）、Point 事件派发、系统事件 `Timeline.End` 派发、中途取消的清理。
+- ⚠️ **未验证**：重入防线（`EnterWindow` 两道防线 / `ExitWindow` 不对称 / 清理幂等 / GE 失败补偿）、`NetPolicy` 分端、时钟倒退、`Interrupted` 派发分支（本阶段无触发者）。
 - **仍不存在**：`UHodgeComboSet`（连击需从零实现）、`Attack.Entry.*` / `Attack.Transition.*` / `Status.AttackMode.*`、Bundle 预加载。
-- ✅ **已存在**：`Status.Attack`（`.Windup` / `.Active` / `.Recovery`）与 `GameplayEvent.Attack`（`.Test` / `.Timeline.End` / `.Interrupted`）已在 `HodgeGameplayTags.h/.cpp` 集中声明；`GA_Melee` 与 `Content/Main/Character/Hero/Ability/` 仍不存在，实际消费方目前只有 CodexText 实验区的 `GA_TimelineTest`（`GA_Attack` 是否改用它仍未在资产层确认）。
+- ✅ **已存在**：`Status.Attack`（`.Windup` / `.Active` / `.Recovery` / `.Cancel` / `.Cancel.Move`）与 `GameplayEvent.Attack`（`.Test` / `.Timeline.End` / `.Interrupted`）已在 `HodgeGameplayTags.h/.cpp` 声明（取消窗口标签为工作区新增）；`GA_Melee` 与 `Content/Main/Character/Hero/Ability/` 仍不存在，实际消费方目前只有 CodexText 实验区的 `GA_TimelineTest`（`GA_Attack` 是否改用它仍未在资产层确认）。
 
 详见 [本轮记录](22-update-2026-09-19.md) 与 [接通清单 KB-15](12-integration-backlog.md)。
+
+## “移动取消后摇”现在能用了吗？
+
+**源码写了，但没编译、没接线、没验证。**
+
+- `UHodgeAbilityTask_WaitMoveCancel`（工作区新增）把“Timeline 的取消窗口（授权）”与“玩家移动意图（输入层）”两个变化驱动信号合流，条件同时成立时广播 `OnMoveCancel` **一次**。配套的 `Status.Attack.Cancel` / `.Move` 标签与 `UHodgeHeroComponent` 的移动意图（`HasMoveIntent` / `GetMoveIntent` / `OnMoveIntentChanged`）也已加入。
+- ⚠️ **未验证**：新任务零运行证据，且无法确认新文件已编入 DLL；`Status.Attack.Cancel.Move` 的运行时进出、以及端到端闭环（攻击 Ability 在 `OnMoveCancel` 里结束自己并恢复移动）都还没有。已有运行证据的只是“移动意图”本身（`simulate_input` 实测 `False → True → False`）。
+- 详见 [本轮记录](23-update-2026-09-22.md) 与 [验收清单 V15](16-validation.md)。
 
 ## 知识库是否验证了当前编译和运行？
 

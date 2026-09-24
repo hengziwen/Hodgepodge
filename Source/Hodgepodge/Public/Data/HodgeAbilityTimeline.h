@@ -112,7 +112,7 @@ struct FHodgeTimelineEvent
 			  EditCondition="Kind==EHodgeTimelineEventKind::Window", EditConditionHides))
 	FGameplayTag WindowTag;
 
-	// 区间内施加、退出时移除的 GE。**必须是 Infinite**，否则这段区间的语义会出现空洞（见 IsDataValid）。
+	// 区间内施加、退出时移除的 GE，必须是 Infinite 且不堆叠，以保证句柄独占。
 	// 只在权威端施加并依赖 GE 复制。留空表示这段区间只驱动 WindowTag。
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,
 		meta=(EditCondition="Kind==EHodgeTimelineEventKind::Window", EditConditionHides))
@@ -163,6 +163,9 @@ public:
 	// 保存后按 StartTime 稳定排序；TitleProperty 直接指向 EventID。
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(TitleProperty=EventID))
 	TArray<FHodgeTimelineEvent> Events;
+
+	// 编辑期与运行期共用的安全校验；失败时在任何窗口或事件执行前拒绝播放。
+	bool ValidateForPlayback(TArray<FText>& OutErrors) const;
 
 #if WITH_EDITOR
 	//~Begin UObject 接口重写

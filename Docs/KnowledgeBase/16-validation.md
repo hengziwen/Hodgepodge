@@ -1,11 +1,11 @@
 # 验收场景与调试观察点
 
-> 最近源码核对：2026-09-19。源码接入状态与运行验收分开记录。
+> 最近源码核对：2026-09-22。源码接入状态与运行验收分开记录。
 [返回首页](README.md)
 
 ## 本轮验证范围
 
-本知识库本轮只做静态源码、配置、文件存在性和链接校验。以下场景均是待执行验收，未填写通过结果。历史 README 编译状态不等于本轮结果。2026-09-19 知识库更新只做文档与索引核对；V01～V12 与 V14 仍未执行，V13 仅完成下表列出的部分（调度器与标签账本已实测，窗口 GE 与 Point 派发未执行）。
+本知识库本轮只做静态源码、配置、文件存在性和链接校验。以下场景均是待执行验收，未填写通过结果。历史 README 编译状态不等于本轮结果。2026-09-22 知识库更新只做文档与索引核对；V01～V14 仍未执行，V13 仅完成下表列出的部分（调度器与标签账本、窗口 GE 施加/移除、Point 与 `Timeline.End` 派发、取消清理均已实测；重入类时序未执行），新增 V15（移动取消后摇）同样未执行。
 
 ## V01：默认 Experience 启动
 
@@ -75,6 +75,23 @@
 > 本项依赖的 `PreloadPrimaryAssetsOnGrant` / `PreloadHandles` **当前工作区不存在**。仍需验证的相关项是 Experience 的 `Equipped` Bundle 加载（见 [数据资产章节](05-data-assets.md)）。
 
 ~~在授予配置了 `PreloadPrimaryAssetsOnGrant` 的技能前后记录耗时与 `PreloadHandles` 数量。通过条件：预加载只发生在授予时、Montage 在首次播放前已就绪、卸载后句柄不泄漏。本项依赖 V13 的 BP 接线，当前为未执行。~~
+
+## V15：移动取消后摇（⚠️ 未执行）
+
+消费方：`UHodgeAbilityTask_WaitMoveCancel`（工作区新增，见 [本轮记录](23-update-2026-09-22.md)）。它把两层信号合流：**Timeline 的取消窗口**（授权，Window 授予 `Status.Attack.Cancel.Move`）与**玩家移动意图**（`UHodgeHeroComponent`）。条件同时成立时广播 `OnMoveCancel` **一次**，然后自结束。
+
+前置：先做一次 Editor 常规构建，让新 `UCLASS` 进反射（新增 `UCLASS` 需**重启编辑器**）；再把 `Status.Attack.Cancel.Move` 配进实验区 `DA_TimelineTest` 的某条 Window。
+
+操作与通过条件：
+
+1. **窗口未开时推杆**：授权没有、意图有 → `OnMoveCancel` **不广播**。
+2. **窗口开放 + 有意图**：窗口开放后 `simulate_input` 推 `W` → `OnMoveCancel` 广播**恰好一次**，随后任务自结束。
+3. **只有窗口、无意图**：窗口开放但不推杆 → 不广播。
+4. **无 HeroComponent**：在 AI / 模拟代理 Pawn 上 → 条件**永不成立**（符合"本地控制端语义"）。
+5. **销毁解绑**：Ability 取消 / 结束 → `OnDestroy` 解绑 `RegisterGameplayTagEvent` 与 `OnMoveIntentChanged`，无残留回调。
+6. **端到端**：正式攻击 Ability 在 `OnMoveCancel` 里结束自己并恢复移动（**当前无消费方，接口层未接通**）。
+
+**当前状态**：全部**未执行**。本轮未编译、未 PIE，新任务零运行证据。已有的运行证据仅是"移动意图"本身（`simulate_input`：无输入 `False` → `key_down W` 变 `True`（原始值 `(0, 1.0)`）→ `key_up W` 回到 `False`）。
 
 ## 验收记录模板
 

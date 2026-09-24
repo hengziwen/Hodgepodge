@@ -1,6 +1,6 @@
 # Hodgepodge 本地知识库
 
-> 人工核对日期：2026-09-19。对象：本仓库当前工作区（HEAD `77b7dba`），包含未提交的修改。此知识库是项目本地文档，不依赖在线服务。
+> 人工核对日期：2026-09-22。对象：本仓库当前工作区（HEAD `993a9eb`），包含未提交的修改。此知识库是项目本地文档，不依赖在线服务。
 
 ## 从这里开始
 
@@ -47,6 +47,7 @@ Hodgepodge 是 UE 5.5 的个人动作 RPG 框架工程，正在将角色、GAS�
 - [代码评审顺序与检查清单](20-code-review.md)
 - [2026-09-17 更新记录与验证边界](21-update-2026-09-17.md)
 - [2026-09-19 更新记录：AbilityTimeline 实现与验证边界](22-update-2026-09-19.md)
+- [2026-09-22 更新记录：移动取消后摇的消费方与输入意图信号](23-update-2026-09-22.md)
 - [项目 AI 开发流程](../AI_DEVELOPMENT.md)
 - [项目开发约定](../../AGENTS.md)
 
@@ -66,6 +67,10 @@ Hodgepodge 是 UE 5.5 的个人动作 RPG 框架工程，正在将角色、GAS�
 
 ## 最新状态提示
 
+2026-09-22 本轮：**"移动取消后摇"的消费方已落地源码，但未验证**（详见 [本轮记录](23-update-2026-09-22.md)）。新增两个 loose tag `Status.Attack.Cancel` / `.Move`（授权语义，由 Timeline 的 Window 授予）；新增 AbilityTask `UHodgeAbilityTask_WaitMoveCancel`，把"窗口开放（Timeline）+ 玩家有移动意图（输入层）"两个变化驱动信号合流为一次 `OnMoveCancel`；`UHodgeHeroComponent` 增加"移动意图"信号（`HasMoveIntent` / `GetMoveIntent` / `OnMoveIntentChanged`），`Input_Move` 记意图、新增 `Input_MoveStopped` 绑到 `Completed`/`Canceled` 清零。CodexText 实验区继续精修（Overlay、左手握持、步幅/地形 IK），`Build.cs` 编辑器块新增 `AnimationWarpingRuntime`/`AnimationWarpingEditor`。
+
+> ⚠️ **边界**：本轮知识库未编译、未 PIE。`UHodgeAbilityTask_WaitMoveCancel` 本身**零运行证据**（且无法确认新文件已编入 DLL）。已有运行证据的是：移动意图（`simulate_input` 实测 `False → True → False`）与时间轴主路径 / 取消路径（见 [上一轮记录](22-update-2026-09-19.md)）。**"移动取消后摇"这条端到端闭环尚未接通**——目前没有正式攻击 Ability 消费 `OnMoveCancel`，`GA_Attack` 是否接线未在资产层确认。
+
 2026-09-19 本轮：**AbilityTimeline 统一事件模型已实现并实测**（详见 [本轮记录](22-update-2026-09-19.md)）。`UHodgeAbilityTimeline` + `UHodgeAbilityTask_PlayTimeline` 已按 [第一阶段设计](../Design/ability-timeline-stage1.md) 重写并**编译通过**；数据校验规则、以及调度器（窗口进入/退出、自然结束清理、起点接续不重放历史）已在编辑器与 PIE 实测通过。
 
 > ✅ **两条主用途已补测通过**：窗口 GE 的施加 / 移除（GE 实例数 `0 → 1 → 0`，无泄漏）与 Point / `Timeline.End` 事件派发都已在 PIE 实测通过（见 [本轮记录](22-update-2026-09-19.md) 的证据表）。
@@ -78,7 +83,7 @@ Hodgepodge 是 UE 5.5 的个人动作 RPG 框架工程，正在将角色、GAS�
 
 > ✅ **"没有 Attack 标签"的旧结论已作废**：`HodgeGameplayTags.h/.cpp` 现已集中声明 `Status.Attack`（`.Windup` / `.Active` / `.Recovery`）与 `GameplayEvent.Attack`（`.Test` / `.Timeline.End` / `.Interrupted`）。**仍不存在**的是旧设计的 `Attack.Entry.*` / `Attack.Transition.*` / `Status.AttackMode.*`，以及 ComboWindow / HitCheck / JumpSection / Phase 系列事件标签。
 
-剩余重点：窗口 GE 与 Point 派发的实测、取消与重入路径、技能授予句柄与撤销、Cue 路径注册与预加载、死亡衔接、敌人 ASC、专服启动、正式的攻击 Ability（连击仍需从零实现）。
+剩余重点：时间轴的**重入类时序**与跨端、时钟倒退；"移动取消后摇"的编译与接线（`WaitMoveCancel` 目前零运行证据）；技能授予句柄与撤销；Cue 路径注册与预加载；死亡衔接；敌人 ASC；专服启动；正式的攻击 Ability（连击仍需从零实现）。
 
 不要把 Lyra 参考文档里的 ShooterCore、FrontEnd 地图、CommonUI 等当成本项目现有资源。
 

@@ -14,11 +14,16 @@
 #include "AnimGraphNode_TwoBoneIK.h"
 #include "AnimGraphNode_ModifyBone.h"
 #include "AnimGraphNode_CopyBone.h"
+#include "AnimGraphNode_LayeredBoneBlend.h"
+#include "AnimGraph/AnimGraphNode_StrideWarping.h"
+#include "AnimGraph/AnimGraphNode_FootPlacement.h"
 #include "AnimStateNode.h"
 #include "AnimStateEntryNode.h"
 #include "AnimStateTransitionNode.h"
 #include "AnimationStateMachineGraph.h"
 #include "K2Node_VariableGet.h"
+#include "K2Node_CallFunction.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Kismet2/BlueprintEditorUtils.h"
 #include "Kismet2/KismetEditorUtilities.h"
 
@@ -33,8 +38,305 @@ namespace HodgeGroundedGraph
         for (auto* P:Node->Pins) if(P->Direction==EGPD_Output) return P;
         return nullptr;
     }
+
+    void PreserveKneeDirection(FAnimNode_TwoBoneIK& IK, int32 Side)
+    {
+        IK.JointTargetLocationSpace = BCS_BoneSpace;
+        IK.JointTarget.BoneReference.BoneName = Side == 0 ? TEXT("Bip001LCalf") : TEXT("Bip001RCalf");
+        IK.JointTargetLocation = FVector::ZeroVector;
+    }
 }
 #endif
+
+bool UHodgeGroundedAuthoring::RepairGroundedLegIK(UObject* Blueprint)
+{
+#if WITH_EDITOR
+    using namespace HodgeGroundedGraph;
+    auto* BP = Cast<UAnimBlueprint>(Blueprint);
+    if (!BP || !BP->GetPathName().StartsWith(TEXT("/Game/CodexText/")) || BP->ParentClass != UHodgeGroundedLocomotion::StaticClass()) return false;
+    TArray<UEdGraph*> Graphs; BP->GetAllGraphs(Graphs);
+    UAnimGraphNode_FootPlacement* Terrain = nullptr;
+    for (auto* G : Graphs) for (UEdGraphNode* N : G->Nodes)
+        if (auto* T = Cast<UAnimGraphNode_FootPlacement>(N)) Terrain = T;
+    if (!Terrain || Terrain->Node.LegDefinitions.Num() != 2) return false;
+    UEdGraph* Graph = Terrain->GetGraph();
+    auto* Input = Terrain->FindPin(TEXT("ComponentPose"));
+    if (!Input || Input->LinkedTo.Num() != 1) return false;
+    BP->Modify(); Graph->Modify(); Terrain->Modify();
+    bool Good = true;
+    // 用独立目标骨承接地形修正，保留真实腿链的骨长供 IK 求解。
+    if (Terrain->Node.LegDefinitions[0].IKFootBone.BoneName == TEXT("Bip001LFoot"))
+    {
+        auto* Previous = Input->LinkedTo[0]; Input->BreakAllPinLinks();
+        for (int32 I = 0; I < 2; ++I)
+        {
+            auto* Copy = Node<UAnimGraphNode_CopyBone>(Graph, 1100 + I * 180, 850);
+            Copy->Node.SourceBone.BoneName = I == 0 ? TEXT("Bip001LFoot") : TEXT("Bip001RFoot");
+            Copy->Node.TargetBone.BoneName = I == 0 ? TEXT("VB ik_foot_left") : TEXT("VB ik_foot_right");
+            Copy->Node.bCopyTranslation = Copy->Node.bCopyRotation = Copy->Node.bCopyScale = true;
+            Copy->Node.ControlSpace = BCS_ComponentSpace;
+            Good &= Graph->GetSchema()->TryCreateConnection(Previous, Copy->FindPin(TEXT("ComponentPose")));
+            Previous = Output(Copy);
+        }
+        Good &= Graph->GetSchema()->TryCreateConnection(Previous, Input);
+    }
+    for (int32 I = 0; I < 2; ++I)
+        Terrain->Node.LegDefinitions[I].IKFootBone.BoneName = I == 0 ? TEXT("VB ik_foot_left") : TEXT("VB ik_foot_right");
+    for (UEdGraphNode* N : Graph->Nodes) if (auto* IK = Cast<UAnimGraphNode_TwoBoneIK>(N))
+    {
+        const FName Foot = IK->Node.IKBone.BoneName;
+        if (Foot != TEXT("Bip001LFoot") && Foot != TEXT("Bip001RFoot")) continue;
+        IK->Modify(); const int32 Side = Foot == TEXT("Bip001LFoot") ? 0 : 1;
+        PreserveKneeDirection(IK->Node, Side);
+        if (IK->Node.EffectorLocationSpace == BCS_BoneSpace && IK->Node.EffectorTarget.BoneReference.BoneName == Foot)
+            IK->Node.EffectorTarget.BoneReference.BoneName = Side == 0 ? TEXT("VB ik_foot_left") : TEXT("VB ik_foot_right");
+    }
+    FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(BP); FKismetEditorUtilities::CompileBlueprint(BP);
+    return Good && BP->Status != BS_Error;
+#else
+    return false;
+#endif
+}
+
+bool UHodgeGroundedAuthoring::RefineGroundedTransitions(UObject* Blueprint)
+{
+#if WITH_EDITOR
+    using namespace HodgeGroundedGraph;
+    UAnimBlueprint* BP = Cast<UAnimBlueprint>(Blueprint);
+    if (!BP || !BP->GetPathName().StartsWith(TEXT("/Game/CodexText/")) || BP->ParentClass != UHodgeGroundedLocomotion::StaticClass()) return false;
+    TArray<UEdGraph*> Graphs; BP->GetAllGraphs(Graphs);
+    UAnimationStateMachineGraph* SM = nullptr;
+    for (auto* G : Graphs) if (G->GetFName() == TEXT("Grounded")) SM = Cast<UAnimationStateMachineGraph>(G);
+    if (!SM) return false;
+    TArray<UAnimStateTransitionNode*> Stops;
+    for (UEdGraphNode* N : SM->Nodes) if (auto* T = Cast<UAnimStateTransitionNode>(N))
+    {
+        if (T->GetPreviousState() && T->GetNextState() && T->GetPreviousState()->GetStateName() == TEXT("Move") && T->GetNextState()->GetStateName().StartsWith(TEXT("Stop"))) Stops.Add(T);
+    }
+    if (Stops.Num() == 8)
+    {
+        BP->Modify();
+        for (auto* T : Stops) for (UEdGraphNode* N : T->BoundGraph->Nodes)
+            if (auto* V = Cast<UK2Node_VariableGet>(N))
+            {
+                const FName Name = V->VariableReference.GetMemberName();
+                if (Name == TEXT("bStopPlanted") || Name == TEXT("bStopAirborne"))
+                { T->Modify(); T->CrossfadeDuration = Name == TEXT("bStopPlanted") ? 0.1f : 0.16f; }
+            }
+        FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(BP); FKismetEditorUtilities::CompileBlueprint(BP);
+        return BP->Status != BS_Error;
+    }
+    if (Stops.Num() != 4) return false;
+    BP->Modify(); SM->Modify(); bool Good = true;
+    for (auto* Old : Stops)
+    {
+        auto* From = Old->GetPreviousState(); auto* To = Old->GetNextState();
+        FName Flag;
+        for (UEdGraphNode* N : Old->BoundGraph->Nodes) if (auto* V = Cast<UK2Node_VariableGet>(N)) Flag = V->VariableReference.GetMemberName();
+        if (Flag.IsNone()) return false;
+        Old->DestroyNode();
+        for (int32 I = 0; I < 2; ++I)
+        {
+            auto* T = Node<UAnimStateTransitionNode>(SM, 0, 0);
+            // 现有收脚素材与循环首帧不同：脚锁立即生效，身体姿态仍需短暂混合。
+            T->CrossfadeDuration = I == 0 ? 0.1f : 0.16f; T->CreateConnections(From, To);
+            UEdGraph* G = T->BoundGraph;
+            FGraphNodeCreator<UK2Node_CallFunction> C(*G); auto* And = C.CreateNode();
+            And->SetFromFunction(UKismetMathLibrary::StaticClass()->FindFunctionByName(GET_FUNCTION_NAME_CHECKED(UKismetMathLibrary, BooleanAND))); C.Finalize();
+            auto Wire = [&](UEdGraphPin* A, UEdGraphPin* B) { Good &= A && B && G->GetSchema()->TryCreateConnection(A, B); };
+            for (int32 J = 0; J < 2; ++J)
+            {
+                FGraphNodeCreator<UK2Node_VariableGet> VC(*G); auto* V = VC.CreateNode();
+                const FName Name = J == 0 ? Flag : FName(I == 0 ? TEXT("bStopPlanted") : TEXT("bStopAirborne"));
+                V->VariableReference.SetSelfMember(Name); V->NodePosX = -450; V->NodePosY = J * 140; VC.Finalize();
+                Wire(V->FindPin(Name), And->FindPin(J == 0 ? TEXT("A") : TEXT("B")));
+            }
+            for (UEdGraphNode* N : G->Nodes) if (auto* R = Cast<UAnimGraphNode_TransitionResult>(N)) Wire(And->FindPin(TEXT("ReturnValue")), R->FindPin(TEXT("bCanEnterTransition")));
+        }
+    }
+    FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(BP); FKismetEditorUtilities::CompileBlueprint(BP);
+    return Good && BP->Status != BS_Error;
+#else
+    return false;
+#endif
+}
+
+bool UHodgeGroundedAuthoring::AddStrideLayer(UObject* Blueprint)
+{
+#if WITH_EDITOR
+    using namespace HodgeGroundedGraph;
+    auto* BP = Cast<UAnimBlueprint>(Blueprint);
+    if (!BP || !BP->GetPathName().StartsWith(TEXT("/Game/CodexText/")) || BP->ParentClass != UHodgeGroundedLocomotion::StaticClass()) return false;
+    TArray<UEdGraph*> Graphs; BP->GetAllGraphs(Graphs); UEdGraph* Graph = nullptr;
+    for (auto* G : Graphs) if (G->GetFName() == TEXT("AnimGraph")) Graph = G;
+    if (!Graph) return false;
+    UAnimGraphNode_CopyBone* LastCopy = nullptr;
+    for (UEdGraphNode* N : Graph->Nodes)
+    {
+        if (Cast<UAnimGraphNode_StrideWarping>(N)) return false;
+        if (auto* C = Cast<UAnimGraphNode_CopyBone>(N)) if (C->Node.TargetBone.BoneName == TEXT("VB ik_foot_right")) LastCopy = C;
+    }
+    if (!LastCopy || Output(LastCopy)->LinkedTo.Num() != 1) return false;
+    BP->Modify(); Graph->Modify(); bool Good = true;
+    UEdGraphPin* Next = Output(LastCopy)->LinkedTo[0]; Output(LastCopy)->BreakAllPinLinks();
+    auto Wire = [&](UEdGraphPin* A, UEdGraphPin* B) { Good &= A && B && Graph->GetSchema()->TryCreateConnection(A, B); };
+    auto Variable = [&](UAnimGraphNode_Base* N, FName Property, FName Name)
+    {
+        for (auto& P : N->ShowPinForProperties) if (P.PropertyName == Property) P.bShowPin = true;
+        N->ReconstructNode();
+        FGraphNodeCreator<UK2Node_VariableGet> C(*Graph); auto* V = C.CreateNode(); V->VariableReference.SetSelfMember(Name); C.Finalize();
+        Wire(V->FindPin(Name), N->FindPin(Property));
+    };
+    FGraphNodeCreator<UAnimGraphNode_StrideWarping> C(*Graph); auto* Warp = C.CreateNode();
+    Warp->Node.Mode = EWarpingEvaluationMode::Manual;
+    Warp->Node.PelvisBone.BoneName = TEXT("Bip001Pelvis"); Warp->Node.IKFootRootBone.BoneName = TEXT("root");
+    Warp->Node.bDisableIfMissingRootMotion = false;
+    for (int32 I = 0; I < 2; ++I)
+    {
+        FStrideWarpingFootDefinition Foot;
+        Foot.IKFootBone.BoneName = I == 0 ? TEXT("VB ik_foot_left") : TEXT("VB ik_foot_right");
+        Foot.FKFootBone.BoneName = I == 0 ? TEXT("Bip001LFoot") : TEXT("Bip001RFoot");
+        Foot.ThighBone.BoneName = I == 0 ? TEXT("Bip001LThigh") : TEXT("Bip001RThigh");
+        Warp->Node.FootDefinitions.Add(Foot);
+    }
+    Warp->NodePosY = 600; C.Finalize();
+    Variable(Warp, TEXT("StrideScale"), TEXT("StrideScale")); Variable(Warp, TEXT("StrideDirection"), TEXT("StrideDirection")); Variable(Warp, TEXT("Alpha"), TEXT("StrideAlpha"));
+    Wire(Output(LastCopy), Warp->FindPin(TEXT("ComponentPose"))); UEdGraphPin* Previous = Output(Warp);
+    for (int32 I = 0; I < 2; ++I)
+    {
+        FGraphNodeCreator<UAnimGraphNode_TwoBoneIK> IC(*Graph); auto* IK = IC.CreateNode();
+        IK->Node.IKBone.BoneName = I == 0 ? TEXT("Bip001LFoot") : TEXT("Bip001RFoot");
+        IK->Node.EffectorLocationSpace = BCS_BoneSpace;
+        IK->Node.EffectorTarget.BoneReference.BoneName = I == 0 ? TEXT("VB ik_foot_left") : TEXT("VB ik_foot_right");
+        PreserveKneeDirection(IK->Node, I);
+        IK->Node.bMaintainEffectorRelRot = true; IK->NodePosY = 600; IK->NodePosX = 350 + I * 350; IC.Finalize();
+        Variable(IK, TEXT("Alpha"), TEXT("StrideAlpha")); Wire(Previous, IK->FindPin(TEXT("ComponentPose"))); Previous = Output(IK);
+    }
+    Wire(Previous, Next);
+    FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(BP); FKismetEditorUtilities::CompileBlueprint(BP);
+    return Good && BP->Status != BS_Error;
+#else
+    return false;
+#endif
+}
+
+bool UHodgeGroundedAuthoring::AddTerrainLayer(UObject* Blueprint)
+{
+#if WITH_EDITOR
+    using namespace HodgeGroundedGraph;
+    auto* BP = Cast<UAnimBlueprint>(Blueprint);
+    if (!BP || !BP->GetPathName().StartsWith(TEXT("/Game/CodexText/")) || BP->ParentClass != UHodgeGroundedLocomotion::StaticClass()) return false;
+    TArray<UEdGraph*> Graphs; BP->GetAllGraphs(Graphs); UEdGraph* Graph = nullptr;
+    for (auto* G : Graphs) if (G->GetFName() == TEXT("AnimGraph")) Graph = G;
+    if (!Graph) return false;
+    UAnimGraphNode_ComponentToLocalSpace* ToLocal = nullptr;
+    for (UEdGraphNode* N : Graph->Nodes)
+    {
+        if (Cast<UAnimGraphNode_FootPlacement>(N)) return false;
+        if (auto* L = Cast<UAnimGraphNode_ComponentToLocalSpace>(N)) ToLocal = L;
+    }
+    if (!ToLocal || ToLocal->FindPin(TEXT("ComponentPose"))->LinkedTo.Num() != 1) return false;
+    BP->Modify(); Graph->Modify(); bool Good = true;
+    auto* Input = ToLocal->FindPin(TEXT("ComponentPose")); auto* Previous = Input->LinkedTo[0]; Input->BreakAllPinLinks();
+    auto Wire = [&](UEdGraphPin* A, UEdGraphPin* B) { Good &= A && B && Graph->GetSchema()->TryCreateConnection(A, B); };
+    auto Alpha = [&](UAnimGraphNode_Base* N)
+    {
+        for (auto& P : N->ShowPinForProperties) if (P.PropertyName == TEXT("Alpha")) P.bShowPin = true;
+        N->ReconstructNode(); FGraphNodeCreator<UK2Node_VariableGet> C(*Graph); auto* V = C.CreateNode();
+        V->VariableReference.SetSelfMember(TEXT("TerrainAlpha")); C.Finalize(); Wire(V->FindPin(TEXT("TerrainAlpha")), N->FindPin(TEXT("Alpha")));
+    };
+    FGraphNodeCreator<UAnimGraphNode_FootPlacement> C(*Graph); auto* Terrain = C.CreateNode();
+    Terrain->Node.PelvisBone.BoneName = TEXT("Bip001Pelvis"); Terrain->Node.IKFootRootBone.BoneName = TEXT("root");
+    Terrain->Node.PlantSpeedMode = EWarpingEvaluationMode::Manual;
+    Terrain->Node.PlantSettings.LockType = EFootPlacementLockType::Unlocked;
+    Terrain->Node.PlantSettings.SeparatingDistance = 2.f;
+    Terrain->Node.PelvisSettings.MaxOffset = 35.f; Terrain->Node.PelvisSettings.HorizontalRebalancingWeight = 0.f;
+    Terrain->Node.PelvisSettings.ActorMovementCompensationMode = EActorMovementCompensationMode::ComponentSpace;
+    Terrain->Node.TraceSettings.StartOffset = -50.f; Terrain->Node.TraceSettings.EndOffset = 60.f;
+    for (int32 I = 0; I < 2; ++I)
+    {
+        FFootPlacemenLegDefinition Leg;
+        Leg.FKFootBone.BoneName = I == 0 ? TEXT("Bip001LFoot") : TEXT("Bip001RFoot");
+        Leg.IKFootBone = Leg.FKFootBone;
+        Leg.BallBone.BoneName = I == 0 ? TEXT("Bip001LToe0") : TEXT("Bip001RToe0");
+        Leg.SpeedCurveName = I == 0 ? TEXT("FootSpeed_L") : TEXT("FootSpeed_R");
+        Terrain->Node.LegDefinitions.Add(Leg);
+    }
+    Terrain->NodePosX = 1500; Terrain->NodePosY = 650; C.Finalize(); Alpha(Terrain);
+    Wire(Previous, Terrain->FindPin(TEXT("ComponentPose"))); Previous = Output(Terrain);
+    for (int32 I = 0; I < 2; ++I)
+    {
+        FGraphNodeCreator<UAnimGraphNode_TwoBoneIK> IC(*Graph); auto* IK = IC.CreateNode();
+        IK->Node.IKBone.BoneName = I == 0 ? TEXT("Bip001LFoot") : TEXT("Bip001RFoot");
+        IK->Node.EffectorLocationSpace = BCS_BoneSpace; IK->Node.EffectorTarget.BoneReference = IK->Node.IKBone;
+        IK->Node.bTakeRotationFromEffectorSpace = true;
+        PreserveKneeDirection(IK->Node, I);
+        IK->NodePosX = 1900 + I * 350; IK->NodePosY = 650; IC.Finalize(); Alpha(IK);
+        Wire(Previous, IK->FindPin(TEXT("ComponentPose"))); Previous = Output(IK);
+    }
+    Wire(Previous, Input);
+    FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(BP); FKismetEditorUtilities::CompileBlueprint(BP);
+    return Good && BP->Status != BS_Error && RepairGroundedLegIK(BP);
+#else
+    return false;
+#endif
+}
+
+bool UHodgeGroundedAuthoring::AddCombatLayer(UObject* Blueprint, UObject* Overlay)
+{
+#if WITH_EDITOR
+    using namespace HodgeGroundedGraph;
+    auto* BP = Cast<UAnimBlueprint>(Blueprint); auto* Sequence = Cast<UAnimSequence>(Overlay);
+    if (!BP || !Sequence || !BP->GetPathName().StartsWith(TEXT("/Game/CodexText/")) || !Sequence->GetPathName().StartsWith(TEXT("/Game/CodexText/"))
+        || BP->ParentClass != UHodgeGroundedLocomotion::StaticClass() || BP->TargetSkeleton != Sequence->GetSkeleton()) return false;
+    TArray<UEdGraph*> Graphs; BP->GetAllGraphs(Graphs); UEdGraph* Graph = nullptr;
+    for (auto* G : Graphs) if (G->GetFName() == TEXT("AnimGraph")) Graph = G;
+    if (!Graph) return false;
+    UAnimGraphNode_Slot* Slot = nullptr; UAnimGraphNode_LocalToComponentSpace* ToCS = nullptr;
+    for (UEdGraphNode* N : Graph->Nodes)
+    {
+        if (Cast<UAnimGraphNode_LayeredBoneBlend>(N)) return false;
+        if (auto* S = Cast<UAnimGraphNode_Slot>(N)) Slot = S;
+        if (auto* CS = Cast<UAnimGraphNode_LocalToComponentSpace>(N)) ToCS = CS;
+    }
+    if (!Slot || !ToCS || Slot->FindPin(TEXT("Source"))->LinkedTo.Num() != 1 || Output(ToCS)->LinkedTo.Num() != 1) return false;
+    BP->Modify(); Graph->Modify(); bool Good = true;
+    auto Wire = [&](UEdGraphPin* A, UEdGraphPin* B) { Good &= A && B && Graph->GetSchema()->TryCreateConnection(A, B); };
+    auto Variable = [&](UAnimGraphNode_Base* N, FName Property, FName Name)
+    {
+        for (auto& P : N->ShowPinForProperties) if (P.PropertyName == Property) P.bShowPin = true;
+        N->ReconstructNode(); FGraphNodeCreator<UK2Node_VariableGet> C(*Graph); auto* V = C.CreateNode();
+        V->VariableReference.SetSelfMember(Name); C.Finalize(); Wire(V->FindPin(Name), N->FindPin(Property));
+    };
+    auto* Base = Slot->FindPin(TEXT("Source"))->LinkedTo[0]; Slot->FindPin(TEXT("Source"))->BreakAllPinLinks();
+    FGraphNodeCreator<UAnimGraphNode_LayeredBoneBlend> LC(*Graph); auto* Layer = LC.CreateNode();
+    Layer->Node.LayerSetup[0].BranchFilters.Add(FBranchFilter(TEXT("Bip001Spine"), 3));
+    Layer->Node.bMeshSpaceRotationBlend = true; Layer->Node.CurveBlendOption = ECurveBlendOption::UseBasePose;
+    Layer->NodePosX = -1500; Layer->NodePosY = -600; LC.Finalize();
+    FGraphNodeCreator<UAnimGraphNode_SequencePlayer> PC(*Graph); auto* Pose = PC.CreateNode(); Pose->Node.SetSequence(Sequence); Pose->NodePosX = -1900; Pose->NodePosY = -500; PC.Finalize();
+    Variable(Pose, TEXT("Sequence"), TEXT("OverlayPose"));
+    FGraphNodeCreator<UK2Node_VariableGet> VC(*Graph); auto* Weight = VC.CreateNode(); Weight->VariableReference.SetSelfMember(TEXT("OverlayAlpha")); VC.Finalize();
+    Wire(Weight->FindPin(TEXT("OverlayAlpha")), Layer->FindPin(TEXT("BlendWeights_0")));
+    Wire(Base, Layer->FindPin(TEXT("BasePose"))); Wire(Output(Pose), Layer->FindPin(TEXT("BlendPoses_0"))); Wire(Output(Layer), Slot->FindPin(TEXT("Source")));
+    auto* Next = Output(ToCS)->LinkedTo[0]; Output(ToCS)->BreakAllPinLinks();
+    FGraphNodeCreator<UAnimGraphNode_TwoBoneIK> IC(*Graph); auto* IK = IC.CreateNode();
+    IK->Node.IKBone.BoneName = TEXT("Bip001LHand"); IK->Node.EffectorLocationSpace = BCS_BoneSpace; IK->Node.EffectorTarget.BoneReference.BoneName = TEXT("Bip001RHand");
+    IK->Node.bTakeRotationFromEffectorSpace = true; IK->Node.JointTargetLocationSpace = BCS_BoneSpace; IK->Node.JointTarget.BoneReference.BoneName = TEXT("Bip001LForearm");
+    IK->Node.JointTargetLocation = FVector::ZeroVector; IK->NodePosX = -1000; IK->NodePosY = -650; IC.Finalize();
+    Variable(IK, TEXT("Alpha"), TEXT("HandIKAlpha")); Variable(IK, TEXT("EffectorLocation"), TEXT("HandGripLocation"));
+    Wire(Output(ToCS), IK->FindPin(TEXT("ComponentPose")));
+    FGraphNodeCreator<UAnimGraphNode_ModifyBone> RC(*Graph); auto* Rotation = RC.CreateNode(); Rotation->Node.BoneToModify.BoneName = TEXT("Bip001LHand");
+    Rotation->Node.RotationMode = BMM_Additive; Rotation->Node.RotationSpace = BCS_BoneSpace; Rotation->NodePosX = -650; Rotation->NodePosY = -650; RC.Finalize();
+    Variable(Rotation, TEXT("Alpha"), TEXT("HandIKAlpha")); Variable(Rotation, TEXT("Rotation"), TEXT("HandGripRotation"));
+    Wire(Output(IK), Rotation->FindPin(TEXT("ComponentPose"))); Wire(Output(Rotation), Next);
+    FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(BP); FKismetEditorUtilities::CompileBlueprint(BP);
+    if (BP->Status == BS_Error || !BP->GeneratedClass) return false;
+    if (auto* CDO = Cast<UHodgeGroundedLocomotion>(BP->GeneratedClass->GetDefaultObject())) CDO->OverlayPose = Sequence;
+    return Good && BP->Status != BS_Error;
+#else
+    return false;
+#endif
+}
 
 bool UHodgeGroundedAuthoring::AddGroundedLayer(UObject* Blueprint, const TArray<UObject*>& Actions, UObject* Idle, UObject* Fall, UObject* PreviewMesh)
 {
@@ -129,8 +431,9 @@ bool UHodgeGroundedAuthoring::AddGroundedLayer(UObject* Blueprint, const TArray<
     {
         FGraphNodeCreator<UAnimGraphNode_TwoBoneIK> IC(*Graph);auto* IK=IC.CreateNode();
         IK->Node.IKBone.BoneName=I==0?TEXT("Bip001LFoot"):TEXT("Bip001RFoot");
-        IK->Node.EffectorLocationSpace=BCS_ComponentSpace;IK->Node.JointTargetLocationSpace=BCS_ComponentSpace;
-        IK->Node.JointTargetLocation=FVector(I==0?25.f:-25.f,120.f,45.f);IK->Node.bAllowStretching=false;
+        IK->Node.EffectorLocationSpace=BCS_ComponentSpace;
+        PreserveKneeDirection(IK->Node, I);
+        IK->Node.bAllowStretching=true;IK->Node.StartStretchRatio=1.f;IK->Node.MaxStretchScale=1.03f;
         IK->Node.bMaintainEffectorRelRot=true;IK->NodePosX=-550+I*850;IC.Finalize();
         Expose(IK,TEXT("Alpha"));
         Wire(Graph,Previous,IK->FindPin(TEXT("ComponentPose")));

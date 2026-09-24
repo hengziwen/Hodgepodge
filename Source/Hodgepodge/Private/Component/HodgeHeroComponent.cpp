@@ -552,6 +552,14 @@ void UHodgeHeroComponent::InitializePlayerInput(UInputComponent* PlayerInputComp
 					HodgeIC->BindNativeAction(InputConfig, HodgeGameplayTags::InputTag_Move, ETriggerEvent::Triggered,
 					                          this, &ThisClass::Input_Move, /*bLogIfNotFound=*/ false);
 
+					// 移动输入结束 / 被取消时清零"移动意图"。
+					// 只接 Triggered 会让意图粘住：松手、切换 InputContext、失焦都不会回到 0，
+					// 依赖它的取消逻辑（如"移动取消后摇"）就会持续假阳性。
+					HodgeIC->BindNativeAction(InputConfig, HodgeGameplayTags::InputTag_Move, ETriggerEvent::Completed,
+					                          this, &ThisClass::Input_MoveStopped, /*bLogIfNotFound=*/ false);
+					HodgeIC->BindNativeAction(InputConfig, HodgeGameplayTags::InputTag_Move, ETriggerEvent::Canceled,
+					                          this, &ThisClass::Input_MoveStopped, /*bLogIfNotFound=*/ false);
+
 					// 将鼠标 Look InputTag 绑定到鼠标视角函数。
 					HodgeIC->BindNativeAction(InputConfig, HodgeGameplayTags::InputTag_Look_Mouse,
 					                          ETriggerEvent::Triggered, this, &ThisClass::Input_LookMouse,
@@ -787,6 +795,20 @@ void UHodgeHeroComponent::Input_AbilityInputTagReleased(FGameplayTag InputTag)
 // 处理角色二维移动输入。
 void UHodgeHeroComponent::Input_Move(const FInputActionValue& InputActionValue)
 {
+	// 记录移动意图。放在最前面：它是"攻击中允许移动取消"唯一要读的输入信号，
+	// 不能因为后面任何提前 return 而被跳过。
+	// 注意这里读的是**原始输入**而不是角色位移，所以攻击期间角色被蒙太奇钉住也不影响判定。
+	SetMoveIntent(InputActionValue.Get<FVector2D>());
+
+	// 保留原始意图供取消窗口消费，攻击期间不向移动组件提交行走输入。
+	if (const UHodgePawnExtensionComponent* Extension = UHodgePawnExtensionComponent::FindPawnExtensionComponent(GetPawn<APawn>()))
+	{
+		if (const UHodgeAbilitySystemComponent* ASC = Extension->GetHodgeAbilitySystemComponent())
+		{
+			if (ASC->HasMatchingGameplayTag(HodgeGameplayTags::Status_Attack)) { return; }
+		}
+	}
+
 	// [HODGE-DBG] 临时诊断：只在按下/松开移动时输出一次，避免 Triggered 每帧刷屏（定位后删除）。
 	static bool bDbgMoveActive = false;
 	const FVector2D DbgMoveValue = InputActionValue.Get<FVector2D>();
@@ -840,6 +862,42 @@ void UHodgeHeroComponent::Input_Move(const FInputActionValue& InputActionValue)
 			Pawn->AddMovementInput(MovementDirection, Value.Y);
 		}
 	}
+}
+
+// 移动输入结束（Completed）或被取消（Canceled）时清零移动意图。
+void UHodgeHeroComponent::Input_MoveStopped(const FInputActionValue& /*InputActionValue*/)
+{
+	// 这里刻意不调用 AddMovementInput：Completed 携带的值不保证是 0，
+	// 而且"清零意图"与"再推一次移动"是两件事，混在一起会让角色在松手瞬间被推一下。
+	SetMoveIntent(FVector2D::ZeroVector);
+}
+
+// 玩家当前是否有明确的移动意图。
+bool UHodgeHeroComponent::HasMoveIntent(float Threshold) const
+{
+	// 比较平方长度，省掉每帧开方。
+	return CurrentMoveInput.SizeSquared() > FMath::Square(FMath::Max(Threshold, 0.0f));
+}
+
+// 记录移动意图并按需广播变化。
+void UHodgeHeroComponent::SetMoveIntent(const FVector2D& NewValue)
+{
+	CurrentMoveInput = NewValue;
+	RefreshMoveIntent();
+}
+
+// 只在布尔结果翻转时广播。
+void UHodgeHeroComponent::RefreshMoveIntent()
+{
+	const bool bNow = HasMoveIntent();
+	if (bNow == bLastMoveIntent)
+	{
+		// 推杆过程中 Input_Move 每帧都来，这里必须挡住，否则订阅方会被每帧唤醒。
+		return;
+	}
+
+	bLastMoveIntent = bNow;
+	OnMoveIntentChanged.Broadcast(bNow);
 }
 
 // 处理鼠标视角输入。

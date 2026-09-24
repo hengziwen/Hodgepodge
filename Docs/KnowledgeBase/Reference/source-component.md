@@ -84,7 +84,7 @@ GameState 上的 Experience 复制、资源加载、插件激活、Action 执行
 
 ## HodgeHeroComponent.cpp
 
-玩家 Init State 协调、ASC 接入、输入与相机；额外输入句柄持久化并在移除/EndPlay 解绑。
+玩家 Init State 协调、ASC 接入、输入与相机；额外输入句柄持久化并在移除/EndPlay 解绑。新增“移动意图”信号（HasMoveIntent / GetMoveIntent / OnMoveIntentChanged），记 Input_Move 原始输入量、Completed/Canceled 清零，供移动取消后摇消费。
 
 源码：[Source/Hodgepodge/Private/Component/HodgeHeroComponent.cpp](../../../Source/Hodgepodge/Private/Component/HodgeHeroComponent.cpp)
 
@@ -103,19 +103,23 @@ GameState 上的 Experience 复制、资源加载、插件激活、Action 执行
 - L346: `void UHodgeHeroComponent::BeginPlay()`
 - L368: `void UHodgeHeroComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)`
 - L392: `void UHodgeHeroComponent::InitializePlayerInput(UInputComponent* PlayerInputComponent)`
-- L610: `void UHodgeHeroComponent::AddAdditionalInputConfig(const UHodgeInputConfig* InputConfig)`
-- L701: `void UHodgeHeroComponent::RemoveAdditionalInputConfig(const UHodgeInputConfig* InputConfig)`
-- L730: `bool UHodgeHeroComponent::IsReadyToBindInputs() const`
-- L737: `void UHodgeHeroComponent::Input_AbilityInputTagPressed(FGameplayTag InputTag)`
-- L760: `void UHodgeHeroComponent::Input_AbilityInputTagReleased(FGameplayTag InputTag)`
-- L788: `void UHodgeHeroComponent::Input_Move(const FInputActionValue& InputActionValue)`
-- L846: `void UHodgeHeroComponent::Input_LookMouse(const FInputActionValue& InputActionValue)`
-- L885: `void UHodgeHeroComponent::Input_LookStick(const FInputActionValue& InputActionValue)`
-- L932: `void UHodgeHeroComponent::Input_Crouch(const FInputActionValue& InputActionValue)`
-- L945: `void UHodgeHeroComponent::Input_AutoRun(const FInputActionValue& InputActionValue)`
-- L965: `TSubclassOf<UHodgeCameraMode> UHodgeHeroComponent::DetermineCameraMode() const`
-- L998: `void UHodgeHeroComponent::SetAbilityCameraMode(TSubclassOf<UHodgeCameraMode> CameraMode,`
-- L1013: `void UHodgeHeroComponent::ClearAbilityCameraMode(const FGameplayAbilitySpecHandle& OwningSpecHandle)`
+- L618: `void UHodgeHeroComponent::AddAdditionalInputConfig(const UHodgeInputConfig* InputConfig)`
+- L709: `void UHodgeHeroComponent::RemoveAdditionalInputConfig(const UHodgeInputConfig* InputConfig)`
+- L738: `bool UHodgeHeroComponent::IsReadyToBindInputs() const`
+- L745: `void UHodgeHeroComponent::Input_AbilityInputTagPressed(FGameplayTag InputTag)`
+- L768: `void UHodgeHeroComponent::Input_AbilityInputTagReleased(FGameplayTag InputTag)`
+- L796: `void UHodgeHeroComponent::Input_Move(const FInputActionValue& InputActionValue)`
+- L859: `void UHodgeHeroComponent::Input_MoveStopped(const FInputActionValue&                     )`
+- L867: `bool UHodgeHeroComponent::HasMoveIntent(float Threshold) const`
+- L874: `void UHodgeHeroComponent::SetMoveIntent(const FVector2D& NewValue)`
+- L881: `void UHodgeHeroComponent::RefreshMoveIntent()`
+- L895: `void UHodgeHeroComponent::Input_LookMouse(const FInputActionValue& InputActionValue)`
+- L934: `void UHodgeHeroComponent::Input_LookStick(const FInputActionValue& InputActionValue)`
+- L981: `void UHodgeHeroComponent::Input_Crouch(const FInputActionValue& InputActionValue)`
+- L994: `void UHodgeHeroComponent::Input_AutoRun(const FInputActionValue& InputActionValue)`
+- L1014: `TSubclassOf<UHodgeCameraMode> UHodgeHeroComponent::DetermineCameraMode() const`
+- L1047: `void UHodgeHeroComponent::SetAbilityCameraMode(TSubclassOf<UHodgeCameraMode> CameraMode,`
+- L1062: `void UHodgeHeroComponent::ClearAbilityCameraMode(const FGameplayAbilitySpecHandle& OwningSpecHandle)`
 
 ## HodgeInteractionComponentBase.cpp
 
@@ -353,7 +357,7 @@ GameState 上的 Experience 复制、资源加载、插件激活、Action 执行
 
 ## HodgeHeroComponent.h
 
-玩家 Init State 协调、ASC 接入、输入与相机；额外输入句柄持久化并在移除/EndPlay 解绑。
+玩家 Init State 协调、ASC 接入、输入与相机；额外输入句柄持久化并在移除/EndPlay 解绑。新增“移动意图”信号（HasMoveIntent / GetMoveIntent / OnMoveIntentChanged），记 Input_Move 原始输入量、Completed/Canceled 清零，供移动取消后摇消费。
 
 源码：[Source/Hodgepodge/Public/Component/HodgeHeroComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeHeroComponent.h)
 
@@ -381,54 +385,66 @@ GameState 上的 Experience 复制、资源加载、插件激活、Action 执行
   43: struct FFrame;
   46: struct FGameplayTag;
   49: struct FInputActionValue;
-  58: UCLASS(Blueprintable, Meta=(BlueprintSpawnableComponent))
-  59: class HODGEPODGE_API UHodgeHeroComponent : public UPawnComponent, public IGameFrameworkInitStateInterface
-  60: {
-  61: 	GENERATED_BODY()
-  63: public:
-  65: 	UHodgeHeroComponent(const FObjectInitializer& ObjectInitializer);
-  69: 	UFUNCTION(BlueprintPure, Category = "Hodge|Hero")
-  70: 	static UHodgeHeroComponent* FindHeroComponent(const AActor* Actor)
-  71: 	{
-  73: 		return (Actor ? Actor->FindComponentByClass<UHodgeHeroComponent>() : nullptr);
-  74: 	}
-  78: 	void SetAbilityCameraMode(TSubclassOf<UHodgeCameraMode> CameraMode,
-  79: 	                          const FGameplayAbilitySpecHandle& OwningSpecHandle);
-  83: 	void ClearAbilityCameraMode(const FGameplayAbilitySpecHandle& OwningSpecHandle);
-  87: 	void AddAdditionalInputConfig(const UHodgeInputConfig* InputConfig);
-  91: 	void RemoveAdditionalInputConfig(const UHodgeInputConfig* InputConfig);
-  95: 	bool IsReadyToBindInputs() const;
-  99: 	static const FName NAME_BindInputsNow;
- 103: 	static const FName NAME_ActorFeatureName;
- 108: 	virtual FName GetFeatureName() const override { return NAME_ActorFeatureName; }
- 111: 	virtual bool CanChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState,
- 112: 	                                FGameplayTag DesiredState) const override;
- 115: 	virtual void HandleChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState,
- 116: 	                                   FGameplayTag DesiredState) override;
- 119: 	virtual void OnActorInitStateChanged(const FActorInitStateChangedParams& Params) override;
- 122: 	virtual void CheckDefaultInitialization() override;
- 126: protected:
- 128: 	virtual void OnRegister() override;
- 131: 	virtual void BeginPlay() override;
- 134: 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
- 137: 	virtual void InitializePlayerInput(UInputComponent* PlayerInputComponent);
- 140: 	void Input_AbilityInputTagPressed(FGameplayTag InputTag);
- 143: 	void Input_AbilityInputTagReleased(FGameplayTag InputTag);
- 146: 	void Input_Move(const FInputActionValue& InputActionValue);
- 149: 	void Input_LookMouse(const FInputActionValue& InputActionValue);
- 152: 	void Input_LookStick(const FInputActionValue& InputActionValue);
- 155: 	void Input_Crouch(const FInputActionValue& InputActionValue);
- 158: 	void Input_AutoRun(const FInputActionValue& InputActionValue);
- 161: 	TSubclassOf<UHodgeCameraMode> DetermineCameraMode() const;
- 163: protected:
- 165: 	UPROPERTY(EditAnywhere)
- 166: 	TArray<FInputMappingContextAndPriority> DefaultInputMappings;
- 170: 	UPROPERTY()
- 171: 	TSubclassOf<UHodgeCameraMode> AbilityCameraMode;
- 175: 	FGameplayAbilitySpecHandle AbilityCameraModeOwningSpecHandle;
- 179: 	bool bReadyToBindInputs;
- 189: 	TMap<const UHodgeInputConfig*, TArray<uint32>> AdditionalInputConfigHandles;
- 190: };
+  57: DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHodgeMoveIntentChanged, bool, bHasMoveIntent);
+  66: UCLASS(Blueprintable, Meta=(BlueprintSpawnableComponent))
+  67: class HODGEPODGE_API UHodgeHeroComponent : public UPawnComponent, public IGameFrameworkInitStateInterface
+  68: {
+  69: 	GENERATED_BODY()
+  71: public:
+  73: 	UHodgeHeroComponent(const FObjectInitializer& ObjectInitializer);
+  77: 	UFUNCTION(BlueprintPure, Category = "Hodge|Hero")
+  78: 	static UHodgeHeroComponent* FindHeroComponent(const AActor* Actor)
+  79: 	{
+  81: 		return (Actor ? Actor->FindComponentByClass<UHodgeHeroComponent>() : nullptr);
+  82: 	}
+  86: 	void SetAbilityCameraMode(TSubclassOf<UHodgeCameraMode> CameraMode,
+  87: 	                          const FGameplayAbilitySpecHandle& OwningSpecHandle);
+  91: 	void ClearAbilityCameraMode(const FGameplayAbilitySpecHandle& OwningSpecHandle);
+  95: 	void AddAdditionalInputConfig(const UHodgeInputConfig* InputConfig);
+  99: 	void RemoveAdditionalInputConfig(const UHodgeInputConfig* InputConfig);
+ 103: 	bool IsReadyToBindInputs() const;
+ 116: 	UFUNCTION(BlueprintPure, Category = "Hodge|Hero|Input")
+ 117: 	bool HasMoveIntent(float Threshold = 0.1f) const;
+ 120: 	UFUNCTION(BlueprintPure, Category = "Hodge|Hero|Input")
+ 121: 	FVector2D GetMoveIntent() const { return CurrentMoveInput; }
+ 124: 	UPROPERTY(BlueprintAssignable, Category = "Hodge|Hero|Input")
+ 125: 	FHodgeMoveIntentChanged OnMoveIntentChanged;
+ 129: 	static const FName NAME_BindInputsNow;
+ 133: 	static const FName NAME_ActorFeatureName;
+ 138: 	virtual FName GetFeatureName() const override { return NAME_ActorFeatureName; }
+ 141: 	virtual bool CanChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState,
+ 142: 	                                FGameplayTag DesiredState) const override;
+ 145: 	virtual void HandleChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState,
+ 146: 	                                   FGameplayTag DesiredState) override;
+ 149: 	virtual void OnActorInitStateChanged(const FActorInitStateChangedParams& Params) override;
+ 152: 	virtual void CheckDefaultInitialization() override;
+ 156: protected:
+ 158: 	virtual void OnRegister() override;
+ 161: 	virtual void BeginPlay() override;
+ 164: 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+ 167: 	virtual void InitializePlayerInput(UInputComponent* PlayerInputComponent);
+ 170: 	void Input_AbilityInputTagPressed(FGameplayTag InputTag);
+ 173: 	void Input_AbilityInputTagReleased(FGameplayTag InputTag);
+ 176: 	void Input_Move(const FInputActionValue& InputActionValue);
+ 180: 	void Input_MoveStopped(const FInputActionValue& InputActionValue);
+ 183: 	void Input_LookMouse(const FInputActionValue& InputActionValue);
+ 186: 	void Input_LookStick(const FInputActionValue& InputActionValue);
+ 189: 	void Input_Crouch(const FInputActionValue& InputActionValue);
+ 192: 	void Input_AutoRun(const FInputActionValue& InputActionValue);
+ 195: 	TSubclassOf<UHodgeCameraMode> DetermineCameraMode() const;
+ 198: 	void SetMoveIntent(const FVector2D& NewValue);
+ 201: 	void RefreshMoveIntent();
+ 203: protected:
+ 205: 	UPROPERTY(EditAnywhere)
+ 206: 	TArray<FInputMappingContextAndPriority> DefaultInputMappings;
+ 210: 	UPROPERTY()
+ 211: 	TSubclassOf<UHodgeCameraMode> AbilityCameraMode;
+ 215: 	FGameplayAbilitySpecHandle AbilityCameraModeOwningSpecHandle;
+ 219: 	bool bReadyToBindInputs;
+ 227: 	FVector2D CurrentMoveInput = FVector2D::ZeroVector;
+ 230: 	bool bLastMoveIntent = false;
+ 240: 	TMap<const UHodgeInputConfig*, TArray<uint32>> AdditionalInputConfigHandles;
+ 241: };
 ```
 
 ## HodgeInteractionComponentBase.h

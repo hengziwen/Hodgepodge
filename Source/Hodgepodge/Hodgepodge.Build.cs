@@ -43,7 +43,7 @@ public class Hodgepodge : ModuleRules
 
 		if (Target.bBuildEditor)
 		{
-			PrivateDependencyModuleNames.AddRange(new string[] { "UnrealEd", "AnimGraph", "BlueprintGraph" });
+			PrivateDependencyModuleNames.AddRange(new string[] { "UnrealEd", "AnimGraph", "BlueprintGraph", "AnimationWarpingRuntime", "AnimationWarpingEditor" });
 		}
 
 		// Uncomment if you are using Slate UI

@@ -248,6 +248,11 @@ namespace HodgeGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Status_Attack_Active, "Status.Attack.Active");
 	UE_DEFINE_GAMEPLAY_TAG(Status_Attack_Recovery, "Status.Attack.Recovery");
 
+	// 取消窗口标签（授权语义，见 .h 中的说明）。
+	UE_DEFINE_GAMEPLAY_TAG(Status_Attack_Cancel, "Status.Attack.Cancel");
+	UE_DEFINE_GAMEPLAY_TAG(Status_Attack_Cancel_Move, "Status.Attack.Cancel.Move");
+	UE_DEFINE_GAMEPLAY_TAG(Status_Attack_Cancel_NextAttack, "Status.Attack.Cancel.NextAttack");
+
 	// =============================================================================
 	// SetByCaller Tags
 	// =============================================================================

@@ -6,7 +6,7 @@
 
 ## 按系统打开
 
-- [AbilitySystem：25 个文件](source-abilitysystem.md)
+- [AbilitySystem：27 个文件](source-abilitysystem.md)
 - [Actor：2 个文件](source-actor.md)
 - [Animation：2 个文件](source-animation.md)
 - [Camera：12 个文件](source-camera.md)

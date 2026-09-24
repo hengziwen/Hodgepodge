@@ -36,7 +36,12 @@ void UHodgeLocomotionLabComponent::BeginPlay()
     SetCombatFacing(bCombatFacing);
     SetWalking(bWalking);
     if (auto* Character = Cast<ACharacter>(GetOwner()))
+    {
         Character->GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = false;
+        // Apply facing after movement, before converting world foot anchors into mesh space.
+        AddTickPrerequisiteComponent(Character->GetCharacterMovement());
+        Character->GetMesh()->AddTickPrerequisiteComponent(this);
+    }
 }
 
 void UHodgeLocomotionLabComponent::SetCombatFacing(bool bEnabled)
@@ -70,6 +75,9 @@ void UHodgeLocomotionLabComponent::TickComponent(float DeltaTime, ELevelTick Tic
     if (bKeyboardControlsEnabled)
     {
         if (PC->WasInputKeyJustPressed(EKeys::V)) SetCombatFacing(!bCombatFacing);
+        if (PC->WasInputKeyJustPressed(EKeys::O))
+            if (auto* Grounded = Cast<UHodgeGroundedLocomotion>(Character->GetMesh()->GetAnimInstance()))
+                Grounded->SetOverlayEnabled(Grounded->OverlayAlpha < 0.5f);
         const bool bShift = PC->IsInputKeyDown(EKeys::LeftShift) || PC->IsInputKeyDown(EKeys::RightShift);
         if (bShift != bWalking) SetWalking(bShift);
     }

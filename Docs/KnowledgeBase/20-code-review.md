@@ -361,7 +361,22 @@
 
 - **R4（`Status.Attack.*` 标签与互斥配置）**：**源码侧已部分落地** —— `Status.Attack` / `.Windup` / `.Active` / `.Recovery` 与 `GameplayEvent.Attack` / `.Test` / `.Timeline.End` / `.Interrupted` 已在 `HodgeGameplayTags.h/.cpp` 集中声明（随 HEAD `77b7dba` 提交）。**仍未确认**：`GA_Attack` CDO 是否已配 `ActivationOwnedTags` / `CancelAbilitiesWithTag` / `BlockAbilitiesWithTag`（二进制资产未解析），以及是否已改用 `UHodgeAbilityTask_PlayTimeline`。
 - **R5（`Ability.Attack` 注册方式）**：**未处理** —— `Config/DefaultGameplayTags.ini` 仍是 `Tag="a"` 与 `Tag="Ability.Attack"` 两条，`Ability.Attack` 仍是 ini 标签而非原生标签。
-- **R1 / R2 / R6（连击接段、命中闭环、空 `WaitGameplayEvent` 死节点）**：**未处理** —— 本阶段只实现了 `UHodgeAbilityTimeline` + `UHodgeAbilityTask_PlayTimeline` 的调度器与标签账本（见 [2026-09-19 记录](22-update-2026-09-19.md)），窗口 GE 与 Point 派发尚未验证；`GA_Attack` 仍无命中判定。
+- **R1 / R2 / R6（连击接段、命中闭环、空 `WaitGameplayEvent` 死节点）**：**未处理** —— 本阶段只实现了 `UHodgeAbilityTimeline` + `UHodgeAbilityTask_PlayTimeline` 的调度器与标签账本（见 [2026-09-19 记录](22-update-2026-09-19.md)）；窗口 GE 施加/移除与 Point 派发已于 2026-09-19 补测通过（**重入类时序、跨端、时钟倒退仍未验证**）；`GA_Attack` 仍无命中判定。
 - **R3 / R10（资产归属、命名、孤儿资产）**：**未处理** —— 攻击 Montage 仍在 `/Game/CodexText/Montage/`，`DA_Pover` 仍是 `HodgeAbilitySet`。
 
 时间轴的实现与验证边界以 [2026-09-19 记录](22-update-2026-09-19.md) 为准。
+
+---
+
+## A5. 后续进展（2026-09-22 补记）：移动取消后摇消费方
+
+> A0–A4 保留原样。以下是同一时间轴议题在本轮的进展与评审关注点，详见 [2026-09-22 记录](23-update-2026-09-22.md)。
+
+- **新增**：`Status.Attack.Cancel` / `.Move` 标签、`UHodgeAbilityTask_WaitMoveCancel`、`UHodgeHeroComponent` 移动意图信号（`HasMoveIntent` / `GetMoveIntent` / `OnMoveIntentChanged`）。
+- **评审关注点（新增代码，本轮未编译、未 PIE）**：
+  1. **本地控制端语义**：移动意图**不复制**、只在本地控制端判定；确认没有把它当"两端一致"的复制状态来设计（头文件已声明理由）。
+  2. **输入意图的采集点**：`Input_Move` 里记录意图必须在任何"屏蔽移动输入"之前；若后续用 `SetIgnoreMoveInput` / `DisableMovement` 实现攻击期间禁移，会**静默**让取消逻辑恒为 false。评审时检查是否违反了这条（头文件已写此约束）。
+  3. **委托 / 事件解绑**：`WaitMoveCancel` 在 `OnDestroy` 解绑 `RegisterGameplayTagEvent` 与 `OnMoveIntentChanged`，用弱引用持有 ASC / HeroComponent；确认无残留回调。
+  4. **广播期重入**：监听者常在 `OnMoveCancel` 回调里**同步** `EndAbility`，任务会在广播途中被销毁；确认 `bSucceeded` 先立、`bInOnDestroy` 兜底、`ShouldBroadcastAbilityTaskDelegates()` 守卫齐全。
+  5. **`ReadyForActivation()`**：C++ 调用方必须自己调（与 `PlayTimeline` 同）；确认新任务的实际调用方没有漏。
+- **仍未处理**：R1 / R2 / R6 不变；**当前没有正式攻击 Ability 消费 `OnMoveCancel`**，所以"取消后摇"尚未端到端接通。

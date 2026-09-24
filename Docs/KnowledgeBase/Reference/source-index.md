@@ -28,7 +28,7 @@
 
 [Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeAbilityTask_PlayTimeline.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeAbilityTask_PlayTimeline.cpp)
 
-驱动 HodgeAbilityTimeline 的唯一 AbilityTask：初始化与 Tick 共用 CollectNodes + SortNodes 统一 Scheduler，推进逻辑时间，维护 WindowTag 与 GE 两个账本，派发 Point 与系统事件。窗口 GE 与 Point 派发路径尚未验证。
+驱动 HodgeAbilityTimeline 的唯一 AbilityTask：初始化与 Tick 共用 CollectNodes + SortNodes 统一 Scheduler，推进逻辑时间，维护 WindowTag 与 GE 两个账本，派发 Point 与系统事件。窗口 GE 施加/移除、Point 与 Timeline.End 派发、中途取消清理已实测通过；重入类时序、NetPolicy 跨端、时钟倒退未验证。
 
 - `UHodgeAbilityTask_PlayTimeline::UHodgeAbilityTask_PlayTimeline` — L36
 - `UHodgeAbilityTask_PlayTimeline::PlayTimeline` — L43
@@ -47,6 +47,19 @@
 - `UHodgeAbilityTask_PlayTimeline::ClearAllWindowState` — L556
 - `UHodgeAbilityTask_PlayTimeline::StopTimeline` — L599
 - `UHodgeAbilityTask_PlayTimeline::OnDestroy` — L631
+
+## HodgeAbilityTask_WaitMoveCancel.cpp
+
+[Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeAbilityTask_WaitMoveCancel.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeAbilityTask_WaitMoveCancel.cpp)
+
+把“取消窗口（Timeline 授权）”与“移动意图（输入层）”两个变化驱动信号合流的 AbilityTask：同时成立时广播 OnMoveCancel 一次后自结束。本地控制端语义；AI/模拟代理找不到 HeroComponent 时永不成立。工作区新增，未编译、未 PIE。
+
+- `UHodgeAbilityTask_WaitMoveCancel::WaitMoveCancel` — L12
+- `UHodgeAbilityTask_WaitMoveCancel::Activate` — L21
+- `UHodgeAbilityTask_WaitMoveCancel::OnDestroy` — L55
+- `UHodgeAbilityTask_WaitMoveCancel::Evaluate` — L78
+- `UHodgeAbilityTask_WaitMoveCancel::HandleMoveIntentChanged` — L121
+- `UHodgeAbilityTask_WaitMoveCancel::HandleWindowTagChanged` — L127
 
 ## HodgeGameplayAbility.cpp
 
@@ -217,7 +230,7 @@ Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动�
 
 [Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp)
 
-原生 GameplayTag 注册和移动状态标签映射；含攻击时间轴依赖的 Status.Attack.* 与 GameplayEvent.Attack.*。标签存在不等于对应玩法实现。
+原生 GameplayTag 注册和移动状态标签映射；含攻击时间轴依赖的 Status.Attack.*（阶段 + 取消窗口 .Cancel.*）与 GameplayEvent.Attack.*。标签存在不等于对应玩法实现。
 
 ## HodgeGlobalAbilitySystem.cpp
 
@@ -442,20 +455,26 @@ CodexText 实验：6 向地面运动动画实例，不属于主 Hero 动画链�
 
 [Source/Hodgepodge/Private/CodexText/HodgeGroundedAuthoring.cpp](../../../Source/Hodgepodge/Private/CodexText/HodgeGroundedAuthoring.cpp)
 
-模块定义或基础代码；请查看对应文件。
+CodexText 实验：编辑器辅助库，含 Grounded 图层与停步/转身精修、步幅、地形、战斗图层等编辑期构建函数。
 
-- `UHodgeGroundedAuthoring::AddGroundedLayer` — L39
+- `UHodgeGroundedAuthoring::RefineGroundedTransitions` — L44
+- `UHodgeGroundedAuthoring::AddStrideLayer` — L107
+- `UHodgeGroundedAuthoring::AddTerrainLayer` — L166
+- `UHodgeGroundedAuthoring::AddCombatLayer` — L228
+- `UHodgeGroundedAuthoring::AddGroundedLayer` — L284
 
 ## HodgeGroundedLocomotion.cpp
 
 [Source/Hodgepodge/Private/CodexText/HodgeGroundedLocomotion.cpp](../../../Source/Hodgepodge/Private/CodexText/HodgeGroundedLocomotion.cpp)
 
-CodexText 实验：在 ALS 基础动画上增加平地起停/转身/脚锁。
+CodexText 实验：在 ALS 基础动画上增加平地起停/转身/脚锁，并扩展上半身 Overlay、左手握持、步幅与地形 IK。
 
 - `UHodgeGroundedLocomotion::NativeInitializeAnimation` — L10
-- `UHodgeGroundedLocomotion::GetGroundedState` — L18
-- `UHodgeGroundedLocomotion::NativePostEvaluateAnimation` — L24
-- `UHodgeGroundedLocomotion::NativeUpdateAnimation` — L36
+- `UHodgeGroundedLocomotion::GetGroundedState` — L29
+- `UHodgeGroundedLocomotion::SetLeftHandGrip` — L35
+- `UHodgeGroundedLocomotion::NativeUninitializeAnimation` — L40
+- `UHodgeGroundedLocomotion::CacheFinalizedFootPose` — L49
+- `UHodgeGroundedLocomotion::NativeUpdateAnimation` — L61
 
 ## HodgeLocomotionLab.cpp
 
@@ -465,12 +484,12 @@ CodexText 实验：在 ALS 基础动画上增加平地起停/转身/脚锁。
 
 - `UHodgeLocomotionLabComponent::UHodgeLocomotionLabComponent` — L27
 - `UHodgeLocomotionLabComponent::BeginPlay` — L33
-- `UHodgeLocomotionLabComponent::SetCombatFacing` — L42
-- `UHodgeLocomotionLabComponent::SetWalking` — L55
-- `UHodgeLocomotionLabComponent::TickComponent` — L64
-- `AHodgeLocomotionLabMode::InitGame` — L103
-- `UHodgeLocomotionLabAuthoring::RemapCopy` — L110
-- `UHodgeLocomotionLabAuthoring::ConfigureGroundBlend` — L147
+- `UHodgeLocomotionLabComponent::SetCombatFacing` — L47
+- `UHodgeLocomotionLabComponent::SetWalking` — L60
+- `UHodgeLocomotionLabComponent::TickComponent` — L69
+- `AHodgeLocomotionLabMode::InitGame` — L111
+- `UHodgeLocomotionLabAuthoring::RemapCopy` — L118
+- `UHodgeLocomotionLabAuthoring::ConfigureGroundBlend` — L155
 
 ## HodgeSurvivor.cpp
 
@@ -584,7 +603,7 @@ GameState 上的 Experience 复制、资源加载、插件激活、Action 执行
 
 [Source/Hodgepodge/Private/Component/HodgeHeroComponent.cpp](../../../Source/Hodgepodge/Private/Component/HodgeHeroComponent.cpp)
 
-玩家 Init State 协调、ASC 接入、输入与相机；额外输入句柄持久化并在移除/EndPlay 解绑。
+玩家 Init State 协调、ASC 接入、输入与相机；额外输入句柄持久化并在移除/EndPlay 解绑。新增“移动意图”信号（HasMoveIntent / GetMoveIntent / OnMoveIntentChanged），记 Input_Move 原始输入量、Completed/Canceled 清零，供移动取消后摇消费。
 
 - `UHodgeHeroComponent::NAME_BindInputsNow` — L81
 - `UHodgeHeroComponent::NAME_ActorFeatureName` — L84
@@ -597,19 +616,23 @@ GameState 上的 Experience 复制、资源加载、插件激活、Action 执行
 - `UHodgeHeroComponent::BeginPlay` — L346
 - `UHodgeHeroComponent::EndPlay` — L368
 - `UHodgeHeroComponent::InitializePlayerInput` — L392
-- `UHodgeHeroComponent::AddAdditionalInputConfig` — L610
-- `UHodgeHeroComponent::RemoveAdditionalInputConfig` — L701
-- `UHodgeHeroComponent::IsReadyToBindInputs` — L730
-- `UHodgeHeroComponent::Input_AbilityInputTagPressed` — L737
-- `UHodgeHeroComponent::Input_AbilityInputTagReleased` — L760
-- `UHodgeHeroComponent::Input_Move` — L788
-- `UHodgeHeroComponent::Input_LookMouse` — L846
-- `UHodgeHeroComponent::Input_LookStick` — L885
-- `UHodgeHeroComponent::Input_Crouch` — L932
-- `UHodgeHeroComponent::Input_AutoRun` — L945
-- `UHodgeHeroComponent::DetermineCameraMode` — L965
-- `UHodgeHeroComponent::SetAbilityCameraMode` — L998
-- `UHodgeHeroComponent::ClearAbilityCameraMode` — L1013
+- `UHodgeHeroComponent::AddAdditionalInputConfig` — L618
+- `UHodgeHeroComponent::RemoveAdditionalInputConfig` — L709
+- `UHodgeHeroComponent::IsReadyToBindInputs` — L738
+- `UHodgeHeroComponent::Input_AbilityInputTagPressed` — L745
+- `UHodgeHeroComponent::Input_AbilityInputTagReleased` — L768
+- `UHodgeHeroComponent::Input_Move` — L796
+- `UHodgeHeroComponent::Input_MoveStopped` — L859
+- `UHodgeHeroComponent::HasMoveIntent` — L867
+- `UHodgeHeroComponent::SetMoveIntent` — L874
+- `UHodgeHeroComponent::RefreshMoveIntent` — L881
+- `UHodgeHeroComponent::Input_LookMouse` — L895
+- `UHodgeHeroComponent::Input_LookStick` — L934
+- `UHodgeHeroComponent::Input_Crouch` — L981
+- `UHodgeHeroComponent::Input_AutoRun` — L994
+- `UHodgeHeroComponent::DetermineCameraMode` — L1014
+- `UHodgeHeroComponent::SetAbilityCameraMode` — L1047
+- `UHodgeHeroComponent::ClearAbilityCameraMode` — L1062
 
 ## HodgeInteractionComponentBase.cpp
 
@@ -1131,7 +1154,13 @@ Enhanced Input 用户设置派生入口；须核对实际设置类配置。
 
 [Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeAbilityTask_PlayTimeline.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeAbilityTask_PlayTimeline.h)
 
-驱动 HodgeAbilityTimeline 的唯一 AbilityTask：初始化与 Tick 共用 CollectNodes + SortNodes 统一 Scheduler，推进逻辑时间，维护 WindowTag 与 GE 两个账本，派发 Point 与系统事件。窗口 GE 与 Point 派发路径尚未验证。
+驱动 HodgeAbilityTimeline 的唯一 AbilityTask：初始化与 Tick 共用 CollectNodes + SortNodes 统一 Scheduler，推进逻辑时间，维护 WindowTag 与 GE 两个账本，派发 Point 与系统事件。窗口 GE 施加/移除、Point 与 Timeline.End 派发、中途取消清理已实测通过；重入类时序、NetPolicy 跨端、时钟倒退未验证。
+
+## HodgeAbilityTask_WaitMoveCancel.h
+
+[Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeAbilityTask_WaitMoveCancel.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeAbilityTask_WaitMoveCancel.h)
+
+把“取消窗口（Timeline 授权）”与“移动意图（输入层）”两个变化驱动信号合流的 AbilityTask：同时成立时广播 OnMoveCancel 一次后自结束。本地控制端语义；AI/模拟代理找不到 HeroComponent 时永不成立。工作区新增，未编译、未 PIE。
 
 ## HodgeGameplayAbility.h
 
@@ -1191,7 +1220,7 @@ Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动�
 
 [Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)
 
-原生 GameplayTag 注册和移动状态标签映射；含攻击时间轴依赖的 Status.Attack.* 与 GameplayEvent.Attack.*。标签存在不等于对应玩法实现。
+原生 GameplayTag 注册和移动状态标签映射；含攻击时间轴依赖的 Status.Attack.*（阶段 + 取消窗口 .Cancel.*）与 GameplayEvent.Attack.*。标签存在不等于对应玩法实现。
 
 ## HodgeGlobalAbilitySystem.h
 
@@ -1287,7 +1316,7 @@ CodexText 实验：6 向地面运动动画实例，不属于主 Hero 动画链�
 
 [Source/Hodgepodge/Public/CodexText/HodgeGroundedLocomotion.h](../../../Source/Hodgepodge/Public/CodexText/HodgeGroundedLocomotion.h)
 
-CodexText 实验：在 ALS 基础动画上增加平地起停/转身/脚锁。
+CodexText 实验：在 ALS 基础动画上增加平地起停/转身/脚锁，并扩展上半身 Overlay、左手握持、步幅与地形 IK。
 
 ## HodgeLocomotionLab.h
 
@@ -1329,7 +1358,7 @@ GameState 上的 Experience 复制、资源加载、插件激活、Action 执行
 
 [Source/Hodgepodge/Public/Component/HodgeHeroComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeHeroComponent.h)
 
-玩家 Init State 协调、ASC 接入、输入与相机；额外输入句柄持久化并在移除/EndPlay 解绑。
+玩家 Init State 协调、ASC 接入、输入与相机；额外输入句柄持久化并在移除/EndPlay 解绑。新增“移动意图”信号（HasMoveIntent / GetMoveIntent / OnMoveIntentChanged），记 Input_Move 原始输入量、Completed/Canceled 清零，供移动取消后摇消费。
 
 ## HodgeInteractionComponentBase.h
 

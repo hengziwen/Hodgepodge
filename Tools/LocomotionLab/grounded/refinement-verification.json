@@ -1,0 +1,45 @@
+{
+  "checks": {
+    "fresh_spawn": true,
+    "grounded_cases": true,
+    "four_stops": true,
+    "stops_end_idle": true,
+    "turns_90": true,
+    "move_interrupt": true,
+    "fall_release": true,
+    "stop_entry_no_large_pop": true,
+    "low_speed_stride": true,
+    "diagonal_compensation": true,
+    "terrain_flat": true,
+    "terrain_slope": true,
+    "terrain_step": true,
+    "overlay_enabled": true,
+    "hand_grip": true,
+    "montage_releases_hand": true,
+    "30fps_turns": true,
+    "30fps_lock_drift": true,
+    "directions_32": true
+  },
+  "metrics": {
+    "idle_min_separation_cm": 26.242396672368855,
+    "max_stop_entry_delta_cm": 1.7239843129289925,
+    "max_diagonal_scale": 1.413954257965088,
+    "terrain_toe_clearance_cm": {
+      "flat": [
+        -0.07816779504130977,
+        1.181956657030197
+      ],
+      "slope": [
+        -0.13716584706409662,
+        0.8950158749852903
+      ],
+      "step": [
+        -0.07822745987631663,
+        1.2694705002363804
+      ]
+    },
+    "max_grip_error_cm": 0.02095965796628418,
+    "30fps_max_lock_drift_cm": 0.7444579123894225
+  },
+  "passed": true
+}

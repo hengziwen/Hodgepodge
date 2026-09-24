@@ -8,7 +8,7 @@
 
 ## HodgeAbilityTask_PlayTimeline.cpp
 
-驱动 HodgeAbilityTimeline 的唯一 AbilityTask：初始化与 Tick 共用 CollectNodes + SortNodes 统一 Scheduler，推进逻辑时间，维护 WindowTag 与 GE 两个账本，派发 Point 与系统事件。窗口 GE 与 Point 派发路径尚未验证。
+驱动 HodgeAbilityTimeline 的唯一 AbilityTask：初始化与 Tick 共用 CollectNodes + SortNodes 统一 Scheduler，推进逻辑时间，维护 WindowTag 与 GE 两个账本，派发 Point 与系统事件。窗口 GE 施加/移除、Point 与 Timeline.End 派发、中途取消清理已实测通过；重入类时序、NetPolicy 跨端、时钟倒退未验证。
 
 源码：[Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeAbilityTask_PlayTimeline.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeAbilityTask_PlayTimeline.cpp)
 
@@ -33,6 +33,23 @@
 - L556: `void UHodgeAbilityTask_PlayTimeline::ClearAllWindowState()`
 - L599: `void UHodgeAbilityTask_PlayTimeline::StopTimeline(EHodgeTimelineStopReason Reason)`
 - L631: `void UHodgeAbilityTask_PlayTimeline::OnDestroy(bool bInOwnerFinished)`
+
+## HodgeAbilityTask_WaitMoveCancel.cpp
+
+把“取消窗口（Timeline 授权）”与“移动意图（输入层）”两个变化驱动信号合流的 AbilityTask：同时成立时广播 OnMoveCancel 一次后自结束。本地控制端语义；AI/模拟代理找不到 HeroComponent 时永不成立。工作区新增，未编译、未 PIE。
+
+源码：[Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeAbilityTask_WaitMoveCancel.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeAbilityTask_WaitMoveCancel.cpp)
+
+项目内直接 include（不是运行调用关系）：[AbilitySystem/Abilities/HodgeAbilityTask_WaitMoveCancel.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeAbilityTask_WaitMoveCancel.h)、[Component/HodgeHeroComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeHeroComponent.h)
+
+定义候选（多行签名仅展示首行）：
+
+- L12: `UHodgeAbilityTask_WaitMoveCancel* UHodgeAbilityTask_WaitMoveCancel::WaitMoveCancel(`
+- L21: `void UHodgeAbilityTask_WaitMoveCancel::Activate()`
+- L55: `void UHodgeAbilityTask_WaitMoveCancel::OnDestroy(bool bInOwnerFinished)`
+- L78: `void UHodgeAbilityTask_WaitMoveCancel::Evaluate(const TCHAR* Source)`
+- L121: `void UHodgeAbilityTask_WaitMoveCancel::HandleMoveIntentChanged(bool                   )`
+- L127: `void UHodgeAbilityTask_WaitMoveCancel::HandleWindowTagChanged(FGameplayTag        , int32 NewCount)`
 
 ## HodgeGameplayAbility.cpp
 
@@ -237,7 +254,7 @@ Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动�
 
 ## HodgeGameplayTags.cpp
 
-原生 GameplayTag 注册和移动状态标签映射；含攻击时间轴依赖的 Status.Attack.* 与 GameplayEvent.Attack.*。标签存在不等于对应玩法实现。
+原生 GameplayTag 注册和移动状态标签映射；含攻击时间轴依赖的 Status.Attack.*（阶段 + 取消窗口 .Cancel.*）与 GameplayEvent.Attack.*。标签存在不等于对应玩法实现。
 
 源码：[Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp)
 
@@ -313,7 +330,7 @@ Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动�
 
 ## HodgeAbilityTask_PlayTimeline.h
 
-驱动 HodgeAbilityTimeline 的唯一 AbilityTask：初始化与 Tick 共用 CollectNodes + SortNodes 统一 Scheduler，推进逻辑时间，维护 WindowTag 与 GE 两个账本，派发 Point 与系统事件。窗口 GE 与 Point 派发路径尚未验证。
+驱动 HodgeAbilityTimeline 的唯一 AbilityTask：初始化与 Tick 共用 CollectNodes + SortNodes 统一 Scheduler，推进逻辑时间，维护 WindowTag 与 GE 两个账本，派发 Point 与系统事件。窗口 GE 施加/移除、Point 与 Timeline.End 派发、中途取消清理已实测通过；重入类时序、NetPolicy 跨端、时钟倒退未验证。
 
 源码：[Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeAbilityTask_PlayTimeline.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeAbilityTask_PlayTimeline.h)
 
@@ -398,6 +415,54 @@ Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动�
  192: 	bool bStopped = false;
  196: 	bool bCleanedUp = false;
  197: };
+```
+
+## HodgeAbilityTask_WaitMoveCancel.h
+
+把“取消窗口（Timeline 授权）”与“移动意图（输入层）”两个变化驱动信号合流的 AbilityTask：同时成立时广播 OnMoveCancel 一次后自结束。本地控制端语义；AI/模拟代理找不到 HeroComponent 时永不成立。工作区新增，未编译、未 PIE。
+
+源码：[Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeAbilityTask_WaitMoveCancel.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeAbilityTask_WaitMoveCancel.h)
+
+有效头文件声明摘录（未展开宏，未求值预处理分支）：
+
+```cpp
+  28: #pragma once
+  30: #include "CoreMinimal.h"
+  31: #include "Abilities/Tasks/AbilityTask.h"
+  32: #include "GameplayTagContainer.h"
+  34: #include "HodgeAbilityTask_WaitMoveCancel.generated.h"
+  36: class UAbilitySystemComponent;
+  37: class UHodgeHeroComponent;
+  40: DECLARE_DYNAMIC_MULTICAST_DELEGATE(FHodgeMoveCancelDelegate);
+  42: UCLASS()
+  43: class HODGEPODGE_API UHodgeAbilityTask_WaitMoveCancel : public UAbilityTask
+  44: {
+  45: 	GENERATED_BODY()
+  47: public:
+  49: 	UPROPERTY(BlueprintAssignable)
+  50: 	FHodgeMoveCancelDelegate OnMoveCancel;
+  58: 	UFUNCTION(BlueprintCallable, Category = "Ability|Tasks",
+  59: 		meta = (DisplayName = "Wait Move Cancel", HidePin = "OwningAbility", DefaultToSelf = "OwningAbility",
+  60: 			BlueprintInternalUseOnly = "TRUE"))
+  61: 	static UHodgeAbilityTask_WaitMoveCancel* WaitMoveCancel(UGameplayAbility* OwningAbility,
+  62: 	                                                        FGameplayTag CancelWindowTag,
+  63: 	                                                        float MoveIntentThreshold = 0.1f);
+  65: protected:
+  66: 	virtual void Activate() override;
+  67: 	virtual void OnDestroy(bool bInOwnerFinished) override;
+  69: private:
+  71: 	void Evaluate(const TCHAR* Source);
+  74: 	UFUNCTION()
+  75: 	void HandleMoveIntentChanged(bool bHasMoveIntent);
+  78: 	void HandleWindowTagChanged(FGameplayTag Tag, int32 NewCount);
+  81: 	FGameplayTag WindowTag;
+  84: 	float IntentThreshold = 0.1f;
+  87: 	bool bSucceeded = false;
+  90: 	bool bInOnDestroy = false;
+  93: 	TWeakObjectPtr<UAbilitySystemComponent> SubscribedASC;
+  94: 	TWeakObjectPtr<UHodgeHeroComponent> SubscribedHeroComponent;
+  97: 	FDelegateHandle WindowTagDelegateHandle;
+  98: };
 ```
 
 ## HodgeGameplayAbility.h
@@ -1004,7 +1069,7 @@ Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动�
 
 ## HodgeGameplayTags.h
 
-原生 GameplayTag 注册和移动状态标签映射；含攻击时间轴依赖的 Status.Attack.* 与 GameplayEvent.Attack.*。标签存在不等于对应玩法实现。
+原生 GameplayTag 注册和移动状态标签映射；含攻击时间轴依赖的 Status.Attack.*（阶段 + 取消窗口 .Cancel.*）与 GameplayEvent.Attack.*。标签存在不等于对应玩法实现。
 
 源码：[Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)
 
@@ -1152,24 +1217,26 @@ Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动�
  242: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Attack_Windup);
  243: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Attack_Active);
  244: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Attack_Recovery);
- 249: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(SetByCaller_Damage);
- 250: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(SetByCaller_Heal);
- 255: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cheat_GodMode);
- 256: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cheat_UnlimitedHealth);
- 261: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Action_Back);
- 262: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Layer_Game);
- 263: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Layer_GameMenu);
- 264: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Layer_Menu);
- 265: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Layer_Modal);
- 270: 	HODGEPODGE_API extern const TMap<uint8, FGameplayTag> MovementModeTagMap;
- 271: 	HODGEPODGE_API extern const TMap<uint8, FGameplayTag> CustomMovementModeTagMap;
- 273: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Mode_Walking);
- 274: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Mode_NavWalking);
- 275: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Mode_Falling);
- 276: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Mode_Swimming);
- 277: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Mode_Flying);
- 278: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Mode_Custom);
- 279: };
+ 252: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Attack_Cancel);
+ 253: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Attack_Cancel_Move);
+ 258: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(SetByCaller_Damage);
+ 259: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(SetByCaller_Heal);
+ 264: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cheat_GodMode);
+ 265: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cheat_UnlimitedHealth);
+ 270: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Action_Back);
+ 271: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Layer_Game);
+ 272: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Layer_GameMenu);
+ 273: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Layer_Menu);
+ 274: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Layer_Modal);
+ 279: 	HODGEPODGE_API extern const TMap<uint8, FGameplayTag> MovementModeTagMap;
+ 280: 	HODGEPODGE_API extern const TMap<uint8, FGameplayTag> CustomMovementModeTagMap;
+ 282: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Mode_Walking);
+ 283: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Mode_NavWalking);
+ 284: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Mode_Falling);
+ 285: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Mode_Swimming);
+ 286: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Mode_Flying);
+ 287: 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Mode_Custom);
+ 288: };
 ```
 
 ## HodgeGlobalAbilitySystem.h

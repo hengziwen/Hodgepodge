@@ -60,8 +60,11 @@ void UHodgeAbilityTask_PlayTimeline::Activate()
 	// 校验集中在唯一入口：C++ 与蓝图调用最终都会经过这里（C++ 需先 ReadyForActivation）。
 	const bool bParamsValid =
 		IsValid(TimelineAsset) &&
+		FMath::IsFinite(TimelineAsset->Duration) &&
 		TimelineAsset->Duration > 0.f &&
+		FMath::IsFinite(InitialPlayRate) &&
 		InitialPlayRate > 0.f &&
+		FMath::IsFinite(StartOffset) &&
 		StartOffset >= 0.f &&
 		StartOffset < TimelineAsset->Duration;
 
@@ -74,6 +77,18 @@ void UHodgeAbilityTask_PlayTimeline::Activate()
 		       StartOffset, InitialPlayRate);
 
 		// 不留一个"活着但不动"的 Task。
+		EndTask();
+		return;
+	}
+
+	TArray<FText> ValidationErrors;
+	if (!TimelineAsset->ValidateForPlayback(ValidationErrors))
+	{
+		for (const FText& Error : ValidationErrors)
+		{
+			UE_LOG(LogTemp, Error, TEXT("[Hodge] PlayTimeline invalid asset %s: %s"),
+				*GetNameSafe(TimelineAsset), *Error.ToString());
+		}
 		EndTask();
 		return;
 	}

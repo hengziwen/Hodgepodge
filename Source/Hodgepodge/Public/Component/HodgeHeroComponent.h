@@ -49,6 +49,14 @@ struct FGameplayTag;
 struct FInputActionValue;
 
 /**
+ * 移动意图发生变化（true = 出现了明确的移动意图，false = 意图消失）。
+ *
+ * 只在布尔结果翻转时广播：推杆过程中 Input_Move 是每帧触发的，不能每帧广播。
+ * 需要方向或大小的一方自己读 GetMoveIntent()。
+ */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHodgeMoveIntentChanged, bool, bHasMoveIntent);
+
+/**
  * Component that sets up input and camera handling for player controlled pawns (or bots that simulate players).
  * This depends on a PawnExtensionComponent to coordinate initialization.
  *
@@ -93,6 +101,28 @@ public:
 	/** True if this is controlled by a real player and has progressed far enough in initialization where additional input bindings can be added */
 	// 判断当前 Pawn 是否已经完成足够的初始化，可以安全添加额外输入绑定。
 	bool IsReadyToBindInputs() const;
+
+	/**
+	 * 玩家当前是否有明确的"移动意图"。
+	 *
+	 * 读的是**原始输入量**（Input_Move 的二维值），不依赖角色是否真的产生了位移：
+	 * 攻击期间角色可能被蒙太奇"钉住"，但只要玩家在推摇杆 / 按方向键，这里就是 true。
+	 * 这正是"用移动取消后摇"需要的那个信号 —— 它属于输入层，不属于 Timeline。
+	 *
+	 * ⚠️ 采集点在 Input_Move 里，位于任何"屏蔽移动输入"之前。若以后用 SetIgnoreMoveInput /
+	 * DisableMovement 让攻击期间不能移动，Input_Move 将不再回调，这个意图会恒为 false，
+	 * 依赖它的取消逻辑会**静默失效**。所以：禁止移动不要用屏蔽输入来实现。
+	 */
+	UFUNCTION(BlueprintPure, Category = "Hodge|Hero|Input")
+	bool HasMoveIntent(float Threshold = 0.1f) const;
+
+	// 最近的二维移动输入原始值（X = 左右，Y = 前后；未做阈值判断），供需要方向或大小的消费方使用。
+	UFUNCTION(BlueprintPure, Category = "Hodge|Hero|Input")
+	FVector2D GetMoveIntent() const { return CurrentMoveInput; }
+
+	// 移动意图变化事件：只在 false ↔ true 翻转时广播。
+	UPROPERTY(BlueprintAssignable, Category = "Hodge|Hero|Input")
+	FHodgeMoveIntentChanged OnMoveIntentChanged;
 
 	/** The name of the extension event sent via UGameFrameworkComponentManager when ability inputs are ready to bind */
 	// 当 Ability 输入已经可以绑定时，通过 GameFrameworkComponentManager 广播的扩展事件名。
@@ -145,6 +175,10 @@ protected:
 	// 处理角色移动输入。
 	void Input_Move(const FInputActionValue& InputActionValue);
 
+	// 移动输入结束（Completed）或被取消（Canceled）时清零移动意图。
+	// 只接 Triggered 会让意图"粘住"：松手、切换 InputContext、失焦都不会让它回到 0。
+	void Input_MoveStopped(const FInputActionValue& InputActionValue);
+
 	// 处理鼠标视角输入。
 	void Input_LookMouse(const FInputActionValue& InputActionValue);
 
@@ -159,6 +193,12 @@ protected:
 
 	// 根据 Ability 覆盖和 PawnData 默认配置决定当前应该使用的相机模式。
 	TSubclassOf<UHodgeCameraMode> DetermineCameraMode() const;
+
+	// 记录移动意图并按需广播变化。Input_Move / Input_MoveStopped 都走这里，保证只有一条写入路径。
+	void SetMoveIntent(const FVector2D& NewValue);
+
+	// 重新计算布尔意图，只在结果翻转时广播 OnMoveIntentChanged。
+	void RefreshMoveIntent();
 
 protected:
 	// 默认输入 MappingContext 及其优先级配置。
@@ -177,6 +217,17 @@ protected:
 	/** True when player input bindings have been applied, will never be true for non - players */
 	// 标记本地玩家输入绑定是否已经完成；非玩家控制 Pawn 永远不会为 true。
 	bool bReadyToBindInputs;
+
+	/**
+	 * 最近一次二维移动输入原始值（X = 左右，Y = 前后）。
+	 *
+	 * 由 Input_Move（Triggered）写入、Input_MoveStopped（Completed / Canceled）清零。
+	 * 它同时供 HasMoveIntent / GetMoveIntent 与 OnMoveIntentChanged 使用。
+	 */
+	FVector2D CurrentMoveInput = FVector2D::ZeroVector;
+
+	// 上一次广播出去的移动意图，用于"只在翻转时广播"。
+	bool bLastMoveIntent = false;
 
 	/**
 	 * 保存 AddAdditionalInputConfig 产生的 Ability 输入绑定句柄，键为对应的 InputConfig。

@@ -2,7 +2,7 @@
  * @file HodgeAbilityTimeline.cpp
  * @brief UHodgeAbilityTimeline 类的实现
  *
- * 只含编辑期校验与列表整理。运行时的时间推进在 UHodgeAbilityTask_PlayTimeline 里，
+ * 包含编辑期与运行期共用校验，以及编辑器列表整理。运行时的时间推进在 UHodgeAbilityTask_PlayTimeline 里，
  * 本类不含任何业务行为。
  *
  * 校验的原则：**发现问题，不替作者猜意图**。
@@ -23,39 +23,13 @@
 
 #define LOCTEXT_NAMESPACE "HodgeAbilityTimeline"
 
-#if WITH_EDITOR
-
-namespace
+bool UHodgeAbilityTimeline::ValidateForPlayback(TArray<FText>& OutErrors) const
 {
-	// 读取 GE 类的默认时长策略。类无效时返回 false，由调用方决定"无法判定"怎么处理。
-	bool TryGetEffectDurationPolicy(const TSubclassOf<UGameplayEffect>& EffectClass,
-									EGameplayEffectDurationType& OutDurationPolicy)
-	{
-		const UGameplayEffect* EffectCDO = EffectClass ? EffectClass->GetDefaultObject<UGameplayEffect>() : nullptr;
-		if (!EffectCDO)
-		{
-			return false;
-		}
-
-		OutDurationPolicy = EffectCDO->DurationPolicy;
-		return true;
-	}
-}
-
-// 编辑器中校验 Timeline 数据是否合法。
-EDataValidationResult UHodgeAbilityTimeline::IsDataValid(FDataValidationContext& Context) const
-{
-	// 先执行父类校验，再合并当前类的结果。
-	EDataValidationResult Result = CombineDataValidationResults(
-		Super::IsDataValid(Context),
-		EDataValidationResult::Valid
-	);
-
+	const int32 InitialErrorCount = OutErrors.Num();
 	// 逻辑时长必须为正，否则整个时间轴无法推进。
-	if (Duration <= 0.f)
+	if (!FMath::IsFinite(Duration) || Duration <= 0.f)
 	{
-		Result = EDataValidationResult::Invalid;
-		Context.AddError(FText::Format(
+		OutErrors.Add(FText::Format(
 			LOCTEXT("DurationIsNotPositive", "Duration 必须大于 0（当前 {0}）"),
 			FText::AsNumber(Duration)
 		));
@@ -74,16 +48,14 @@ EDataValidationResult UHodgeAbilityTimeline::IsDataValid(FDataValidationContext&
 
 		if (Event.EventID.IsNone())
 		{
-			Result = EDataValidationResult::Invalid;
-			Context.AddError(FText::Format(
+			OutErrors.Add(FText::Format(
 				LOCTEXT("EventIDIsEmpty", "Events[{0}] 的 EventID 为空（它同时是列表显示名）"),
 				IndexText
 			));
 		}
 		else if (const int32* ExistingIndex = EventIdToIndex.Find(Event.EventID))
 		{
-			Result = EDataValidationResult::Invalid;
-			Context.AddError(FText::Format(
+			OutErrors.Add(FText::Format(
 				LOCTEXT("EventIDIsDuplicated", "Events[{0}] 的 EventID \"{1}\" 与 Events[{2}] 重复"),
 				IndexText,
 				FText::FromName(Event.EventID),
@@ -97,13 +69,25 @@ EDataValidationResult UHodgeAbilityTimeline::IsDataValid(FDataValidationContext&
 
 		// 推进被 Min(StartOffset + LogicalElapsed, Duration) 截断，
 		// 因此越界的条目永远不可能被消费 —— 这是不可达配置，不是"配得不太合理"。
-		if (Event.StartTime < 0.f || Event.StartTime > Duration)
+		if (!FMath::IsFinite(Event.StartTime) || Event.StartTime < 0.f || Event.StartTime > Duration)
 		{
-			Result = EDataValidationResult::Invalid;
-			Context.AddError(FText::Format(
+			OutErrors.Add(FText::Format(
 				LOCTEXT("StartTimeOutOfRange", "Events[{0}] 的 StartTime 必须在 [0, Duration] 内"),
 				IndexText
 			));
+		}
+
+		if (Event.Kind != EHodgeTimelineEventKind::Window && Event.Kind != EHodgeTimelineEventKind::Point)
+		{
+			OutErrors.Add(FText::Format(LOCTEXT("InvalidEventKind", "Events[{0}] 的 Kind 无效"), IndexText));
+			continue;
+		}
+		if (Event.Kind == EHodgeTimelineEventKind::Point
+			&& Event.NetPolicy != EHodgeTimelineEventNetPolicy::LocalAndAuthority
+			&& Event.NetPolicy != EHodgeTimelineEventNetPolicy::AuthorityOnly
+			&& Event.NetPolicy != EHodgeTimelineEventNetPolicy::LocallyControlledOnly)
+		{
+			OutErrors.Add(FText::Format(LOCTEXT("InvalidNetPolicy", "Events[{0}] 的 NetPolicy 无效"), IndexText));
 		}
 
 		// ---- 按 Kind 分流 ----
@@ -111,10 +95,9 @@ EDataValidationResult UHodgeAbilityTimeline::IsDataValid(FDataValidationContext&
 		// 否则只会误导。
 		if (Event.Kind == EHodgeTimelineEventKind::Window)
 		{
-			if (Event.EndTime <= Event.StartTime)
+			if (!FMath::IsFinite(Event.EndTime) || Event.EndTime <= Event.StartTime)
 			{
-				Result = EDataValidationResult::Invalid;
-				Context.AddError(FText::Format(
+				OutErrors.Add(FText::Format(
 					LOCTEXT("WindowRangeIsReversed", "Events[{0}] 是 Window，StartTime 必须小于 EndTime"),
 					IndexText
 				));
@@ -123,8 +106,7 @@ EDataValidationResult UHodgeAbilityTimeline::IsDataValid(FDataValidationContext&
 			// 终点超过 Duration 的区间永远不会正常退出。
 			if (Event.EndTime > Duration)
 			{
-				Result = EDataValidationResult::Invalid;
-				Context.AddError(FText::Format(
+				OutErrors.Add(FText::Format(
 					LOCTEXT("WindowEndTimeExceedsDuration", "Events[{0}] 是 Window，EndTime 超过了 Duration（该区间永远无法正常退出）"),
 					IndexText
 				));
@@ -132,27 +114,20 @@ EDataValidationResult UHodgeAbilityTimeline::IsDataValid(FDataValidationContext&
 
 			if (!Event.WindowTag.IsValid())
 			{
-				Result = EDataValidationResult::Invalid;
-				Context.AddError(FText::Format(
+				OutErrors.Add(FText::Format(
 					LOCTEXT("WindowTagIsInvalid", "Events[{0}] 是 Window，WindowTag 为空"),
 					IndexText
 				));
 			}
 
-			// Window 靠 ExitWindow 撤销 GE，所以只有 Infinite 才能覆盖整个区间。
-			// 若配成 HasDuration 且短于窗口，GE 会在窗口中途自行到期 —— 那段时间的状态空洞
-			// 直接违反 Window 的数据语义，因此这里是 Error 而不是 Warning。
 			if (Event.WindowEffectClass)
 			{
-				EGameplayEffectDurationType DurationPolicy = EGameplayEffectDurationType::HasDuration;
-				if (TryGetEffectDurationPolicy(Event.WindowEffectClass, DurationPolicy)
-					&& DurationPolicy != EGameplayEffectDurationType::Infinite)
+				const UGameplayEffect* Effect = Event.WindowEffectClass->GetDefaultObject<UGameplayEffect>();
+				if (!Effect || Effect->DurationPolicy != EGameplayEffectDurationType::Infinite
+					|| Effect->StackingType != EGameplayEffectStackingType::None)
 				{
-					Result = EDataValidationResult::Invalid;
-					Context.AddError(FText::Format(
-						LOCTEXT("WindowEffectMustBeInfinite", "Events[{0}] 是 Window，WindowEffectClass 必须是 Infinite（否则 GE 会在窗口结束前自行到期）"),
-						IndexText
-					));
+					OutErrors.Add(FText::Format(
+						LOCTEXT("WindowEffectContract", "Events[{0}] 的 WindowEffectClass 必须是 Infinite 且 StackingType=None，保证窗口独占可回收的 GE 句柄"), IndexText));
 				}
 			}
 		}
@@ -160,8 +135,7 @@ EDataValidationResult UHodgeAbilityTimeline::IsDataValid(FDataValidationContext&
 		{
 			if (!Event.PointEventTag.IsValid())
 			{
-				Result = EDataValidationResult::Invalid;
-				Context.AddError(FText::Format(
+				OutErrors.Add(FText::Format(
 					LOCTEXT("PointEventTagIsInvalid", "Events[{0}] 是 Point，PointEventTag 为空"),
 					IndexText
 				));
@@ -171,26 +145,20 @@ EDataValidationResult UHodgeAbilityTimeline::IsDataValid(FDataValidationContext&
 			{
 				// Point 只负责 Apply 这一次，此后生命周期不归 Timeline 管：
 				// Infinite 会留下一个没人回收的永久状态，所以禁止。
-				EGameplayEffectDurationType DurationPolicy = EGameplayEffectDurationType::HasDuration;
-				if (TryGetEffectDurationPolicy(Event.PointEffectClass, DurationPolicy)
-					&& DurationPolicy == EGameplayEffectDurationType::Infinite)
+				const UGameplayEffect* Effect = Event.PointEffectClass->GetDefaultObject<UGameplayEffect>();
+				if (!Effect || (Effect->DurationPolicy != EGameplayEffectDurationType::Instant
+					&& Effect->DurationPolicy != EGameplayEffectDurationType::HasDuration))
 				{
-					Result = EDataValidationResult::Invalid;
-					Context.AddError(FText::Format(
+					OutErrors.Add(FText::Format(
 						LOCTEXT("PointEffectMustNotBeInfinite", "Events[{0}] 是 Point，PointEffectClass 不能是 Infinite（Timeline 不会再回收它）"),
 						IndexText
 					));
 				}
 
-				// LocallyControlledOnly + GE 在多人下没有一致语义：
-				// 远程玩家的 Owning Client 事件会执行但 GE 不施加（无权威），
-				// 服务器则因为 bShouldFire 为假直接返回，也不施加，
-				// 而 listen server 主机自己控制的角色两者同时为真 → GE 会施加。
-				// 结果就是 Host 有、Remote 没有。
+				// 本地事件搭配 GE 会造成主机生效、远程玩家无效，必须拒绝。
 				if (Event.NetPolicy == EHodgeTimelineEventNetPolicy::LocallyControlledOnly)
 				{
-					Result = EDataValidationResult::Invalid;
-					Context.AddError(FText::Format(
+					OutErrors.Add(FText::Format(
 						LOCTEXT("PointEffectWithLocallyControlledOnly", "Events[{0}] 配了 PointEffectClass，NetPolicy 就不能是 LocallyControlledOnly（远程客户端上这个 GE 永远不会施加；请改用 AuthorityOnly 或 LocalAndAuthority）"),
 						IndexText
 					));
@@ -228,8 +196,7 @@ EDataValidationResult UHodgeAbilityTimeline::IsDataValid(FDataValidationContext&
 
 				if (bOverlapped)
 				{
-					Result = EDataValidationResult::Invalid;
-					Context.AddError(FText::Format(
+					OutErrors.Add(FText::Format(
 						LOCTEXT("WindowTagOverlapped", "Events[{0}] 与 Events[{1}] 使用了同一个 WindowTag 且区间重叠"),
 						FText::AsNumber(LeftIndex),
 						FText::AsNumber(RightIndex)
@@ -237,6 +204,41 @@ EDataValidationResult UHodgeAbilityTimeline::IsDataValid(FDataValidationContext&
 				}
 			}
 
+		}
+	}
+	return OutErrors.Num() == InitialErrorCount;
+}
+
+#if WITH_EDITOR
+
+EDataValidationResult UHodgeAbilityTimeline::IsDataValid(FDataValidationContext& Context) const
+{
+	EDataValidationResult Result = CombineDataValidationResults(Super::IsDataValid(Context), EDataValidationResult::Valid);
+	TArray<FText> Errors;
+	if (!ValidateForPlayback(Errors))
+	{
+		Result = EDataValidationResult::Invalid;
+		for (const FText& Error : Errors)
+		{
+			Context.AddError(Error);
+		}
+	}
+
+	for (int32 LeftIndex = 0; LeftIndex < Events.Num(); ++LeftIndex)
+	{
+		const FHodgeTimelineEvent& Left = Events[LeftIndex];
+		if (Left.Kind != EHodgeTimelineEventKind::Window)
+		{
+			continue;
+		}
+		for (int32 RightIndex = LeftIndex + 1; RightIndex < Events.Num(); ++RightIndex)
+		{
+			const FHodgeTimelineEvent& Right = Events[RightIndex];
+			if (Right.Kind != EHodgeTimelineEventKind::Window)
+			{
+				continue;
+			}
+			const bool bSameTag = Left.WindowTag.IsValid() && Left.WindowTag == Right.WindowTag;
 			// 2) 首尾相接：边界时刻会先 End 再 Begin，于是标签走 1 → 0 → 1，
 			//    订阅方会真的收到一次 Removed / Added；相同 GE 相邻还会重新触发 Cue / OnActive。
 			//    若本意是一段连续区间，应该合并成一条 —— 但作者也可能故意要这个边界跳变，所以只提示。

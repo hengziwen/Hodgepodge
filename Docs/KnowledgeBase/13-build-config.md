@@ -1,13 +1,13 @@
 # 本地环境、构建与配置
 
-> 最近源码核对：2026-09-17。源码接入状态与运行验收分开记录。
+> 最近源码核对：2026-09-22。源码接入状态与运行验收分开记录。
 [返回首页](README.md)
 
 ## 构建基线
 
 uproject 关联 UE 5.5，Runtime 模块为 Hodgepodge，已有 Game 和 Editor Target。Build.cs 启用显式/共享 PCH、UE 5.5 include 顺序、内联生成代码警告及 SetupIrisSupport。
 
-Public 依赖包含 Core、CoreUObject、Engine、InputCore、GameplayAbilities、GameplayTags、GameplayTasks、ModularGameplay、GameFeatures、AIModule、EngineSettings、NetCore、AnimGraphRuntime、RigVM、ControlRig，以及新增的 UMG、SlateCore（供 CodexText 的 UUserWidget 使用）。Private 依赖包含 EnhancedInput、PhysicsCore、Niagara、SignificanceManager。编辑器专用块（`Target.bBuildEditor`）包含 UnrealEd、AnimGraph、BlueprintGraph，供 CodexText 的 Authoring 库生成动画图。
+Public 依赖包含 Core、CoreUObject、Engine、InputCore、GameplayAbilities、GameplayTags、GameplayTasks、ModularGameplay、GameFeatures、AIModule、EngineSettings、NetCore、AnimGraphRuntime、RigVM、ControlRig，以及 UMG、SlateCore（供 CodexText 的 UUserWidget 使用）。Private 依赖包含 EnhancedInput、PhysicsCore、Niagara、SignificanceManager。编辑器专用块（`Target.bBuildEditor`）包含 UnrealEd、AnimGraph、BlueprintGraph（供 CodexText 的 Authoring 库生成动画图），工作区新增 **`AnimationWarpingRuntime`、`AnimationWarpingEditor`**（供 CodexText 实验用 UE 5.5 的 Stride Warping / Foot Placement）。**这些都在 Editor-only 块内，不进 Runtime 构建**。
 
 未启用的 Slate UI 和 OnlineSubsystem 注释不能作为依赖已经加入的证据。ALS 不在当前 Build.cs 依赖中。
 
