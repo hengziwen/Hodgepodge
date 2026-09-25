@@ -28,14 +28,17 @@ public class Hodgepodge : ModuleRules
 			"RigVM",
 			"ControlRig",
 			"UMG",
-			"SlateCore"
+			"SlateCore",
+			"CommonUI",
+			"CommonInput",
+			"Slate",
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[]
 		{
 			"EnhancedInput",
 			"PhysicsCore",
-			"Niagara", 
+			"Niagara",
 			"SignificanceManager"
 		});
 
@@ -43,7 +46,8 @@ public class Hodgepodge : ModuleRules
 
 		if (Target.bBuildEditor)
 		{
-			PrivateDependencyModuleNames.AddRange(new string[] { "UnrealEd", "AnimGraph", "BlueprintGraph", "AnimationWarpingRuntime", "AnimationWarpingEditor" });
+			PrivateDependencyModuleNames.AddRange(new string[]
+				{ "UnrealEd", "AnimGraph", "BlueprintGraph", "AnimationWarpingRuntime", "AnimationWarpingEditor" });
 		}
 
 		// Uncomment if you are using Slate UI

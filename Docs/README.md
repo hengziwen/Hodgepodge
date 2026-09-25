@@ -12,3 +12,4 @@
 
 - [AbilityTimeline 设计方案：逻辑时间轴与表现分离](Design/ability-timeline.md)
 - [Timeline 与 PlayTimeline AbilityTask：第一阶段最小闭环设计](Design/ability-timeline-stage1.md)
+- [Lyra UI 架构迁移执行文档（阶段一）](Design/lyra-ui-migration-plan.md)
