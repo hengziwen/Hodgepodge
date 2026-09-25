@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "NativeGameplayTags.h"
 
@@ -23,11 +23,17 @@ namespace HodgeGameplayTags
 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Behavior_SurvivesDeath);
 
 	// =============================================================================
+	// 能力 Weapon 标签
+	// =============================================================================
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Weapon_NoFiring);
+
+	// =============================================================================
 	// 能力 Duration/Message 标签
 	// =============================================================================
 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Dash_Duration_Message);
 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Grenade_Duration_Message);
 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Interaction_Activate);
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Interaction_Duration_Message);
 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Respawn_Completed_Message);
 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Respawn_Duration_Message);
 
@@ -66,6 +72,7 @@ namespace HodgeGameplayTags
 	// =============================================================================
 	// Gameplay Zone 标签
 	// =============================================================================
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Gameplay_Zone);
 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Gameplay_Zone_WeakSpot);
 
 	// =============================================================================
@@ -136,6 +143,7 @@ namespace HodgeGameplayTags
 	// =============================================================================
 	// GameSettings 标签
 	// =============================================================================
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameSettings_Action_EditBrightness);
 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameSettings_Action_EditSafeZone);
 
 	// =============================================================================
@@ -203,10 +211,18 @@ namespace HodgeGameplayTags
 	// =============================================================================
 	// Hodge 标签
 	// =============================================================================
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Hodge_AddNotification_Message);
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Hodge_Assist_Message);
 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Hodge_Damage_Taken_Message);
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Hodge_Elimination_Message);
 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Hodge_HUD_PlayerHUD);
 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Hodge_HUD_TempTopWidgets);
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Hodge_Inventory_Message_StackChanged);
 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Hodge_Player);
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Hodge_QuickBar_Message_ActiveIndexChanged);
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Hodge_QuickBar_Message_SlotsChanged);
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Hodge_ShooterGame_Accolade);
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Hodge_Weapon_SteadyAimingCamera);
 
 	// =============================================================================
 	// Platform Trait 标签
@@ -221,6 +237,20 @@ namespace HodgeGameplayTags
 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_SupportsBackgroundAudio);
 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_SupportsChangingAudioOutputDevice);
 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_SupportsWindowedMode);
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_Input_SupportsGamepad);
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_Input_SupportsTriggerHaptics);
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_NeedsBrightnessAdjustment);
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_ReplaySupport);
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_RequiresStrictControllerMapping);
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Platform_Trait_SingleOnlineUser);
+
+	// =============================================================================
+	// SystemMessage 标签
+	// =============================================================================
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(SystemMessage_Display);
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(SystemMessage_Error);
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(SystemMessage_Error_InitializeLocalPlayerFailed);
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(SystemMessage_Warning);
 
 	// =============================================================================
 	// ShooterGame 标签
@@ -269,6 +299,7 @@ namespace HodgeGameplayTags
 	// UI 标签
 	// =============================================================================
 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Action_Back);
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Action_Escape);
 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Layer_Game);
 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Layer_GameMenu);
 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UI_Layer_Menu);

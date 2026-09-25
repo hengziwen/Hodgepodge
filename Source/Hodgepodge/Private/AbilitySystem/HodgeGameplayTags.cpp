@@ -27,11 +27,17 @@ namespace HodgeGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Behavior_SurvivesDeath, "Ability.Behavior.SurvivesDeath");
 
 	// =============================================================================
+	// Ability Weapon Tags
+	// =============================================================================
+	UE_DEFINE_GAMEPLAY_TAG(Ability_Weapon_NoFiring, "Ability.Weapon.NoFiring");
+
+	// =============================================================================
 	// Ability Duration/Message Tags
 	// =============================================================================
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Dash_Duration_Message, "Ability.Dash.Duration.Message");
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Grenade_Duration_Message, "Ability.Grenade.Duration.Message");
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Interaction_Activate, "Ability.Interaction.Activate");
+	UE_DEFINE_GAMEPLAY_TAG(Ability_Interaction_Duration_Message, "Ability.Interaction.Duration.Message");
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Respawn_Completed_Message, "Ability.Respawn.Completed.Message");
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Respawn_Duration_Message, "Ability.Respawn.Duration.Message");
 
@@ -70,6 +76,7 @@ namespace HodgeGameplayTags
 	// =============================================================================
 	// Gameplay Zone Tags
 	// =============================================================================
+	UE_DEFINE_GAMEPLAY_TAG(Gameplay_Zone, "Gameplay.Zone");
 	UE_DEFINE_GAMEPLAY_TAG(Gameplay_Zone_WeakSpot, "Gameplay.Zone.WeakSpot");
 
 	// =============================================================================
@@ -140,6 +147,7 @@ namespace HodgeGameplayTags
 	// =============================================================================
 	// GameSettings Tags
 	// =============================================================================
+	UE_DEFINE_GAMEPLAY_TAG(GameSettings_Action_EditBrightness, "GameSettings.Action.EditBrightness");
 	UE_DEFINE_GAMEPLAY_TAG(GameSettings_Action_EditSafeZone, "GameSettings.Action.EditSafeZone");
 
 	// =============================================================================
@@ -204,10 +212,18 @@ namespace HodgeGameplayTags
 	// =============================================================================
 	// Hodge Tags
 	// =============================================================================
+	UE_DEFINE_GAMEPLAY_TAG(Hodge_AddNotification_Message, "Hodge.AddNotification.Message");
+	UE_DEFINE_GAMEPLAY_TAG(Hodge_Assist_Message, "Hodge.Assist.Message");
 	UE_DEFINE_GAMEPLAY_TAG(Hodge_Damage_Taken_Message, "Hodge.Damage.Taken.Message");
+	UE_DEFINE_GAMEPLAY_TAG(Hodge_Elimination_Message, "Hodge.Elimination.Message");
 	UE_DEFINE_GAMEPLAY_TAG(Hodge_HUD_PlayerHUD, "Hodge.HUD.PlayerHUD");
 	UE_DEFINE_GAMEPLAY_TAG(Hodge_HUD_TempTopWidgets, "Hodge.HUD.TempTopWidgets");
+	UE_DEFINE_GAMEPLAY_TAG(Hodge_Inventory_Message_StackChanged, "Hodge.Inventory.Message.StackChanged");
 	UE_DEFINE_GAMEPLAY_TAG(Hodge_Player, "Hodge.Player");
+	UE_DEFINE_GAMEPLAY_TAG(Hodge_QuickBar_Message_ActiveIndexChanged, "Hodge.QuickBar.Message.ActiveIndexChanged");
+	UE_DEFINE_GAMEPLAY_TAG(Hodge_QuickBar_Message_SlotsChanged, "Hodge.QuickBar.Message.SlotsChanged");
+	UE_DEFINE_GAMEPLAY_TAG(Hodge_ShooterGame_Accolade, "Hodge.ShooterGame.Accolade");
+	UE_DEFINE_GAMEPLAY_TAG(Hodge_Weapon_SteadyAimingCamera, "Hodge.Weapon.SteadyAimingCamera");
 
 	// =============================================================================
 	// Platform Trait Tags
@@ -226,6 +242,20 @@ namespace HodgeGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Platform_Trait_SupportsChangingAudioOutputDevice,
 	                       "Platform.Trait.SupportsChangingAudioOutputDevice");
 	UE_DEFINE_GAMEPLAY_TAG(Platform_Trait_SupportsWindowedMode, "Platform.Trait.SupportsWindowedMode");
+	UE_DEFINE_GAMEPLAY_TAG(Platform_Trait_Input_SupportsGamepad, "Platform.Trait.Input.SupportsGamepad");
+	UE_DEFINE_GAMEPLAY_TAG(Platform_Trait_Input_SupportsTriggerHaptics, "Platform.Trait.Input.SupportsTriggerHaptics");
+	UE_DEFINE_GAMEPLAY_TAG(Platform_Trait_NeedsBrightnessAdjustment, "Platform.Trait.NeedsBrightnessAdjustment");
+	UE_DEFINE_GAMEPLAY_TAG(Platform_Trait_ReplaySupport, "Platform.Trait.ReplaySupport");
+	UE_DEFINE_GAMEPLAY_TAG(Platform_Trait_RequiresStrictControllerMapping, "Platform.Trait.RequiresStrictControllerMapping");
+	UE_DEFINE_GAMEPLAY_TAG(Platform_Trait_SingleOnlineUser, "Platform.Trait.SingleOnlineUser");
+
+	// =============================================================================
+	// SystemMessage Tags
+	// =============================================================================
+	UE_DEFINE_GAMEPLAY_TAG(SystemMessage_Display, "SystemMessage.Display");
+	UE_DEFINE_GAMEPLAY_TAG(SystemMessage_Error, "SystemMessage.Error");
+	UE_DEFINE_GAMEPLAY_TAG(SystemMessage_Error_InitializeLocalPlayerFailed, "SystemMessage.Error.InitializeLocalPlayerFailed");
+	UE_DEFINE_GAMEPLAY_TAG(SystemMessage_Warning, "SystemMessage.Warning");
 
 	// =============================================================================
 	// ShooterGame Tags
@@ -269,6 +299,7 @@ namespace HodgeGameplayTags
 	// UI Tags
 	// =============================================================================
 	UE_DEFINE_GAMEPLAY_TAG(UI_Action_Back, "UI.Action.Back");
+	UE_DEFINE_GAMEPLAY_TAG(UI_Action_Escape, "UI.Action.Escape");
 	UE_DEFINE_GAMEPLAY_TAG(UI_Layer_Game, "UI.Layer.Game");
 	UE_DEFINE_GAMEPLAY_TAG(UI_Layer_GameMenu, "UI.Layer.GameMenu");
 	UE_DEFINE_GAMEPLAY_TAG(UI_Layer_Menu, "UI.Layer.Menu");
