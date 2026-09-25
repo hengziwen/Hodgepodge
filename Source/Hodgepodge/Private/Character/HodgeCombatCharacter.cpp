@@ -13,6 +13,7 @@
 #include "AbilitySystem/HodgeGameplayTags.h"
 #include "Camera/HodgeCameraComponent.h"
 #include "Component/HodgeCharacterMovementComponent.h"
+#include "Component/HodgeHealthComponent.h"
 #include "Component/HodgePawnExtensionComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Core/PlayerController/HodgePlayerController.h"
@@ -119,14 +120,13 @@ AHodgeCombatCharacter::AHodgeCombatCharacter(const FObjectInitializer& ObjectIni
 		FSimpleMulticastDelegate::FDelegate::CreateUObject(this, &ThisClass::OnAbilitySystemUninitialized));
 
 	// 创建角色生命值组件
-	//
-	// HealthComponent = CreateDefaultSubobject<UHodgeHealthComponent>(TEXT("HealthComponent"));
+	HealthComponent = CreateDefaultSubobject<UHodgeHealthComponent>(TEXT("HealthComponent"));
 
 	// 角色开始死亡时触发死亡流程
-	// HealthComponent->OnDeathStarted.AddDynamic(this, &ThisClass::OnDeathStarted);
+	HealthComponent->OnDeathStarted.AddDynamic(this, &ThisClass::OnDeathStarted);
 
 	// 角色死亡流程完成后触发销毁流程
-	// HealthComponent->OnDeathFinished.AddDynamic(this, &ThisClass::OnDeathFinished);
+	HealthComponent->OnDeathFinished.AddDynamic(this, &ThisClass::OnDeathFinished);
 
 	// 创建角色 Camera Component
 	CameraComponent = CreateDefaultSubobject<UHodgeCameraComponent>(TEXT("CameraComponent"));
@@ -316,7 +316,7 @@ void AHodgeCombatCharacter::OnAbilitySystemInitialized()
 	check(HodgeASC);
 
 	// 使用 ASC 初始化生命值组件
-	// HealthComponent->InitializeWithAbilitySystem(HodgeASC);
+	HealthComponent->InitializeWithAbilitySystem(HodgeASC);
 
 	// 初始化角色 GameplayTag
 	InitializeGameplayTags();
@@ -335,7 +335,9 @@ void AHodgeCombatCharacter::PossessedBy(AController* NewController)
 	// 保存被占有之前的 Team ID
 	const FGenericTeamId OldTeamID = MyTeamID;
 
-	Super::PossessedBy(NewController); UE_LOG(LogTemp, Warning, TEXT("[HODGE-DBG] CombatCharacter PossessedBy Pawn=%s Controller=%s PlayerState=%s"), *GetNameSafe(this), *GetNameSafe(NewController), *GetNameSafe(GetPlayerState<APlayerState>()));
+	Super::PossessedBy(NewController);
+	UE_LOG(LogTemp, Warning, TEXT("[HODGE-DBG] CombatCharacter PossessedBy Pawn=%s Controller=%s PlayerState=%s"),
+	       *GetNameSafe(this), *GetNameSafe(NewController), *GetNameSafe(GetPlayerState<APlayerState>()));
 
 	// 通知 PawnExtensionComponent Controller 发生变化
 	PawnExtComponent->HandleControllerChanged();
@@ -400,7 +402,9 @@ void AHodgeCombatCharacter::OnRep_PlayerState()
 // 设置玩家输入
 void AHodgeCombatCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent); UE_LOG(LogTemp, Warning, TEXT("[HODGE-DBG] CombatCharacter SetupPlayerInputComponent Pawn=%s InputComp=%s"), *GetNameSafe(this), *GetNameSafe(PlayerInputComponent));
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	UE_LOG(LogTemp, Warning, TEXT("[HODGE-DBG] CombatCharacter SetupPlayerInputComponent Pawn=%s InputComp=%s"),
+	       *GetNameSafe(this), *GetNameSafe(PlayerInputComponent));
 
 	// 由 PawnExtensionComponent 设置额外输入
 	PawnExtComponent->SetupPlayerInputComponent();
@@ -491,7 +495,7 @@ bool AHodgeCombatCharacter::HasAnyMatchingGameplayTags(const FGameplayTagContain
 void AHodgeCombatCharacter::FellOutOfWorld(const class UDamageType& dmgType)
 {
 	// 通过生命值组件执行自毁处理
-	// HealthComponent->DamageSelfDestruct(/*bFellOutOfWorld=*/ true);
+	HealthComponent->DamageSelfDestruct(/*bFellOutOfWorld=*/ true);
 }
 
 // 角色开始死亡流程

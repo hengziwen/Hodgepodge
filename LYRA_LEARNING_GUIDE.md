@@ -10,7 +10,7 @@
 | 文档 | 内容 |
 |------|------|
 | 本篇 | 学什么、按什么顺序学、哪些重要 |
-| **[LYRA_RUNTIME_FLOW.md](./LYRA_RUNTIME_FLOW.md)** | **代码怎么跑**：Experience 决策链路、加载状态机、启动时序、Pawn Init State 链、各系统生命周期、调试技巧 |
+| **[LYRA_RUNTIME_FLOW.md](./LYRA_RUNTIME_FLOW.md)** | **代码怎么跑**：Experience 决策链路、加载状态机、启动时序、Pawn Init State 链、各系统生命周期、**造成伤害完整链路（第 9 章）**、调试技巧 |
 
 > 建议配合阅读：本篇讲"学什么"，执行链路篇讲"怎么跑"。读 Experience 系统时尤其建议先看执行链路篇。
 
@@ -663,6 +663,8 @@ WorldSettingsClassName=/Script/LyraGame.LyraWorldSettings
 ### 6.5 `Equipment/` / `Inventory/` / `Weapons/` ⭐⭐⭐⭐
 
 见 [阶段 4](#阶段-4装备与武器--三段式模型的实战-)。
+
+这三个模块串起来就是"从捡到枪到打出伤害"的链路，完整执行顺序见 **[LYRA_RUNTIME_FLOW.md 第 9 章：造成伤害完整链路](./LYRA_RUNTIME_FLOW.md#9-造成伤害完整链路从开火到死亡)** —— 覆盖 装备授予能力 → 输入激活 GA → 本地 Trace → 预测上报 → 伤害 GE → `LyraDamageExecution` 结算 → `LyraHealthSet` 扣血 → 死亡事件 → Cue/计分。
 
 ### 6.6 `UI/`（79 个文件）⭐⭐⭐
 

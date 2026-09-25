@@ -1,7 +1,7 @@
 # Lyra 运行时执行链路与生命周期详解
 
 > 配套文档：`LYRA_LEARNING_GUIDE.md`（学习路线）
-> 本篇专注回答三个问题：**代码按什么顺序执行？每个系统的生命周期是什么？我运行时到底跑的是哪个 Experience？**
+> 本篇专注回答四个问题：**代码按什么顺序执行？每个系统的生命周期是什么？我运行时到底跑的是哪个 Experience？从开火到造成伤害这条链路是怎么走的？**
 
 ---
 
@@ -16,7 +16,8 @@
 - [6. 完整启动时序：从进程启动到 Pawn 生成](#6-完整启动时序从进程启动到-pawn-生成)
 - [7. Pawn 生命周期：Init State 链](#7-pawn-生命周期init-state-链)
 - [8. 其他系统生命周期](#8-其他系统生命周期)
-- [9. 调试技巧](#9-调试技巧)
+- [9. 造成伤害完整链路（从开火到死亡）](#9-造成伤害完整链路从开火到死亡)
+- [10. 调试技巧](#10-调试技巧)
 
 ---
 
@@ -804,9 +805,571 @@ Phase_PostGame      结算
 
 ---
 
-## 9. 调试技巧
+## 9. 造成伤害完整链路（从开火到死亡）
 
-### 9.1 日志
+> 本章回答：**从"捡到一把枪"到"敌人掉血死亡"，代码到底按什么顺序跑？**
+> 先把这张总览图记住，后面每一节对应其中一段：
+
+```
+Experience 加载 / GameFeature 激活
+  → PawnData 授予起始能力 + HealthSet
+  → 拾取武器：Inventory → QuickBar → EquipmentManager.EquipItem
+  → AddEntry：创建装备实例 + 授予武器能力集（带 InputTag）+ Spawn 武器 Actor
+  → 输入：InputAction → InputTag → ASC.AbilityInputTagPressed → TryActivateAbility
+  → GA_Weapon_Fire.ActivateAbility → StartRangedWeaponTargeting → 本地 Trace → TargetData
+  → 预测上报服务器 + 服务器 ClientConfirmTargetData（命中标记）
+  → 蓝图 OnRangedWeaponTargetDataReady → MakeOutgoingSpec(DamageGE) → ApplyGameplayEffectSpecToTarget
+  → LyraDamageExecution：基础伤害 × 距离衰减 × 材质衰减 × 友伤判定 → 写入 HealthSet.Damage
+  → HealthSet.PostGameplayEffectExecute：Health − Damage → OnOutOfHealth
+  → HealthComponent.HandleOutOfHealth：GameplayEvent.Death + Elim 消息
+  → GA_Death → StartDeath / FinishDeath → Status.Death.Dying / Dead
+  → Cue 飘字 + ShooterCore 计分（ElimStreak / ElimChain / Assist）
+```
+
+> ⚠️ **两个 C++ / 蓝图边界**（读源码时会"断链"，先记下来）：
+> 1. "构造伤害 GE Spec + `ApplyGameplayEffectSpecToTarget`"在蓝图 `GA_Weapon_Fire` 里，C++ 只暴露钩子 `OnRangedWeaponTargetDataReady`。
+> 2. 伤害飘字 `AddNumberPop` 的调用者是伤害 GameplayCue（蓝图资产），C++ 里没有 native 调用点。
+
+### 9.1 阶段 1：Experience 加载与能力/属性注入
+
+World 由 **Experience** 驱动（见第 4、5 章）。`UGameFeatureAction_AddAbilities` 在目标 Actor 就绪时，把 Ability / AttributeSet 授予其 ASC —— 触发时机监听 `ALyraPlayerState::NAME_LyraAbilityReady`（`GameFeatureAction_AddAbilities.cpp:144-159, 161-231`）。这是"全局规则型"能力/属性的注入通道。
+
+### 9.2 阶段 2：Pawn 就位 —— PawnData 授予起始能力与 HealthSet
+
+`ULyraPawnData` 配置了 `AbilitySets` / `InputConfig` / `PawnClass` / `DefaultCameraMode`。PlayerState 收到 PawnData 时授予起始能力集：
+
+```cpp
+// LyraPlayerState.cpp:185
+void ALyraPlayerState::SetPawnData(const ULyraPawnData* InPawnData)
+{
+    ...
+    for (const ULyraAbilitySet* AbilitySet : PawnData->AbilitySets)
+    {
+        if (AbilitySet)
+        {
+            AbilitySet->GiveToAbilitySystem(AbilitySystemComponent, nullptr);   // :207
+        }
+    }
+
+    UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent(this, NAME_LyraAbilityReady);  // :211
+    ForceNetUpdate();
+}
+```
+
+`GiveToAbilitySystem` 做三件事：加 AttributeSet、授予 Ability、应用起始 GE。**其中埋了两个关键点**：
+
+```cpp
+// LyraAbilitySet.cpp:114
+ULyraGameplayAbility* AbilityCDO = AbilityToGrant.Ability->GetDefaultObject<ULyraGameplayAbility>();
+
+FGameplayAbilitySpec AbilitySpec(AbilityCDO, AbilityToGrant.AbilityLevel);
+AbilitySpec.SourceObject = SourceObject;                                       // ① 能力知道"我属于哪个装备实例"
+AbilitySpec.GetDynamicSpecSourceTags().AddTag(AbilityToGrant.InputTag);        // ② 输入标签藏在 Spec 动态标签里
+
+const FGameplayAbilitySpecHandle AbilitySpecHandle = LyraASC->GiveAbility(AbilitySpec);
+```
+
+`ULyraHealthSet` 作为 AttributeSet 被加到 ASC；`ULyraHealthComponent` 在 `InitializeWithAbilitySystem` 里缓存 HealthSet 并订阅 `OnHealthChanged` / `OnMaxHealthChanged` / `OnOutOfHealth`（`LyraHealthComponent.cpp:70-80`），完成 GAS 与玩法层的桥接（详见 `LYRA_LEARNING_GUIDE.md` 对 HealthSet / HealthComponent 分工的说明）。
+
+### 9.3 阶段 3：获得武器 —— Inventory → QuickBar → Equipment
+
+**拾取/生成**：世界武器走 `ALyraWeaponSpawner::AttemptPickUpWeapon_Implementation`（`LyraWeaponSpawner.cpp:124-142`），拿到 `WeaponDefinition->InventoryItemDefinition` 后调用蓝图事件 `GiveWeapon`。蓝图把武器做成 `ULyraInventoryItemInstance` 并放进 QuickBar 槽位。
+
+武器的关键配置是物品上的 **`UInventoryFragment_EquippableItem`**，它把"物品实例"映射到"装备定义"：
+
+```cpp
+// LyraQuickBarComponent.cpp:86
+void ULyraQuickBarComponent::EquipItemInSlot()
+{
+    if (ULyraInventoryItemInstance* SlotItem = Slots[ActiveSlotIndex])
+    {
+        if (const UInventoryFragment_EquippableItem* EquipInfo = SlotItem->FindFragmentByClass<UInventoryFragment_EquippableItem>())
+        {
+            TSubclassOf<ULyraEquipmentDefinition> EquipDef = EquipInfo->EquipmentDefinition;
+            if (EquipDef != nullptr)
+            {
+                if (ULyraEquipmentManagerComponent* EquipmentManager = FindEquipmentManager())
+                {
+                    EquippedItem = EquipmentManager->EquipItem(EquipDef);   // :100
+                    if (EquippedItem != nullptr)
+                    {
+                        EquippedItem->SetInstigator(SlotItem);               // :103
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+**真正"装备"的一步是 `FLyraEquipmentList::AddEntry`（服务端权威）**，它一次完成三件事：
+
+```cpp
+// LyraEquipmentManagerComponent.cpp:68
+ULyraEquipmentInstance* FLyraEquipmentList::AddEntry(TSubclassOf<ULyraEquipmentDefinition> EquipmentDefinition)
+{
+    ...
+    FLyraAppliedEquipmentEntry& NewEntry = Entries.AddDefaulted_GetRef();
+    NewEntry.EquipmentDefinition = EquipmentDefinition;
+    NewEntry.Instance = NewObject<ULyraEquipmentInstance>(OwnerComponent->GetOwner(), InstanceType);  // ① 创建装备实例
+    Result = NewEntry.Instance;
+
+    if (ULyraAbilitySystemComponent* ASC = GetAbilitySystemComponent())
+    {
+        for (const TObjectPtr<const ULyraAbilitySet>& AbilitySet : EquipmentCDO->AbilitySetsToGrant)
+        {
+            AbilitySet->GiveToAbilitySystem(ASC, /*inout*/ &NewEntry.GrantedHandles, Result);  // ② 授予武器能力集，SourceObject=Result
+        }
+    }
+
+    Result->SpawnEquipmentActors(EquipmentCDO->ActorsToSpawn);   // ③ Spawn 出武器 Actor 并 Attach 到骨骼插槽
+
+    MarkItemDirty(NewEntry);
+    return Result;
+}
+```
+
+| 步骤 | 作用 | 为什么重要 |
+|------|------|-----------|
+| ① `NewObject<ULyraEquipmentInstance>` | 创建装备实例（实际类型是 `ULyraWeaponInstance` / `ULyraRangedWeaponInstance` 子类） | 能力的运行期数据载体 |
+| ② `GiveToAbilitySystem(..., Result)` | 授予该武器自带能力集（`GA_Weapon_Fire` 就在这被授予） | **`SourceObject` = 装备实例**，能力靠它反查武器 |
+| ③ `SpawnEquipmentActors` | spawn 出真正的武器 Actor（`B_WeaponActor`） | 视觉/枪口/挂点 |
+
+> **能力如何拿回武器？** `ULyraGameplayAbility_FromEquipment::GetAssociatedEquipment()` 读 `Spec->SourceObject`（`LyraGameplayAbility_FromEquipment.cpp:18-26`），返回的就是这里的装备实例。
+>
+> **网络**：`AddEntry` 里有 `check(...HasAuthority())`（`:74`），装备只在服务端执行；客户端通过 `FLyraEquipmentList` 的 FastArray 复制，在 `PostReplicatedAdd` → `OnEquipped()` 做表现（`:47`）。`GrantedHandles` 是 `NotReplicated`，只有服务端持有用于回收。
+
+### 9.4 阶段 4：输入绑定 —— InputAction ↔ InputTag ↔ 能力
+
+`ULyraHeroComponent::InitializePlayerInput` 在本地玩家就绪时，把输入资产里每个 InputAction 绑到对应 InputTag：
+
+```cpp
+// LyraHeroComponent.cpp:280
+// This is where we actually bind and input action to a gameplay tag, which means that Gameplay Ability Blueprints will
+// be triggered directly by these input actions Triggered events.
+TArray<uint32> BindHandles;
+LyraIC->BindAbilityActions(InputConfig, this, &ThisClass::Input_AbilityInputTagPressed, &ThisClass::Input_AbilityInputTagReleased, /*out*/ BindHandles);   // :283
+```
+
+按键回调转发给 ASC：
+
+```cpp
+// LyraHeroComponent.cpp:343
+void ULyraHeroComponent::Input_AbilityInputTagPressed(FGameplayTag InputTag)
+{
+    ...
+    if (ULyraAbilitySystemComponent* LyraASC = PawnExtComp->GetLyraAbilitySystemComponent())
+    {
+        LyraASC->AbilityInputTagPressed(InputTag);   // :351
+    }
+}
+```
+
+之后由 PlayerController 每帧驱动 ASC 处理：
+
+```cpp
+// LyraPlayerController.cpp:359
+void ALyraPlayerController::PostProcessInput(const float DeltaTime, const bool bGamePaused)
+{
+    ...
+    if (ULyraAbilitySystemComponent* LyraASC = GetLyraAbilitySystemComponent())
+    {
+        LyraASC->ProcessAbilityInput(DeltaTime, bGamePaused);   // :363
+    }
+}
+```
+
+**三点合一是"装备 → 能力可被输入激活"的完整纽带**：
+1. 授予能力时把 InputTag 塞进 `AbilitySpec.GetDynamicSpecSourceTags()`（`LyraAbilitySet.cpp:118`）；
+2. 能力的 `SourceObject` = 装备实例（`LyraEquipmentManagerComponent.cpp:93`）；
+3. HeroComponent 把 InputAction 绑到 InputTag → `AbilityInputTagPressed` → `ProcessAbilityInput` 里 `TryActivateAbility`。
+
+> 能力默认 `ActivationPolicy = OnInputTriggered`（`LyraGameplayAbility.cpp:44`），枚举定义见 `LyraGameplayAbility.h:37-47`（`OnInputTriggered` / `WhileInputActive` / `OnSpawn`）。**项目里没有 `bAutoActivateOnInput` 这个符号**。
+>
+> ⚠️ 本工作区副本里 `Source/LyraGame/AbilitySystem/LyraAbilitySystemComponent.cpp` 是 1 字节空文件，ASC 输入分派（Tag 匹配 Spec → 收进 `InputPressedSpecHandles` → `TryActivateAbility`）的实现体不在源码内，只能看到头文件声明（`LyraAbilitySystemComponent.h:45-49, 96-102`）。
+
+### 9.5 阶段 5：开火 —— Trace 打点
+
+`GA_Weapon_Fire` 激活后进 C++ 基类 `ULyraGameplayAbility_RangedWeapon::ActivateAbility`：
+
+```cpp
+// LyraGameplayAbility_RangedWeapon.cpp:440
+void ULyraGameplayAbility_RangedWeapon::ActivateAbility(...)
+{
+    // Bind target data callback
+    UAbilitySystemComponent* MyAbilityComponent = CurrentActorInfo->AbilitySystemComponent.Get();
+    OnTargetDataReadyCallbackDelegateHandle = MyAbilityComponent->AbilityTargetDataSetDelegate(CurrentSpecHandle, CurrentActivationInfo.GetActivationPredictionKey()).AddUObject(this, &ThisClass::OnTargetDataReadyCallback);   // :446
+
+    // Update the last firing time
+    ULyraRangedWeaponInstance* WeaponData = GetWeaponInstance();
+    WeaponData->UpdateFiringTime();   // :451
+
+    Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+}
+```
+
+**⚠️ 关键：Lyra 的远程武器不走 `AGameplayAbilityTargetActor_Trace` / `WaitTargetData` 那一套**，而是在能力内部自建 Trace。蓝图在输入触发时调 `StartRangedWeaponTargeting()`。
+
+**① 算弹道起点/终点**（起点用相机→焦点变换，不是枪口，这是第三人称射击手感的关键）：
+
+```cpp
+// LyraGameplayAbility_RangedWeapon.cpp:352
+void ULyraGameplayAbility_RangedWeapon::PerformLocalTargeting(OUT TArray<FHitResult>& OutHits)
+{
+    APawn* const AvatarPawn = Cast<APawn>(GetAvatarActorFromActorInfo());
+    ULyraRangedWeaponInstance* WeaponData = GetWeaponInstance();
+    if (AvatarPawn && AvatarPawn->IsLocallyControlled() && WeaponData)
+    {
+        FRangedWeaponFiringInput InputData;
+        InputData.WeaponData = WeaponData;
+        InputData.bCanPlayBulletFX = (AvatarPawn->GetNetMode() != NM_DedicatedServer);
+
+        const FTransform TargetTransform = GetTargetingTransform(AvatarPawn, ELyraAbilityTargetingSource::CameraTowardsFocus);   // :364
+        InputData.AimDir = TargetTransform.GetUnitAxis(EAxis::X);
+        InputData.StartTrace = TargetTransform.GetTranslation();
+        InputData.EndAim = InputData.StartTrace + InputData.AimDir * WeaponData->GetMaxDamageRange();
+
+        TraceBulletsInCartridge(InputData, /*out*/ OutHits);   // :378
+    }
+}
+```
+
+**② 逐弹丸 + 扩散**（霰弹靠 `BulletsPerCartridge`，扩散角由 Heat/Spread 状态机给出）：
+
+```cpp
+// LyraGameplayAbility_RangedWeapon.cpp:382
+for (int32 BulletIndex = 0; BulletIndex < BulletsPerCartridge; ++BulletIndex)
+{
+    const float BaseSpreadAngle = WeaponData->GetCalculatedSpreadAngle();
+    const float SpreadAngleMultiplier = WeaponData->GetCalculatedSpreadAngleMultiplier();
+    const float ActualSpreadAngle = BaseSpreadAngle * SpreadAngleMultiplier;
+
+    const float HalfSpreadAngleInRadians = FMath::DegreesToRadians(ActualSpreadAngle * 0.5f);
+    const FVector BulletDir = VRandConeNormalDistribution(InputData.AimDir, HalfSpreadAngleInRadians, WeaponData->GetSpreadExponent());   // :397
+
+    const FVector EndTrace = InputData.StartTrace + (BulletDir * WeaponData->GetMaxDamageRange());
+    ...
+    FHitResult Impact = DoSingleBulletTrace(InputData.StartTrace, EndTrace, WeaponData->GetBulletTraceSweepRadius(), /*bIsSimulated=*/ false, /*out*/ AllImpacts);   // :404
+```
+
+**扩散 / 后坐力 / 精度**都在 `ULyraRangedWeaponInstance` 里：每帧 `Tick` 驱动 `UpdateSpread` / `UpdateMultipliers`，开火时 `AddSpread` 加热：
+
+```cpp
+// LyraRangedWeaponInstance.cpp:111
+void ULyraRangedWeaponInstance::AddSpread()
+{
+    const float HeatPerShot = HeatToHeatPerShotCurve.GetRichCurveConst()->Eval(CurrentHeat);
+    CurrentHeat = ClampHeat(CurrentHeat + HeatPerShot);
+    CurrentSpreadAngle = HeatToSpreadCurve.GetRichCurveConst()->Eval(CurrentHeat);
+}
+```
+
+| 关注点 | 在哪实现 |
+|--------|----------|
+| Heat / Spread / 后坐力 / 精度乘子 | **C++** `ULyraRangedWeaponInstance`（`:73-123, 148-217`） |
+| 单发 / 连发 / 射速 | **蓝图** `GA_Weapon_Fire`（用循环/延迟调 `StartRangedWeaponTargeting`） |
+| Trace 通道 | `Lyra_TraceChannel_Weapon`（`LyraGameplayAbility_RangedWeapon.cpp:138-141`） |
+
+**③ 打包 TargetData**（每条弹道一个 `SingleTargetHit`，带命中结果 + CartridgeID）：
+
+```cpp
+// LyraGameplayAbility_RangedWeapon.cpp:552
+void ULyraGameplayAbility_RangedWeapon::StartRangedWeaponTargeting()
+{
+    ...
+    FScopedPredictionWindow ScopedPrediction(MyAbilityComponent, CurrentActivationInfo.GetActivationPredictionKey());   // :566
+
+    TArray<FHitResult> FoundHits;
+    PerformLocalTargeting(/*out*/ FoundHits);
+
+    FGameplayAbilityTargetDataHandle TargetData;
+    TargetData.UniqueId = WeaponStateComponent ? WeaponStateComponent->GetUnconfirmedServerSideHitMarkerCount() : 0;   // :573
+
+    if (FoundHits.Num() > 0)
+    {
+        const int32 CartridgeID = FMath::Rand();
+        for (const FHitResult& FoundHit : FoundHits)
+        {
+            FLyraGameplayAbilityTargetData_SingleTargetHit* NewTargetData = new FLyraGameplayAbilityTargetData_SingleTargetHit();
+            NewTargetData->HitResult = FoundHit;
+            NewTargetData->CartridgeID = CartridgeID;
+            TargetData.Add(NewTargetData);
+        }
+    }
+    ...
+    OnTargetDataReadyCallback(TargetData, FGameplayTag());   // :597
+}
+```
+
+### 9.6 阶段 6：命中确认 —— 客户端预测 + 服务端验证
+
+```cpp
+// LyraGameplayAbility_RangedWeapon.cpp:477
+void ULyraGameplayAbility_RangedWeapon::OnTargetDataReadyCallback(const FGameplayAbilityTargetDataHandle& InData, FGameplayTag ApplicationTag)
+{
+    ...
+    FScopedPredictionWindow ScopedPrediction(MyAbilityComponent);   // :484
+    FGameplayAbilityTargetDataHandle LocalTargetDataHandle(MoveTemp(const_cast<FGameplayAbilityTargetDataHandle&>(InData)));
+
+    const bool bShouldNotifyServer = CurrentActorInfo->IsLocallyControlled() && !CurrentActorInfo->IsNetAuthority();
+    if (bShouldNotifyServer)
+    {
+        MyAbilityComponent->CallServerSetReplicatedTargetData(CurrentSpecHandle, CurrentActivationInfo.GetActivationPredictionKey(), LocalTargetDataHandle, ApplicationTag, MyAbilityComponent->ScopedPredictionKey);   // :492
+    }
+    ...
+#if WITH_SERVER_CODE
+    // 服务端：把验证结果与"被替换的命中"回投客户端
+    WeaponStateComponent->ClientConfirmTargetData(LocalTargetDataHandle.UniqueId, bIsTargetDataValid, HitReplaces);   // :521
+#endif
+
+    // See if we still have ammo
+    if (bIsTargetDataValid && CommitAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo))   // :531
+    {
+        // We fired the weapon, add spread
+        WeaponData->AddSpread();                          // :536
+        // Let the blueprint do stuff like apply effects to the targets
+        OnRangedWeaponTargetDataReady(LocalTargetDataHandle);   // :539
+    }
+}
+```
+
+| 环节 | 说明 |
+|------|------|
+| 本地玩家 | 用预测键把 TargetData 上报服务器（`CallServerSetReplicatedTargetData`） |
+| 服务端 | 验证后回调 `ULyraWeaponStateComponent::ClientConfirmTargetData`（`LyraWeaponStateComponent.cpp:66-101`） |
+| 客户端表现 | 命中标记：`SHitMarkerConfirmationWidget` 从 `GetLastWeaponDamageScreenLocations()` 取屏幕点绘制 |
+| 扣弹药 | **`CommitAbility` 通过后才算真正开火**（消耗/冷却在这里） |
+
+### 9.7 阶段 7：应用伤害 GE —— C++ 与蓝图的边界
+
+`OnRangedWeaponTargetDataReady` 是 `BlueprintImplementableEvent`。**蓝图里**做：
+
+1. 从 `ULyraGameData::DamageGameplayEffect_SetByCaller` 取伤害 GE 类（`LyraGameData.h:32-33`）；
+2. `MakeOutgoingSpec` 创建 Spec，用 **`SetByCaller.Damage`**（`LyraGameplayTags.cpp:36`）写入伤害量；
+3. `ApplyGameplayEffectSpecToTarget` 施加到目标。
+
+**C++ 为这一步提供的支撑**：
+
+| 支撑点 | 位置 | 作用 |
+|--------|------|------|
+| 把命中结果注入 EffectContext | `LyraGameplayAbilityTargetData_SingleTargetHit.cpp:13-22` | Execution 里能拿到 `HitResult` 算距离、取物理材质 |
+| 把武器实例写成 AbilitySource | `LyraGameplayAbility.cpp:278-301, 428-440` | 距离/材质衰减的来源 |
+| 武器实现 `ILyraAbilitySourceInterface` | `LyraRangedWeaponInstance.cpp:125-146` | 提供衰减曲线查询 |
+
+> 一句话：**C++ 负责"打到哪"和"把武器信息塞进 Context"，蓝图负责"施加哪个 GE、扣多少血"。**
+
+### 9.8 阶段 8：伤害结算 —— `ULyraDamageExecution`
+
+GE 执行时进 `ULyraDamageExecution::Execute_Implementation`（`#if WITH_SERVER_CODE`，仅服务端）：
+
+```cpp
+// LyraDamageExecution.cpp:50
+float BaseDamage = 0.0f;
+ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().BaseDamageDef, EvaluateParameters, BaseDamage);   // ① 捕获 CombatSet.BaseDamage
+
+const AActor* EffectCauser = TypedContext->GetEffectCauser();
+const FHitResult* HitActorResult = TypedContext->GetHitResult();      // ② 取命中结果（无则回退目标位置）
+...
+// ③ 友伤判定：同队 → 乘 0
+float DamageInteractionAllowedMultiplier = 0.0f;
+if (HitActor)
+{
+    ULyraTeamSubsystem* TeamSubsystem = HitActor->GetWorld()->GetSubsystem<ULyraTeamSubsystem>();
+    DamageInteractionAllowedMultiplier = TeamSubsystem->CanCauseDamage(EffectCauser, HitActor) ? 1.0 : 0.0;   // :96
+}
+...
+// ④ 距离衰减 + 物理材质衰减
+if (const ILyraAbilitySourceInterface* AbilitySource = TypedContext->GetAbilitySource())
+{
+    if (const UPhysicalMaterial* PhysMat = TypedContext->GetPhysicalMaterial())
+    {
+        PhysicalMaterialAttenuation = AbilitySource->GetPhysicalMaterialAttenuation(PhysMat, SourceTags, TargetTags);
+    }
+    DistanceAttenuation = AbilitySource->GetDistanceAttenuation(Distance, SourceTags, TargetTags);   // :126
+}
+...
+const float DamageDone = FMath::Max(BaseDamage * DistanceAttenuation * PhysicalMaterialAttenuation * DamageInteractionAllowedMultiplier, 0.0f);   // :131
+
+if (DamageDone > 0.0f)
+{
+    // Apply a damage modifier, this gets turned into - health on the target
+    OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(ULyraHealthSet::GetDamageAttribute(), EGameplayModOp::Additive, DamageDone));   // :136
+}
+```
+
+**注意：这里只是把 `DamageDone` 写进 `ULyraHealthSet::Damage` 这个 meta 属性**（注释：*"this gets turned into -health on the target"*），并不是直接扣 Health。护甲减伤 Lyra 默认没做，只做了距离/材质衰减。
+
+### 9.9 阶段 9：扣血 —— `ULyraHealthSet`
+
+**① 结算前拦截**（伤害免疫 / GodMode 的统一入口）：
+
+```cpp
+// LyraHealthSet.cpp:68
+bool ULyraHealthSet::PreGameplayEffectExecute(FGameplayEffectModCallbackData &Data)
+{
+    if (Data.EvaluatedData.Attribute == GetDamageAttribute())
+    {
+        if (Data.EvaluatedData.Magnitude > 0.0f)
+        {
+            const bool bIsDamageFromSelfDestruct = Data.EffectSpec.GetDynamicAssetTags().HasTagExact(TAG_Gameplay_DamageSelfDestruct);
+
+            if (Data.Target.HasMatchingGameplayTag(TAG_Gameplay_DamageImmunity) && !bIsDamageFromSelfDestruct)
+            {
+                Data.EvaluatedData.Magnitude = 0.0f;   // 免疫：不扣血
+                return false;
+            }
+#if !UE_BUILD_SHIPPING
+            if (Data.Target.HasMatchingGameplayTag(LyraGameplayTags::Cheat_GodMode) && !bIsDamageFromSelfDestruct)
+            {
+                Data.EvaluatedData.Magnitude = 0.0f;   // 作弊无敌
+                return false;
+            }
+#endif
+        }
+    }
+    ...
+    return true;
+}
+```
+
+**② meta `Damage` → `Health`**（血才真正扣掉）：
+
+```cpp
+// LyraHealthSet.cpp:128
+if (Data.EvaluatedData.Attribute == GetDamageAttribute())
+{
+    // Send a standardized verb message that other systems can observe
+    if (Data.EvaluatedData.Magnitude > 0.0f)
+    {
+        FLyraVerbMessage Message;
+        Message.Verb = TAG_Lyra_Damage_Message;   // "Lyra.Damage.Message"
+        ...
+        MessageSystem.BroadcastMessage(Message.Verb, Message);
+    }
+
+    // Convert into -Health and then clamp
+    SetHealth(FMath::Clamp(GetHealth() - GetDamage(), MinimumHealth, GetMaxHealth()));   // :148
+    SetDamage(0.0f);
+}
+...
+if (GetHealth() != HealthBeforeAttributeChange)
+{
+    OnHealthChanged.Broadcast(...);   // :173
+}
+
+if ((GetHealth() <= 0.0f) && !bOutOfHealth)
+{
+    OnOutOfHealth.Broadcast(...);     // :178  ← 死亡流程的入口
+}
+```
+
+### 9.10 阶段 10：死亡 —— `HealthComponent` + `GA_Death`
+
+`ULyraHealthComponent` 订阅了 `OnOutOfHealth`，回调解锁死亡流程：
+
+```cpp
+// LyraHealthComponent.cpp:148
+void ULyraHealthComponent::HandleOutOfHealth(...)
+{
+#if WITH_SERVER_CODE
+    if (AbilitySystemComponent && DamageEffectSpec)
+    {
+        // ① 发 "GameplayEvent.Death" → 自动激活 GA_Death
+        {
+            FGameplayEventData Payload;
+            Payload.EventTag = LyraGameplayTags::GameplayEvent_Death;   // :156
+            ...
+            FScopedPredictionWindow NewScopedWindow(AbilitySystemComponent, true);
+            AbilitySystemComponent->HandleGameplayEvent(Payload.EventTag, &Payload);   // :166
+        }
+
+        // ② 广播 "Lyra.Elimination.Message" → 计分/连杀/助攻
+        {
+            FLyraVerbMessage Message;
+            Message.Verb = TAG_Lyra_Elimination_Message;   // :172
+            ...
+            MessageSystem.BroadcastMessage(Message.Verb, Message);
+        }
+    }
+#endif
+}
+```
+
+`GA_Death` 的 TriggerTag 就是 `GameplayEvent.Death`，被上面的 `HandleGameplayEvent` 自动激活：
+
+```cpp
+// LyraGameplayAbility_Death.cpp:22
+if (HasAnyFlags(RF_ClassDefaultObject))
+{
+    FAbilityTriggerData TriggerData;
+    TriggerData.TriggerTag = LyraGameplayTags::GameplayEvent_Death;
+    TriggerData.TriggerSource = EGameplayAbilityTriggerSource::GameplayEvent;
+    AbilityTriggers.Add(TriggerData);
+}
+```
+
+`GA_Death` → `HealthComponent` 状态机 → 打 tag / 广播委托：
+
+```cpp
+// LyraGameplayAbility_Death.cpp:70
+void ULyraGameplayAbility_Death::StartDeath()
+{
+    if (ULyraHealthComponent* HealthComponent = ULyraHealthComponent::FindHealthComponent(GetAvatarActorFromActorInfo()))
+    {
+        if (HealthComponent->GetDeathState() == ELyraDeathState::NotDead)
+        {
+            HealthComponent->StartDeath();
+        }
+    }
+}
+
+// LyraHealthComponent.cpp:235
+void ULyraHealthComponent::StartDeath()
+{
+    ...
+    DeathState = ELyraDeathState::DeathStarted;
+    AbilitySystemComponent->SetLooseGameplayTagCount(LyraGameplayTags::Status_Death_Dying, 1);   // :246
+    OnDeathStarted.Broadcast(Owner);
+    Owner->ForceNetUpdate();
+}
+```
+
+> **复制的真相**：死亡状态靠 `UPROPERTY(ReplicatedUsing = OnRep_DeathState) ELyraDeathState DeathState` 复制（`LyraHealthComponent.h:128-130`）；`Status.Death.Dying/Dead` 这两个 **loose tag 是本地派生的镜像**，客户端在 `OnRep_DeathState` 里跑同一套 `StartDeath`/`FinishDeath` 得到，不是靠 tag 自身复制。`ClearGameplayTags()` 的存在，是因为 ASC 挂在 PlayerState 上、跨 Pawn 复用，必须在初始化/反初始化时清掉残留 tag（`LyraHealthComponent.cpp:106-113, 85, 93`）。
+
+### 9.11 阶段 11：反馈与计分
+
+| 反馈 | 触发点 |
+|------|--------|
+| 伤害飘字 / 特效 / 音效 | 伤害 GameplayCue（蓝图）→ `ULyraNumberPopComponent::AddNumberPop`（`LyraNumberPopComponent.h:54-56`），实现见 `LyraNumberPopComponent_NiagaraText` / `_MeshText` |
+| 命中标记 / 准星 | `SHitMarkerConfirmationWidget`、`ULyraReticleWidgetBase`（消费 `ULyraWeaponStateComponent`） |
+| 伤害统计 | `Lyra.Damage.Message` ← `LyraDamageLogDebuggerComponent.cpp:26, 84-98` |
+| 击杀 / 连杀 / 助攻 | `Lyra.Elimination.Message` ← ShooterCore 的 `ElimStreakProcessor` / `ElimChainProcessor` / `AssistProcessor` |
+| 消息复制到 HUD | `LyraPlayerState::ClientBroadcastMessage` / `LyraVerbMessageReplication::RebroadcastMessage` |
+
+### 9.12 客户端 / 服务端职责划分
+
+| 环节 | 本地客户端 | 服务端 |
+|------|-----------|--------|
+| 装备武器 | 收 FastArray 复制 → `OnEquipped` 表现 | 真正执行 `AddEntry`（`HasAuthority`） |
+| Trace 打点 | **本地预测执行**（`IsLocallyControlled`） | 收到上报后验证 |
+| 上报 / 确认 | `CallServerSetReplicatedTargetData` | `ClientConfirmTargetData` 回投命中标记 |
+| 伤害 GE | 预测施加（蓝图） | 权威施加 |
+| 伤害 Execution | —— | `#if WITH_SERVER_CODE` 仅服务端结算 |
+| 扣血 / 死亡事件 | `OnRep_Health` / `OnRep_DeathState` 本地派生 | 权威结算 + 复制 |
+| 飘字 / 命中标记 / HUD | 客户端表现 | —— |
+
+### 9.13 需要到蓝图确认的环节
+
+1. **`GA_Weapon_Fire`**：单发/连发/射速控制，以及 `OnRangedWeaponTargetDataReady` 里"构造 GE Spec + `ApplyGameplayEffectSpecToTarget`"。
+2. **伤害 GameplayCue（GCN_Damage 之类）**：`AddNumberPop` 的调用者。
+
+其余逻辑全部在 C++，按上述 11 个阶段即可。
+
+---
+
+## 10. 调试技巧
+
+### 10.1 日志
 
 ```
 Log LogLyraExperience Verbose     ← 看 Experience 全流程（最有用）
@@ -824,7 +1387,7 @@ Log LogLyraAbilitySystem Verbose  ← 看能力相关
 | `Failed to find plugin URL from PluginName` | 插件名写错了 |
 | `Trying to set PawnData [...] that already has valid PawnData` | 重复设置 PawnData |
 
-### 9.2 控制台命令
+### 10.2 控制台命令
 
 | 命令 | 作用 |
 |------|------|
@@ -834,7 +1397,7 @@ Log LogLyraAbilitySystem Verbose  ← 看能力相关
 | `GameplayMessageSubsystem.LogMessages 1` | 打印所有消息总线消息 |
 | `-LogAssetLoads`（启动参数） | 打印每个资源的同步加载耗时 |
 
-### 9.3 断点速查
+### 10.3 断点速查
 
 | 想看什么 | 断点位置 |
 |----------|----------|
@@ -846,9 +1409,15 @@ Log LogLyraAbilitySystem Verbose  ← 看能力相关
 | init state 为何卡住 | `LyraPawnExtensionComponent::CanChangeInitState()` ← **调试初始化问题首选** |
 | ASC 何时就绪 | `LyraPawnExtensionComponent::InitializeAbilitySystem()` |
 | 装备流程 | `FLyraEquipmentList::AddEntry()` |
-| 伤害计算 | `LyraDamageExecution::Execute_Implementation()` |
+| 装备授予了哪些能力 | `ULyraAbilitySet::GiveToAbilitySystem()` |
+| 输入有没有传到 ASC | `ULyraHeroComponent::Input_AbilityInputTagPressed()` |
+| 开火 Trace 打了哪 | `ULyraGameplayAbility_RangedWeapon::PerformLocalTargeting()` |
+| 命中确认走没走通 | `ULyraGameplayAbility_RangedWeapon::OnTargetDataReadyCallback()` |
+| 伤害计算 | `ULyraDamageExecution::Execute_Implementation()` |
+| 血是怎么扣的 | `ULyraHealthSet::PostGameplayEffectExecute()` |
+| 死亡事件从哪来 | `ULyraHealthComponent::HandleOutOfHealth()` |
 
-### 9.4 诊断"Pawn 没生成"的流程
+### 10.4 诊断"Pawn 没生成"的流程
 
 如果你遇到 Pawn 不出现，按这个顺序查：
 
@@ -871,6 +1440,7 @@ Log LogLyraAbilitySystem Verbose  ← 看能力相关
 | **ASC** | 从 PlayerState 获取 → `InitAbilityActorInfo(Owner=PS, Avatar=Pawn)` → 广播就绪 → 死亡时取消能力但保留 ASC |
 | **装备** | 定义 CDO → 创建 Instance（Outer=Pawn）→ 授予能力（SourceObject=Instance）→ 复制 → 客户端特效 |
 | **阶段** | Warmup → Playing → PostGame，用嵌套 GameplayTag 由 PhaseSubsystem 管理 |
+| **伤害链路** | 装备武器 → 输入激活 GA → 本地 Trace → 预测上报 → 伤害 GE → 距离/材质衰减 → HealthSet 扣血 → 死亡事件 → Cue/计分 |
 
 ---
 
