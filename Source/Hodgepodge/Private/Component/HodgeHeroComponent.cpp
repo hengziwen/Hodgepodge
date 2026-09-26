@@ -167,7 +167,9 @@ bool UHodgeHeroComponent::CanChangeInitState(UGameFrameworkComponentManager* Man
 		// HeroComponent 初始化依赖 PlayerState。
 		if (!GetPlayerState<AHodgePlayerState>())
 		{
-			UE_LOG(LogTemp, Warning, TEXT("[HODGE-DBG] Hero->DataAvailable BLOCKED: PlayerState=null (Pawn=%s Controller=%s)"), *GetNameSafe(Pawn), *GetNameSafe(GetController<AController>()));
+			UE_LOG(LogTemp, Warning,
+			       TEXT("[HODGE-DBG] Hero->DataAvailable BLOCKED: PlayerState=null (Pawn=%s Controller=%s)"),
+			       *GetNameSafe(Pawn), *GetNameSafe(GetController<AController>()));
 			return false;
 		}
 
@@ -186,7 +188,13 @@ bool UHodgeHeroComponent::CanChangeInitState(UGameFrameworkComponentManager* Man
 			// Controller 与 PlayerState 尚未完成配对时不能继续初始化。
 			if (!bHasControllerPairedWithPS)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("[HODGE-DBG] Hero->DataAvailable BLOCKED: Controller/PS not paired (Controller=%s PS=%s PS_Owner=%s)"), *GetNameSafe(Controller), *GetNameSafe((Controller != nullptr) ? Controller->PlayerState : nullptr), *GetNameSafe(((Controller != nullptr) && (Controller->PlayerState != nullptr)) ? Controller->PlayerState->GetOwner() : nullptr));
+				UE_LOG(LogTemp, Warning,
+				       TEXT(
+					       "[HODGE-DBG] Hero->DataAvailable BLOCKED: Controller/PS not paired (Controller=%s PS=%s PS_Owner=%s)"
+				       ), *GetNameSafe(Controller),
+				       *GetNameSafe((Controller != nullptr) ? Controller->PlayerState : nullptr),
+				       *GetNameSafe(((Controller != nullptr) && (Controller->PlayerState != nullptr)) ? Controller->
+					       PlayerState->GetOwner() : nullptr));
 				return false;
 			}
 		}
@@ -207,7 +215,12 @@ bool UHodgeHeroComponent::CanChangeInitState(UGameFrameworkComponentManager* Man
 			// 本地玩家必须已经拥有 InputComponent、PlayerController 和 LocalPlayer。
 			if (!Pawn->InputComponent || !HodgePC || !HodgePC->GetLocalPlayer())
 			{
-				UE_LOG(LogTemp, Warning, TEXT("[HODGE-DBG] Hero->DataAvailable BLOCKED: InputComp=%d HodgePC=%s LocalPlayer=%s (Controller=%s)"), (Pawn->InputComponent != nullptr) ? 1 : 0, *GetNameSafe(HodgePC), HodgePC ? *GetNameSafe(HodgePC->GetLocalPlayer()) : TEXT("None"), *GetNameSafe(GetController<AController>()));
+				UE_LOG(LogTemp, Warning,
+				       TEXT(
+					       "[HODGE-DBG] Hero->DataAvailable BLOCKED: InputComp=%d HodgePC=%s LocalPlayer=%s (Controller=%s)"
+				       ), (Pawn->InputComponent != nullptr) ? 1 : 0, *GetNameSafe(HodgePC),
+				       HodgePC ? *GetNameSafe(HodgePC->GetLocalPlayer()) : TEXT("None"),
+				       *GetNameSafe(GetController<AController>()));
 				return false;
 			}
 		}
@@ -225,8 +238,10 @@ bool UHodgeHeroComponent::CanChangeInitState(UGameFrameworkComponentManager* Man
 		AHodgePlayerState* HodgePS = GetPlayerState<AHodgePlayerState>();
 
 		// HeroComponent 必须等 PawnExtensionComponent 先到达 DataInitialized。
-		const bool bPawnExtReady = Manager->HasFeatureReachedInitState(Pawn, UHodgePawnExtensionComponent::NAME_ActorFeatureName, HodgeGameplayTags::InitState_DataInitialized);
-		UE_LOG(LogTemp, Warning, TEXT("[HODGE-DBG] Hero->DataInitialized check PS=%s PawnExtReady=%d"), *GetNameSafe(HodgePS), bPawnExtReady ? 1 : 0);
+		const bool bPawnExtReady = Manager->HasFeatureReachedInitState(
+			Pawn, UHodgePawnExtensionComponent::NAME_ActorFeatureName, HodgeGameplayTags::InitState_DataInitialized);
+		UE_LOG(LogTemp, Warning, TEXT("[HODGE-DBG] Hero->DataInitialized check PS=%s PawnExtReady=%d"),
+		       *GetNameSafe(HodgePS), bPawnExtReady ? 1 : 0);
 		return HodgePS && bPawnExtReady;
 	}
 
@@ -260,7 +275,8 @@ void UHodgeHeroComponent::HandleChangeInitState(UGameFrameworkComponentManager* 
 		// Pawn 和 PlayerState 都必须有效。
 		if (!ensure(Pawn && HodgePS))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("[HODGE-DBG] Hero DataInitialized Pawn=%s PS=%s"), *GetNameSafe(Pawn), *GetNameSafe(HodgePS));
+			UE_LOG(LogTemp, Warning, TEXT("[HODGE-DBG] Hero DataInitialized Pawn=%s PS=%s"), *GetNameSafe(Pawn),
+			       *GetNameSafe(HodgePS));
 			return;
 		}
 
@@ -301,8 +317,9 @@ void UHodgeHeroComponent::HandleChangeInitState(UGameFrameworkComponentManager* 
 			if (UHodgeCameraComponent* CameraComponent = UHodgeCameraComponent::FindCameraComponent(Pawn))
 			{
 				// 让 CameraComponent 通过 HeroComponent 动态决定当前 CameraMode。
-				CameraComponent->DetermineCameraModeDelegate.BindUObject(this, &ThisClass::DetermineCameraMode); 
-				UE_LOG(LogTemp, Warning, TEXT("[HODGE-DBG] Hero bound camera delegate PawnData=%s CamComp=%s"), *GetNameSafe(PawnData), *GetNameSafe(CameraComponent));
+				CameraComponent->DetermineCameraModeDelegate.BindUObject(this, &ThisClass::DetermineCameraMode);
+				UE_LOG(LogTemp, Warning, TEXT("[HODGE-DBG] Hero bound camera delegate PawnData=%s CamComp=%s"),
+				       *GetNameSafe(PawnData), *GetNameSafe(CameraComponent));
 			}
 		}
 	}
@@ -336,7 +353,9 @@ void UHodgeHeroComponent::CheckDefaultInitialization()
 	// This will try to progress from spawned (which is only set in BeginPlay) through the data initialization stages until it gets to gameplay ready
 	// [HODGE-DBG] 临时诊断：记录每次尝试推进 Hero 初始化（定位后删除）。
 	static int32 HodgeDbgInitCount = 0;
-	UE_LOG(LogTemp, Warning, TEXT("[HODGE-DBG] Hero CheckDefaultInitialization #%d Pawn=%s PS=%s InputComp=%d"), ++HodgeDbgInitCount, *GetNameSafe(GetPawn<APawn>()), *GetNameSafe(GetPlayerState<AHodgePlayerState>()), (GetPawn<APawn>() && GetPawn<APawn>()->InputComponent) ? 1 : 0);
+	UE_LOG(LogTemp, Warning, TEXT("[HODGE-DBG] Hero CheckDefaultInitialization #%d Pawn=%s PS=%s InputComp=%d"),
+	       ++HodgeDbgInitCount, *GetNameSafe(GetPawn<APawn>()), *GetNameSafe(GetPlayerState<AHodgePlayerState>()),
+	       (GetPawn<APawn>() && GetPawn<APawn>()->InputComponent) ? 1 : 0);
 
 	// 从当前状态开始持续尝试向后推进，直到某个阶段的前置条件尚未满足。
 	ContinueInitStateChain(StateChain);
@@ -347,7 +366,9 @@ void UHodgeHeroComponent::BeginPlay()
 {
 	// 先执行父类 BeginPlay。
 	Super::BeginPlay();
-	UE_LOG(LogTemp, Warning, TEXT("[HODGE-DBG] Hero BeginPlay Pawn=%s PC=%s LocallyControlled=%d"), *GetNameSafe(GetPawn<APawn>()), *GetNameSafe(GetController<AController>()), (GetPawn<APawn>() && GetPawn<APawn>()->IsLocallyControlled()) ? 1 : 0);
+	UE_LOG(LogTemp, Warning, TEXT("[HODGE-DBG] Hero BeginPlay Pawn=%s PC=%s LocallyControlled=%d"),
+	       *GetNameSafe(GetPawn<APawn>()), *GetNameSafe(GetController<AController>()),
+	       (GetPawn<APawn>() && GetPawn<APawn>()->IsLocallyControlled()) ? 1 : 0);
 
 	// Listen for when the pawn extension component changes init state
 	// 监听 PawnExtensionComponent 的 InitState 变化。
@@ -571,8 +592,8 @@ void UHodgeHeroComponent::InitializePlayerInput(UInputComponent* PlayerInputComp
 					                          /*bLogIfNotFound=*/ false);
 
 					// 将 Crouch InputTag 绑定到蹲伏处理函数。
-					HodgeIC->BindNativeAction(InputConfig, HodgeGameplayTags::InputTag_Crouch, ETriggerEvent::Triggered,
-					                          this, &ThisClass::Input_Crouch, /*bLogIfNotFound=*/ false);
+					//HodgeIC->BindNativeAction(InputConfig, HodgeGameplayTags::InputTag_Crouch, ETriggerEvent::Triggered,
+					//                          this, &ThisClass::Input_Crouch, /*bLogIfNotFound=*/ false);
 
 					// 将 AutoRun InputTag 绑定到自动奔跑处理函数。
 					HodgeIC->BindNativeAction(InputConfig, HodgeGameplayTags::InputTag_AutoRun,
@@ -801,7 +822,8 @@ void UHodgeHeroComponent::Input_Move(const FInputActionValue& InputActionValue)
 	SetMoveIntent(InputActionValue.Get<FVector2D>());
 
 	// 保留原始意图供取消窗口消费，攻击期间不向移动组件提交行走输入。
-	if (const UHodgePawnExtensionComponent* Extension = UHodgePawnExtensionComponent::FindPawnExtensionComponent(GetPawn<APawn>()))
+	if (const UHodgePawnExtensionComponent* Extension = UHodgePawnExtensionComponent::FindPawnExtensionComponent(
+		GetPawn<APawn>()))
 	{
 		if (const UHodgeAbilitySystemComponent* ASC = Extension->GetHodgeAbilitySystemComponent())
 		{
