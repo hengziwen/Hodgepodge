@@ -19,8 +19,8 @@ class UHodgeAbilitySystemComponent;
 // 项目自定义 PlayerState 前置声明。
 class AHodgePlayerState;
 
-// 项目自定义 HUD 基类前置声明。
-class AHodgeHUDBase;
+// 项目自定义 HUD 前置声明。
+class AHodgeHUD;
 
 /**
  * Hodge 主 PlayerController。
@@ -47,7 +47,7 @@ public:
 
 	// 获取当前 PlayerController 对应的 Hodge HUD。
 	UFUNCTION(BlueprintCallable, Category = "Hodge|PlayerController")
-	AHodgeHUDBase* GetHodgeHUD() const;
+	AHodgeHUD* GetHodgeHUD() const;
 
 	// Call from game state logic to start recording an automatic client replay if ShouldRecordClientReplay returns true
 	// 由 GameState 等游戏逻辑调用；当 ShouldRecordClientReplay 返回 true 时尝试启动客户端自动 Replay 录制。

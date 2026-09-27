@@ -39,7 +39,7 @@ PURPOSE = {
     'HodgePlayerState': '玩家 ASC、HealthSet、PawnData、阵营/标签栈等持有者；SetPawnData 在权威端授予 AbilitySets（未记录句柄）。',
     'HodgePlayerControllerBase': '控制器和 Pawn 生命周期桥接到 LocalPlayer 委托；具体输入消费在派生 HodgePlayerController。',
     'HodgeLocalPlayerBase': '本地玩家对象及控制器、PlayerState、Pawn 就绪事件桥。',
-    'HodgeHUDBase': '项目 HUD 基类扩展入口，不代表 CommonUI 已完成。',
+    'HodgeHUD': '项目 HUD 类：GameFrameworkComponent 接收器注册与 GAS 调试 Actor 列表；不代表 CommonUI 已完成。',
     'HodgeCharacterBase': '原生 Character 基础、替换移动组件；Receiver 在 PreInit 注册、EndPlay 成对移除。',
     'HodgeCombatCharacter': 'PawnExtension、相机、ASC 查询、移动标签、复制与死亡占位逻辑。',
     'HodgeHeroCharacter': '构造挂载 HeroComponent；PossessedBy/OnRep_PlayerState 只调用 Super，ASC 接入已收敛。',

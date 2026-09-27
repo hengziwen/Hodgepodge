@@ -33,8 +33,9 @@
 
 定义候选（多行签名仅展示首行）：
 
-- L46: `EDataValidationResult UHodgeAbilityTimeline::IsDataValid(FDataValidationContext& Context) const`
-- L321: `void UHodgeAbilityTimeline::PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent)`
+- L26: `bool UHodgeAbilityTimeline::ValidateForPlayback(TArray<FText>& OutErrors) const`
+- L214: `EDataValidationResult UHodgeAbilityTimeline::IsDataValid(FDataValidationContext& Context) const`
+- L323: `void UHodgeAbilityTimeline::PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent)`
 
 ## HodgeAssetManager.cpp
 
@@ -299,11 +300,12 @@ PawnClass、AbilitySets、TagRelationshipMapping、InputConfig、DefaultCameraMo
  160: 	float Duration = 1.0f;
  164: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(TitleProperty=EventID))
  165: 	TArray<FHodgeTimelineEvent> Events;
- 167: #if WITH_EDITOR
- 170: 	virtual EDataValidationResult IsDataValid(class FDataValidationContext& Context) const override;
- 173: 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent) override;
- 175: #endif
- 176: };
+ 168: 	bool ValidateForPlayback(TArray<FText>& OutErrors) const;
+ 170: #if WITH_EDITOR
+ 173: 	virtual EDataValidationResult IsDataValid(class FDataValidationContext& Context) const override;
+ 176: 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent) override;
+ 178: #endif
+ 179: };
 ```
 
 ## HodgeAssetManager.h

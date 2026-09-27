@@ -6,70 +6,125 @@
 
 ## 生成信息
 
-- UTC：2026-09-22T01:52:07.722014+00:00
-- Git HEAD：`993a9eb8bef49afc7c78b5081e681883de4c401a`
-- 源文件（h/cpp/cs）：152
+- UTC：2026-09-27T14:09:53.862926+00:00
+- Git HEAD：`ed12e62ce4b25cac7d1bbec1c4b407461dd29a9b`
+- 源文件（h/cpp/cs）：244
 - Content/Main 文件：44
-- 原生标签注册条目：162
-- 漂移跟踪文件：212
+- 原生标签注册条目：186
+- 漂移跟踪文件：304
 
 ## 生成时已有的受 Git 跟踪修改
 
 ```text
-M Content/CodexText/Anim/Grounded/Run_B.uasset
- M Content/CodexText/Anim/Grounded/Run_F.uasset
- M Content/CodexText/Anim/Grounded/Run_LB.uasset
- M Content/CodexText/Anim/Grounded/Run_LF.uasset
- M Content/CodexText/Anim/Grounded/Run_RB.uasset
- M Content/CodexText/Anim/Grounded/Run_RF.uasset
- M Content/CodexText/Anim/Grounded/Stand1.uasset
- M Content/CodexText/Anim/Grounded/Stand1_Turn_L90D.uasset
- M Content/CodexText/Anim/Grounded/Stand1_Turn_R90D.uasset
- M Content/CodexText/Anim/Grounded/Stop_Run_L.uasset
- M Content/CodexText/Anim/Grounded/Stop_Run_R.uasset
- M Content/CodexText/Anim/Grounded/Stop_Walk_L.uasset
- M Content/CodexText/Anim/Grounded/Stop_Walk_R.uasset
- M Content/CodexText/Anim/Grounded/Walk_B.uasset
- M Content/CodexText/Anim/Grounded/Walk_F.uasset
- M Content/CodexText/Anim/Grounded/Walk_LB.uasset
- M Content/CodexText/Anim/Grounded/Walk_LF.uasset
- M Content/CodexText/Anim/Grounded/Walk_RB.uasset
- M Content/CodexText/Anim/Grounded/Walk_RF.uasset
- M Content/CodexText/AnimInstance/ALS/ABP_ALS_Grounded.uasset
- M Content/CodexText/Locomotion/BP_LocomotionHero.uasset
- M Content/CodexText/Locomotion/L_LocomotionLab.umap
- M Content/CodexText/Timeline/DA_TimelineTest.uasset
- M Content/CodexText/Timeline/GA_TimelineTest.uasset
- M Docs/KnowledgeBase/01-project-map.md
- M Docs/KnowledgeBase/07-gas.md
- M Docs/KnowledgeBase/09-camera-animation.md
- M Docs/KnowledgeBase/12-integration-backlog.md
- M Docs/KnowledgeBase/13-build-config.md
- M Docs/KnowledgeBase/14-troubleshooting.md
- M Docs/KnowledgeBase/16-validation.md
- M Docs/KnowledgeBase/17-maintenance-glossary.md
- M Docs/KnowledgeBase/18-faq.md
- M Docs/KnowledgeBase/20-code-review.md
- M Docs/KnowledgeBase/README.md
+M Config/DefaultEngine.ini
+ M Docs/Design/lyra-ui-migration-plan.md
  M Docs/KnowledgeBase/Reference/README.md
  M Docs/KnowledgeBase/Reference/assets.md
+ M Docs/KnowledgeBase/Reference/config.md
  M Docs/KnowledgeBase/Reference/gameplay-tags.md
  M Docs/KnowledgeBase/Reference/snapshot.json
  M Docs/KnowledgeBase/Reference/source-abilitysystem.md
+ M Docs/KnowledgeBase/Reference/source-character.md
  M Docs/KnowledgeBase/Reference/source-codextext.md
  M Docs/KnowledgeBase/Reference/source-component.md
+ M Docs/KnowledgeBase/Reference/source-core.md
+ M Docs/KnowledgeBase/Reference/source-data.md
  M Docs/KnowledgeBase/Reference/source-index.md
  M Docs/KnowledgeBase/tools/kb.py
+ M Docs/README.md
+ M README.md
  M Source/Hodgepodge/Hodgepodge.Build.cs
- M Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp
- M Source/Hodgepodge/Private/CodexText/HodgeGroundedAuthoring.cpp
- M Source/Hodgepodge/Private/CodexText/HodgeGroundedLocomotion.cpp
- M Source/Hodgepodge/Private/CodexText/HodgeLocomotionLab.cpp
- M Source/Hodgepodge/Private/Component/HodgeHeroComponent.cpp
- M Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h
- M Source/Hodgepodge/Public/CodexText/HodgeGroundedLocomotion.h
- M Source/Hodgepodge/Public/Component/HodgeHeroComponent.h
- M Tools/LocomotionLab/README.md
+ M Source/Hodgepodge/Private/AbilitySystem/AttributeSet/HodgeHealthSet.cpp
+ M Source/Hodgepodge/Private/Component/HodgeHealthComponent.cpp
+ M Source/Hodgepodge/Private/Core/GameMode/HodgeGameModeBase.cpp
+D  Source/Hodgepodge/Private/Core/HUD/HodgeHUDBase.cpp
+ M Source/Hodgepodge/Private/Core/PlayerController/HodgePlayerController.cpp
+AM Source/Hodgepodge/Private/UI/Extension/UIExtensionPointWidget.cpp
+AM Source/Hodgepodge/Private/UI/Extension/UIExtensionSystem.cpp
+ M Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeHealthSet.h
+AM Source/Hodgepodge/Public/Core/HUD/HodgeHUD.h
+D  Source/Hodgepodge/Public/Core/HUD/HodgeHUDBase.h
+ M Source/Hodgepodge/Public/Core/PlayerController/HodgePlayerController.h
+AD Source/Hodgepodge/Public/UI/Basic/MaterialProgressBar.cpp
+AM Source/Hodgepodge/Public/UI/Basic/MaterialProgressBar.h
+AM Source/Hodgepodge/Public/UI/Common/HodgeBoundActionButton.h
+AM Source/Hodgepodge/Public/UI/Common/HodgeListView.h
+AM Source/Hodgepodge/Public/UI/Common/HodgeTabButtonBase.h
+AM Source/Hodgepodge/Public/UI/Common/HodgeTabListWidgetBase.h
+AM Source/Hodgepodge/Public/UI/Common/HodgeWidgetFactory.h
+AM Source/Hodgepodge/Public/UI/Common/HodgeWidgetFactory_Class.h
+AD Source/Hodgepodge/Public/UI/Common/LyraBoundActionButton.cpp
+AD Source/Hodgepodge/Public/UI/Common/LyraListView.cpp
+AD Source/Hodgepodge/Public/UI/Common/LyraTabButtonBase.cpp
+AD Source/Hodgepodge/Public/UI/Common/LyraTabListWidgetBase.cpp
+AD Source/Hodgepodge/Public/UI/Common/LyraWidgetFactory.cpp
+AD Source/Hodgepodge/Public/UI/Common/LyraWidgetFactory_Class.cpp
+AM Source/Hodgepodge/Public/UI/Extension/UIExtensionPointWidget.h
+AM Source/Hodgepodge/Public/UI/Extension/UIExtensionSystem.h
+AM Source/Hodgepodge/Public/UI/Foundation/HodgeActionWidget.h
+AM Source/Hodgepodge/Public/UI/Foundation/HodgeButtonBase.h
+AM Source/Hodgepodge/Public/UI/Foundation/HodgeConfirmationScreen.h
+AM Source/Hodgepodge/Public/UI/Foundation/HodgeControllerDisconnectedScreen.h
+AM Source/Hodgepodge/Public/UI/Foundation/HodgeLoadingScreenSubsystem.h
+AD Source/Hodgepodge/Public/UI/Foundation/LyraActionWidget.cpp
+AD Source/Hodgepodge/Public/UI/Foundation/LyraButtonBase.cpp
+AD Source/Hodgepodge/Public/UI/Foundation/LyraConfirmationScreen.cpp
+AD Source/Hodgepodge/Public/UI/Foundation/LyraControllerDisconnectedScreen.cpp
+AD Source/Hodgepodge/Public/UI/Foundation/LyraLoadingScreenSubsystem.cpp
+AD Source/Hodgepodge/Public/UI/Frontend/ApplyFrontendPerfSettingsAction.cpp
+A  Source/Hodgepodge/Public/UI/Frontend/ApplyFrontendPerfSettingsAction.h
+AM Source/Hodgepodge/Public/UI/Frontend/HodgeFrontendStateComponent.h
+AM Source/Hodgepodge/Public/UI/Frontend/HodgeLobbyBackground.h
+AD Source/Hodgepodge/Public/UI/Frontend/LyraFrontendStateComponent.cpp
+AD Source/Hodgepodge/Public/UI/Frontend/LyraLobbyBackground.cpp
+AM Source/Hodgepodge/Public/UI/HodgeHUDLayout.h
+AM Source/Hodgepodge/Public/UI/HodgeJoystickWidget.h
+AM Source/Hodgepodge/Public/UI/HodgeSettingScreen.h
+AM Source/Hodgepodge/Public/UI/HodgeSimulatedInputWidget.h
+AM Source/Hodgepodge/Public/UI/HodgeTaggedWidget.h
+AM Source/Hodgepodge/Public/UI/HodgeTouchRegion.h
+AD Source/Hodgepodge/Public/UI/HogdeActivatableWidget.h
+AM Source/Hodgepodge/Public/UI/IndicatorSystem/HodgeIndicatorManagerComponent.h
+AM Source/Hodgepodge/Public/UI/IndicatorSystem/IActorIndicatorWidget.h
+AD Source/Hodgepodge/Public/UI/IndicatorSystem/IndicatorDescriptor.cpp
+AM Source/Hodgepodge/Public/UI/IndicatorSystem/IndicatorDescriptor.h
+AD Source/Hodgepodge/Public/UI/IndicatorSystem/IndicatorLayer.cpp
+AM Source/Hodgepodge/Public/UI/IndicatorSystem/IndicatorLayer.h
+AD Source/Hodgepodge/Public/UI/IndicatorSystem/IndicatorLibrary.cpp
+AM Source/Hodgepodge/Public/UI/IndicatorSystem/IndicatorLibrary.h
+AD Source/Hodgepodge/Public/UI/IndicatorSystem/LyraIndicatorManagerComponent.cpp
+AD Source/Hodgepodge/Public/UI/IndicatorSystem/SActorCanvas.cpp
+AM Source/Hodgepodge/Public/UI/IndicatorSystem/SActorCanvas.h
+AD Source/Hodgepodge/Public/UI/LyraActivatableWidget.cpp
+AD Source/Hodgepodge/Public/UI/LyraGameViewportClient.cpp
+AD Source/Hodgepodge/Public/UI/LyraGameViewportClient.h
+AD Source/Hodgepodge/Public/UI/LyraHUD.cpp
+AD Source/Hodgepodge/Public/UI/LyraHUDLayout.cpp
+AD Source/Hodgepodge/Public/UI/LyraJoystickWidget.cpp
+AD Source/Hodgepodge/Public/UI/LyraSettingScreen.cpp
+AD Source/Hodgepodge/Public/UI/LyraSimulatedInputWidget.cpp
+AD Source/Hodgepodge/Public/UI/LyraTaggedWidget.cpp
+AD Source/Hodgepodge/Public/UI/LyraTouchRegion.cpp
+AM Source/Hodgepodge/Public/UI/PerformanceStats/HodgePerfStatContainerBase.h
+AD Source/Hodgepodge/Public/UI/PerformanceStats/LyraPerfStatContainerBase.cpp
+AD Source/Hodgepodge/Public/UI/PerformanceStats/LyraPerfStatWidgetBase.cpp
+AD Source/Hodgepodge/Public/UI/PerformanceStats/LyraPerfStatWidgetBase.h
+AM Source/Hodgepodge/Public/UI/Subsystem/HodgeUIManagerSubsystem.h
+AM Source/Hodgepodge/Public/UI/Subsystem/HodgeUIMessaging.h
+AD Source/Hodgepodge/Public/UI/Subsystem/LyraUIManagerSubsystem.cpp
+AD Source/Hodgepodge/Public/UI/Subsystem/LyraUIMessaging.cpp
+AD Source/Hodgepodge/Public/UI/Weapons/CircumferenceMarkerWidget.cpp
+A  Source/Hodgepodge/Public/UI/Weapons/CircumferenceMarkerWidget.h
+AD Source/Hodgepodge/Public/UI/Weapons/HitMarkerConfirmationWidget.cpp
+AM Source/Hodgepodge/Public/UI/Weapons/HitMarkerConfirmationWidget.h
+AM Source/Hodgepodge/Public/UI/Weapons/HodgeReticleWidgetBase.h
+AM Source/Hodgepodge/Public/UI/Weapons/HodgeWeaponUserInterface.h
+AD Source/Hodgepodge/Public/UI/Weapons/LyraReticleWidgetBase.cpp
+AD Source/Hodgepodge/Public/UI/Weapons/LyraWeaponUserInterface.cpp
+AD Source/Hodgepodge/Public/UI/Weapons/SCircumferenceMarkerWidget.cpp
+A  Source/Hodgepodge/Public/UI/Weapons/SCircumferenceMarkerWidget.h
+AD Source/Hodgepodge/Public/UI/Weapons/SHitMarkerConfirmationWidget.cpp
+AM Source/Hodgepodge/Public/UI/Weapons/SHitMarkerConfirmationWidget.h
 ```
 
 这里只记录已跟踪路径状态，未跟踪知识库自身不包含在此列表。HEAD 不足以还原 dirty 工作区；[snapshot.json](snapshot.json) 保存扫描范围的 SHA-256。

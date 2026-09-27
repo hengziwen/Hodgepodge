@@ -33,9 +33,6 @@ HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_DamageSelfDestruct);
 // 掉出世界造成的伤害 GameplayTag。
 HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_FellOutOfWorld);
 
-// Hodge 项目的伤害消息 GameplayTag，用于标识或广播伤害相关 GameplayMessage。
-HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Hodge_Damage_Message);
-
 // GameplayEffect 修改 Attribute 前后回调时携带的数据结构。
 struct FGameplayEffectModCallbackData;
 

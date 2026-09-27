@@ -925,7 +925,7 @@ AHodgeCombatCharacter::SetupPlayerInputComponent()
 | `AHodgePlayerController` 🆕 | `Core/PlayerController/` | **主 PlayerController**（Concrete 层），相机 / 观战 / Replay / `ProcessAbilityInput`，见 [§6.15](#615-playercontroller) |
 | `AHodgeReplayPlayerController` 🆕 | `Core/PlayerController/` | Replay 专用 PC：跟随 `FollowedPlayerState`、平滑观察视角 |
 | `UHodgeLocalPlayerBase` | `Core/LocalPlayer/` | 三个 `CallAndRegister_On*Set` 委托 + `bIsPlayerViewEnabled` |
-| `AHodgeHUDBase` | `Core/HUD/` | HUD 占位 |
+| `AHodgeHUD` | `Core/HUD/` | HUD 类：注册 GameFrameworkComponent 接收器，并把带 ASC 的 Actor 汇总进 GAS 调试列表 |
 | `UHodgeActorComponentBase` | `Component/` | 组件基类，默认**开 Tick** |
 | `UHodgeCombatComponentBase` | `Component/` | 战斗组件，默认**关 Tick**；空实现 |
 | `UHodgeInteractionComponentBase` | `Component/` | 交互组件；空实现 |

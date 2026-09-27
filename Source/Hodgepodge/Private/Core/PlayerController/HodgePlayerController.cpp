@@ -16,8 +16,8 @@
 // 项目自定义 PlayerCameraManager。
 #include "Camera/HodgePlayerCameraManager.h"
 
-// 项目 HUD 基类。
-#include "Core/HUD/HodgeHUDBase.h"
+// 项目 HUD 类。
+#include "Core/HUD/HodgeHUD.h"
 
 // 项目自定义 AbilitySystemComponent。
 #include "AbilitySystem/HodgeAbilitySystemComponent.h"
@@ -257,10 +257,10 @@ UHodgeAbilitySystemComponent* AHodgePlayerController::GetHodgeAbilitySystemCompo
 }
 
 // 获取当前 Controller 使用的 Hodge HUD。
-AHodgeHUDBase* AHodgePlayerController::GetHodgeHUD() const
+AHodgeHUD* AHodgePlayerController::GetHodgeHUD() const
 {
-	// 允许 HUD 为空，但存在时要求类型必须为 AHodgeHUDBase。
-	return CastChecked<AHodgeHUDBase>(GetHUD(), ECastCheckedType::NullAllowed);
+	// 允许 HUD 为空，但存在时要求类型必须为 AHodgeHUD。
+	return CastChecked<AHodgeHUD>(GetHUD(), ECastCheckedType::NullAllowed);
 }
 
 // 尝试开始录制客户端 Replay。

@@ -29,9 +29,6 @@ UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_DamageSelfDestruct, "Gameplay.Damage.SelfDes
 // 定义掉出世界相关伤害 GameplayTag。
 UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_FellOutOfWorld, "Gameplay.Damage.FellOutOfWorld");
 
-// 定义 Hodge 项目统一伤害消息 GameplayTag。
-UE_DEFINE_GAMEPLAY_TAG(TAG_Hodge_Damage_Message, "Hodge.Damage.Message");
-
 // 初始化生命属性集默认值。
 UHodgeHealthSet::UHodgeHealthSet()
 // 默认当前生命值为 100。
@@ -220,7 +217,7 @@ void UHodgeHealthSet::PostGameplayEffectExecute(const FGameplayEffectModCallback
 		{
 			// 原设计：构造统一的伤害消息，携带伤害来源、目标、Tag 和伤害量。
 			// FHodgeVerbMessage Message;
-			// Message.Verb = TAG_Hodge_Damage_Message;
+			// Message.Verb = HodgeGameplayTags::Hodge_Damage_Taken_Message;
 			// Message.Instigator = Data.EffectSpec.GetEffectContext().GetEffectCauser();
 			// Message.InstigatorTags = *Data.EffectSpec.CapturedSourceTags.GetAggregatedTags();
 			// Message.Target = GetOwningActor();

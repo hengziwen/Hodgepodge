@@ -7,7 +7,7 @@
 #include "Component/HodgePawnExtensionComponent.h"
 #include "Core/GameState/HodgeGameState.h"
 #include "Core/GameState/HodgeGameStateBase.h"
-#include "Core/HUD/HodgeHUDBase.h"
+#include "Core/HUD/HodgeHUD.h"
 #include "Core/PlayerController/HodgePlayerController.h"
 #include "Core/PlayState/HodgePlayerState.h"
 #include "Data/HodgeAssetManager.h"
@@ -40,7 +40,7 @@ AHodgeGameModeBase::AHodgeGameModeBase(const FObjectInitializer& ObjectInitializ
 	DefaultPawnClass = AHodgeCharacterBase::StaticClass();
 
 	// 指定当前游戏使用的 HUD 类。
-	HUDClass = AHodgeHUDBase::StaticClass();
+	HUDClass = AHodgeHUD::StaticClass();
 }
 
 const UHodgePawnData* AHodgeGameModeBase::GetPawnDataForController(const AController* InController) const

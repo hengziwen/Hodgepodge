@@ -270,7 +270,7 @@ bool ILoadingProcessInterface::ShouldShowLoadingScreen(UObject* TestObject, FStr
 |---|---|---|---|
 | `UHodgeLocalPlayerBase` | `: public ULocalPlayer`（F11），已有 Lyra 同款三组委托 + `CallAndRegister_*`，`GetRootUILayout()` 注释 | `: public UCommonLocalPlayer`，实现 `GetRootUILayout()` | **反射布局变更**，必须关编辑器常规构建；委托成员可能与基类重复，需逐一比对 |
 | `UHodgeGameInstanceBase` | `: public UGameInstance`，覆写 `Init` / `Shutdown`（F12） | `: public UCommonGameInstance` | 同上；`UCommonGameInstance` 已覆写 `Init` / `AddLocalPlayer` / `RemoveLocalPlayer` / `ReturnToMainMenu`，需确认调用 `Super` |
-| `AHodgeHUDBase` | 空壳（`Public/Core/HUD/HodgeHUDBase.h:31`） | 本阶段不改，但它是 HUD 可见性链的一环 | — |
+| `AHodgeHUD` | Lyra `ALyraHUD` 移植（`Public/Core/HUD/HodgeHUD.h:23`）：注册 GameFrameworkComponent 接收器 + GAS 调试 Actor 列表 | 本阶段不改，但它是 HUD 可见性链的一环 | — |
 | `DefaultEngine.ini` | 无 `GameViewportClientClassName`（F13） | 若要 Lyra 的十字准星/光标链，需补该配置并实现 ViewportClient | 属于阶段③之外的独立项，**建议本阶段不做**，只登记 |
 
 ### 5.2 为什么这一步不能省
@@ -348,6 +348,443 @@ bool ILoadingProcessInterface::ShouldShowLoadingScreen(UObject* TestObject, FStr
 
 ---
 
+## 10. 待复活文件清单（2026-09-26 实测）
+
+### 10.1 为什么有这份清单
+
+`Source/Hodgepodge/Public/UI/**` + `Private/UI/**` 共 **79 个文件**是从 `LyraStarterGame\Source\LyraGame\UI\**` 按"改文件名 + 改类名 + CoreRedirect"整体搬入的。但 Lyra 的 UI 不是自包含的：它依赖 5 个**本项目未引入**的插件。为了让其余文件先编过，**30 个文件被整体注释**（`// ` 前缀 + 文件头 `[UI-MIGRATION-PENDING]` 标记块）。
+
+**约定：复活时必须 `.h` 与 `.cpp` 成对恢复**。只恢复一半会导致 UCLASS 的构造函数/vtable 缺定义，报 `LNK2019`。
+
+### 10.2 分组清单
+
+**A 组 — 依赖 `CommonGame` 插件（12 文件）**
+
+| 文件 | 缺什么 | 复活前置 |
+|---|---|---|
+| `Subsystem/HodgeUIManagerSubsystem.h/.cpp` | 父类 `UGameUIManagerSubsystem` | 移植 CommonGame：`GameUIManagerSubsystem` + `GameUIPolicy` |
+| `Subsystem/HodgeUIMessaging.h/.cpp` | 父类 `UCommonMessagingSubsystem` | 移植 CommonGame：`Messaging/CommonMessagingSubsystem` |
+| `Foundation/HodgeConfirmationScreen.h/.cpp` | 父类 `UCommonGameDialog` | 移植 CommonGame：`Messaging/CommonGameDialog` + `CommonGameDialogDescriptor` |
+| `HodgeGameViewportClient.h/.cpp` | 父类 `UCommonGameViewportClient` | 移植 CommonGame 的 ViewportClient；并补 `GameViewportClientClassName` |
+| `HodgeHUDLayout.h/.cpp` | `UCommonUIExtensions` 的 3 个静态函数 | 移植 CommonGame：`CommonUIExtensions`（`PushContentToLayer_ForPlayer` / `PushStreamedContentToLayer_ForPlayer` / `PopContentFromLayer`） |
+| `Frontend/HodgeFrontendStateComponent.h/.cpp` | `CommonUser`（`UCommonUserSubsystem` / `ECommonUser*` / `FCommonUserTags`）+ `ControlFlows`（`FControlFlow`）+ `PrimaryGameLayout` / `UCommonLocalPlayer` | 依赖最多，**建议最后复活**；单机流程可考虑改写成不依赖 CommonUser 的版本 |
+
+**B 组 — 依赖 `GameSettings` 插件（2 文件）**
+
+| 文件 | 缺什么 | 复活前置 |
+|---|---|---|
+| `HodgeSettingScreen.h/.cpp` | 父类 `UGameSettingScreen`；`CreateRegistry()` 返回 `UGameSettingRegistry*` | 移植 GameSettings 插件（59 文件 / 4336 行）。**这是整个迁移里最重的依赖，与"学 UI 架构"无关** |
+
+**C 组 — 依赖 `AsyncMixin` 插件（4 文件）→ ✅ 已于 2026-09-26 复活，不再注释**
+
+| 文件 | 原缺什么 | 复活方式 |
+|---|---|---|
+| `IndicatorSystem/SActorCanvas.h/.cpp` | `#include "AsyncMixin.h"` + 基类 `FAsyncMixin` | 不引入 AsyncMixin 插件：去掉 `FAsyncMixin` 基类，异步加载改用 `FStreamableManager::RequestAsyncLoad`。详见 §11 |
+| `IndicatorSystem/IndicatorLayer.h/.cpp` | 仅因 `IndicatorLayer.cpp:36` 用 `SNew(SActorCanvas, ...)` 被连带 | 随 `SActorCanvas` 一起复原，无独立依赖 |
+
+**D 组 — 依赖未搬迁的玩法系统（8 文件）**
+
+| 文件 | 缺什么 | 复活前置 |
+|---|---|---|
+| `Weapons/HodgeReticleWidgetBase.h/.cpp` | `Weapons/HodgeWeaponInstance.h`、`Weapons/HodgeRangedWeaponInstance.h`、`Inventory/HodgeInventoryItemInstance.h` | 先移植装备 / 武器 / 库存系统（项目当前无 `Equipment/`、`Weapons/`、`Inventory/` 目录） |
+| `Weapons/HodgeWeaponUserInterface.h/.cpp` | `Equipment/HodgeEquipmentManagerComponent.h`、`Weapons/HodgeWeaponInstance.h` | 同上 |
+| `Weapons/SHitMarkerConfirmationWidget.h/.cpp` | `Weapons/HodgeWeaponStateComponent.h` | 同上 |
+| `Weapons/HitMarkerConfirmationWidget.h/.cpp` | 仅因 `HitMarkerConfirmationWidget.cpp:35` 用 `SNew(SHitMarkerConfirmationWidget, ...)` 被连带 | 随 `SHitMarkerConfirmationWidget` 一起复活 |
+| `PerformanceStats/HodgePerfStatContainerBase.h/.cpp`、`HodgePerfStatWidgetBase.h/.cpp` | `Performance/HodgePerformanceStatTypes.h`（`EHodgeStatDisplayMode` / `EHodgeDisplayablePerformanceStat`）+ `UHodgePerformanceStatSubsystem` | 补 `Performance/` 目录（Lyra 侧为 `LyraPerformanceStatTypes.h` + `LyraPerformanceStatSubsystem`），**约 2~3 个文件，成本低** |
+
+### 10.3 本轮已做的非注释改动
+
+| 文件 | 改动 | 原因 |
+|---|---|---|
+| `Private/UI/Frontend/ApplyFrontendPerfSettingsAction.cpp:3` | `"Ui/Frontend/..."` → `"UI/Frontend/..."` | 大小写：Windows 能过，Linux/Android 打包会挂 |
+| `Private/UI/Common/HodgeListView.cpp:3` | `"Ui/Common/..."` → `"UI/Common/..."` | 同上 |
+| `Hodgepodge.Build.cs` | 私有依赖新增 `ApplicationCore` | `IPlatformInputDeviceMapper::Get()` 定义在 `ApplicationCore`（`GenericPlatform/GenericPlatformInputDeviceMapper.h`），`HodgeControllerDisconnectedScreen.cpp:53,86` 使用 |
+
+### 10.4 复活时必须一并修的已知问题（当前埋在注释体内）
+
+| 文件 | 问题 | 修法 |
+|---|---|---|
+| `Public/UI/HodgeHUDLayout.h`（原第 5 行） | `#include "HogdeActivatableWidget.h"` —— **文件名拼错** | 改为 `"UI/HodgeActivatableWidget.h"` |
+| `Public/UI/Frontend/HodgeFrontendStateComponent.h`（原第 7 行） | `#include "LoadingProcessInterface.h"` —— 项目的在 `Interface/` 子目录，本模块 include 根是 `Public/` | 改为 `"Interface/LoadingProcessInterface.h"` |
+| `Public/UI/PerformanceStats/HodgePerfStatContainerBase.h`（原第 6 行） | `#include "Performance/HodgePerformanceStatTypes.h"` —— 该文件**从未被搬入** | 补 `Performance/` 目录后再复活 |
+
+### 10.5 本轮构建验证结果
+
+| 项 | 命令 | 结果 |
+|---|---|---|
+| Editor 构建 | `Build.bat HodgepodgeEditor Win64 Development -Project=...\Hodgepodge.uproject -WaitMutex -architecture=x64` | **EXIT=0**（UHT + 编译 + 链接全部通过） |
+| Game 构建 | `Build.bat Hodgepodge Win64 Development -Project=...\Hodgepodge.uproject -WaitMutex -architecture=x64` | **EXIT=0** |
+| C 组复活后（Editor） | 同上 Editor 命令 | **EXIT=0** |
+| C 组复活后（Game） | 同上 Game 命令 | **EXIT=0** |
+
+复活 C 组 4 个文件后：**已注释 26 个 / 在编 53 个**（总计 79）。
+
+**未验证 / 不得声称**：未打开编辑器、未做蓝图编译、未 PIE。30 个已注释文件里的蓝图资产（如 `W_OverallUILayout`、`B_LyraUIPolicy`）现在会报"缺失父类"——这是预期的，因为类已不在构建内。**"C++ 编译通过"不等于"蓝图或 UI 可用"**。
+
+---
+
+## 11. SActorCanvas 复活记录（2026-09-26）
+
+### 11.1 为什么它能第一个复活
+
+它是 30 个待复活文件里**唯一不需要引入新插件**的：阻塞点只有 `FAsyncMixin` 一个基类，而它的异步加载语义（"加载一个 `TSoftClassPtr<UUserWidget>`，完成后创建控件并挂到 Canvas"）用引擎自带的 `FStreamableManager` 就能等价表达。`IndicatorLayer` 只是被它连带，随之一起复原。
+
+### 11.2 相对上游的改动
+
+| 位置 | 上游（Lyra） | 本项目 |
+|---|---|---|
+| `SActorCanvas.h` include | `#include "AsyncMixin.h"` | **删除**，改为前向声明 `struct FStreamableHandle;`（注意是 `struct`，写成 `class` 会触发 C4099） |
+| 类声明 | `class SActorCanvas : public SPanel, public FAsyncMixin, public FGCObject` | `public SPanel, public FGCObject` |
+| 异步加载 | `AsyncLoad(Class, Lambda)` + `StartAsyncLoading()`（FAsyncMixin 的排队语义） | `FStreamableManager::RequestAsyncLoad(SoftObjectPath, Delegate)`，逐次直发、无需 `StartAsyncLoading` |
+| 回调绑定 | `CreateWeakLambda(this, ...)` | `CreateSP(StaticCastSharedRef<SActorCanvas>(AsShared()), &SActorCanvas::OnIndicatorClassLoaded, IndicatorPtr)`。**Slate 控件不是 UObject，`CreateWeakLambda` 会触发 `TStrongObjectPtr can only be constructed with UObject types` 断言**；`CreateSP` 用共享引用保活，语义等价 |
+| 回调体 | 内联在 `AddIndicatorForEntry` 的 lambda 里 | 拆成成员函数 `OnIndicatorClassLoaded(TWeakObjectPtr<UIndicatorDescriptor>)`，控件类在回调内用 `LoadedIndicator->GetIndicatorClass()` 重新取 |
+| 句柄生命周期 | FAsyncMixin 内部管理 | 新增成员 `TArray<TSharedPtr<FStreamableHandle>> IndicatorLoadHandles`，析构函数里统一 `CancelHandle()` |
+
+### 11.3 保留的上游行为
+
+- `AllIndicators.Contains(LoadedIndicator)` 的"加载期间已被移除"守卫**原样保留**——这是异步加载最容易漏的竞态检查。
+- 控件池复用（`IndicatorPool.GetOrCreateInstance` + `Release`）逻辑不变。
+- `IIndicatorWidgetInterface::Execute_BindIndicator` 的绑定时机不变（仍是控件创建后立刻绑定）。
+- 箭头绘制、视锥裁剪、`AddReferencedObjects` 手动 GC 等 Slate 绘制逻辑**一行未动**。
+
+### 11.4 验证结果与边界
+
+| 项 | 结果 |
+|---|---|
+| Editor 构建 | **EXIT=0** |
+| Game 构建 | **EXIT=0** |
+| 注释文件计数 | 30 → **26**（在编 53） |
+
+**未验证**：未打开编辑器、未 PIE、未做蓝图编译。因此 **"指示器实际能在屏幕上画出来"没有任何运行证据**——本次只证明"能编过、链接过"。若要做运行验证，需要一个 `UIndicatorLayer` 的子 Widget 蓝图 + 一个通过 `UHodgeIndicatorManagerComponent::AddIndicator` 注册的 `UIndicatorDescriptor`，并在 PIE 里观察箭头/图标是否跟随目标。
+
+---
+
+## 12. 只引入 UIExtension 的落地方案（不搬 CommonGame）
+
+> 决策：**走 Lyra 的 HUD 挂载方式（UIExtension 扩展点），但不引入 CommonGame 插件。**
+>
+> **落地进度（2026-09-27）**：**Step 1 已完成** —— 4 个文件并入 `Hodgepodge` 模块，Editor / Game 双构建 **EXIT=0**（详见 [UIExtension 子系统说明](ui-extension-system.md) §9）；**Step 2 / 3 / 4 未开始**。
+> 已记录 1 条**对上游的有意偏离**（注册日志极性修正），见 [ui-extension-system.md §10.1](ui-extension-system.md)。
+
+### 12.1 对 §0.2 的一处更正
+
+§0.2 与 §3.2 曾写"UIExtension 源码 0 处引用 CommonGame"——**这个说法不准确**。当时只扫了 `UIExtensionSystem.h/.cpp`。完整核实结果：
+
+| 文件 | 行数 | CommonGame 依赖 |
+|---|---|---|
+| `Source/Public/UIExtensionSystem.h` + `Source/Private/UIExtensionSystem.cpp` | 216 + 311 | ✅ **零依赖**（只用 GameplayTags / Slate / UMG） |
+| `Source/Public/Widgets/UIExtensionPointWidget.h` | 48 | ✅ 头文件不含 |
+| `Source/Private/Widgets/UIExtensionPointWidget.cpp` | 149 | ⚠️ **有**：`:8` `#include "CommonLocalPlayer.h"`、`:38` `GetOwningLocalPlayer<UCommonLocalPlayer>()`、`:102` `RegisterExtensionPointForPlayerState(UCommonLocalPlayer*)` |
+| `Source/Private/UIExtensionModule.cpp`、`LogUIExtension.h/.cpp` | 20 + 4 + 3 | ✅ 零依赖 |
+| `UIExtension.Build.cs` | — | ⚠️ 声明 `"CommonGame"`（唯一原因就是上面那个文件） |
+
+**修正后的结论**：扩展点内核（Subsystem / ExtensionPoint / Extension / Handle）完全独立；**只有现成的槽位控件 `UUIExtensionPointWidget` 粘了 `UCommonLocalPlayer`**。
+
+### 12.2 唯一的障碍已经提前解决
+
+`UCommonLocalPlayer` 在那 3 处只做一件事：**等 LocalPlayer 拿到 PlayerState，再注册一个带 Context 的扩展点**。项目里的 `UHodgeLocalPlayerBase` 就是同一个东西：
+
+| 上游 | 项目 | 位置 |
+|---|---|---|
+| `UCommonLocalPlayer::CallAndRegister_OnPlayerStateSet` | `UHodgeLocalPlayerBase::CallAndRegister_OnPlayerStateSet` | `HodgeLocalPlayerBase.h:98` |
+| `FPlayerStateSetDelegate`（`LocalPlayer*, APlayerState*`） | 同名同签名 | `HodgeLocalPlayerBase.h:63` |
+
+`GetOwningLocalPlayer<T>()` 是 `UWidget` 的模板方法（`Engine/Source/Runtime/UMG/Public/Components/Widget.h:887`），换模板参数即可。
+
+**改造量（2026-09-27 逐文件点数后的准确清单）**：
+
+| 文件 | 改动 | 处数 |
+|---|---|---|
+| `Public/UIExtensionSystem.h` | `UIEXTENSION_API` → `HODGEPODGE_API` | 5 |
+| `Public/Widgets/UIExtensionPointWidget.h` | `UIEXTENSION_API` → `HODGEPODGE_API` | 1 |
+| `Public/Widgets/UIExtensionPointWidget.h` | `class UCommonLocalPlayer;` 前向声明 + `RegisterExtensionPointForPlayerState(UCommonLocalPlayer*, ...)` 签名 → `UHodgeLocalPlayerBase` | 2 |
+| `Private/Widgets/UIExtensionPointWidget.cpp` | `#include "CommonLocalPlayer.h"` → `"Core/LocalPlayer/HodgeLocalPlayerBase.h"` | 1 |
+| `Private/Widgets/UIExtensionPointWidget.cpp` | `GetOwningLocalPlayer<UCommonLocalPlayer>()` → `<UHodgeLocalPlayerBase>()`（`Widget.h:887` 的模板方法） | 1 |
+| `Private/Widgets/UIExtensionPointWidget.cpp` | `RegisterExtensionPointForPlayerState(UCommonLocalPlayer* ...)` 定义 → `UHodgeLocalPlayerBase*` | 1 |
+| 两个 `.cpp` | include 路径 → `UI/Extension/...` | 2 |
+| `Private/UIExtensionSystem.cpp` | `LogUIExtension` 的处理（见下） | 14 |
+
+**`LogUIExtension` 二选一**：
+- ① **推荐**：在 `UIExtensionSystem.cpp` 内就地加 `DECLARE_LOG_CATEGORY_EXTERN` + `DEFINE_LOG_CATEGORY`（2 行），14 处调用不动 —— **保留 `log LogUIExtension Verbose` 这个排查手段**（扩展点匹配日志是 Verbose 级，"注册了但不显示"只能靠它查）。
+- ② 全部改成 `LogTemp`，删掉 `LogUIExtension.h/.cpp` 与对应 include —— 符合项目现状（全项目 `DECLARE_LOG_CATEGORY` 为 0 处），但失去过滤能力。
+
+### 12.3 失去什么 / 用什么替代
+
+| CommonGame 能力 | 失去后 | 替代 |
+|---|---|---|
+| `UPrimaryGameLayout` 层栈（Game / Menu / Modal） | 没有"推到某层"的概念 | 第一步不需要。将来要分层：引擎自带 `UCommonActivatableWidgetStack`（`Engine/Plugins/Runtime/CommonUI/Source/CommonUI/Public/Widgets/CommonActivatableWidgetContainer.h`）+ 自己写 Tag→Stack 映射（约 30 行，等价于 `PrimaryGameLayout`） |
+| `UGameUIPolicy` / `UGameUIManagerSubsystem` | HUD 根控件不再随玩家自动创建/销毁 | `AHodgeHUD::BeginPlay` 里 `CreateWidget + AddToViewport`（单机/单玩家足够；分屏要自己遍历 LocalPlayer） |
+| `UCommonUIExtensions::Push/Pop/SuspendInput` | `HodgeHUDLayout` 里 2 处调用无实现 | 自己写等价函数，或局部用 `AddToViewport` |
+| `CommonMessagingSubsystem` / `CommonGameDialog` | 没有统一确认框 | UMG 自己搭 |
+| `UCommonGameInstance` / `UCommonGameViewportClient` | 无 | 不需要 |
+| `UCommonLocalPlayer::GetRootUILayout()` | 无 | 不需要（HUD 由 HUD Actor 持有） |
+
+**保留**：Tag 挂载、`FUIExtensionHandle` 生命周期、手动 GC 引用（`AddReferencedObjects`）、槽位控件、`DataClasses` 契约——即 UIExtension 的全部架构价值。
+
+### 12.4 落地清单
+
+**Step 1｜引入 UIExtension（7 文件 / 751 行）**
+
+| 源文件（Lyra） | 行数 | 目标 |
+|---|---|---|
+| `Source/Public/UIExtensionSystem.h` | 216 | `Public/UI/Extension/UIExtensionSystem.h` |
+| `Source/Private/UIExtensionSystem.cpp` | 311 | `Private/UI/Extension/UIExtensionSystem.cpp` |
+| `Source/Public/Widgets/UIExtensionPointWidget.h` | 48 | `Public/UI/Extension/Widgets/UIExtensionPointWidget.h` |
+| `Source/Private/Widgets/UIExtensionPointWidget.cpp` | 149 | `Private/UI/Extension/Widgets/UIExtensionPointWidget.cpp` |
+| `Source/Private/UIExtensionModule.cpp` | 20 | **不要**（并入模块后无意义） |
+| `Source/Private/LogUIExtension.h/.cpp` | 4 + 3 | **不要**，日志统一用 `LogTemp`（全项目 `DECLARE_LOG_CATEGORY` 为 0 处，尚无日志类别体系） |
+
+- 建议**并入 `Hodgepodge` 模块**（不建插件、不建模块）：`CommonUI` / `CommonInput` / `UMG` / `Slate` / `SlateCore` / `GameplayTags` 已全在 `Hodgepodge.Build.cs` 中 → **零依赖改动**。
+- 类名保留 `UUIExtensionSubsystem` / `FUIExtensionHandle` / `UUIExtensionPointWidget` 原名（不改成 Hodge 前缀），以便与上游文档对照。
+- 若坚持做插件：需删掉 `UIExtension.Build.cs` 里的 `"CommonGame"`，并注意上游 `.uplugin` 的 `"Plugins"` 键重复写了两次（后者覆盖前者）。
+
+**Step 2｜HUD 根控件 + 槽位**
+
+- 复活 `HodgeHUDLayout.h/.cpp`（84 + 192 行，原 §10.2 A 组）。
+- 复活时必须同时处理：`#include "HodgeLogChannels.h"` 与 `LogHodge` **都不存在**（`LogHodge` 只出现在注释里，项目无日志类别）→ 换 `LogTemp`；2 处 `UCommonUIExtensions::Push*` → 自己实现（见 12.3）。
+- `AHodgeHUD::BeginPlay` 创建 HUD Layout 并 `AddToViewport`。
+- HUD Layout 蓝图里放 `UUIExtensionPointWidget`，填 `ExtensionPointTag`。
+
+**Step 3｜复活 `GameFeatureAction_AddWidget`（161 行，原 §10.2 A 组）**
+
+- **保留 `Widgets[]` 分支**：`RegisterExtensionAsWidgetForContext(Entry.SlotID, LocalPlayer, Entry.WidgetClass.Get(), -1)` → 纯 UIExtension。
+- **删除 `Layout[]` 分支**（`FHodgeHUDLayoutRequest`、`LayoutsAdded`、`UCommonUIExtensions::PushContentToLayer_ForPlayer`、`DeactivateWidget`）→ 这是全文件**唯一**需要 CommonGame 的地方（上游 `AddWidget.cpp:151-157`、`:176-182`）。
+
+**Step 4｜资产**
+
+- HUD Layout 蓝图（父类 `UHodgeHUDLayout`）→ 血条 Widget 蓝图 → Experience / GameFeature 里配 `AddWidget` 的 `Widgets[]`（`SlotID` + `WidgetClass`）。
+
+### 12.5 扩展点匹配契约（不搞清会"静默不显示"）
+
+`UIExtensionSystem.cpp:35-59` 的 `DoesExtensionPassContract` 要求**两个条件同时成立**：
+
+1. **数据类匹配**：`RegisterExtensionAsWidget` 把 Data 设成**控件的 `UClass`**（`:138-141`），判定的是"该蓝图类 → `IsChildOf(AllowedDataClasses)` 中之一"。`UUIExtensionPointWidget::RegisterExtensionPoint` 会自动加入 `UUserWidget`（`:87`）→ 血条蓝图继承 `UUserWidget` 即可通过；但若在槽位 `DataClasses` 里填了具体类，则必须把血条类也加进去。
+2. **Context 匹配**（`:39-41`）：`AddWidget` 传入的 `LocalPlayer` 必须等于槽位注册时的 Context。槽位会注册两次（`UIExtensionPointWidget.cpp:90` 无 Context、`:95` 带 `GetOwningLocalPlayer()`）。
+
+排查手段：`UIExtension` 日志为 Verbose 级别；并入模块后用 `LogTemp` 过滤，或临时建一个 `LogUIExtension` 类别。
+
+### 12.6 与原计划的关系
+
+| 原计划 | 本方案 |
+|---|---|
+| §4 阶段③：移植 CommonGame 内核（16 文件 / 1318 行） | **不做** |
+| §5 阶段④：Hodge 类换父类（`UCommonLocalPlayer` / `UCommonGameInstance`） | **不做**（改用 `CreateWidget` 建 HUD 根） |
+| §4 的 `UPrimaryGameLayout` 层栈 | 降级为可选，需要时用引擎 `UCommonActivatableWidgetStack` 自建 |
+| §2 阶段① CommonLoadingScreen | 不受影响，仍可独立推进 |
+| §3 阶段② UIExtension | **升为本方案的核心（Step 1）** |
+
+---
+
+## 13. UI 骨架三块 todo（架构学习主线）
+
+> 基线实测日期：2026-09-27。
+> 与 §2~§5 的关系：§2~§5 是最初的阶段划分；§12 之后实际采用的路线是「只引入 UIExtension，其余用引擎 CommonUI + C++ 兜底自建」。
+> **本节是当前有效**的推进清单，三块都不需要 CommonUser / GameSettings。
+> 架构全景（安装链 / 卸载链 / 三张连接契约 / 已核实事实）见 [Hodge UI 模块化注入链：架构总览与逐条核实](hodge-ui-architecture.md)。
+
+### 13.1 完成度实测（2026-09-27）
+
+**① 源码文件维度：基本搬完**
+
+| 项 | Lyra | 项目现状 | 说明 |
+|---|---|---|---|
+| `Source/LyraGame/UI/**` | 79 文件 / 4924 行 | **81 文件 / 7968 行** | 79 个文件 **100% 覆盖**（`LyraHUD.h/.cpp` 在 Lyra 侧位于 `Source/LyraGame/` 根目录，不属于 UI 子目录，故不计入）；额外多 4 个来自 UIExtension 插件：`UI/Extension/UIExtensionSystem.h/.cpp`、`UIExtensionPointWidget.h/.cpp` |
+| 在编 / 仍注释 | — | **57 在编（6486 行）/ 24 注释（1482 行）** | 分组见 §10.2；复活对应关系见 §13.6 |
+| `Content/UI/**` 蓝图 | **606 个 `.uasset`**（Credits / Foundation / FrontEnd / Hud / Indicators / Menu / PerfStats / Settings） | **0** | 项目 `Content` 下仅 5 个 `WBP_*`，全在 `CodexText`，与 Lyra 无关 |
+
+**② 框架插件维度：几乎为零**
+
+| 插件 | Lyra 规模 | 项目现状 | 完成度 |
+|---|---|---|---|
+| CommonUI（引擎自带） | — | 已启用 | 100% |
+| UIExtension | 751 行 / 7 文件 | 4 个源文件搬入 `UI/Extension/` 且在编 | 源码 100%（无插件本体；无蓝图使用槽位） |
+| **CommonGame** | **2389 行 / 29 文件** | 仅 `UHodgeHUDLayout::MenuLayerStack` 单层（≈100 行） | **~5%** |
+| **CommonLoadingScreen** | **891 行 / 13 文件** | `LoadingProcessInterface.h`(30 行) + `HodgeLoadingScreenSubsystem`(19 行)；接口静态函数**未实现**（`.cpp` 仅 4 非空行） | **~10%** |
+| CommonUser | 5029 行 | 0 | 0% |
+| GameSubtitles | 541 行 | 0 | 0% |
+| GameSettings | 4336 行 | 0 | 0% |
+| `Plugins/` 下 5 个 Lyra UI 插件 | — | **全部缺失**（仅有 ALS-Refactored / Developer / McpAutomationBridge / UnrealMCP） | 0/5 |
+
+**③ 为什么"搬了文件"≠"迁移了系统"**
+
+`LyraGame/UI` 中的类多为插件基类的派生类，派生类全部搬入而基类所在插件全部未引入，因此只能整体注释或 C++ 兜底重写：
+
+| 项目文件 | 父类 | 父类所在 |
+|---|---|---|
+| `HodgeUIManagerSubsystem` | `UGameUIManagerSubsystem` | CommonGame |
+| `HodgeUIMessaging` | `UCommonMessagingSubsystem` | CommonGame |
+| `HodgeConfirmationScreen` | `UCommonGameDialog` | CommonGame |
+| `HodgeGameViewportClient` | `UCommonGameViewportClient` | CommonGame |
+| `HodgeSettingScreen` | `UGameSettingScreen` | GameSettings |
+| `HodgeFrontendStateComponent` | — | CommonUser + ControlFlows |
+
+**④ 当前已通的链**
+
+- 控件层：`HodgeActivatableWidget` / `HodgeTaggedWidget` / `HodgeButtonBase` / 列表 / 标签页 / 派生输入控件（Joystick、SimulatedInput、TouchRegion）/ `MaterialProgressBar`
+- 指示器链：`IndicatorSystem` 全套（`SActorCanvas` 见 §11）
+- 扩展点链：`UIExtensionSystem` + `UIExtensionPointWidget` 源码在编，但**暂无蓝图使用槽位**
+- HUD 宿主：`HodgeGameModeBase.cpp:43` 已设 `HUDClass = AHodgeHUD`；但 `AHodgeHUD` 自身**不创建任何控件**
+- 菜单层：`UHodgeHUDLayout` 已复活（Push/Pop 走引擎 `UCommonActivatableWidgetStack`：`AddWidget` / `RemoveWidget`），仅持有单个 `MenuLayerStack`；`GameFeatureAction_AddWidget.cpp` 仍为 0 有效行 → **HUDLayout 目前无人创建**
+
+**⑤ 仍然断着的链**
+
+| 链 | 断点 | 证据 |
+|---|---|---|
+| 层 / 每玩家根布局 | 无 `UPrimaryGameLayout` / `GameUIPolicy`，仅 1 个 Menu 层 | `UI/Subsystem/*` 两文件全注释 |
+| 弹窗 / 消息 | 无 `UCommonMessagingSubsystem` / `UCommonGameDialog` | `HodgeUIMessaging`、`HodgeConfirmationScreen` 全注释 |
+| 加载屏 | 无 `ULoadingScreenManager`；`LoadingProcessInterface.cpp` 仅 4 非空行，静态函数 `ShouldShowLoadingScreen(UObject*, FString&)` 声明未实现 | 实测 |
+| HUD 注入 | `GameFeatureAction_AddWidget.cpp` 0 有效代码行 | 实测 |
+| 输入路由 | `Config/*.ini` 中 `CommonUI` 匹配 **0 处** → `UI.Action.Escape` 无按键映射，`RegisterUIActionBinding` 注册后不触发 | 实测 |
+| 用户 / 前端 / 设置 | `Public/UI/Settings`、`Public/Settings`、`Public/Performance`、`Public/Weapons`、`Public/Equipment`、`Public/Inventory` 目录均不存在 | 实测 |
+
+---
+
+### 13.2 todo ①：层栈 + 每玩家根布局（`PrimaryGameLayout` + `GameUIPolicy`）
+
+**目标**：把 `HUDLayout` 里的单个 `MenuLayerStack` 扩展成 Lyra 的多层模型，并引入"每玩家根布局"的归属关系。
+
+**参考实现**
+
+```text
+Plugins\CommonGame\Source\Public\PrimaryGameLayout.h        :35-137（:35-36 UCLASS(Abstract) ; :53-110 模板 ; :62,:102 static_assert ; :93-97 无 InitInstanceFunc 重载）
+Plugins\CommonGame\Source\Public\GameUIManagerSubsystem.h   :22-50
+Plugins\CommonGame\Source\Private\CommonUIExtensions.cpp    :55-74 Push ; :76-94 PushStreamed ; :96-117 Pop ; :129-150 Suspend ; :157+ Resume
+Plugins\CommonGame\Source\Public\CommonUIExtensions.h       :21-22（COMMONGAME_API 函数库）, :39-58 函数声明
+引擎：Plugins\Runtime\CommonUI\Source\CommonUI\Public\Widgets\CommonActivatableWidgetContainer.h
+    :31,:47 AddWidget（两个重载）; :68 RemoveWidget ; :73 GetWidgetList ; :75 GetNumWidgets ; :78 ClearWidgets ; :187-188 UCommonActivatableWidgetStack
+引擎：Plugins\Runtime\CommonUI\Source\CommonUI\Public\CommonActivatableWidget.h  :38 IsActivated ; :41 ActivateWidget ; :44 DeactivateWidget
+引擎：Plugins\Runtime\CommonUI\Source\CommonUI\Private\Input\CommonUIActionRouterBase.cpp
+    :174-212 RegisterUIActionBinding（无节点则延迟一帧）; :263 OnRebuilding 订阅 ; :984 root 创建 ; :1678-1684 HandleActivatableWidgetRebuilding
+```
+
+**要做的事**
+
+1. 新类 `UHodgePrimaryGameLayout`（可基于 `UCommonUserWidget` 或 `UCommonActivatableWidget`）：
+   - `TMap<FGameplayTag, TObjectPtr<UCommonActivatableWidgetContainerBase>> Layers`
+   - `UFUNCTION(BlueprintCallable) void RegisterLayer(UPARAM(meta=(Categories="UI.Layer")) FGameplayTag, UCommonActivatableWidgetContainerBase*)`（对应 WBP 里连线）
+   - `template <typename T = UCommonActivatableWidget> T* PushWidgetToLayerStack(FGameplayTag, UClass*, TFunctionRef<void(T&)>)` —— **模板定义必须写在头文件**
+   - `void FindAndRemoveWidgetFromLayer(UCommonActivatableWidget*)` —— 建议按 `GetWidgetList()` 判断归属，而不是照抄 Lyra 的盲遍历（理由见 §12.3）
+   - `UCommonActivatableWidgetContainerBase* GetLayerWidget(FGameplayTag) const`
+2. 层 Tag 约定：`UI.Layer.Game` / `UI.Layer.GameMenu` / `UI.Layer.Menu` / `UI.Layer.Modal`，补进 `HodgeGameplayTags`（当前只有 `UI_Action_Escape` / `UI_Action_Back`；`meta=(Categories="UI.Layer")` 需要 Tag 已注册，否则蓝图里选不到）
+3. 根布局归属（二选一）：
+   - 最小：在 `UHodgeLocalPlayerBase` 上挂 `GetRootUILayout()`（`HodgeLocalPlayerBase.h:143-144` 已有预留注释）
+   - 贴近 Lyra：补 `UGameUIPolicy`（`Within = GameUIManagerSubsystem`）
+4. `UHodgeUIExtensions`（函数库）：`PushContentToLayer_ForPlayer` / `PushStreamedContentToLayer_ForPlayer`（异步）/ `PopContentFromLayer` / `SuspendInputForPlayer` / `ResumeInputForPlayer`
+   —— 后两组**只依赖引擎 `UCommonInputSubsystem`**（`CommonUIExtensions.cpp:129-150` 实测），可以先行落地
+5. 把 `UHodgeHUDLayout` 里 C++ 兜底的 `EnsureMenuLayerStack()` 替换为向根布局注册/取层
+
+**前置条件**：HUDLayout 需要一个实例化入口（`GameFeatureAction_AddWidget` 仍是 0 有效行）。
+
+**学习点**：模板必须定义在头文件（否则 `unresolved external`）；`static_assert(TIsDerivedFrom<T, UCommonActivatableWidget>::IsDerived, ...)` 是唯一护栏；若引入 Policy，`GetOuter()` 与 `Within` 强绑定（`NewObject<UGameUIPolicy>(Manager, Class)`，传错 Outer 会崩）；输入挂起 token 必须全局唯一（`SuspendToken.SetNumber(++InputSuspensions)`）。
+
+**验收**：Esc 菜单 Push 到 `UI.Layer.Menu` 后能被 `PopContentFromLayer` 移除；日志能打印层 Tag 与实际控件名；`AddWidget` 的模板重载对非 `UCommonActivatableWidget` 子类在编译期被 `static_assert` 拦住。
+
+---
+
+### 13.3 todo ②：加载屏（`LoadingScreenManager`）
+
+**目标**：多来源加载状态汇聚 + 显示期间吞输入 + 最短显示时长。
+
+**参考实现**
+
+```text
+Plugins\CommonLoadingScreen\Source\CommonLoadingScreen\Private\LoadingScreenManager.cpp
+    :46-63   静态辅助函数实现（C1 的参照）
+    :201-221 PreLoadMap / PostLoadMap
+    :232,246 FThreadHeartBeat 检查点
+    :255-405 判定链全量
+    :407-465 最短显示时长 / 额外保持
+    :467-484 首屏守卫（PreLoadScreen）
+    :473-533 显示加载屏 + 输入吞噬 + Slate Tick
+Plugins\CommonLoadingScreen\Source\CommonLoadingScreen\Public\LoadingScreenManager.h        :55-62 对外契约
+Plugins\CommonLoadingScreen\Source\CommonLoadingScreen\Private\CommonLoadingScreenSettings.h :15-65 配置项
+```
+
+**硬前置（必须先做）**：`Source\Hodgepodge\Private\Interface\LoadingProcessInterface.cpp` 目前只有 4 非空行，静态函数 `ShouldShowLoadingScreen(UObject*, FString&)` 声明了但**没有实现**，而判定链有 5 处调用它。
+
+**要做的事**
+
+1. 补 `ILoadingProcessInterface::ShouldShowLoadingScreen(UObject*, FString&)` 的静态实现（遍历 `ILoadingProcessInterface` 实现者）
+2. 新类 `UHodgeLoadingScreenManager : UGameInstanceSubsystem, FTickableGameObject`，对外契约对齐 `LoadingScreenManager.h:55-62`
+3. 新类 `UHodgeLoadingScreenSettings`（`config`，含 `LoadingScreenWidget` 软类、最短显示时长、编辑器强制 Tick）
+4. 显示期间用 `IInputProcessor` 吃掉全部输入
+5. 与已有 `HodgeLoadingScreenSubsystem`（`UI/Foundation/`，19 行）合并或明确分工
+
+**学习点**：判定链的发现策略 —— Lyra 是**主动遍历** GameState / 组件 / PlayerController 找处理器（`LoadingScreenManager.cpp:326-349`），`RegisterLoadingProcessor` 只是补充通道，并非唯一入口；最短显示时长用于防止一次快速加载导致界面闪烁。
+
+**验收**：加载过程中显示加载屏、完成后隐藏；快速加载时不闪烁；加载屏显示期间键鼠输入被吞掉（角色不动）。
+
+---
+
+### 13.4 todo ③：消息 / 对话框（`CommonMessagingSubsystem` + `CommonGameDialog` + AsyncAction）
+
+**目标**：对话框分发 + 蓝图异步节点。
+
+**参考实现**：`Plugins\CommonGame\Source\Public\Messaging\*`（本轮未逐行核实，动工前先补精确行号）
+
+**要做的事**
+
+1. `UHodgeMessagingSubsystem : ULocalPlayerSubsystem`：`ShowConfirmation(UHodgeGameDialogDescriptor*, FCommonMessagingResultDelegate = {})` / `ShowError(...)`
+   —— 用普通 `virtual` 代替 Lyra 的精确 override 签名（因为没有 CommonGame 基类）
+2. `UHodgeGameDialogDescriptor`：`CreateConfirmationOk / OkCancel / YesNo / YesNoCancel` + `Header` / `Body` / `ButtonActions`
+3. `EHodgeMessagingResult` + `FHodgeConfirmationDialogAction`（结构体需实现 `operator==`）
+4. `UHodgeGameDialog : UCommonActivatableWidget`：`SetupDialog` / `KillDialog`，并 Push 到 `UI.Layer.Modal`
+5. 可选：`UAsyncAction_ShowConfirmation`（`UBlueprintAsyncActionBase` + 多播委托 `OnResult`）
+6. 复活 `Subsystem/HodgeUIMessaging.*` 与 `Foundation/HodgeConfirmationScreen.*`（当前 4 个文件全注释）
+
+**前置条件**：需要 `UI.Layer.Modal` 层 → **依赖 todo ①**。
+
+**验收**：调用 `ShowConfirmation` 能弹到 Modal 层；选择结果通过回调返回；层栈中该控件能被正确 Pop。
+
+---
+
+### 13.5 明确不做（本主线范围外）
+
+| 项 | 行数 | 原因 |
+|---|---|---|
+| CommonUser | 5029 | 在线账号 / 平台会话耦合，与 UI 分层无关 |
+| GameSettings | 4336 | 设置框架，牵出 CommonUser → 在线子系统 → 输入重映射 |
+| `LyraGame/Settings/**` | 5730 | 同上 |
+| `Content/UI/**` 606 个蓝图 | — | 全量搬运无学习价值；按需自建最小几张（HUD Layout / Menu / Confirmation）即可 |
+
+---
+
+### 13.6 与 §10 待复活清单的对应关系
+
+当前仍注释 **24 个文件 / 1482 行**，按"做完哪一块能复活"归类：
+
+| 前置 | 可复活文件 | 文件数 |
+|---|---|---|
+| todo ③（消息链）+ todo ① 的 Modal 层 | `Subsystem/HodgeUIMessaging.h/.cpp`、`Foundation/HodgeConfirmationScreen.h/.cpp` | 4 |
+| todo ①（若采用 Policy 方案） | `Subsystem/HodgeUIManagerSubsystem.h/.cpp` | 2 |
+| 独立小改（与三块无关） | `HodgeGameViewportClient.h/.cpp` —— 父类由 `UCommonGameViewportClient` 降为 `UGameViewportClient` 即可 | 2 |
+| todo ① 完成后回改 | `HodgeHUDLayout.h/.cpp`（已复活，可去掉 C++ 兜底改回按层 Push） | 已复活 |
+| 需额外前置（不在三块内） | `HodgeSettingScreen.h/.cpp`（GameSettings）、`Frontend/HodgeFrontendStateComponent.h/.cpp`（CommonUser + ControlFlows） | 4 |
+| 需先补上游系统 | `PerformanceStats/*`（4，缺 `Performance/` 目录与性能统计子系统）、`Weapons/*`（8，缺武器 / 装备 / 库存系统） | 12 |
+
+> 注：`Weapons/*` 的 8 个文件里，`HitMarkerConfirmationWidget.*` 只是因为 `SNew(SHitMarkerConfirmationWidget, ...)` 被连带，可与 `SHitMarkerConfirmationWidget.*` 一起处理。
+
+---
+
+### 13.7 建议顺序与纪律
+
+```text
+② 加载屏（891 行，零 Lyra 依赖，接口钩子已存在）
+   ↓
+① 层栈 + 每玩家根布局（~1200 行，是 ③ 的前置）
+   ↓
+③ 消息 / 对话框（~400 行）
+```
+
+纪律：
+
+1. 每块落地后同时跑 Editor 与 Game 双构建，记录 EXIT 状态。
+2. 构建期间不要让 IDE 保存被编译的文件 —— 曾出现 UHT 与编译器读到两个版本、报出 `缺少";"(在"<class-head>"的前面)` 之类假故障（详见 §13.1 对应的变更记录）。
+3. 蓝图资产（`WBP_*`）由编辑器侧自建，代码侧只提供 `TSubclassOf` / `TSoftClassPtr` 配置位与 `meta=(BindWidgetOptional)`。
+4. 未在 PIE 中验证过的运行时路径，一律标注"未验证"，不得写成"已完成"。
+
+---
+
 ## 附录 A：证据索引
 
 **Lyra 参考实现（绝对路径，行号已核实）**
@@ -385,7 +822,7 @@ Source\Hodgepodge\Private\Component\HodgeExperienceManagerComponent.cpp F8（:62
 Source\Hodgepodge\Public\GameFeatures\GameFeatureAction_AddWidget.h   F10（全文注释）
 Source\Hodgepodge\Public\Core\LocalPlayer\HodgeLocalPlayerBase.h      F11（:31,52-109,143-144）
 Source\Hodgepodge\Public\Core\GameInstance\HodgeGameInstanceBase.h    F12（:23,36,39）
-Source\Hodgepodge\Public\Core\HUD\HodgeHUDBase.h                      F10/R 相关（:31 空壳）
+Source\Hodgepodge\Public\Core\HUD\HodgeHUD.h                          F10/R 相关
 Config\DefaultEngine.ini                                             F13/F14
 Source\Hodgepodge\Hodgepodge.Build.cs                                现有模块依赖
 ```
@@ -397,3 +834,9 @@ Source\Hodgepodge\Hodgepodge.Build.cs                                现有模�
 | 日期 | 内容 |
 |---|---|
 | 2026-09-25 | 首版执行草案。基线来自对 Lyra 源码与本项目的只读实测；未修改任何代码。 |
+| 2026-09-26 | 新增 §10「待复活文件清单」：79 个 UI 文件中有 30 个被整体注释（见 §10.2 分组）；修正 2 处 `Ui/` 大小写；`Build.cs` 补 `ApplicationCore`。Editor / Game 双构建 EXIT=0。 |
+| 2026-09-26 | C 组复活：`SActorCanvas.h/.cpp` + `IndicatorLayer.h/.cpp` 复原并改用 `FStreamableManager`（见 §11）。已注释 30 → 26 个，Editor / Game 双构建 EXIT=0。 |
+| 2026-09-26 | 新增 §12「只引入 UIExtension 的落地方案（不搬 CommonGame）」；更正 §0.2/§3.2 关于"UIExtension 零依赖"的说法。配套新增 [文件导览](lyra-ui-file-guide.md)。本轮未改代码。 |
+| 2026-09-26 | 新增 [Indicator UI 系统：职责边界与完整流程](indicator-ui-system.md)（学习笔记 + 源码核实）。本轮未改代码。 |
+| 2026-09-27 | `UHodgeHUDLayout` 复活：Push/Pop 改走引擎 `UCommonActivatableWidgetStack`（`MenuLayerStack` + `EnsureMenuLayerStack()` C++ 兜底）；`HodgeGameModeBase.cpp:43` 的 `HUDClass` 指向 `AHodgeHUD`。已注释 26 → 24 个，Editor / Game 双构建 EXIT=0。 |
+| 2026-09-27 | 新增 §13「UI 骨架三块 todo（架构学习主线）」与完成度实测：源码文件 100% 覆盖、框架插件 ~3%、`Content/UI` 蓝图 0%（606 vs 0）。本轮仅写文档。 |

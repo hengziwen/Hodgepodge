@@ -25,9 +25,6 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeHealthComponent)
 
-// 定义角色被淘汰时使用的标准化 GameplayMessage Tag。
-UE_DEFINE_GAMEPLAY_TAG_STATIC(TAG_Hodge_Elimination_Message, "Hodge.Elimination.Message");
-
 
 // HealthComponent 构造函数。
 UHodgeHealthComponent::UHodgeHealthComponent(const FObjectInitializer& ObjectInitializer)
@@ -284,7 +281,7 @@ void UHodgeHealthComponent::HandleOutOfHealth(AActor* DamageInstigator, AActor* 
 		{
 			// 构造标准化淘汰消息。
 			// FHodgeVerbMessage Message;
-			// Message.Verb = TAG_Hodge_Elimination_Message;
+			// Message.Verb = HodgeGameplayTags::Hodge_Elimination_Message;
 			// Message.Instigator = DamageInstigator;
 			// Message.InstigatorTags = *DamageEffectSpec->CapturedSourceTags.GetAggregatedTags();
 			// Message.Target = UHodgeVerbMessageHelpers::GetPlayerStateFromObject(

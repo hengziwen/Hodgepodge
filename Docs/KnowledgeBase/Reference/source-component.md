@@ -82,6 +82,33 @@ GameState 上的 Experience 复制、资源加载、插件激活、Action 执行
 - L627: `bool UHodgeExperienceManagerComponent::ShouldShowLoadingScreen(FString& OutReason) const`
 - L645: `void UHodgeExperienceManagerComponent::OnAllActionsDeactivated()`
 
+## HodgeHealthComponent.cpp
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Private/Component/HodgeHealthComponent.cpp](../../../Source/Hodgepodge/Private/Component/HodgeHealthComponent.cpp)
+
+项目内直接 include（不是运行调用关系）：[Component/HodgeHealthComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeHealthComponent.h)、[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)、[AbilitySystem/AttributeSet/HodgeHealthSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeHealthSet.h)、[Data/HodgeAssetManager.h](../../../Source/Hodgepodge/Public/Data/HodgeAssetManager.h)、[Data/HodgeGameData.h](../../../Source/Hodgepodge/Public/Data/HodgeGameData.h)
+
+定义候选（多行签名仅展示首行）：
+
+- L30: `UHodgeHealthComponent::UHodgeHealthComponent(const FObjectInitializer& ObjectInitializer)`
+- L53: `void UHodgeHealthComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const`
+- L63: `void UHodgeHealthComponent::OnUnregister()`
+- L73: `void UHodgeHealthComponent::InitializeWithAbilitySystem(UHodgeAbilitySystemComponent* InASC)`
+- L142: `void UHodgeHealthComponent::UninitializeFromAbilitySystem()`
+- L168: `void UHodgeHealthComponent::ClearGameplayTags()`
+- L182: `float UHodgeHealthComponent::GetHealth() const`
+- L189: `float UHodgeHealthComponent::GetMaxHealth() const`
+- L196: `float UHodgeHealthComponent::GetHealthNormalized() const`
+- L216: `void UHodgeHealthComponent::HandleHealthChanged(AActor* DamageInstigator, AActor* DamageCauser,`
+- L225: `void UHodgeHealthComponent::HandleMaxHealthChanged(AActor* DamageInstigator, AActor* DamageCauser,`
+- L234: `void UHodgeHealthComponent::HandleOutOfHealth(AActor* DamageInstigator, AActor* DamageCauser,`
+- L308: `void UHodgeHealthComponent::OnRep_DeathState(EHodgeDeathState OldDeathState)`
+- L380: `void UHodgeHealthComponent::StartDeath()`
+- L412: `void UHodgeHealthComponent::FinishDeath()`
+- L444: `void UHodgeHealthComponent::DamageSelfDestruct(bool bFellOutOfWorld)`
+
 ## HodgeHeroComponent.cpp
 
 玩家 Init State 协调、ASC 接入、输入与相机；额外输入句柄持久化并在移除/EndPlay 解绑。新增“移动意图”信号（HasMoveIntent / GetMoveIntent / OnMoveIntentChanged），记 Input_Move 原始输入量、Completed/Canceled 清零，供移动取消后摇消费。
@@ -97,29 +124,29 @@ GameState 上的 Experience 复制、资源加载、插件激活、Action 执行
 - L87: `UHodgeHeroComponent::UHodgeHeroComponent(const FObjectInitializer& ObjectInitializer)`
 - L98: `void UHodgeHeroComponent::OnRegister()`
 - L142: `bool UHodgeHeroComponent::CanChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState,`
-- L247: `void UHodgeHeroComponent::HandleChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState,`
-- L312: `void UHodgeHeroComponent::OnActorInitStateChanged(const FActorInitStateChangedParams& Params)`
-- L328: `void UHodgeHeroComponent::CheckDefaultInitialization()`
-- L346: `void UHodgeHeroComponent::BeginPlay()`
-- L368: `void UHodgeHeroComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)`
-- L392: `void UHodgeHeroComponent::InitializePlayerInput(UInputComponent* PlayerInputComponent)`
-- L618: `void UHodgeHeroComponent::AddAdditionalInputConfig(const UHodgeInputConfig* InputConfig)`
-- L709: `void UHodgeHeroComponent::RemoveAdditionalInputConfig(const UHodgeInputConfig* InputConfig)`
-- L738: `bool UHodgeHeroComponent::IsReadyToBindInputs() const`
-- L745: `void UHodgeHeroComponent::Input_AbilityInputTagPressed(FGameplayTag InputTag)`
-- L768: `void UHodgeHeroComponent::Input_AbilityInputTagReleased(FGameplayTag InputTag)`
-- L796: `void UHodgeHeroComponent::Input_Move(const FInputActionValue& InputActionValue)`
-- L859: `void UHodgeHeroComponent::Input_MoveStopped(const FInputActionValue&                     )`
-- L867: `bool UHodgeHeroComponent::HasMoveIntent(float Threshold) const`
-- L874: `void UHodgeHeroComponent::SetMoveIntent(const FVector2D& NewValue)`
-- L881: `void UHodgeHeroComponent::RefreshMoveIntent()`
-- L895: `void UHodgeHeroComponent::Input_LookMouse(const FInputActionValue& InputActionValue)`
-- L934: `void UHodgeHeroComponent::Input_LookStick(const FInputActionValue& InputActionValue)`
-- L981: `void UHodgeHeroComponent::Input_Crouch(const FInputActionValue& InputActionValue)`
-- L994: `void UHodgeHeroComponent::Input_AutoRun(const FInputActionValue& InputActionValue)`
-- L1014: `TSubclassOf<UHodgeCameraMode> UHodgeHeroComponent::DetermineCameraMode() const`
-- L1047: `void UHodgeHeroComponent::SetAbilityCameraMode(TSubclassOf<UHodgeCameraMode> CameraMode,`
-- L1062: `void UHodgeHeroComponent::ClearAbilityCameraMode(const FGameplayAbilitySpecHandle& OwningSpecHandle)`
+- L262: `void UHodgeHeroComponent::HandleChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState,`
+- L329: `void UHodgeHeroComponent::OnActorInitStateChanged(const FActorInitStateChangedParams& Params)`
+- L345: `void UHodgeHeroComponent::CheckDefaultInitialization()`
+- L365: `void UHodgeHeroComponent::BeginPlay()`
+- L389: `void UHodgeHeroComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)`
+- L413: `void UHodgeHeroComponent::InitializePlayerInput(UInputComponent* PlayerInputComponent)`
+- L639: `void UHodgeHeroComponent::AddAdditionalInputConfig(const UHodgeInputConfig* InputConfig)`
+- L730: `void UHodgeHeroComponent::RemoveAdditionalInputConfig(const UHodgeInputConfig* InputConfig)`
+- L759: `bool UHodgeHeroComponent::IsReadyToBindInputs() const`
+- L766: `void UHodgeHeroComponent::Input_AbilityInputTagPressed(FGameplayTag InputTag)`
+- L789: `void UHodgeHeroComponent::Input_AbilityInputTagReleased(FGameplayTag InputTag)`
+- L817: `void UHodgeHeroComponent::Input_Move(const FInputActionValue& InputActionValue)`
+- L890: `void UHodgeHeroComponent::Input_MoveStopped(const FInputActionValue&                     )`
+- L898: `bool UHodgeHeroComponent::HasMoveIntent(float Threshold) const`
+- L905: `void UHodgeHeroComponent::SetMoveIntent(const FVector2D& NewValue)`
+- L912: `void UHodgeHeroComponent::RefreshMoveIntent()`
+- L926: `void UHodgeHeroComponent::Input_LookMouse(const FInputActionValue& InputActionValue)`
+- L965: `void UHodgeHeroComponent::Input_LookStick(const FInputActionValue& InputActionValue)`
+- L1012: `void UHodgeHeroComponent::Input_Crouch(const FInputActionValue& InputActionValue)`
+- L1025: `void UHodgeHeroComponent::Input_AutoRun(const FInputActionValue& InputActionValue)`
+- L1045: `TSubclassOf<UHodgeCameraMode> UHodgeHeroComponent::DetermineCameraMode() const`
+- L1078: `void UHodgeHeroComponent::SetAbilityCameraMode(TSubclassOf<UHodgeCameraMode> CameraMode,`
+- L1093: `void UHodgeHeroComponent::ClearAbilityCameraMode(const FGameplayAbilitySpecHandle& OwningSpecHandle)`
 
 ## HodgeInteractionComponentBase.cpp
 
@@ -353,6 +380,96 @@ GameState 上的 Experience 复制、资源加载、插件激活、Action 执行
  120:     FOnHodgeExperienceLoaded OnExperienceLoaded;
  123:     FOnHodgeExperienceLoaded OnExperienceLoaded_LowPriority;
  124: };
+```
+
+## HodgeHealthComponent.h
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Public/Component/HodgeHealthComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeHealthComponent.h)
+
+有效头文件声明摘录（未展开宏，未求值预处理分支）：
+
+```cpp
+   3: #pragma once
+   6: #include "CoreMinimal.h"
+   9: #include "Components/GameFrameworkComponent.h"
+  11: #include "HodgeHealthComponent.generated.h"
+  15: class UHodgeAbilitySystemComponent;
+  18: class UHodgeHealthSet;
+  21: class UObject;
+  24: struct FFrame;
+  27: struct FGameplayEffectSpec;
+  31: DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHodgeHealth_DeathEvent, AActor*, OwningActor);
+  37: DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FHodgeHealth_AttributeChanged, UHodgeHealthComponent*, HealthComponent,
+  38:                                               float, OldValue, float, NewValue, AActor*, Instigator);
+  49: UENUM(BlueprintType)
+  50: enum class EHodgeDeathState : uint8
+  51: {
+  53: 	NotDead = 0,
+  56: 	DeathStarted,
+  59: 	DeathFinished
+  60: };
+  74: UCLASS(Blueprintable, Meta=(BlueprintSpawnableComponent))
+  75: class HODGEPODGE_API UHodgeHealthComponent : public UGameFrameworkComponent
+  76: {
+  77: 	GENERATED_BODY()
+  79: public:
+  81: 	UHodgeHealthComponent(const FObjectInitializer& ObjectInitializer);
+  85: 	UFUNCTION(BlueprintPure, Category = "Hodge|Health")
+  86: 	static UHodgeHealthComponent* FindHealthComponent(const AActor* Actor)
+  87: 	{
+  89: 		return (Actor ? Actor->FindComponentByClass<UHodgeHealthComponent>() : nullptr);
+  90: 	}
+  94: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Health")
+  95: 	void InitializeWithAbilitySystem(UHodgeAbilitySystemComponent* InASC);
+  99: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Health")
+ 100: 	void UninitializeFromAbilitySystem();
+ 104: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Health")
+ 105: 	float GetHealth() const;
+ 109: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Health")
+ 110: 	float GetMaxHealth() const;
+ 114: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Health")
+ 115: 	float GetHealthNormalized() const;
+ 118: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Health")
+ 119: 	EHodgeDeathState GetDeathState() const { return DeathState; }
+ 123: 	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "Hodge|Health",
+ 124: 		Meta = (ExpandBoolAsExecs = "ReturnValue"))
+ 125: 	bool IsDeadOrDying() const { return (DeathState > EHodgeDeathState::NotDead); }
+ 129: 	virtual void StartDeath();
+ 133: 	virtual void FinishDeath();
+ 137: 	virtual void DamageSelfDestruct(bool bFellOutOfWorld = false);
+ 139: public:
+ 142: 	UPROPERTY(BlueprintAssignable)
+ 143: 	FHodgeHealth_AttributeChanged OnHealthChanged;
+ 147: 	UPROPERTY(BlueprintAssignable)
+ 148: 	FHodgeHealth_AttributeChanged OnMaxHealthChanged;
+ 152: 	UPROPERTY(BlueprintAssignable)
+ 153: 	FHodgeHealth_DeathEvent OnDeathStarted;
+ 157: 	UPROPERTY(BlueprintAssignable)
+ 158: 	FHodgeHealth_DeathEvent OnDeathFinished;
+ 160: protected:
+ 162: 	virtual void OnUnregister() override;
+ 165: 	void ClearGameplayTags();
+ 169: 	virtual void HandleHealthChanged(AActor* DamageInstigator, AActor* DamageCauser,
+ 170: 	                                 const FGameplayEffectSpec* DamageEffectSpec, float DamageMagnitude, float OldValue,
+ 171: 	                                 float NewValue);
+ 174: 	virtual void HandleMaxHealthChanged(AActor* DamageInstigator, AActor* DamageCauser,
+ 175: 	                                    const FGameplayEffectSpec* DamageEffectSpec, float DamageMagnitude,
+ 176: 	                                    float OldValue, float NewValue);
+ 179: 	virtual void HandleOutOfHealth(AActor* DamageInstigator, AActor* DamageCauser,
+ 180: 	                               const FGameplayEffectSpec* DamageEffectSpec, float DamageMagnitude, float OldValue,
+ 181: 	                               float NewValue);
+ 185: 	UFUNCTION()
+ 186: 	virtual void OnRep_DeathState(EHodgeDeathState OldDeathState);
+ 188: protected:
+ 191: 	UPROPERTY()
+ 192: 	TObjectPtr<UHodgeAbilitySystemComponent> AbilitySystemComponent;
+ 197: 	UPROPERTY()
+ 198: 	TObjectPtr<const UHodgeHealthSet> HealthSet;
+ 202: 	UPROPERTY(ReplicatedUsing = OnRep_DeathState)
+ 203: 	EHodgeDeathState DeathState;
+ 204: };
 ```
 
 ## HodgeHeroComponent.h

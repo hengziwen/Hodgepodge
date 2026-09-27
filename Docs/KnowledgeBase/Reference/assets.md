@@ -45,9 +45,9 @@
 
 ## Data
 
-- [DA_Dafult_GameData.uasset](../../../Content/Main/Data/DA_Dafult_GameData.uasset) — `/Game/Main/Data/DA_Dafult_GameData`；1,495 字节
+- [DA_Dafult_GameData.uasset](../../../Content/Main/Data/DA_Dafult_GameData.uasset) — `/Game/Main/Data/DA_Dafult_GameData`；2,066 字节
 - [DA_Dafult_PawnData.uasset](../../../Content/Main/Data/DA_Dafult_PawnData.uasset) — `/Game/Main/Data/DA_Dafult_PawnData`；2,441 字节
-- [DA_Pover.uasset](../../../Content/Main/Data/DA_Pover.uasset) — `/Game/Main/Data/DA_Pover`；2,314 字节
+- [DA_Pover.uasset](../../../Content/Main/Data/DA_Pover.uasset) — `/Game/Main/Data/DA_Pover`；2,326 字节
 
 ## Experiences
 
@@ -85,11 +85,12 @@
 
 - `Assets`：645 个文件（包含源资源，不等于 UE 资产数）。
 - `Characters`：148 个文件（包含源资源，不等于 UE 资产数）。
-- `CodexText`：482 个文件（包含源资源，不等于 UE 资产数）。
+- `CodexText`：489 个文件（包含源资源，不等于 UE 资产数）。
+- `GameplayEffects`：15 个文件（包含源资源，不等于 UE 资产数）。
 - `LevelPrototyping`：13 个文件（包含源资源，不等于 UE 资产数）。
 - `Main`：44 个文件（包含源资源，不等于 UE 资产数）。
-- `ThirdPerson`：7 个文件（包含源资源，不等于 UE 资产数）。
+- `ThirdPerson`：8 个文件（包含源资源，不等于 UE 资产数）。
 - `Wuwa`：675 个文件（包含源资源，不等于 UE 资产数）。
-- `__ExternalActors__`：257 个文件（包含源资源，不等于 UE 资产数）。
+- `__ExternalActors__`：258 个文件（包含源资源，不等于 UE 资产数）。
 - `__ExternalObjects__`：19 个文件（包含源资源，不等于 UE 资产数）。
 - `qiuyuan`：285 个文件（包含源资源，不等于 UE 资产数）。

@@ -13,3 +13,8 @@
 - [AbilityTimeline 设计方案：逻辑时间轴与表现分离](Design/ability-timeline.md)
 - [Timeline 与 PlayTimeline AbilityTask：第一阶段最小闭环设计](Design/ability-timeline-stage1.md)
 - [Lyra UI 架构迁移执行文档（阶段一）](Design/lyra-ui-migration-plan.md)
+- [Lyra UI 迁移文件导览（79 文件说明 + 学习优先级）](Design/lyra-ui-file-guide.md)
+- [Hodge UI 模块化注入链：架构总览与逐条核实](Design/hodge-ui-architecture.md)
+- [UMG 与 Slate：读懂 Indicator 系统所需的最小心智模型](Design/umg-slate-mental-model.md)
+- [UIExtension：职责边界与完整流程](Design/ui-extension-system.md)
+- [Indicator UI 系统：职责边界与完整流程](Design/indicator-ui-system.md)

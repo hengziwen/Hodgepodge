@@ -33,20 +33,20 @@
 - `UHodgeAbilityTask_PlayTimeline::UHodgeAbilityTask_PlayTimeline` — L36
 - `UHodgeAbilityTask_PlayTimeline::PlayTimeline` — L43
 - `UHodgeAbilityTask_PlayTimeline::Activate` — L56
-- `UHodgeAbilityTask_PlayTimeline::TickTask` — L98
-- `UHodgeAbilityTask_PlayTimeline::CollectNodes` — L161
-- `UHodgeAbilityTask_PlayTimeline::SortNodes` — L220
-- `UHodgeAbilityTask_PlayTimeline::InitializeTimeline` — L254
-- `UHodgeAbilityTask_PlayTimeline::AdvanceTimeline` — L290
-- `UHodgeAbilityTask_PlayTimeline::HasAuthorityOnAvatar` — L341
-- `UHodgeAbilityTask_PlayTimeline::EnterWindow` — L347
-- `UHodgeAbilityTask_PlayTimeline::ExitWindow` — L407
-- `UHodgeAbilityTask_PlayTimeline::ApplyTimelineEffect` — L456
-- `UHodgeAbilityTask_PlayTimeline::FirePointEvent` — L480
-- `UHodgeAbilityTask_PlayTimeline::FireSystemEvent` — L543
-- `UHodgeAbilityTask_PlayTimeline::ClearAllWindowState` — L556
-- `UHodgeAbilityTask_PlayTimeline::StopTimeline` — L599
-- `UHodgeAbilityTask_PlayTimeline::OnDestroy` — L631
+- `UHodgeAbilityTask_PlayTimeline::TickTask` — L113
+- `UHodgeAbilityTask_PlayTimeline::CollectNodes` — L176
+- `UHodgeAbilityTask_PlayTimeline::SortNodes` — L235
+- `UHodgeAbilityTask_PlayTimeline::InitializeTimeline` — L269
+- `UHodgeAbilityTask_PlayTimeline::AdvanceTimeline` — L305
+- `UHodgeAbilityTask_PlayTimeline::HasAuthorityOnAvatar` — L356
+- `UHodgeAbilityTask_PlayTimeline::EnterWindow` — L362
+- `UHodgeAbilityTask_PlayTimeline::ExitWindow` — L422
+- `UHodgeAbilityTask_PlayTimeline::ApplyTimelineEffect` — L471
+- `UHodgeAbilityTask_PlayTimeline::FirePointEvent` — L495
+- `UHodgeAbilityTask_PlayTimeline::FireSystemEvent` — L558
+- `UHodgeAbilityTask_PlayTimeline::ClearAllWindowState` — L571
+- `UHodgeAbilityTask_PlayTimeline::StopTimeline` — L614
+- `UHodgeAbilityTask_PlayTimeline::OnDestroy` — L646
 
 ## HodgeAbilityTask_WaitMoveCancel.cpp
 
@@ -54,12 +54,14 @@
 
 把“取消窗口（Timeline 授权）”与“移动意图（输入层）”两个变化驱动信号合流的 AbilityTask：同时成立时广播 OnMoveCancel 一次后自结束。本地控制端语义；AI/模拟代理找不到 HeroComponent 时永不成立。工作区新增，未编译、未 PIE。
 
-- `UHodgeAbilityTask_WaitMoveCancel::WaitMoveCancel` — L12
-- `UHodgeAbilityTask_WaitMoveCancel::Activate` — L21
-- `UHodgeAbilityTask_WaitMoveCancel::OnDestroy` — L55
-- `UHodgeAbilityTask_WaitMoveCancel::Evaluate` — L78
-- `UHodgeAbilityTask_WaitMoveCancel::HandleMoveIntentChanged` — L121
-- `UHodgeAbilityTask_WaitMoveCancel::HandleWindowTagChanged` — L127
+- `UHodgeAbilityTask_WaitMoveCancel::UHodgeAbilityTask_WaitMoveCancel` — L14
+- `UHodgeAbilityTask_WaitMoveCancel::TickTask` — L20
+- `UHodgeAbilityTask_WaitMoveCancel::WaitMoveCancel` — L26
+- `UHodgeAbilityTask_WaitMoveCancel::Activate` — L35
+- `UHodgeAbilityTask_WaitMoveCancel::OnDestroy` — L70
+- `UHodgeAbilityTask_WaitMoveCancel::Evaluate` — L93
+- `UHodgeAbilityTask_WaitMoveCancel::HandleMoveIntentChanged` — L136
+- `UHodgeAbilityTask_WaitMoveCancel::HandleWindowTagChanged` — L142
 
 ## HodgeGameplayAbility.cpp
 
@@ -93,6 +95,24 @@
 - `UHodgeGameplayAbility::SetCameraMode` — L773
 - `UHodgeGameplayAbility::ClearCameraMode` — L787
 
+## HodgeGameplayAbility_BasicAttack.cpp
+
+[Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility_BasicAttack.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility_BasicAttack.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `UHodgeGameplayAbility_BasicAttack::UHodgeGameplayAbility_BasicAttack` — L16
+- `UHodgeGameplayAbility_BasicAttack::ActivateAbility` — L25
+- `UHodgeGameplayAbility_BasicAttack::StartStep` — L64
+- `UHodgeGameplayAbility_BasicAttack::OnAttackPressed` — L90
+- `UHodgeGameplayAbility_BasicAttack::OnComboWindowChanged` — L96
+- `UHodgeGameplayAbility_BasicAttack::TryAdvance` — L101
+- `UHodgeGameplayAbility_BasicAttack::OnTimelineEnded` — L116
+- `UHodgeGameplayAbility_BasicAttack::OnCompleted` — L121
+- `UHodgeGameplayAbility_BasicAttack::OnInterrupted` — L129
+- `UHodgeGameplayAbility_BasicAttack::ClearStep` — L137
+- `UHodgeGameplayAbility_BasicAttack::EndAbility` — L168
+
 ## HodgeAttributeSet.cpp
 
 [Source/Hodgepodge/Private/AbilitySystem/AttributeSet/HodgeAttributeSet.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/AttributeSet/HodgeAttributeSet.cpp)
@@ -103,24 +123,51 @@
 - `UHodgeAttributeSet::GetWorld` — L28
 - `UHodgeAttributeSet::GetHodgeAbilitySystemComponent` — L41
 
+## HodgeCombatSet.cpp
+
+[Source/Hodgepodge/Private/AbilitySystem/AttributeSet/HodgeCombatSet.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/AttributeSet/HodgeCombatSet.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `UHodgeCombatSet::UHodgeCombatSet` — L11
+- `UHodgeCombatSet::GetLifetimeReplicatedProps` — L20
+- `UHodgeCombatSet::OnRep_BaseDamage` — L33
+- `UHodgeCombatSet::OnRep_BaseHeal` — L40
+
 ## HodgeHealthSet.cpp
 
 [Source/Hodgepodge/Private/AbilitySystem/AttributeSet/HodgeHealthSet.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/AttributeSet/HodgeHealthSet.cpp)
 
 Health/MaxHealth、BaseDamage/BaseHeal 和 Damage/Healing 元属性；有效结算、夹取、免疫和耗尽广播。
 
-- `UHodgeHealthSet::UHodgeHealthSet` — L37
-- `UHodgeHealthSet::GetLifetimeReplicatedProps` — L53
-- `UHodgeHealthSet::OnRep_Health` — L72
-- `UHodgeHealthSet::OnRep_MaxHealth` — L108
-- `UHodgeHealthSet::OnRep_BaseDamage` — L125
-- `UHodgeHealthSet::OnRep_BaseHeal` — L132
-- `UHodgeHealthSet::PreGameplayEffectExecute` — L139
-- `UHodgeHealthSet::PostGameplayEffectExecute` — L197
-- `UHodgeHealthSet::PreAttributeBaseChange` — L334
-- `UHodgeHealthSet::PreAttributeChange` — L344
-- `UHodgeHealthSet::PostAttributeChange` — L354
-- `UHodgeHealthSet::ClampAttribute` — L386
+- `UHodgeHealthSet::UHodgeHealthSet` — L33
+- `UHodgeHealthSet::GetLifetimeReplicatedProps` — L50
+- `UHodgeHealthSet::OnRep_Health` — L63
+- `UHodgeHealthSet::OnRep_MaxHealth` — L99
+- `UHodgeHealthSet::PreGameplayEffectExecute` — L116
+- `UHodgeHealthSet::PostGameplayEffectExecute` — L176
+- `UHodgeHealthSet::PreAttributeBaseChange` — L298
+- `UHodgeHealthSet::PreAttributeChange` — L308
+- `UHodgeHealthSet::PostAttributeChange` — L318
+- `UHodgeHealthSet::ClampAttribute` — L352
+
+## HodgeDamageExecution.cpp
+
+[Source/Hodgepodge/Private/AbilitySystem/Executions/HodgeDamageExecution.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/Executions/HodgeDamageExecution.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `UHodgeDamageExecution::UHodgeDamageExecution` — L47
+- `UHodgeDamageExecution::Execute_Implementation` — L54
+
+## HodgeHealExecution.cpp
+
+[Source/Hodgepodge/Private/AbilitySystem/Executions/HodgeHealExecution.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/Executions/HodgeHealExecution.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `UHodgeHealExecution::UHodgeHealExecution` — L44
+- `UHodgeHealExecution::Execute_Implementation` — L51
 
 ## GameplayTagStack.cpp
 
@@ -374,7 +421,7 @@ UI 相机管理扩展，不代表 UI 系统已接入。
 
 PawnExtension、相机、ASC 查询、移动标签、复制与死亡占位逻辑。
 
-- `AHodgeCombatCharacter::AHodgeCombatCharacter` — L36
+- `AHodgeCombatCharacter::AHodgeCombatCharacter` — L37
 - `AHodgeCombatCharacter::PreInitializeComponents` — L154
 - `AHodgeCombatCharacter::BeginPlay` — L161
 - `AHodgeCombatCharacter::EndPlay` — L184
@@ -389,36 +436,36 @@ PawnExtension、相机、ASC 查询、移动标签、复制与死亡占位逻辑
 - `AHodgeCombatCharacter::OnAbilitySystemInitialized` — L312
 - `AHodgeCombatCharacter::OnAbilitySystemUninitialized` — L326
 - `AHodgeCombatCharacter::PossessedBy` — L333
-- `AHodgeCombatCharacter::UnPossessed` — L357
-- `AHodgeCombatCharacter::OnRep_Controller` — L383
-- `AHodgeCombatCharacter::OnRep_PlayerState` — L392
-- `AHodgeCombatCharacter::SetupPlayerInputComponent` — L401
-- `AHodgeCombatCharacter::InitializeGameplayTags` — L410
-- `AHodgeCombatCharacter::GetOwnedGameplayTags` — L445
-- `AHodgeCombatCharacter::HasMatchingGameplayTag` — L455
-- `AHodgeCombatCharacter::HasAllMatchingGameplayTags` — L467
-- `AHodgeCombatCharacter::HasAnyMatchingGameplayTags` — L479
-- `AHodgeCombatCharacter::FellOutOfWorld` — L491
-- `AHodgeCombatCharacter::OnDeathStarted` — L498
-- `AHodgeCombatCharacter::OnDeathFinished` — L505
-- `AHodgeCombatCharacter::DisableMovementAndCollision` — L512
-- `AHodgeCombatCharacter::DestroyDueToDeath` — L542
-- `AHodgeCombatCharacter::UninitAndDestroy` — L552
-- `AHodgeCombatCharacter::OnMovementModeChanged` — L580
-- `AHodgeCombatCharacter::SetMovementModeTag` — L596
-- `AHodgeCombatCharacter::ToggleCrouch` — L625
-- `AHodgeCombatCharacter::OnStartCrouch` — L644
-- `AHodgeCombatCharacter::OnEndCrouch` — L658
-- `AHodgeCombatCharacter::CanJumpInternal_Implementation` — L672
-- `AHodgeCombatCharacter::OnRep_ReplicatedAcceleration` — L679
-- `AHodgeCombatCharacter::OnControllerChangedTeam` — L709
-- `AHodgeCombatCharacter::OnRep_MyTeamID` — L722
-- `AHodgeCombatCharacter::UpdateSharedReplication` — L729
-- `AHodgeCombatCharacter::FastSharedReplication_Implementation` — L762
-- `FSharedRepMovement::FSharedRepMovement` — L804
-- `FSharedRepMovement::FillForCharacter` — L811
-- `FSharedRepMovement::Equals` — L858
-- `FSharedRepMovement::NetSerialize` — L901
+- `AHodgeCombatCharacter::UnPossessed` — L359
+- `AHodgeCombatCharacter::OnRep_Controller` — L385
+- `AHodgeCombatCharacter::OnRep_PlayerState` — L394
+- `AHodgeCombatCharacter::SetupPlayerInputComponent` — L403
+- `AHodgeCombatCharacter::InitializeGameplayTags` — L414
+- `AHodgeCombatCharacter::GetOwnedGameplayTags` — L449
+- `AHodgeCombatCharacter::HasMatchingGameplayTag` — L459
+- `AHodgeCombatCharacter::HasAllMatchingGameplayTags` — L471
+- `AHodgeCombatCharacter::HasAnyMatchingGameplayTags` — L483
+- `AHodgeCombatCharacter::FellOutOfWorld` — L495
+- `AHodgeCombatCharacter::OnDeathStarted` — L502
+- `AHodgeCombatCharacter::OnDeathFinished` — L509
+- `AHodgeCombatCharacter::DisableMovementAndCollision` — L516
+- `AHodgeCombatCharacter::DestroyDueToDeath` — L546
+- `AHodgeCombatCharacter::UninitAndDestroy` — L556
+- `AHodgeCombatCharacter::OnMovementModeChanged` — L584
+- `AHodgeCombatCharacter::SetMovementModeTag` — L600
+- `AHodgeCombatCharacter::ToggleCrouch` — L629
+- `AHodgeCombatCharacter::OnStartCrouch` — L648
+- `AHodgeCombatCharacter::OnEndCrouch` — L662
+- `AHodgeCombatCharacter::CanJumpInternal_Implementation` — L676
+- `AHodgeCombatCharacter::OnRep_ReplicatedAcceleration` — L683
+- `AHodgeCombatCharacter::OnControllerChangedTeam` — L713
+- `AHodgeCombatCharacter::OnRep_MyTeamID` — L726
+- `AHodgeCombatCharacter::UpdateSharedReplication` — L733
+- `AHodgeCombatCharacter::FastSharedReplication_Implementation` — L766
+- `FSharedRepMovement::FSharedRepMovement` — L808
+- `FSharedRepMovement::FillForCharacter` — L815
+- `FSharedRepMovement::Equals` — L862
+- `FSharedRepMovement::NetSerialize` — L905
 
 ## HodgeEnemyCharacter.cpp
 
@@ -429,7 +476,7 @@ PawnExtension、相机、ASC 查询、移动标签、复制与死亡占位逻辑
 - `AHodgeEnemyCharacter::AHodgeEnemyCharacter` — L10
 - `AHodgeEnemyCharacter::BeginPlay` — L41
 - `AHodgeEnemyCharacter::PossessedBy` — L46
-- `AHodgeEnemyCharacter::PostEditChangeProperty` — L53
+- `AHodgeEnemyCharacter::PostEditChangeProperty` — L54
 
 ## HodgeHeroCharacter.cpp
 
@@ -457,11 +504,12 @@ CodexText 实验：6 向地面运动动画实例，不属于主 Hero 动画链�
 
 CodexText 实验：编辑器辅助库，含 Grounded 图层与停步/转身精修、步幅、地形、战斗图层等编辑期构建函数。
 
-- `UHodgeGroundedAuthoring::RefineGroundedTransitions` — L44
-- `UHodgeGroundedAuthoring::AddStrideLayer` — L107
-- `UHodgeGroundedAuthoring::AddTerrainLayer` — L166
-- `UHodgeGroundedAuthoring::AddCombatLayer` — L228
-- `UHodgeGroundedAuthoring::AddGroundedLayer` — L284
+- `UHodgeGroundedAuthoring::RepairGroundedLegIK` — L51
+- `UHodgeGroundedAuthoring::RefineGroundedTransitions` — L101
+- `UHodgeGroundedAuthoring::AddStrideLayer` — L164
+- `UHodgeGroundedAuthoring::AddTerrainLayer` — L223
+- `UHodgeGroundedAuthoring::AddCombatLayer` — L285
+- `UHodgeGroundedAuthoring::AddGroundedLayer` — L341
 
 ## HodgeGroundedLocomotion.cpp
 
@@ -599,6 +647,29 @@ GameState 上的 Experience 复制、资源加载、插件激活、Action 执行
 - `UHodgeExperienceManagerComponent::ShouldShowLoadingScreen` — L627
 - `UHodgeExperienceManagerComponent::OnAllActionsDeactivated` — L645
 
+## HodgeHealthComponent.cpp
+
+[Source/Hodgepodge/Private/Component/HodgeHealthComponent.cpp](../../../Source/Hodgepodge/Private/Component/HodgeHealthComponent.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `UHodgeHealthComponent::UHodgeHealthComponent` — L30
+- `UHodgeHealthComponent::GetLifetimeReplicatedProps` — L53
+- `UHodgeHealthComponent::OnUnregister` — L63
+- `UHodgeHealthComponent::InitializeWithAbilitySystem` — L73
+- `UHodgeHealthComponent::UninitializeFromAbilitySystem` — L142
+- `UHodgeHealthComponent::ClearGameplayTags` — L168
+- `UHodgeHealthComponent::GetHealth` — L182
+- `UHodgeHealthComponent::GetMaxHealth` — L189
+- `UHodgeHealthComponent::GetHealthNormalized` — L196
+- `UHodgeHealthComponent::HandleHealthChanged` — L216
+- `UHodgeHealthComponent::HandleMaxHealthChanged` — L225
+- `UHodgeHealthComponent::HandleOutOfHealth` — L234
+- `UHodgeHealthComponent::OnRep_DeathState` — L308
+- `UHodgeHealthComponent::StartDeath` — L380
+- `UHodgeHealthComponent::FinishDeath` — L412
+- `UHodgeHealthComponent::DamageSelfDestruct` — L444
+
 ## HodgeHeroComponent.cpp
 
 [Source/Hodgepodge/Private/Component/HodgeHeroComponent.cpp](../../../Source/Hodgepodge/Private/Component/HodgeHeroComponent.cpp)
@@ -610,29 +681,29 @@ GameState 上的 Experience 复制、资源加载、插件激活、Action 执行
 - `UHodgeHeroComponent::UHodgeHeroComponent` — L87
 - `UHodgeHeroComponent::OnRegister` — L98
 - `UHodgeHeroComponent::CanChangeInitState` — L142
-- `UHodgeHeroComponent::HandleChangeInitState` — L247
-- `UHodgeHeroComponent::OnActorInitStateChanged` — L312
-- `UHodgeHeroComponent::CheckDefaultInitialization` — L328
-- `UHodgeHeroComponent::BeginPlay` — L346
-- `UHodgeHeroComponent::EndPlay` — L368
-- `UHodgeHeroComponent::InitializePlayerInput` — L392
-- `UHodgeHeroComponent::AddAdditionalInputConfig` — L618
-- `UHodgeHeroComponent::RemoveAdditionalInputConfig` — L709
-- `UHodgeHeroComponent::IsReadyToBindInputs` — L738
-- `UHodgeHeroComponent::Input_AbilityInputTagPressed` — L745
-- `UHodgeHeroComponent::Input_AbilityInputTagReleased` — L768
-- `UHodgeHeroComponent::Input_Move` — L796
-- `UHodgeHeroComponent::Input_MoveStopped` — L859
-- `UHodgeHeroComponent::HasMoveIntent` — L867
-- `UHodgeHeroComponent::SetMoveIntent` — L874
-- `UHodgeHeroComponent::RefreshMoveIntent` — L881
-- `UHodgeHeroComponent::Input_LookMouse` — L895
-- `UHodgeHeroComponent::Input_LookStick` — L934
-- `UHodgeHeroComponent::Input_Crouch` — L981
-- `UHodgeHeroComponent::Input_AutoRun` — L994
-- `UHodgeHeroComponent::DetermineCameraMode` — L1014
-- `UHodgeHeroComponent::SetAbilityCameraMode` — L1047
-- `UHodgeHeroComponent::ClearAbilityCameraMode` — L1062
+- `UHodgeHeroComponent::HandleChangeInitState` — L262
+- `UHodgeHeroComponent::OnActorInitStateChanged` — L329
+- `UHodgeHeroComponent::CheckDefaultInitialization` — L345
+- `UHodgeHeroComponent::BeginPlay` — L365
+- `UHodgeHeroComponent::EndPlay` — L389
+- `UHodgeHeroComponent::InitializePlayerInput` — L413
+- `UHodgeHeroComponent::AddAdditionalInputConfig` — L639
+- `UHodgeHeroComponent::RemoveAdditionalInputConfig` — L730
+- `UHodgeHeroComponent::IsReadyToBindInputs` — L759
+- `UHodgeHeroComponent::Input_AbilityInputTagPressed` — L766
+- `UHodgeHeroComponent::Input_AbilityInputTagReleased` — L789
+- `UHodgeHeroComponent::Input_Move` — L817
+- `UHodgeHeroComponent::Input_MoveStopped` — L890
+- `UHodgeHeroComponent::HasMoveIntent` — L898
+- `UHodgeHeroComponent::SetMoveIntent` — L905
+- `UHodgeHeroComponent::RefreshMoveIntent` — L912
+- `UHodgeHeroComponent::Input_LookMouse` — L926
+- `UHodgeHeroComponent::Input_LookStick` — L965
+- `UHodgeHeroComponent::Input_Crouch` — L1012
+- `UHodgeHeroComponent::Input_AutoRun` — L1025
+- `UHodgeHeroComponent::DetermineCameraMode` — L1045
+- `UHodgeHeroComponent::SetAbilityCameraMode` — L1078
+- `UHodgeHeroComponent::ClearAbilityCameraMode` — L1093
 
 ## HodgeInteractionComponentBase.cpp
 
@@ -743,11 +814,17 @@ GameState 基础扩展生命周期。
 - `AHodgeGameStateBase::BeginPlay` — L27
 - `AHodgeGameStateBase::EndPlay` — L36
 
-## HodgeHUDBase.cpp
+## HodgeHUD.cpp
 
-[Source/Hodgepodge/Private/Core/HUD/HodgeHUDBase.cpp](../../../Source/Hodgepodge/Private/Core/HUD/HodgeHUDBase.cpp)
+[Source/Hodgepodge/Private/Core/HUD/HodgeHUD.cpp](../../../Source/Hodgepodge/Private/Core/HUD/HodgeHUD.cpp)
 
-项目 HUD 基类扩展入口，不代表 CommonUI 已完成。
+项目 HUD 类：GameFrameworkComponent 接收器注册与 GAS 调试 Actor 列表；不代表 CommonUI 已完成。
+
+- `AHodgeHUD::AHodgeHUD` — L19
+- `AHodgeHUD::PreInitializeComponents` — L25
+- `AHodgeHUD::BeginPlay` — L32
+- `AHodgeHUD::EndPlay` — L39
+- `AHodgeHUD::GetDebugActorList` — L46
 
 ## HodgeLocalPlayerBase.cpp
 
@@ -884,8 +961,9 @@ PlayerState ModularGameplay Receiver 注册、注销及组件 Reset/CopyProperti
 
 技能逻辑时间轴数据资产（统一事件模型：单一 Events[]，Kind = Window / Point）。只描述“何时发生什么”，不含业务判断；没有 Montage 字段、不做 Bundle 收集。
 
-- `UHodgeAbilityTimeline::IsDataValid` — L46
-- `UHodgeAbilityTimeline::PostEditChangeProperty` — L321
+- `UHodgeAbilityTimeline::ValidateForPlayback` — L26
+- `UHodgeAbilityTimeline::IsDataValid` — L214
+- `UHodgeAbilityTimeline::PostEditChangeProperty` — L323
 
 ## HodgeAssetManager.cpp
 
@@ -1144,6 +1222,471 @@ Enhanced Input 用户设置派生入口；须核对实际设置类配置。
 
 加载状态/原因查询契约；不是独立加载界面。
 
+## HodgeAbilityTimelineTests.cpp
+
+[Source/Hodgepodge/Private/Tests/HodgeAbilityTimelineTests.cpp](../../../Source/Hodgepodge/Private/Tests/HodgeAbilityTimelineTests.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `FHodgeTimelineValidationTest::RunTest` — L77
+- `FHodgeTimelineRejectTest::RunTest` — L115
+- `FHodgeTimelineCleanupTest::RunTest` — L152
+
+## MaterialProgressBar.cpp
+
+[Source/Hodgepodge/Private/UI/Basic/MaterialProgressBar.cpp](../../../Source/Hodgepodge/Private/UI/Basic/MaterialProgressBar.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `UMaterialProgressBar::SynchronizeProperties` — L11
+- `UMaterialProgressBar::OnWidgetRebuilt` — L80
+- `UMaterialProgressBar::OnAnimationFinished_Implementation` — L139
+- `UMaterialProgressBar::SetProgress` — L149
+- `UMaterialProgressBar::SetStartProgress` — L157
+- `UMaterialProgressBar::SetColorA` — L165
+- `UMaterialProgressBar::SetColorB` — L173
+- `UMaterialProgressBar::SetColorBackground` — L181
+- `UMaterialProgressBar::AnimateProgressFromStart` — L189
+- `UMaterialProgressBar::AnimateProgressFromCurrent` — L196
+- `UMaterialProgressBar::SetProgress_Internal` — L208
+- `UMaterialProgressBar::SetStartProgress_Internal` — L217
+- `UMaterialProgressBar::SetColorA_Internal` — L226
+- `UMaterialProgressBar::SetColorB_Internal` — L235
+- `UMaterialProgressBar::SetColorBackground_Internal` — L244
+- `UMaterialProgressBar::GetBarDynamicMaterial` — L253
+
+## HodgeBoundActionButton.cpp
+
+[Source/Hodgepodge/Private/UI/Common/HodgeBoundActionButton.cpp](../../../Source/Hodgepodge/Private/UI/Common/HodgeBoundActionButton.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `UHodgeBoundActionButton::NativeConstruct` — L12
+- `UHodgeBoundActionButton::HandleInputMethodChanged` — L23
+
+## HodgeListView.cpp
+
+[Source/Hodgepodge/Private/UI/Common/HodgeListView.cpp](../../../Source/Hodgepodge/Private/UI/Common/HodgeListView.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `UHodgeListView::UHodgeListView` — L14
+- `UHodgeListView::ValidateCompiledDefaults` — L21
+- `UHodgeListView::OnGenerateEntryWidgetInternal` — L35
+
+## HodgeTabButtonBase.cpp
+
+[Source/Hodgepodge/Private/UI/Common/HodgeTabButtonBase.cpp](../../../Source/Hodgepodge/Private/UI/Common/HodgeTabButtonBase.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `UHodgeTabButtonBase::SetIconFromLazyObject` — L13
+- `UHodgeTabButtonBase::SetIconBrush` — L21
+- `UHodgeTabButtonBase::SetTabLabelInfo_Implementation` — L29
+
+## HodgeTabListWidgetBase.cpp
+
+[Source/Hodgepodge/Private/UI/Common/HodgeTabListWidgetBase.cpp](../../../Source/Hodgepodge/Private/UI/Common/HodgeTabListWidgetBase.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `UHodgeTabListWidgetBase::NativeOnInitialized` — L10
+- `UHodgeTabListWidgetBase::NativeConstruct` — L15
+- `UHodgeTabListWidgetBase::NativeDestruct` — L22
+- `UHodgeTabListWidgetBase::GetPreregisteredTabInfo` — L36
+- `UHodgeTabListWidgetBase::SetTabHiddenState` — L53
+- `UHodgeTabListWidgetBase::RegisterDynamicTab` — L65
+- `UHodgeTabListWidgetBase::HandlePreLinkedSwitcherChanged` — L78
+- `UHodgeTabListWidgetBase::HandlePostLinkedSwitcherChanged` — L92
+- `UHodgeTabListWidgetBase::HandleTabCreation_Implementation` — L103
+- `UHodgeTabListWidgetBase::IsFirstTabActive` — L132
+- `UHodgeTabListWidgetBase::IsLastTabActive` — L142
+- `UHodgeTabListWidgetBase::IsTabVisible` — L152
+- `UHodgeTabListWidgetBase::GetVisibleTabCount` — L165
+- `UHodgeTabListWidgetBase::SetupTabs` — L180
+
+## HodgeWidgetFactory.cpp
+
+[Source/Hodgepodge/Private/UI/Common/HodgeWidgetFactory.cpp](../../../Source/Hodgepodge/Private/UI/Common/HodgeWidgetFactory.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `UHodgeWidgetFactory::FindWidgetClassForData_Implementation` — L10
+
+## HodgeWidgetFactory_Class.cpp
+
+[Source/Hodgepodge/Private/UI/Common/HodgeWidgetFactory_Class.cpp](../../../Source/Hodgepodge/Private/UI/Common/HodgeWidgetFactory_Class.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `UHodgeWidgetFactory_Class::FindWidgetClassForData_Implementation` — L9
+
+## UIExtensionPointWidget.cpp
+
+[Source/Hodgepodge/Private/UI/Extension/UIExtensionPointWidget.cpp](../../../Source/Hodgepodge/Private/UI/Extension/UIExtensionPointWidget.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `UUIExtensionPointWidget::UUIExtensionPointWidget` — L39
+- `UUIExtensionPointWidget::ReleaseSlateResources` — L45
+- `UUIExtensionPointWidget::RebuildWidget` — L56
+- `UUIExtensionPointWidget::ResetExtensionPoint` — L123
+- `UUIExtensionPointWidget::RegisterExtensionPoint` — L142
+- `UUIExtensionPointWidget::RegisterExtensionPointForPlayerState` — L186
+- `UUIExtensionPointWidget::OnAddOrRemoveExtension` — L214
+- `UUIExtensionPointWidget::ValidateCompiledDefaults` — L297
+
+## UIExtensionSystem.cpp
+
+[Source/Hodgepodge/Private/UI/Extension/UIExtensionSystem.cpp](../../../Source/Hodgepodge/Private/UI/Extension/UIExtensionSystem.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `FUIExtensionPointHandle::Unregister` — L24
+- `FUIExtensionHandle::Unregister` — L38
+- `FUIExtensionPoint::DoesExtensionPassContract` — L52
+- `UUIExtensionSubsystem::AddReferencedObjects` — L101
+- `UUIExtensionSubsystem::Initialize` — L136
+- `UUIExtensionSubsystem::Deinitialize` — L143
+- `UUIExtensionSubsystem::RegisterExtensionPoint` — L150
+- `UUIExtensionSubsystem::RegisterExtensionPointForContext` — L162
+- `UUIExtensionSubsystem::RegisterExtensionAsWidget` — L225
+- `UUIExtensionSubsystem::RegisterExtensionAsWidgetForContext` — L235
+- `UUIExtensionSubsystem::RegisterExtensionAsData` — L244
+- `UUIExtensionSubsystem::NotifyExtensionPointOfExtensions` — L307
+- `UUIExtensionSubsystem::NotifyExtensionPointsOfExtension` — L357
+- `UUIExtensionSubsystem::UnregisterExtension` — L412
+- `UUIExtensionSubsystem::UnregisterExtensionPoint` — L466
+- `UUIExtensionSubsystem::CreateExtensionRequest` — L502
+- `UUIExtensionSubsystem::K2_RegisterExtensionPoint` — L526
+- `UUIExtensionSubsystem::K2_RegisterExtensionAsWidget` — L544
+- `UUIExtensionSubsystem::K2_RegisterExtensionAsWidgetForContext` — L553
+- `UUIExtensionSubsystem::K2_RegisterExtensionAsData` — L572
+- `UUIExtensionSubsystem::K2_RegisterExtensionAsDataForContext` — L580
+- `UUIExtensionHandleFunctions::Unregister` — L600
+- `UUIExtensionHandleFunctions::IsValid` — L606
+- `UUIExtensionPointHandleFunctions::Unregister` — L614
+- `UUIExtensionPointHandleFunctions::IsValid` — L620
+
+## HodgeActionWidget.cpp
+
+[Source/Hodgepodge/Private/UI/Foundation/HodgeActionWidget.cpp](../../../Source/Hodgepodge/Private/UI/Foundation/HodgeActionWidget.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `UHodgeActionWidget::GetIcon` — L10
+- `UHodgeActionWidget::GetEnhancedInputSubsystem` — L35
+
+## HodgeButtonBase.cpp
+
+[Source/Hodgepodge/Private/UI/Foundation/HodgeButtonBase.cpp](../../../Source/Hodgepodge/Private/UI/Foundation/HodgeButtonBase.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `UHodgeButtonBase::NativePreConstruct` — L8
+- `UHodgeButtonBase::UpdateInputActionWidget` — L16
+- `UHodgeButtonBase::SetButtonText` — L24
+- `UHodgeButtonBase::RefreshButtonText` — L31
+- `UHodgeButtonBase::OnInputMethodChanged` — L49
+
+## HodgeConfirmationScreen.cpp
+
+[Source/Hodgepodge/Private/UI/Foundation/HodgeConfirmationScreen.cpp](../../../Source/Hodgepodge/Private/UI/Foundation/HodgeConfirmationScreen.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+状态：文件无有效非注释内容。
+
+## HodgeControllerDisconnectedScreen.cpp
+
+[Source/Hodgepodge/Private/UI/Foundation/HodgeControllerDisconnectedScreen.cpp](../../../Source/Hodgepodge/Private/UI/Foundation/HodgeControllerDisconnectedScreen.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `UHodgeControllerDisconnectedScreen::UHodgeControllerDisconnectedScreen` — L23
+- `UHodgeControllerDisconnectedScreen::NativeOnActivated` — L30
+- `UHodgeControllerDisconnectedScreen::ShouldDisplayChangeUserButton` — L64
+- `UHodgeControllerDisconnectedScreen::HandleChangeUserClicked` — L79
+- `UHodgeControllerDisconnectedScreen::HandleChangeUserCompleted` — L97
+
+## HodgeLoadingScreenSubsystem.cpp
+
+[Source/Hodgepodge/Private/UI/Foundation/HodgeLoadingScreenSubsystem.cpp](../../../Source/Hodgepodge/Private/UI/Foundation/HodgeLoadingScreenSubsystem.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `UHodgeLoadingScreenSubsystem::UHodgeLoadingScreenSubsystem` — L14
+- `UHodgeLoadingScreenSubsystem::SetLoadingScreenContentWidget` — L18
+- `UHodgeLoadingScreenSubsystem::GetLoadingScreenContentWidget` — L28
+
+## ApplyFrontendPerfSettingsAction.cpp
+
+[Source/Hodgepodge/Private/UI/Frontend/ApplyFrontendPerfSettingsAction.cpp](../../../Source/Hodgepodge/Private/UI/Frontend/ApplyFrontendPerfSettingsAction.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `UApplyFrontendPerfSettingsAction::OnGameFeatureActivating` — L23
+- `UApplyFrontendPerfSettingsAction::OnGameFeatureDeactivating` — L32
+
+## HodgeFrontendStateComponent.cpp
+
+[Source/Hodgepodge/Private/UI/Frontend/HodgeFrontendStateComponent.cpp](../../../Source/Hodgepodge/Private/UI/Frontend/HodgeFrontendStateComponent.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+状态：文件无有效非注释内容。
+
+## HodgeLobbyBackground.cpp
+
+[Source/Hodgepodge/Private/UI/Frontend/HodgeLobbyBackground.cpp](../../../Source/Hodgepodge/Private/UI/Frontend/HodgeLobbyBackground.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+## HodgeActivatableWidget.cpp
+
+[Source/Hodgepodge/Private/UI/HodgeActivatableWidget.cpp](../../../Source/Hodgepodge/Private/UI/HodgeActivatableWidget.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `UHodgeActivatableWidget::UHodgeActivatableWidget` — L17
+- `UHodgeActivatableWidget::GetDesiredInputConfig` — L24
+- `UHodgeActivatableWidget::ValidateCompiledWidgetTree` — L62
+
+## HodgeGameViewportClient.cpp
+
+[Source/Hodgepodge/Private/UI/HodgeGameViewportClient.cpp](../../../Source/Hodgepodge/Private/UI/HodgeGameViewportClient.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+状态：文件无有效非注释内容。
+
+## HodgeHUDLayout.cpp
+
+[Source/Hodgepodge/Private/UI/HodgeHUDLayout.cpp](../../../Source/Hodgepodge/Private/UI/HodgeHUDLayout.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+状态：文件无有效非注释内容。
+
+## HodgeJoystickWidget.cpp
+
+[Source/Hodgepodge/Private/UI/HodgeJoystickWidget.cpp](../../../Source/Hodgepodge/Private/UI/HodgeJoystickWidget.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `UHodgeJoystickWidget::UHodgeJoystickWidget` — L12
+- `UHodgeJoystickWidget::NativeOnTouchStarted` — L18
+- `UHodgeJoystickWidget::NativeOnTouchMoved` — L32
+- `UHodgeJoystickWidget::NativeOnTouchEnded` — L45
+- `UHodgeJoystickWidget::NativeOnMouseLeave` — L51
+- `UHodgeJoystickWidget::NativeTick` — L57
+- `UHodgeJoystickWidget::HandleTouchDelta` — L76
+- `UHodgeJoystickWidget::StopInputSimulation` — L101
+
+## HodgeSettingScreen.cpp
+
+[Source/Hodgepodge/Private/UI/HodgeSettingScreen.cpp](../../../Source/Hodgepodge/Private/UI/HodgeSettingScreen.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+状态：文件无有效非注释内容。
+
+## HodgeSimulatedInputWidget.cpp
+
+[Source/Hodgepodge/Private/UI/HodgeSimulatedInputWidget.cpp](../../../Source/Hodgepodge/Private/UI/HodgeSimulatedInputWidget.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `UHodgeSimulatedInputWidget::UHodgeSimulatedInputWidget` — L11
+- `UHodgeSimulatedInputWidget::GetPaletteCategory` — L18
+- `UHodgeSimulatedInputWidget::NativeConstruct` — L24
+- `UHodgeSimulatedInputWidget::NativeDestruct` — L38
+- `UHodgeSimulatedInputWidget::NativeOnTouchEnded` — L48
+- `UHodgeSimulatedInputWidget::GetEnhancedInputSubsystem` — L55
+- `UHodgeSimulatedInputWidget::GetPlayerInput` — L67
+- `UHodgeSimulatedInputWidget::InputKeyValue` — L76
+- `UHodgeSimulatedInputWidget::InputKeyValue2D` — L111
+- `UHodgeSimulatedInputWidget::FlushSimulatedInput` — L116
+- `UHodgeSimulatedInputWidget::QueryKeyToSimulate` — L124
+- `UHodgeSimulatedInputWidget::OnControlMappingsRebuilt` — L140
+
+## HodgeTaggedWidget.cpp
+
+[Source/Hodgepodge/Private/UI/HodgeTaggedWidget.cpp](../../../Source/Hodgepodge/Private/UI/HodgeTaggedWidget.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `UHodgeTaggedWidget::UHodgeTaggedWidget` — L13
+- `UHodgeTaggedWidget::NativeConstruct` — L19
+- `UHodgeTaggedWidget::NativeDestruct` — L44
+- `UHodgeTaggedWidget::SetVisibility` — L61
+- `UHodgeTaggedWidget::OnWatchedTagsChanged` — L120
+
+## HodgeTouchRegion.cpp
+
+[Source/Hodgepodge/Private/UI/HodgeTouchRegion.cpp](../../../Source/Hodgepodge/Private/UI/HodgeTouchRegion.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `UHodgeTouchRegion::NativeOnTouchStarted` — L11
+- `UHodgeTouchRegion::NativeOnTouchMoved` — L17
+- `UHodgeTouchRegion::NativeOnTouchEnded` — L26
+- `UHodgeTouchRegion::NativeTick` — L32
+
+## HodgeIndicatorManagerComponent.cpp
+
+[Source/Hodgepodge/Private/UI/IndicatorSystem/HodgeIndicatorManagerComponent.cpp](../../../Source/Hodgepodge/Private/UI/IndicatorSystem/HodgeIndicatorManagerComponent.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `UHodgeIndicatorManagerComponent::UHodgeIndicatorManagerComponent` — L14
+- `UHodgeIndicatorManagerComponent::GetComponent` — L28
+- `UHodgeIndicatorManagerComponent::AddIndicator` — L43
+- `UHodgeIndicatorManagerComponent::RemoveIndicator` — L58
+
+## IndicatorDescriptor.cpp
+
+[Source/Hodgepodge/Private/UI/IndicatorSystem/IndicatorDescriptor.cpp](../../../Source/Hodgepodge/Private/UI/IndicatorSystem/IndicatorDescriptor.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `FIndicatorProjection::Project` — L21
+- `UIndicatorDescriptor::SetIndicatorManagerComponent` — L254
+- `UIndicatorDescriptor::UnregisterIndicator` — L267
+
+## IndicatorLayer.cpp
+
+[Source/Hodgepodge/Private/UI/IndicatorSystem/IndicatorLayer.cpp](../../../Source/Hodgepodge/Private/UI/IndicatorSystem/IndicatorLayer.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `UIndicatorLayer::UIndicatorLayer` — L24
+- `UIndicatorLayer::ReleaseSlateResources` — L37
+- `UIndicatorLayer::RebuildWidget` — L48
+
+## IndicatorLibrary.cpp
+
+[Source/Hodgepodge/Private/UI/IndicatorSystem/IndicatorLibrary.cpp](../../../Source/Hodgepodge/Private/UI/IndicatorSystem/IndicatorLibrary.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `UIndicatorLibrary::UIndicatorLibrary` — L16
+- `UIndicatorLibrary::GetIndicatorManagerComponent` — L21
+
+## SActorCanvas.cpp
+
+[Source/Hodgepodge/Private/UI/IndicatorSystem/SActorCanvas.cpp](../../../Source/Hodgepodge/Private/UI/IndicatorSystem/SActorCanvas.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `SActorCanvas::Construct` — L207
+- `SActorCanvas::UpdateCanvas` — L253
+- `SActorCanvas::SetShowAnyIndicators` — L484
+- `SActorCanvas::OnArrangeChildren` — L506
+- `SActorCanvas::OnPaint` — L796
+- `SActorCanvas::~SActorCanvas` — L858
+- `SActorCanvas::GetReferencerName` — L876
+- `SActorCanvas::AddReferencedObjects` — L882
+- `SActorCanvas::OnIndicatorAdded` — L890
+- `SActorCanvas::OnIndicatorRemoved` — L904
+- `SActorCanvas::AddIndicatorForEntry` — L918
+- `SActorCanvas::OnIndicatorClassLoaded` — L955
+- `SActorCanvas::RemoveIndicatorForEntry` — L1014
+- `SActorCanvas::AddActorSlot` — L1047
+- `SActorCanvas::RemoveActorSlot` — L1068
+- `SActorCanvas::GetOffsetAndSize` — L1093
+- `SActorCanvas::UpdateActiveTimer` — L1170
+
+## HodgePerfStatContainerBase.cpp
+
+[Source/Hodgepodge/Private/UI/PerformanceStats/HodgePerfStatContainerBase.cpp](../../../Source/Hodgepodge/Private/UI/PerformanceStats/HodgePerfStatContainerBase.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+状态：文件无有效非注释内容。
+
+## HodgePerfStatWidgetBase.cpp
+
+[Source/Hodgepodge/Private/UI/PerformanceStats/HodgePerfStatWidgetBase.cpp](../../../Source/Hodgepodge/Private/UI/PerformanceStats/HodgePerfStatWidgetBase.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+状态：文件无有效非注释内容。
+
+## HodgeUIManagerSubsystem.cpp
+
+[Source/Hodgepodge/Private/UI/Subsystem/HodgeUIManagerSubsystem.cpp](../../../Source/Hodgepodge/Private/UI/Subsystem/HodgeUIManagerSubsystem.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+状态：文件无有效非注释内容。
+
+## HodgeUIMessaging.cpp
+
+[Source/Hodgepodge/Private/UI/Subsystem/HodgeUIMessaging.cpp](../../../Source/Hodgepodge/Private/UI/Subsystem/HodgeUIMessaging.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+状态：文件无有效非注释内容。
+
+## CircumferenceMarkerWidget.cpp
+
+[Source/Hodgepodge/Private/UI/Weapons/CircumferenceMarkerWidget.cpp](../../../Source/Hodgepodge/Private/UI/Weapons/CircumferenceMarkerWidget.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `UCircumferenceMarkerWidget::UCircumferenceMarkerWidget` — L10
+- `UCircumferenceMarkerWidget::ReleaseSlateResources` — L17
+- `UCircumferenceMarkerWidget::RebuildWidget` — L24
+- `UCircumferenceMarkerWidget::SynchronizeProperties` — L34
+- `UCircumferenceMarkerWidget::SetRadius` — L42
+
+## HitMarkerConfirmationWidget.cpp
+
+[Source/Hodgepodge/Private/UI/Weapons/HitMarkerConfirmationWidget.cpp](../../../Source/Hodgepodge/Private/UI/Weapons/HitMarkerConfirmationWidget.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+状态：文件无有效非注释内容。
+
+## HodgeReticleWidgetBase.cpp
+
+[Source/Hodgepodge/Private/UI/Weapons/HodgeReticleWidgetBase.cpp](../../../Source/Hodgepodge/Private/UI/Weapons/HodgeReticleWidgetBase.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+状态：文件无有效非注释内容。
+
+## HodgeWeaponUserInterface.cpp
+
+[Source/Hodgepodge/Private/UI/Weapons/HodgeWeaponUserInterface.cpp](../../../Source/Hodgepodge/Private/UI/Weapons/HodgeWeaponUserInterface.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+状态：文件无有效非注释内容。
+
+## SCircumferenceMarkerWidget.cpp
+
+[Source/Hodgepodge/Private/UI/Weapons/SCircumferenceMarkerWidget.cpp](../../../Source/Hodgepodge/Private/UI/Weapons/SCircumferenceMarkerWidget.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `SCircumferenceMarkerWidget::SCircumferenceMarkerWidget` — L13
+- `SCircumferenceMarkerWidget::Construct` — L17
+- `SCircumferenceMarkerWidget::GetMarkerRenderTransform` — L26
+- `SCircumferenceMarkerWidget::OnPaint` — L55
+- `SCircumferenceMarkerWidget::ComputeDesiredSize` — L92
+- `SCircumferenceMarkerWidget::SetRadius` — L100
+- `SCircumferenceMarkerWidget::SetMarkerList` — L109
+
+## SHitMarkerConfirmationWidget.cpp
+
+[Source/Hodgepodge/Private/UI/Weapons/SHitMarkerConfirmationWidget.cpp](../../../Source/Hodgepodge/Private/UI/Weapons/SHitMarkerConfirmationWidget.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+状态：文件无有效非注释内容。
+
 ## HodgeAbilityCost.h
 
 [Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeAbilityCost.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeAbilityCost.h)
@@ -1168,17 +1711,41 @@ Enhanced Input 用户设置派生入口；须核对实际设置类配置。
 
 项目技能基类：激活策略、互斥组、额外 Cost、失败与 EffectContext 扩展。（PreloadPrimaryAssetsOnGrant 已随未提交改动回退，当前不存在。）
 
+## HodgeGameplayAbility_BasicAttack.h
+
+[Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_BasicAttack.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_BasicAttack.h)
+
+模块定义或基础代码；请查看对应文件。
+
 ## HodgeAttributeSet.h
 
 [Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeAttributeSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeAttributeSet.h)
 
 项目 AttributeSet 基础和 ASC 访问。
 
+## HodgeCombatSet.h
+
+[Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeCombatSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeCombatSet.h)
+
+模块定义或基础代码；请查看对应文件。
+
 ## HodgeHealthSet.h
 
 [Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeHealthSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeHealthSet.h)
 
 Health/MaxHealth、BaseDamage/BaseHeal 和 Damage/Healing 元属性；有效结算、夹取、免疫和耗尽广播。
+
+## HodgeDamageExecution.h
+
+[Source/Hodgepodge/Public/AbilitySystem/Executions/HodgeDamageExecution.h](../../../Source/Hodgepodge/Public/AbilitySystem/Executions/HodgeDamageExecution.h)
+
+模块定义或基础代码；请查看对应文件。
+
+## HodgeHealExecution.h
+
+[Source/Hodgepodge/Public/AbilitySystem/Executions/HodgeHealExecution.h](../../../Source/Hodgepodge/Public/AbilitySystem/Executions/HodgeHealExecution.h)
+
+模块定义或基础代码；请查看对应文件。
 
 ## GameplayTagStack.h
 
@@ -1354,6 +1921,12 @@ CharacterMovement 扩展、地面距离、加速度和能力系统相关移动�
 
 GameState 上的 Experience 复制、资源加载、插件激活、Action 执行与 Loaded 委托。
 
+## HodgeHealthComponent.h
+
+[Source/Hodgepodge/Public/Component/HodgeHealthComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeHealthComponent.h)
+
+模块定义或基础代码；请查看对应文件。
+
 ## HodgeHeroComponent.h
 
 [Source/Hodgepodge/Public/Component/HodgeHeroComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeHeroComponent.h)
@@ -1402,11 +1975,11 @@ PawnData 复制、Init State、ASC 关联/解除、TagRelationshipMapping 与 Cl
 
 GameState 基础扩展生命周期。
 
-## HodgeHUDBase.h
+## HodgeHUD.h
 
-[Source/Hodgepodge/Public/Core/HUD/HodgeHUDBase.h](../../../Source/Hodgepodge/Public/Core/HUD/HodgeHUDBase.h)
+[Source/Hodgepodge/Public/Core/HUD/HodgeHUD.h](../../../Source/Hodgepodge/Public/Core/HUD/HodgeHUD.h)
 
-项目 HUD 基类扩展入口，不代表 CommonUI 已完成。
+项目 HUD 类：GameFrameworkComponent 接收器注册与 GAS 调试 Actor 列表；不代表 CommonUI 已完成。
 
 ## HodgeLocalPlayerBase.h
 
@@ -1595,6 +2168,276 @@ Enhanced Input 用户设置派生入口；须核对实际设置类配置。
 [Source/Hodgepodge/Public/Interface/LoadingProcessInterface.h](../../../Source/Hodgepodge/Public/Interface/LoadingProcessInterface.h)
 
 加载状态/原因查询契约；不是独立加载界面。
+
+## MaterialProgressBar.h
+
+[Source/Hodgepodge/Public/UI/Basic/MaterialProgressBar.h](../../../Source/Hodgepodge/Public/UI/Basic/MaterialProgressBar.h)
+
+模块定义或基础代码；请查看对应文件。
+
+## HodgeBoundActionButton.h
+
+[Source/Hodgepodge/Public/UI/Common/HodgeBoundActionButton.h](../../../Source/Hodgepodge/Public/UI/Common/HodgeBoundActionButton.h)
+
+模块定义或基础代码；请查看对应文件。
+
+## HodgeListView.h
+
+[Source/Hodgepodge/Public/UI/Common/HodgeListView.h](../../../Source/Hodgepodge/Public/UI/Common/HodgeListView.h)
+
+模块定义或基础代码；请查看对应文件。
+
+## HodgeTabButtonBase.h
+
+[Source/Hodgepodge/Public/UI/Common/HodgeTabButtonBase.h](../../../Source/Hodgepodge/Public/UI/Common/HodgeTabButtonBase.h)
+
+模块定义或基础代码；请查看对应文件。
+
+## HodgeTabListWidgetBase.h
+
+[Source/Hodgepodge/Public/UI/Common/HodgeTabListWidgetBase.h](../../../Source/Hodgepodge/Public/UI/Common/HodgeTabListWidgetBase.h)
+
+模块定义或基础代码；请查看对应文件。
+
+## HodgeWidgetFactory.h
+
+[Source/Hodgepodge/Public/UI/Common/HodgeWidgetFactory.h](../../../Source/Hodgepodge/Public/UI/Common/HodgeWidgetFactory.h)
+
+模块定义或基础代码；请查看对应文件。
+
+## HodgeWidgetFactory_Class.h
+
+[Source/Hodgepodge/Public/UI/Common/HodgeWidgetFactory_Class.h](../../../Source/Hodgepodge/Public/UI/Common/HodgeWidgetFactory_Class.h)
+
+模块定义或基础代码；请查看对应文件。
+
+## UIExtensionPointWidget.h
+
+[Source/Hodgepodge/Public/UI/Extension/UIExtensionPointWidget.h](../../../Source/Hodgepodge/Public/UI/Extension/UIExtensionPointWidget.h)
+
+模块定义或基础代码；请查看对应文件。
+
+## UIExtensionSystem.h
+
+[Source/Hodgepodge/Public/UI/Extension/UIExtensionSystem.h](../../../Source/Hodgepodge/Public/UI/Extension/UIExtensionSystem.h)
+
+模块定义或基础代码；请查看对应文件。
+
+## HodgeActionWidget.h
+
+[Source/Hodgepodge/Public/UI/Foundation/HodgeActionWidget.h](../../../Source/Hodgepodge/Public/UI/Foundation/HodgeActionWidget.h)
+
+模块定义或基础代码；请查看对应文件。
+
+## HodgeButtonBase.h
+
+[Source/Hodgepodge/Public/UI/Foundation/HodgeButtonBase.h](../../../Source/Hodgepodge/Public/UI/Foundation/HodgeButtonBase.h)
+
+模块定义或基础代码；请查看对应文件。
+
+## HodgeConfirmationScreen.h
+
+[Source/Hodgepodge/Public/UI/Foundation/HodgeConfirmationScreen.h](../../../Source/Hodgepodge/Public/UI/Foundation/HodgeConfirmationScreen.h)
+
+模块定义或基础代码；请查看对应文件。
+
+状态：文件无有效非注释内容。
+
+## HodgeControllerDisconnectedScreen.h
+
+[Source/Hodgepodge/Public/UI/Foundation/HodgeControllerDisconnectedScreen.h](../../../Source/Hodgepodge/Public/UI/Foundation/HodgeControllerDisconnectedScreen.h)
+
+模块定义或基础代码；请查看对应文件。
+
+## HodgeLoadingScreenSubsystem.h
+
+[Source/Hodgepodge/Public/UI/Foundation/HodgeLoadingScreenSubsystem.h](../../../Source/Hodgepodge/Public/UI/Foundation/HodgeLoadingScreenSubsystem.h)
+
+模块定义或基础代码；请查看对应文件。
+
+## ApplyFrontendPerfSettingsAction.h
+
+[Source/Hodgepodge/Public/UI/Frontend/ApplyFrontendPerfSettingsAction.h](../../../Source/Hodgepodge/Public/UI/Frontend/ApplyFrontendPerfSettingsAction.h)
+
+模块定义或基础代码；请查看对应文件。
+
+## HodgeFrontendStateComponent.h
+
+[Source/Hodgepodge/Public/UI/Frontend/HodgeFrontendStateComponent.h](../../../Source/Hodgepodge/Public/UI/Frontend/HodgeFrontendStateComponent.h)
+
+模块定义或基础代码；请查看对应文件。
+
+状态：文件无有效非注释内容。
+
+## HodgeLobbyBackground.h
+
+[Source/Hodgepodge/Public/UI/Frontend/HodgeLobbyBackground.h](../../../Source/Hodgepodge/Public/UI/Frontend/HodgeLobbyBackground.h)
+
+模块定义或基础代码；请查看对应文件。
+
+## HodgeActivatableWidget.h
+
+[Source/Hodgepodge/Public/UI/HodgeActivatableWidget.h](../../../Source/Hodgepodge/Public/UI/HodgeActivatableWidget.h)
+
+模块定义或基础代码；请查看对应文件。
+
+## HodgeGameViewportClient.h
+
+[Source/Hodgepodge/Public/UI/HodgeGameViewportClient.h](../../../Source/Hodgepodge/Public/UI/HodgeGameViewportClient.h)
+
+模块定义或基础代码；请查看对应文件。
+
+状态：文件无有效非注释内容。
+
+## HodgeHUDLayout.h
+
+[Source/Hodgepodge/Public/UI/HodgeHUDLayout.h](../../../Source/Hodgepodge/Public/UI/HodgeHUDLayout.h)
+
+模块定义或基础代码；请查看对应文件。
+
+## HodgeJoystickWidget.h
+
+[Source/Hodgepodge/Public/UI/HodgeJoystickWidget.h](../../../Source/Hodgepodge/Public/UI/HodgeJoystickWidget.h)
+
+模块定义或基础代码；请查看对应文件。
+
+## HodgeSettingScreen.h
+
+[Source/Hodgepodge/Public/UI/HodgeSettingScreen.h](../../../Source/Hodgepodge/Public/UI/HodgeSettingScreen.h)
+
+模块定义或基础代码；请查看对应文件。
+
+状态：文件无有效非注释内容。
+
+## HodgeSimulatedInputWidget.h
+
+[Source/Hodgepodge/Public/UI/HodgeSimulatedInputWidget.h](../../../Source/Hodgepodge/Public/UI/HodgeSimulatedInputWidget.h)
+
+模块定义或基础代码；请查看对应文件。
+
+## HodgeTaggedWidget.h
+
+[Source/Hodgepodge/Public/UI/HodgeTaggedWidget.h](../../../Source/Hodgepodge/Public/UI/HodgeTaggedWidget.h)
+
+模块定义或基础代码；请查看对应文件。
+
+## HodgeTouchRegion.h
+
+[Source/Hodgepodge/Public/UI/HodgeTouchRegion.h](../../../Source/Hodgepodge/Public/UI/HodgeTouchRegion.h)
+
+模块定义或基础代码；请查看对应文件。
+
+## HodgeIndicatorManagerComponent.h
+
+[Source/Hodgepodge/Public/UI/IndicatorSystem/HodgeIndicatorManagerComponent.h](../../../Source/Hodgepodge/Public/UI/IndicatorSystem/HodgeIndicatorManagerComponent.h)
+
+模块定义或基础代码；请查看对应文件。
+
+## IActorIndicatorWidget.h
+
+[Source/Hodgepodge/Public/UI/IndicatorSystem/IActorIndicatorWidget.h](../../../Source/Hodgepodge/Public/UI/IndicatorSystem/IActorIndicatorWidget.h)
+
+模块定义或基础代码；请查看对应文件。
+
+## IndicatorDescriptor.h
+
+[Source/Hodgepodge/Public/UI/IndicatorSystem/IndicatorDescriptor.h](../../../Source/Hodgepodge/Public/UI/IndicatorSystem/IndicatorDescriptor.h)
+
+模块定义或基础代码；请查看对应文件。
+
+## IndicatorLayer.h
+
+[Source/Hodgepodge/Public/UI/IndicatorSystem/IndicatorLayer.h](../../../Source/Hodgepodge/Public/UI/IndicatorSystem/IndicatorLayer.h)
+
+模块定义或基础代码；请查看对应文件。
+
+## IndicatorLibrary.h
+
+[Source/Hodgepodge/Public/UI/IndicatorSystem/IndicatorLibrary.h](../../../Source/Hodgepodge/Public/UI/IndicatorSystem/IndicatorLibrary.h)
+
+模块定义或基础代码；请查看对应文件。
+
+## SActorCanvas.h
+
+[Source/Hodgepodge/Public/UI/IndicatorSystem/SActorCanvas.h](../../../Source/Hodgepodge/Public/UI/IndicatorSystem/SActorCanvas.h)
+
+模块定义或基础代码；请查看对应文件。
+
+## HodgePerfStatContainerBase.h
+
+[Source/Hodgepodge/Public/UI/PerformanceStats/HodgePerfStatContainerBase.h](../../../Source/Hodgepodge/Public/UI/PerformanceStats/HodgePerfStatContainerBase.h)
+
+模块定义或基础代码；请查看对应文件。
+
+状态：文件无有效非注释内容。
+
+## HodgePerfStatWidgetBase.h
+
+[Source/Hodgepodge/Public/UI/PerformanceStats/HodgePerfStatWidgetBase.h](../../../Source/Hodgepodge/Public/UI/PerformanceStats/HodgePerfStatWidgetBase.h)
+
+模块定义或基础代码；请查看对应文件。
+
+状态：文件无有效非注释内容。
+
+## HodgeUIManagerSubsystem.h
+
+[Source/Hodgepodge/Public/UI/Subsystem/HodgeUIManagerSubsystem.h](../../../Source/Hodgepodge/Public/UI/Subsystem/HodgeUIManagerSubsystem.h)
+
+模块定义或基础代码；请查看对应文件。
+
+状态：文件无有效非注释内容。
+
+## HodgeUIMessaging.h
+
+[Source/Hodgepodge/Public/UI/Subsystem/HodgeUIMessaging.h](../../../Source/Hodgepodge/Public/UI/Subsystem/HodgeUIMessaging.h)
+
+模块定义或基础代码；请查看对应文件。
+
+状态：文件无有效非注释内容。
+
+## CircumferenceMarkerWidget.h
+
+[Source/Hodgepodge/Public/UI/Weapons/CircumferenceMarkerWidget.h](../../../Source/Hodgepodge/Public/UI/Weapons/CircumferenceMarkerWidget.h)
+
+模块定义或基础代码；请查看对应文件。
+
+## HitMarkerConfirmationWidget.h
+
+[Source/Hodgepodge/Public/UI/Weapons/HitMarkerConfirmationWidget.h](../../../Source/Hodgepodge/Public/UI/Weapons/HitMarkerConfirmationWidget.h)
+
+模块定义或基础代码；请查看对应文件。
+
+状态：文件无有效非注释内容。
+
+## HodgeReticleWidgetBase.h
+
+[Source/Hodgepodge/Public/UI/Weapons/HodgeReticleWidgetBase.h](../../../Source/Hodgepodge/Public/UI/Weapons/HodgeReticleWidgetBase.h)
+
+模块定义或基础代码；请查看对应文件。
+
+状态：文件无有效非注释内容。
+
+## HodgeWeaponUserInterface.h
+
+[Source/Hodgepodge/Public/UI/Weapons/HodgeWeaponUserInterface.h](../../../Source/Hodgepodge/Public/UI/Weapons/HodgeWeaponUserInterface.h)
+
+模块定义或基础代码；请查看对应文件。
+
+状态：文件无有效非注释内容。
+
+## SCircumferenceMarkerWidget.h
+
+[Source/Hodgepodge/Public/UI/Weapons/SCircumferenceMarkerWidget.h](../../../Source/Hodgepodge/Public/UI/Weapons/SCircumferenceMarkerWidget.h)
+
+模块定义或基础代码；请查看对应文件。
+
+## SHitMarkerConfirmationWidget.h
+
+[Source/Hodgepodge/Public/UI/Weapons/SHitMarkerConfirmationWidget.h](../../../Source/Hodgepodge/Public/UI/Weapons/SHitMarkerConfirmationWidget.h)
+
+模块定义或基础代码；请查看对应文件。
+
+状态：文件无有效非注释内容。
 
 ## Hodgepodge.Target.cs
 

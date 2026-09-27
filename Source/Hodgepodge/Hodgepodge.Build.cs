@@ -39,7 +39,9 @@ public class Hodgepodge : ModuleRules
 			"EnhancedInput",
 			"PhysicsCore",
 			"Niagara",
-			"SignificanceManager"
+			"SignificanceManager",
+			// IPlatformInputDeviceMapper 定义在 ApplicationCore（GenericPlatformInputDeviceMapper.h）。
+			"ApplicationCore"
 		});
 
 		SetupIrisSupport(Target);

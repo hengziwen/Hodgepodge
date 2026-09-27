@@ -30,11 +30,12 @@ CodexText 实验：编辑器辅助库，含 Grounded 图层与停步/转身精�
 
 定义候选（多行签名仅展示首行）：
 
-- L44: `bool UHodgeGroundedAuthoring::RefineGroundedTransitions(UObject* Blueprint)`
-- L107: `bool UHodgeGroundedAuthoring::AddStrideLayer(UObject* Blueprint)`
-- L166: `bool UHodgeGroundedAuthoring::AddTerrainLayer(UObject* Blueprint)`
-- L228: `bool UHodgeGroundedAuthoring::AddCombatLayer(UObject* Blueprint, UObject* Overlay)`
-- L284: `bool UHodgeGroundedAuthoring::AddGroundedLayer(UObject* Blueprint, const TArray<UObject*>& Actions, UObject* Idle, UObject* Fall, UObject* PreviewMesh)`
+- L51: `bool UHodgeGroundedAuthoring::RepairGroundedLegIK(UObject* Blueprint)`
+- L101: `bool UHodgeGroundedAuthoring::RefineGroundedTransitions(UObject* Blueprint)`
+- L164: `bool UHodgeGroundedAuthoring::AddStrideLayer(UObject* Blueprint)`
+- L223: `bool UHodgeGroundedAuthoring::AddTerrainLayer(UObject* Blueprint)`
+- L285: `bool UHodgeGroundedAuthoring::AddCombatLayer(UObject* Blueprint, UObject* Overlay)`
+- L341: `bool UHodgeGroundedAuthoring::AddGroundedLayer(UObject* Blueprint, const TArray<UObject*>& Actions, UObject* Idle, UObject* Fall, UObject* PreviewMesh)`
 
 ## HodgeGroundedLocomotion.cpp
 
@@ -345,17 +346,19 @@ CodexText 实验：在 ALS 基础动画上增加平地起停/转身/脚锁，并
  123: 	GENERATED_BODY()
  125: public:
  126: 	UFUNCTION(BlueprintCallable, Category="CodexText|Editor")
- 127: 	static bool RefineGroundedTransitions(UObject* Blueprint);
+ 127: 	static bool RepairGroundedLegIK(UObject* Blueprint);
  128: 	UFUNCTION(BlueprintCallable, Category="CodexText|Editor")
- 129: 	static bool AddStrideLayer(UObject* Blueprint);
+ 129: 	static bool RefineGroundedTransitions(UObject* Blueprint);
  130: 	UFUNCTION(BlueprintCallable, Category="CodexText|Editor")
- 131: 	static bool AddTerrainLayer(UObject* Blueprint);
+ 131: 	static bool AddStrideLayer(UObject* Blueprint);
  132: 	UFUNCTION(BlueprintCallable, Category="CodexText|Editor")
- 133: 	static bool AddCombatLayer(UObject* Blueprint, UObject* Overlay);
- 135: 	UFUNCTION(BlueprintCallable, Category="CodexText|Editor")
- 136: 	static bool AddGroundedLayer(UObject* Blueprint, const TArray<UObject*>& Actions, UObject* Idle, UObject* Fall,
- 137: 	                             UObject* PreviewMesh);
- 138: };
+ 133: 	static bool AddTerrainLayer(UObject* Blueprint);
+ 134: 	UFUNCTION(BlueprintCallable, Category="CodexText|Editor")
+ 135: 	static bool AddCombatLayer(UObject* Blueprint, UObject* Overlay);
+ 137: 	UFUNCTION(BlueprintCallable, Category="CodexText|Editor")
+ 138: 	static bool AddGroundedLayer(UObject* Blueprint, const TArray<UObject*>& Actions, UObject* Idle, UObject* Fall,
+ 139: 	                             UObject* PreviewMesh);
+ 140: };
 ```
 
 ## HodgeLocomotionLab.h

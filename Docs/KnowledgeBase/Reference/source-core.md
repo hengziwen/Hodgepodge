@@ -27,7 +27,7 @@
 
 源码：[Source/Hodgepodge/Private/Core/GameMode/HodgeGameModeBase.cpp](../../../Source/Hodgepodge/Private/Core/GameMode/HodgeGameModeBase.cpp)
 
-项目内直接 include（不是运行调用关系）：[Core/GameMode/HodgeGameModeBase.h](../../../Source/Hodgepodge/Public/Core/GameMode/HodgeGameModeBase.h)、[Character/HodgeCharacterBase.h](../../../Source/Hodgepodge/Public/Character/HodgeCharacterBase.h)、[Component/HodgeExperienceManagerComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeExperienceManagerComponent.h)、[Component/HodgePawnExtensionComponent.h](../../../Source/Hodgepodge/Public/Component/HodgePawnExtensionComponent.h)、[Core/GameState/HodgeGameState.h](../../../Source/Hodgepodge/Public/Core/GameState/HodgeGameState.h)、[Core/GameState/HodgeGameStateBase.h](../../../Source/Hodgepodge/Public/Core/GameState/HodgeGameStateBase.h)、[Core/HUD/HodgeHUDBase.h](../../../Source/Hodgepodge/Public/Core/HUD/HodgeHUDBase.h)、[Core/PlayerController/HodgePlayerController.h](../../../Source/Hodgepodge/Public/Core/PlayerController/HodgePlayerController.h)、[Core/PlayState/HodgePlayerState.h](../../../Source/Hodgepodge/Public/Core/PlayState/HodgePlayerState.h)、[Data/HodgeAssetManager.h](../../../Source/Hodgepodge/Public/Data/HodgeAssetManager.h)、[Data/HodgeExperienceDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeExperienceDefinition.h)
+项目内直接 include（不是运行调用关系）：[Core/GameMode/HodgeGameModeBase.h](../../../Source/Hodgepodge/Public/Core/GameMode/HodgeGameModeBase.h)、[Character/HodgeCharacterBase.h](../../../Source/Hodgepodge/Public/Character/HodgeCharacterBase.h)、[Component/HodgeExperienceManagerComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeExperienceManagerComponent.h)、[Component/HodgePawnExtensionComponent.h](../../../Source/Hodgepodge/Public/Component/HodgePawnExtensionComponent.h)、[Core/GameState/HodgeGameState.h](../../../Source/Hodgepodge/Public/Core/GameState/HodgeGameState.h)、[Core/GameState/HodgeGameStateBase.h](../../../Source/Hodgepodge/Public/Core/GameState/HodgeGameStateBase.h)、[Core/HUD/HodgeHUD.h](../../../Source/Hodgepodge/Public/Core/HUD/HodgeHUD.h)、[Core/PlayerController/HodgePlayerController.h](../../../Source/Hodgepodge/Public/Core/PlayerController/HodgePlayerController.h)、[Core/PlayState/HodgePlayerState.h](../../../Source/Hodgepodge/Public/Core/PlayState/HodgePlayerState.h)、[Data/HodgeAssetManager.h](../../../Source/Hodgepodge/Public/Data/HodgeAssetManager.h)、[Data/HodgeExperienceDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeExperienceDefinition.h)
 
 定义候选（多行签名仅展示首行）：
 
@@ -93,16 +93,21 @@ GameState 基础扩展生命周期。
 - L27: `void AHodgeGameStateBase::BeginPlay()`
 - L36: `void AHodgeGameStateBase::EndPlay(const EEndPlayReason::Type EndPlayReason)`
 
-## HodgeHUDBase.cpp
+## HodgeHUD.cpp
 
-项目 HUD 基类扩展入口，不代表 CommonUI 已完成。
+项目 HUD 类：GameFrameworkComponent 接收器注册与 GAS 调试 Actor 列表；不代表 CommonUI 已完成。
 
-源码：[Source/Hodgepodge/Private/Core/HUD/HodgeHUDBase.cpp](../../../Source/Hodgepodge/Private/Core/HUD/HodgeHUDBase.cpp)
+源码：[Source/Hodgepodge/Private/Core/HUD/HodgeHUD.cpp](../../../Source/Hodgepodge/Private/Core/HUD/HodgeHUD.cpp)
 
-项目内直接 include（不是运行调用关系）：[Core/HUD/HodgeHUDBase.h](../../../Source/Hodgepodge/Public/Core/HUD/HodgeHUDBase.h)
+项目内直接 include（不是运行调用关系）：[Core/HUD/HodgeHUD.h](../../../Source/Hodgepodge/Public/Core/HUD/HodgeHUD.h)
 
 定义候选（多行签名仅展示首行）：
 
+- L19: `AHodgeHUD::AHodgeHUD(const FObjectInitializer& ObjectInitializer)`
+- L25: `void AHodgeHUD::PreInitializeComponents()`
+- L32: `void AHodgeHUD::BeginPlay()`
+- L39: `void AHodgeHUD::EndPlay(const EEndPlayReason::Type EndPlayReason)`
+- L46: `void AHodgeHUD::GetDebugActorList(TArray<AActor*>& InOutList)`
 
 ## HodgeLocalPlayerBase.cpp
 
@@ -126,7 +131,7 @@ GameState 基础扩展生命周期。
 
 源码：[Source/Hodgepodge/Private/Core/PlayerController/HodgePlayerController.cpp](../../../Source/Hodgepodge/Private/Core/PlayerController/HodgePlayerController.cpp)
 
-项目内直接 include（不是运行调用关系）：[Core/PlayerController/HodgePlayerController.h](../../../Source/Hodgepodge/Public/Core/PlayerController/HodgePlayerController.h)、[Core/PlayState/HodgePlayerState.h](../../../Source/Hodgepodge/Public/Core/PlayState/HodgePlayerState.h)、[Camera/HodgePlayerCameraManager.h](../../../Source/Hodgepodge/Public/Camera/HodgePlayerCameraManager.h)、[Core/HUD/HodgeHUDBase.h](../../../Source/Hodgepodge/Public/Core/HUD/HodgeHUDBase.h)、[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)、[Core/LocalPlayer/HodgeLocalPlayerBase.h](../../../Source/Hodgepodge/Public/Core/LocalPlayer/HodgeLocalPlayerBase.h)、[Core/GameState/HodgeGameState.h](../../../Source/Hodgepodge/Public/Core/GameState/HodgeGameState.h)
+项目内直接 include（不是运行调用关系）：[Core/PlayerController/HodgePlayerController.h](../../../Source/Hodgepodge/Public/Core/PlayerController/HodgePlayerController.h)、[Core/PlayState/HodgePlayerState.h](../../../Source/Hodgepodge/Public/Core/PlayState/HodgePlayerState.h)、[Camera/HodgePlayerCameraManager.h](../../../Source/Hodgepodge/Public/Camera/HodgePlayerCameraManager.h)、[Core/HUD/HodgeHUD.h](../../../Source/Hodgepodge/Public/Core/HUD/HodgeHUD.h)、[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)、[Core/LocalPlayer/HodgeLocalPlayerBase.h](../../../Source/Hodgepodge/Public/Core/LocalPlayer/HodgeLocalPlayerBase.h)、[Core/GameState/HodgeGameState.h](../../../Source/Hodgepodge/Public/Core/GameState/HodgeGameState.h)
 
 定义候选（多行签名仅展示首行）：
 
@@ -139,7 +144,7 @@ GameState 基础扩展生命周期。
 - L178: `void AHodgePlayerController::PlayerTick(float DeltaTime)`
 - L243: `AHodgePlayerState* AHodgePlayerController::GetHodgePlayerState() const`
 - L250: `UHodgeAbilitySystemComponent* AHodgePlayerController::GetHodgeAbilitySystemComponent() const`
-- L260: `AHodgeHUDBase* AHodgePlayerController::GetHodgeHUD() const`
+- L260: `AHodgeHUD* AHodgePlayerController::GetHodgeHUD() const`
 - L267: `bool AHodgePlayerController::TryToRecordClientReplay()`
 - L296: `bool AHodgePlayerController::ShouldRecordClientReplay()`
 - L363: `void AHodgePlayerController::OnPlayerStateChangedTeam(UObject* TeamAgent, int32 OldTeam, int32 NewTeam)`
@@ -396,24 +401,33 @@ GameState 基础扩展生命周期。
   41: };
 ```
 
-## HodgeHUDBase.h
+## HodgeHUD.h
 
-项目 HUD 基类扩展入口，不代表 CommonUI 已完成。
+项目 HUD 类：GameFrameworkComponent 接收器注册与 GAS 调试 Actor 列表；不代表 CommonUI 已完成。
 
-源码：[Source/Hodgepodge/Public/Core/HUD/HodgeHUDBase.h](../../../Source/Hodgepodge/Public/Core/HUD/HodgeHUDBase.h)
+源码：[Source/Hodgepodge/Public/Core/HUD/HodgeHUD.h](../../../Source/Hodgepodge/Public/Core/HUD/HodgeHUD.h)
 
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   8: #pragma once
-  10: #include "CoreMinimal.h"
-  11: #include "GameFramework/HUD.h"
-  12: #include "HodgeHUDBase.generated.h"
-  30: UCLASS()
-  31: class HODGEPODGE_API AHodgeHUDBase : public AHUD
-  32: {
-  33: 	GENERATED_BODY()
-  34: };
+   3: #pragma once
+   5: #include "GameFramework/HUD.h"
+   7: #include "HodgeHUD.generated.h"
+   9: namespace EEndPlayReason { enum Type : int; }
+  11: class AActor;
+  12: class UObject;
+  22: UCLASS(Config = Game)
+  23: class HODGEPODGE_API AHodgeHUD : public AHUD
+  24: {
+  25: 	GENERATED_BODY()
+  27: public:
+  28: 	AHodgeHUD(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+  30: protected:
+  33: 	virtual void PreInitializeComponents() override;
+  37: 	virtual void BeginPlay() override;
+  38: 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+  42: 	virtual void GetDebugActorList(TArray<AActor*>& InOutList) override;
+  44: };
 ```
 
 ## HodgeLocalPlayerBase.h
@@ -474,7 +488,7 @@ GameState 基础扩展生命周期。
   14: #include "HodgePlayerController.generated.h"
   17: class UHodgeAbilitySystemComponent;
   20: class AHodgePlayerState;
-  23: class AHodgeHUDBase;
+  23: class AHodgeHUD;
   31: UCLASS()
   32: class HODGEPODGE_API AHodgePlayerController : public AHodgePlayerControllerBase, public IHodgeCameraAssistInterface
   33: {
@@ -486,7 +500,7 @@ GameState 基础扩展生命周期。
   45: 	UFUNCTION(BlueprintCallable, Category = "Hodge|PlayerController")
   46: 	UHodgeAbilitySystemComponent* GetHodgeAbilitySystemComponent() const;
   49: 	UFUNCTION(BlueprintCallable, Category = "Hodge|PlayerController")
-  50: 	AHodgeHUDBase* GetHodgeHUD() const;
+  50: 	AHodgeHUD* GetHodgeHUD() const;
   54: 	UFUNCTION(BlueprintCallable, Category = "Hodge|PlayerController")
   55: 	bool TryToRecordClientReplay();
   59: 	virtual bool ShouldRecordClientReplay();
