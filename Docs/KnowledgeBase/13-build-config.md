@@ -1,13 +1,15 @@
 # 本地环境、构建与配置
 
-> 最近源码核对：2026-09-22。源码接入状态与运行验收分开记录。
+> 最近源码核对：2026-09-28（HEAD `6eec094`）。源码接入状态与运行验收分开记录。
 [返回首页](README.md)
 
 ## 构建基线
 
 uproject 关联 UE 5.5，Runtime 模块为 Hodgepodge，已有 Game 和 Editor Target。Build.cs 启用显式/共享 PCH、UE 5.5 include 顺序、内联生成代码警告及 SetupIrisSupport。
 
-Public 依赖包含 Core、CoreUObject、Engine、InputCore、GameplayAbilities、GameplayTags、GameplayTasks、ModularGameplay、GameFeatures、AIModule、EngineSettings、NetCore、AnimGraphRuntime、RigVM、ControlRig，以及 UMG、SlateCore（供 CodexText 的 UUserWidget 使用）。Private 依赖包含 EnhancedInput、PhysicsCore、Niagara、SignificanceManager。编辑器专用块（`Target.bBuildEditor`）包含 UnrealEd、AnimGraph、BlueprintGraph（供 CodexText 的 Authoring 库生成动画图），工作区新增 **`AnimationWarpingRuntime`、`AnimationWarpingEditor`**（供 CodexText 实验用 UE 5.5 的 Stride Warping / Foot Placement）。**这些都在 Editor-only 块内，不进 Runtime 构建**。
+Public 依赖包含 Core、CoreUObject、Engine、InputCore、GameplayAbilities、GameplayTags、GameplayTasks、ModularGameplay、GameFeatures、AIModule、EngineSettings、NetCore、AnimGraphRuntime、RigVM、ControlRig，以及 **UMG、Slate、SlateCore**（最初只为 CodexText 的 UUserWidget，2026-09-28 起成为 UI 迁移的正式依赖）、**`CommonUI`、`CommonInput`**（本轮新增，Lyra UI 迁移用）。Private 依赖包含 EnhancedInput、PhysicsCore、Niagara、SignificanceManager、**`ApplicationCore`**（本轮新增）。编辑器专用块（`Target.bBuildEditor`）包含 UnrealEd、AnimGraph、BlueprintGraph（供 CodexText 的 Authoring 库生成动画图）以及 **`AnimationWarpingRuntime`、`AnimationWarpingEditor`**（CodexText 实验用 UE 5.5 的 Stride Warping / Foot Placement）。**编辑器块内的依赖不进 Runtime 构建**。
+
+⚠️ 未启用：`GameplayMessageRuntime`（源码也无引用）。CommonGame / GameSettings / CommonUser 未引入 —— 这是 `UI/` 中 24 个文件只能注释保留的根因。
 
 未启用的 Slate UI 和 OnlineSubsystem 注释不能作为依赖已经加入的证据。ALS 不在当前 Build.cs 依赖中。
 
@@ -36,7 +38,11 @@ DefaultInput.ini：DefaultPlayerInputClass 为 EnhancedPlayerInput；DefaultInpu
 
 ## 插件
 
-uproject 启用 GameplayAbilities、GameFeatures、AnimationLocomotionLibrary、AnimationWarping、ModelingToolsEditorMode（Editor）、UnrealMCP（Editor）和 McpAutomationBridge（Editor，`TargetAllowList: ["Editor"]`）；UNTLink 当前显式禁用。ALS.uplugin 默认启用，主模块不引用 ALS 不等于插件停用。两个 MCP 插件均为 Editor-only 模块（McpAutomationBridge 含 McpAutomationBridge / McpAutomationBridgeFab 两个 Editor 模块），不进 Runtime 构建。**连接与工具调用已于 2026-09-19 实测通过**（UnrealMCP 55557；McpAutomationBridge 原生 MCP `POST /mcp` 3016，需 `X-MCP-Capability-Token`），实操坑见 [排障手册的 MCP 一节](14-troubleshooting.md)。注意桥**不能编译 C++**，也不注册新增 `UCLASS`。
+uproject 启用 GameplayAbilities、GameFeatures、AnimationLocomotionLibrary、AnimationWarping、**CommonUI（2026-09-28 新增，`Enabled=true`，随 Runtime 构建）**、ModelingToolsEditorMode（Editor）、UnrealMCP（Editor）和 McpAutomationBridge（Editor，`TargetAllowList: ["Editor"]`）；UNTLink 当前显式禁用。两个 MCP 插件均为 Editor-only 模块（McpAutomationBridge 含 McpAutomationBridge / McpAutomationBridgeFab 两个 Editor 模块），不进 Runtime 构建。**连接与工具调用已于 2026-09-19 实测通过**（UnrealMCP 55557；McpAutomationBridge 原生 MCP `POST /mcp` 3016，需 `X-MCP-Capability-Token`），实操坑见 [排障手册的 MCP 一节](14-troubleshooting.md)。注意桥**不能编译 C++**，也不注册新增 `UCLASS`。
+
+`Config/DefaultGame.ini` 另有一节 `[/Script/McpAutomationBridge.McpAutomationBridgeSettings]`：`bEnableNativeMCP` / `NativeMCPPort=3016` / `ListenPorts=8116` / `bRequireCapabilityToken=True`。
+
+CommonUI 启用后，ini 里**还没有** CommonUI 的按键映射（如 `UI.Action.Escape`），也未配置 `GameViewportClientClassName` —— 需要前端 UI 时补上。
 
 模块依赖和 uproject 插件声明是不同层级。出现插件依赖警告时对照引擎插件所属模块修正，不能仅删除 Build.cs 依赖来消除警告。
 
@@ -44,11 +50,17 @@ uproject 启用 GameplayAbilities、GameFeatures、AnimationLocomotionLibrary、
 
 CoreRedirects 可让旧资产类名迁移到新类，但 NewName 必须真实存在。当前有旧 GameplayAbilityBase 重定向到 HodgeGameplayAbilityBase 的历史条目，而代码已迁移到 HodgeGameplayAbility，应结合资产加载日志核对。HeroComponent 重定向目标当前已是有效类，仍需蓝图加载验证。
 
+2026-09-28 新增一批 **UI 类重定向**（`LyraHUD → HodgeHUD`、`LyraUIManagerSubsystem → HodgeUIManagerSubsystem` 等），配合 `UI/` 迁移。注意 `LyraActivatableWidget` 等 Lyra 类名必须对应到真实存在的 Hodge 类型，否则加载时会报"找不到类"。
+
 不要批量删除所有重定向；旧资产可能仍依赖它们。先查加载错误，再在编辑器打开并保存迁移资产，确认后做有依据的清理。
 
 ## 构建结果记录
 
 每次记录 Git HEAD、未提交修改、引擎版本、目标、配置、命令、退出码和首个编译错误。README 的历史编译通过仅适用于其记录基线，不代表当前新增类与工作区修改已重新编译。
+
+**2026-09-28 记录**：HEAD `6eec094`，工作区干净；引擎 `E:\UE\UE_5.5`；目标 `HodgepodgeEditor Win64 Development`；结果 UBT 返回 **`Target is up to date`**（0.67s，未触发重编，说明源码与产物一致）。本轮**未**执行 PIE / 蓝图 Compile / 打包。UI 的 81 个新文件与战斗相关类均已在此前的构建中编入（产物最新）。
+
+> 引擎安装路径：`E:\UE\UE_5.5`（由注册表 `HKLM:\SOFTWARE\EpicGames\Unreal Engine\5.5` 的 `InstalledDirectory` 核实）。文档里残留的 `D:\UE_5.5` / `D:\Hodgepodge` 是旧路径，不要照抄。
 
 完整配置索引见 [Reference/config.md](Reference/config.md)。
 

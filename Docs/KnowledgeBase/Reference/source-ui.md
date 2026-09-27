@@ -305,7 +305,22 @@
 
 源码：[Source/Hodgepodge/Private/UI/HodgeHUDLayout.cpp](../../../Source/Hodgepodge/Private/UI/HodgeHUDLayout.cpp)
 
-**全部为注释或空白；无有效声明/实现。**
+项目内直接 include（不是运行调用关系）：[UI/HodgeHUDLayout.h](../../../Source/Hodgepodge/Public/UI/HodgeHUDLayout.h)、[UI/Foundation/HodgeControllerDisconnectedScreen.h](../../../Source/Hodgepodge/Public/UI/Foundation/HodgeControllerDisconnectedScreen.h)、[UI/HodgeActivatableWidget.h](../../../Source/Hodgepodge/Public/UI/HodgeActivatableWidget.h)
+
+定义候选（多行签名仅展示首行）：
+
+- L77: `UHodgeHUDLayout::UHodgeHUDLayout(const FObjectInitializer& ObjectInitializer)`
+- L90: `void UHodgeHUDLayout::NativeOnInitialized()`
+- L139: `void UHodgeHUDLayout::NativeDestruct()`
+- L169: `void UHodgeHUDLayout::EnsureMenuLayerStack()`
+- L199: `void UHodgeHUDLayout::HandleEscapeAction()`
+- L247: `void UHodgeHUDLayout::HandleInputDeviceConnectionChanged(EInputDeviceConnectionState NewConnectionState,`
+- L271: `void UHodgeHUDLayout::HandleInputDevicePairingChanged(FInputDeviceId InputDeviceId, FPlatformUserId NewUserPlatformId,`
+- L295: `bool UHodgeHUDLayout::ShouldPlatformDisplayControllerDisconnectScreen() const`
+- L328: `void UHodgeHUDLayout::NotifyControllerStateChangeForDisconnectScreen()`
+- L369: `void UHodgeHUDLayout::ProcessControllerDevicesHavingChangedForDisconnectScreen()`
+- L442: `void UHodgeHUDLayout::DisplayControllerDisconnectedMenu_Implementation()`
+- L481: `void UHodgeHUDLayout::HideControllerDisconnectedMenu_Implementation()`
 
 ## HodgeJoystickWidget.cpp
 
@@ -1479,44 +1494,48 @@
 
 ```cpp
    3: #pragma once
-   5: #include "HodgeActivatableWidget.h"
-   6: #include "Containers/Ticker.h"
-   7: #include "GameplayTagContainer.h"
-   9: #include "HodgeHUDLayout.generated.h"
-  11: class UCommonActivatableWidget;
-  12: class UObject;
-  13: class UHodgeControllerDisconnectedScreen;
-  20: UCLASS(Abstract, BlueprintType, Blueprintable, Meta = (DisplayName = "Hodge HUD Layout", Category = "Hodge|HUD"))
-  21: class UHodgeHUDLayout : public UHodgeActivatableWidget
-  22: {
-  23: 	GENERATED_BODY()
-  25: public:
-  26: 	UHodgeHUDLayout(const FObjectInitializer& ObjectInitializer);
-  28: 	virtual void NativeOnInitialized() override;
-  29: 	virtual void NativeDestruct() override;
-  31: protected:
-  32: 	void HandleEscapeAction();
-  40: 	void HandleInputDeviceConnectionChanged(EInputDeviceConnectionState NewConnectionState,
-  41: 	                                        FPlatformUserId PlatformUserId, FInputDeviceId InputDeviceId);
-  47: 	void HandleInputDevicePairingChanged(FInputDeviceId InputDeviceId, FPlatformUserId NewUserPlatformId,
-  48: 	                                     FPlatformUserId OldUserPlatformId);
-  54: 	void NotifyControllerStateChangeForDisconnectScreen();
-  61: 	virtual void ProcessControllerDevicesHavingChangedForDisconnectScreen();
-  66: 	virtual bool ShouldPlatformDisplayControllerDisconnectScreen() const;
-  71: 	UFUNCTION(BlueprintNativeEvent, Category="Controller Disconnect Menu")
-  72: 	void DisplayControllerDisconnectedMenu();
-  77: 	UFUNCTION(BlueprintNativeEvent, Category="Controller Disconnect Menu")
-  78: 	void HideControllerDisconnectedMenu();
-  83: 	UPROPERTY(EditDefaultsOnly)
-  84: 	TSoftClassPtr<UCommonActivatableWidget> EscapeMenuClass;
-  89: 	UPROPERTY(EditDefaultsOnly, Category="Controller Disconnect Menu")
-  90: 	TSubclassOf<UHodgeControllerDisconnectedScreen> ControllerDisconnectedScreen;
-  98: 	UPROPERTY(EditDefaultsOnly, Category="Controller Disconnect Menu")
-  99: 	FGameplayTagContainer PlatformRequiresControllerDisconnectScreen;
- 102: 	UPROPERTY(Transient)
- 103: 	TObjectPtr<UCommonActivatableWidget> SpawnedControllerDisconnectScreen;
- 106: 	FTSTicker::FDelegateHandle RequestProcessControllerStateHandle;
- 107: };
+   7: #include "HodgeActivatableWidget.h"
+  11: #include "Containers/Ticker.h"
+  15: #include "GameplayTagContainer.h"
+  17: #include "HodgeHUDLayout.generated.h"
+  21: class UCommonActivatableWidget;
+  24: class UObject;
+  27: class UHodgeControllerDisconnectedScreen;
+  30: class UCommonActivatableWidgetStack;
+  45: UCLASS(Abstract, BlueprintType, Blueprintable, Meta = (DisplayName = "Hodge HUD Layout", Category = "Hodge|HUD"))
+  46: class UHodgeHUDLayout : public UHodgeActivatableWidget
+  47: {
+  48: 	GENERATED_BODY()
+  50: public:
+  52: 	UHodgeHUDLayout(const FObjectInitializer& ObjectInitializer);
+  58: 	virtual void NativeOnInitialized() override;
+  63: 	virtual void NativeDestruct() override;
+  65: protected:
+  70: 	void HandleEscapeAction();
+  73: 	void EnsureMenuLayerStack();
+  89: 	void HandleInputDeviceConnectionChanged(EInputDeviceConnectionState NewConnectionState,
+  90: 	                                        FPlatformUserId PlatformUserId, FInputDeviceId InputDeviceId);
+ 104: 	void HandleInputDevicePairingChanged(FInputDeviceId InputDeviceId, FPlatformUserId NewUserPlatformId,
+ 105: 	                                     FPlatformUserId OldUserPlatformId);
+ 117: 	void NotifyControllerStateChangeForDisconnectScreen();
+ 133: 	virtual void ProcessControllerDevicesHavingChangedForDisconnectScreen();
+ 143: 	virtual bool ShouldPlatformDisplayControllerDisconnectScreen() const;
+ 156: 	UFUNCTION(BlueprintNativeEvent, Category="Controller Disconnect Menu")
+ 157: 	void DisplayControllerDisconnectedMenu();
+ 166: 	UFUNCTION(BlueprintNativeEvent, Category="Controller Disconnect Menu")
+ 167: 	void HideControllerDisconnectedMenu();
+ 177: 	UPROPERTY(EditDefaultsOnly)
+ 178: 	TSoftClassPtr<UCommonActivatableWidget> EscapeMenuClass;
+ 185: 	UPROPERTY(EditDefaultsOnly, Category="Controller Disconnect Menu")
+ 186: 	TSubclassOf<UHodgeControllerDisconnectedScreen> ControllerDisconnectedScreen;
+ 202: 	UPROPERTY(EditDefaultsOnly, Category="Controller Disconnect Menu")
+ 203: 	FGameplayTagContainer PlatformRequiresControllerDisconnectScreen;
+ 211: 	UPROPERTY(Transient)
+ 212: 	TObjectPtr<UCommonActivatableWidget> SpawnedControllerDisconnectScreen;
+ 215: 	UPROPERTY(meta = (BindWidgetOptional))
+ 216: 	TObjectPtr<UCommonActivatableWidgetStack> MenuLayerStack;
+ 224: 	FTSTicker::FDelegateHandle RequestProcessControllerStateHandle;
+ 225: };
 ```
 
 ## HodgeJoystickWidget.h

@@ -820,11 +820,11 @@ GameState 基础扩展生命周期。
 
 项目 HUD 类：GameFrameworkComponent 接收器注册与 GAS 调试 Actor 列表；不代表 CommonUI 已完成。
 
-- `AHodgeHUD::AHodgeHUD` — L19
-- `AHodgeHUD::PreInitializeComponents` — L25
-- `AHodgeHUD::BeginPlay` — L32
-- `AHodgeHUD::EndPlay` — L39
-- `AHodgeHUD::GetDebugActorList` — L46
+- `AHodgeHUD::AHodgeHUD` — L37
+- `AHodgeHUD::PreInitializeComponents` — L46
+- `AHodgeHUD::BeginPlay` — L59
+- `AHodgeHUD::EndPlay` — L73
+- `AHodgeHUD::GetDebugActorList` — L85
 
 ## HodgeLocalPlayerBase.cpp
 
@@ -1111,7 +1111,14 @@ PawnClass、AbilitySets、TagRelationshipMapping、InputConfig、DefaultCameraMo
 
 Widget 注入迁移草稿，当前实现停用。
 
-状态：文件无有效非注释内容。
+- `UGameFeatureAction_AddWidgets::OnGameFeatureDeactivating` — L46
+- `UGameFeatureAction_AddWidgets::AddAdditionalAssetBundleData` — L65
+- `UGameFeatureAction_AddWidgets::IsDataValid` — L80
+- `UGameFeatureAction_AddWidgets::AddToWorld` — L155
+- `UGameFeatureAction_AddWidgets::Reset` — L189
+- `UGameFeatureAction_AddWidgets::HandleActorExtension` — L211
+- `UGameFeatureAction_AddWidgets::AddWidgets` — L230
+- `UGameFeatureAction_AddWidgets::RemoveWidgets` — L279
 
 ## GameFeatureAction_SplitscreenConfig.cpp
 
@@ -1466,7 +1473,18 @@ Enhanced Input 用户设置派生入口；须核对实际设置类配置。
 
 模块定义或基础代码；请查看对应文件。
 
-状态：文件无有效非注释内容。
+- `UHodgeHUDLayout::UHodgeHUDLayout` — L77
+- `UHodgeHUDLayout::NativeOnInitialized` — L90
+- `UHodgeHUDLayout::NativeDestruct` — L139
+- `UHodgeHUDLayout::EnsureMenuLayerStack` — L169
+- `UHodgeHUDLayout::HandleEscapeAction` — L199
+- `UHodgeHUDLayout::HandleInputDeviceConnectionChanged` — L247
+- `UHodgeHUDLayout::HandleInputDevicePairingChanged` — L271
+- `UHodgeHUDLayout::ShouldPlatformDisplayControllerDisconnectScreen` — L295
+- `UHodgeHUDLayout::NotifyControllerStateChangeForDisconnectScreen` — L328
+- `UHodgeHUDLayout::ProcessControllerDevicesHavingChangedForDisconnectScreen` — L369
+- `UHodgeHUDLayout::DisplayControllerDisconnectedMenu_Implementation` — L442
+- `UHodgeHUDLayout::HideControllerDisconnectedMenu_Implementation` — L481
 
 ## HodgeJoystickWidget.cpp
 
@@ -2097,8 +2115,6 @@ PawnClass、AbilitySets、TagRelationshipMapping、InputConfig、DefaultCameraMo
 [Source/Hodgepodge/Public/GameFeatures/GameFeatureAction_AddWidget.h](../../../Source/Hodgepodge/Public/GameFeatures/GameFeatureAction_AddWidget.h)
 
 Widget 注入迁移草稿，当前实现停用。
-
-状态：文件无有效非注释内容。
 
 ## GameFeatureAction_SplitscreenConfig.h
 

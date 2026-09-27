@@ -91,7 +91,18 @@ Widget 注入迁移草稿，当前实现停用。
 
 源码：[Source/Hodgepodge/Private/GameFeatures/GameFeatureAction_AddWidget.cpp](../../../Source/Hodgepodge/Private/GameFeatures/GameFeatureAction_AddWidget.cpp)
 
-**全部为注释或空白；无有效声明/实现。**
+项目内直接 include（不是运行调用关系）：[GameFeatures/GameFeatureAction_AddWidget.h](../../../Source/Hodgepodge/Public/GameFeatures/GameFeatureAction_AddWidget.h)、[GameFeatures/GameFeatureAction_WorldActionBase.h](../../../Source/Hodgepodge/Public/GameFeatures/GameFeatureAction_WorldActionBase.h)、[Core/HUD/HodgeHUD.h](../../../Source/Hodgepodge/Public/Core/HUD/HodgeHUD.h)
+
+定义候选（多行签名仅展示首行）：
+
+- L46: `void UGameFeatureAction_AddWidgets::OnGameFeatureDeactivating(FGameFeatureDeactivatingContext& Context)`
+- L65: `void UGameFeatureAction_AddWidgets::AddAdditionalAssetBundleData(FAssetBundleData& AssetBundleData)`
+- L80: `EDataValidationResult UGameFeatureAction_AddWidgets::IsDataValid(FDataValidationContext& Context) const`
+- L155: `void UGameFeatureAction_AddWidgets::AddToWorld(const FWorldContext& WorldContext, const FGameFeatureStateChangeContext& ChangeContext)`
+- L189: `void UGameFeatureAction_AddWidgets::Reset(FPerContextData& ActiveData)`
+- L211: `void UGameFeatureAction_AddWidgets::HandleActorExtension(AActor* Actor, FName EventName, FGameFeatureStateChangeContext ChangeContext)`
+- L230: `void UGameFeatureAction_AddWidgets::AddWidgets(AActor* Actor, FPerContextData& ActiveData)`
+- L279: `void UGameFeatureAction_AddWidgets::RemoveWidgets(AActor* Actor, FPerContextData& ActiveData)`
 
 ## GameFeatureAction_SplitscreenConfig.cpp
 
@@ -381,7 +392,74 @@ Widget 注入迁移草稿，当前实现停用。
 
 源码：[Source/Hodgepodge/Public/GameFeatures/GameFeatureAction_AddWidget.h](../../../Source/Hodgepodge/Public/GameFeatures/GameFeatureAction_AddWidget.h)
 
-**全部为注释或空白；无有效声明/实现。**
+项目内直接 include（不是运行调用关系）：[UI/Extension/UIExtensionSystem.h](../../../Source/Hodgepodge/Public/UI/Extension/UIExtensionSystem.h)
+
+有效头文件声明摘录（未展开宏，未求值预处理分支）：
+
+```cpp
+   3: #pragma once
+   7: #include "CommonActivatableWidget.h"
+  11: #include "GameFeatureAction_WorldActionBase.h"
+  15: #include "GameplayTagContainer.h"
+  19: #include "UI/Extension/UIExtensionSystem.h"
+  21: #include "GameFeatureAction_AddWidget.generated.h"
+  25: struct FWorldContext;
+  29: struct FComponentRequestHandle;
+  38: USTRUCT()
+  39: struct FHodgeHUDLayoutRequest
+  40: {
+  41: 	GENERATED_BODY()
+  50: 	UPROPERTY(EditAnywhere, Category=UI, meta=(AssetBundles="Client"))
+  51: 	TSoftClassPtr<UCommonActivatableWidget> LayoutClass;
+  59: 	UPROPERTY(EditAnywhere, Category=UI, meta=(Categories="UI.Layer"))
+  60: 	FGameplayTag LayerID;
+  61: };
+  72: USTRUCT()
+  73: struct FHodgeHUDElementEntry
+  74: {
+  75: 	GENERATED_BODY()
+  79: 	UPROPERTY(EditAnywhere, Category=UI, meta=(AssetBundles="Client"))
+  80: 	TSoftClassPtr<UUserWidget> WidgetClass;
+  85: 	UPROPERTY(EditAnywhere, Category = UI)
+  86: 	FGameplayTag SlotID;
+  87: };
+ 106: UCLASS(MinimalAPI, meta = (DisplayName = "Add Widgets"))
+ 107: class UGameFeatureAction_AddWidgets final : public UGameFeatureAction_WorldActionBase
+ 108: {
+ 109: 	GENERATED_BODY()
+ 111: public:
+ 116: 	virtual void OnGameFeatureDeactivating(FGameFeatureDeactivatingContext& Context) override;
+ 118: #if WITH_EDITORONLY_DATA
+ 122: 	virtual void AddAdditionalAssetBundleData(FAssetBundleData& AssetBundleData) override;
+ 124: #endif
+ 130: #if WITH_EDITOR
+ 134: 	virtual EDataValidationResult IsDataValid(class FDataValidationContext& Context) const override;
+ 136: #endif
+ 140: private:
+ 146: 	UPROPERTY(EditAnywhere, Category=UI, meta=(TitleProperty="{LayerID} -> {LayoutClass}"))
+ 147: 	TArray<FHodgeHUDLayoutRequest> Layout;
+ 154: 	UPROPERTY(EditAnywhere, Category=UI, meta=(TitleProperty="{SlotID} -> {WidgetClass}"))
+ 155: 	TArray<FHodgeHUDElementEntry> Widgets;
+ 157: private:
+ 163: 	struct FPerActorData
+ 164: 	{
+ 166: 		TArray<TWeakObjectPtr<UCommonActivatableWidget>> LayoutsAdded;
+ 169: 		TArray<FUIExtensionHandle> ExtensionHandles;
+ 170: 	};
+ 179: 	struct FPerContextData
+ 180: 	{
+ 182: 		TArray<TSharedPtr<FComponentRequestHandle>> ComponentRequests;
+ 185: 		TMap<FObjectKey, FPerActorData> ActorData;
+ 186: 	};
+ 189: 	TMap<FGameFeatureStateChangeContext, FPerContextData> ContextData;
+ 196: 	virtual void AddToWorld(const FWorldContext& WorldContext,
+ 197: 	                        const FGameFeatureStateChangeContext& ChangeContext) override;
+ 203: 	void Reset(FPerContextData& ActiveData);
+ 207: 	void HandleActorExtension(AActor* Actor, FName EventName, FGameFeatureStateChangeContext ChangeContext);
+ 210: 	void AddWidgets(AActor* Actor, FPerContextData& ActiveData);
+ 213: 	void RemoveWidgets(AActor* Actor, FPerContextData& ActiveData);
+ 214: };
+```
 
 ## GameFeatureAction_SplitscreenConfig.h
 

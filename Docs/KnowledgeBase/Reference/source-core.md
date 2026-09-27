@@ -103,11 +103,11 @@ GameState 基础扩展生命周期。
 
 定义候选（多行签名仅展示首行）：
 
-- L19: `AHodgeHUD::AHodgeHUD(const FObjectInitializer& ObjectInitializer)`
-- L25: `void AHodgeHUD::PreInitializeComponents()`
-- L32: `void AHodgeHUD::BeginPlay()`
-- L39: `void AHodgeHUD::EndPlay(const EEndPlayReason::Type EndPlayReason)`
-- L46: `void AHodgeHUD::GetDebugActorList(TArray<AActor*>& InOutList)`
+- L37: `AHodgeHUD::AHodgeHUD(const FObjectInitializer& ObjectInitializer)`
+- L46: `void AHodgeHUD::PreInitializeComponents()`
+- L59: `void AHodgeHUD::BeginPlay()`
+- L73: `void AHodgeHUD::EndPlay(const EEndPlayReason::Type EndPlayReason)`
+- L85: `void AHodgeHUD::GetDebugActorList(TArray<AActor*>& InOutList)`
 
 ## HodgeLocalPlayerBase.cpp
 
@@ -411,23 +411,26 @@ GameState 基础扩展生命周期。
 
 ```cpp
    3: #pragma once
-   5: #include "GameFramework/HUD.h"
-   7: #include "HodgeHUD.generated.h"
-   9: namespace EEndPlayReason { enum Type : int; }
-  11: class AActor;
-  12: class UObject;
-  22: UCLASS(Config = Game)
-  23: class HODGEPODGE_API AHodgeHUD : public AHUD
-  24: {
-  25: 	GENERATED_BODY()
-  27: public:
-  28: 	AHodgeHUD(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-  30: protected:
-  33: 	virtual void PreInitializeComponents() override;
-  37: 	virtual void BeginPlay() override;
-  38: 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-  42: 	virtual void GetDebugActorList(TArray<AActor*>& InOutList) override;
-  44: };
+   7: #include "GameFramework/HUD.h"
+   9: #include "HodgeHUD.generated.h"
+  13: namespace EEndPlayReason
+  14: {
+  15: 	enum Type : int;
+  16: }
+  20: class AActor;
+  23: class UObject;
+  45: UCLASS(Config = Game)
+  46: class HODGEPODGE_API AHodgeHUD : public AHUD
+  47: {
+  48: 	GENERATED_BODY()
+  50: public:
+  53: 	AHodgeHUD(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+  55: protected:
+  60: 	virtual void PreInitializeComponents() override;
+  67: 	virtual void BeginPlay() override;
+  71: 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+  81: 	virtual void GetDebugActorList(TArray<AActor*>& InOutList) override;
+  84: };
 ```
 
 ## HodgeLocalPlayerBase.h

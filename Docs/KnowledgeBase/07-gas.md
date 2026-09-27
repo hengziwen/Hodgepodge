@@ -1,7 +1,7 @@
 # GAS、AbilitySet 与技能生命周期
 
-> 最近源码核对：2026-09-22。源码接入状态与运行验收分开记录。
-[返回首页](README.md) · [伤害系统](08-combat-health.md) · [上一轮变更](22-update-2026-09-19.md) · [本轮变更](23-update-2026-09-22.md)
+> 最近源码核对：2026-09-28（HEAD `6eec094`）。源码接入状态与运行验收分开记录。
+[返回首页](README.md) · [伤害系统](08-combat-health.md) · [上一轮变更](23-update-2026-09-22.md) · [本轮变更](24-update-2026-09-28.md)
 
 ## ASC 的项目职责
 
@@ -47,9 +47,11 @@ HodgeGameplayAbility::MakeEffectContext 调用父类创建句柄后，尝试提�
 
 当前自定义 Context 的 NetSerialize 复用父类，额外本地字段不会因此自动复制。Iris 路径也转发父类序列化；将来加入必须联网的自定义字段时，需要同步设计序列化和验证。
 
-## 攻击时间轴与 ComboSet（时间轴已实现并部分验证；连击仍不存在）
+## 攻击能力、时间轴与 ComboSet（时间轴已验证；攻击 Ability 已有；连击数据仍不存在）
 
-**当前事实（2026-09-22，HEAD `993a9eb`，工作区含未提交改动）**：时间轴按**统一事件模型**（单一 `Events[]`，`Kind = Window / Point`）实现 —— `UHodgeAbilityTimeline`（`UPrimaryDataAsset`）只描述"什么时候发生什么"，`UHodgeAbilityTask_PlayTimeline` 是唯一消费者。四个源码文件均已提交：`Public/Data/HodgeAbilityTimeline.h` / `Private/Data/HodgeAbilityTimeline.cpp` / `Public/AbilitySystem/Abilities/HodgeAbilityTask_PlayTimeline.h` / `Private/AbilitySystem/Abilities/HodgeAbilityTask_PlayTimeline.cpp`。数据校验规则与调度器（窗口进入/退出、自然结束清理、起点接续不重放历史）已在编辑器与 PIE 实测；**窗口的 GE 施加/移除、Point 与 `Timeline.End` 派发、中途取消的清理均已补测通过**（GE 实例数 `0 → 1 → 0`）。详见 [2026-09-19 记录](22-update-2026-09-19.md) 与 [第一阶段设计](../Design/ability-timeline-stage1.md)。
+**🆕 2026-09-28 更新**：`UHodgeGameplayAbility_BasicAttack` 已成为时间轴的**正式消费方** —— 五段连招（`AttackSteps` = Montage + Timeline），并在 `Docs/Validation/basic-attack-2026-09-24.md` 中通过 PIE 验证（单人 12 项 + Listen Server 客户端 36 / 主机 16 项，**不含命中与伤害**）。同一个 Ability 也消费了 `WaitMoveCancel`（见下）。详见 [本轮记录](24-update-2026-09-28.md)。
+
+**当前事实（HEAD `6eec094`）**：时间轴按**统一事件模型**（单一 `Events[]`，`Kind = Window / Point`）实现 —— `UHodgeAbilityTimeline`（`UPrimaryDataAsset`）只描述"什么时候发生什么"，`UHodgeAbilityTask_PlayTimeline` 是驱动者。数据校验规则与调度器（窗口进入/退出、自然结束清理、起点接续不重放历史）已在编辑器与 PIE 实测；**窗口的 GE 施加/移除、Point 与 `Timeline.End` 派发、中途取消的清理均已补测通过**（GE 实例数 `0 → 1 → 0`），另有 3 项自动化测试（`HodgeAbilityTimelineTests.cpp`）。详见 [2026-09-19 记录](22-update-2026-09-19.md) 与 [第一阶段设计](../Design/ability-timeline-stage1.md)。
 
 - `UHodgeAbilityTimeline`：`Duration` + 混排 `Events`（`FHodgeTimelineEvent`，`Kind = Window / Point`，含 `EHodgeTimelineEventNetPolicy`）；字段按 Kind 用 `EditConditionHides` 拆开（`WindowTag` / `WindowEffectClass` 与 `PointEventTag` / `PointEffectClass`）；编辑器校验按 Kind 分流，`PostEditChangeProperty` 只做 `StableSort`。**没有 Montage 字段、没有 `GetActivePhases`、没有 Bundle 收集**。
 - `UHodgeAbilityTask_PlayTimeline`：`bTickingTask = true`，用世界时间差累加逻辑时间；`CollectNodes` + `SortNodes`（`Time → NodeKind → Priority → EventIndex`）是初始化与 Tick 共用的统一 Scheduler；Window 进入/退出加/减 **non-replicated loose tag** 并按需施加 Infinite GE，Point 用 `HandleGameplayEvent` 派发 `PointEventTag` 并按需施加一次性 GE；`StopTimeline(NaturalEnd)` 与 `OnDestroy` 都走 `ClearAllWindowState()`（幂等）。`Timeline.End` / `Interrupted` 系统事件复用同一派发通道。
@@ -62,13 +64,14 @@ HodgeGameplayAbility::MakeEffectContext 调用父类创建句柄后，尝试提�
 
 **当前完成度**：时间轴已完成实现并通过 PIE 实测 —— 窗口标签进出、**窗口 GE 的施加 / 移除**、**Point 与 `Timeline.End` 事件派发**、自然结束零残留均已验证；**未验证的是重入类时序与跨端**（`EnterWindow` 两道防线、`ExitWindow` 不对称、GE 施加失败补偿、`NetPolicy` 分端、时钟倒退；`Interrupted` 派发分支本阶段无触发者）——中途取消的清理已验证通过，因此仍不能声称攻击闭环可用。
 
-### 移动取消后摇的消费方（工作区新增，未验证）
+### 移动取消后摇的消费方（2026-09-28：已被 BasicAttack 接入并验证）
 
-`UHodgeAbilityTask_WaitMoveCancel`（`Public|Private/AbilitySystem/Abilities/HodgeAbilityTask_WaitMoveCancel.*`，工作区未提交）把"移动取消后摇"拆成三层职责：**Timeline** 决定允许不允许取消（授权，由 Window 授予 `Status.Attack.Cancel.Move`）；**`UHodgeHeroComponent`** 提供玩家有没有移动意图（输入层的**原始输入量**，不是角色位移）；**攻击 Ability** 决定取消之后怎么结束（第一版是 `EndAbility`）。任务本身只做前两者的合流 —— 窗口 + 意图同时成立时广播 `OnMoveCancel` **一次**，然后自结束；两个信号都变化驱动（`RegisterGameplayTagEvent` + `OnMoveIntentChanged`），不轮询。
+`UHodgeAbilityTask_WaitMoveCancel` 把"移动取消后摇"拆成三层职责：**Timeline** 决定允许不允许取消（授权，由 Window 授予 `Status.Attack.Cancel.Move`）；**`UHodgeHeroComponent`** 提供玩家有没有移动意图（输入层的**原始输入量**，不是角色位移）；**攻击 Ability** 决定取消之后怎么结束（第一版是 `EndAbility`）。任务本身只做前两者的合流 —— 窗口 + 意图同时成立时广播 `OnMoveCancel` **一次**，然后自结束；两个信号都变化驱动（`RegisterGameplayTagEvent` + `OnMoveIntentChanged`），不轮询。
 
 - **本地控制端语义**：移动意图只在本地控制端存在，服务器对远端 Pawn 看不到它；跨端一致靠 `EndAbility` 的 GAS 预测复制收敛，**不要把移动意图复制上去**（会造出两个决策源）。找不到 HeroComponent（AI / 模拟代理）时任务只订阅标签，条件**永不成立**。
 - C++ 调用方需自己调 `ReadyForActivation()`（与 `PlayTimeline` 同）；蓝图 latent 节点自动补。
-- ⚠️ **未验证**：本轮未编译、未 PIE，也无证据表明新文件已编入 DLL；`Status.Attack.Cancel.Move` 的运行时进出与"取消后摇"端到端闭环都还没有证据。详见 [本轮记录](23-update-2026-09-22.md)。
+- ✅ **已验证（2026-09-24）**：`basic-attack` 验证记录中，移动取消路径已随五段连击一起通过；文件早已提交，不再是"工作区未提交 / 未编入 DLL"状态。详见 [本轮记录](24-update-2026-09-28.md)。
+- ⚠️ 仍未验证的是**重入类时序**与跨端：见上一节的"当前完成度"。
 
 ## Cue 与全局能力
 
@@ -76,4 +79,4 @@ HodgeGameplayCueManager 实现了资源管理相关逻辑，DefaultGame.ini 已�
 
 GlobalAbilitySystem 保存世界级授予，并对注册 ASC 应用。调用这些公共方法时仍需检查权威边界，不能把 WorldSubsystem 自动等同于仅服务器执行。
 
-源码：[Ability](../../Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility.cpp)、[ASC](../../Source/Hodgepodge/Private/AbilitySystem/HodgeAbilitySystemComponent.cpp)、[Context](../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayEffectContext.cpp)、[AbilitySet](../../Source/Hodgepodge/Private/Data/HodgeAbilitySet.cpp)。
+源码：[Ability](../../Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility.cpp)、[BasicAttack](../../Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility_BasicAttack.cpp)、[PlayTimeline](../../Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeAbilityTask_PlayTimeline.cpp)、[WaitMoveCancel](../../Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeAbilityTask_WaitMoveCancel.cpp)、[Timeline 数据资产](../../Source/Hodgepodge/Private/Data/HodgeAbilityTimeline.cpp)、[ASC](../../Source/Hodgepodge/Private/AbilitySystem/HodgeAbilitySystemComponent.cpp)、[Context](../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayEffectContext.cpp)、[AbilitySet](../../Source/Hodgepodge/Private/Data/HodgeAbilitySet.cpp)、[DamageExecution](../../Source/Hodgepodge/Private/AbilitySystem/Executions/HodgeDamageExecution.cpp)、[CombatSet](../../Source/Hodgepodge/Private/AbilitySystem/AttributeSet/HodgeCombatSet.cpp)。

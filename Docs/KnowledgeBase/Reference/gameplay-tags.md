@@ -196,6 +196,7 @@
 - `Platform.Trait.Input.HasStrictControllerPairing` — `Platform_Trait_Input_HasStrictControllerPairing`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L235
 - `Platform.Trait.Input.HasStrictControllerPairing` — `TAG_Platform_Trait_Input_HasStrictControllerPairing`；[HodgeControllerDisconnectedScreen.cpp](../../../Source/Hodgepodge/Private/UI/Foundation/HodgeControllerDisconnectedScreen.cpp) L20
 - `Platform.Trait.Input.PrimarlyController` — `Platform_Trait_Input_PrimarlyController`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L234
+- `Platform.Trait.Input.PrimarlyController` — `TAG_Platform_Trait_Input_PrimarlyController`；[HodgeHUDLayout.cpp](../../../Source/Hodgepodge/Private/UI/HodgeHUDLayout.cpp) L74
 - `Platform.Trait.Input.PrimarlyTouchScreen` — `Platform_Trait_Input_PrimarlyTouchScreen`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L237
 - `Platform.Trait.Input.SupportsGamepad` — `Platform_Trait_Input_SupportsGamepad`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L245
 - `Platform.Trait.Input.SupportsMouseAndKeyboard` — `Platform_Trait_Input_SupportsMouseAndKeyboard`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L238
@@ -243,8 +244,10 @@
 ## UI
 
 - `UI.Action.Back` — `UI_Action_Back`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L301
+- `UI.Action.Escape` — `TAG_UI_ACTION_ESCAPE`；[HodgeHUDLayout.cpp](../../../Source/Hodgepodge/Private/UI/HodgeHUDLayout.cpp) L70
 - `UI.Action.Escape` — `UI_Action_Escape`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L302
 - `UI.Layer.Game` — `UI_Layer_Game`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L303
 - `UI.Layer.GameMenu` — `UI_Layer_GameMenu`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L304
+- `UI.Layer.Menu` — `TAG_UI_LAYER_MENU`；[HodgeHUDLayout.cpp](../../../Source/Hodgepodge/Private/UI/HodgeHUDLayout.cpp) L66
 - `UI.Layer.Menu` — `UI_Layer_Menu`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L305
 - `UI.Layer.Modal` — `UI_Layer_Modal`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L306

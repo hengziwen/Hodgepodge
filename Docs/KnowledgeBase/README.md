@@ -1,10 +1,10 @@
 # Hodgepodge 本地知识库
 
-> 人工核对日期：2026-09-22。对象：本仓库当前工作区（HEAD `993a9eb`），包含未提交的修改。此知识库是项目本地文档，不依赖在线服务。
+> 人工核对日期：2026-09-28。对象：本仓库 HEAD `6eec094`，工作区干净（无未提交修改）。此知识库是项目本地文档，不依赖在线服务。
 
 ## 从这里开始
 
-Hodgepodge 是 UE 5.5 的个人动作 RPG 框架工程，正在将角色、GAS、输入和相机迁移到 Lyra 式组件协作架构。当前最重要的事情是完成玩家初始化与可操作闭环，而不是扩展开放世界或后端。
+Hodgepodge 是 UE 5.5 的个人动作 RPG 框架工程，正在将角色、GAS、输入、相机**与 UI** 迁移到 Lyra 式组件协作架构。当前最重要的事情是打通"能打中并掉血"的战斗闭环，以及让 UI 真正出画面，而不是扩展开放世界或后端。
 
 这套文档区分四类内容：
 
@@ -13,7 +13,7 @@ Hodgepodge 是 UE 5.5 的个人动作 RPG 框架工程，正在将角色、GAS�
 - **待编辑器验证**：二进制资产内部字段、蓝图逻辑、实际地图覆盖、运行效果。
 - **建议 / 目标**：后续开发设计，不能当成已有功能。
 
-本轮没有编译、启动 PIE、修改游戏代码或修改资产。自动索引是静态导航工具，不是 C++ 编译器或蓝图解析器。
+本轮执行了 Editor 构建（UBT 报 `Target is up to date`）与 `kb.py check` / `refresh`；**没有启动 PIE、没有编译蓝图、没有联机或打包**。自动索引是静态导航工具，不是 C++ 编译器或蓝图解析器。
 
 ## 阅读路线
 
@@ -48,6 +48,7 @@ Hodgepodge 是 UE 5.5 的个人动作 RPG 框架工程，正在将角色、GAS�
 - [2026-09-17 更新记录与验证边界](21-update-2026-09-17.md)
 - [2026-09-19 更新记录：AbilityTimeline 实现与验证边界](22-update-2026-09-19.md)
 - [2026-09-22 更新记录：移动取消后摇的消费方与输入意图信号](23-update-2026-09-22.md)
+- [2026-09-28 更新记录：Lyra UI 源码迁移落地与战斗管线核对](24-update-2026-09-28.md)
 - [项目 AI 开发流程](../AI_DEVELOPMENT.md)
 - [项目开发约定](../../AGENTS.md)
 
@@ -67,6 +68,10 @@ Hodgepodge 是 UE 5.5 的个人动作 RPG 框架工程，正在将角色、GAS�
 
 ## 最新状态提示
 
+2026-09-28 本轮：**Lyra UI 源码已整体迁移并编译，战斗推进到"能打但不掉血"**（详见 [本轮记录](24-update-2026-09-28.md)）。`UI/` 新增 **81 个文件**（41 `.h` + 40 `.cpp`）并启用 **CommonUI**；`AHodgeHUDBase` 删除改为 `AHodgeHUD`；`GameFeatureAction_AddWidget` 从整文件注释恢复为完整实现；Crouch 输入被临时屏蔽。**其中 24 个文件"待复活"** —— 依赖不满足的代码逐行注释保留，文件头带 `[UI-MIGRATION-PENDING]` 标记，复活需 CommonGame / GameSettings / CommonUser。
+
+> ⚠️ **边界**：本轮**未 PIE**。UI 目前不会出画面（`PrimaryGameLayout` / `GameUIPolicy` 缺依赖，`_AddWidget` 的 `PushContentToLayer_ForPlayer` 仍注释）。战斗侧：`UHodgeGameplayAbility_BasicAttack` 五段连招已有 PIE 验证（09-24 两份验证记录），`UHodgeHealthComponent` 已挂载、死亡流程已串联；🔴 **但 `HodgeDamageExecution` 的敌我倍率恒 `0.0f`，打中也不掉血** —— 这是当前"战斗闭环"最大的缺口。
+
 2026-09-22 本轮：**"移动取消后摇"的消费方已落地源码，但未验证**（详见 [本轮记录](23-update-2026-09-22.md)）。新增两个 loose tag `Status.Attack.Cancel` / `.Move`（授权语义，由 Timeline 的 Window 授予）；新增 AbilityTask `UHodgeAbilityTask_WaitMoveCancel`，把"窗口开放（Timeline）+ 玩家有移动意图（输入层）"两个变化驱动信号合流为一次 `OnMoveCancel`；`UHodgeHeroComponent` 增加"移动意图"信号（`HasMoveIntent` / `GetMoveIntent` / `OnMoveIntentChanged`），`Input_Move` 记意图、新增 `Input_MoveStopped` 绑到 `Completed`/`Canceled` 清零。CodexText 实验区继续精修（Overlay、左手握持、步幅/地形 IK），`Build.cs` 编辑器块新增 `AnimationWarpingRuntime`/`AnimationWarpingEditor`。
 
 > ⚠️ **边界**：本轮知识库未编译、未 PIE。`UHodgeAbilityTask_WaitMoveCancel` 本身**零运行证据**（且无法确认新文件已编入 DLL）。已有运行证据的是：移动意图（`simulate_input` 实测 `False → True → False`）与时间轴主路径 / 取消路径（见 [上一轮记录](22-update-2026-09-19.md)）。**"移动取消后摇"这条端到端闭环尚未接通**——目前没有正式攻击 Ability 消费 `OnMoveCancel`，`GA_Attack` 是否接线未在资产层确认。
@@ -83,9 +88,9 @@ Hodgepodge 是 UE 5.5 的个人动作 RPG 框架工程，正在将角色、GAS�
 
 > ✅ **"没有 Attack 标签"的旧结论已作废**：`HodgeGameplayTags.h/.cpp` 现已集中声明 `Status.Attack`（`.Windup` / `.Active` / `.Recovery`）与 `GameplayEvent.Attack`（`.Test` / `.Timeline.End` / `.Interrupted`）。**仍不存在**的是旧设计的 `Attack.Entry.*` / `Attack.Transition.*` / `Status.AttackMode.*`，以及 ComboWindow / HitCheck / JumpSection / Phase 系列事件标签。
 
-剩余重点：时间轴的**重入类时序**与跨端、时钟倒退；"移动取消后摇"的编译与接线（`WaitMoveCancel` 目前零运行证据）；技能授予句柄与撤销；Cue 路径注册与预加载；死亡衔接；敌人 ASC；专服启动；正式的攻击 Ability（连击仍需从零实现）。
+剩余重点：🔴 伤害倍率恒 0（打不掉血）；UI 出画面（需 CommonGame）；AbilitySet 授予句柄与撤销；Cue 路径注册与预加载；敌人 ASC；专服启动；时间轴的**重入类时序**与跨端、时钟倒退；`UHodgeComboSet`（连击数据仍不存在，但 `BasicAttack` 已能用 `AttackSteps` 编排五段）。
 
-不要把 Lyra 参考文档里的 ShooterCore、FrontEnd 地图、CommonUI 等当成本项目现有资源。
+不要把 Lyra 参考文档里的 ShooterCore、FrontEnd 地图当成本项目现有资源。CommonUI 现在**已启用**，但 Lyra 的 `GameUIPolicy` / `PrimaryGameLayout` / 前端地图资产**都还没有** —— 别把"插件启用"当成"前端流程可用"。
 
 ## 本地使用和维护
 
