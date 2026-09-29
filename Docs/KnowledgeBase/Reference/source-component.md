@@ -54,6 +54,45 @@ CharacterMovement 扩展、地面距离、加速度和能力系统相关移动�
 
 - L23: `UHodgeCombatComponentBase::UHodgeCombatComponentBase()`
 
+## HodgeComboComponent.cpp
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Private/Component/HodgeComboComponent.cpp](../../../Source/Hodgepodge/Private/Component/HodgeComboComponent.cpp)
+
+项目内直接 include（不是运行调用关系）：[Component/HodgeComboComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeComboComponent.h)、[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)、[AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h)、[Component/HodgeHeroComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeHeroComponent.h)、[Data/HodgeComboDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeComboDefinition.h)
+
+定义候选（多行签名仅展示首行）：
+
+- L14: `UHodgeComboComponent::UHodgeComboComponent()`
+- L20: `void UHodgeComboComponent::Configure(UHodgeAbilitySystemComponent* InASC, const UHodgeComboDefinition* InDefinition)`
+- L31: `void UHodgeComboComponent::Shutdown()`
+- L40: `void UHodgeComboComponent::ClearInput()`
+- L46: `bool UHodgeComboComponent::InputPressed(FGameplayTag InputTag)`
+- L65: `const FHodgeComboTransition* UHodgeComboComponent::SelectTransition(FGameplayTag Trigger, bool bEvent) const`
+- L82: `bool UHodgeComboComponent::IsAuthorized(FGameplayAbilitySpecHandle Handle) const`
+- L87: `int16 UHodgeComboComponent::ExecutionKey() const`
+- L94: `bool UHodgeComboComponent::PrepareTransition(const FHodgeComboTransition& Edge, FGameplayAbilitySpecHandle Handle)`
+- L116: `bool UHodgeComboComponent::TryTransition(FGameplayTag Trigger, bool bEvent)`
+- L153: `bool UHodgeComboComponent::PrepareServerActivation(FGameplayAbilitySpecHandle Handle, const FGameplayEventData* Payload)`
+- L174: `bool UHodgeComboComponent::PrepareConfirmedActivation(FGameplayAbilitySpecHandle Handle,`
+- L194: `void UHodgeComboComponent::RejectServerActivation(const FGameplayEventData* Payload)`
+- L202: `void UHodgeComboComponent::CompleteServerActivation()`
+- L211: `void UHodgeComboComponent::ExecutionStarted(UHodgeGameplayAbility_Definition* Ability)`
+- L218: `void UHodgeComboComponent::ExecutionEnded(UHodgeGameplayAbility_Definition* Ability)`
+- L225: `void UHodgeComboComponent::WindowsChanged(UHodgeGameplayAbility_Definition* Ability)`
+- L234: `void UHodgeComboComponent::TimelineEvent(UHodgeGameplayAbility_Definition* Ability, FGameplayTag Event)`
+- L241: `void UHodgeComboComponent::DrainEvents()`
+- L259: `void UHodgeComboComponent::SetNode(FGameplayTag Node)`
+- L273: `void UHodgeComboComponent::ResetSession(bool bEndAbility)`
+- L284: `void UHodgeComboComponent::TickComponent(float Delta, ELevelTick Type, FActorComponentTickFunction* Tick)`
+- L310: `void UHodgeComboComponent::ServerMoveCancel_Implementation(AActor* Avatar, FGameplayAbilitySpecHandle Handle, int32 Key)`
+- L322: `void UHodgeComboComponent::ClientMoveCancelResult_Implementation() { bMoveRequestPending = false; }`
+- L324: `void UHodgeComboComponent::ServerReturnToEntry_Implementation(AActor* Avatar, FGameplayTag SourceNode, int32 Key,`
+- L336: `void UHodgeComboComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const`
+- L342: `void UHodgeComboComponent::OnRep_ObserverTags(const FGameplayTagContainer& Previous)`
+- L351: `void UHodgeComboComponent::EndPlay(const EEndPlayReason::Type Reason)`
+
 ## HodgeExperienceManagerComponent.cpp
 
 GameState 上的 Experience 复制、资源加载、插件激活、Action 执行与 Loaded 委托。
@@ -176,29 +215,29 @@ PawnData 复制、Init State、ASC 关联/解除、TagRelationshipMapping 与 Cl
 
 源码：[Source/Hodgepodge/Private/Component/HodgePawnExtensionComponent.cpp](../../../Source/Hodgepodge/Private/Component/HodgePawnExtensionComponent.cpp)
 
-项目内直接 include（不是运行调用关系）：[Component/HodgePawnExtensionComponent.h](../../../Source/Hodgepodge/Public/Component/HodgePawnExtensionComponent.h)、[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)、[Data/HodgePawnData.h](../../../Source/Hodgepodge/Public/Data/HodgePawnData.h)
+项目内直接 include（不是运行调用关系）：[Component/HodgePawnExtensionComponent.h](../../../Source/Hodgepodge/Public/Component/HodgePawnExtensionComponent.h)、[Component/HodgeComboComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeComboComponent.h)、[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)、[Data/HodgePawnData.h](../../../Source/Hodgepodge/Public/Data/HodgePawnData.h)
 
 定义候选（多行签名仅展示首行）：
 
-- L18: `const FName UHodgePawnExtensionComponent::NAME_ActorFeatureName("PawnExtension");`
-- L20: `UHodgePawnExtensionComponent::UHodgePawnExtensionComponent(const FObjectInitializer& ObjectInitializer)`
-- L34: `void UHodgePawnExtensionComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const`
-- L42: `void UHodgePawnExtensionComponent::OnRegister()`
-- L61: `void UHodgePawnExtensionComponent::BeginPlay()`
-- L75: `void UHodgePawnExtensionComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)`
-- L86: `void UHodgePawnExtensionComponent::SetPawnData(const UHodgePawnData* InPawnData)`
-- L116: `void UHodgePawnExtensionComponent::OnRep_PawnData()`
-- L122: `void UHodgePawnExtensionComponent::InitializeAbilitySystem(UHodgeAbilitySystemComponent* InASC,`
-- L182: `void UHodgePawnExtensionComponent::UninitializeAbilitySystem()`
-- L227: `void UHodgePawnExtensionComponent::HandleControllerChanged()`
-- L251: `void UHodgePawnExtensionComponent::HandlePlayerStateReplicated()`
-- L257: `void UHodgePawnExtensionComponent::SetupPlayerInputComponent()`
-- L263: `void UHodgePawnExtensionComponent::CheckDefaultInitialization()`
-- L278: `bool UHodgePawnExtensionComponent::CanChangeInitState(UGameFrameworkComponentManager* Manager,`
-- L338: `void UHodgePawnExtensionComponent::HandleChangeInitState(UGameFrameworkComponentManager* Manager,`
-- L348: `void UHodgePawnExtensionComponent::OnActorInitStateChanged(const FActorInitStateChangedParams& Params)`
-- L360: `void UHodgePawnExtensionComponent::OnAbilitySystemInitialized_RegisterAndCall(`
-- L376: `void UHodgePawnExtensionComponent::OnAbilitySystemUninitialized_Register(FSimpleMulticastDelegate::FDelegate Delegate)`
+- L19: `const FName UHodgePawnExtensionComponent::NAME_ActorFeatureName("PawnExtension");`
+- L21: `UHodgePawnExtensionComponent::UHodgePawnExtensionComponent(const FObjectInitializer& ObjectInitializer)`
+- L35: `void UHodgePawnExtensionComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const`
+- L43: `void UHodgePawnExtensionComponent::OnRegister()`
+- L62: `void UHodgePawnExtensionComponent::BeginPlay()`
+- L76: `void UHodgePawnExtensionComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)`
+- L87: `void UHodgePawnExtensionComponent::SetPawnData(const UHodgePawnData* InPawnData)`
+- L117: `void UHodgePawnExtensionComponent::OnRep_PawnData()`
+- L123: `void UHodgePawnExtensionComponent::InitializeAbilitySystem(UHodgeAbilitySystemComponent* InASC,`
+- L187: `void UHodgePawnExtensionComponent::UninitializeAbilitySystem()`
+- L236: `void UHodgePawnExtensionComponent::HandleControllerChanged()`
+- L260: `void UHodgePawnExtensionComponent::HandlePlayerStateReplicated()`
+- L266: `void UHodgePawnExtensionComponent::SetupPlayerInputComponent()`
+- L272: `void UHodgePawnExtensionComponent::CheckDefaultInitialization()`
+- L287: `bool UHodgePawnExtensionComponent::CanChangeInitState(UGameFrameworkComponentManager* Manager,`
+- L347: `void UHodgePawnExtensionComponent::HandleChangeInitState(UGameFrameworkComponentManager* Manager,`
+- L357: `void UHodgePawnExtensionComponent::OnActorInitStateChanged(const FActorInitStateChangedParams& Params)`
+- L369: `void UHodgePawnExtensionComponent::OnAbilitySystemInitialized_RegisterAndCall(`
+- L385: `void UHodgePawnExtensionComponent::OnAbilitySystemUninitialized_Register(FSimpleMulticastDelegate::FDelegate Delegate)`
 
 ## HodgeActorComponentBase.h
 
@@ -310,6 +349,97 @@ CharacterMovement 扩展、地面距离、加速度和能力系统相关移动�
   34: public:
   41: 	UHodgeCombatComponentBase();
   42: };
+```
+
+## HodgeComboComponent.h
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Public/Component/HodgeComboComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeComboComponent.h)
+
+有效头文件声明摘录（未展开宏，未求值预处理分支）：
+
+```cpp
+   1: #pragma once
+   2: #include "Components/ActorComponent.h"
+   3: #include "GameplayAbilitySpecHandle.h"
+   4: #include "GameplayTagContainer.h"
+   5: #include "HodgeComboComponent.generated.h"
+   7: class UHodgeAbilitySystemComponent;
+   8: class UHodgeComboDefinition;
+   9: class UHodgeGameplayAbility_Definition;
+  10: struct FGameplayEventData;
+  11: struct FHodgeComboTransition;
+  14: UCLASS()
+  15: class HODGEPODGE_API UHodgeComboComponent : public UActorComponent
+  16: {
+  17: 	GENERATED_BODY()
+  19: public:
+  20: 	UHodgeComboComponent();
+  21: 	void Configure(UHodgeAbilitySystemComponent* InASC, const UHodgeComboDefinition* InDefinition);
+  22: 	void Shutdown();
+  23: 	bool InputPressed(FGameplayTag InputTag);
+  24: 	void ClearInput();
+  25: 	void ExecutionStarted(UHodgeGameplayAbility_Definition* Ability);
+  26: 	void ExecutionEnded(UHodgeGameplayAbility_Definition* Ability);
+  27: 	void WindowsChanged(UHodgeGameplayAbility_Definition* Ability);
+  28: 	void TimelineEvent(UHodgeGameplayAbility_Definition* Ability, FGameplayTag Event);
+  29: 	bool IsAuthorized(FGameplayAbilitySpecHandle Handle) const;
+  30: 	bool PrepareServerActivation(FGameplayAbilitySpecHandle Handle, const FGameplayEventData* Payload);
+  31: 	void RejectServerActivation(const FGameplayEventData* Payload);
+  32: 	bool PrepareConfirmedActivation(FGameplayAbilitySpecHandle Handle, const FGameplayEventData& Payload);
+  33: 	void CompleteServerActivation();
+  34: 	UFUNCTION(BlueprintPure)
+  35: 	FGameplayTag GetCurrentComboTag() const { return CurrentComboTag; }
+  37: 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+  39: protected:
+  40: 	virtual void
+  41: 	TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* TickFunction) override;
+  42: 	virtual void EndPlay(const EEndPlayReason::Type Reason) override;
+  44: private:
+  45: 	friend struct FHodgeComboTestAccess;
+  47: 	struct FQueuedEvent
+  48: 	{
+  49: 		TWeakObjectPtr<UHodgeGameplayAbility_Definition> Ability;
+  50: 		int16 Key = 0;
+  51: 		FGameplayTag Tag;
+  52: 	};
+  54: 	void DrainEvents();
+  55: 	TArray<FQueuedEvent> QueuedEvents;
+  56: 	bool bDrainingEvents = false;
+  57: 	const FHodgeComboTransition* SelectTransition(FGameplayTag Trigger, bool bEvent) const;
+  58: 	bool TryTransition(FGameplayTag Trigger, bool bEvent);
+  59: 	bool PrepareTransition(const FHodgeComboTransition& Edge, FGameplayAbilitySpecHandle Handle);
+  60: 	void ResetSession(bool bEndAbility);
+  61: 	void SetNode(FGameplayTag Node);
+  62: 	int16 ExecutionKey() const;
+  63: 	UFUNCTION(Server, Reliable)
+  64: 	void ServerMoveCancel(AActor* Avatar, FGameplayAbilitySpecHandle Handle, int32 Key);
+  65: 	UFUNCTION(Server, Reliable)
+  66: 	void ServerReturnToEntry(AActor* Avatar, FGameplayTag SourceNode, int32 Key, FGameplayTag Intent);
+  67: 	UFUNCTION(Client, Reliable)
+  68: 	void ClientMoveCancelResult();
+  69: 	UFUNCTION()
+  70: 	void OnRep_ObserverTags(const FGameplayTagContainer& Previous);
+  71: 	UPROPERTY(Transient)
+  72: 	TObjectPtr<UHodgeAbilitySystemComponent> ASC;
+  73: 	UPROPERTY(Transient)
+  74: 	TObjectPtr<const UHodgeComboDefinition> Definition;
+  75: 	UPROPERTY(Transient)
+  76: 	TObjectPtr<UHodgeGameplayAbility_Definition> CurrentAbility;
+  77: 	UPROPERTY(Transient)
+  78: 	FGameplayTag CurrentComboTag;
+  79: 	UPROPERTY(ReplicatedUsing=OnRep_ObserverTags)
+  80: 	FGameplayTagContainer ObserverTags;
+  81: 	FGameplayTagContainer OwnedNodeTags;
+  82: 	FGameplayTag BufferedInput;
+  83: 	double InputExpiresAt = 0;
+  84: 	FGameplayAbilitySpecHandle AuthorizedHandle;
+  85: 	FGameplayTag PendingNode;
+  86: 	bool bSwitching = false;
+  87: 	bool bMoveRequestPending = false;
+  88: 	bool bEvaluating = false;
+  89: };
 ```
 
 ## HodgeExperienceManagerComponent.h

@@ -33,6 +33,18 @@ GiveToAbilitySystem 在权威端执行，顺序为属性集、技能、效果。
 
 PlayerState 构造函数已经创建 HealthSet。若 AbilitySet 再添加同类型 HealthSet，需要明确是否造成重复属性实例；不要在配置里无意识叠加。
 
+## 技能与连招数据资产（2026-09-29 新增）
+
+| 类 | 基类 | 用途 | 状态 |
+|---|---|---|---|
+| `UHodgeAbilityDefinition` | `UPrimaryDataAsset` | **单段技能**：`AbilityTag`、`AbilityClass`（须为 `UHodgeGameplayAbility_Definition` 子类）、`ExecutionConfig{ Montage, PlayRate, BlendIn, NaturalBlendOut, StopBlendOut, TimelineTaskConfig.Timeline }` | ✅ 在用（`/Game/CodexText/DefinitionCombo/DA_Attack_1~5`） |
+| `UHodgeComboDefinition` | `UPrimaryDataAsset` | **连招跳转表**：`ComboTable`（DataTable，`FHodgeComboRow` / `FHodgeComboTransition`）+ `EntryComboTag` + `InputBindings[]` + `InputBufferSeconds` + 移动取消配置 | ✅ 在用（`DT_LightCombo` / `DA_LightCombo`，已存入 `DA_Dafult_PawnData.ComboDefinition`） |
+| `UHodgeAbilityTimeline` | `UPrimaryDataAsset` | 逻辑时间轴（Window / Point 事件表），由 Definition 引用 | ✅ 在用 |
+
+配置提醒：`AbilityDefinition` 的 Montage 与 Timeline 时长不一致时，**能力激活会被直接拒绝**；`ComboDefinition` 的跳转靠 `RequiredWindowTags` / `RequiredSourceTags` / `BlockedSourceTags` / `TransitionPriority` 选边，改跳转表前先确认这些标签确实由 Timeline 窗口授予。
+
+> ⚠️ 三者都**没有**登记进 `PrimaryAssetTypesToScan`（仍是 7 项），也**没有** Bundle 预加载（`PreloadPrimaryAssetBundles` / `PreloadPrimaryAssetsOnGrant` 源码 0 命中）—— 见下面的"注册原则"小节。它们目前走 PawnData → ComboDefinition / AbilitySet 的硬引用链带出来，符合"只被引用带出来的不注册"原则。
+
 ## GameData
 
 目前字段是 DamageGameplayEffect_SetByCaller、HealGameplayEffect_SetByCaller、DynamicTagGameplayEffect，均为软类引用。路径存在不代表引用已填，更不代表对应 GE 的 Modifier、SetByCaller 标签正确。
@@ -55,7 +67,7 @@ Cook 规则与 PIE 是两回事。PIE 能加载，不说明打包一定包含资
 
 ### ~~新增：AbilityTimeline 与 ComboSet 的按名登记~~（⚠️ 未落地）
 
-> **本节仍未生效。** `Config/DefaultGame.ini` **没有** `HodgeAbilityTimeline` / `HodgeComboSet` 两个 PrimaryAssetTypesToScan（仍是 7 项：Map、PrimaryAssetLabel、HodgeGameData、GameFeatureData、HodgeExperienceDefinition、HodgePawnData、HodgeExperienceActionSet）。时间轴的测试件 `DA_TimelineTest` / `GA_TimelineTest` 走实验区直接引用，不依赖按名加载。
+> **本节仍未生效。** `Config/DefaultGame.ini` **没有** `HodgeAbilityTimeline` / `HodgeComboDefinition` 的 PrimaryAssetTypesToScan（仍是 7 项：Map、PrimaryAssetLabel、HodgeGameData、GameFeatureData、HodgeExperienceDefinition、HodgePawnData、HodgeExperienceActionSet）。2026-09-29 状态：连招资产在 `/Game/CodexText/DefinitionCombo/`，通过 `DA_Dafult_PawnData` 的硬引用链带出，**不依赖按名加载**。
 
 ~~`Config/DefaultGame.ini` 已把 `HodgeAbilityTimeline` 与 `HodgeComboSet` 加入 PrimaryAssetTypesToScan（目录 `/Game/Main`）。它们会被"点名预加载"，符合上面的注册原则。~~
 
@@ -67,4 +79,4 @@ Cook 规则与 PIE 是两回事。PIE 能加载，不说明打包一定包含资
 
 打开 Experience 查看 DefaultPawnData；打开 PawnData 查看五个字段；打开 Hero 蓝图查看父类、Mesh、AnimClass 和组件；打开 InputConfig 与 IMC 核对两套映射；打开 AbilitySet 核对技能输入 Tag；最后运行观察实际类型和引用。
 
-源码：[PawnData](../../Source/Hodgepodge/Public/Data/HodgePawnData.h)、[ExperienceDefinition](../../Source/Hodgepodge/Public/Data/HodgeExperienceDefinition.h)、[AbilitySet](../../Source/Hodgepodge/Private/Data/HodgeAbilitySet.cpp)、[AssetManager](../../Source/Hodgepodge/Private/Data/HodgeAssetManager.cpp)。
+源码：[PawnData](../../Source/Hodgepodge/Public/Data/HodgePawnData.h)、[ExperienceDefinition](../../Source/Hodgepodge/Public/Data/HodgeExperienceDefinition.h)、[AbilitySet](../../Source/Hodgepodge/Private/Data/HodgeAbilitySet.cpp)、[AbilityDefinition](../../Source/Hodgepodge/Private/Data/HodgeAbilityDefinition.cpp)、[ComboDefinition](../../Source/Hodgepodge/Private/Data/HodgeComboDefinition.cpp)、[AbilityTimeline](../../Source/Hodgepodge/Private/Data/HodgeAbilityTimeline.cpp)、[AssetManager](../../Source/Hodgepodge/Private/Data/HodgeAssetManager.cpp)。

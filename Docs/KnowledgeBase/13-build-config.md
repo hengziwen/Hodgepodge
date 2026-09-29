@@ -5,7 +5,9 @@
 
 ## 构建基线
 
-uproject 关联 UE 5.5，Runtime 模块为 Hodgepodge，已有 Game 和 Editor Target。Build.cs 启用显式/共享 PCH、UE 5.5 include 顺序、内联生成代码警告及 SetupIrisSupport。
+uproject 关联 UE 5.5。**现在有两个模块**：`Hodgepodge`（Runtime，唯一进游戏构建的模块）与 **`HodgeAbilityEditor`**（2026-09-29 新增，`Type: Editor`，`LoadingPhase: PostEngineInit`，已在 `HodgepodgeEditor.Target.cs` 的 `ExtraModuleNames` 登记，**不进 Runtime 构建**）。已有 Game 和 Editor Target。Build.cs 启用显式/共享 PCH、UE 5.5 include 顺序、内联生成代码警告及 SetupIrisSupport。
+
+`HodgeAbilityEditor.Build.cs` 依赖：`Hodgepodge`、`UnrealEd`、`AssetTools`、`PropertyEditor`、`Slate`、`SlateCore`、`EditorStyle`、`AdvancedPreviewScene`、`AnimationEditor`、`AnimGraph`、`BlueprintGraph`、`GraphEditor`、`UnrealEd` 类工具等（编辑器模块，运行时不存在）。
 
 Public 依赖包含 Core、CoreUObject、Engine、InputCore、GameplayAbilities、GameplayTags、GameplayTasks、ModularGameplay、GameFeatures、AIModule、EngineSettings、NetCore、AnimGraphRuntime、RigVM、ControlRig，以及 **UMG、Slate、SlateCore**（最初只为 CodexText 的 UUserWidget，2026-09-28 起成为 UI 迁移的正式依赖）、**`CommonUI`、`CommonInput`**（本轮新增，Lyra UI 迁移用）。Private 依赖包含 EnhancedInput、PhysicsCore、Niagara、SignificanceManager、**`ApplicationCore`**（本轮新增）。编辑器专用块（`Target.bBuildEditor`）包含 UnrealEd、AnimGraph、BlueprintGraph（供 CodexText 的 Authoring 库生成动画图）以及 **`AnimationWarpingRuntime`、`AnimationWarpingEditor`**（CodexText 实验用 UE 5.5 的 Stride Warping / Foot Placement）。**编辑器块内的依赖不进 Runtime 构建**。
 
@@ -15,10 +17,10 @@ Public 依赖包含 Core、CoreUObject、Engine、InputCore、GameplayAbilities�
 
 ## 本地构建命令模板
 
-以下是待用户在具备引擎环境时执行的模板，本轮未运行。开发流程记录引擎为 D:\UE_5.5、版本 5.5.4；它是既有核实记录，本轮没有重新探测工具链。项目路径按当前仓库解析，不能照搬文档中的旧 D:\Hodgepodge 路径。
+**本轮已实际运行**（2026-09-29），引擎在本机 `E:\UE\UE_5.5`（由注册表 `HKLM:\SOFTWARE\EpicGames\Unreal Engine\5.5` 的 `InstalledDirectory` 核实，版本 5.5.4）。文档里残留的 `D:\UE_5.5` / `D:\Hodgepodge` 是旧路径，**不要照抄**。
 
 ```powershell
-$ueRoot = 'D:\UE_5.5'
+$ueRoot = 'E:\UE\UE_5.5'
 $projectFile = (Resolve-Path './Hodgepodge.uproject').Path
 & "$ueRoot\Engine\Build\BatchFiles\Build.bat" HodgepodgeEditor Win64 Development "-project=$projectFile" -WaitMutex
 & "$ueRoot\Engine\Binaries\Win64\UnrealEditor.exe" $projectFile
@@ -59,6 +61,10 @@ CoreRedirects 可让旧资产类名迁移到新类，但 NewName 必须真实存
 每次记录 Git HEAD、未提交修改、引擎版本、目标、配置、命令、退出码和首个编译错误。README 的历史编译通过仅适用于其记录基线，不代表当前新增类与工作区修改已重新编译。
 
 **2026-09-28 记录**：HEAD `6eec094`，工作区干净；引擎 `E:\UE\UE_5.5`；目标 `HodgepodgeEditor Win64 Development`；结果 UBT 返回 **`Target is up to date`**（0.67s，未触发重编，说明源码与产物一致）。本轮**未**执行 PIE / 蓝图 Compile / 打包。UI 的 81 个新文件与战斗相关类均已在此前的构建中编入（产物最新）。
+
+**2026-09-29 记录**：HEAD `abb9224`，工作区有 2 个 `CodexText` 资产改动（不影响构建）；同一目标与配置；结果 UBT 返回 **`Target is up to date`**（0.75s）。说明连击系统（`AbilityDefinition` / `ComboDefinition` / `ComboComponent` / `Ability_Definition`）、独立编辑器模块 `HodgeAbilityEditor`、装备四件套、`TimelineEvaluator` 与新测试文件都已编入（产物最新）。本轮**未**执行 PIE / 蓝图 Compile / 打包。
+
+> 注意：`Target is up to date` 只说明**源码与现有产物一致**；它由 `git status` 决定工作集，因此看到这句话时应确认自己确实在预期提交上（本轮为 `abb9224`）。若改动了 `.Build.cs` / 新增模块却仍报 up to date，需检查是否真的保存了文件。
 
 > 引擎安装路径：`E:\UE\UE_5.5`（由注册表 `HKLM:\SOFTWARE\EpicGames\Unreal Engine\5.5` 的 `InstalledDirectory` 核实）。文档里残留的 `D:\UE_5.5` / `D:\Hodgepodge` 是旧路径，不要照抄。
 

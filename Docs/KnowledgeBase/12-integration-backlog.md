@@ -1,8 +1,8 @@
 # 当前状态、断点与接通顺序
 
-[返回首页](README.md) · [上一轮变更](23-update-2026-09-22.md) · [本轮变更](24-update-2026-09-28.md)
+[返回首页](README.md) · [上一轮变更](24-update-2026-09-28.md) · [本轮变更](25-update-2026-09-29.md)
 
-> 核对日期：2026-09-28。对象：HEAD `6eec094`，工作区干净。已执行 Editor 构建（UBT 报 `Target is up to date`）；**未执行 PIE、蓝图 Compile、联机、打包**。保留 KB 编号便于追踪，但"源码已接入"与"运行验收通过"严格区分。
+> 核对日期：2026-09-29。对象：HEAD `abb9224`，工作区有 2 个 `CodexText` 资产改动。已执行 Editor 构建（UBT 报 `Target is up to date`）；**未执行 PIE、蓝图 Compile、联机、打包**。保留 KB 编号便于追踪，但"源码已接入"与"运行验收通过"严格区分。
 
 ## 旧缺口现已在源码接入
 
@@ -38,11 +38,11 @@ CharacterBase 在 PreInitializeComponents 注册 Receiver、BeginPlay 发送 Gam
 
 LocalPlayerClassName 和 GameFeaturesManagerClassName 已指向项目类型。Policy 的具体观察者注册仍是另一个环节，见 KB-07。
 
-### KB-16 🆕：攻击 Ability 与连招——C++ 已落地并有 PIE 验证
+### KB-16：攻击 Ability 与连招——已换代为 Definition 链路，旧 BasicAttack 成孤儿
 
-`UHodgeGameplayAbility_BasicAttack` 已实现：`TArray<FHodgeBasicAttackStep> AttackSteps`（每段 = Montage + `UHodgeAbilityTimeline`）、输入缓冲（`WaitInputPress`，`bBufferedAttack`）、窗口接段（监听 `Status.Attack.Cancel.NextAttack` 计数变化 → `TryAdvance`）、移动取消（`UHodgeAbilityTask_WaitMoveCancel`）、后摇取消（`OnInterrupted → EndAbility`）。激活时校验 Montage 长度与 `Timeline.Duration` 对齐，不一致直接拒绝。
+**当前主链路**（2026-09-29）：`UHodgeAbilityDefinition`（单段技能）+ `UHodgeComboDefinition`（DataTable 跳转表）+ `UHodgeComboComponent`（**已挂到 `AHodgePlayerState`**）+ `UHodgeGameplayAbility_Definition`。五段连击资产在 `/Game/CodexText/DefinitionCombo/`，`DA_Dafult_PawnData` 已配 `ComboDefinition`。详见 **KB-22** 与 [本轮记录](25-update-2026-09-29.md)。
 
-验证：`Docs/Validation/basic-attack-2026-09-24.md`（五段连击，单人 PIE 12 项 + Listen Server 客户端 36 / 主机 16 项通过，**不含命中与伤害**）。详见 [本轮记录](24-update-2026-09-28.md)。
+**旧链路**：`UHodgeGameplayAbility_BasicAttack`（`TArray<FHodgeBasicAttackStep> AttackSteps`，每段 = Montage + Timeline；输入缓冲 `WaitInputPress`；窗口接段监听 `Status.Attack.Cancel.NextAttack` → `TryAdvance`；移动取消 `WaitMoveCancel`；后摇取消 `OnInterrupted → EndAbility`）。它有过 PIE 验证（`Docs/Validation/basic-attack-2026-09-24.md`，**不含命中与伤害**），但**现在 `DA_Pover` 已移除该授予、C++ 零引用** → 属待清理的孤儿，两套连招模型并存容易混淆。
 
 ### KB-17 🆕：生命与死亡——已接通
 
@@ -82,11 +82,13 @@ TryDedicatedServerLogin 在默认地图条件满足时返回 true，实际登录
 
 AddInputBinding、AddInputContextMapping 的扩展添加分支均已启用。Hero::RemoveAdditionalInputConfig 已实现，EndPlay 统一解绑。ContextMapping 的 ControllersAddedTo 记录路径仍需复核。验收必须覆盖激活、停用、再次激活和多世界。
 
-### KB-15：时间轴与 ComboSet——时间轴已验证，ComboSet 仍不存在
+### KB-15：时间轴与 ComboSet——时间轴已验证，**ComboSet 缺口已由 ComboDefinition 补上** ✅
 
-`UHodgeAbilityTimeline` + `UHodgeAbilityTask_PlayTimeline` 已按统一事件模型实现并**编译 + PIE 实测通过**（窗口 GE 施加/移除 `0→1→0`、Point / `Timeline.End` 派发、取消清理幂等，见 `Docs/Validation/timeline-2026-09-24.md`）；自动化测试 3 项（`HodgeAbilityTimelineTests.cpp`）。`Status.Attack.*` / `GameplayEvent.Attack.*` 原生标签已集中声明。
+`UHodgeAbilityTimeline` + `UHodgeAbilityTask_PlayTimeline` + **`UHodgeTimelineEvaluator`**（纯静态求值器，运行时与编辑器共用，配套 `Hodge.Timeline.SharedEvaluator` 测试）已实现并**编译 + PIE 实测通过**（窗口 GE 施加/移除 `0→1→0`、Point / `Timeline.End` 派发、取消清理幂等，见 `Docs/Validation/timeline-2026-09-24.md`）；另有 `HodgeAbilityTimelineTests.cpp` 与新增的 `HodgeTimelineEvaluatorTests.cpp`。`Status.Attack.*` / `GameplayEvent.Attack.*` 原生标签已集中声明。
 
-**仍然不存在**：`UHodgeComboSet`、`UHodgeAssetManager::PreloadPrimaryAssetBundles`、`HodgeGameplayAbility::PreloadPrimaryAssetsOnGrant`、旧设计的 `Attack.Entry.*` / `Attack.Transition.*` / `Status.AttackMode.*`。
+**2026-09-29 更新**：连招数据不再是缺口 —— `UHodgeComboDefinition`（DataTable 跳转表）已落地并挂载验证，见 **KB-22**；旧的 `UHodgeComboSet` 命名不再使用。
+
+**仍然存在**：`UHodgeAssetManager::PreloadPrimaryAssetBundles`、`HodgeGameplayAbility::PreloadPrimaryAssetsOnGrant`（Bundle 预加载）、旧设计的 `Attack.Entry.*` / `Attack.Transition.*` / `Status.AttackMode.*`。
 
 ⚠️ 未验证的是**重入类时序**：`EnterWindow` 两道防线、`ExitWindow` 不对称约束、GE 施加失败补偿，以及 `NetPolicy` 跨端分派、时钟倒退。
 
@@ -115,22 +117,56 @@ AddInputBinding、AddInputContextMapping 的扩展添加分支均已启用。Her
 
 **验收方法**：先确认没有蓝图 / 动画依赖旧行为（`GetBlendInfo` 当前不是 `UFUNCTION`，改动不会破坏蓝图调用），再在 PIE 中打印镜头切换前后的返回值，确认压入死亡 / 技能模式后 tag 随之变化。
 
+### KB-22 🆕：技能 Definition 与连击系统——已挂载并验证（当前主链路）
+
+`UHodgeAbilityDefinition`（单段技能数据资产）+ `UHodgeComboDefinition`（连招跳转表，终于是 `ComboSet` 的正解）+ `UHodgeComboComponent`（**已由 `AHodgePlayerState` 构造创建**，PawnExtension 初始化时 Configure）+ `UHodgeGameplayAbility_Definition`。
+
+- **输入缓存**：单槽、0.3 秒、新输入覆盖旧输入
+- **切段**：先做预检查，失败保留当前动作；实际切换失败回 `Entry`
+- **标签账本**：拥有端 / 权威端各维护本地账本，模拟代理收 `skip-owner` 快照（不重复计数）
+- **事件链上限 32**：超过报错并清理回 `Entry`（防零时间循环）
+- **网络**：输入切段走 GAS `LocalPredicted` 激活 RPC，**服务器按当前执行窗口重新选边**，不接受客户端指定目标、不做历史窗口补偿
+- **时间轴时长**：支持 `Use Montage Duration`（从 Montage 派生），窗口用"源动画秒数"
+
+资产：`/Game/CodexText/DefinitionCombo/`（`GA_Attack_1~5` + `DA_Attack_1~5` + 对应 Timeline + `DT_LightCombo` + `DA_LightCombo` + `AS_LightCombo`）；`DA_Dafult_PawnData` 已存 `ComboDefinition = DA_LightCombo`。
+
+验证（[`Docs/Validation/definition-combo-2026-09-28.md`](../Validation/definition-combo-2026-09-28.md)）：Editor + Game 两目标构建退出码 0；单人 PIE 14 项、Listen Server（拥有端 23 / 主机 19）、网络模拟 15 项、原生自动化 7/7。
+
+🔴 **缺口**：不含命中判定与伤害，且 `HodgeDamageExecution` 倍率恒 0（见 KB-08）→ 连招能跑完但**打不掉血**。另有：组合触发 B、Section 跳转 / 循环、图形编辑器未包含。
+
+### KB-23 🆕：独立编辑器模块 `HodgeAbilityEditor`——已可用
+
+`Source/HodgeAbilityEditor/`（9 文件，`Type: Editor`），已登记进 `HodgepodgeEditor.Target.cs`。内容浏览器双击 `UHodgeAbilityDefinition` 即打开（注册了 `FHodgeAbilityDefinitionActions`），六个停靠页：Definition / Preview / Timeline / Ability Tasks / Selected Event / Validation；`SHodgeAbilityPreview`（AdvancedPreviewScene + Montage）、`SHodgeAbilityTimeline`（`SLeafWidget` 自绘轨道，编辑走 `FScopedTransaction`）；`Hodge.Editor.DefinitionWorkflow` 测试。
+
+**边界**：只支持单 Section 正向技能；不模拟 GAS 激活、命中、网络与位移。编辑器与运行时共用 `UHodgeTimelineEvaluator`，所以"编辑器看到的窗口"＝"运行时走进的窗口"。
+
+### KB-24 🆕：装备系统四件套——编译通过但零挂载
+
+`UHodgeEquipmentDefinition` / `UHodgeEquipmentInstance` / `UHodgeEquipmentManagerComponent` / `UHodgeWeaponInstance`（Lyra 移植）。
+
+证据：无 `CreateDefaultSubobject<UHodgeEquipmentManagerComponent>`；非 `BlueprintSpawnableComponent`（蓝图搜不到）；`Docs/Design/equipment-weapon-system.md` 明写"均未挂载、未建资产、未接线"。
+
+启用最小路径：① 定 ManagerComponent 挂在哪（建议 `AHodgeCombatCharacter`，Init State 初始化时把 ASC 交给它）→ ② 建 Definition 资产（`ActorsToSpawn` 填武器 Mesh + 手部 Socket）→ ③ `EquipItem` 验证挂上 / AbilitySet 授予 / `UnequipItem` 后 GE 与设备效果归零。
+
+⚠️ 注意：ManagerComponent 的 AbilitySet 授予**保存了 `GrantedHandles` 并支持精确撤销**，比 KB-05 的 PlayerState 授予更完整 —— 想补 KB-05 的句柄可以直接参照它。
+
 ## 编辑器资产检查步骤
 
 1. 打开 `/Game/Main/Data/DA_Dafult_PawnData`，确认 PawnClass 是目标 Hero 蓝图、InputConfig、DefaultCameraMode 指向 `Main/Camera/CM_ThirdPerson`。AbilitySets 会被授予，可以实际填写。
 2. 打开 `/Game/Main/Character/Hero/BP_Hero_Pover`，检查父类 / 继承组件、HeroComponent 的 DefaultInputMappings（选 `IMC_Default`，注意 `bRegisterWithSettings=false` 会跳过添加）。
 3. 打开 `DA_HodgeInputConfig`，确认 NativeInputActions / AbilityInputActions 的 Tag 与 `IA_*` 匹配；打开 IMC 检查键位与修饰器。
-4. 打开 `/Game/Main/Character/Hero/GA_BasicAttack`，确认父类是 `UHodgeGameplayAbility_BasicAttack`，并逐段核对 **`AttackSteps` 的 Montage 与 Timeline 是否配对**（长度不一致会直接拒绝激活）。
+4. 打开 `/Game/CodexText/DefinitionCombo/` 下的 `DA_Attack_1~5`，确认每个的 `AbilityClass` 是 `UHodgeGameplayAbility_Definition` 子类、**Montage 与 Timeline 时长一致**（不一致会拒绝激活）；打开 `DT_LightCombo` 核对六行跳转表的 `RequiredWindowTags` / `RequiredSourceTags` / `BlockedSourceTags` / `TransitionPriority`。
 5. 打开 `/Game/Main/Data/DA_Dafult_GameData`，确认 Damage / Heal / DynamicTag 三个 GE 引用是否已填。
-6. PIE 观察 `HODGE-DBG` 的 CONFIG、IMC entry、BLOCKED、CALLBACK 与相机绑定日志。⚠️ 本轮未执行 PIE。
+6. PIE 观察 `HODGE-DBG` 的 CONFIG、IMC entry、BLOCKED、CALLBACK 与相机绑定日志。⚠️ 本轮未执行 PIE（连招的运行时结论看 `Docs/Validation/definition-combo-2026-09-28.md`）。
 
 ## 当前开发顺序
 
-1. **修 `HodgeDamageExecution` 的敌我倍率**（当前恒 0，是"能打但不掉血"的根因）。
-2. 编辑器确认 `GA_BasicAttack` 的 `AttackSteps` 配对与命中判定 → 打通"打中掉血"。
+1. **修 `HodgeDamageExecution` 的敌我倍率**（当前恒 `0.0f`，是"连招能打完但不掉血"的根因）。
+2. 编辑器确认 `DA_Attack_1~5` 的 Montage ↔ Timeline 配对与命中判定 → 打通"打中掉血"。
 3. 引入 **CommonGame** → 复活 24 个 UI 文件 → 解注释 `PushContentToLayer_ForPlayer` → UI 出画面（可与 1~2 并行）。
-4. AbilitySet 授予补 `GrantedHandles`（可撤销 / 可防重）。
-5. 敌人 ASC 初始化 → 验证"打敌人"完整闭环。
-6. 补时间轴的**重入类用例**；完善 Cue 路径与预加载；进入联机 / 热卸载前覆盖 KB-10、KB-12、KB-14。
+4. AbilitySet 授予补 `GrantedHandles`（可直接参照 KB-24 里 ManagerComponent 的写法）。
+5. 挂载 `UHodgeEquipmentManagerComponent` → 第一个装备 Definition → 武器挂手（装备 UI 与 Cosmetics 动画层仍是空壳）。
+6. 敌人 ASC 初始化 → 验证"打敌人"完整闭环。
+7. 清理孤儿 `UHodgeGameplayAbility_BasicAttack`（KB-16）；补时间轴**重入类用例**；完善 Cue 路径与预加载；进入联机 / 热卸载前覆盖 KB-10、KB-12、KB-14。
 
 本页只更新知识，不修改游戏实现。未执行的构建、蓝图编译、PIE、联机、Cook/打包保持"未验证"。

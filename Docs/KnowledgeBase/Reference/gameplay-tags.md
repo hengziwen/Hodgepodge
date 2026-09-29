@@ -65,7 +65,7 @@
 
 ## Gameplay
 
-- `Gameplay.AbilityInputBlocked` — `TAG_Gameplay_AbilityInputBlocked`；[HodgeAbilitySystemComponent.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeAbilitySystemComponent.cpp) L24
+- `Gameplay.AbilityInputBlocked` — `TAG_Gameplay_AbilityInputBlocked`；[HodgeAbilitySystemComponent.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeAbilitySystemComponent.cpp) L29
 - `Gameplay.Damage` — `TAG_Gameplay_Damage`；[HodgeHealthSet.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/AttributeSet/HodgeHealthSet.cpp) L21
 - `Gameplay.Damage.FellOutOfWorld` — `TAG_Gameplay_FellOutOfWorld`；[HodgeHealthSet.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/AttributeSet/HodgeHealthSet.cpp) L30
 - `Gameplay.Damage.SelfDestruct` — `TAG_Gameplay_DamageSelfDestruct`；[HodgeHealthSet.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/AttributeSet/HodgeHealthSet.cpp) L27
@@ -115,6 +115,8 @@
 - `GameplayEvent.Attack.Interrupted` — `GameplayEvent_Attack_Interrupted`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L145
 - `GameplayEvent.Attack.Test` — `GameplayEvent_Attack_Test`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L143
 - `GameplayEvent.Attack.Timeline.End` — `GameplayEvent_Attack_Timeline_End`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L144
+- `GameplayEvent.Combo.EventRequest` — `TAG_ComboEventRequest`；[HodgeComboComponent.cpp](../../../Source/Hodgepodge/Private/Component/HodgeComboComponent.cpp) L12
+- `GameplayEvent.Combo.InputRequest` — `TAG_ComboInputRequest`；[HodgeComboComponent.cpp](../../../Source/Hodgepodge/Private/Component/HodgeComboComponent.cpp) L11
 - `GameplayEvent.Death` — `GameplayEvent_Death`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L135
 - `GameplayEvent.MeleeHit` — `GameplayEvent_MeleeHit`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L134
 - `GameplayEvent.RequestReset` — `GameplayEvent_RequestReset`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L137

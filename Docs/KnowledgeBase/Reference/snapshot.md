@@ -6,29 +6,37 @@
 
 ## 生成信息
 
-- UTC：2026-09-27T16:40:46.432444+00:00
-- Git HEAD：`6eec094fcdeafb0c80ea9af24c3ea7931024e618`
-- 源文件（h/cpp/cs）：244
+- UTC：2026-09-29T15:57:03.472870+00:00
+- Git HEAD：`abb92243c2543025eb5f7518ada72ac8163d5265`
+- 源文件（h/cpp/cs）：275
 - Content/Main 文件：44
-- 原生标签注册条目：189
-- 漂移跟踪文件：304
+- 原生标签注册条目：191
+- 漂移跟踪文件：335
 
 ## 生成时已有的受 Git 跟踪修改
 
 ```text
-M Docs/KnowledgeBase/01-project-map.md
+M Content/CodexText/BasicAttack/DA_Attack01_Timeline.uasset
+ M Content/CodexText/DefinitionCombo/DA_Attack_1.uasset
+ M Docs/KnowledgeBase/01-project-map.md
+ M Docs/KnowledgeBase/05-data-assets.md
  M Docs/KnowledgeBase/07-gas.md
- M Docs/KnowledgeBase/08-combat-health.md
  M Docs/KnowledgeBase/12-integration-backlog.md
  M Docs/KnowledgeBase/13-build-config.md
  M Docs/KnowledgeBase/16-validation.md
  M Docs/KnowledgeBase/README.md
+ M Docs/KnowledgeBase/Reference/README.md
+ M Docs/KnowledgeBase/Reference/assets.md
+ M Docs/KnowledgeBase/Reference/config.md
  M Docs/KnowledgeBase/Reference/gameplay-tags.md
  M Docs/KnowledgeBase/Reference/snapshot.json
+ M Docs/KnowledgeBase/Reference/source-abilitysystem.md
+ M Docs/KnowledgeBase/Reference/source-component.md
  M Docs/KnowledgeBase/Reference/source-core.md
- M Docs/KnowledgeBase/Reference/source-gamefeatures.md
+ M Docs/KnowledgeBase/Reference/source-data.md
  M Docs/KnowledgeBase/Reference/source-index.md
- M Docs/KnowledgeBase/Reference/source-ui.md
+ M Docs/KnowledgeBase/Reference/source-module.md
+ M Docs/KnowledgeBase/Reference/source-tests.md
  M README.md
 ```
 

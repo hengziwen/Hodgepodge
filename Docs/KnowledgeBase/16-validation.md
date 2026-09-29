@@ -100,13 +100,15 @@
 
 **当前状态**：✅ **已通过**（见 `Docs/Validation/basic-attack-2026-09-24.md`）。消费方不再是"无着落" —— `UHodgeGameplayAbility_BasicAttack` 已接入 `WaitMoveCancel` 并随五段连击一起验证。此前记录的"移动意图"证据（`simulate_input`：`False` → `True`（原始值 `(0, 1.0)`）→ `False`）依然有效。
 
-## V16：普攻五段连击（✅ 2026-09-24 已通过；命中与伤害未覆盖）
+## V16：连招流转（✅ 2026-09-28 已通过；命中与伤害未覆盖）
 
-`UHodgeGameplayAbility_BasicAttack`：`AttackSteps`（Montage + Timeline）、输入缓冲、窗口接段、移动 / 后摇取消。
+**当前主链路**：`UHodgeAbilityDefinition` + `UHodgeComboDefinition`（跳转表）+ `UHodgeComboComponent` + `UHodgeGameplayAbility_Definition`；五段连击资产 `DA_Attack_1~5` + `DT_LightCombo`。
 
-**已通过**：单人 PIE 12 项、Listen Server 客户端 36 / 主机 16 项（见 [`basic-attack-2026-09-24.md`](../Validation/basic-attack-2026-09-24.md)）。
+**已通过**（见 [`definition-combo-2026-09-28.md`](../Validation/definition-combo-2026-09-28.md)）：Editor + Game 两目标构建退出码 0；单人 PIE **14 项**；Listen Server（拥有端 **23** / 主机 **19**）；网络模拟（750ms 延迟、10% 丢包 + 重复包）**15 项**；原生自动化 **7/7**。
 
-**未覆盖**：命中判定与伤害。⚠️ 这不是"还没测"，而是**当前代码上就不成立** —— `HodgeDamageExecution` 的 `DamageInteractionAllowedMultiplier` 恒 `0.0f`（见 V17）。修好后再补测。
+**历史链路**：`UHodgeGameplayAbility_BasicAttack` 的五段连击曾在 `basic-attack-2026-09-24.md` 通过（单人 12 项 + Listen Server 客户端 36 / 主机 16），现已成孤儿（见 [KB-16](12-integration-backlog.md)）。
+
+**未覆盖**：命中判定与伤害 —— 这不是"还没测"，而是**当前代码上就不成立**（`DamageInteractionAllowedMultiplier` 恒 `0.0f`，见 V17）。修好后再补测。
 
 ## V17：伤害 → 掉血 → 死亡（⚠️ 部分接通：死亡已通，掉血不通）
 
@@ -121,6 +123,20 @@
 操作与通过条件：启动后能看到 HUD 根布局；GameFeature 激活 / 停用能把控件挂上 / 摘掉；`UHodgeHUD` 的 Debug Actor 列表能列出带 ASC 的 Actor。
 
 **当前状态**：未执行，且**当前代码上不可能通过**（缺依赖）。
+
+## V19：装备挂载与武器挂手（⚠️ 未挂载，无法执行）
+
+前置：决定 `UHodgeEquipmentManagerComponent` 挂在哪（建议 `AHodgeCombatCharacter`），建 `UHodgeEquipmentDefinition` 资产（`ActorsToSpawn` = 武器 Mesh + 手部 Socket）。
+
+操作与通过条件：`EquipItem` 后武器出现在手部 Socket、AbilitySet 授予生效；`UnequipItem` 后 GE 与设备效果（手柄震动）归零、Actor 销毁；换 Pawn / 死亡时不泄漏句柄。
+
+**当前状态**：**零挂载** —— 无 `CreateDefaultSubobject`、非 `BlueprintSpawnableComponent`，当前代码上无法执行。装备 UI（`HodgeReticleWidgetBase`）与 `PickBestAnimLayer`（Cosmetics 动画层）也仍是注释 / 空壳。
+
+## V20：技能编辑器工作流（✅ 自动化已通过，人工待做）
+
+`Hodge.Editor.DefinitionWorkflow` 自动化测试已通过（加载 `DA_Attack_5` 内存副本，测增删改 / 撤销重做 / Seek / 预览姿势变化 / 终点无活动窗口）。
+
+**待人工验收**：在编辑器里双击 `UHodgeAbilityDefinition` 能打开六个面板；预览视口能播当前 Montage；时间轴轨道可拖动 / 缩放且改动能 Undo；Validation 面板能报出非法配置。**本轮未执行**（未启动编辑器人工验证）。
 
 ## 验收记录模板
 

@@ -16,23 +16,26 @@
 
 定义候选（多行签名仅展示首行）：
 
-- L36: `UHodgeAbilityTask_PlayTimeline::UHodgeAbilityTask_PlayTimeline(const FObjectInitializer& ObjectInitializer)`
-- L43: `UHodgeAbilityTask_PlayTimeline* UHodgeAbilityTask_PlayTimeline::PlayTimeline(`
-- L56: `void UHodgeAbilityTask_PlayTimeline::Activate()`
-- L113: `void UHodgeAbilityTask_PlayTimeline::TickTask(float DeltaTime)`
-- L176: `void UHodgeAbilityTask_PlayTimeline::CollectNodes(float PreviousTime, float CurrentTime,`
-- L235: `void UHodgeAbilityTask_PlayTimeline::SortNodes(TArray<FHodgeTimelineNode>& Nodes) const`
-- L269: `void UHodgeAbilityTask_PlayTimeline::InitializeTimeline(float InStartOffset)`
-- L305: `void UHodgeAbilityTask_PlayTimeline::AdvanceTimeline(float PreviousTime, float CurrentTime)`
-- L356: `bool UHodgeAbilityTask_PlayTimeline::HasAuthorityOnAvatar() const`
-- L362: `void UHodgeAbilityTask_PlayTimeline::EnterWindow(int32 EventIndex)`
-- L422: `void UHodgeAbilityTask_PlayTimeline::ExitWindow(int32 EventIndex)`
-- L471: `FActiveGameplayEffectHandle UHodgeAbilityTask_PlayTimeline::ApplyTimelineEffect(`
-- L495: `void UHodgeAbilityTask_PlayTimeline::FirePointEvent(const FHodgeTimelineEvent& Event)`
-- L558: `void UHodgeAbilityTask_PlayTimeline::FireSystemEvent(const FGameplayTag& EventTag)`
-- L571: `void UHodgeAbilityTask_PlayTimeline::ClearAllWindowState()`
-- L614: `void UHodgeAbilityTask_PlayTimeline::StopTimeline(EHodgeTimelineStopReason Reason)`
-- L646: `void UHodgeAbilityTask_PlayTimeline::OnDestroy(bool bInOwnerFinished)`
+- L29: `UHodgeAbilityTask_PlayTimeline::UHodgeAbilityTask_PlayTimeline(const FObjectInitializer& ObjectInitializer)`
+- L36: `UHodgeAbilityTask_PlayTimeline* UHodgeAbilityTask_PlayTimeline::PlayTimeline(`
+- L49: `void UHodgeAbilityTask_PlayTimeline::Activate()`
+- L109: `void UHodgeAbilityTask_PlayTimeline::TickTask(float DeltaTime)`
+- L168: `void UHodgeAbilityTask_PlayTimeline::CollectNodes(float PreviousTime, float CurrentTime,`
+- L176: `void UHodgeAbilityTask_PlayTimeline::SortNodes(TArray<FHodgeTimelineNode>& Nodes) const`
+- L181: `void UHodgeAbilityTask_PlayTimeline::InitializeTimeline(float InStartOffset)`
+- L217: `void UHodgeAbilityTask_PlayTimeline::AdvanceTimeline(float PreviousTime, float CurrentTime)`
+- L268: `bool UHodgeAbilityTask_PlayTimeline::HasAuthorityOnAvatar() const`
+- L274: `void UHodgeAbilityTask_PlayTimeline::EnterWindow(int32 EventIndex)`
+- L334: `void UHodgeAbilityTask_PlayTimeline::ExitWindow(int32 EventIndex)`
+- L383: `FActiveGameplayEffectHandle UHodgeAbilityTask_PlayTimeline::ApplyTimelineEffect(`
+- L407: `void UHodgeAbilityTask_PlayTimeline::FirePointEvent(const FHodgeTimelineEvent& Event)`
+- L471: `void UHodgeAbilityTask_PlayTimeline::FireSystemEvent(const FGameplayTag& EventTag)`
+- L484: `void UHodgeAbilityTask_PlayTimeline::ClearAllWindowState()`
+- L527: `void UHodgeAbilityTask_PlayTimeline::StopTimeline(EHodgeTimelineStopReason Reason)`
+- L560: `void UHodgeAbilityTask_PlayTimeline::OnDestroy(bool bInOwnerFinished)`
+- L572: `UHodgeAbilityTask_PlayTimeline* UHodgeAbilityTask_PlayTimeline::PlayMontageTimeline(`
+- L583: `FGameplayTagContainer UHodgeAbilityTask_PlayTimeline::GetActiveWindowTags() const`
+- L604: `void UHodgeAbilityTask_PlayTimeline::RefreshMontageClock()`
 
 ## HodgeAbilityTask_WaitMoveCancel.cpp
 
@@ -110,6 +113,29 @@
 - L129: `void UHodgeGameplayAbility_BasicAttack::OnInterrupted()`
 - L137: `void UHodgeGameplayAbility_BasicAttack::ClearStep()`
 - L168: `void UHodgeGameplayAbility_BasicAttack::EndAbility(FGameplayAbilitySpecHandle Handle,`
+
+## HodgeGameplayAbility_Definition.cpp
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.cpp)
+
+项目内直接 include（不是运行调用关系）：[AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h)、[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)、[Component/HodgeComboComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeComboComponent.h)、[Data/HodgeAbilityDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilityDefinition.h)
+
+定义候选（多行签名仅展示首行）：
+
+- L10: `UHodgeGameplayAbility_Definition::UHodgeGameplayAbility_Definition(const FObjectInitializer& Initializer)`
+- L19: `const UHodgeAbilityDefinition* UHodgeGameplayAbility_Definition::GetDefinition() const`
+- L25: `void UHodgeGameplayAbility_Definition::ActivateConfirmedDefinition(FGameplayAbilitySpecHandle Handle,`
+- L35: `bool UHodgeGameplayAbility_Definition::CanActivateAbility(FGameplayAbilitySpecHandle Handle,`
+- L45: `void UHodgeGameplayAbility_Definition::ActivateAbility(FGameplayAbilitySpecHandle Handle,`
+- L75: `void UHodgeGameplayAbility_Definition::FinishExecution(bool bCancelled, bool bReplicate)`
+- L80: `void UHodgeGameplayAbility_Definition::EndAbility(FGameplayAbilitySpecHandle Handle,`
+- L102: `FGameplayTagContainer UHodgeGameplayAbility_Definition::GetExecutionWindows() const`
+- L106: `void UHodgeGameplayAbility_Definition::RefreshExecutionClock()`
+- L110: `void UHodgeGameplayAbility_Definition::OnTimelineFinished(EHodgeTimelineStopReason Reason)`
+- L116: `void UHodgeGameplayAbility_Definition::OnWindowsChanged()`
+- L120: `void UHodgeGameplayAbility_Definition::OnPoint(FGameplayTag Tag)`
 
 ## HodgeAttributeSet.cpp
 
@@ -210,38 +236,63 @@ Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动�
 
 源码：[Source/Hodgepodge/Private/AbilitySystem/HodgeAbilitySystemComponent.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeAbilitySystemComponent.cpp)
 
-项目内直接 include（不是运行调用关系）：[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)、[AbilitySystem/HodgeAbilityTagRelationshipMapping.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilityTagRelationshipMapping.h)、[AbilitySystem/HodgeGlobalAbilitySystem.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGlobalAbilitySystem.h)、[Animation/HodgeAnimInstance.h](../../../Source/Hodgepodge/Public/Animation/HodgeAnimInstance.h)、[Data/HodgeAssetManager.h](../../../Source/Hodgepodge/Public/Data/HodgeAssetManager.h)、[Data/HodgeGameData.h](../../../Source/Hodgepodge/Public/Data/HodgeGameData.h)
+项目内直接 include（不是运行调用关系）：[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)、[AbilitySystem/HodgeAbilityTagRelationshipMapping.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilityTagRelationshipMapping.h)、[AbilitySystem/HodgeGlobalAbilitySystem.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGlobalAbilitySystem.h)、[Animation/HodgeAnimInstance.h](../../../Source/Hodgepodge/Public/Animation/HodgeAnimInstance.h)、[Data/HodgeAssetManager.h](../../../Source/Hodgepodge/Public/Data/HodgeAssetManager.h)、[Data/HodgeGameData.h](../../../Source/Hodgepodge/Public/Data/HodgeGameData.h)、[Data/HodgeAbilityDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilityDefinition.h)、[Component/HodgeComboComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeComboComponent.h)、[AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h)
 
 定义候选（多行签名仅展示首行）：
 
-- L27: `UHodgeAbilitySystemComponent::UHodgeAbilitySystemComponent(const FObjectInitializer& ObjectInitializer)`
-- L43: `void UHodgeAbilitySystemComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)`
-- L55: `void UHodgeAbilitySystemComponent::InitAbilityActorInfo(AActor* InOwnerActor, AActor* InAvatarActor)`
-- L126: `void UHodgeAbilitySystemComponent::TryActivateAbilitiesOnSpawn()`
-- L143: `void UHodgeAbilitySystemComponent::CancelAbilitiesByFunc(TShouldCancelAbilityFunc ShouldCancelFunc,`
-- L211: `void UHodgeAbilitySystemComponent::CancelInputActivatedAbilities(bool bReplicateCancelAbility)`
-- L228: `void UHodgeAbilitySystemComponent::AbilitySpecInputPressed(FGameplayAbilitySpec& Spec)`
-- L255: `void UHodgeAbilitySystemComponent::AbilitySpecInputReleased(FGameplayAbilitySpec& Spec)`
-- L282: `void UHodgeAbilitySystemComponent::AbilityInputTagPressed(const FGameplayTag& InputTag)`
-- L303: `void UHodgeAbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag& InputTag)`
-- L324: `void UHodgeAbilitySystemComponent::ProcessAbilityInput(float DeltaTime, bool bGamePaused)`
-- L454: `void UHodgeAbilitySystemComponent::ClearAbilityInput()`
-- L466: `void UHodgeAbilitySystemComponent::NotifyAbilityActivated(const FGameplayAbilitySpecHandle Handle,`
-- L480: `void UHodgeAbilitySystemComponent::NotifyAbilityFailed(const FGameplayAbilitySpecHandle Handle,`
-- L502: `void UHodgeAbilitySystemComponent::NotifyAbilityEnded(FGameplayAbilitySpecHandle Handle, UGameplayAbility* Ability,`
-- L516: `void UHodgeAbilitySystemComponent::ApplyAbilityBlockAndCancelTags(const FGameplayTagContainer& AbilityTags,`
-- L545: `void UHodgeAbilitySystemComponent::HandleChangeAbilityCanBeCanceled(const FGameplayTagContainer& AbilityTags,`
-- L556: `void UHodgeAbilitySystemComponent::GetAdditionalActivationTagRequirements(`
-- L569: `void UHodgeAbilitySystemComponent::SetTagRelationshipMapping(UHodgeAbilityTagRelationshipMapping* NewMapping)`
-- L575: `void UHodgeAbilitySystemComponent::ClientNotifyAbilityFailed_Implementation(`
-- L582: `void UHodgeAbilitySystemComponent::HandleAbilityFailed(const UGameplayAbility* Ability,`
-- L595: `bool UHodgeAbilitySystemComponent::IsActivationGroupBlocked(EHodgeAbilityActivationGroup Group) const`
-- L626: `void UHodgeAbilitySystemComponent::AddAbilityToActivationGroup(EHodgeAbilityActivationGroup Group,`
-- L674: `void UHodgeAbilitySystemComponent::RemoveAbilityFromActivationGroup(EHodgeAbilityActivationGroup Group,`
-- L687: `void UHodgeAbilitySystemComponent::CancelActivationGroupAbilities(EHodgeAbilityActivationGroup Group,`
-- L703: `void UHodgeAbilitySystemComponent::AddDynamicTagGameplayEffect(const FGameplayTag& Tag)`
-- L739: `void UHodgeAbilitySystemComponent::RemoveDynamicTagGameplayEffect(const FGameplayTag& Tag)`
-- L764: `void UHodgeAbilitySystemComponent::GetAbilityTargetData(const FGameplayAbilitySpecHandle AbilityHandle,`
+- L32: `UHodgeAbilitySystemComponent::UHodgeAbilitySystemComponent(const FObjectInitializer& ObjectInitializer)`
+- L48: `void UHodgeAbilitySystemComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)`
+- L60: `void UHodgeAbilitySystemComponent::InitAbilityActorInfo(AActor* InOwnerActor, AActor* InAvatarActor)`
+- L136: `void UHodgeAbilitySystemComponent::TryActivateAbilitiesOnSpawn()`
+- L153: `void UHodgeAbilitySystemComponent::CancelAbilitiesByFunc(TShouldCancelAbilityFunc ShouldCancelFunc,`
+- L221: `void UHodgeAbilitySystemComponent::CancelInputActivatedAbilities(bool bReplicateCancelAbility)`
+- L238: `void UHodgeAbilitySystemComponent::AbilitySpecInputPressed(FGameplayAbilitySpec& Spec)`
+- L265: `void UHodgeAbilitySystemComponent::AbilitySpecInputReleased(FGameplayAbilitySpec& Spec)`
+- L292: `void UHodgeAbilitySystemComponent::AbilityInputTagPressed(const FGameplayTag& InputTag)`
+- L317: `void UHodgeAbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag& InputTag)`
+- L338: `void UHodgeAbilitySystemComponent::ProcessAbilityInput(float DeltaTime, bool bGamePaused)`
+- L468: `void UHodgeAbilitySystemComponent::ClearAbilityInput()`
+- L481: `void UHodgeAbilitySystemComponent::NotifyAbilityActivated(const FGameplayAbilitySpecHandle Handle,`
+- L495: `void UHodgeAbilitySystemComponent::NotifyAbilityFailed(const FGameplayAbilitySpecHandle Handle,`
+- L517: `void UHodgeAbilitySystemComponent::NotifyAbilityEnded(FGameplayAbilitySpecHandle Handle, UGameplayAbility* Ability,`
+- L531: `void UHodgeAbilitySystemComponent::ApplyAbilityBlockAndCancelTags(const FGameplayTagContainer& AbilityTags,`
+- L560: `void UHodgeAbilitySystemComponent::HandleChangeAbilityCanBeCanceled(const FGameplayTagContainer& AbilityTags,`
+- L571: `void UHodgeAbilitySystemComponent::GetAdditionalActivationTagRequirements(`
+- L584: `void UHodgeAbilitySystemComponent::SetTagRelationshipMapping(UHodgeAbilityTagRelationshipMapping* NewMapping)`
+- L590: `void UHodgeAbilitySystemComponent::ClientNotifyAbilityFailed_Implementation(`
+- L597: `void UHodgeAbilitySystemComponent::HandleAbilityFailed(const UGameplayAbility* Ability,`
+- L610: `bool UHodgeAbilitySystemComponent::IsActivationGroupBlocked(EHodgeAbilityActivationGroup Group) const`
+- L641: `void UHodgeAbilitySystemComponent::AddAbilityToActivationGroup(EHodgeAbilityActivationGroup Group,`
+- L689: `void UHodgeAbilitySystemComponent::RemoveAbilityFromActivationGroup(EHodgeAbilityActivationGroup Group,`
+- L702: `void UHodgeAbilitySystemComponent::CancelActivationGroupAbilities(EHodgeAbilityActivationGroup Group,`
+- L718: `void UHodgeAbilitySystemComponent::AddDynamicTagGameplayEffect(const FGameplayTag& Tag)`
+- L754: `void UHodgeAbilitySystemComponent::RemoveDynamicTagGameplayEffect(const FGameplayTag& Tag)`
+- L779: `void UHodgeAbilitySystemComponent::GetAbilityTargetData(const FGameplayAbilitySpecHandle AbilityHandle,`
+- L794: `void UHodgeAbilitySystemComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const`
+- L801: `FGameplayAbilitySpecHandle UHodgeAbilitySystemComponent::GiveAbilityDefinition(`
+- L829: `const UHodgeAbilityDefinition* UHodgeAbilitySystemComponent::FindAbilityDefinition(`
+- L839: `FGameplayAbilitySpecHandle UHodgeAbilitySystemComponent::FindDefinitionAbility(FGameplayTag AbilityTag) const`
+- L854: `void UHodgeAbilitySystemComponent::OnRemoveAbility(FGameplayAbilitySpec& AbilitySpec)`
+- L860: `void UHodgeAbilitySystemComponent::InternalServerTryActivateAbility(FGameplayAbilitySpecHandle Handle,`
+- L885: `void UHodgeAbilitySystemComponent::ClientActivateAbilitySucceedWithEventData_Implementation(`
+
+## HodgeAbilitySystemComponent_Montage.cpp
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Private/AbilitySystem/HodgeAbilitySystemComponent_Montage.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeAbilitySystemComponent_Montage.cpp)
+
+项目内直接 include（不是运行调用关系）：[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)、[Data/HodgeAbilityDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilityDefinition.h)
+
+定义候选（多行签名仅展示首行）：
+
+- L6: `float UHodgeAbilitySystemComponent::PlayMontage(UGameplayAbility* Ability, FGameplayAbilityActivationInfo Info,`
+- L21: `float UHodgeAbilitySystemComponent::PlayMontageSimulated(UAnimMontage* Montage, float Rate, FName Section)`
+- L28: `void UHodgeAbilitySystemComponent::ApplyDefinitionMontageSettings()`
+- L42: `void UHodgeAbilitySystemComponent::OnRep_DefinitionMontage()`
+- L51: `void UHodgeAbilitySystemComponent::OnRep_ReplicatedAnimMontage()`
+- L57: `void UHodgeAbilitySystemComponent::StopDefinitionMontage(UGameplayAbility* Ability, bool bNatural)`
+- L64: `void UHodgeAbilitySystemComponent::CurrentMontageStop(float OverrideBlendOutTime)`
 
 ## HodgeAbilitySystemGlobals.cpp
 
@@ -350,6 +401,22 @@ Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动�
 - L189: `void UHodgeGlobalAbilitySystem::RegisterASC(UHodgeAbilitySystemComponent* ASC)`
 - L210: `void UHodgeGlobalAbilitySystem::UnregisterASC(UHodgeAbilitySystemComponent* ASC)`
 
+## HodgeTimelineEvaluator.cpp
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Private/AbilitySystem/HodgeTimelineEvaluator.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeTimelineEvaluator.cpp)
+
+项目内直接 include（不是运行调用关系）：[AbilitySystem/HodgeTimelineEvaluator.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeTimelineEvaluator.h)
+
+定义候选（多行签名仅展示首行）：
+
+- L3: `float FHodgeTimelineEvaluator::WindowEnd(const FHodgeTimelineEvent& Event, float Duration)`
+- L9: `void FHodgeTimelineEvaluator::Collect(TConstArrayView<FHodgeTimelineEvent> Events, float Duration,`
+- L41: `void FHodgeTimelineEvaluator::Sort(TConstArrayView<FHodgeTimelineEvent> Events, TArray<FHodgeTimelineNode>& Nodes)`
+- L53: `void FHodgeTimelineEvaluator::EvaluateRange(TConstArrayView<FHodgeTimelineEvent> Events, float Duration,`
+- L60: `void FHodgeTimelineEvaluator::EvaluateAt(TConstArrayView<FHodgeTimelineEvent> Events, float Duration,`
+
 ## HodgeAbilityCost.h
 
 自定义额外能力消耗的扩展契约。
@@ -397,6 +464,8 @@ Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动�
 
 源码：[Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeAbilityTask_PlayTimeline.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeAbilityTask_PlayTimeline.h)
 
+项目内直接 include（不是运行调用关系）：[AbilitySystem/HodgeTimelineEvaluator.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeTimelineEvaluator.h)
+
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
@@ -405,80 +474,89 @@ Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动�
   24: #include "Abilities/Tasks/AbilityTask.h"
   25: #include "GameplayEffectTypes.h"
   26: #include "GameplayTagContainer.h"
-  27: #include "Templates/SubclassOf.h"
-  29: #include "HodgeAbilityTask_PlayTimeline.generated.h"
-  31: class UGameplayEffect;
-  32: class UHodgeAbilityTimeline;
-  33: struct FHodgeTimelineEvent;
-  40: UENUM(BlueprintType)
-  41: enum class EHodgeTimelineStopReason : uint8
-  42: {
-  44: 	None,
-  47: 	NaturalEnd,
-  50: 	Interrupted,
-  53: 	AbilityCancelled
-  54: };
-  66: enum class EHodgeTimelineNodeKind : uint8
-  67: {
-  68: 	WindowEnd = 0,
-  69: 	WindowBegin = 1,
-  70: 	PointFire = 2
-  71: };
-  73: struct FHodgeTimelineNode
-  74: {
-  76: 	float Time = 0.f;
-  78: 	EHodgeTimelineNodeKind Kind = EHodgeTimelineNodeKind::PointFire;
-  81: 	int32 EventIndex = INDEX_NONE;
-  82: };
-  87: UCLASS()
-  88: class HODGEPODGE_API UHodgeAbilityTask_PlayTimeline : public UAbilityTask
-  89: {
-  90: 	GENERATED_BODY()
-  92: public:
-  93: 	UHodgeAbilityTask_PlayTimeline(const FObjectInitializer& ObjectInitializer);
- 102: 	UFUNCTION(BlueprintCallable, Category="Hodge|Ability|Tasks",
- 103: 		meta=(HidePin="OwningAbility", DefaultToSelf="OwningAbility",
- 104: 		      BlueprintInternalUseOnly="TRUE"))
- 105: 	static UHodgeAbilityTask_PlayTimeline* PlayTimeline(
- 106: 		UGameplayAbility* OwningAbility,
- 107: 		UHodgeAbilityTimeline* Timeline,
- 108: 		float StartOffset = 0.f,
- 109: 		float InitialPlayRate = 1.f);
- 115: 	UFUNCTION(BlueprintCallable, Category="Hodge|Ability|Tasks")
- 116: 	void StopTimeline(EHodgeTimelineStopReason Reason);
- 119: 	UFUNCTION(BlueprintPure, Category="Hodge|Ability|Tasks")
- 120: 	bool IsTimelineStopped() const { return bStopped; }
- 122: protected:
- 123: 	virtual void Activate() override;
- 124: 	virtual void TickTask(float DeltaTime) override;
- 125: 	virtual void OnDestroy(bool bInOwnerFinished) override;
- 130: 	void InitializeTimeline(float InStartOffset);
- 133: 	void AdvanceTimeline(float PreviousTime, float CurrentTime);
- 137: 	void CollectNodes(float PreviousTime, float CurrentTime, bool bInitializing,
- 138: 					  TArray<FHodgeTimelineNode>& OutNodes) const;
- 141: 	void SortNodes(TArray<FHodgeTimelineNode>& Nodes) const;
- 144: 	void EnterWindow(int32 EventIndex);
- 147: 	void ExitWindow(int32 EventIndex);
- 150: 	void FirePointEvent(const FHodgeTimelineEvent& Event);
- 153: 	void FireSystemEvent(const FGameplayTag& EventTag);
- 156: 	void ClearAllWindowState();
- 160: 	FActiveGameplayEffectHandle ApplyTimelineEffect(UAbilitySystemComponent* ASC,
- 161: 													TSubclassOf<UGameplayEffect> EffectClass);
- 164: 	bool HasAuthorityOnAvatar() const;
- 166: private:
- 167: 	friend struct FHodgeTimelineTestAccess;
- 169: 	UPROPERTY()
- 170: 	TObjectPtr<UHodgeAbilityTimeline> TimelineAsset;
- 173: 	float StartOffset = 0.f;
- 176: 	float InitialPlayRate = 1.f;
- 179: 	float LastUpdateWorldTime = 0.f;
- 182: 	float LogicalElapsed = 0.f;
- 185: 	float ElapsedTime = 0.f;
- 188: 	TArray<int32> ActiveWindowIndices;
- 191: 	TMap<int32, FActiveGameplayEffectHandle> WindowEffectHandles;
- 194: 	bool bStopped = false;
- 198: 	bool bCleanedUp = false;
- 199: };
+  27: #include "AbilitySystem/HodgeTimelineEvaluator.h"
+  28: #include "Templates/SubclassOf.h"
+  30: #include "HodgeAbilityTask_PlayTimeline.generated.h"
+  32: class UGameplayEffect;
+  33: class UAnimInstance;
+  34: class UAnimMontage;
+  35: class UHodgeAbilityTimeline;
+  36: struct FHodgeTimelineEvent;
+  43: UENUM(BlueprintType)
+  44: enum class EHodgeTimelineStopReason : uint8
+  45: {
+  47: 	None,
+  50: 	NaturalEnd,
+  53: 	Interrupted,
+  56: 	AbilityCancelled
+  57: };
+  62: UCLASS()
+  63: class HODGEPODGE_API UHodgeAbilityTask_PlayTimeline : public UAbilityTask
+  64: {
+  65: 	GENERATED_BODY()
+  67: public:
+  68: 	UHodgeAbilityTask_PlayTimeline(const FObjectInitializer& ObjectInitializer);
+  77: 	UFUNCTION(BlueprintCallable, Category="Hodge|Ability|Tasks",
+  78: 		meta=(HidePin="OwningAbility", DefaultToSelf="OwningAbility",
+  79: 			BlueprintInternalUseOnly="TRUE"))
+  80: 	static UHodgeAbilityTask_PlayTimeline* PlayTimeline(
+  81: 		UGameplayAbility* OwningAbility,
+  82: 		UHodgeAbilityTimeline* Timeline,
+  83: 		float StartOffset = 0.f,
+  84: 		float InitialPlayRate = 1.f);
+  90: 	UFUNCTION(BlueprintCallable, Category="Hodge|Ability|Tasks")
+  91: 	void StopTimeline(EHodgeTimelineStopReason Reason);
+  93: 	static UHodgeAbilityTask_PlayTimeline* PlayMontageTimeline(UGameplayAbility* OwningAbility,
+  94: 	                                                           UHodgeAbilityTimeline* Timeline,
+  95: 	                                                           UAnimInstance* AnimInstance, UAnimMontage* Montage,
+  96: 	                                                           int32 InstanceID);
+  97: 	FGameplayTagContainer GetActiveWindowTags() const;
+  98: 	DECLARE_MULTICAST_DELEGATE(FWindowsChanged);
+  99: 	DECLARE_MULTICAST_DELEGATE_OneParam(FFinished, EHodgeTimelineStopReason);
+ 100: 	DECLARE_MULTICAST_DELEGATE_OneParam(FPoint, FGameplayTag);
+ 101: 	FWindowsChanged OnWindowsChanged;
+ 102: 	FFinished OnFinished;
+ 103: 	FPoint OnPoint;
+ 104: 	void RefreshMontageClock();
+ 107: 	UFUNCTION(BlueprintPure, Category="Hodge|Ability|Tasks")
+ 108: 	bool IsTimelineStopped() const { return bStopped; }
+ 110: protected:
+ 111: 	virtual void Activate() override;
+ 112: 	virtual void TickTask(float DeltaTime) override;
+ 113: 	virtual void OnDestroy(bool bInOwnerFinished) override;
+ 118: 	void InitializeTimeline(float InStartOffset);
+ 121: 	void AdvanceTimeline(float PreviousTime, float CurrentTime);
+ 125: 	void CollectNodes(float PreviousTime, float CurrentTime, bool bInitializing,
+ 126: 	                  TArray<FHodgeTimelineNode>& OutNodes) const;
+ 129: 	void SortNodes(TArray<FHodgeTimelineNode>& Nodes) const;
+ 132: 	void EnterWindow(int32 EventIndex);
+ 135: 	void ExitWindow(int32 EventIndex);
+ 138: 	void FirePointEvent(const FHodgeTimelineEvent& Event);
+ 141: 	void FireSystemEvent(const FGameplayTag& EventTag);
+ 144: 	void ClearAllWindowState();
+ 148: 	FActiveGameplayEffectHandle ApplyTimelineEffect(UAbilitySystemComponent* ASC,
+ 149: 	                                                TSubclassOf<UGameplayEffect> EffectClass);
+ 152: 	bool HasAuthorityOnAvatar() const;
+ 154: private:
+ 155: 	friend struct FHodgeTimelineTestAccess;
+ 156: 	TWeakObjectPtr<UAnimInstance> ClockAnimInstance;
+ 157: 	UPROPERTY()
+ 158: 	TObjectPtr<UAnimMontage> ClockMontage;
+ 159: 	int32 ClockInstanceID = INDEX_NONE;
+ 160: 	float EffectiveDuration = 0.f;
+ 161: 	bool bAdvancingMontage = false;
+ 163: 	UPROPERTY()
+ 164: 	TObjectPtr<UHodgeAbilityTimeline> TimelineAsset;
+ 167: 	float StartOffset = 0.f;
+ 170: 	float InitialPlayRate = 1.f;
+ 173: 	float LastUpdateWorldTime = 0.f;
+ 176: 	float LogicalElapsed = 0.f;
+ 179: 	float ElapsedTime = 0.f;
+ 182: 	TArray<int32> ActiveWindowIndices;
+ 185: 	TMap<int32, FActiveGameplayEffectHandle> WindowEffectHandles;
+ 188: 	bool bStopped = false;
+ 192: 	bool bCleanedUp = false;
+ 193: };
 ```
 
 ## HodgeAbilityTask_WaitMoveCancel.h
@@ -742,6 +820,51 @@ Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动�
   73: 	bool bChangingStep = false;
   74: 	bool bEndingAttack = false;
   75: };
+```
+
+## HodgeGameplayAbility_Definition.h
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h)
+
+项目内直接 include（不是运行调用关系）：[AbilitySystem/Abilities/HodgeGameplayAbility.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility.h)、[AbilitySystem/Abilities/HodgeAbilityTask_PlayTimeline.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeAbilityTask_PlayTimeline.h)
+
+有效头文件声明摘录（未展开宏，未求值预处理分支）：
+
+```cpp
+   1: #pragma once
+   2: #include "AbilitySystem/Abilities/HodgeGameplayAbility.h"
+   3: #include "AbilitySystem/Abilities/HodgeAbilityTask_PlayTimeline.h"
+   4: #include "HodgeGameplayAbility_Definition.generated.h"
+   6: class UHodgeAbilityDefinition;
+   9: UCLASS(Blueprintable)
+  10: class HODGEPODGE_API UHodgeGameplayAbility_Definition : public UHodgeGameplayAbility
+  11: {
+  12: 	GENERATED_BODY()
+  13: public:
+  14: 	UHodgeGameplayAbility_Definition(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+  15: 	UFUNCTION(BlueprintPure, Category="Hodge|Ability") const UHodgeAbilityDefinition* GetDefinition() const;
+  16: 	FGameplayTagContainer GetExecutionWindows() const;
+  17: 	void FinishExecution(bool bCancelled, bool bReplicate);
+  18: 	void RefreshExecutionClock();
+  19: 	void ActivateConfirmedDefinition(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* Info,
+  20: 		const FPredictionKey& Key, const FGameplayEventData& Payload);
+  21: 	virtual bool CanActivateAbility(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+  22: 		const FGameplayTagContainer* SourceTags = nullptr, const FGameplayTagContainer* TargetTags = nullptr,
+  23: 		FGameplayTagContainer* OptionalRelevantTags = nullptr) const override;
+  24: protected:
+  25: 	virtual void ActivateAbility(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+  26: 		FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
+  27: 	virtual void EndAbility(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+  28: 		FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
+  29: private:
+  30: 	void OnTimelineFinished(EHodgeTimelineStopReason Reason);
+  31: 	void OnWindowsChanged();
+  32: 	void OnPoint(FGameplayTag Tag);
+  33: 	UPROPERTY(Transient) TObjectPtr<UHodgeAbilityTask_PlayTimeline> TimelineTask;
+  34: 	bool bEnding = false;
+  35: };
 ```
 
 ## HodgeAttributeSet.h
@@ -1026,63 +1149,113 @@ Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动�
    6: #include "Abilities/HodgeGameplayAbility.h"
    7: #include "HodgeAbilitySystemComponent.generated.h"
   10: class UHodgeAbilityTagRelationshipMapping;
-  13: HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_AbilityInputBlocked);
-  27: UCLASS()
-  28: class HODGEPODGE_API UHodgeAbilitySystemComponent : public UAbilitySystemComponent
-  29: {
-  30: 	GENERATED_BODY()
-  32: public:
-  34: 	UHodgeAbilitySystemComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-  38: 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-  42: 	virtual void InitAbilityActorInfo(AActor* InOwnerActor, AActor* InAvatarActor) override;
-  45: 	typedef TFunctionRef<bool(const UHodgeGameplayAbility* HodgeAbility, FGameplayAbilitySpecHandle Handle)>
-  46: 	TShouldCancelAbilityFunc;
-  49: 	void CancelAbilitiesByFunc(TShouldCancelAbilityFunc ShouldCancelFunc, bool bReplicateCancelAbility);
-  52: 	void CancelInputActivatedAbilities(bool bReplicateCancelAbility);
-  55: 	void AbilityInputTagPressed(const FGameplayTag& InputTag);
-  58: 	void AbilityInputTagReleased(const FGameplayTag& InputTag);
-  61: 	void ProcessAbilityInput(float DeltaTime, bool bGamePaused);
-  64: 	void ClearAbilityInput();
-  67: 	bool IsActivationGroupBlocked(EHodgeAbilityActivationGroup Group) const;
-  70: 	void AddAbilityToActivationGroup(EHodgeAbilityActivationGroup Group, UHodgeGameplayAbility* HodgeAbility);
-  73: 	void RemoveAbilityFromActivationGroup(EHodgeAbilityActivationGroup Group, UHodgeGameplayAbility* HodgeAbility);
-  76: 	void CancelActivationGroupAbilities(EHodgeAbilityActivationGroup Group, UHodgeGameplayAbility* IgnoreHodgeAbility,
-  77: 	                                    bool bReplicateCancelAbility);
-  81: 	void AddDynamicTagGameplayEffect(const FGameplayTag& Tag);
-  85: 	void RemoveDynamicTagGameplayEffect(const FGameplayTag& Tag);
-  89: 	void GetAbilityTargetData(const FGameplayAbilitySpecHandle AbilityHandle,
-  90: 	                          FGameplayAbilityActivationInfo ActivationInfo,
-  91: 	                          FGameplayAbilityTargetDataHandle& OutTargetDataHandle);
-  95: 	void SetTagRelationshipMapping(UHodgeAbilityTagRelationshipMapping* NewMapping);
-  99: 	void GetAdditionalActivationTagRequirements(const FGameplayTagContainer& AbilityTags,
- 100: 	                                            FGameplayTagContainer& OutActivationRequired,
- 101: 	                                            FGameplayTagContainer& OutActivationBlocked) const;
- 103: protected:
- 105: 	void TryActivateAbilitiesOnSpawn();
- 108: 	virtual void AbilitySpecInputPressed(FGameplayAbilitySpec& Spec) override;
- 111: 	virtual void AbilitySpecInputReleased(FGameplayAbilitySpec& Spec) override;
- 114: 	virtual void NotifyAbilityActivated(const FGameplayAbilitySpecHandle Handle, UGameplayAbility* Ability) override;
- 117: 	virtual void NotifyAbilityFailed(const FGameplayAbilitySpecHandle Handle, UGameplayAbility* Ability,
- 118: 	                                 const FGameplayTagContainer& FailureReason) override;
- 121: 	virtual void NotifyAbilityEnded(FGameplayAbilitySpecHandle Handle, UGameplayAbility* Ability,
- 122: 	                                bool bWasCancelled) override;
- 125: 	virtual void ApplyAbilityBlockAndCancelTags(const FGameplayTagContainer& AbilityTags,
- 126: 	                                            UGameplayAbility* RequestingAbility, bool bEnableBlockTags,
- 127: 	                                            const FGameplayTagContainer& BlockTags, bool bExecuteCancelTags,
- 128: 	                                            const FGameplayTagContainer& CancelTags) override;
- 131: 	virtual void HandleChangeAbilityCanBeCanceled(const FGameplayTagContainer& AbilityTags,
- 132: 	                                              UGameplayAbility* RequestingAbility, bool bCanBeCanceled) override;
- 136: 	UFUNCTION(Client, Unreliable)
- 137: 	void ClientNotifyAbilityFailed(const UGameplayAbility* Ability, const FGameplayTagContainer& FailureReason);
- 140: 	void HandleAbilityFailed(const UGameplayAbility* Ability, const FGameplayTagContainer& FailureReason);
- 142: protected:
- 146: 	UPROPERTY()
- 147: 	TObjectPtr<UHodgeAbilityTagRelationshipMapping> TagRelationshipMapping;
- 151: 	TArray<FGameplayAbilitySpecHandle> InputPressedSpecHandles;
- 155: 	TArray<FGameplayAbilitySpecHandle> InputReleasedSpecHandles;
- 159: 	TArray<FGameplayAbilitySpecHandle> InputHeldSpecHandles;
- 163: 	int32 ActivationGroupCounts[(uint8)EHodgeAbilityActivationGroup::MAX];
- 164: };
+  11: class UHodgeAbilityDefinition;
+  13: USTRUCT()
+  14: struct FHodgeDefinitionMontageState
+  15: {
+  16: 	GENERATED_BODY()
+  17: 	UPROPERTY()
+  18: 	TObjectPtr<const UHodgeAbilityDefinition> Definition;
+  19: 	UPROPERTY()
+  20: 	uint8 PlayInstanceID = 0;
+  21: 	UPROPERTY()
+  22: 	bool bNaturalStop = false;
+  23: };
+  25: USTRUCT()
+  26: struct FHodgeGrantedAbilityDefinition
+  27: {
+  28: 	GENERATED_BODY()
+  29: 	UPROPERTY()
+  30: 	FGameplayAbilitySpecHandle Handle;
+  31: 	UPROPERTY()
+  32: 	TObjectPtr<const UHodgeAbilityDefinition> Definition;
+  33: };
+  36: HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_AbilityInputBlocked);
+  50: UCLASS()
+  51: class HODGEPODGE_API UHodgeAbilitySystemComponent : public UAbilitySystemComponent
+  52: {
+  53: 	GENERATED_BODY()
+  55: public:
+  57: 	UHodgeAbilitySystemComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+  59: 	virtual float PlayMontage(UGameplayAbility* AnimatingAbility, FGameplayAbilityActivationInfo ActivationInfo,
+  60: 	                          UAnimMontage* Montage, float InPlayRate, FName StartSectionName = NAME_None,
+  61: 	                          float StartTimeSeconds = 0.f) override;
+  62: 	virtual float
+  63: 	PlayMontageSimulated(UAnimMontage* Montage, float InPlayRate, FName StartSectionName = NAME_None) override;
+  64: 	virtual void CurrentMontageStop(float OverrideBlendOutTime = -1.f) override;
+  65: 	void StopDefinitionMontage(UGameplayAbility* Ability, bool bNatural);
+  66: 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+  67: 	FGameplayAbilitySpecHandle GiveAbilityDefinition(const UHodgeAbilityDefinition* Definition, int32 Level,
+  68: 	                                                 UObject* SourceObject);
+  69: 	UFUNCTION(BlueprintPure, Category="Hodge|Abilities")
+  70: 	const UHodgeAbilityDefinition* FindAbilityDefinition(FGameplayAbilitySpecHandle Handle) const;
+  71: 	FGameplayAbilitySpecHandle FindDefinitionAbility(FGameplayTag AbilityTag) const;
+  75: 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+  79: 	virtual void InitAbilityActorInfo(AActor* InOwnerActor, AActor* InAvatarActor) override;
+  82: 	typedef TFunctionRef<bool(const UHodgeGameplayAbility* HodgeAbility, FGameplayAbilitySpecHandle Handle)>
+  83: 	TShouldCancelAbilityFunc;
+  86: 	void CancelAbilitiesByFunc(TShouldCancelAbilityFunc ShouldCancelFunc, bool bReplicateCancelAbility);
+  89: 	void CancelInputActivatedAbilities(bool bReplicateCancelAbility);
+  92: 	void AbilityInputTagPressed(const FGameplayTag& InputTag);
+  95: 	void AbilityInputTagReleased(const FGameplayTag& InputTag);
+  98: 	void ProcessAbilityInput(float DeltaTime, bool bGamePaused);
+ 101: 	void ClearAbilityInput();
+ 104: 	bool IsActivationGroupBlocked(EHodgeAbilityActivationGroup Group) const;
+ 107: 	void AddAbilityToActivationGroup(EHodgeAbilityActivationGroup Group, UHodgeGameplayAbility* HodgeAbility);
+ 110: 	void RemoveAbilityFromActivationGroup(EHodgeAbilityActivationGroup Group, UHodgeGameplayAbility* HodgeAbility);
+ 113: 	void CancelActivationGroupAbilities(EHodgeAbilityActivationGroup Group, UHodgeGameplayAbility* IgnoreHodgeAbility,
+ 114: 	                                    bool bReplicateCancelAbility);
+ 118: 	void AddDynamicTagGameplayEffect(const FGameplayTag& Tag);
+ 122: 	void RemoveDynamicTagGameplayEffect(const FGameplayTag& Tag);
+ 126: 	void GetAbilityTargetData(const FGameplayAbilitySpecHandle AbilityHandle,
+ 127: 	                          FGameplayAbilityActivationInfo ActivationInfo,
+ 128: 	                          FGameplayAbilityTargetDataHandle& OutTargetDataHandle);
+ 132: 	void SetTagRelationshipMapping(UHodgeAbilityTagRelationshipMapping* NewMapping);
+ 136: 	void GetAdditionalActivationTagRequirements(const FGameplayTagContainer& AbilityTags,
+ 137: 	                                            FGameplayTagContainer& OutActivationRequired,
+ 138: 	                                            FGameplayTagContainer& OutActivationBlocked) const;
+ 140: protected:
+ 141: 	UPROPERTY(ReplicatedUsing=OnRep_DefinitionMontage)
+ 142: 	FHodgeDefinitionMontageState DefinitionMontage;
+ 143: 	UFUNCTION()
+ 144: 	void OnRep_DefinitionMontage();
+ 145: 	virtual void OnRep_ReplicatedAnimMontage() override;
+ 146: 	void ApplyDefinitionMontageSettings();
+ 147: 	int32 ConfiguredMontageInstance = INDEX_NONE;
+ 148: 	virtual void ClientActivateAbilitySucceedWithEventData_Implementation(
+ 149: 		FGameplayAbilitySpecHandle Handle, FPredictionKey PredictionKey, FGameplayEventData TriggerEventData) override;
+ 150: 	TArray<int16> RecentComboPredictionKeys;
+ 151: 	virtual void InternalServerTryActivateAbility(FGameplayAbilitySpecHandle Handle, bool InputPressed,
+ 152: 	                                              const FPredictionKey& PredictionKey,
+ 153: 	                                              const FGameplayEventData* TriggerEventData) override;
+ 154: 	virtual void OnRemoveAbility(FGameplayAbilitySpec& AbilitySpec) override;
+ 155: 	UPROPERTY(Replicated)
+ 156: 	TArray<FHodgeGrantedAbilityDefinition> GrantedDefinitions;
+ 159: 	void TryActivateAbilitiesOnSpawn();
+ 162: 	virtual void AbilitySpecInputPressed(FGameplayAbilitySpec& Spec) override;
+ 165: 	virtual void AbilitySpecInputReleased(FGameplayAbilitySpec& Spec) override;
+ 168: 	virtual void NotifyAbilityActivated(const FGameplayAbilitySpecHandle Handle, UGameplayAbility* Ability) override;
+ 171: 	virtual void NotifyAbilityFailed(const FGameplayAbilitySpecHandle Handle, UGameplayAbility* Ability,
+ 172: 	                                 const FGameplayTagContainer& FailureReason) override;
+ 175: 	virtual void NotifyAbilityEnded(FGameplayAbilitySpecHandle Handle, UGameplayAbility* Ability,
+ 176: 	                                bool bWasCancelled) override;
+ 179: 	virtual void ApplyAbilityBlockAndCancelTags(const FGameplayTagContainer& AbilityTags,
+ 180: 	                                            UGameplayAbility* RequestingAbility, bool bEnableBlockTags,
+ 181: 	                                            const FGameplayTagContainer& BlockTags, bool bExecuteCancelTags,
+ 182: 	                                            const FGameplayTagContainer& CancelTags) override;
+ 185: 	virtual void HandleChangeAbilityCanBeCanceled(const FGameplayTagContainer& AbilityTags,
+ 186: 	                                              UGameplayAbility* RequestingAbility, bool bCanBeCanceled) override;
+ 190: 	UFUNCTION(Client, Unreliable)
+ 191: 	void ClientNotifyAbilityFailed(const UGameplayAbility* Ability, const FGameplayTagContainer& FailureReason);
+ 194: 	void HandleAbilityFailed(const UGameplayAbility* Ability, const FGameplayTagContainer& FailureReason);
+ 196: protected:
+ 200: 	UPROPERTY()
+ 201: 	TObjectPtr<UHodgeAbilityTagRelationshipMapping> TagRelationshipMapping;
+ 205: 	TArray<FGameplayAbilitySpecHandle> InputPressedSpecHandles;
+ 209: 	TArray<FGameplayAbilitySpecHandle> InputReleasedSpecHandles;
+ 213: 	TArray<FGameplayAbilitySpecHandle> InputHeldSpecHandles;
+ 217: 	int32 ActivationGroupCounts[(uint8)EHodgeAbilityActivationGroup::MAX];
+ 218: };
 ```
 
 ## HodgeAbilitySystemGlobals.h
@@ -1549,4 +1722,40 @@ Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动�
  112: 	UPROPERTY()
  113: 	TArray<TObjectPtr<UHodgeAbilitySystemComponent>> RegisteredASCs;
  114: };
+```
+
+## HodgeTimelineEvaluator.h
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Public/AbilitySystem/HodgeTimelineEvaluator.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeTimelineEvaluator.h)
+
+项目内直接 include（不是运行调用关系）：[Data/HodgeAbilityTimeline.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilityTimeline.h)
+
+有效头文件声明摘录（未展开宏，未求值预处理分支）：
+
+```cpp
+   1: #pragma once
+   3: #include "CoreMinimal.h"
+   4: #include "Data/HodgeAbilityTimeline.h"
+   7: enum class EHodgeTimelineNodeKind : uint8 { WindowEnd, WindowBegin, PointFire };
+   8: struct FHodgeTimelineNode
+   9: {
+  10:     float Time = 0.f;
+  11:     EHodgeTimelineNodeKind Kind = EHodgeTimelineNodeKind::PointFire;
+  12:     int32 EventIndex = INDEX_NONE;
+  13: };
+  16: class HODGEPODGE_API FHodgeTimelineEvaluator
+  17: {
+  18: public:
+  19:     static constexpr float WindowEndTolerance = 1.e-3f;
+  20:     static float WindowEnd(const FHodgeTimelineEvent& Event, float Duration);
+  21:     static void Collect(TConstArrayView<FHodgeTimelineEvent> Events, float Duration,
+  22:         float PreviousTime, float CurrentTime, bool bInitialize, TArray<FHodgeTimelineNode>& OutNodes);
+  23:     static void Sort(TConstArrayView<FHodgeTimelineEvent> Events, TArray<FHodgeTimelineNode>& Nodes);
+  24:     static void EvaluateRange(TConstArrayView<FHodgeTimelineEvent> Events, float Duration,
+  25:         float PreviousTime, float CurrentTime, TArray<FHodgeTimelineNode>& OutNodes);
+  26:     static void EvaluateAt(TConstArrayView<FHodgeTimelineEvent> Events, float Duration,
+  27:         float Time, TArray<int32>& OutActiveWindows);
+  28: };
 ```

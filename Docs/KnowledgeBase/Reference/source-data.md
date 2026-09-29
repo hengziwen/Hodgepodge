@@ -6,6 +6,22 @@
 
 每个文件给出职责、项目内 include、有效定义与头文件声明摘录。摘录保留原行号，排除注释。
 
+## HodgeAbilityDefinition.cpp
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Private/Data/HodgeAbilityDefinition.cpp](../../../Source/Hodgepodge/Private/Data/HodgeAbilityDefinition.cpp)
+
+项目内直接 include（不是运行调用关系）：[Data/HodgeAbilityDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilityDefinition.h)、[AbilitySystem/Abilities/HodgeGameplayAbility.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility.h)、[AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h)、[Data/HodgeAbilityTimeline.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilityTimeline.h)
+
+定义候选（多行签名仅展示首行）：
+
+- L11: `FAlphaBlend FHodgeAbilityBlendSettings::MakeBlend() const`
+- L19: `bool FHodgeAbilityBlendSettings::IsValid() const`
+- L25: `float UHodgeAbilityDefinition::GetDuration() const`
+- L29: `bool UHodgeAbilityDefinition::ValidateDefinition(TArray<FText>& Errors) const`
+- L65: `EDataValidationResult UHodgeAbilityDefinition::IsDataValid(FDataValidationContext& Context) const`
+
 ## HodgeAbilitySet.cpp
 
 权威端批量授予属性集、技能和 GE，并用句柄集合撤销。
@@ -29,13 +45,14 @@
 
 源码：[Source/Hodgepodge/Private/Data/HodgeAbilityTimeline.cpp](../../../Source/Hodgepodge/Private/Data/HodgeAbilityTimeline.cpp)
 
-项目内直接 include（不是运行调用关系）：[Data/HodgeAbilityTimeline.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilityTimeline.h)
+项目内直接 include（不是运行调用关系）：[Data/HodgeAbilityTimeline.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilityTimeline.h)、[AbilitySystem/HodgeTimelineEvaluator.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeTimelineEvaluator.h)
 
 定义候选（多行签名仅展示首行）：
 
-- L26: `bool UHodgeAbilityTimeline::ValidateForPlayback(TArray<FText>& OutErrors) const`
-- L214: `EDataValidationResult UHodgeAbilityTimeline::IsDataValid(FDataValidationContext& Context) const`
-- L323: `void UHodgeAbilityTimeline::PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent)`
+- L27: `bool UHodgeAbilityTimeline::ValidateForPlayback(TArray<FText>& OutErrors, float DurationOverride) const`
+- L38: `bool UHodgeAbilityTimeline::ValidateEntries(TArray<FText>& OutErrors, float EffectiveDuration, bool bCheckDuration) const`
+- L240: `EDataValidationResult UHodgeAbilityTimeline::IsDataValid(FDataValidationContext& Context) const`
+- L350: `void UHodgeAbilityTimeline::PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent)`
 
 ## HodgeAssetManager.cpp
 
@@ -74,6 +91,20 @@
 定义候选（多行签名仅展示首行）：
 
 - L13: `TSharedPtr<FStreamableHandle> FHodgeAssetManagerStartupJob::DoJob() const`
+
+## HodgeComboDefinition.cpp
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Private/Data/HodgeComboDefinition.cpp](../../../Source/Hodgepodge/Private/Data/HodgeComboDefinition.cpp)
+
+项目内直接 include（不是运行调用关系）：[Data/HodgeComboDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeComboDefinition.h)
+
+定义候选（多行签名仅展示首行）：
+
+- L7: `const FHodgeComboRow* UHodgeComboDefinition::FindNode(FGameplayTag Tag) const`
+- L12: `bool UHodgeComboDefinition::ValidateDefinition(TArray<FText>& Errors) const`
+- L49: `EDataValidationResult UHodgeComboDefinition::IsDataValid(FDataValidationContext& Context) const`
 
 ## HodgeExperienceActionSet.cpp
 
@@ -142,6 +173,81 @@ PawnClass、AbilitySets、TagRelationshipMapping、InputConfig、DefaultCameraMo
 
 - L8: `UHodgePawnData::UHodgePawnData(const FObjectInitializer& ObjectInitializer)`
 
+## HodgePawnData_Validation.cpp
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Private/Data/HodgePawnData_Validation.cpp](../../../Source/Hodgepodge/Private/Data/HodgePawnData_Validation.cpp)
+
+项目内直接 include（不是运行调用关系）：[Data/HodgePawnData.h](../../../Source/Hodgepodge/Public/Data/HodgePawnData.h)、[Data/HodgeAbilityDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilityDefinition.h)、[Data/HodgeAbilitySet.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilitySet.h)、[Data/HodgeAbilityTimeline.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilityTimeline.h)、[Data/HodgeComboDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeComboDefinition.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)
+
+定义候选（多行签名仅展示首行）：
+
+- L10: `EDataValidationResult UHodgePawnData::IsDataValid(FDataValidationContext& Context) const`
+
+## HodgeAbilityDefinition.h
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Public/Data/HodgeAbilityDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilityDefinition.h)
+
+有效头文件声明摘录（未展开宏，未求值预处理分支）：
+
+```cpp
+   1: #pragma once
+   3: #include "CoreMinimal.h"
+   4: #include "Engine/DataAsset.h"
+   5: #include "AlphaBlend.h"
+   6: #include "Animation/AnimMontage.h"
+   7: #include "GameplayTagContainer.h"
+   8: #include "HodgeAbilityDefinition.generated.h"
+  10: class UHodgeGameplayAbility;
+  11: class UHodgeAbilityTimeline;
+  12: class UAnimMontage;
+  14: USTRUCT(BlueprintType)
+  15: struct FHodgeAbilityBlendSettings
+  16: {
+  17: 	GENERATED_BODY()
+  18: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(ClampMin="0")) float Time = 0.1f;
+  19: 	UPROPERTY(EditAnywhere, BlueprintReadOnly) EMontageBlendMode Mode = EMontageBlendMode::Standard;
+  20: 	UPROPERTY(EditAnywhere, BlueprintReadOnly) EAlphaBlendOption Curve = EAlphaBlendOption::Linear;
+  21: 	UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<UCurveFloat> CustomCurve;
+  22: 	FAlphaBlend MakeBlend() const;
+  23: 	bool IsValid() const;
+  24: };
+  26: USTRUCT(BlueprintType)
+  27: struct FHodgeTimelineTaskConfig
+  28: {
+  29: 	GENERATED_BODY()
+  31: 	UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<UHodgeAbilityTimeline> Timeline;
+  32: };
+  34: USTRUCT(BlueprintType)
+  35: struct FHodgeAbilityExecutionConfig
+  36: {
+  37: 	GENERATED_BODY()
+  38: 	UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<UAnimMontage> Montage;
+  39: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(ClampMin="0.01")) float PlayRate = 1.f;
+  40: 	UPROPERTY(EditAnywhere, BlueprintReadOnly) FHodgeAbilityBlendSettings BlendIn;
+  41: 	UPROPERTY(EditAnywhere, BlueprintReadOnly) FHodgeAbilityBlendSettings NaturalBlendOut;
+  42: 	UPROPERTY(EditAnywhere, BlueprintReadOnly) FHodgeAbilityBlendSettings StopBlendOut;
+  43: 	UPROPERTY(EditAnywhere, BlueprintReadOnly) FHodgeTimelineTaskConfig TimelineTaskConfig;
+  44: };
+  47: UCLASS(BlueprintType, Const)
+  48: class HODGEPODGE_API UHodgeAbilityDefinition : public UPrimaryDataAsset
+  49: {
+  50: 	GENERATED_BODY()
+  51: public:
+  52: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) FGameplayTag AbilityTag;
+  53: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) TSubclassOf<UHodgeGameplayAbility> AbilityClass;
+  54: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) FHodgeAbilityExecutionConfig ExecutionConfig;
+  55: 	UFUNCTION(BlueprintPure) float GetDuration() const;
+  56: 	bool ValidateDefinition(TArray<FText>& Errors) const;
+  57: #if WITH_EDITOR
+  58: 	virtual EDataValidationResult IsDataValid(FDataValidationContext& Context) const override;
+  59: #endif
+  60: };
+```
+
 ## HodgeAbilitySet.h
 
 权威端批量授予属性集、技能和 GE，并用句柄集合撤销。
@@ -163,69 +269,80 @@ PawnClass、AbilitySets、TagRelationshipMapping、InputConfig、DefaultCameraMo
   15: class UHodgeAbilitySystemComponent;
   16: class UHodgeGameplayAbility;
   17: class UObject;
-  25: USTRUCT(BlueprintType)
-  26: struct FHodgeAbilitySet_GameplayAbility
-  27: {
-  28: 	GENERATED_BODY()
-  30: public:
-  32: 	UPROPERTY(EditDefaultsOnly)
-  33: 	TSubclassOf<UHodgeGameplayAbility> Ability = nullptr;
-  36: 	UPROPERTY(EditDefaultsOnly)
-  37: 	int32 AbilityLevel = 1;
-  40: 	UPROPERTY(EditDefaultsOnly, Meta = (Categories = "InputTag"))
-  41: 	FGameplayTag InputTag;
-  42: };
-  50: USTRUCT(BlueprintType)
-  51: struct FHodgeAbilitySet_GameplayEffect
-  52: {
-  53: 	GENERATED_BODY()
-  55: public:
-  57: 	UPROPERTY(EditDefaultsOnly)
-  58: 	TSubclassOf<UGameplayEffect> GameplayEffect = nullptr;
-  61: 	UPROPERTY(EditDefaultsOnly)
-  62: 	float EffectLevel = 1.0f;
-  63: };
-  70: USTRUCT(BlueprintType)
-  71: struct FHodgeAbilitySet_AttributeSet
-  72: {
-  73: 	GENERATED_BODY()
-  75: public:
-  77: 	UPROPERTY(EditDefaultsOnly)
-  78: 	TSubclassOf<UAttributeSet> AttributeSet;
-  79: };
-  87: USTRUCT(BlueprintType)
-  88: struct FHodgeAbilitySet_GrantedHandles
-  89: {
-  90: 	GENERATED_BODY()
-  92: public:
-  94: 	void AddAbilitySpecHandle(const FGameplayAbilitySpecHandle& Handle);
-  97: 	void AddGameplayEffectHandle(const FActiveGameplayEffectHandle& Handle);
- 100: 	void AddAttributeSet(UAttributeSet* Set);
- 103: 	void TakeFromAbilitySystem(UHodgeAbilitySystemComponent* HodgeASC);
- 105: protected:
- 107: 	UPROPERTY()
- 108: 	TArray<FGameplayAbilitySpecHandle> AbilitySpecHandles;
- 111: 	UPROPERTY()
- 112: 	TArray<FActiveGameplayEffectHandle> GameplayEffectHandles;
- 115: 	UPROPERTY()
- 116: 	TArray<TObjectPtr<UAttributeSet>> GrantedAttributeSets;
- 117: };
- 128: UCLASS(BlueprintType, Const)
- 129: class UHodgeAbilitySet : public UPrimaryDataAsset
- 130: {
- 131: 	GENERATED_BODY()
- 133: public:
- 134: 	UHodgeAbilitySet(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
- 137: 	void GiveToAbilitySystem(UHodgeAbilitySystemComponent* HodgeASC, FHodgeAbilitySet_GrantedHandles* OutGrantedHandles,
- 138: 	                         UObject* SourceObject = nullptr) const;
- 140: protected:
- 142: 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Abilities", meta=(TitleProperty=Ability))
- 143: 	TArray<FHodgeAbilitySet_GameplayAbility> GrantedGameplayAbilities;
- 146: 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Effects", meta=(TitleProperty=GameplayEffect))
- 147: 	TArray<FHodgeAbilitySet_GameplayEffect> GrantedGameplayEffects;
- 150: 	UPROPERTY(EditDefaultsOnly, Category = "Attribute Sets", meta=(TitleProperty=AttributeSet))
- 151: 	TArray<FHodgeAbilitySet_AttributeSet> GrantedAttributes;
- 152: };
+  18: class UHodgeAbilityDefinition;
+  20: USTRUCT(BlueprintType)
+  21: struct FHodgeAbilitySet_Definition
+  22: {
+  23:  GENERATED_BODY()
+  24:  UPROPERTY(EditDefaultsOnly) TObjectPtr<UHodgeAbilityDefinition> Definition;
+  25:  UPROPERTY(EditDefaultsOnly, meta=(ClampMin="1")) int32 AbilityLevel = 1;
+  26: };
+  34: USTRUCT(BlueprintType)
+  35: struct FHodgeAbilitySet_GameplayAbility
+  36: {
+  37: 	GENERATED_BODY()
+  39: public:
+  41: 	UPROPERTY(EditDefaultsOnly)
+  42: 	TSubclassOf<UHodgeGameplayAbility> Ability = nullptr;
+  45: 	UPROPERTY(EditDefaultsOnly)
+  46: 	int32 AbilityLevel = 1;
+  49: 	UPROPERTY(EditDefaultsOnly, Meta = (Categories = "InputTag"))
+  50: 	FGameplayTag InputTag;
+  51: };
+  59: USTRUCT(BlueprintType)
+  60: struct FHodgeAbilitySet_GameplayEffect
+  61: {
+  62: 	GENERATED_BODY()
+  64: public:
+  66: 	UPROPERTY(EditDefaultsOnly)
+  67: 	TSubclassOf<UGameplayEffect> GameplayEffect = nullptr;
+  70: 	UPROPERTY(EditDefaultsOnly)
+  71: 	float EffectLevel = 1.0f;
+  72: };
+  79: USTRUCT(BlueprintType)
+  80: struct FHodgeAbilitySet_AttributeSet
+  81: {
+  82: 	GENERATED_BODY()
+  84: public:
+  86: 	UPROPERTY(EditDefaultsOnly)
+  87: 	TSubclassOf<UAttributeSet> AttributeSet;
+  88: };
+  96: USTRUCT(BlueprintType)
+  97: struct FHodgeAbilitySet_GrantedHandles
+  98: {
+  99: 	GENERATED_BODY()
+ 101: public:
+ 103: 	void AddAbilitySpecHandle(const FGameplayAbilitySpecHandle& Handle);
+ 106: 	void AddGameplayEffectHandle(const FActiveGameplayEffectHandle& Handle);
+ 109: 	void AddAttributeSet(UAttributeSet* Set);
+ 112: 	void TakeFromAbilitySystem(UHodgeAbilitySystemComponent* HodgeASC);
+ 114: protected:
+ 116: 	UPROPERTY()
+ 117: 	TArray<FGameplayAbilitySpecHandle> AbilitySpecHandles;
+ 120: 	UPROPERTY()
+ 121: 	TArray<FActiveGameplayEffectHandle> GameplayEffectHandles;
+ 124: 	UPROPERTY()
+ 125: 	TArray<TObjectPtr<UAttributeSet>> GrantedAttributeSets;
+ 126: };
+ 137: UCLASS(BlueprintType, Const)
+ 138: class UHodgeAbilitySet : public UPrimaryDataAsset
+ 139: {
+ 140: 	GENERATED_BODY()
+ 142: public:
+ 143: 	UHodgeAbilitySet(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+ 144: 	const TArray<FHodgeAbilitySet_Definition>& GetGrantedDefinitions() const { return GrantedAbilityDefinitions; }
+ 147: 	void GiveToAbilitySystem(UHodgeAbilitySystemComponent* HodgeASC, FHodgeAbilitySet_GrantedHandles* OutGrantedHandles,
+ 148: 	                         UObject* SourceObject = nullptr) const;
+ 150: protected:
+ 152: 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Abilities", meta=(TitleProperty=Ability))
+ 153: 	TArray<FHodgeAbilitySet_GameplayAbility> GrantedGameplayAbilities;
+ 155: 	UPROPERTY(EditDefaultsOnly, Category="Gameplay Abilities", meta=(TitleProperty="Definition"))
+ 156: 	TArray<FHodgeAbilitySet_Definition> GrantedAbilityDefinitions;
+ 159: 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Effects", meta=(TitleProperty=GameplayEffect))
+ 160: 	TArray<FHodgeAbilitySet_GameplayEffect> GrantedGameplayEffects;
+ 163: 	UPROPERTY(EditDefaultsOnly, Category = "Attribute Sets", meta=(TitleProperty=AttributeSet))
+ 164: 	TArray<FHodgeAbilitySet_AttributeSet> GrantedAttributes;
+ 165: };
 ```
 
 ## HodgeAbilityTimeline.h
@@ -296,16 +413,20 @@ PawnClass、AbilitySets、TagRelationshipMapping、InputConfig、DefaultCameraMo
  154: {
  155: 	GENERATED_BODY()
  157: public:
- 159: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ClampMin=0.01, Units="s"))
- 160: 	float Duration = 1.0f;
- 164: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(TitleProperty=EventID))
- 165: 	TArray<FHodgeTimelineEvent> Events;
- 168: 	bool ValidateForPlayback(TArray<FText>& OutErrors) const;
- 170: #if WITH_EDITOR
- 173: 	virtual EDataValidationResult IsDataValid(class FDataValidationContext& Context) const override;
- 176: 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent) override;
- 178: #endif
- 179: };
+ 159: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+ 160: 	bool bUseMontageDuration = false;
+ 163: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ClampMin=0.01, Units="s", EditCondition="!bUseMontageDuration", EditConditionHides))
+ 164: 	float Duration = 1.0f;
+ 168: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(TitleProperty=EventID))
+ 169: 	TArray<FHodgeTimelineEvent> Events;
+ 172: 	bool ValidateForPlayback(TArray<FText>& OutErrors, float DurationOverride = -1.f) const;
+ 174: #if WITH_EDITOR
+ 177: 	virtual EDataValidationResult IsDataValid(class FDataValidationContext& Context) const override;
+ 180: 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent) override;
+ 182: #endif
+ 184: private:
+ 185: 	bool ValidateEntries(TArray<FText>& OutErrors, float EffectiveDuration, bool bCheckDuration) const;
+ 186: };
 ```
 
 ## HodgeAssetManager.h
@@ -493,6 +614,68 @@ PawnClass、AbilitySets、TagRelationshipMapping、InputConfig、DefaultCameraMo
  213: };
 ```
 
+## HodgeComboDefinition.h
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Public/Data/HodgeComboDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeComboDefinition.h)
+
+有效头文件声明摘录（未展开宏，未求值预处理分支）：
+
+```cpp
+   1: #pragma once
+   3: #include "CoreMinimal.h"
+   4: #include "Engine/DataAsset.h"
+   5: #include "Engine/DataTable.h"
+   6: #include "GameplayTagContainer.h"
+   7: #include "HodgeComboDefinition.generated.h"
+   9: USTRUCT(BlueprintType)
+  10: struct FHodgeComboTransition
+  11: {
+  12: 	GENERATED_BODY()
+  13: 	UPROPERTY(EditAnywhere, BlueprintReadOnly) FGameplayTag TriggerInputIntentTag;
+  14: 	UPROPERTY(EditAnywhere, BlueprintReadOnly) FGameplayTag TriggerEventTag;
+  15: 	UPROPERTY(EditAnywhere, BlueprintReadOnly) FGameplayTag TargetComboTag;
+  16: 	UPROPERTY(EditAnywhere, BlueprintReadOnly) FGameplayTagContainer RequiredWindowTags;
+  17: 	UPROPERTY(EditAnywhere, BlueprintReadOnly) FGameplayTagContainer RequiredSourceTags;
+  18: 	UPROPERTY(EditAnywhere, BlueprintReadOnly) FGameplayTagContainer BlockedSourceTags;
+  19: 	UPROPERTY(EditAnywhere, BlueprintReadOnly) int32 TransitionPriority = 0;
+  20: };
+  22: USTRUCT(BlueprintType)
+  23: struct FHodgeComboRow : public FTableRowBase
+  24: {
+  25: 	GENERATED_BODY()
+  26: 	UPROPERTY(EditAnywhere, BlueprintReadOnly) FGameplayTag ComboTag;
+  27: 	UPROPERTY(EditAnywhere, BlueprintReadOnly) FGameplayTag AbilityTag;
+  28: 	UPROPERTY(EditAnywhere, BlueprintReadOnly) FGameplayTagContainer GrantedTags;
+  29: 	UPROPERTY(EditAnywhere, BlueprintReadOnly) TArray<FHodgeComboTransition> Transitions;
+  30: };
+  32: USTRUCT(BlueprintType)
+  33: struct FHodgeComboInputBinding
+  34: {
+  35: 	GENERATED_BODY()
+  36: 	UPROPERTY(EditAnywhere, BlueprintReadOnly) FGameplayTag InputTag;
+  37: 	UPROPERTY(EditAnywhere, BlueprintReadOnly) FGameplayTag IntentTag;
+  38: };
+  40: UCLASS(BlueprintType, Const)
+  41: class HODGEPODGE_API UHodgeComboDefinition : public UPrimaryDataAsset
+  42: {
+  43: 	GENERATED_BODY()
+  44: public:
+  45: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) TObjectPtr<UDataTable> ComboTable;
+  46: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) FGameplayTag EntryComboTag;
+  47: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) TArray<FHodgeComboInputBinding> InputBindings;
+  48: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ClampMin="0.01")) float InputBufferSeconds = 0.3f;
+  49: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) FGameplayTag MoveCancelWindowTag;
+  50: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ClampMin="0")) float MoveIntentThreshold = 0.1f;
+  51: 	const FHodgeComboRow* FindNode(FGameplayTag Tag) const;
+  52: 	bool ValidateDefinition(TArray<FText>& Errors) const;
+  53: #if WITH_EDITOR
+  54: 	virtual EDataValidationResult IsDataValid(FDataValidationContext& Context) const override;
+  55: #endif
+  56: };
+```
+
 ## HodgeExperienceActionSet.h
 
 复用 GameFeature 插件和动作配置的数据资产。
@@ -646,25 +829,31 @@ PawnClass、AbilitySets、TagRelationshipMapping、InputConfig、DefaultCameraMo
    9: #include "Engine/DataAsset.h"
   11: #include "HodgePawnData.generated.h"
   14: class UHodgeAbilitySet;
-  17: class UHodgeCameraMode;
-  20: class UHodgeInputConfig;
-  23: class UHodgeAbilityTagRelationshipMapping;
-  31: UCLASS()
-  32: class HODGEPODGE_API UHodgePawnData : public UPrimaryDataAsset
-  33: {
-  34: 	GENERATED_BODY()
-  36: public:
-  38: 	UHodgePawnData(const FObjectInitializer& ObjectInitializer);
-  40: public:
-  43: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hodge|Pawn")
-  44: 	TSubclassOf<APawn> PawnClass;
-  48: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hodge|Abilities")
-  49: 	TArray<TObjectPtr<UHodgeAbilitySet>> AbilitySets;
-  53: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hodge|Abilities")
-  54: 	TObjectPtr<UHodgeAbilityTagRelationshipMapping> TagRelationshipMapping;
-  58: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hodge|Input")
-  59: 	TObjectPtr<UHodgeInputConfig> InputConfig;
-  63: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hodge|Camera")
-  64: 	TSubclassOf<UHodgeCameraMode> DefaultCameraMode;
-  65: };
+  15: class UHodgeComboDefinition;
+  18: class UHodgeCameraMode;
+  21: class UHodgeInputConfig;
+  24: class UHodgeAbilityTagRelationshipMapping;
+  32: UCLASS()
+  33: class HODGEPODGE_API UHodgePawnData : public UPrimaryDataAsset
+  34: {
+  35: 	GENERATED_BODY()
+  37: public:
+  39: 	UHodgePawnData(const FObjectInitializer& ObjectInitializer);
+  40: #if WITH_EDITOR
+  41: 	virtual EDataValidationResult IsDataValid(FDataValidationContext& Context) const override;
+  42: #endif
+  44: public:
+  47: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hodge|Pawn")
+  48: 	TSubclassOf<APawn> PawnClass;
+  52: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hodge|Abilities")
+  53: 	TArray<TObjectPtr<UHodgeAbilitySet>> AbilitySets;
+  55: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Abilities")
+  56: 	TObjectPtr<UHodgeComboDefinition> ComboDefinition;
+  60: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hodge|Abilities")
+  61: 	TObjectPtr<UHodgeAbilityTagRelationshipMapping> TagRelationshipMapping;
+  65: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hodge|Input")
+  66: 	TObjectPtr<UHodgeInputConfig> InputConfig;
+  70: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hodge|Camera")
+  71: 	TSubclassOf<UHodgeCameraMode> DefaultCameraMode;
+  72: };
 ```

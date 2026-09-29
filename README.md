@@ -6,39 +6,42 @@
 |---|---|
 | 引擎版本 | Unreal Engine **5.5**（本机核实 5.5.4） |
 | 主模块 | `Hodgepodge`（Runtime，单模块；另有 `CodexText` 实验代码同模块内） |
-| 代码规模 | `Source/Hodgepodge` 共 **239 个 C++ 文件**（120 `.h` + 119 `.cpp`）+ 3 个 `.cs`，约 **31300 行** |
+| 代码规模 | `Source/Hodgepodge` 共 **261 个 C++ 文件**（129 `.h` + 132 `.cpp`）+ 独立编辑器模块 `Source/HodgeAbilityEditor/`（9 个文件）+ 3 个 `.cs`，约 **33900 行** |
 | 核心依赖 | GameplayAbilities、GameFeatures、EnhancedInput、**ModularGameplay**、AnimationWarping、ControlRig、**CommonUI / UMG / Slate** |
-| 项目阶段 | 🚧 **战斗 MVP 已成型 + UI 源码迁移落地**：普攻连招 / 逻辑时间轴 / 死亡链路已验证；UI 层移植 81 个文件（其中 **24 个待复活**），尚未真正出画面 |
+| 项目阶段 | 🚧 **连击系统已验证 + 技能编辑器可用**：技能 Definition / 连招跳转 / 装备四件套 / 编辑器模块本轮落地；UI 层 81 个文件（24 个待复活）仍未出画面，**伤害仍恒为 0** |
 | 相关文档 | [`Docs/KnowledgeBase/README.md`](Docs/KnowledgeBase/README.md)（**已核对的当前事实、断点与验证边界**）、[`Docs/Design/`](Docs/Design)（设计草案）、[`Docs/Validation/`](Docs/Validation)（验证记录）、[`LYRA_LEARNING_GUIDE.md`](LYRA_LEARNING_GUIDE.md)、[`LYRA_RUNTIME_FLOW.md`](LYRA_RUNTIME_FLOW.md) |
-| 代码基线 | 提交 `6eec094`（工作区干净） |
+| 代码基线 | 提交 `abb9224`（工作区有 2 个 `CodexText` 资产改动未提交） |
 
 ---
 
 ## 当前状态
 
-项目处于 **战斗 MVP 已成型 + UI 源码迁移落地** 的阶段。框架层（Experience / AssetManager / GAS / 角色 / 相机 / 输入 / PlayerController）是 Lyra 的等价实现，**战斗链路（普攻连招 → 逻辑时间轴 → 伤害 → 死亡）已落地并有 PIE 验证**；本轮又完成了 **Lyra UI 层源码的整体迁移**。
+项目处于 **连击系统已验证、技能编辑器可用** 的阶段。框架层（Experience / AssetManager / GAS / 角色 / 相机 / 输入 / PlayerController）是 Lyra 的等价实现；战斗侧本轮完成了 **技能 Definition + 连招跳转表 + 独立编辑器**；装备系统与 UI 层则是"源码已搬入、尚未接通"。
 
-**编译状态**：✅ 通过（`6eec094`，Development Editor，UBT 报 `Target is up to date`）。
+**编译状态**：✅ 通过（`abb9224`，Development Editor，UBT 报 `Target is up to date`）。
 
-### 本轮变化（`10305c2` → `6eec094`，3 个提交）
+### 本轮变化（`6eec094` → `abb9224`，4 个提交）
 
 | 变更 | 说明 |
 |---|---|
-| **Lyra UI 源码迁移** 🆕 | 新增 `Source/Hodgepodge/{Public,Private}/UI/` 共 **81 个文件**（41 `.h` + 40 `.cpp`）：Basic / Common / Extension / Foundation / Frontend / IndicatorSystem / PerformanceStats / Subsystem / Weapons。见 [§6.19](#619-ui-系统) |
-| **24 个"待复活"文件** ⏸️ | 依赖缺失的部分**整体逐行注释**保留，文件头带 `[UI-MIGRATION-PENDING]` 标记（Weapons 8 / PerformanceStats 4 / Subsystem 4 / SettingScreen 2 / GameViewportClient 2 / ConfirmationScreen 2 / FrontendStateComponent 2）。复活需 CommonGame / GameSettings / CommonUser 等插件 |
-| **CommonUI 插件启用** ✅ | `.uproject` 里 `CommonUI = Enabled`；`Build.cs` 新增 `UMG` / `Slate` / `SlateCore` / `CommonUI` / `CommonInput`（私有新增 `ApplicationCore`） |
-| **HUD 换代** | `AHodgeHUDBase` **删除**，改为 `AHodgeHUD`（`UCLASS(Config=Game)`）：只做 GHCM 接线与 Debug Actor 列表，**不创建任何控件**；`AHodgeGameModeBase` 构造里 `HUDClass = AHodgeHUD` |
-| **`GameFeatureAction_AddWidget` 复活** ✅ | 从"整文件注释"恢复为完整实现（`AddToWorld` / `AddWidgets` / `RemoveWidgets` / `Reset`）；唯一仍注释的是 `PushContentToLayer_ForPlayer` → **Layout 目前不会真正创建** |
-| **下蹲被屏蔽** ⏸️ | `HodgeHeroComponent` 里 Crouch 的 `BindNativeAction` 被注释（函数体与 `ToggleCrouch` 仍保留，`bCanCrouch` 仍为 true）—— 临时处理，UI / 动画就绪后恢复 |
-| **UI 设计文档** 🆕 | `Docs/Design/` 新增 6 篇：UI 架构、UIExtension 系统、指示器系统、Lyra UI 文件导读、迁移计划、UMG/Slate 心智模型 |
-| **类重定向** | `DefaultEngine.ini` 的 `[CoreRedirects]` 新增一批 UI 类映射（`LyraHUD → HodgeHUD`、`LyraUIManagerSubsystem → HodgeUIManagerSubsystem` 等） |
+| **技能 Definition 与连击系统** ✅ | 新增 `UHodgeAbilityDefinition`（技能数据资产）+ `UHodgeComboDefinition`（**连招跳转表**，终于补上了此前的 `ComboSet` 缺口）+ `UHodgeComboComponent`（**已挂到 PlayerState**）+ `UHodgeGameplayAbility_Definition`（新 Ability 子类）。见 [§6.20](#620-技能-definition-与连击) |
+| **连击已验证** ✅ | 五段连击资产（`CodexText/DefinitionCombo/`）、`DA_Dafult_PawnData` 已配 `ComboDefinition`；`Docs/Validation/definition-combo-2026-09-28.md`：Editor + Game 构建退出码 0、单人 PIE 14 项、Listen Server（拥有端 23 / 主机 19）、网络模拟 15 项、原生自动化 6→7 项全部通过 |
+| **独立编辑器模块** 🆕 | `Source/HodgeAbilityEditor/`（9 个文件，Editor 模块，已加入 `HodgepodgeEditor.Target.cs`）：双击 `UHodgeAbilityDefinition` 打开，6 个面板 + 蒙太奇预览视口 + 自绘时间轴轨道。见 [§6.22](#622-技能编辑器) |
+| **装备系统四件套** ⏸️ | 新增 `Equipment/`：`HodgeEquipmentDefinition` / `EquipmentInstance` / `EquipmentManagerComponent` / `WeaponInstance`（Lyra 移植，编译通过）。**未挂载**：没有任何角色创建 ManagerComponent，也没有装备资产 |
+| **时间轴求值器** 🆕 | `UHodgeTimelineEvaluator`：纯静态、无副作用的时间轴求值逻辑（可脱离 GAS 单测），由 `PlayTimeline` 与编辑器共用；配套 `Hodge.Timeline.SharedEvaluator` 测试 |
+| **新测试** | `Hodge.Combo.DefinitionGrant` / `GraphValidation` / `SessionRules` / `MontageDuration`、`Hodge.Timeline.SharedEvaluator`、`Hodge.Editor.DefinitionWorkflow` |
+| **仇远武器模型** | `Content/Wuwa/Weapon/` 骨骼 + 材质已修复（`Tools/Weapon/README.md`），**无动画** |
+| **其它** | 根目录新增 `CODE_REVIEW.md`（96 项评审标准，是"标准"不是"已通过"）；`DefaultGameplayTags.ini` 追加 `Combo.*` / `Ability.Attack.Light.*` / `InputIntent.Attack.Light`；`DefaultEngine.ini` 加装备类 `Lyra→Hodge` 重定向 |
+
+> ⚠️ 注意：旧的 `UHodgeGameplayAbility_BasicAttack` 现在是**孤儿** —— `AttackSteps` 字段还在，但 C++ 与资产里都已不再授予它（`DA_Pover` 已移除该授予），新链路走 `Definition + Combo`。详见 [§6.20](#620-技能-definition-与连击)。
 
 ### 已验证 ✅（见 [`Docs/Validation/`](Docs/Validation)）
 
 | 验证记录 | 结论 |
 |---|---|
-| `basic-attack-2026-09-24.md` | `GA_BasicAttack` 五段连击：单人 PIE 12 项 + Listen Server（客户端 36 项 / 主机 16 项）全部通过。**该次验证不含命中与伤害** |
-| `timeline-2026-09-24.md` | `Hodge.Timeline` 三项自动化测试 + PIE 九项断言通过（窗口 GE 0→1→0、Point / End 派发、取消清理幂等），Editor / Game 构建退出码 0 |
+| `basic-attack-2026-09-24.md` | `GA_BasicAttack` 五段连击（**旧链路，已被 Definition 链路取代**）：单人 PIE 12 项 + Listen Server（客户端 36 / 主机 16）通过。**不含命中与伤害** |
+| `timeline-2026-09-24.md` | `Hodge.Timeline` 三项自动化测试 + PIE 九项断言通过（窗口 GE 0→1→0、Point / End 派发、取消清理幂等） |
+| **`definition-combo-2026-09-28.md`** 🆕 | **当前主链路**：Editor + Game 两目标构建退出码 0；五段连击资产 + `DT_LightCombo` 跳转表 + `PawnData.ComboDefinition` 已配；单人 PIE **14 项**、Listen Server（拥有端 **23** / 主机 **19**）、网络模拟（750ms 延迟、10% 丢包+重复包）**15 项**、原生自动化 **7/7** 全部通过。**仍不含命中判定与伤害** |
 
 ### 已通电 / 待验证 / 未建
 
@@ -54,8 +57,9 @@
 | 输入主链 | ✅ | HeroComponent 绑定原生 / 能力输入；`PostProcessInput → ProcessAbilityInput` 打通（❓ 资产配置待编辑器确认） |
 | 相机主链 | ✅ | 委托由 HeroComponent 绑定；模式资产 `CM_ThirdPerson` / `CM_ThirdPerson_Death` + 两条曲线资产（❓ PawnData 实际指向待确认） |
 | AbilitySet 基础授予 | ✅ | 权威端遍历 `PawnData->AbilitySets` 授予（**无句柄，不可撤销**） |
-| **普攻连招** | ✅ 已验证 | `UHodgeGameplayAbility_BasicAttack` 五段连击，见 `basic-attack-2026-09-24.md` |
-| **逻辑时间轴** | ✅ 已验证 | `HodgeAbilityTimeline` + `PlayTimeline` Task + 自动化测试，见 `timeline-2026-09-24.md` |
+| **连击系统** 🆕 | ✅ 已验证 | `UHodgeAbilityDefinition` + `UHodgeComboDefinition`（跳转表）+ `UHodgeComboComponent`（**已挂到 PlayerState**）+ `UHodgeGameplayAbility_Definition`；五段连击与网络模拟已验证，见 `definition-combo-2026-09-28.md` |
+| **技能编辑器** 🆕 | ✅ 可用 | `Source/HodgeAbilityEditor/` 独立 Editor 模块，双击 `UHodgeAbilityDefinition` 打开（6 面板 + 蒙太奇预览 + 时间轴轨道） |
+| **逻辑时间轴** | ✅ 已验证 | `HodgeAbilityTimeline` + `PlayTimeline` Task + `TimelineEvaluator`（纯求值器）+ 多项自动化测试 |
 | **生命 / 死亡流程** | ✅ | `UHodgeHealthComponent` 已挂载；`OnOutOfHealth → StartDeath → FinishDeath → UninitAndDestroy` 串联 |
 | **伤害 / 治疗结算** | ⚠️ | HealthSet 的 Meta 属性结算闭环 ✅；但 `DamageExecution` 的敌我判定整段被注释 → **当前算出来的伤害恒为 0**（见下） |
 | Pawn 生成 | ❓ | `DefaultPawnClass` 回退仍是 `AHodgeCharacterBase`；最终看 `PawnData->PawnClass`（二进制，需编辑器确认） |
@@ -64,6 +68,7 @@
 | **UI 源码层（Lyra 移植）** 🆕 | ✅ 已迁移 | `UI/` 81 个文件落地、CommonUI 启用、HUD 换代、`_AddWidget` 复活；**但 24 个文件待复活，画面尚未真正出现** |
 | **UIExtension** 🆕 | ✅ 已编译 | `UUIExtensionSubsystem` / `UUIExtensionPointWidget` 可用，暂无蓝图槽位使用 |
 | **实际出画面 / 前端流程** | ❌ | 缺 `PrimaryGameLayout` / `GameUIPolicy`（依赖 CommonGame）；`_AddWidget` 的 `PushContentToLayer_ForPlayer` 仍注释 |
+| **装备系统** 🆕 |  未挂载 | `Equipment/` 四件套（Definition / Instance / ManagerComponent / WeaponInstance）编译通过，但**没有任何角色创建 `UHodgeEquipmentManagerComponent`**，也没有装备资产 |
 | Load Screen / AI / 背包 / DS | ❌ | 没有（CodexText 的 UMG 是独立实验，不复用框架） |
 
 ### 当前剩余的关键缺口
@@ -72,7 +77,9 @@
 |---|---|
 | **伤害恒为 0** 🔴 | `HodgeDamageExecution` 里用 TeamSubsystem 判敌我的整段被注释，`DamageInteractionAllowedMultiplier` 恒为 `0.0f` → **任何攻击都打不掉血**。这是"战斗闭环"目前最大的实际缺口 |
 | **AbilitySet 只授不撤** 🔴 | `GiveToAbilitySystem(ASC, nullptr)` 没收集 `GrantedHandles`；换装 / 重生 / 撤销前必须补上按来源保存的句柄 |
-| **编辑器确认资产接线** 🔴 | `DA_Dafult_PawnData`（`PawnClass` / `InputConfig` / `DefaultCameraMode` / `AbilitySets`）、`BP_Hero_Pover` 的 `DefaultInputMappings`、`DA_HodgeInputConfig` 的映射、`GA_BasicAttack` 的 `AttackSteps`。文本无法读取 `.uasset` 内部值 |
+| **编辑器确认资产接线** 🔴 | `DA_Dafult_PawnData`（`PawnClass` / `InputConfig` / `DefaultCameraMode` / `AbilitySets` / `ComboDefinition`）、`BP_Hero_Pover` 的 `DefaultInputMappings`、`DA_HodgeInputConfig` 的映射。文本无法读取 `.uasset` 内部值 |
+| **装备系统未挂载** 🟠 | 四件套已编译但没人 `CreateDefaultSubobject<UHodgeEquipmentManagerComponent>`（也不是 `BlueprintSpawnableComponent`，蓝图里搜不到）；想用"武器挂手"先要选挂载点（PlayerState 还是 Character）并建 Definition 资产。见 [§6.21](#621-装备系统) |
+| **旧 `BasicAttack` 成孤儿** 🟠 | `AttackSteps` 字段还在但已无授予与引用（新链路走 Definition + Combo）。要么删除，要么明确它只作历史参考，避免两套连招模型混淆 |
 | **无防御 / 暴击 / 伤害类型** 🟠 | `DamageExecution` 目前只做 `BaseDamage × 距离衰减 × 物理材质衰减`，没有 Defense、暴击、`DamageType.*` 分支 |
 | **敌人 ASC 缺初始化** 🟠 | 先定 ASC 所有者（PlayerState 还是 Character），再验服务器伤害目标与远端状态 |
 | **Cue 路径没注册** 🟠 | `HodgeGameFeaturePolicy.cpp:39` 创建 `UHodgeGameFeature_AddGameplayCuePaths` Observer 的那行仍注释；`OnGameFeatureUnregistering` 与 `UHodgeAssetManager::InitializeGameplayCueManager()` 仍是空实现 |
@@ -82,7 +89,7 @@
 
 > Experience 链路本身完好，默认 Experience 是 `Exp_HodgeDefaultExperience`，换玩法用 `-Experience=<资产名>`。
 
-> 研发过程记录见 [`Docs/KnowledgeBase/`](Docs/KnowledgeBase/README.md) 的每日更新（19~24，最新为 [2026-09-28](Docs/KnowledgeBase/24-update-2026-09-28.md)），以及 `Docs/Design/` 的设计文档（时间轴、连招图、UI 迁移等）。
+> 研发过程记录见 [`Docs/KnowledgeBase/`](Docs/KnowledgeBase/README.md) 的每日更新（19~24），以及 `Docs/Design/` 的设计文档（时间轴、连招图、技能编辑器、装备武器、UI 迁移等）。根目录 [`CODE_REVIEW.md`](CODE_REVIEW.md) 是 96 项评审**标准**（不是"已通过审查"的声明）。
 
 ---
 
@@ -164,6 +171,8 @@ PrivateDependencyModuleNames: EnhancedInput, PhysicsCore, Niagara, SignificanceM
 Editor 专用（Target.bBuildEditor）: UnrealEd, AnimGraph, BlueprintGraph
 ```
 
+**第二个模块：`Source/HodgeAbilityEditor/`**（本轮新增，`Type: Editor`，`LoadingPhase: PostEngineInit`）：技能编辑器。它**不是 Runtime 模块**，依赖 `Hodgepodge` / `UnrealEd` / `AssetTools` / `PropertyEditor` / `Slate` / `AdvancedPreviewScene` / `AnimGraph` 等，已在 `HodgepodgeEditor.Target.cs` 的 `ExtraModuleNames` 中登记。见 [§6.22](#622-技能编辑器)。
+
 另外 `SetupIrisSupport(Target)` 只在构建层打开 Iris 支持，**不代表运行时已启用 Iris**。
 
 `Hodgepodge.uproject` 启用的插件：`GameplayAbilities`、`GameFeatures`、`AnimationLocomotionLibrary`、`AnimationWarping`、`CommonUI`（本轮新增）、`ModelingToolsEditorMode`（仅 Editor）、`McpAutomationBridge`（仅 Editor）；并显式 **禁用 `UNTLink`**。
@@ -206,15 +215,19 @@ Source/
 └── Hodgepodge/
     ├── Hodgepodge.Build.cs
     ├── Hodgepodge.h / Hodgepodge.cpp
-    ├── Public/       ← 120 个头文件
-    └── Private/      ← 119 个实现文件，与 Public 大体镜像
+    ├── Public/       ← 129 个头文件
+    └── Private/      ← 132 个实现文件，与 Public 大体镜像
 ```
+
+另有独立编辑器模块 `Source/HodgeAbilityEditor/`（9 个文件，见 [§6.22](#622-技能编辑器)）。
 
 | 目录 | 文件数 | 职责 | 重要度 |
 |---|---|---|---|
-| `AbilitySystem/` | 18 | ASC、**Ability + AbilityCost + BasicAttack**、**AbilityTask（PlayTimeline / WaitMoveCancel）**、**Executions 2 个**、AttributeSet 3 个、TagRelationship、**AbilitySystemGlobals**、GameplayCueManager、EffectContext、GlobalAbilitySystem、GameplayTags、GameplayTagStack | ★★★★★ |
+| `AbilitySystem/` | 20 | ASC、**Ability 三个子类（BasicAttack / Definition / Cost）**、**AbilityTask（PlayTimeline / WaitMoveCancel）**、**TimelineEvaluator**、**Executions 2 个**、AttributeSet 3 个、TagRelationship、**AbilitySystemGlobals**、GameplayCueManager、EffectContext、GlobalAbilitySystem、GameplayTags、GameplayTagStack | ★★★★★ |
+| `Data/` | 11 | AssetManager、GameData、PawnData、**AbilityTimeline、AbilityDefinition、ComboDefinition**、AbilitySet、Experience 三件套、ExperienceManager | ★★★★★ |
 | `UI/` 🆕 | 41 | **Lyra UI 移植**（40 个对应 cpp）：Basic / Common（含 **UIExtension**）/ Foundation / Frontend / IndicatorSystem / PerformanceStats / Subsystem / Weapons；**其中 24 个文件待复活**（见 [§6.19](#619-ui-系统)） | ★★★★ |
-| `Component/` | 9 | **PawnExtensionComponent** / **HeroComponent** / **HealthComponent** / ExperienceManagerComponent / 角色移动组件 + 4 个组件基类 | ★★★★★ |
+| `Equipment/` 🆕 | 4 | **Lyra 装备四件套**：`EquipmentDefinition` / `EquipmentInstance` / `EquipmentManagerComponent` / `WeaponInstance`；编译通过但**未挂载**（见 [§6.21](#621-装备系统)） | ★★ |
+| `Component/` | 10 | **PawnExtensionComponent** / **HeroComponent** / **HealthComponent** / **ComboComponent** / ExperienceManagerComponent / 角色移动组件 + 4 个组件基类 | ★★★★★ |
 | `Core/` | 10 | GameInstance / GameMode / **GameState + GameStateBase** / **PlayerController + Base** / **PlayerState + PlayerStateBase** / HUD / LocalPlayer | ★★★★★ |
 | `Data/` | 9 | AssetManager、GameData、PawnData、**AbilitySet、AbilityTimeline**、Experience 三件套、ExperienceManager | ★★★★★ |
 | `Camera/` | 7 | 相机模式栈整套（Lyra 移植） | ★★★★ |
@@ -239,13 +252,16 @@ Content/
 │   └── Character/           BP_HeroBase / BP_Hero_Pover / GA_BasicAttack
 │       ├── Hero/            Anim/ABP_Pover_Base（漂泊者动画蓝图）+ Anim/Layer/
 │       └── EnemyBase/       ABP_Enemy_Base / ALI_Enemy
-├── CodexText/               ⚠️ AI / MCP 演练 + 动画实验产物（含 6 向移动与攻击 Montage，见 §6.16）
-│                            L_MainMenu / L_Character / L_SurvivalHUD / L_Terminal + WBP_* UMG + Montage/
+├── CodexText/               ⚠️ 实验与演练区，**也是当前连击资产的所在地**（见 §6.20）
+│                            DefinitionCombo/（GA_Attack_1~5 + DA_Attack_1~5 + 对应 Timeline
+│                            + DT_LightCombo / DA_LightCombo / AS_LightCombo）、BasicAttack/、
+│                            Montage/、L_MainMenu / L_Character / L_SurvivalHUD / L_Terminal + WBP_* UMG
 ├── qiuyuan/                 漂泊者角色资源（285）
 ├── Wuwa/                    鸣潮风格资源包（675，含 322 个 fbx 模型）
 ├── Assets/                  通用资产：Enemies / HeroCharacter / Weapons /
 │                            Niagara / Sounds / Textures / Meshes / MaterialFunctions（645）
 ├── Characters/              角色资源（148）+ Cameras/ 相机偏移曲线（ThirdPersonOffsetCurve / Death 版）
+├── Wuwa/                    鸣潮风格资源包；Weapon/ 下有仇远武器（骨骼 + 材质已修复，**无动画**）
 ├── Collections/ Developers/ LevelPrototyping/   编辑器辅助目录
 └── ThirdPerson/             UE 模板内容（游戏默认地图在这里）
 ```
@@ -259,13 +275,15 @@ Plugins/
 ├── McpAutomationBridge/   编辑器 MCP 桥（ChiR24，Editor-only，HTTP MCP 3016）
 ├── UnrealMCP/             编辑器 MCP 插件（第三方，MIT，TCP 55557）
 └── Developer/RiderLink/   Rider 联动
-Tools/                     MCP 与实验工具前端（UnrealMCP / ChiR24MCP / LocomotionLab / ModelRepair）
+Tools/                     Python 脚本与说明：UnrealMCP / ChiR24MCP / LocomotionLab / ModelRepair /
+                           Weapon（武器材质修复）/ BasicAttack（连击验证与迁移脚本）
 Docs/
 ├── KnowledgeBase/         ★ 已核对的本地知识库（01~23 章节 + Reference/ 自动索引 + tools/kb.py）
 ├── Design/                设计草案（ability-timeline / stage1 / combo-graph / combo 实现计划）
 ├── Validation/            PIE 验证记录（basic-attack / timeline，2026-09-24）
 └── AI_DEVELOPMENT.md      AI 开发与验证流程
 TagMigration/              Lyra GameplayTag 对照表 + 可直接导入的 ini
+CODE_REVIEW.md             96 项代码评审**标准**（C++ / GAS / 网络 / 动画 / 交付）
 AGENTS.md                  AI 协作规则（项目级）
 .agents/                   工程事实快照（给 AI 读）
 .cursor/rules/             Cursor 规则指针
@@ -1087,6 +1105,8 @@ AHodgePlayerController         ← 具体逻辑：相机 / 观战 / Replay / 自
 
 ### 6.17 战斗系统：普攻与逻辑时间轴
 
+> ⚠️ **链路已换代**：本节讲的 `UHodgeGameplayAbility_BasicAttack`（`AttackSteps`）是**旧链路**，已被 [§6.20](#620-技能-definition-与连击) 的 `Definition + Combo` 取代 —— `DA_Pover` 已移除它的授予、C++ 里零引用。保留本节是因为"**表现与逻辑分离**"这个核心设计思想仍然成立，且时间轴部分被新链路完整继承。要看当前主链路请直接读 §6.20。
+
 这是本项目的**战斗核心设计**：把"表现（动画）"和"逻辑（时机）"彻底分开。
 
 #### 三段式结构
@@ -1243,6 +1263,94 @@ AHodgeHUD（UCLASS(Config=Game)）
 
 > 迁移计划、文件导读与 UMG / Slate 心智模型见 [`Docs/Design/lyra-ui-migration-plan.md`](Docs/Design/lyra-ui-migration-plan.md)、[`lyra-ui-file-guide.md`](Docs/Design/lyra-ui-file-guide.md)、[`umg-slate-mental-model.md`](Docs/Design/umg-slate-mental-model.md)。
 
+### 6.20 技能 Definition 与连击
+
+这是**当前的连招主链路**，取代了旧的 `UHodgeGameplayAbility_BasicAttack::AttackSteps`。
+
+#### 三层模型
+
+| 层 | 类型 | 职责 |
+|---|---|---|
+| `UHodgeAbilityDefinition` | `UPrimaryDataAsset` | **单段技能**：`AbilityTag`、`AbilityClass`（必须是 `UHodgeGameplayAbility_Definition` 子类）、`ExecutionConfig{ Montage, PlayRate, BlendIn, NaturalBlendOut, StopBlendOut, TimelineTaskConfig.Timeline }` |
+| `UHodgeComboDefinition` | `UPrimaryDataAsset` | **连招跳转表**：`ComboTable`（DataTable）+ `EntryComboTag` + `InputBindings[]` + `InputBufferSeconds`（默认 0.3 + `MoveCancelWindowTag` / `MoveIntentThreshold` |
+| `UHodgeComboComponent` | `UPawnComponent`，**已挂在 `AHodgePlayerState`** | 运行时协调器：输入单槽缓冲、按窗口 + Required/Blocked 源标签 + 优先级选边、授权 Handle、失败回 `Entry` |
+| `UHodgeGameplayAbility_Definition` | `UHodgeGameplayAbility` 子类 | 执行层：反查 Definition → 要求 `Combo->IsAuthorized(Handle)` → 播 Montage + `PlayTimeline::PlayMontageTimeline` → 窗口/事件回调转发给 Combo |
+
+为什么要换：旧模型把"段数 / 输入 / 窗口"集中在一个类里，不利于招式分支与编辑器可视化。
+
+#### 连招跳转表
+
+```cpp
+// Public/Data/HodgeComboDefinition.h
+FHodgeComboTransition {
+    TriggerInputIntentTag;    // 什么输入触发
+    TriggerEventTag;          // 或什么事件触发（如 Timeline 的 Point）
+    TargetComboTag;           // 跳到哪一段
+    RequiredWindowTags;       // 必须处于哪些窗口
+    RequiredSourceTags;       // 源段必须带哪些标签
+    BlockedSourceTags;        // 源段带哪些标签则禁止
+    TransitionPriority;       // 大者优先，同级按数组顺序
+}
+FHodgeComboRow : FTableRowBase { ComboTag, AbilityTag, GrantedTags, Transitions[] }
+```
+
+#### 关键设计点
+
+- **输入缓存**：单槽、0.3 秒、新输入覆盖旧输入；过期不再接段
+- **切段前预检查**：失败保留当前动作；实际切换失败回 `Entry`
+- **标签账本**：拥有端与权威端各维护本地账本，模拟代理收 `skip-owner` 快照 → 不会重复计数
+- **事件链上限**：单次最多处理 32 次，超过报错并清理回 `Entry`（防零时间循环卡死）
+- **网络**：输入切段沿用 GAS `LocalPredicted` 激活 RPC；**服务器按收到时的当前执行窗口重新选边**，不接受客户端指定目标，也不提供历史窗口补偿；Timeline 事件派生由权威端触发
+- **时间轴时长**：支持 `Use Montage Duration`（从 Montage 派生），窗口用"源动画秒数"，不再乘 PlayRate
+
+#### 资产与验证
+
+资产在 `/Game/CodexText/DefinitionCombo/`：`GA_Attack_1~5`、`DA_Attack_1~5` + 对应 Timeline、`DT_LightCombo`（`Combo.Entry` + `Combo.Light.01~05` 六行）、`DA_LightCombo`、`AS_LightCombo`；`DA_Dafult_PawnData` 已存 `ComboDefinition = DA_LightCombo`，AbilitySets 含 `AS_LightCombo`。
+
+验证（[`Docs/Validation/definition-combo-2026-09-28.md`](Docs/Validation/definition-combo-2026-09-28.md)）：Editor + Game 两目标构建退出码 0；单人 PIE **14 项**、Listen Server（拥有端 **23** / 主机 **19**）、网络模拟（750ms 延迟、10% 丢包 + 重复包）**15 项**、原生自动化 **7/7** 通过。**不含命中判定与伤害**。
+
+> ⚠️ 旧的 `UHodgeGameplayAbility_BasicAttack` 已成孤儿：`AttackSteps` 字段还在，但 `DA_Pover` 已移除该授予、C++ 零引用。两套连招模型并存容易混淆，建议清理旧的。
+
+### 6.21 装备系统
+
+Lyra 装备 / 武器系统的移植，**编译通过但零挂载**。
+
+| 类 | 基类 | 职责 |
+|---|---|---|
+| `UHodgeEquipmentDefinition` | `UObject` | 数据：`InstanceType`、`AbilitySetsToGrant[]`、`ActorsToSpawn[]`（Actor + AttachSocket + AttachTransform） |
+| `UHodgeEquipmentInstance` | `UObject`（支持网络复制） | 运行时实例：`SpawnEquipmentActors`（挂到角色 Mesh 的 Socket）/ `DestroyEquipmentActors` / `OnEquipped/OnUnequipped`（转发 `K2_*` 蓝图事件）/ Iris 复制片段 |
+| `UHodgeEquipmentManagerComponent` | `UPawnComponent` | 容器：`EquipItem` / `UnequipItem`、FastArray 增量复制；`AddEntry` 授予 AbilitySet **并保存 `GrantedHandles`**，`RemoveEntry` 用 `TakeFromAbilitySystem` **精确撤销**（这一点比 PlayerState 的 AbilitySet 授予更完整） |
+| `UHodgeWeaponInstance` | `UHodgeEquipmentInstance` | 武器特有：`ApplicableDeviceProperties`（手柄震动等）、`UpdateFiringTime` / 闲置时间供 UI 判断、`OnDeathStarted` 清理设备效果 |
+
+**未挂载的证据**：没有任何 `CreateDefaultSubobject<UHodgeEquipmentManagerComponent>`；它不是 `BlueprintSpawnableComponent`（蓝图面板搜不到）；`Docs/Design/equipment-weapon-system.md` 明写"均未挂载、未建资产、未接线"。
+
+**启用的最小路径（武器挂手）**：
+
+1. 决定 ManagerComponent 挂在哪（Lyra 挂在 Pawn；本项目建议先挂 `AHodgeCombatCharacter`，并在 Init State 初始化时把 ASC 交给它）
+2. 建一个 `UHodgeEquipmentDefinition` 资产：`ActorsToSpawn` 填武器 Mesh + 手部 Socket
+3. 调 `EquipItem(Definition)`，验证：武器挂上、AbilitySet 授予、`UnequipItem` 后 GE 与震动效果归零
+
+> 边界：装备的 UI 侧（`HodgeReticleWidgetBase` / `HodgeWeaponUserInterface`）仍在 `[UI-MIGRATION-PENDING]` 注释中；`PickBestAnimLayer` 是空壳（Cosmetics 动画层已注释），所以"武器挂上了但持握动画不对"是预期现象。
+
+### 6.22 技能编辑器
+
+`Source/HodgeAbilityEditor/` —— 独立的 **Editor 模块**（9 个文件），已在 `HodgepodgeEditor.Target.cs` 的 `ExtraModuleNames` 登记。
+
+**入口**：内容浏览器双击 `UHodgeAbilityDefinition` 资产即可打开（模块注册了 `FHodgeAbilityDefinitionActions`）。
+
+**布局**：6 个停靠页 —— Definition / Preview / Timeline / Ability Tasks / Selected Event / Validation。
+
+| 组成 | 说明 |
+|---|---|
+| `FHodgeAbilityEditorToolkit` | `FAssetEditorToolkit + FGCObject + FEditorUndoClient`；对外提供 `Seek` / `TickPreview` / `AddEvent` / `DeleteEvent` / `DuplicateEvent` / `TogglePlay` / `Validate` / `MakeUniqueTimeline`，带 Undo/Redo |
+| `SHodgeAbilityPreview` | `SEditorViewport` 子类：`FAdvancedPreviewScene` + 骨骼网格 + 当前 Montage，可定位到某时刻看姿势 |
+| `SHodgeAbilityTimeline` | `SLeafWidget` 自绘轨道：拖动条目、拖两端改窗口、滚轮缩放平移、键盘操作；编辑用 `FScopedTransaction` 包裹 |
+| `HodgeAbilityEditorTests` | `Hodge.Editor.DefinitionWorkflow`：加载 `DA_Attack_5` 的内存副本，测增删改 / 撤销重做 / Seek / 预览姿势变化 / 终点无活动窗口 |
+
+**共用求值器**：编辑器与运行时都用 `UHodgeTimelineEvaluator`（纯静态、无时钟、无副作用），所以"编辑器里看到的窗口"与"运行时走进的窗口"是同一套逻辑 —— 这正是它值得从 GAS 里拆出来的原因。
+
+**边界**：只支持单 Section 的正向技能；不模拟 GAS 激活、命中、网络与位移。
+
 ---
 
 ## 7. 当前进度
@@ -1276,6 +1384,12 @@ AHodgeHUD（UCLASS(Config=Game)）
 | **HUD 换代** | `AHodgeHUDBase` 删除 → `AHodgeHUD`（`UCLASS(Config=Game)`，只做 GHCM 接线 + Debug 列表）；`HUDClass = AHodgeHUD` |
 | **`GameFeatureAction_AddWidget` 复活** | 从整文件注释恢复为完整实现（Layout 创建仍注释） |
 | **UI 设计文档** 🆕 | `Docs/Design/` 新增 6 篇：UI 架构、UIExtension、指示器系统、Lyra UI 文件导读、迁移计划、UMG/Slate 心智模型 |
+| **技能 Definition + 连击系统** 🆕 ✅ | `UHodgeAbilityDefinition`（单段技能）+ `UHodgeComboDefinition`（连招跳转表，补上了此前的 ComboSet 缺口）+ `UHodgeComboComponent`（**已挂到 PlayerState**）+ `UHodgeGameplayAbility_Definition`。见 [§6.20](#620-技能-definition-与连击) |
+| **连击已验证** 🆕 ✅ | 五段连击资产 + 跳转表 + `PawnData.ComboDefinition`；`Docs/Validation/definition-combo-2026-09-28.md`：两目标构建、PIE 14 项、Listen Server 23/19、网络模拟 15 项、自动化 7/7 |
+| **独立技能编辑器** 🆕 ✅ | `Source/HodgeAbilityEditor/`（Editor 模块）：双击 `UHodgeAbilityDefinition` 打开，6 面板 + 蒙太奇预览 + 自绘时间轴轨道。见 [§6.22](#622-技能编辑器) |
+| **装备系统四件套** 🆕 ⏸️ | `Equipment/`：Definition / Instance / ManagerComponent / WeaponInstance（Lyra 移植，编译通过、**未挂载**）。见 [§6.21](#621-装备系统) |
+| **时间轴求值器** 🆕 | `UHodgeTimelineEvaluator`：纯静态、无副作用，运行时与编辑器共用；配套 `Hodge.Timeline.SharedEvaluator` 测试 |
+| **仇远武器模型** | `Content/Wuwa/Weapon/` 骨骼 + 材质修复完成（无动画） |
 | **相机系统** | `Camera/` 7 类完整移植；模式资产 `CM_ThirdPerson` / `CM_ThirdPerson_Death`，委托由 HeroComponent 绑定（默认偏移改由蓝图曲线提供） |
 | **输入框架** | `UHodgeInputComponent`（`DefaultInputComponentClass` 已指向它）+ InputConfig + HeroComponent 绑定 + 额外输入增删（❓ 资产配置待验证） |
 | **移动组件 / 动画实例** | `UHodgeCharacterMovementComponent` + `UHodgeAnimInstance` |
@@ -1297,6 +1411,9 @@ AHodgeHUD（UCLASS(Config=Game)）
 | 🔴 P0 | **让 UI 真正出画面** | 需引入 **CommonGame**（`UGameUIManagerSubsystem` / `GameUIPolicy` / `PrimaryGameLayout` / `UCommonLocalPlayer`）才能复活 24 个待复活文件；并解注释 `_AddWidget` 里的 `PushContentToLayer_ForPlayer` |
 | 🟠 P1 | **伤害系统补维度** | `DamageExecution` 目前只看 BaseDamage × 距离 / 物理材质衰减；缺防御、暴击、`DamageType.*` 分支 |
 | 🟠 P1 | **恢复下蹲输入** | `HodgeHeroComponent` 里 Crouch 的 `BindNativeAction` 被临时注释（函数体保留），动画 / UI 就绪后需接回 |
+| 🟠 P1 | **挂载装备系统** | 四件套已编译但零挂载：先定 ManagerComponent 挂在哪（建议 `AHodgeCombatCharacter`），再建 Definition 资产验证"武器挂手 + AbilitySet 授予 + 撤销归零" |
+| 🟠 P1 | **清理旧 `BasicAttack`** | 已被 Definition 链路取代，但类与 `AttackSteps` 仍在（零引用）。保留会形成两套连招模型 |
+| 🟠 P1 | **连击网络 B / 历史窗口** | 第一版不做历史窗口补偿；组合触发 B、Section 跳转 / 循环、图形编辑器均未包含 |
 | 🟠 P1 | **淘汰 / 击杀消息** | `UHodgeHealthComponent::HandleOutOfHealth` 里 Elimination / Verb Message 广播整段注释 |
 | 🟠 P1 | **敌人 ASC** | 先定 ASC 所有者（PlayerState 还是 Character），再验服务器伤害目标与远端状态 |
 | 🟠 P1 | **建立独立 Log Category** | 全部用 `LogTemp`（还靠 `[HODGE-DBG]` 临时日志），`HodgeLogChannels.h` 不存在 |
@@ -1331,11 +1448,12 @@ AHodgeHUD（UCLASS(Config=Game)）
   ├─ AbilitySet 引入 GrantedHandles（可撤销、可防重）
   └─ 接上 Cue 路径 Observer + 淘汰/击杀消息
 
-阶段 C（可与 B 并行）：UI 落地
+阶段 C（可与 B 并行）：UI 与装备落地
   ├─ 引入 CommonGame → 复活 24 个待复活文件（UIManagerSubsystem / SettingScreen / ...）
   ├─ 解注释 _AddWidget 的 PushContentToLayer_ForPlayer → 前端 Layout 能出画面
   ├─ 用 UIExtension 扩展点挂 HUD 控件（IndicatorSystem 已可直接使用）
-  └─ 恢复下蹲输入
+  ├─ 挂载 EquipmentManagerComponent → 第一个装备 Definition → 武器挂手
+  └─ 恢复下蹲输入 + 清理旧的 BasicAttack
 
 阶段 D：联机验证 + 内容层
   ├─ Dedicated Server + 2 Client 验证同步（需先补 Server Target）
@@ -1482,7 +1600,7 @@ ExperienceComponent->CallOrRegister_OnExperienceLoaded(...)
 | `Hodge.DumpLoadedAssets` | 列出 AssetManager 常驻内存的所有资源（查内存泄漏） |
 | `Hodge.chaos.ExperienceDelayLoad.MinSecs 2` | 人为延迟 Experience 加载 2 秒 |
 | `Hodge.chaos.ExperienceDelayLoad.RandomSecs 3` | 随机延迟 0~3 秒 |
-| `Automation RunTests Hodge.Timeline` | 跑 Timeline 的 3 个自动化测试（也可在编辑器 Session Frontend → Automation 里点） |
+| `Automation RunTests Hodge.` | 跑全部项目自动化（含 `Hodge.Combo.DefinitionGrant` / `GraphValidation` / `SessionRules` / `MontageDuration`、`Hodge.Timeline.SharedEvaluator`、`Hodge.Editor.DefinitionWorkflow`；也可在 Session Frontend → Automation 里点） |
 
 ### 10.2 启动参数
 
@@ -1528,6 +1646,10 @@ ExperienceComponent->CallOrRegister_OnExperienceLoaded(...)
 | 移动取消是否触发 | `UHodgeAbilityTask_WaitMoveCancel::Evaluate()`（看双信号哪一半没满足） |
 | 死亡流程走到哪 | `UHodgeHealthComponent::StartDeath()` / `FinishDeath()` / `OnRep_DeathState()` |
 | **伤害为什么是 0** | `UHodgeDamageExecution::Execute_Implementation()`，断点看 `DamageInteractionAllowedMultiplier`（当前恒 0） |
+| 连招选了哪条边 | `UHodgeComboComponent::SelectTransition()`（看窗口与 Required / Blocked 源标签、优先级） |
+| 输入有没有被缓冲 | `UHodgeComboComponent::InputPressed()`（单槽 + 0.3 秒过期） |
+| 切段是否被授权 | `UHodgeComboComponent::IsAuthorized()` / `TryTransition()`（失败会回 `Entry`） |
+| 武器有没有挂上 | `UHodgeEquipmentManagerComponent::EquipItem()` → `AddEntry()`（**当前无调用者**，断点不会命中） |
 
 ### 10.5 推荐实验
 
@@ -1567,6 +1689,9 @@ ExperienceComponent->CallOrRegister_OnExperienceLoaded(...)
 | **`_AddWidget` 不出 Layout** 🟠 | `PushContentToLayer_ForPlayer` 的 include 与调用仍注释 → `Layout[]` 不会真正创建控件 | `GameFeatureAction_AddWidget.cpp` |
 | **下蹲被临时屏蔽** 🟠 | HeroComponent 里 Crouch 的 `BindNativeAction` 注释（`ToggleCrouch` / `bCanCrouch` 保留）；`HodgeLocomotionLab` 显式 `bCanCrouch=false` | `HodgeHeroComponent.cpp`、`HodgeLocomotionLab.cpp` |
 | **CommonUI 输入未接线** 🟠 | ini 里没有 CommonUI 按键映射（如 `UI.Action.Escape`），也没配 `GameViewportClientClassName` | `Config/*.ini` |
+| **装备系统未挂载** 🟠 | `Equipment/` 四件套无 `CreateDefaultSubobject`，且非 `BlueprintSpawnableComponent`；`PickBestAnimLayer` 是空壳、Cosmetics 动画层已注释 | `Source/Hodgepodge/{Public,Private}/Equipment/` |
+| **旧 `BasicAttack` 成孤儿** 🟠 | 类与 `AttackSteps` 仍在但零引用（已被 Definition + Combo 取代），属待清理的双模型残留 | `AbilitySystem/Abilities/HodgeGameplayAbility_BasicAttack.*` |
+| **连击不含命中 / 伤害** 🟠 | `definition-combo` 验证只覆盖连招流转与网络；命中判定从未接入（叠加伤害倍率恒 0） | `Docs/Validation/definition-combo-2026-09-28.md` |
 | **Cue 路径增删没生效** | Observer 注册行是注释；`OnGameFeatureUnregistering` 与 `InitializeGameplayCueManager()` 空实现 | `HodgeGameFeaturePolicy.cpp:39`、`HodgeAssetManager.cpp` |
 | **`DefaultPawnClass` 回退是基类** | GameMode 构造里仍是 `AHodgeCharacterBase`（没有 PawnExtensionComponent）→ 若 `PawnData->PawnClass` 也没配，`SetPawnData` 静默跳过 | `HodgeGameModeBase.cpp` |
 | **敌人没有 ASC 初始化** | `AHodgeEnemyCharacter` 只设置 `AutoPossessAI`，没有 ASC 创建 / 关联 → 服务器伤害目标与远端状态无从谈起 | `HodgeEnemyCharacter.cpp` |
@@ -1646,6 +1771,12 @@ Source/Hodgepodge/Private/Component/HodgeHealthComponent.cpp               生�
 Source/Hodgepodge/Public/UI/Extension/UIExtensionSystem.h                  UI 扩展点系统（Lyra UIExtension 搬入）★★
 Source/Hodgepodge/Private/UI/IndicatorSystem/HodgeIndicatorManagerComponent.cpp  指示器系统（可直接用）★
 Source/Hodgepodge/Private/Core/HUD/HodgeHUD.cpp                            HUD 换代（GHCM 接线 + Debug 列表）★
+Source/Hodgepodge/Public/Data/HodgeAbilityDefinition.h                     单段技能数据资产 ★★★
+Source/Hodgepodge/Public/Data/HodgeComboDefinition.h                       连招跳转表 ★★★
+Source/Hodgepodge/Private/Component/HodgeComboComponent.cpp                连击协调器（已挂 PlayerState）★★★
+Source/Hodgepodge/Public/AbilitySystem/HodgeTimelineEvaluator.h            纯静态时间轴求值器（运行时/编辑器共用）★★
+Source/Hodgepodge/Private/Equipment/HodgeEquipmentManagerComponent.cpp     装备容器（⏸ 未挂载）★★
+Source/HodgeAbilityEditor/Private/HodgeAbilityEditorToolkit.cpp            技能编辑器主体 ★★
 Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_BasicAttack.h  普攻连招编排 ★★★
 Source/Hodgepodge/Public/Data/HodgeAbilityTimeline.h                       逻辑时间轴数据资产 ★★★
 Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeAbilityTask_PlayTimeline.cpp  时间轴驱动（窗口 / Point）★★★
@@ -1763,7 +1894,23 @@ UAttributeSet
 
 UGameplayAbility
 └── UHodgeGameplayAbility                （Ability 基类）
-    └── UHodgeGameplayAbility_BasicAttack（五段连招编排）
+    ├── UHodgeGameplayAbility_BasicAttack（旧：AttackSteps 五段，⏸ 已无引用）
+    └── UHodgeGameplayAbility_Definition （新：由 Definition + Combo 驱动）
+
+UPrimaryDataAsset
+├── UHodgeAbilityDefinition              （单段技能：Montage / PlayRate / Blend / Timeline）
+├── UHodgeComboDefinition                （连招跳转表，引用 DataTable）
+└── UHodgeAbilityTimeline                （逻辑时间轴：Window / Point 事件表）
+
+UPawnComponent
+├── UHodgePawnExtensionComponent         （Feature ①）
+├── UHodgeHeroComponent                  （Feature ②）
+├── UHodgeComboComponent                 （连击协调器，挂 PlayerState）
+└── UHodgeEquipmentManagerComponent      （装备容器，⏸ 未挂载）
+
+UObject（可复制）
+└── UHodgeEquipmentInstance
+    └── UHodgeWeaponInstance             （武器：设备属性 / 开火时间 / 死亡清理）
 
 UAbilityTask
 ├── UHodgeAbilityTask_PlayTimeline       （驱动 HodgeAbilityTimeline：窗口 / Point）
@@ -1835,6 +1982,8 @@ UUserWidget
 | [`Docs/Design/`](Docs/Design) | 4 篇设计文档：`ability-timeline.md`（时间轴全量设计）、`ability-timeline-stage1.md`（第一阶段事件模型）、`ability-definition-combo-graph.md`（单段技能 Definition 与连招跳转表）、`ability-definition-combo-implementation-plan.md` | 时间轴已实现，见 [§6.17](#617-战斗系统普攻与逻辑时间轴)；Definition / 连招图仍是设计草案 |
 | [`Docs/Validation/`](Docs/Validation) | 2 篇 PIE 验证记录：`basic-attack-2026-09-24.md`、`timeline-2026-09-24.md` | 复现步骤与断言清单，改战斗代码后照跑一遍 |
 | [`Docs/Design/` 的 UI 系列](Docs/Design) | 6 篇：`hodge-ui-architecture`、`ui-extension-system`、`indicator-ui-system`、`lyra-ui-file-guide`（文件导读）、`lyra-ui-migration-plan`（每个待复活文件缺什么）、`umg-slate-mental-model` | 见 [§6.19](#619-ui-系统)；动 UI 前先读文件导读与迁移计划 |
+| [`Docs/Design/` 的技能与装备](Docs/Design) | `ability-definition-combo-graph`（连招图设计）、`ability-definition-combo-implementation-plan`、`ability-definition-editor`（编辑器，已实现说明）、`equipment-weapon-system`（装备，**实施草案、未完成**） | 见 [§6.20](#620-技能-definition-与连击) / [§6.21](#621-装备系统) / [§6.22](#622-技能编辑器) |
+| [`CODE_REVIEW.md`](CODE_REVIEW.md) | 96 项评审**标准**（C++ / 生命周期 / GAS / 网络 / Timeline / 命中 / 动画 / 性能 / 交付） | 是标准清单，**不是"代码已通过审查"的声明** |
 | [`Docs/AI_DEVELOPMENT.md`](Docs/AI_DEVELOPMENT.md) | AI 开发与验证流程（构建命令、验证边界） | §4.2 构建命令的来源 |
 
 ### 12.6 AI 辅助开发工具链
@@ -1870,4 +2019,4 @@ NativeMCPPort=3016 / ListenPorts=8116，默认只监听回环且要求能力令�
 
 ---
 
-*本 README 基于 UE 5.5 + Hodgepodge 提交 `6eec094` 整理（工作区干净，编译已验证）。项目处于活跃的 Lyra 化重构中，**[§7 进度](#7-当前进度) 与 [`Docs/KnowledgeBase`](Docs/KnowledgeBase/README.md) 请优先关注并定期更新**。战斗结论以 [`Docs/Validation/`](Docs/Validation) 为准；UI 迁移状态以 [`Docs/Design/lyra-ui-migration-plan.md`](Docs/Design/lyra-ui-migration-plan.md) 为准。文中"已接通"指源码与配置已存在，未逐一重跑 PIE。*
+*本 README 基于 UE 5.5 + Hodgepodge 提交 `abb9224` 整理（工作区有 2 个 `CodexText` 资产改动；Editor 构建已验证）。项目处于活跃的 Lyra 化重构中，**[§7 进度](#7-当前进度) 与 [`Docs/KnowledgeBase`](Docs/KnowledgeBase/README.md) 请优先关注并定期更新**。连击结论以 [`Docs/Validation/definition-combo-2026-09-28.md`](Docs/Validation/definition-combo-2026-09-28.md) 为准；UI 迁移以 [`lyra-ui-migration-plan.md`](Docs/Design/lyra-ui-migration-plan.md) 为准。文中"已接通"指源码与配置已存在，本轮未重跑 PIE。*

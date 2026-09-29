@@ -1,10 +1,10 @@
 # Hodgepodge 本地知识库
 
-> 人工核对日期：2026-09-28。对象：本仓库 HEAD `6eec094`，工作区干净（无未提交修改）。此知识库是项目本地文档，不依赖在线服务。
+> 人工核对日期：2026-09-29。对象：本仓库 HEAD `abb9224`，工作区有 2 个 `CodexText` 资产改动（未提交）。此知识库是项目本地文档，不依赖在线服务。
 
 ## 从这里开始
 
-Hodgepodge 是 UE 5.5 的个人动作 RPG 框架工程，正在将角色、GAS、输入、相机**与 UI** 迁移到 Lyra 式组件协作架构。当前最重要的事情是打通"能打中并掉血"的战斗闭环，以及让 UI 真正出画面，而不是扩展开放世界或后端。
+Hodgepodge 是 UE 5.5 的个人动作 RPG 框架工程，正在将角色、GAS、输入、相机**与 UI** 迁移到 Lyra 式组件协作架构。当前最重要的事情是**打通"打中掉血"的战斗闭环**（连招已能跑完但伤害恒 0），其次让 UI 出画面、让装备系统挂上，而不是扩展开放世界或后端。
 
 这套文档区分四类内容：
 
@@ -49,6 +49,7 @@ Hodgepodge 是 UE 5.5 的个人动作 RPG 框架工程，正在将角色、GAS�
 - [2026-09-19 更新记录：AbilityTimeline 实现与验证边界](22-update-2026-09-19.md)
 - [2026-09-22 更新记录：移动取消后摇的消费方与输入意图信号](23-update-2026-09-22.md)
 - [2026-09-28 更新记录：Lyra UI 源码迁移落地与战斗管线核对](24-update-2026-09-28.md)
+- [2026-09-29 更新记录：连击系统、技能编辑器与装备系统源码落地](25-update-2026-09-29.md)
 - [项目 AI 开发流程](../AI_DEVELOPMENT.md)
 - [项目开发约定](../../AGENTS.md)
 
@@ -68,9 +69,21 @@ Hodgepodge 是 UE 5.5 的个人动作 RPG 框架工程，正在将角色、GAS�
 
 ## 最新状态提示
 
+2026-09-29 本轮：**连击系统已换代为 Definition + Combo 并验证通过，技能编辑器可用，装备四件套落地但未挂载**（详见 [本轮记录](25-update-2026-09-29.md)）。
+
+- **连招主链路**：`UHodgeAbilityDefinition`（单段技能）+ `UHodgeComboDefinition`（DataTable 跳转表）+ `UHodgeComboComponent`（**已挂 `AHodgePlayerState`**）+ `UHodgeGameplayAbility_Definition`。**长期缺口 `UHodgeComboSet` 至此由 ComboDefinition 填上**。验证：两目标构建 + PIE 14 项 + Listen Server 23/19 + 网络模拟 15 项 + 自动化 7/7（**不含命中与伤害**）。
+- **旧 `UHodgeGameplayAbility_BasicAttack` 已成孤儿**（`DA_Pover` 已移除授予、C++ 零引用）→ 两套连招模型并存，按旧章节接新东西会踩坑。
+- **技能编辑器**：新增独立 Editor 模块 `Source/HodgeAbilityEditor/`（9 文件），双击 `UHodgeAbilityDefinition` 打开，六面板 + 蒙太奇预览 + 自绘时间轴轨道；编辑器与运行时共用 `UHodgeTimelineEvaluator`。
+- **装备系统**：`Equipment/` 四件套（Lyra 移植）编译通过但**零挂载**（无 `CreateDefaultSubobject`、非 `BlueprintSpawnableComponent`）。
+- 其它：仇远武器模型（骨骼+材质，**无动画**）、根目录新增 `CODE_REVIEW.md`（96 项评审**标准**，不是"已通过"声明）。
+
+> ⚠️ **边界**：本轮**未 PIE**。🔴 **伤害倍率仍恒 `0.0f`** —— 连招能完整跑完，但打不掉血，这是"战斗闭环"唯一的最大缺口。装备未挂载、装备 UI 与 Cosmetics 动画层仍是空壳。
+
 2026-09-28 本轮：**Lyra UI 源码已整体迁移并编译，战斗推进到"能打但不掉血"**（详见 [本轮记录](24-update-2026-09-28.md)）。`UI/` 新增 **81 个文件**（41 `.h` + 40 `.cpp`）并启用 **CommonUI**；`AHodgeHUDBase` 删除改为 `AHodgeHUD`；`GameFeatureAction_AddWidget` 从整文件注释恢复为完整实现；Crouch 输入被临时屏蔽。**其中 24 个文件"待复活"** —— 依赖不满足的代码逐行注释保留，文件头带 `[UI-MIGRATION-PENDING]` 标记，复活需 CommonGame / GameSettings / CommonUser。
 
-> ⚠️ **边界**：本轮**未 PIE**。UI 目前不会出画面（`PrimaryGameLayout` / `GameUIPolicy` 缺依赖，`_AddWidget` 的 `PushContentToLayer_ForPlayer` 仍注释）。战斗侧：`UHodgeGameplayAbility_BasicAttack` 五段连招已有 PIE 验证（09-24 两份验证记录），`UHodgeHealthComponent` 已挂载、死亡流程已串联；🔴 **但 `HodgeDamageExecution` 的敌我倍率恒 `0.0f`，打中也不掉血** —— 这是当前"战斗闭环"最大的缺口。
+> ⚠️ **边界**：本轮**未 PIE**。UI 目前不会出画面（`PrimaryGameLayout` / `GameUIPolicy` 缺依赖，`_AddWidget` 的 `PushContentToLayer_ForPlayer` 仍注释）。战斗侧：`UHodgeHealthComponent` 已挂载、死亡流程已串联；🔴 **但 `HodgeDamageExecution` 的敌我倍率恒 `0.0f`，打中也不掉血** —— 这是当前"战斗闭环"最大的缺口。
+>
+> 📌 该轮记录的攻击链路（`UHodgeGameplayAbility_BasicAttack` 五段连招，09-24 验证）**已被 2026-09-29 的 Definition + Combo 链路取代**，旧类成孤儿。
 
 2026-09-22 本轮：**"移动取消后摇"的消费方已落地源码，但未验证**（详见 [本轮记录](23-update-2026-09-22.md)）。新增两个 loose tag `Status.Attack.Cancel` / `.Move`（授权语义，由 Timeline 的 Window 授予）；新增 AbilityTask `UHodgeAbilityTask_WaitMoveCancel`，把"窗口开放（Timeline）+ 玩家有移动意图（输入层）"两个变化驱动信号合流为一次 `OnMoveCancel`；`UHodgeHeroComponent` 增加"移动意图"信号（`HasMoveIntent` / `GetMoveIntent` / `OnMoveIntentChanged`），`Input_Move` 记意图、新增 `Input_MoveStopped` 绑到 `Completed`/`Canceled` 清零。CodexText 实验区继续精修（Overlay、左手握持、步幅/地形 IK），`Build.cs` 编辑器块新增 `AnimationWarpingRuntime`/`AnimationWarpingEditor`。
 
@@ -88,7 +101,7 @@ Hodgepodge 是 UE 5.5 的个人动作 RPG 框架工程，正在将角色、GAS�
 
 > ✅ **"没有 Attack 标签"的旧结论已作废**：`HodgeGameplayTags.h/.cpp` 现已集中声明 `Status.Attack`（`.Windup` / `.Active` / `.Recovery`）与 `GameplayEvent.Attack`（`.Test` / `.Timeline.End` / `.Interrupted`）。**仍不存在**的是旧设计的 `Attack.Entry.*` / `Attack.Transition.*` / `Status.AttackMode.*`，以及 ComboWindow / HitCheck / JumpSection / Phase 系列事件标签。
 
-剩余重点：🔴 伤害倍率恒 0（打不掉血）；UI 出画面（需 CommonGame）；AbilitySet 授予句柄与撤销；Cue 路径注册与预加载；敌人 ASC；专服启动；时间轴的**重入类时序**与跨端、时钟倒退；`UHodgeComboSet`（连击数据仍不存在，但 `BasicAttack` 已能用 `AttackSteps` 编排五段）。
+剩余重点：🔴 伤害倍率恒 0（连招能跑完但打不掉血，是**唯一的最大缺口**）；装备系统挂载（武器挂手 + 装备 UI + Cosmetics 动画层）；清理孤儿 `UHodgeGameplayAbility_BasicAttack`；UI 出画面（需 CommonGame）；AbilitySet 授予句柄与撤销（可参照装备 ManagerComponent 的写法）；Cue 路径注册与预加载；敌人 ASC；专服启动；时间轴的**重入类时序**与跨端、时钟倒退；连招的**组合触发 B、Section 跳转 / 循环、图形编辑器**（均未包含）。
 
 不要把 Lyra 参考文档里的 ShooterCore、FrontEnd 地图当成本项目现有资源。CommonUI 现在**已启用**，但 Lyra 的 `GameUIPolicy` / `PrimaryGameLayout` / 前端地图资产**都还没有** —— 别把"插件启用"当成"前端流程可用"。
 

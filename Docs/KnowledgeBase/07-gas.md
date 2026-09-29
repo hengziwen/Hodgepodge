@@ -47,16 +47,20 @@ HodgeGameplayAbility::MakeEffectContext 调用父类创建句柄后，尝试提�
 
 当前自定义 Context 的 NetSerialize 复用父类，额外本地字段不会因此自动复制。Iris 路径也转发父类序列化；将来加入必须联网的自定义字段时，需要同步设计序列化和验证。
 
-## 攻击能力、时间轴与 ComboSet（时间轴已验证；攻击 Ability 已有；连击数据仍不存在）
+## 攻击能力、时间轴与连招（时间轴已验证；连招已由 Definition + Combo 实现并验证）
 
-**🆕 2026-09-28 更新**：`UHodgeGameplayAbility_BasicAttack` 已成为时间轴的**正式消费方** —— 五段连招（`AttackSteps` = Montage + Timeline），并在 `Docs/Validation/basic-attack-2026-09-24.md` 中通过 PIE 验证（单人 12 项 + Listen Server 客户端 36 / 主机 16 项，**不含命中与伤害**）。同一个 Ability 也消费了 `WaitMoveCancel`（见下）。详见 [本轮记录](24-update-2026-09-28.md)。
+**🆕 2026-09-29 更新（当前主链路）**：连招已换成 **Definition + Combo** 模型 —— `UHodgeAbilityDefinition`（单段技能）+ `UHodgeComboDefinition`（DataTable 跳转表）+ `UHodgeComboComponent`（**已挂 `AHodgePlayerState`**）+ `UHodgeGameplayAbility_Definition`。五段连击资产在 `/Game/CodexText/DefinitionCombo/`，验证见 `Docs/Validation/definition-combo-2026-09-28.md`（两目标构建、PIE 14 项、Listen Server 23/19、网络模拟 15 项、自动化 7/7，**不含命中与伤害**）。**`UHodgeComboSet` 这个长期缺口至此由 `ComboDefinition` 填上。**
 
-**当前事实（HEAD `6eec094`）**：时间轴按**统一事件模型**（单一 `Events[]`，`Kind = Window / Point`）实现 —— `UHodgeAbilityTimeline`（`UPrimaryDataAsset`）只描述"什么时候发生什么"，`UHodgeAbilityTask_PlayTimeline` 是驱动者。数据校验规则与调度器（窗口进入/退出、自然结束清理、起点接续不重放历史）已在编辑器与 PIE 实测；**窗口的 GE 施加/移除、Point 与 `Timeline.End` 派发、中途取消的清理均已补测通过**（GE 实例数 `0 → 1 → 0`），另有 3 项自动化测试（`HodgeAbilityTimelineTests.cpp`）。详见 [2026-09-19 记录](22-update-2026-09-19.md) 与 [第一阶段设计](../Design/ability-timeline-stage1.md)。
+⚠️ 旧链路 `UHodgeGameplayAbility_BasicAttack`（`AttackSteps` = Montage + Timeline，曾通过 `basic-attack-2026-09-24.md` 验证）**已成孤儿**：`DA_Pover` 已移除该授予、C++ 零引用，属待清理。别再按旧章节接新东西。详见 [本轮记录](25-update-2026-09-29.md)。
+
+**当前事实（HEAD `abb9224`）**：时间轴按**统一事件模型**（单一 `Events[]`，`Kind = Window / Point`）实现 —— `UHodgeAbilityTimeline`（`UPrimaryDataAsset`）只描述"什么时候发生什么"，`UHodgeAbilityTask_PlayTimeline` 是驱动者；求值逻辑另抽成 **`UHodgeTimelineEvaluator`**（纯静态、无时钟无副作用，**运行时与编辑器共用**）。数据校验规则与调度器（窗口进入/退出、自然结束清理、起点接续不重放历史）已在编辑器与 PIE 实测；**窗口的 GE 施加/移除、Point 与 `Timeline.End` 派发、中途取消的清理均已补测通过**（GE 实例数 `0 → 1 → 0`），自动化测试有 `HodgeAbilityTimelineTests.cpp` 与 `HodgeTimelineEvaluatorTests.cpp`。详见 [2026-09-19 记录](22-update-2026-09-19.md) 与 [第一阶段设计](../Design/ability-timeline-stage1.md)。
 
 - `UHodgeAbilityTimeline`：`Duration` + 混排 `Events`（`FHodgeTimelineEvent`，`Kind = Window / Point`，含 `EHodgeTimelineEventNetPolicy`）；字段按 Kind 用 `EditConditionHides` 拆开（`WindowTag` / `WindowEffectClass` 与 `PointEventTag` / `PointEffectClass`）；编辑器校验按 Kind 分流，`PostEditChangeProperty` 只做 `StableSort`。**没有 Montage 字段、没有 `GetActivePhases`、没有 Bundle 收集**。
 - `UHodgeAbilityTask_PlayTimeline`：`bTickingTask = true`，用世界时间差累加逻辑时间；`CollectNodes` + `SortNodes`（`Time → NodeKind → Priority → EventIndex`）是初始化与 Tick 共用的统一 Scheduler；Window 进入/退出加/减 **non-replicated loose tag** 并按需施加 Infinite GE，Point 用 `HandleGameplayEvent` 派发 `PointEventTag` 并按需施加一次性 GE；`StopTimeline(NaturalEnd)` 与 `OnDestroy` 都走 `ClearAllWindowState()`（幂等）。`Timeline.End` / `Interrupted` 系统事件复用同一派发通道。
 
-**仍不存在**：`UHodgeComboSet`、`UHodgeAssetManager::PreloadPrimaryAssetBundles`、`HodgeGameplayAbility::PreloadPrimaryAssetsOnGrant`，以及旧设计的 `Attack.Entry.*` / `Attack.Transition.*` / `Status.AttackMode.*` 与 ComboWindow / HitCheck / JumpSection / Phase 系列事件标签。连击与预加载仍需从零实现。
+**仍不存在**：`UHodgeAssetManager::PreloadPrimaryAssetBundles`、`HodgeGameplayAbility::PreloadPrimaryAssetsOnGrant`（Bundle 预加载），以及旧设计的 `Attack.Entry.*` / `Attack.Transition.*` / `Status.AttackMode.*` 与 ComboWindow / HitCheck / JumpSection / Phase 系列事件标签。连招的**组合触发 B、Section 跳转 / 循环、图形编辑器**也未包含。
+
+（2026-09-29 起 `UHodgeComboSet` 不再属于缺口：连招数据由 `UHodgeComboDefinition` 提供。）
 
 **已存在的攻击相关原生标签**（`HodgeGameplayTags.h/.cpp`，`Status.Attack.*` 阶段标签随 HEAD `77b7dba` 提交，取消窗口标签为工作区未提交新增）：`Status.Attack`、`Status.Attack.Windup`、`Status.Attack.Active`、`Status.Attack.Recovery`（窗口 loose tag，由 Timeline 自动加减）；`Status.Attack.Cancel`、`Status.Attack.Cancel.Move`（**取消窗口** loose tag，语义是"当前允许因移动而结束这次攻击"，与"处于后摇"是两件事）；`GameplayEvent.Attack`、`GameplayEvent.Attack.Test`、`GameplayEvent.Attack.Timeline.End`、`GameplayEvent.Attack.Interrupted`（Point 与系统事件）。它们服务的是时间轴的标签账本；`GA_Attack` 是否已配 `ActivationOwnedTags` 仍属资产层待确认项。
 
@@ -64,7 +68,7 @@ HodgeGameplayAbility::MakeEffectContext 调用父类创建句柄后，尝试提�
 
 **当前完成度**：时间轴已完成实现并通过 PIE 实测 —— 窗口标签进出、**窗口 GE 的施加 / 移除**、**Point 与 `Timeline.End` 事件派发**、自然结束零残留均已验证；**未验证的是重入类时序与跨端**（`EnterWindow` 两道防线、`ExitWindow` 不对称、GE 施加失败补偿、`NetPolicy` 分端、时钟倒退；`Interrupted` 派发分支本阶段无触发者）——中途取消的清理已验证通过，因此仍不能声称攻击闭环可用。
 
-### 移动取消后摇的消费方（2026-09-28：已被 BasicAttack 接入并验证）
+### 移动取消后摇的消费方（2026-09-28：已接入并验证）
 
 `UHodgeAbilityTask_WaitMoveCancel` 把"移动取消后摇"拆成三层职责：**Timeline** 决定允许不允许取消（授权，由 Window 授予 `Status.Attack.Cancel.Move`）；**`UHodgeHeroComponent`** 提供玩家有没有移动意图（输入层的**原始输入量**，不是角色位移）；**攻击 Ability** 决定取消之后怎么结束（第一版是 `EndAbility`）。任务本身只做前两者的合流 —— 窗口 + 意图同时成立时广播 `OnMoveCancel` **一次**，然后自结束；两个信号都变化驱动（`RegisterGameplayTagEvent` + `OnMoveIntentChanged`），不轮询。
 
@@ -79,4 +83,4 @@ HodgeGameplayCueManager 实现了资源管理相关逻辑，DefaultGame.ini 已�
 
 GlobalAbilitySystem 保存世界级授予，并对注册 ASC 应用。调用这些公共方法时仍需检查权威边界，不能把 WorldSubsystem 自动等同于仅服务器执行。
 
-源码：[Ability](../../Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility.cpp)、[BasicAttack](../../Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility_BasicAttack.cpp)、[PlayTimeline](../../Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeAbilityTask_PlayTimeline.cpp)、[WaitMoveCancel](../../Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeAbilityTask_WaitMoveCancel.cpp)、[Timeline 数据资产](../../Source/Hodgepodge/Private/Data/HodgeAbilityTimeline.cpp)、[ASC](../../Source/Hodgepodge/Private/AbilitySystem/HodgeAbilitySystemComponent.cpp)、[Context](../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayEffectContext.cpp)、[AbilitySet](../../Source/Hodgepodge/Private/Data/HodgeAbilitySet.cpp)、[DamageExecution](../../Source/Hodgepodge/Private/AbilitySystem/Executions/HodgeDamageExecution.cpp)、[CombatSet](../../Source/Hodgepodge/Private/AbilitySystem/AttributeSet/HodgeCombatSet.cpp)。
+源码：[Ability](../../Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility.cpp)、[**Ability_Definition（当前主链路）**](../../Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.cpp)、[BasicAttack（孤儿，待清理）](../../Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility_BasicAttack.cpp)、[PlayTimeline](../../Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeAbilityTask_PlayTimeline.cpp)、[WaitMoveCancel](../../Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeAbilityTask_WaitMoveCancel.cpp)、[Timeline 数据资产](../../Source/Hodgepodge/Private/Data/HodgeAbilityTimeline.cpp)、[AbilityDefinition](../../Source/Hodgepodge/Private/Data/HodgeAbilityDefinition.cpp)、[ComboDefinition（跳转表）](../../Source/Hodgepodge/Private/Data/HodgeComboDefinition.cpp)、[ComboComponent](../../Source/Hodgepodge/Private/Component/HodgeComboComponent.cpp)、[TimelineEvaluator](../../Source/Hodgepodge/Public/AbilitySystem/HodgeTimelineEvaluator.h)、[ASC](../../Source/Hodgepodge/Private/AbilitySystem/HodgeAbilitySystemComponent.cpp)、[Context](../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayEffectContext.cpp)、[AbilitySet](../../Source/Hodgepodge/Private/Data/HodgeAbilitySet.cpp)、[DamageExecution](../../Source/Hodgepodge/Private/AbilitySystem/Executions/HodgeDamageExecution.cpp)、[CombatSet](../../Source/Hodgepodge/Private/AbilitySystem/AttributeSet/HodgeCombatSet.cpp)。

@@ -164,6 +164,10 @@
  164: +ClassRedirects=(OldName="/Script/Hodgepodge.HogdeTaggedWidget",NewName="/Script/Hodgepodge.HodgeTaggedWidget")
  165: +ClassRedirects=(OldName="/Script/Hodgepodge.HogdeJoystickWidget",NewName="/Script/Hodgepodge.HodgeJoystickWidget")
  166: +ClassRedirects=(OldName="/Script/Hodgepodge.HodgfeTaggedWidget",NewName="/Script/Hodgepodge.HodgeTaggedWidget")
+ 167: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraWeaponInstance",NewName="/Script/Hodgepodge.HodgeWeaponInstance")
+ 168: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraEquipmentManagerComponent",NewName="/Script/Hodgepodge.HodgeEquipmentManagerComponent")
+ 169: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraEquipmentInstance",NewName="/Script/Hodgepodge.HodgeEquipmentInstance")
+ 170: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraEquipmentDefinition",NewName="/Script/Hodgepodge.HodgeEquipmentDefinition")
 ```
 
 ## DefaultGame.ini
@@ -427,6 +431,18 @@
  212: ; TODO.*
  213: ; -----------------------------------------------------------------------------
  214: +GameplayTagList=(Tag="TODO.GameModeDamageImmunity",DevComment="")
+ 216: +GameplayTagList=(Tag="Combo.Entry",DevComment="Definition combo")
+ 217: +GameplayTagList=(Tag="InputIntent.Attack.Light",DevComment="Definition combo")
+ 218: +GameplayTagList=(Tag="Combo.Light.01",DevComment="Definition combo")
+ 219: +GameplayTagList=(Tag="Combo.Light.02",DevComment="Definition combo")
+ 220: +GameplayTagList=(Tag="Combo.Light.03",DevComment="Definition combo")
+ 221: +GameplayTagList=(Tag="Combo.Light.04",DevComment="Definition combo")
+ 222: +GameplayTagList=(Tag="Combo.Light.05",DevComment="Definition combo")
+ 223: +GameplayTagList=(Tag="Ability.Attack.Light.01",DevComment="Definition combo")
+ 224: +GameplayTagList=(Tag="Ability.Attack.Light.02",DevComment="Definition combo")
+ 225: +GameplayTagList=(Tag="Ability.Attack.Light.03",DevComment="Definition combo")
+ 226: +GameplayTagList=(Tag="Ability.Attack.Light.04",DevComment="Definition combo")
+ 227: +GameplayTagList=(Tag="Ability.Attack.Light.05",DevComment="Definition combo")
 ```
 
 ## DefaultInput.ini
