@@ -144,7 +144,7 @@ struct FHodgeTimelineEvent
 /**
  * 技能逻辑时间轴。
  *
- * 逻辑时间的唯一基准是 Duration；StartTime == Duration 的 Point 也会被正常派发。
+ * 蒙太奇模式以调用方的 Montage 为时长和时钟来源；独立模式使用 Duration。
  *
  * 本阶段不提供"查询某时刻处于哪些窗口"的 API：它唯一的消费者曾是初始化，
  * 而初始化现在改走与 Tick 共用的节点收集；真要判断当前状态，直接查 ASC 上的 loose tag 更准。
@@ -155,8 +155,12 @@ class HODGEPODGE_API UHodgeAbilityTimeline : public UPrimaryDataAsset
 	GENERATED_BODY()
 
 public:
-	// 逻辑总时长（秒）。逻辑时间的唯一基准，与动画长度是"对齐关系"而非绑定关系。
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ClampMin=0.01, Units="s"))
+	// Definition 使用蒙太奇时长；独立 Timeline 保留手动时长，兼容已有资产。
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	bool bUseMontageDuration = false;
+
+	// 仅用于独立计时；蒙太奇模式忽略此值，不需要同步动画长度。
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ClampMin=0.01, Units="s", EditCondition="!bUseMontageDuration", EditConditionHides))
 	float Duration = 1.0f;
 
 	// 条目列表（Window 与 Point 混排）。
@@ -164,8 +168,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(TitleProperty=EventID))
 	TArray<FHodgeTimelineEvent> Events;
 
-	// 编辑期与运行期共用的安全校验；失败时在任何窗口或事件执行前拒绝播放。
-	bool ValidateForPlayback(TArray<FText>& OutErrors) const;
+	// 蒙太奇模式必须传入动画长度；独立模式默认使用手动时长。
+	bool ValidateForPlayback(TArray<FText>& OutErrors, float DurationOverride = -1.f) const;
 
 #if WITH_EDITOR
 	//~Begin UObject 接口重写
@@ -176,4 +180,7 @@ public:
 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent) override;
 	//~End UObject 接口重写
 #endif
+
+private:
+	bool ValidateEntries(TArray<FText>& OutErrors, float EffectiveDuration, bool bCheckDuration) const;
 };

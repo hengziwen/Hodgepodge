@@ -24,11 +24,14 @@
 #include "Abilities/Tasks/AbilityTask.h"
 #include "GameplayEffectTypes.h"
 #include "GameplayTagContainer.h"
+#include "AbilitySystem/HodgeTimelineEvaluator.h"
 #include "Templates/SubclassOf.h"
 
 #include "HodgeAbilityTask_PlayTimeline.generated.h"
 
 class UGameplayEffect;
+class UAnimInstance;
+class UAnimMontage;
 class UHodgeAbilityTimeline;
 struct FHodgeTimelineEvent;
 
@@ -54,34 +57,6 @@ enum class EHodgeTimelineStopReason : uint8
 };
 
 /**
- * 把一条时间轴展开之后的"节点"。
- *
- * 枚举值顺序 = 同一时刻的执行顺序，这是设计的一部分而不是巧合：
- * Window 是左闭右开区间 [StartTime, EndTime)，因此 EndTime 时刻该窗口已经退出（先 Exit）、
- * StartTime 时刻该窗口已经生效（后 Enter），而 Point 应当看到该时刻的完整状态（最后派发）。
- *
- * 放在头文件里，是因为 CollectNodes / SortNodes 要作为成员函数被 InitializeTimeline
- * 与 AdvanceTimeline 共用 —— 那正是"统一 Scheduler"的落点。
- */
-enum class EHodgeTimelineNodeKind : uint8
-{
-	WindowEnd = 0,
-	WindowBegin = 1,
-	PointFire = 2
-};
-
-struct FHodgeTimelineNode
-{
-	// 节点发生的时刻。恢复"起点处已生效的窗口"时取该 Window 的 StartTime，以便与正常推进同序。
-	float Time = 0.f;
-
-	EHodgeTimelineNodeKind Kind = EHodgeTimelineNodeKind::PointFire;
-
-	// 对应 TimelineAsset->Events 的下标。
-	int32 EventIndex = INDEX_NONE;
-};
-
-/**
  * 播放技能逻辑时间轴。
  */
 UCLASS()
@@ -101,7 +76,7 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category="Hodge|Ability|Tasks",
 		meta=(HidePin="OwningAbility", DefaultToSelf="OwningAbility",
-		      BlueprintInternalUseOnly="TRUE"))
+			BlueprintInternalUseOnly="TRUE"))
 	static UHodgeAbilityTask_PlayTimeline* PlayTimeline(
 		UGameplayAbility* OwningAbility,
 		UHodgeAbilityTimeline* Timeline,
@@ -114,6 +89,19 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category="Hodge|Ability|Tasks")
 	void StopTimeline(EHodgeTimelineStopReason Reason);
+
+	static UHodgeAbilityTask_PlayTimeline* PlayMontageTimeline(UGameplayAbility* OwningAbility,
+	                                                           UHodgeAbilityTimeline* Timeline,
+	                                                           UAnimInstance* AnimInstance, UAnimMontage* Montage,
+	                                                           int32 InstanceID);
+	FGameplayTagContainer GetActiveWindowTags() const;
+	DECLARE_MULTICAST_DELEGATE(FWindowsChanged);
+	DECLARE_MULTICAST_DELEGATE_OneParam(FFinished, EHodgeTimelineStopReason);
+	DECLARE_MULTICAST_DELEGATE_OneParam(FPoint, FGameplayTag);
+	FWindowsChanged OnWindowsChanged;
+	FFinished OnFinished;
+	FPoint OnPoint;
+	void RefreshMontageClock();
 
 	// 是否已经停止推进。已销毁必然是已停止，反之不成立。
 	UFUNCTION(BlueprintPure, Category="Hodge|Ability|Tasks")
@@ -135,7 +123,7 @@ protected:
 	// 收集时间节点。bInitializing 为 true 时只收集"起点恢复"与"恰好落在起点"的节点，
 	// 此时 PreviousTime 被忽略。
 	void CollectNodes(float PreviousTime, float CurrentTime, bool bInitializing,
-					  TArray<FHodgeTimelineNode>& OutNodes) const;
+	                  TArray<FHodgeTimelineNode>& OutNodes) const;
 
 	// 节点排序：Time → NodeKind → Priority → EventIndex（EventIndex 兜底保证跨端确定）。
 	void SortNodes(TArray<FHodgeTimelineNode>& Nodes) const;
@@ -158,13 +146,19 @@ protected:
 	// 施加一条条目配置的 GE，返回句柄；无法施加时返回无效句柄。
 	// 名字不叫 ApplyWindowEffect：Point 也在用它。
 	FActiveGameplayEffectHandle ApplyTimelineEffect(UAbilitySystemComponent* ASC,
-													TSubclassOf<UGameplayEffect> EffectClass);
+	                                                TSubclassOf<UGameplayEffect> EffectClass);
 
 	// 本端是否有权威（Avatar 上的权威）。Window 的 GE 与 Point 的 GE 都靠它决定是否施加。
 	bool HasAuthorityOnAvatar() const;
 
 private:
 	friend struct FHodgeTimelineTestAccess;
+	TWeakObjectPtr<UAnimInstance> ClockAnimInstance;
+	UPROPERTY()
+	TObjectPtr<UAnimMontage> ClockMontage;
+	int32 ClockInstanceID = INDEX_NONE;
+	float EffectiveDuration = 0.f;
+	bool bAdvancingMontage = false;
 
 	UPROPERTY()
 	TObjectPtr<UHodgeAbilityTimeline> TimelineAsset;

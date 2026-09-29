@@ -21,17 +21,10 @@
 #include "Data/HodgeAbilityTimeline.h"
 #include "Engine/World.h"
 #include "GameplayEffect.h"
+#include "Animation/AnimInstance.h"
+#include "Animation/AnimMontage.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeAbilityTask_PlayTimeline)
-
-namespace
-{
-	// 左开右闭，与推进区间一致：保证每个时刻恰好被消费一次，且起点时刻不丢。
-	FORCEINLINE bool IsInAdvanceInterval(float Time, float PreviousTime, float CurrentTime)
-	{
-		return Time > PreviousTime && Time <= CurrentTime;
-	}
-}
 
 UHodgeAbilityTask_PlayTimeline::UHodgeAbilityTask_PlayTimeline(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -57,23 +50,26 @@ void UHodgeAbilityTask_PlayTimeline::Activate()
 {
 	Super::Activate();
 
+	EffectiveDuration = ClockMontage ? ClockMontage->GetPlayLength() : (TimelineAsset ? TimelineAsset->Duration : 0.f);
+
 	// 校验集中在唯一入口：C++ 与蓝图调用最终都会经过这里（C++ 需先 ReadyForActivation）。
 	const bool bParamsValid =
 		IsValid(TimelineAsset) &&
-		FMath::IsFinite(TimelineAsset->Duration) &&
-		TimelineAsset->Duration > 0.f &&
+		(!TimelineAsset->bUseMontageDuration || ClockMontage) &&
+		FMath::IsFinite(EffectiveDuration) &&
+		EffectiveDuration > 0.f &&
 		FMath::IsFinite(InitialPlayRate) &&
 		InitialPlayRate > 0.f &&
 		FMath::IsFinite(StartOffset) &&
 		StartOffset >= 0.f &&
-		StartOffset < TimelineAsset->Duration;
+		StartOffset < EffectiveDuration;
 
 	if (!bParamsValid)
 	{
 		UE_LOG(LogTemp, Error,
 		       TEXT("[Hodge] PlayTimeline 参数非法：Timeline=%s Duration=%.3f StartOffset=%.3f PlayRate=%.3f"),
 		       *GetNameSafe(TimelineAsset),
-		       IsValid(TimelineAsset) ? TimelineAsset->Duration : -1.f,
+		       EffectiveDuration,
 		       StartOffset, InitialPlayRate);
 
 		// 不留一个"活着但不动"的 Task。
@@ -82,7 +78,7 @@ void UHodgeAbilityTask_PlayTimeline::Activate()
 	}
 
 	TArray<FText> ValidationErrors;
-	if (!TimelineAsset->ValidateForPlayback(ValidationErrors))
+	if (!TimelineAsset->ValidateForPlayback(ValidationErrors, EffectiveDuration))
 	{
 		for (const FText& Error : ValidationErrors)
 		{
@@ -119,6 +115,8 @@ void UHodgeAbilityTask_PlayTimeline::TickTask(float DeltaTime)
 		return;
 	}
 
+	if (ClockMontage) { RefreshMontageClock(); return; }
+
 	const UWorld* World = GetWorld();
 	if (!World)
 	{
@@ -148,10 +146,11 @@ void UHodgeAbilityTask_PlayTimeline::TickTask(float DeltaTime)
 	const float PreviousTime = ElapsedTime;
 
 	// 时钟不允许越过 Duration。
-	ElapsedTime = FMath::Min(StartOffset + LogicalElapsed, TimelineAsset->Duration);
+	ElapsedTime = FMath::Min(StartOffset + LogicalElapsed, EffectiveDuration);
 
 	// 先把区间内的全部时间节点消费完……
 	AdvanceTimeline(PreviousTime, ElapsedTime);
+	if (!bStopped) { OnWindowsChanged.Broadcast(); }
 
 	// ……其间任意一个节点都可能已经结束了 Ability（Task 已被 OnDestroy，bStopped 已被置位）。
 	if (bStopped)
@@ -160,110 +159,23 @@ void UHodgeAbilityTask_PlayTimeline::TickTask(float DeltaTime)
 	}
 
 	// ……再判定自然结束，这样 StartTime == Duration 的 Point 不会被提前吃掉。
-	if (ElapsedTime >= TimelineAsset->Duration)
+	if (ElapsedTime >= EffectiveDuration)
 	{
 		StopTimeline(EHodgeTimelineStopReason::NaturalEnd);
 	}
 }
 
-// 收集时间节点。
-//
-// 两种模式共用同一个比较器，这是"从 0 跑"与"从 StartOffset 接续"调度顺序一致的基础：
-//   bInitializing == false：收集落在 (PreviousTime, CurrentTime] 内的全部边界与时刻。
-//   bInitializing == true ：只做两件事 —— 补"起点时仍然生效"的窗口（节点时刻取它的 StartTime，
-//                           于是它落在与正常推进相同的位置上），以及"恰好落在起点"的 Point。
-//                           历史（StartTime < StartOffset）一律不补：这是接续语义，不是历史重放。
 void UHodgeAbilityTask_PlayTimeline::CollectNodes(float PreviousTime, float CurrentTime,
-												  bool bInitializing, TArray<FHodgeTimelineNode>& OutNodes) const
+    bool bInitializing, TArray<FHodgeTimelineNode>& OutNodes) const
 {
-	OutNodes.Reset();
-
-	if (!IsValid(TimelineAsset))
-	{
-		return;
-	}
-
-	const TArray<FHodgeTimelineEvent>& Events = TimelineAsset->Events;
-	OutNodes.Reserve(Events.Num() * 2);
-
-	for (int32 EventIndex = 0; EventIndex < Events.Num(); ++EventIndex)
-	{
-		const FHodgeTimelineEvent& Event = Events[EventIndex];
-
-		if (Event.Kind == EHodgeTimelineEventKind::Window)
-		{
-			if (bInitializing)
-			{
-				// 起点恢复：只在"起点时仍然生效"（Start <= T < End）时补一次 WindowBegin。
-				// 只影响调度顺序 —— 窗口 GE 的实际施加时刻仍然是 StartOffset。
-				if (Event.StartTime <= CurrentTime && CurrentTime < Event.EndTime)
-				{
-					OutNodes.Add({Event.StartTime, EHodgeTimelineNodeKind::WindowBegin, EventIndex});
-				}
-			}
-			else
-			{
-				if (IsInAdvanceInterval(Event.EndTime, PreviousTime, CurrentTime))
-				{
-					OutNodes.Add({Event.EndTime, EHodgeTimelineNodeKind::WindowEnd, EventIndex});
-				}
-
-				if (IsInAdvanceInterval(Event.StartTime, PreviousTime, CurrentTime))
-				{
-					OutNodes.Add({Event.StartTime, EHodgeTimelineNodeKind::WindowBegin, EventIndex});
-				}
-			}
-		}
-		else
-		{
-			const bool bCollect = bInitializing
-				? (Event.StartTime == CurrentTime)
-				: IsInAdvanceInterval(Event.StartTime, PreviousTime, CurrentTime);
-
-			if (bCollect)
-			{
-				OutNodes.Add({Event.StartTime, EHodgeTimelineNodeKind::PointFire, EventIndex});
-			}
-		}
-	}
+    OutNodes.Reset();
+    if (TimelineAsset) { FHodgeTimelineEvaluator::Collect(TimelineAsset->Events, EffectiveDuration,
+        PreviousTime, CurrentTime, bInitializing, OutNodes); }
 }
 
-// 节点排序：时间 → 节点种类 → Priority → EventIndex。
-//
-// Priority 刻意排在"节点种类"之后：语义顺序（区间 [Start, End) 的数学定义）优先于作者配置，
-// 否则"某一刻的状态"会变成可由 Priority 改写的，跨端一致与区间定义都会破。
 void UHodgeAbilityTask_PlayTimeline::SortNodes(TArray<FHodgeTimelineNode>& Nodes) const
 {
-	if (!IsValid(TimelineAsset))
-	{
-		return;
-	}
-
-	const TArray<FHodgeTimelineEvent>& Events = TimelineAsset->Events;
-
-	Nodes.Sort([&Events](const FHodgeTimelineNode& Left, const FHodgeTimelineNode& Right)
-	{
-		if (Left.Time != Right.Time)
-		{
-			return Left.Time < Right.Time;
-		}
-
-		if (Left.Kind != Right.Kind)
-		{
-			return static_cast<uint8>(Left.Kind) < static_cast<uint8>(Right.Kind);
-		}
-
-		const int32 LeftPriority = Events.IsValidIndex(Left.EventIndex) ? Events[Left.EventIndex].Priority : 0;
-		const int32 RightPriority = Events.IsValidIndex(Right.EventIndex) ? Events[Right.EventIndex].Priority : 0;
-
-		if (LeftPriority != RightPriority)
-		{
-			return LeftPriority < RightPriority;
-		}
-
-		// 同刻同类同优先级：用下标兜底，保证跨端严格确定。
-		return Left.EventIndex < Right.EventIndex;
-	});
+    if (TimelineAsset) { FHodgeTimelineEvaluator::Sort(TimelineAsset->Events, Nodes); }
 }
 
 void UHodgeAbilityTask_PlayTimeline::InitializeTimeline(float InStartOffset)
@@ -537,6 +449,7 @@ void UHodgeAbilityTask_PlayTimeline::FirePointEvent(const FHodgeTimelineEvent& E
 
 	// 固定顺序 ①：先派发语义事件（同步，可能结束 Ability / 停止 Timeline）。
 	ASC->HandleGameplayEvent(Event.PointEventTag, &Payload);
+	if (!bStopped) { OnPoint.Broadcast(Event.PointEventTag); }
 
 	// 事件的处理者若结束了这一帧，就不再施加效果 —— 这是契约，不是 bug。
 	if (bStopped)
@@ -640,6 +553,7 @@ void UHodgeAbilityTask_PlayTimeline::StopTimeline(EHodgeTimelineStopReason Reaso
 
 	// 停止必须真正结束 Task，否则会留下一个"不再推进但仍然活着"的对象。
 	// 重复 EndTask 由引擎的 TaskState 守卫，这里不需要额外判断。
+	OnFinished.Broadcast(Reason);
 	EndTask();
 }
 
@@ -653,4 +567,59 @@ void UHodgeAbilityTask_PlayTimeline::OnDestroy(bool bInOwnerFinished)
 	ClearAllWindowState();
 
 	Super::OnDestroy(bInOwnerFinished);
+}
+
+UHodgeAbilityTask_PlayTimeline* UHodgeAbilityTask_PlayTimeline::PlayMontageTimeline(
+	UGameplayAbility* OwningAbility, UHodgeAbilityTimeline* Timeline, UAnimInstance* AnimInstance,
+	UAnimMontage* Montage, int32 InstanceID)
+{
+	auto* Task = PlayTimeline(OwningAbility, Timeline);
+	Task->ClockAnimInstance = AnimInstance;
+	Task->ClockMontage = Montage;
+	Task->ClockInstanceID = InstanceID;
+	return Task;
+}
+
+FGameplayTagContainer UHodgeAbilityTask_PlayTimeline::GetActiveWindowTags() const
+{
+	FGameplayTagContainer Result;
+	if (bStopped || !TimelineAsset) { return Result; }
+	float Position = ElapsedTime;
+	if (ClockMontage)
+	{
+		auto* Anim = ClockAnimInstance.Get();
+		const auto* Instance = Anim ? Anim->GetMontageInstanceForID(ClockInstanceID) : nullptr;
+		if (!Instance || Instance->Montage != ClockMontage || Instance->IsStopped()) { return Result; }
+		Position = Instance->GetPosition();
+	}
+	for (int32 Index : ActiveWindowIndices)
+	{
+		const auto& Event = TimelineAsset->Events[Index];
+		// A backward correction must never authorize a window ahead of the actual montage.
+		if (Event.StartTime <= Position && Position < FHodgeTimelineEvaluator::WindowEnd(Event, EffectiveDuration)) { Result.AddTag(Event.WindowTag); }
+	}
+	return Result;
+}
+
+void UHodgeAbilityTask_PlayTimeline::RefreshMontageClock()
+{
+	if (bStopped || bAdvancingMontage || !ClockMontage) { return; }
+	TGuardValue<bool> Guard(bAdvancingMontage, true);
+	auto* Anim = ClockAnimInstance.Get();
+	auto* Instance = Anim ? Anim->GetMontageInstanceForID(ClockInstanceID) : nullptr;
+	if (!Instance || Instance->Montage != ClockMontage || Instance->IsStopped())
+	{
+		StopTimeline(EHodgeTimelineStopReason::Interrupted);
+		return;
+	}
+	const float Previous = ElapsedTime;
+	// High-water scheduling prevents duplicated effects after network position corrections.
+	const float Position = Instance->GetPosition();
+	// UE clamps a finished section slightly before its endpoint; paused mid-clip stays frozen.
+	const bool bAtEnd = !Instance->IsPlaying() && Position >= EffectiveDuration - KINDA_SMALL_NUMBER;
+	ElapsedTime = bAtEnd ? EffectiveDuration : FMath::Clamp(Position, Previous, EffectiveDuration);
+	AdvanceTimeline(Previous, ElapsedTime);
+	if (bStopped) { return; }
+	OnWindowsChanged.Broadcast();
+	if (!bStopped && ElapsedTime >= EffectiveDuration) { StopTimeline(EHodgeTimelineStopReason::NaturalEnd); }
 }

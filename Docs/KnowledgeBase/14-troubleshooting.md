@@ -40,6 +40,15 @@
 
 **Ability 远超预期时长一直挂着**：查 `TickTask` 的 `WorldDelta <= 0` 守卫是否在**累加 `LogicalElapsed` 之前**。放到后面拦不住 —— 负差值已经把逻辑时间污染成负数，`ElapsedTime >= Duration` 要等它爬回来才成立，且早期节点会被重新跨过（Point 重复派发）。
 
+**改了时间却存不了盘（保存被静默拒绝）**：`IsDataValid` 返回 Invalid 时**编辑器会拒绝保存**。日志里不出现"保存失败"字样，只有一串 `LogFileHelpers: InternalPromptForCheckoutAndSave` 加校验输出，所以看起来像"怎么都存不上"。2026-09-28 的真实案例：
+
+- 现象：`DefinitionCombo/DA_Attack_4`（能力定义资产）反复保存未果，而它引用的时间轴 `BasicAttack/DA_Attack04_Timeline` **单独校验是 VALID**；
+- 唯一线索是日志里的 `AssetCheck: Error: ... Events[0] 是 Window，EndTime 超过了 Duration`；
+- 真因：定义资产用 `ValidateForPlayback(Errors, Montage->GetPlayLength())` 校验（`DurationOverride` 路径），而 `GetPlayLength()` 是**算出来的 float 原值**，与作者手填、恰好等于 EndTime 的资产 `Duration` 在第 7 位小数上不等 —— 三个值显示出来都是 `4.666667`，肉眼绝无可能看出来。独立校验之所以通过，是因为它用的是资产自己的 `Duration`（与 EndTime 同值）；
+- 已修（`HodgeAbilityTimeline.cpp`）：时间比较加 **1ms 容差**，`EndTime > EffectiveDuration + TimeTolerance` 才算错 —— 顺带把"窗口正好开到 Duration 结束"明确成**合法配置**（由自然结束统一收尾，`ExitWindow` 与 `ClearAllWindowState` 在同一 tick 内先后执行，不会残留）；同时报错文案改为带 `[EventID, EndTime, Duration]`，用 `%.9g` 打印（float32 需要 9 位有效数字才看得出差别）。
+
+> 教训：**校验器的报错必须打印实际数值**。只报下标的消息会把"工具误判"伪装成"数据错误"，作者会先怀疑自己，然后卡在工作流上。
+
 **事件没到客户端**：按 `EHodgeTimelineEventNetPolicy` 区分端，不要假设 `HandleGameplayEvent` 会自动 RPC。特别注意 `PointEffectClass + LocallyControlledOnly` 已被校验定为 **Error**：该组合下 listen server 主机自己控制的角色会施加 GE，而远程客户端不会。
 
 **要主动打断时间轴做验证**：`asc.clear_ability(handle)`（用法见下面 MCP 一节）。取消后 `Status.Attack.*` 与窗口 GE 都应归零，且**此后不应再出现后续窗口标签或 Point 派发**（出现就是"停不下来还在 tick"）。注意 `GameplayEvent.Attack.Interrupted` **在取消时不会派发**，这是设计约定（`AbilityCancelled` 不广播；`Interrupted` 只给"被外力抢占"，本阶段没有触发者）——别把它当成漏派发的 bug 去查。

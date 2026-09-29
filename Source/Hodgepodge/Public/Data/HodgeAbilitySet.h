@@ -15,6 +15,15 @@ class UGameplayEffect;
 class UHodgeAbilitySystemComponent;
 class UHodgeGameplayAbility;
 class UObject;
+class UHodgeAbilityDefinition;
+
+USTRUCT(BlueprintType)
+struct FHodgeAbilitySet_Definition
+{
+ GENERATED_BODY()
+ UPROPERTY(EditDefaultsOnly) TObjectPtr<UHodgeAbilityDefinition> Definition;
+ UPROPERTY(EditDefaultsOnly, meta=(ClampMin="1")) int32 AbilityLevel = 1;
+};
 
 
 /**
@@ -132,6 +141,7 @@ class UHodgeAbilitySet : public UPrimaryDataAsset
 
 public:
 	UHodgeAbilitySet(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	const TArray<FHodgeAbilitySet_Definition>& GetGrantedDefinitions() const { return GrantedAbilityDefinitions; }
 
 	// 将当前 AbilitySet 中配置的所有内容授予指定的 AbilitySystemComponent，并可通过返回的 Handles 在之后移除这些内容。
 	void GiveToAbilitySystem(UHodgeAbilitySystemComponent* HodgeASC, FHodgeAbilitySet_GrantedHandles* OutGrantedHandles,
@@ -141,6 +151,9 @@ protected:
 	// 授予 AbilitySet 时需要添加的 GameplayAbility 列表。
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Abilities", meta=(TitleProperty=Ability))
 	TArray<FHodgeAbilitySet_GameplayAbility> GrantedGameplayAbilities;
+
+	UPROPERTY(EditDefaultsOnly, Category="Gameplay Abilities", meta=(TitleProperty="Definition"))
+	TArray<FHodgeAbilitySet_Definition> GrantedAbilityDefinitions;
 
 	// 授予 AbilitySet 时需要应用的 GameplayEffect 列表。
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Effects", meta=(TitleProperty=GameplayEffect))

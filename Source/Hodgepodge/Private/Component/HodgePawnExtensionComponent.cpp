@@ -2,6 +2,7 @@
 
 
 #include "Component/HodgePawnExtensionComponent.h"
+#include "Component/HodgeComboComponent.h"
 
 #include "AbilitySystem/HodgeAbilitySystemComponent.h"
 #include "AbilitySystem/HodgeGameplayTags.h"
@@ -148,7 +149,7 @@ void UHodgePawnExtensionComponent::InitializeAbilitySystem(UHodgeAbilitySystemCo
 	       *GetNameSafe(Pawn), *GetNameSafe(InOwnerActor), *GetNameSafe(ExistingAvatar));
 
 	// 如果 ASC 已经绑定了其他 Pawn，需要先让旧 Pawn 解除 Avatar 身份
-	if ((ExistingAvatar != nullptr) && (ExistingAvatar != Pawn))
+	if ((ExistingAvatar != nullptr) && (ExistingAvatar != Pawn) && (ExistingAvatar != InOwnerActor))
 	{
 		UE_LOG(LogTemp, Log, TEXT("Existing avatar (authority=%d)"), ExistingAvatar->HasAuthority() ? 1 : 0);
 
@@ -173,6 +174,10 @@ void UHodgePawnExtensionComponent::InitializeAbilitySystem(UHodgeAbilitySystemCo
 	{
 		// 根据 PawnData 设置 ASC 的 TagRelationshipMapping
 		InASC->SetTagRelationshipMapping(PawnData->TagRelationshipMapping);
+		if (auto* Combo = InOwnerActor->FindComponentByClass<UHodgeComboComponent>())
+		{
+			Combo->Configure(InASC, PawnData->ComboDefinition);
+		}
 	}
 
 	// 通知所有依赖 ASC 初始化完成的系统
@@ -191,6 +196,10 @@ void UHodgePawnExtensionComponent::UninitializeAbilitySystem()
 	// 如果 ASC 已经被其他 Pawn 接管，则说明其他 Pawn 已经完成了重新初始化
 	if (AbilitySystemComponent->GetAvatarActor() == GetOwner())
 	{
+		if (AActor* ASCOwner = AbilitySystemComponent->GetOwnerActor())
+		{
+			if (auto* Combo = ASCOwner->FindComponentByClass<UHodgeComboComponent>()) { Combo->Shutdown(); }
+		}
 		FGameplayTagContainer AbilityTypesToIgnore;
 
 		// 死亡后仍然需要保留的 Ability 不参与取消

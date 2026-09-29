@@ -14,6 +14,7 @@
 #include "Data/HodgeAbilityTimeline.h"
 
 #include "GameplayEffect.h"
+#include "AbilitySystem/HodgeTimelineEvaluator.h"
 
 #if WITH_EDITOR
 #include "Misc/DataValidation.h"
@@ -23,15 +24,30 @@
 
 #define LOCTEXT_NAMESPACE "HodgeAbilityTimeline"
 
-bool UHodgeAbilityTimeline::ValidateForPlayback(TArray<FText>& OutErrors) const
+bool UHodgeAbilityTimeline::ValidateForPlayback(TArray<FText>& OutErrors, float DurationOverride) const
 {
+	if (bUseMontageDuration && DurationOverride == -1.f)
+	{
+		OutErrors.Add(LOCTEXT("MontageDurationRequired", "蒙太奇模式需要调用方提供 Montage 长度，请通过 Definition 播放"));
+		return false;
+	}
+	const float EffectiveDuration = DurationOverride == -1.f ? Duration : DurationOverride;
+	return ValidateEntries(OutErrors, EffectiveDuration, true);
+}
+
+bool UHodgeAbilityTimeline::ValidateEntries(TArray<FText>& OutErrors, float EffectiveDuration, bool bCheckDuration) const
+{
+
+	// 窗口终点仅允许舍入误差，求值时使用同一常量归一到总时长。
+	static constexpr float TimeTolerance = FHodgeTimelineEvaluator::WindowEndTolerance;
+
 	const int32 InitialErrorCount = OutErrors.Num();
 	// 逻辑时长必须为正，否则整个时间轴无法推进。
-	if (!FMath::IsFinite(Duration) || Duration <= 0.f)
+	if (bCheckDuration && (!FMath::IsFinite(EffectiveDuration) || EffectiveDuration <= 0.f))
 	{
 		OutErrors.Add(FText::Format(
 			LOCTEXT("DurationIsNotPositive", "Duration 必须大于 0（当前 {0}）"),
-			FText::AsNumber(Duration)
+			FText::AsNumber(EffectiveDuration)
 		));
 	}
 
@@ -69,7 +85,8 @@ bool UHodgeAbilityTimeline::ValidateForPlayback(TArray<FText>& OutErrors) const
 
 		// 推进被 Min(StartOffset + LogicalElapsed, Duration) 截断，
 		// 因此越界的条目永远不可能被消费 —— 这是不可达配置，不是"配得不太合理"。
-		if (!FMath::IsFinite(Event.StartTime) || Event.StartTime < 0.f || Event.StartTime > Duration)
+		if (!FMath::IsFinite(Event.StartTime) || Event.StartTime < 0.f
+			|| (bCheckDuration && Event.StartTime > EffectiveDuration))
 		{
 			OutErrors.Add(FText::Format(
 				LOCTEXT("StartTimeOutOfRange", "Events[{0}] 的 StartTime 必须在 [0, Duration] 内"),
@@ -95,7 +112,8 @@ bool UHodgeAbilityTimeline::ValidateForPlayback(TArray<FText>& OutErrors) const
 		// 否则只会误导。
 		if (Event.Kind == EHodgeTimelineEventKind::Window)
 		{
-			if (!FMath::IsFinite(Event.EndTime) || Event.EndTime <= Event.StartTime)
+			// 容差之内视为"零长度窗口"：仍然是配置错误，但不该被浮点噪声判成错误。
+			if (!FMath::IsFinite(Event.EndTime) || Event.EndTime - Event.StartTime <= TimeTolerance)
 			{
 				OutErrors.Add(FText::Format(
 					LOCTEXT("WindowRangeIsReversed", "Events[{0}] 是 Window，StartTime 必须小于 EndTime"),
@@ -104,11 +122,19 @@ bool UHodgeAbilityTimeline::ValidateForPlayback(TArray<FText>& OutErrors) const
 			}
 
 			// 终点超过 Duration 的区间永远不会正常退出。
-			if (Event.EndTime > Duration)
+			// 容差之内视为"正好等于 Duration"——这是合法配置：窗口一直开到结束，由自然结束统一收尾。
+			if (bCheckDuration && Event.EndTime > EffectiveDuration + TimeTolerance)
 			{
+				// 报错必须带上数值与 EventID：这条消息以前只有下标，作者看到"时间明明对得上"
+				// 却存不了盘，只能去读代码定位（真实案例：EndTime 与 Duration 显示值相同、
+				// 第 7 位小数不同）。用 %.9g 是因为 float32 需要 9 位有效数字才看得出差别。
 				OutErrors.Add(FText::Format(
-					LOCTEXT("WindowEndTimeExceedsDuration", "Events[{0}] 是 Window，EndTime 超过了 Duration（该区间永远无法正常退出）"),
-					IndexText
+					LOCTEXT("WindowEndTimeExceedsDuration",
+						"Events[{0}] 是 Window，EndTime 超过了 Duration（该区间永远无法正常退出）[EventID={1}, EndTime={2}, Duration={3}]"),
+					IndexText,
+					FText::FromName(Event.EventID),
+					FText::FromString(FString::Printf(TEXT("%.9g"), Event.EndTime)),
+					FText::FromString(FString::Printf(TEXT("%.9g"), EffectiveDuration))
 				));
 			}
 
@@ -215,7 +241,8 @@ EDataValidationResult UHodgeAbilityTimeline::IsDataValid(FDataValidationContext&
 {
 	EDataValidationResult Result = CombineDataValidationResults(Super::IsDataValid(Context), EDataValidationResult::Valid);
 	TArray<FText> Errors;
-	if (!ValidateForPlayback(Errors))
+	// 独立资产没有 Montage 上下文；动画边界由引用它的 Definition 校验。
+	if (!ValidateEntries(Errors, Duration, !bUseMontageDuration))
 	{
 		Result = EDataValidationResult::Invalid;
 		for (const FText& Error : Errors)

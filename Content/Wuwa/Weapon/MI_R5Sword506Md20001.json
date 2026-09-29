@@ -1,0 +1,104 @@
+{
+  "Textures": {
+    "MainTex": "Client/Content/Aki/Character/Weapon/Sword/R5Sword506/R5Sword506Md20001/Model/T_R5Sword506Md20001_D.T_R5Sword506Md20001_D",
+    "PM_Diffuse": "Client/Content/Aki/Character/Weapon/Sword/R5Sword506/R5Sword506Md20001/Model/T_R5Sword506Md20001_01_D.T_R5Sword506Md20001_01_D",
+    "T_R5Sword506Md20001_D": "Client/Content/Aki/Character/Weapon/Sword/R5Sword506/R5Sword506Md20001/Model/T_R5Sword506Md20001_D.T_R5Sword506Md20001_D",
+    "TypeMask": "Client/Content/Aki/Character/Weapon/Sword/R5Sword506/R5Sword506Md20001/Model/T_R5Sword502Md20001_ID.T_R5Sword502Md20001_ID",
+    "T_R5Sword502Md20001_ID": "Client/Content/Aki/Character/Weapon/Sword/R5Sword506/R5Sword506Md20001/Model/T_R5Sword502Md20001_ID.T_R5Sword502Md20001_ID",
+    "PM_Normals": "Client/Content/Aki/Character/Weapon/Sword/R5Sword506/R5Sword506Md20001/Model/T_R5Knife505Md20001_N.T_R5Knife505Md20001_N",
+    "Normal_Roughness_Metallic": "Client/Content/Aki/Character/Weapon/Sword/R5Sword506/R5Sword506Md20001/Model/T_R5Knife505Md20001_N.T_R5Knife505Md20001_N",
+    "MatCapTex": "Client/Content/Aki/Character/Role/CommonTexture/CharacterCubeMaps/T_MC_premake_D.T_MC_premake_D",
+    "T_MC_premake_D": "Client/Content/Aki/Character/Role/CommonTexture/CharacterCubeMaps/T_MC_premake_D.T_MC_premake_D",
+    "Ramp": "Client/Content/Aki/Render/Common/T_DefaultColorWhite_D.T_DefaultColorWhite_D",
+    "T_DefaultColorWhite_D": "Client/Content/Aki/Render/Common/T_DefaultColorWhite_D.T_DefaultColorWhite_D",
+    "R_Noise_A_Mask": "Client/Content/Aki/Character/Weapon/Sword/R5Sword506/R5Sword506Md20001/Model/T_R5Sword506Md20001_01_D.T_R5Sword506Md20001_01_D",
+    "T_R5Sword506Md20001_01_D": "Client/Content/Aki/Character/Weapon/Sword/R5Sword506/R5Sword506Md20001/Model/T_R5Sword506Md20001_01_D.T_R5Sword506Md20001_01_D",
+    "Second_RGB": "Client/Content/Aki/Effect/Texture/Tile/T_Tile_017.T_Tile_017",
+    "T_Tile_017": "Client/Content/Aki/Effect/Texture/Tile/T_Tile_017.T_Tile_017"
+  },
+  "Parameters": {
+    "BlendMode": 0,
+    "ShadingModel": 0,
+    "Colors": {
+      "SubsurfaceColor": {
+        "R": 0.209597,
+        "G": 0.213542,
+        "B": 0.151259,
+        "A": 0.0,
+        "Hex": "7E7F6C"
+      },
+      "EmissionColor": {
+        "R": 0.917592,
+        "G": 0.75,
+        "B": 1.0,
+        "A": 0.0,
+        "Hex": "F6E1FF"
+      },
+      "FresnelRim_RimColor": {
+        "R": 0.463542,
+        "G": 1.0,
+        "B": 0.943313,
+        "A": 1.0,
+        "Hex": "B5FFF9"
+      },
+      "SecondTex_UVSwitch": {
+        "R": 0.0,
+        "G": 0.0,
+        "B": 0.0,
+        "A": 1.0,
+        "Hex": "000000"
+      },
+      "Second_UV": {
+        "R": 2.0,
+        "G": 0.5,
+        "B": 0.01,
+        "A": 0.02,
+        "Hex": "05FFBC19"
+      }
+    },
+    "Scalars": {
+      "SolidShadowStrength": 1.0,
+      "EdgeEnvBRDFIntensity": 0.0,
+      "MetalSpecularPower": 5.0,
+      "SpecularPower": 15.0,
+      "Param": 0.0,
+      "RampInt": 0.8,
+      "RampPosition": 0.6,
+      "SolidShadow_RampPosition": 0.4,
+      "FresnelRim_RimRange": 5.0,
+      "FresnelRim_Smooth": 0.1,
+      "RefractionDepthBias": 0.0
+    },
+    "Switches": {
+      "UseTypeMask": true,
+      "UseIDColor": true,
+      "UsePBR": true,
+      "UseMatCap": true,
+      "使用PBRMask": true,
+      "UseFaceRamp": false,
+      "UseCurve": false,
+      "UseEffectMaterial": true,
+      "UseRim": true,
+      "UseSecond": true
+    },
+    "Properties": {
+      "bHasStaticPermutationResource": true,
+      "BasePropertyOverrides": {
+        "TwoSided": true,
+        "bRenderInCustomCapturePass": true,
+        "ShadingModel": "MSM_ToonCommon",
+        "OpacityMaskClipValue": 0.3333,
+        "RenderQueue": 180,
+        "RenderTranslucentOpacity": true,
+        "bCastRayTracedShadows": true,
+        "bIsOnlyForSkeletalMesh": true
+      }
+    },
+    "HasTopDiffuse": true,
+    "HasTopNormals": false,
+    "HasTopSpecularMasks": false,
+    "HasTopEmissive": false,
+    "IsTranslucent": false,
+    "IsNull": false
+  }
+}

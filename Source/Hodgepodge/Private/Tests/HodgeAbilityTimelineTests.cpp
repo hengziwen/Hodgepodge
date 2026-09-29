@@ -143,6 +143,11 @@ bool FHodgeTimelineRejectTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("Invalid point dispatches no event"), EventCount, 0);
 	TestEqual(TEXT("Invalid point leaves no permanent GE"), Fixture.ASC->GetActiveEffects(FGameplayEffectQuery()).Num(), 0);
 	Fixture.ASC->GenericGameplayEventCallbacks.FindChecked(Point.PointEventTag).Remove(EventHandle);
+	Timeline->bUseMontageDuration = true;
+	AddExpectedError(TEXT("PlayTimeline 参数非法"), EAutomationExpectedErrorFlags::Contains, 1);
+	Task = FHodgeTimelineTestAccess::Create(Fixture.ASC, Timeline);
+	Task->ReadyForActivation();
+	TestTrue(TEXT("Montage mode cannot silently use standalone clock"), Task->IsTimelineStopped());
 	return true;
 }
 
@@ -174,13 +179,22 @@ bool FHodgeTimelineCleanupTest::RunTest(const FString& Parameters)
 			TestEqual(TEXT("Point observes second window open"), Fixture.ASC->GetTagCount(HodgeGameplayTags::Status_Attack_Recovery), 1);
 		});
 	auto* Task = FHodgeTimelineTestAccess::Create(Fixture.ASC, Timeline);
+	int32 CompletionCount = 0;
+	Task->OnFinished.AddLambda([this, &CompletionCount](EHodgeTimelineStopReason Reason)
+	{
+		++CompletionCount;
+		TestTrue(TEXT("Native completion reports natural end"), Reason == EHodgeTimelineStopReason::NaturalEnd);
+	});
 	Task->ReadyForActivation();
 	FHodgeTimelineTestAccess::Advance(Task, 0.3f);
+	TestTrue(TEXT("Execution windows include its own active window"), Task->GetActiveWindowTags().HasTag(HodgeGameplayTags::Status_Attack_Active));
 	TestEqual(TEXT("External GE plus two independent windows"), Fixture.ASC->GetActiveEffects(FGameplayEffectQuery()).Num(), 3);
 	FHodgeTimelineTestAccess::Advance(Task, 0.3f);
 	TestEqual(TEXT("First exit preserves second and external GE"), Fixture.ASC->GetActiveEffects(FGameplayEffectQuery()).Num(), 2);
 	FHodgeTimelineTestAccess::Advance(Task, 0.5f);
 	TestTrue(TEXT("Timeline naturally completes"), Task->IsTimelineStopped());
+	TestEqual(TEXT("Native completion fires exactly once"), CompletionCount, 1);
+	TestTrue(TEXT("Stopped execution grants no windows"), Task->GetActiveWindowTags().IsEmpty());
 	TestEqual(TEXT("Point fires exactly once across frames"), PointCount, 1);
 	TestNotNull(TEXT("External GE survives natural end"), Fixture.ASC->GetActiveGameplayEffect(External));
 	TestEqual(TEXT("All timeline effects removed"), Fixture.ASC->GetActiveEffects(FGameplayEffectQuery()).Num(), 1);

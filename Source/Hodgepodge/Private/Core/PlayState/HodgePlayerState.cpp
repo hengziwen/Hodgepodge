@@ -12,6 +12,7 @@
 
 // Experience 管理组件，用于监听当前 Experience 加载完成事件。
 #include "Component/HodgeExperienceManagerComponent.h"
+#include "Component/HodgeComboComponent.h"
 
 // GameFrameworkComponentManager，用于向 GameFeature / ModularGameplay 系统发送扩展事件。
 #include "Components/GameFrameworkComponentManager.h"
@@ -39,6 +40,8 @@ AHodgePlayerState::AHodgePlayerState(const FObjectInitializer& ObjectInitializer
 	// 创建挂载在 PlayerState 上的项目自定义 ASC。
 	AbilitySystemComponent = ObjectInitializer.CreateDefaultSubobject<UHodgeAbilitySystemComponent>(
 		this, TEXT("AbilitySystemComponent"));
+
+	CreateDefaultSubobject<UHodgeComboComponent>(TEXT("ComboComponent"));
 
 	// ASC 需要参与网络复制。
 	AbilitySystemComponent->SetIsReplicated(true);

@@ -12,6 +12,7 @@
 
 // AbilitySet：用于批量授予 Ability、GameplayEffect、AttributeSet 等 GAS 资源。
 class UHodgeAbilitySet;
+class UHodgeComboDefinition;
 
 // CameraMode：定义 Pawn 默认使用的相机模式。
 class UHodgeCameraMode;
@@ -36,6 +37,9 @@ class HODGEPODGE_API UHodgePawnData : public UPrimaryDataAsset
 public:
 	// 构造函数。
 	UHodgePawnData(const FObjectInitializer& ObjectInitializer);
+#if WITH_EDITOR
+	virtual EDataValidationResult IsDataValid(FDataValidationContext& Context) const override;
+#endif
 
 public:
 	// Class to instantiate for this pawn (should usually derive from AHodgePawn or AHodgeCharacter).
@@ -47,6 +51,9 @@ public:
 	// 需要授予给这个 Pawn 的 ASC 的 AbilitySet 集合。
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hodge|Abilities")
 	TArray<TObjectPtr<UHodgeAbilitySet>> AbilitySets;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Abilities")
+	TObjectPtr<UHodgeComboDefinition> ComboDefinition;
 
 	// What mapping of ability tags to use for actions taking by this pawn
 	// 当前 Pawn 使用的 AbilityTag 关系配置，用于定义 Ability 之间的阻塞、取消和激活条件。

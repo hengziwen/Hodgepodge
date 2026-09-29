@@ -1,9 +1,9 @@
 # 单段技能 Definition 与连招跳转表设计
 
-> 状态：设计文档，已补充用户确认的第一版决策（见第 13 节）；本次仅授权更新文档，尚未进入实现。
+> 状态：用户确认决策后已授权实施。第一版运行时、五段资产及默认配置已落地；实际验证结果见[实施记录](../Validation/definition-combo-2026-09-28.md)。
 > 范围：现有 Hodgepodge GAS、Montage、AbilityTimeline 与后续技能编辑器。
 > 兼容目标：UE 5.5.4，沿用单一 Hodgepodge Runtime 模块与现有 Experience / PawnData / AbilitySet 链路。
-> 本文提出的数据类型、协调组件和行为规则尚未实现。已有五段普攻的测试结果不能证明本文方案通过验证。
+> 本文保留设计推导及后续扩展边界；实现状态以当前源码、资产和实施记录为准，旧普攻测试不代替新架构验收。
 
 ## 1. 目标与决策状态
 
@@ -252,7 +252,7 @@ SourceTags 不等于 AbilitySpec.DynamicSpecSourceTags；项目目前在后者�
 
 继续沿用 Experience → PawnData → AbilitySet → PlayerState ASC 的服务器授予链路，按 Definition 建立 AbilityTag 到 Spec 的映射。配置职责已确认：PawnData 引用 ComboDefinition，决定角色的连招规则；AbilitySet 配置并授予 AbilityDefinitions，决定角色拥有的技能。连招引用的 AbilityTag 必须能在当前授予上下文中唯一解析，具体反射字段名称留到实现时确定。
 
-协调器建议挂在 ASC 所有者侧，即 PlayerState 侧，结合 PawnExtension 初始化状态绑定当前 Pawn。本轮用户确认了配置入口和网络阶段，没有单独选择协调器位置，因此该位置仍是建议。无论最终放在哪里，都必须处理 ASC 重复初始化、解绑、Pawn 更换、死亡、技能撤销及 GameFeature 卸载，不能让 PlayerState 持久 ASC 携带上一 Pawn 的连招状态。
+协调器挂在 ASC 所有者 PlayerState 侧，结合 PawnExtension 初始化状态绑定当前 Pawn。这是实施阶段沿用现有 ASC 所有权作出的技术选择。必须处理 ASC 重复初始化、解绑、Pawn 更换、死亡、技能撤销及 GameFeature 卸载，不能让 PlayerState 持久 ASC 携带上一 Pawn 的连招状态。具体已验证路径见实施记录，不将架构目标等同于全部场景通过。
 
 ### 8.3 跨 GA 切换
 
@@ -324,9 +324,9 @@ DataTable 的一行可以显示成编辑器中的一个节点，Transitions 显�
 
 ## 12. 实施顺序与验收计划
 
-逐步改动范围、依赖、交付物与验收条件见[第一版执行计划](ability-definition-combo-implementation-plan.md)。所有步骤当前待执行；计划编写不代表开始实现。
+逐步改动范围、依赖、交付物与验收条件见[第一版执行计划](ability-definition-combo-implementation-plan.md)。用户随后已明确要求开始并继续实施；当前进度与已验证范围见[实施验证记录](../Validation/definition-combo-2026-09-28.md)。
 
-建议分阶段推进，本文不授权立即执行：
+按以下阶段推进：
 
 1. 按第 13 节已确认决策收敛剩余技术细节，定义资产校验规则。
 2. 引入 AbilityDefinition 和授予映射，先完成一个单段 GA。
@@ -350,7 +350,7 @@ DataTable 的一行可以显示成编辑器中的一个节点，Transitions 显�
 
 ## 13. 用户决策记录与剩余技术事项
 
-本节替代原“实现前待确认”清单。以下确认仅用于设计文档，不是实施授权。
+本节替代原“实现前待确认”清单。用户随后已在执行计划之后明确要求开始实施。
 
 1. **Definition 关系：已确认 A。** Definition 引用 AbilityClass；AbilitySet 配置 Definition，授予时经上下文提供给 GA；GA 读取并执行。保留原装备 / 授予来源，不做双向重复配置。
 2. **触发方式：第一版已确认 A。** 同一条边输入与事件互斥，同一节点可以同时配置输入边和事件边；窗口变化重新评估有效缓存。**后续可能需要 B：组合触发**，例如命中确认加缓存输入，第一版不实现。
@@ -363,8 +363,58 @@ DataTable 的一行可以显示成编辑器中的一个节点，Transitions 显�
 
 剩余事项主要是技术落地：授予上下文如何兼容现有 SourceObject；协调器具体挂接与解绑；标签预测 / 权威状态的复制载体；Montage 实例身份及位置校正；跨 GA 切换的回调顺序；配置字段命名与校验实现。它们不得改变以上已确认玩法规则，且不能据此把全部设计选择重新标记成待确认。
 
-## 14. 本次文档交付边界
+## 14. 从设计到实施
 
-本文已整合用户目标、两次评估及本轮确认决策；本次仅更新此设计文档。未修改 C++、蓝图、DataTable、Definition、GameplayTag 注册、PawnData 或任何运行配置。
+本文最初只整合用户目标、两次评估及确认决策；随后用户批准按[执行计划](ability-definition-combo-implementation-plan.md)实施。当前已创建 Definition、跳转表、协调器、五个单段 GA 和 Timeline，并保存默认 PawnData 授予迁移。
 
-文档检查包括工作区状态、引用路径和差异检查；未执行 C++ 构建、蓝图编译、PIE、联机或打包测试。旧工作区已有的资产改动保持原样。
+构建、蓝图、PIE、网络模拟、资产备份和未验证项分别记录在[实施验证记录](../Validation/definition-combo-2026-09-28.md)。没有攻击判定或伤害，也没有将后续组合触发 B、网络 B、Section/循环或编辑器扩展计入本轮完成范围。
+
+
+## 15. 未提交代码审查问题（2026-09-28）
+
+依据 [CODE_REVIEW.md](../../CODE_REVIEW.md) 对暂存、未暂存及未跟踪源码进行只读审查，结论为 **需修改**。用户决定：**以下三个问题先记录，暂不修改代码**。三项均为源码调用链审查结论，尚未进行对应场景的 UE 运行复现或修复回归；此前核心回归通过不代表这三个边界已覆盖。行号对应审查快照，后续以函数名定位。
+
+### REVIEW-01：复用同一技能时，事件跳转选错节点
+
+- **级别 / 检查项**：MAJOR；COMBO-08。
+- **状态**：未修复；运行复现与修复回归待执行。
+- **位置**：[HodgeComboComponent.cpp](../../Source/Hodgepodge/Private/Component/HodgeComboComponent.cpp)，`PrepareConfirmedActivation`，审查时第 179～188 行；载荷构造在 `TryTransition`。
+- **触发**：来源节点 A 与目标节点 B 引用同一 AbilityTag，由服务端 Timeline 事件触发 A → B。设计允许不同 ComboTag 复用同一技能。
+- **证据与影响**：事件载荷依次将来源和目标 ComboTag 放入 `Payload.TargetTags`；客户端按目标 SpecHandle 取首个匹配节点。A、B 对应同一 SpecHandle，因此先匹配 A 并将其设为 `PendingNode`。服务器进入 B、客户端仍按 A 维护标签及后续转移，后续输入可能因来源节点不符被拒绝。
+- **最小修复方向**：确认消息显式区分来源与目标 ComboTag，客户端使用明确的目标节点并校验其 SpecHandle，不通过技能句柄反推唯一图节点。
+- **回归要求**：配置两个节点复用同一 AbilityTag、不同 GrantedTags 和后续边；验证服务端事件派生后双方均处于 B，标签正确，后续输入可继续转移。
+
+### REVIEW-02：时间容差允许不可达 Point 通过校验
+
+- **级别 / 检查项**：MAJOR；TIME-04、TIME-05。
+- **状态**：2026-09-29 随共享 Evaluator 修复；`Hodge.Timeline.SharedEvaluator` 自动化通过，Point 严格可达，窗口终点单独归一。详见 [编辑器说明](ability-definition-editor.md)。
+- **位置**：[HodgeAbilityTimeline.cpp](../../Source/Hodgepodge/Private/Data/HodgeAbilityTimeline.cpp)，`ValidateForPlayback`，审查时第 85～86 行；对应调度在 `UHodgeAbilityTask_PlayTimeline::CollectNodes`、`TickTask` 和 `RefreshMontageClock`。
+- **触发**：Duration 为 1 秒，Point 的 StartTime 为 `1.0005` 或 `-0.0005` 秒，其他字段合法。
+- **证据与影响**：新校验允许 StartTime 落在 `[-0.001, Duration + 0.001]`，但 Point 初始化仍使用精确相等，后续调度使用 `(PreviousTime, CurrentTime]`，时钟最大值仍钳制到 Duration。上述两种 Point 均可通过时间范围校验，却不会被播放消费，关联事件、GE 或派生逻辑静默遗漏。
+- **最小修复方向**：校验和调度使用同一套边界归一化规则；若只解决窗口终点浮点误差，则保留 Point 的严格可达性校验。不要只放宽校验而保持运行时边界不变。
+- **回归要求**：覆盖 0、Duration、边界两侧容差内及容差外的 Point；合法端点恰好执行一次，不可达配置明确拒绝，同时保留窗口终点浮点误差的修复目标。
+
+### REVIEW-03：授予数据未到齐时丢失服务端事件激活
+
+- **级别 / 检查项**：MAJOR；NET-07、GAS-08。
+- **状态**：未修复；复制时序复现与修复回归待执行。
+- **位置**：[HodgeAbilitySystemComponent.cpp](../../Source/Hodgepodge/Private/AbilitySystem/HodgeAbilitySystemComponent.cpp)，`ClientActivateAbilitySucceedWithEventData_Implementation`，审查时第 889～898 行。
+- **触发**：服务端事件派生确认 RPC 到达拥有端时，Definition 关联、AbilitySpec、主实例或协调器尚未全部就绪，例如授予与事件激活相邻发生的复制时序。
+- **证据与影响**：Definition 已到而 Spec / 实例未到时，自定义分支没有启动能力便完成切换并返回；Spec 已到但 Definition 未到时，进入父类 LocalPredicted 确认分支，该分支只确认已有预测实例，不启动本次服务端发起的实例。协调器准备失败也直接返回。当前没有在依赖就绪后重试的路径，可能出现服务器执行目标段、拥有端不执行的分歧。
+- **最小修复方向**：按服务端事件确认的消息类型保留待处理消息，等待 Definition、Spec、实例和协调器就绪后再处理；重放时核对 Avatar、配置和执行身份，并处理去重、失效及清理。保留 UE 原有未收到 Spec 时的待激活语义。
+- **回归要求**：分别延迟 Definition、Spec 和协调器就绪，验证消息最终只执行一次；补充能力撤销、Pawn 更换及过期消息不重放的检查。
+
+以上仅登记现有实现缺陷，不改变已确认的玩法规则，也不提前实施组合触发 B、网络 B 或技能编辑器。修复后应更新本节状态并追加实际验证证据。
+
+
+## 16. Montage 驱动 Timeline 的时长配置（2026-09-28）
+
+Definition 的 Montage 是该次执行总时长的唯一来源。配置好 Montage 与 Timeline 后，不再手动同步 Timeline.Duration；运行时仍使用当前 Montage 实例的位置推进，倍率和暂停由动画时钟自然体现。窗口与 Point 使用源动画秒数，更换 Montage 后按新长度校验，不自动缩放事件位置。
+
+- Timeline 新增 `bUseMontageDuration`（编辑器显示 `Use Montage Duration`）。开启后隐藏手动 `Duration`，旧值仅保留用于兼容，不参与该模式的校验或播放。
+- Montage 模式下，Timeline 独立资产校验检查事件结构、时间数值和窗口关系；上界必须由 Definition 使用 `Montage->GetPlayLength()` 校验。通过独立 Task 播放且没有 Montage 时拒绝启动，避免静默退回旧时钟。
+- Definition 要求引用的 Timeline 开启此选项，并在授予和执行前检查动画边界。旧独立 Timeline 默认保持关闭，继续使用手动 Duration；资产生成脚本为新建 Definition Timeline 自动开启。
+- 当前五个 `DA_Attack_1～5` 实际引用 `/Game/CodexText/BasicAttack/DA_Attack01_Timeline` 至 `DA_Attack05_Timeline`。迁移沿用当前引用，仅修改时长模式，保留事件、窗口及旧 Duration 数值；不改回 `DefinitionCombo` 目录下的历史副本。
+- 迁移脚本为 `Tools/BasicAttack/migrate_timeline_montage_duration.py`，原始资产备份位于 `Saved/Backups/TimelineMontageDuration_20260928`。
+
+第 15 节的三项审查缺陷仍保持暂缓；本次不修改其事件派生、时间容差或复制重试逻辑。
