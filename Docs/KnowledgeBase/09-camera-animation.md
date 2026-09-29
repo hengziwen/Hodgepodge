@@ -13,6 +13,8 @@ HodgeCameraMode_ThirdPerson 是 `Abstract/Blueprintable`：C++ 构造不再设�
 
 CombatCharacter 已创建 CameraComponent，新增 AHodgePlayerController 构造已经设置 PlayerCameraManagerClass，GameMode 也已选择此控制器。应区分“组件能参与引擎视图计算”与“自定义 PlayerCameraManager 已被实例化”。资产覆盖仍待验证。
 
+模式栈的顺序与实例生命周期（2026-09-29 只读核对相机源码）：`CameraModeStack[0]` 是栈顶（`PushCameraMode` 用 `Insert(CameraMode, 0)`），`Last()` 是栈底、每次压栈后被强制 `SetBlendWeight(1.0f)` 的基础模式；`UpdateStack` 从栈顶向下更新，`BlendStack` 以栈底视图为基础向上按权重混合。CameraMode 实例按类缓存在 `CameraModeInstances`，`GetCameraModeInstance` 线性匹配 `GetClass()` 命中则复用、未命中才 `NewObject(Outer = 相机组件)`，实例随组件存活、不销毁也不复制——它是"按类型去重的实例缓存"，不是通用对象池。⚠️ `GetBlendInfo` 声明返回"栈顶"层，实现取的却是 `CameraModeStack.Last()`（栈底），接入任何消费方前不要按字面语义使用，缺陷记录见 [接通清单 KB-21](12-integration-backlog.md)。
+
 ## 当前接入与空配置风险
 
 UpdateCameraModes 只有在 DetermineCameraModeDelegate 绑定后才 Push 模式。当前 HeroComponent 在 DataInitialized 阶段绑定此委托，并读取 PawnData.DefaultCameraMode（优先技能临时覆盖 AbilityCameraMode）。`Content/Main/Camera` 下现有 `CM_ThirdPerson` 与 `CM_ThirdPerson_Death`；旧的 `CM_Default` 已从磁盘删除，PawnData.DefaultCameraMode 的实际指向需在编辑器确认。

@@ -98,6 +98,23 @@ AddInputBinding、AddInputContextMapping 的扩展添加分支均已启用。Her
 
 `HodgeHeroComponent` 里 Crouch 的 `BindNativeAction` 被注释（`Input_Crouch` 函数体、`ToggleCrouch`、`bCanCrouch=true` 均保留）；`HodgeLocomotionLab.cpp` 另有显式 `bCanCrouch=false`。动画 / UI 就绪后接回。
 
+### KB-21 🆕：`GetBlendInfo` 返回的不是栈顶层（待统一修缺陷）
+
+> 记录日期 2026-09-29，对象为本页 KB 条目之外的**既有缺陷**。核对此条时的实际状态：HEAD `dc3fb9f`，工作区**有未提交修改**（本条目只读核对相机源码，未改动任何源码）。
+
+`UHodgeCameraModeStack::GetBlendInfo` 的形参名（`OutWeightOfTopLayer` / `OutTagOfTopLayer`）与函数注释都声明返回**栈顶**层，但实现取的是 `CameraModeStack.Last()`，即**栈底**：
+
+- `PushCameraMode` 以 `Insert(CameraMode, 0)` 约定 `CameraModeStack[0]` 为栈顶（`HodgeCameraMode.cpp:453`），每次压栈后还会强制 `CameraModeStack.Last()->SetBlendWeight(1.0f)`（`:456`），所以栈底恒为"权重 100% 的基础模式"。
+- `GetBlendInfo` 取 `Last()` 后返回该基础模式的 `CameraTypeTag` 与 `BlendWeight`（`HodgeCameraMode.cpp:630-656`），注释自己写的是"获取栈底的 CameraMode"。因此返回的标签是基础模式（默认第三人称）的标签、权重恒为 `1.0`；`CM_ThirdPerson_Death`、技能临时覆盖模式等**上层模式在当前主导时不会被反映**。
+
+**当前影响：低（无消费方）**。`UHodgeCameraComponent::GetBlendInfo` 声明处没有 `UFUNCTION`（`HodgeCameraComponent.h:57`），C++ 侧除定义外无调用者，蓝图也调不到，所以现在是**潜伏缺陷**，不影响现有画面；但它一旦被动画 / UI 用来判断"当前镜头类型"，就会拿到过期层（恒为基础模式）。
+
+**来源**：与上游 Lyra 同名接口的写法一致（按讨论结论记录；本次**未**核对本机 Lyra 源码）。因此本条按"继承自上游的既有问题"处理，不计入本项目引入缺陷。
+
+**最小修复方向**：改为取 `CameraModeStack[0]` 以与压栈 / 更新（`UpdateStack` 从栈顶向下遍历）的约定一致；若真正想要的是"当前主导视图"，需要按各层权重从栈底向上求出实际主导层，只换下标并不等价。
+
+**验收方法**：先确认没有蓝图 / 动画依赖旧行为（`GetBlendInfo` 当前不是 `UFUNCTION`，改动不会破坏蓝图调用），再在 PIE 中打印镜头切换前后的返回值，确认压入死亡 / 技能模式后 tag 随之变化。
+
 ## 编辑器资产检查步骤
 
 1. 打开 `/Game/Main/Data/DA_Dafult_PawnData`，确认 PawnClass 是目标 Hero 蓝图、InputConfig、DefaultCameraMode 指向 `Main/Camera/CM_ThirdPerson`。AbilitySets 会被授予，可以实际填写。
