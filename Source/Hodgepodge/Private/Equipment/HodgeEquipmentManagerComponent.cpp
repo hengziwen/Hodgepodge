@@ -20,6 +20,9 @@
 // 提供 DOREPLIFETIME 等 UE 网络复制功能。
 #include "Net/UnrealNetwork.h"
 
+// [HODGE-DBG] 提供 GEngine，用于屏幕调试消息。
+#include "Engine/Engine.h"
+
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeEquipmentManagerComponent)
 
 class FLifetimeProperty;
@@ -138,6 +141,8 @@ UHodgeEquipmentInstance* FHodgeEquipmentList::AddEntry(TSubclassOf<UHodgeEquipme
 	// 获取当前 Pawn 使用的 ASC，装备授予 GAS 内容需要由 ASC 完成。
 	if (UHodgeAbilitySystemComponent* ASC = GetAbilitySystemComponent())
 	{
+		NewEntry.GrantedAbilitySystem = ASC;
+
 		// 遍历当前 EquipmentDefinition 配置的所有 AbilitySet。
 		for (const TObjectPtr<const UHodgeAbilitySet>& AbilitySet : EquipmentCDO->AbilitySetsToGrant)
 		{
@@ -173,8 +178,8 @@ void FHodgeEquipmentList::RemoveEntry(UHodgeEquipmentInstance* Instance)
 		// 找到与目标运行时装备实例对应的 Entry。
 		if (Entry.Instance == Instance)
 		{
-			// 获取当前 Pawn 的 ASC，用于撤销这件装备曾经授予的 GAS 内容。
-			if (UHodgeAbilitySystemComponent* ASC = GetAbilitySystemComponent())
+			// 使用授予时的 ASC，避免 Pawn 解绑或换绑后漏撤销或撤销到其他 ASC。
+			if (UHodgeAbilitySystemComponent* ASC = Entry.GrantedAbilitySystem.Get())
 			{
 				// 根据装备时保存的 GrantedHandles 精确撤销 AbilitySet 授予的内容。
 				Entry.GrantedHandles.TakeFromAbilitySystem(ASC);
@@ -299,6 +304,15 @@ void UHodgeEquipmentManagerComponent::InitializeComponent()
 {
 	// 当前没有额外初始化逻辑，仅执行父类实现。
 	Super::InitializeComponent();
+
+	// [HODGE-DBG] 临时诊断：组件实例真正被创建时打印所属世界与角色。
+	UE_LOG(LogTemp, Warning, TEXT("[HODGE-DBG] EquipMgr InitializeComponent Owner=%s NetMode=%d Role=%d"),
+	       *GetNameSafe(GetOwner()), static_cast<int32>(GetNetMode()),
+	       static_cast<int32>(GetOwnerRole()));
+
+	// [HODGE-DBG] 临时诊断：在屏幕上直接确认组件挂到了哪个角色上。
+	GEngine->AddOnScreenDebugMessage(INDEX_NONE, 20.0f, FColor::Green,
+	                                 FString::Printf(TEXT("[HODGE-DBG] EquipMgr created on %s"), *GetNameSafe(GetOwner())));
 }
 
 // 组件反初始化时卸下并清理当前 Pawn 的全部装备。

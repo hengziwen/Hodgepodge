@@ -49,9 +49,11 @@ public:
 
 protected:
 	virtual void ActivateAbility(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
-		FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
+	                             FGameplayAbilityActivationInfo ActivationInfo,
+	                             const FGameplayEventData* TriggerEventData) override;
 	virtual void EndAbility(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
-		FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
+	                        FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility,
+	                        bool bWasCancelled) override;
 
 private:
 	void StartStep();
@@ -59,14 +61,21 @@ private:
 	void TryAdvance();
 	void OnComboWindowChanged(FGameplayTag Tag, int32 NewCount);
 	void OnTimelineEnded(const FGameplayEventData* Payload);
-	UFUNCTION() void OnAttackPressed(float TimeWaited);
-	UFUNCTION() void OnCompleted();
-	UFUNCTION() void OnInterrupted();
+	UFUNCTION()
+	void OnAttackPressed(float TimeWaited);
+	UFUNCTION()
+	void OnCompleted();
+	UFUNCTION()
+	void OnInterrupted();
 
-	UPROPERTY(Transient) TObjectPtr<UHodgeAbilityTask_PlayTimeline> TimelineTask;
-	UPROPERTY(Transient) TObjectPtr<UAbilityTask_PlayMontageAndWait> MontageTask;
-	UPROPERTY(Transient) TObjectPtr<UAbilityTask_WaitInputPress> InputTask;
-	UPROPERTY(Transient) TObjectPtr<UHodgeAbilityTask_WaitMoveCancel> MoveTask;
+	UPROPERTY(Transient)
+	TObjectPtr<UHodgeAbilityTask_PlayTimeline> TimelineTask;
+	UPROPERTY(Transient)
+	TObjectPtr<UAbilityTask_PlayMontageAndWait> MontageTask;
+	UPROPERTY(Transient)
+	TObjectPtr<UAbilityTask_WaitInputPress> InputTask;
+	UPROPERTY(Transient)
+	TObjectPtr<UHodgeAbilityTask_WaitMoveCancel> MoveTask;
 	FDelegateHandle ComboHandle;
 	FDelegateHandle TimelineEndHandle;
 	bool bBufferedAttack = false;

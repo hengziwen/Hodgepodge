@@ -1,24 +1,22 @@
-#include "Component/HodgeComboComponent.h"
+#include "Component/HodgeCombatComponentBase.h"
 #include "AbilitySystem/HodgeAbilitySystemComponent.h"
+#include "AbilitySystem/HodgeGameplayTags.h"
 #include "AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h"
 #include "Component/HodgeHeroComponent.h"
 #include "Data/HodgeComboDefinition.h"
 #include "Engine/World.h"
 #include "GameFramework/Pawn.h"
 #include "Net/UnrealNetwork.h"
-#include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeComboComponent)
+#include "Component/HodgePawnExtensionComponent.h"
+#include "Data/HodgePawnData.h"
 
 UE_DEFINE_GAMEPLAY_TAG_STATIC(TAG_ComboInputRequest, "GameplayEvent.Combo.InputRequest");
 UE_DEFINE_GAMEPLAY_TAG_STATIC(TAG_ComboEventRequest, "GameplayEvent.Combo.EventRequest");
 
-UHodgeComboComponent::UHodgeComboComponent()
+void UHodgeCombatComponentBase::Configure(UHodgeAbilitySystemComponent* InASC, const UHodgeComboDefinition* InDefinition)
 {
-	PrimaryComponentTick.bCanEverTick = true;
-	SetIsReplicatedByDefault(true);
-}
-
-void UHodgeComboComponent::Configure(UHodgeAbilitySystemComponent* InASC, const UHodgeComboDefinition* InDefinition)
-{
+	if (bShuttingDown) { return; }
+	if (InASC && InASC->GetAvatarActor() != GetOwner()) { return; }
 	if (ASC == InASC && Definition == InDefinition) { return; }
 	Shutdown();
 	ASC = InASC;
@@ -26,26 +24,41 @@ void UHodgeComboComponent::Configure(UHodgeAbilitySystemComponent* InASC, const 
 	if (InDefinition && InDefinition->ValidateDefinition(Errors)) { Definition = InDefinition; }
 	for (const FText& Error : Errors) { UE_LOG(LogTemp, Error, TEXT("[Hodge] Combo: %s"), *Error.ToString()); }
 	CurrentComboTag = Definition ? Definition->EntryComboTag : FGameplayTag();
+	SetComponentTickEnabled(ASC && Definition && ASC->AbilityActorInfo.IsValid() &&
+		(GetOwner()->HasAuthority() || ASC->AbilityActorInfo->IsLocallyControlled()));
+	// 观察者标签可能先于 Pawn 的 ASC 绑定到达，绑定完成后补应用缓存状态。
+	if (GetOwner()->GetLocalRole() == ROLE_SimulatedProxy) { OnRep_ObserverTags({}); }
 }
 
-void UHodgeComboComponent::Shutdown()
+void UHodgeCombatComponentBase::Shutdown()
 {
+	if (bShuttingDown) { return; }
+	TGuardValue<bool> Guard(bShuttingDown, true);
+	SetComponentTickEnabled(false);
 	ResetSession(true);
+	SetNode(FGameplayTag());
+	if (ASC) { ASC->RemoveLooseGameplayTags(AppliedObserverTags); }
+	AppliedObserverTags.Reset();
+	EndAllDetectionSessions();
+	AuthorizedHandle = {};
+	PendingNode = FGameplayTag();
 	Definition = nullptr;
 	ASC = nullptr;
 	CurrentComboTag = FGameplayTag();
 	bMoveRequestPending = false;
+	bSwitching = false;
+	bEvaluating = false;
 }
 
-void UHodgeComboComponent::ClearInput()
+void UHodgeCombatComponentBase::ClearInput()
 {
 	BufferedInput = FGameplayTag();
 	InputExpiresAt = 0;
 }
 
-bool UHodgeComboComponent::InputPressed(FGameplayTag InputTag)
+bool UHodgeCombatComponentBase::InputPressed(FGameplayTag InputTag)
 {
-	if (!Definition || !ASC) { return false; }
+	if (!IsComboReady()) { return false; }
 	for (const auto& Binding : Definition->InputBindings)
 	{
 		if (Binding.InputTag != InputTag) { continue; }
@@ -62,7 +75,7 @@ bool UHodgeComboComponent::InputPressed(FGameplayTag InputTag)
 	return false;
 }
 
-const FHodgeComboTransition* UHodgeComboComponent::SelectTransition(FGameplayTag Trigger, bool bEvent) const
+const FHodgeComboTransition* UHodgeCombatComponentBase::SelectTransition(FGameplayTag Trigger, bool bEvent) const
 {
 	const auto* Node = Definition ? Definition->FindNode(CurrentComboTag) : nullptr;
 	if (!ASC || !Node || !Trigger.IsValid()) { return nullptr; }
@@ -79,19 +92,19 @@ const FHodgeComboTransition* UHodgeComboComponent::SelectTransition(FGameplayTag
 	return Best;
 }
 
-bool UHodgeComboComponent::IsAuthorized(FGameplayAbilitySpecHandle Handle) const
+bool UHodgeCombatComponentBase::IsAuthorized(FGameplayAbilitySpecHandle Handle) const
 {
-	return Handle.IsValid() && AuthorizedHandle == Handle;
+	return IsComboReady() && Handle.IsValid() && AuthorizedHandle == Handle;
 }
 
-int16 UHodgeComboComponent::ExecutionKey() const
+int16 UHodgeCombatComponentBase::ExecutionKey() const
 {
 	if (!CurrentAbility) { return 0; }
 	const auto Key = CurrentAbility->GetCurrentActivationInfo().GetActivationPredictionKey();
 	return Key.IsServerInitiatedKey() ? -Key.Current : Key.Current;
 }
 
-bool UHodgeComboComponent::PrepareTransition(const FHodgeComboTransition& Edge, FGameplayAbilitySpecHandle Handle)
+bool UHodgeCombatComponentBase::PrepareTransition(const FHodgeComboTransition& Edge, FGameplayAbilitySpecHandle Handle)
 {
 	FGameplayAbilitySpec* Spec = ASC->FindAbilitySpecFromHandle(Handle);
 	if (!Spec || (Spec->IsActive() && (!CurrentAbility || CurrentAbility->GetCurrentAbilitySpecHandle() != Handle)))
@@ -104,22 +117,25 @@ bool UHodgeComboComponent::PrepareTransition(const FHodgeComboTransition& Edge, 
 		AuthorizedHandle = {};
 		return false;
 	}
+	if (!IsComboReady() || AuthorizedHandle != Handle) { return false; }
 	bSwitching = true;
 	PendingNode = Edge.TargetComboTag;
 	ClearInput();
 	if (CurrentAbility) { CurrentAbility->FinishExecution(true, false); }
+	// 结束旧技能可能同步卸载组件或更换 Pawn，不能继续使用已清理的连招配置。
+	if (!IsComboReady() || !bSwitching) { return false; }
 	CurrentAbility = nullptr;
 	SetNode(Definition->EntryComboTag);
 	return true;
 }
 
-bool UHodgeComboComponent::TryTransition(FGameplayTag Trigger, bool bEvent)
+bool UHodgeCombatComponentBase::TryTransition(FGameplayTag Trigger, bool bEvent)
 {
-	if (!ASC || !Definition || bSwitching || bEvaluating) { return false; }
+	if (!IsComboReady() || bSwitching || bEvaluating) { return false; }
 	const FGameplayTag SourceNode = CurrentComboTag;
 	const int16 SourceKey = ExecutionKey();
 	if (CurrentAbility) { CurrentAbility->RefreshExecutionClock(); }
-	if (SourceNode != CurrentComboTag || SourceKey != ExecutionKey()) { return false; }
+	if (!IsComboReady() || SourceNode != CurrentComboTag || SourceKey != ExecutionKey()) { return false; }
 	TGuardValue<bool> Guard(bEvaluating, true);
 	const auto* Edge = SelectTransition(Trigger, bEvent);
 	if (!Edge) { return false; }
@@ -150,17 +166,17 @@ bool UHodgeComboComponent::TryTransition(FGameplayTag Trigger, bool bEvent)
 	return bActivated && CurrentAbility != nullptr;
 }
 
-bool UHodgeComboComponent::PrepareServerActivation(FGameplayAbilitySpecHandle Handle, const FGameplayEventData* Payload)
+bool UHodgeCombatComponentBase::PrepareServerActivation(FGameplayAbilitySpecHandle Handle, const FGameplayEventData* Payload)
 {
-	if (!ASC || !Definition || ASC->HasMatchingGameplayTag(TAG_Gameplay_AbilityInputBlocked)
+	if (!IsComboReady() || ASC->HasMatchingGameplayTag(TAG_Gameplay_AbilityInputBlocked)
 		|| !Payload || Payload->OptionalObject != Definition
 		|| Payload->Instigator != ASC->GetAvatarActor() || Payload->TargetTags.Num() != 1
 		|| Payload->InstigatorTags.Num() != 1 || !Payload->TargetTags.HasTagExact(CurrentComboTag)
 		|| Payload->EventMagnitude != ExecutionKey()) { return false; }
-	// Timeline events originate on authority; a client cannot assert that an event happened.
+	// 时间轴事件由服务器产生，不接受客户端自行声明事件已发生。
 	if (Payload->EventTag != TAG_ComboInputRequest) { return false; }
 	if (CurrentAbility) { CurrentAbility->RefreshExecutionClock(); }
-	if (!Payload->TargetTags.HasTagExact(CurrentComboTag) || Payload->EventMagnitude != ExecutionKey())
+	if (!IsComboReady() || !Payload->TargetTags.HasTagExact(CurrentComboTag) || Payload->EventMagnitude != ExecutionKey())
 	{
 		return false;
 	}
@@ -171,10 +187,10 @@ bool UHodgeComboComponent::PrepareServerActivation(FGameplayAbilitySpecHandle Ha
 	return PrepareTransition(*Edge, Handle);
 }
 
-bool UHodgeComboComponent::PrepareConfirmedActivation(FGameplayAbilitySpecHandle Handle,
+bool UHodgeCombatComponentBase::PrepareConfirmedActivation(FGameplayAbilitySpecHandle Handle,
                                                       const FGameplayEventData& Payload)
 {
-	if (!ASC || !Definition || Payload.OptionalObject != Definition || Payload.Instigator != ASC->GetAvatarActor()
+	if (!IsComboReady() || Payload.OptionalObject != Definition || Payload.Instigator != ASC->GetAvatarActor()
 		|| Payload.EventTag != TAG_ComboEventRequest) { return false; }
 	for (FGameplayTag Tag : Payload.TargetTags)
 	{
@@ -182,6 +198,7 @@ bool UHodgeComboComponent::PrepareConfirmedActivation(FGameplayAbilitySpecHandle
 		if (Row && ASC->FindDefinitionAbility(Row->AbilityTag) == Handle)
 		{
 			ResetSession(true);
+			if (!IsComboReady()) { return false; }
 			bSwitching = true;
 			PendingNode = Tag;
 			AuthorizedHandle = Handle;
@@ -191,15 +208,15 @@ bool UHodgeComboComponent::PrepareConfirmedActivation(FGameplayAbilitySpecHandle
 	return false;
 }
 
-void UHodgeComboComponent::RejectServerActivation(const FGameplayEventData* Payload)
+void UHodgeCombatComponentBase::RejectServerActivation(const FGameplayEventData* Payload)
 {
-	if (ASC && Definition && Payload && Payload->OptionalObject == Definition && Payload->Instigator == ASC->
+	if (IsComboReady() && Payload && Payload->OptionalObject == Definition && Payload->Instigator == ASC->
 		GetAvatarActor()
 		&& Payload->TargetTags.Num() == 1 && Payload->TargetTags.HasTagExact(CurrentComboTag)
 		&& Payload->EventMagnitude == ExecutionKey()) { ResetSession(true); }
 }
 
-void UHodgeComboComponent::CompleteServerActivation()
+void UHodgeCombatComponentBase::CompleteServerActivation()
 {
 	bSwitching = false;
 	AuthorizedHandle = {};
@@ -208,37 +225,37 @@ void UHodgeComboComponent::CompleteServerActivation()
 	DrainEvents();
 }
 
-void UHodgeComboComponent::ExecutionStarted(UHodgeGameplayAbility_Definition* Ability)
+void UHodgeCombatComponentBase::ExecutionStarted(UHodgeGameplayAbility_Definition* Ability)
 {
 	if (!Ability || !IsAuthorized(Ability->GetCurrentAbilitySpecHandle())) { return; }
 	CurrentAbility = Ability;
 	SetNode(PendingNode);
 }
 
-void UHodgeComboComponent::ExecutionEnded(UHodgeGameplayAbility_Definition* Ability)
+void UHodgeCombatComponentBase::ExecutionEnded(UHodgeGameplayAbility_Definition* Ability)
 {
 	if (CurrentAbility != Ability) { return; }
 	CurrentAbility = nullptr;
 	if (!bSwitching) { ResetSession(false); }
 }
 
-void UHodgeComboComponent::WindowsChanged(UHodgeGameplayAbility_Definition* Ability)
+void UHodgeCombatComponentBase::WindowsChanged(UHodgeGameplayAbility_Definition* Ability)
 {
-	if (CurrentAbility != Ability || !ASC->AbilityActorInfo->IsLocallyControlled()) { return; }
+	if (!IsComboReady() || CurrentAbility != Ability || !ASC->AbilityActorInfo->IsLocallyControlled()) { return; }
 	if (BufferedInput.IsValid() && GetWorld()->GetTimeSeconds() < InputExpiresAt)
 	{
 		TryTransition(BufferedInput, false);
 	}
 }
 
-void UHodgeComboComponent::TimelineEvent(UHodgeGameplayAbility_Definition* Ability, FGameplayTag Event)
+void UHodgeCombatComponentBase::TimelineEvent(UHodgeGameplayAbility_Definition* Ability, FGameplayTag Event)
 {
-	if (CurrentAbility != Ability || !GetOwner()->HasAuthority()) { return; }
+	if (!IsComboReady() || CurrentAbility != Ability || !GetOwner()->HasAuthority()) { return; }
 	if (bSwitching || bEvaluating) { QueuedEvents.Add({Ability, ExecutionKey(), Event}); }
 	else { TryTransition(Event, true); }
 }
 
-void UHodgeComboComponent::DrainEvents()
+void UHodgeCombatComponentBase::DrainEvents()
 {
 	if (bDrainingEvents || bSwitching || bEvaluating) { return; }
 	TGuardValue<bool> Guard(bDrainingEvents, true);
@@ -256,7 +273,7 @@ void UHodgeComboComponent::DrainEvents()
 	}
 }
 
-void UHodgeComboComponent::SetNode(FGameplayTag Node)
+void UHodgeCombatComponentBase::SetNode(FGameplayTag Node)
 {
 	FGameplayTagContainer Previous = MoveTemp(OwnedNodeTags);
 	OwnedNodeTags.Reset();
@@ -270,7 +287,7 @@ void UHodgeComboComponent::SetNode(FGameplayTag Node)
 	if (GetOwner()->HasAuthority()) { ObserverTags = OwnedNodeTags; }
 }
 
-void UHodgeComboComponent::ResetSession(bool bEndAbility)
+void UHodgeCombatComponentBase::ResetSession(bool bEndAbility)
 {
 	TGuardValue<bool> Guard(bSwitching, true);
 	auto* Previous = CurrentAbility.Get();
@@ -281,11 +298,11 @@ void UHodgeComboComponent::ResetSession(bool bEndAbility)
 	SetNode(Definition ? Definition->EntryComboTag : FGameplayTag());
 }
 
-void UHodgeComboComponent::TickComponent(float Delta, ELevelTick Type, FActorComponentTickFunction* Tick)
+void UHodgeCombatComponentBase::TickComponent(float Delta, ELevelTick Type, FActorComponentTickFunction* Tick)
 {
 	Super::TickComponent(Delta, Type, Tick);
 	DrainEvents();
-	if (!ASC || !Definition || !ASC->AbilityActorInfo.IsValid() || !ASC->AbilityActorInfo->IsLocallyControlled())
+	if (!IsComboReady() || !ASC->AbilityActorInfo->IsLocallyControlled())
 	{
 		return;
 	}
@@ -307,49 +324,102 @@ void UHodgeComboComponent::TickComponent(float Delta, ELevelTick Type, FActorCom
 	}
 }
 
-void UHodgeComboComponent::ServerMoveCancel_Implementation(AActor* Avatar, FGameplayAbilitySpecHandle Handle, int32 Key)
+void UHodgeCombatComponentBase::ServerMoveCancel_Implementation(AActor* Avatar, FGameplayAbilitySpecHandle Handle, int32 Key)
 {
-	if (ASC && Definition && CurrentAbility && Avatar == ASC->GetAvatarActor()
+	if (IsComboReady() && CurrentAbility && Avatar == GetOwner()
 		&& Handle == CurrentAbility->GetCurrentAbilitySpecHandle() && Key == ExecutionKey())
 	{
 		CurrentAbility->RefreshExecutionClock();
-		if (CurrentAbility && Handle == CurrentAbility->GetCurrentAbilitySpecHandle() && Key == ExecutionKey()
+		if (IsComboReady() && CurrentAbility && Handle == CurrentAbility->GetCurrentAbilitySpecHandle() && Key == ExecutionKey()
 			&& CurrentAbility->GetExecutionWindows().HasTag(Definition->MoveCancelWindowTag)) { ResetSession(true); }
 	}
 	ClientMoveCancelResult();
 }
 
-void UHodgeComboComponent::ClientMoveCancelResult_Implementation() { bMoveRequestPending = false; }
+void UHodgeCombatComponentBase::ClientMoveCancelResult_Implementation() { bMoveRequestPending = false; }
 
-void UHodgeComboComponent::ServerReturnToEntry_Implementation(AActor* Avatar, FGameplayTag SourceNode, int32 Key,
+void UHodgeCombatComponentBase::ServerReturnToEntry_Implementation(AActor* Avatar, FGameplayTag SourceNode, int32 Key,
                                                               FGameplayTag Intent)
 {
-	if (!ASC || !Definition || Avatar != ASC->GetAvatarActor() || SourceNode != CurrentComboTag
+	if (!IsComboReady() || Avatar != GetOwner() || SourceNode != CurrentComboTag
 		|| Key != ExecutionKey() || ASC->HasMatchingGameplayTag(TAG_Gameplay_AbilityInputBlocked)) { return; }
 	if (CurrentAbility) { CurrentAbility->RefreshExecutionClock(); }
-	if (SourceNode != CurrentComboTag || Key != ExecutionKey()) { return; }
+	if (!IsComboReady() || SourceNode != CurrentComboTag || Key != ExecutionKey()) { return; }
 	TGuardValue<bool> Guard(bEvaluating, true);
 	const auto* Edge = SelectTransition(Intent, false);
 	if (Edge && Edge->TargetComboTag == Definition->EntryComboTag) { ResetSession(true); }
 }
 
-void UHodgeComboComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+void UHodgeCombatComponentBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME_CONDITION(UHodgeComboComponent, ObserverTags, COND_SkipOwner);
+	DOREPLIFETIME_CONDITION(UHodgeCombatComponentBase, ObserverTags, COND_SkipOwner);
 }
 
-void UHodgeComboComponent::OnRep_ObserverTags(const FGameplayTagContainer& Previous)
+void UHodgeCombatComponentBase::OnRep_ObserverTags(const FGameplayTagContainer& Previous)
 {
-	if (auto* OwnerASC = GetOwner()->FindComponentByClass<UHodgeAbilitySystemComponent>())
+	if (IsValid(ASC) && ASC->GetAvatarActor() == GetOwner() && GetOwner()->GetLocalRole() == ROLE_SimulatedProxy)
 	{
-		OwnerASC->RemoveLooseGameplayTags(Previous);
-		OwnerASC->AddLooseGameplayTags(ObserverTags);
+		// 只撤销本组件实际应用的标签，重复绑定不会叠加其他来源的计数。
+		ASC->RemoveLooseGameplayTags(AppliedObserverTags);
+		AppliedObserverTags = ObserverTags;
+		ASC->AddLooseGameplayTags(AppliedObserverTags);
 	}
 }
 
-void UHodgeComboComponent::EndPlay(const EEndPlayReason::Type Reason)
+UHodgeCombatComponentBase* UHodgeCombatComponentBase::FindCombatComponent(const AActor* Avatar)
+{
+	return IsValid(Avatar) ? Avatar->FindComponentByClass<UHodgeCombatComponentBase>() : nullptr;
+}
+
+bool UHodgeCombatComponentBase::IsComboReady() const
+{
+	// 旧 Pawn 的组件不能继续操作已经切换 Avatar 的 PlayerState ASC。
+	return !bShuttingDown && IsRegistered() && IsValid(ASC) && Definition &&
+		ASC->AbilityActorInfo.IsValid() && ASC->GetAvatarActor() == GetOwner() &&
+		!ASC->HasMatchingGameplayTag(HodgeGameplayTags::Status_Death);
+}
+
+void UHodgeCombatComponentBase::BindPawnExtension()
+{
+	auto* Extension = UHodgePawnExtensionComponent::FindPawnExtensionComponent(GetOwner());
+	if (!Extension) { return; }
+	PawnExtension = Extension;
+	Extension->OnAbilitySystemUninitialized_Register(
+		FSimpleMulticastDelegate::FDelegate::CreateUObject(this, &ThisClass::HandleAbilitySystemUninitialized));
+	Extension->OnAbilitySystemInitialized_RegisterAndCall(
+		FSimpleMulticastDelegate::FDelegate::CreateUObject(this, &ThisClass::HandleAbilitySystemInitialized));
+}
+
+void UHodgeCombatComponentBase::HandleAbilitySystemInitialized()
+{
+	if (!IsRegistered() || !PawnExtension.IsValid()) { return; }
+	const auto* PawnData = PawnExtension->GetPawnData<UHodgePawnData>();
+	Configure(PawnExtension->GetHodgeAbilitySystemComponent(), PawnData ? PawnData->ComboDefinition.Get() : nullptr);
+}
+
+void UHodgeCombatComponentBase::HandleAbilitySystemUninitialized()
 {
 	Shutdown();
-	Super::EndPlay(Reason);
+}
+
+void UHodgeCombatComponentBase::OnRegister()
+{
+	Super::OnRegister();
+	BindPawnExtension();
+}
+
+void UHodgeCombatComponentBase::BeginPlay()
+{
+	Super::BeginPlay();
+	// 覆盖动态添加时其他默认组件尚未完成注册的顺序。
+	BindPawnExtension();
+}
+
+void UHodgeCombatComponentBase::OnUnregister()
+{
+	if (PawnExtension.IsValid()) { PawnExtension->UnregisterAbilitySystemDelegates(this); }
+	PawnExtension.Reset();
+	Shutdown();
+	Super::OnUnregister();
 }

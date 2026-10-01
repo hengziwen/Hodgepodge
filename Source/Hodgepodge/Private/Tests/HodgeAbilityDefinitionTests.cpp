@@ -5,7 +5,7 @@
 #include "Data/HodgeAbilityDefinition.h"
 #include "Data/HodgeAbilityTimeline.h"
 #include "Data/HodgeComboDefinition.h"
-#include "Component/HodgeComboComponent.h"
+#include "Component/HodgeCombatComponentBase.h"
 #include "Animation/AnimMontage.h"
 #include "Engine/World.h"
 #include "GameFramework/Actor.h"
@@ -85,9 +85,9 @@ bool FHodgeComboValidationTest::RunTest(const FString& Parameters)
 
 struct FHodgeComboTestAccess
 {
-	static void SetNode(UHodgeComboComponent* Combo, FGameplayTag Tag) { Combo->SetNode(Tag); }
-	static const FHodgeComboTransition* Select(UHodgeComboComponent* Combo, FGameplayTag Tag) { return Combo->SelectTransition(Tag, false); }
-	static FGameplayTag Input(UHodgeComboComponent* Combo) { return Combo->BufferedInput; }
+	static void SetNode(UHodgeCombatComponentBase* Combo, FGameplayTag Tag) { Combo->SetNode(Tag); }
+	static const FHodgeComboTransition* Select(UHodgeCombatComponentBase* Combo, FGameplayTag Tag) { return Combo->SelectTransition(Tag, false); }
+	static FGameplayTag Input(UHodgeCombatComponentBase* Combo) { return Combo->BufferedInput; }
 };
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeComboSessionTest, "Hodge.Combo.SessionRules",
@@ -103,9 +103,12 @@ bool FHodgeComboSessionTest::RunTest(const FString& Parameters)
 	Owner->AddInstanceComponent(ASC);
 	ASC->RegisterComponent();
 	ASC->InitAbilityActorInfo(Owner, Avatar);
-	auto* Combo = NewObject<UHodgeComboComponent>(Owner);
-	Owner->AddInstanceComponent(Combo);
+	auto* Combo = NewObject<UHodgeCombatComponentBase>(Avatar);
+	Avatar->AddInstanceComponent(Combo);
 	Combo->RegisterComponent();
+	TestTrue(TEXT("Combat entry belongs to the current Avatar"),
+		UHodgeCombatComponentBase::FindCombatComponent(ASC->GetAvatarActor()) == Combo);
+	TestNull(TEXT("ASC owner does not host a second combat entry"), UHodgeCombatComponentBase::FindCombatComponent(Owner));
 	auto* Definition = NewObject<UHodgeComboDefinition>();
 	Definition->ComboTable = NewObject<UDataTable>();
 	Definition->ComboTable->RowStruct = FHodgeComboRow::StaticStruct();
@@ -161,7 +164,11 @@ bool FHodgeComboSessionTest::RunTest(const FString& Parameters)
 	ASC->InitAbilityActorInfo(Owner, World->SpawnActor<AActor>());
 	TestEqual(TEXT("Avatar change cleans owned node tags"), ASC->GetTagCount(Source), 0);
 	TestFalse(TEXT("Avatar change clears buffered input"), FHodgeComboTestAccess::Input(Combo).IsValid());
+	Combo->Configure(ASC, Definition);
+	TestFalse(TEXT("Old Pawn cannot accept combo input after Avatar replacement"), Combo->InputPressed(First));
+	TestFalse(TEXT("Old Pawn remains unconfigured for the new Avatar"), Combo->GetCurrentComboTag().IsValid());
 	TestEqual(TEXT("Avatar cleanup preserves foreign tags"), ASC->GetTagCount(Second), 1);
+	ASC->InitAbilityActorInfo(Owner, Avatar);
 	Combo->Configure(ASC, Definition);
 	TestEqual(TEXT("Rebind starts at Entry"), Combo->GetCurrentComboTag(), Definition->EntryComboTag);
 	Combo->Shutdown();

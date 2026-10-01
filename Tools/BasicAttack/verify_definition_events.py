@@ -10,8 +10,8 @@ world = sub.get_world()
 pc = unreal.GameplayStatics.get_player_controller(world, 0)
 peer = next(x for x in unreal.ObjectIterator(unreal.HodgePlayerState) if x.get_world() is not None
             and x.has_authority() and x.get_editor_property('PlayerId') == pc.player_state.get_editor_property('PlayerId'))
-combo = pc.player_state.get_component_by_class(unreal.HodgeComboComponent)
-server_combo = peer.get_component_by_class(unreal.HodgeComboComponent)
+combo = pc.get_controlled_pawn().get_component_by_class(unreal.HodgeCombatComponentBase)
+server_combo = peer.get_pawn().get_component_by_class(unreal.HodgeCombatComponentBase)
 action = unreal.load_asset('/Game/Main/Input/InputAction/IA_Attack')
 state = {'start': unreal.GameplayStatics.get_time_seconds(world), 'checked': [], 'changes': [], 'last': None}
 path = Path(unreal.Paths.convert_relative_path_to_full(unreal.Paths.project_saved_dir())) / 'Tests/definition_combo_events.json'

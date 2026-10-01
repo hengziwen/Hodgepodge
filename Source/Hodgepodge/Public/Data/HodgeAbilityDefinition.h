@@ -5,6 +5,7 @@
 #include "AlphaBlend.h"
 #include "Animation/AnimMontage.h"
 #include "GameplayTagContainer.h"
+#include "Combat/HodgeHitDetection.h"
 #include "HodgeAbilityDefinition.generated.h"
 
 class UHodgeGameplayAbility;
@@ -52,6 +53,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) FGameplayTag AbilityTag;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) TSubclassOf<UHodgeGameplayAbility> AbilityClass;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) FHodgeAbilityExecutionConfig ExecutionConfig;
+	// 同一 WindowTag 只能配置一次；多个窗口可复用该绑定。
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Combat", meta=(TitleProperty="WindowTag"))
+	TArray<FHodgeHitWindowBinding> HitWindows;
 	UFUNCTION(BlueprintPure) float GetDuration() const;
 	bool ValidateDefinition(TArray<FText>& Errors) const;
 #if WITH_EDITOR

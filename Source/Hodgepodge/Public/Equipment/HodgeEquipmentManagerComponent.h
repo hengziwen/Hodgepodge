@@ -62,6 +62,10 @@ private:
 	// 仅服务器保存的 AbilitySet 授予句柄，用于卸装时精确撤销这件装备授予的 GAS 内容。
 	UPROPERTY(NotReplicated)
 	FHodgeAbilitySet_GrantedHandles GrantedHandles;
+
+	// 仅服务器记录原始 ASC，Pawn 解绑后仍可准确撤销授予。
+	UPROPERTY(NotReplicated)
+	TWeakObjectPtr<UHodgeAbilitySystemComponent> GrantedAbilitySystem;
 };
 
 /** List of applied equipment */

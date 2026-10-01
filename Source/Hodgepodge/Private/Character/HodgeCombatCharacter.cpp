@@ -14,11 +14,18 @@
 #include "Camera/HodgeCameraComponent.h"
 #include "Component/HodgeCharacterMovementComponent.h"
 #include "Component/HodgeHealthComponent.h"
+#include "Component/HodgeCombatComponentBase.h"
 #include "Component/HodgePawnExtensionComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Core/PlayerController/HodgePlayerController.h"
 #include "Core/PlayState/HodgePlayerState.h"
+#include "Data/HodgePawnData.h"
+#include "Equipment/HodgeEquipmentDefinition.h"
+#include "Equipment/HodgeEquipmentInstance.h"
+#include "Equipment/HodgeEquipmentManagerComponent.h"
+#include "Equipment/HodgeWeaponInstance.h"
 #include "Net/UnrealNetwork.h"
+#include "Templates/UnrealTemplate.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeCombatCharacter)
 
@@ -183,6 +190,13 @@ void AHodgeCombatCharacter::BeginPlay()
 // Actor 结束游戏
 void AHodgeCombatCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	// 判定组件由 Experience 按需添加，卸载体验后组件可能已不存在。
+	if (auto* Combat = FindComponentByClass<UHodgeCombatComponentBase>())
+	{
+		Combat->Shutdown();
+	}
+	// 在组件结束生命周期前清理，覆盖直接销毁 Pawn 的路径。
+	UninitializeDefaultEquipment();
 	Super::EndPlay(EndPlayReason);
 
 	// 获取当前 World
@@ -320,13 +334,96 @@ void AHodgeCombatCharacter::OnAbilitySystemInitialized()
 
 	// 初始化角色 GameplayTag
 	InitializeGameplayTags();
+
+	InitializeDefaultEquipment();
 }
 
 // AbilitySystem 反初始化时调用
 void AHodgeCombatCharacter::OnAbilitySystemUninitialized()
 {
+	if (auto* Combat = FindComponentByClass<UHodgeCombatComponentBase>()) { Combat->Shutdown(); }
+	UninitializeDefaultEquipment();
+
 	// 解除生命值组件与 ASC 的绑定
-	// HealthComponent->UninitializeFromAbilitySystem();
+	HealthComponent->UninitializeFromAbilitySystem();
+}
+
+void AHodgeCombatCharacter::InitializeDefaultEquipment()
+{
+	// 客户端只接收装备复制，不自行生成武器或授予能力。
+	if (!HasAuthority() || bInitializingDefaultEquipment)
+	{
+		return;
+	}
+
+	const UHodgePawnData* PawnData = PawnExtComponent->GetPawnData<UHodgePawnData>();
+	if (!PawnData || !PawnData->DefaultWeaponDefinition)
+	{
+		return;
+	}
+
+	UHodgeAbilitySystemComponent* ASC = GetHodgeAbilitySystemComponent();
+	if (!ensure(ASC && ASC->GetAvatarActor() == this))
+	{
+		return;
+	}
+
+	UHodgeEquipmentManagerComponent* EquipmentManager = FindComponentByClass<UHodgeEquipmentManagerComponent>();
+	if (!EquipmentManager)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Default weapon on [%s] requires a HodgeEquipmentManagerComponent."),
+		       *GetNameSafe(this));
+		return;
+	}
+
+	// 以容器中的实际条目判定是否已装备，避免外部卸装后留下过期缓存。
+	if (DefaultWeaponInstance && DefaultEquipmentManager.Get() == EquipmentManager &&
+		EquipmentManager->GetEquipmentInstancesOfType(UHodgeEquipmentInstance::StaticClass()).Contains(
+			DefaultWeaponInstance.Get()))
+	{
+		return;
+	}
+
+	const UHodgeEquipmentDefinition* Definition = GetDefault<UHodgeEquipmentDefinition>(
+		PawnData->DefaultWeaponDefinition);
+	if (!Definition->InstanceType || !Definition->InstanceType->IsChildOf(UHodgeWeaponInstance::StaticClass()))
+	{
+		UE_LOG(LogTemp, Error, TEXT("Default weapon [%s] must use a HodgeWeaponInstance subclass."),
+		       *GetNameSafe(PawnData->DefaultWeaponDefinition.Get()));
+		return;
+	}
+
+	TGuardValue<bool> InitializationGuard(bInitializingDefaultEquipment, true);
+	UninitializeDefaultEquipment();
+	DefaultEquipmentManager = EquipmentManager;
+	DefaultWeaponInstance = EquipmentManager->EquipItem(PawnData->DefaultWeaponDefinition);
+
+	// 装备回调可能同步触发解绑，返回后补清理刚创建的实例。
+	if (GetHodgeAbilitySystemComponent() != ASC || ASC->GetAvatarActor() != this)
+	{
+		UninitializeDefaultEquipment();
+	}
+}
+
+void AHodgeCombatCharacter::UninitializeDefaultEquipment()
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	// 卸装过程中禁止回调重新创建默认武器。
+	TGuardValue<bool> InitializationGuard(bInitializingDefaultEquipment, true);
+	UHodgeEquipmentInstance* Instance = DefaultWeaponInstance;
+	UHodgeEquipmentManagerComponent* EquipmentManager = DefaultEquipmentManager.Get();
+	// 先清空记录，避免卸装回调再次清理同一实例。
+	DefaultWeaponInstance = nullptr;
+	DefaultEquipmentManager.Reset();
+	if (Instance && EquipmentManager &&
+		EquipmentManager->GetEquipmentInstancesOfType(UHodgeEquipmentInstance::StaticClass()).Contains(Instance))
+	{
+		EquipmentManager->UnequipItem(Instance);
+	}
 }
 
 // Pawn 被 Controller 占有时调用
@@ -501,6 +598,8 @@ void AHodgeCombatCharacter::FellOutOfWorld(const class UDamageType& dmgType)
 // 角色开始死亡流程
 void AHodgeCombatCharacter::OnDeathStarted(AActor*)
 {
+	// 死亡立即停止判定，不等待死亡动画结束或 Pawn 销毁。
+	if (auto* Combat = FindComponentByClass<UHodgeCombatComponentBase>()) { Combat->Shutdown(); }
 	// 禁用角色移动和碰撞
 	DisableMovementAndCollision();
 }

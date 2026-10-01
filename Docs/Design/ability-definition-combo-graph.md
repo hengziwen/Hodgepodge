@@ -1,5 +1,7 @@
 # 单段技能 Definition 与连招跳转表设计
 
+> 2026-10-01 组件统一：运行时连招入口已从 PlayerState 的 HodgeComboComponent 迁入 Pawn 上由 Experience 添加的 HodgeCombatComponentBase。旧实施记录仅代表合并前结果；生命周期、RPC 与待验证步骤见 [伤害设计第 17 节](melee-detection-ga-effects.md)。
+
 > 状态：用户确认决策后已授权实施。第一版运行时、五段资产及默认配置已落地；实际验证结果见[实施记录](../Validation/definition-combo-2026-09-28.md)。
 > 范围：现有 Hodgepodge GAS、Montage、AbilityTimeline 与后续技能编辑器。
 > 兼容目标：UE 5.5.4，沿用单一 Hodgepodge Runtime 模块与现有 Experience / PawnData / AbilitySet 链路。
@@ -378,7 +380,7 @@ DataTable 的一行可以显示成编辑器中的一个节点，Transitions 显�
 
 - **级别 / 检查项**：MAJOR；COMBO-08。
 - **状态**：未修复；运行复现与修复回归待执行。
-- **位置**：[HodgeComboComponent.cpp](../../Source/Hodgepodge/Private/Component/HodgeComboComponent.cpp)，`PrepareConfirmedActivation`，审查时第 179～188 行；载荷构造在 `TryTransition`。
+- **位置**：[HodgeCombatComponentBase_Combo.cpp](../../Source/Hodgepodge/Private/Component/HodgeCombatComponentBase_Combo.cpp)，`PrepareConfirmedActivation`，审查时第 179～188 行；载荷构造在 `TryTransition`。
 - **触发**：来源节点 A 与目标节点 B 引用同一 AbilityTag，由服务端 Timeline 事件触发 A → B。设计允许不同 ComboTag 复用同一技能。
 - **证据与影响**：事件载荷依次将来源和目标 ComboTag 放入 `Payload.TargetTags`；客户端按目标 SpecHandle 取首个匹配节点。A、B 对应同一 SpecHandle，因此先匹配 A 并将其设为 `PendingNode`。服务器进入 B、客户端仍按 A 维护标签及后续转移，后续输入可能因来源节点不符被拒绝。
 - **最小修复方向**：确认消息显式区分来源与目标 ComboTag，客户端使用明确的目标节点并校验其 SpecHandle，不通过技能句柄反推唯一图节点。
@@ -418,3 +420,12 @@ Definition 的 Montage 是该次执行总时长的唯一来源。配置好 Monta
 - 迁移脚本为 `Tools/BasicAttack/migrate_timeline_montage_duration.py`，原始资产备份位于 `Saved/Backups/TimelineMontageDuration_20260928`。
 
 第 15 节的三项审查缺陷仍保持暂缓；本次不修改其事件派生、时间容差或复制重试逻辑。
+
+
+## 统一战斗组件后的接入
+
+ASC 继续归 PlayerState；ASC 输入、Definition GA 授权与执行通知，以及激活请求校验，均定位当前 Avatar 的 CombatComponent。连招协调、移动取消 RPC 和观察者标签复制实现于 HodgeCombatComponentBase_Combo.cpp。原 ComboDefinition、DataTable、输入意图、窗口条件和预测键协议保留；组件换 Pawn 时清空旧执行状态。
+
+不再在 PlayerState 创建 ComboComponent，不要求蓝图再挂一份连招组件。Experience 的 CombatComponent 添加项同时提供连招与命中检测；PawnExtension 的 ASC 就绪回调负责配置 PawnData.ComboDefinition。未就绪、未注册、死亡或 ASC Avatar 不匹配的组件不能授权连招请求。合并不改变 GA 单段执行与伤害效果应用职责，也不修复后加入玩家属性集初始化时序。
+
+合并后的实际 MCP 回归已完成：单人连招、客户端授权与移动取消 RPC、网络重生和服务器事件转移通过；当前资产路线 01→02→03→05→04 保留。验证结果与仍存在的客户端伤害属性初始化问题见 [统一 CombatComponent 回归报告](combat-component-unification-validation-20261001.md)。

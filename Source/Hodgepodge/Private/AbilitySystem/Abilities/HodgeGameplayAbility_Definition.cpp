@@ -1,7 +1,7 @@
 #include "AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h"
 #include "AbilitySystem/HodgeAbilitySystemComponent.h"
 #include "AbilitySystem/HodgeGameplayTags.h"
-#include "Component/HodgeComboComponent.h"
+#include "Component/HodgeCombatComponentBase.h"
 #include "Data/HodgeAbilityDefinition.h"
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimMontage.h"
@@ -23,9 +23,14 @@ const UHodgeAbilityDefinition* UHodgeGameplayAbility_Definition::GetDefinition()
 }
 
 void UHodgeGameplayAbility_Definition::ActivateConfirmedDefinition(FGameplayAbilitySpecHandle Handle,
-	const FGameplayAbilityActorInfo* Info, const FPredictionKey& Key, const FGameplayEventData& Payload)
+                                                                   const FGameplayAbilityActorInfo* Info,
+                                                                   const FPredictionKey& Key,
+                                                                   const FGameplayEventData& Payload)
 {
-	if (!Key.IsServerInitiatedKey() || IsActive()) { return; }
+	if (!Key.IsServerInitiatedKey() || IsActive())
+	{
+		return;
+	}
 	FGameplayAbilityActivationInfo ActivationInfo(Info->OwnerActor.Get());
 	ActivationInfo.SetActivationConfirmed();
 	ActivationInfo.ServerSetActivationPredictionKey(Key);
@@ -33,22 +38,36 @@ void UHodgeGameplayAbility_Definition::ActivateConfirmedDefinition(FGameplayAbil
 }
 
 bool UHodgeGameplayAbility_Definition::CanActivateAbility(FGameplayAbilitySpecHandle Handle,
-	const FGameplayAbilityActorInfo* Info, const FGameplayTagContainer* SourceTags,
-	const FGameplayTagContainer* TargetTags, FGameplayTagContainer* RelevantTags) const
+                                                          const FGameplayAbilityActorInfo* Info,
+                                                          const FGameplayTagContainer* SourceTags,
+                                                          const FGameplayTagContainer* TargetTags,
+                                                          FGameplayTagContainer* RelevantTags) const
 {
 	const auto* ASC = Info ? Cast<UHodgeAbilitySystemComponent>(Info->AbilitySystemComponent.Get()) : nullptr;
-	const auto* Combo = Info && Info->OwnerActor.IsValid() ? Info->OwnerActor->FindComponentByClass<UHodgeComboComponent>() : nullptr;
-	return ASC && ASC->FindAbilityDefinition(Handle) && Combo && Combo->IsAuthorized(Handle)
+	const auto* Combat = Info && Info->AvatarActor.IsValid()
+		                    ? UHodgeCombatComponentBase::FindCombatComponent(Info->AvatarActor.Get())
+		                    : nullptr;
+	return ASC && ASC->FindAbilityDefinition(Handle) && Combat && Combat->IsAuthorized(Handle)
 		&& Super::CanActivateAbility(Handle, Info, SourceTags, TargetTags, RelevantTags);
 }
 
 void UHodgeGameplayAbility_Definition::ActivateAbility(FGameplayAbilitySpecHandle Handle,
-	const FGameplayAbilityActorInfo* Info, FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* Payload)
+                                                       const FGameplayAbilityActorInfo* Info,
+                                                       FGameplayAbilityActivationInfo ActivationInfo,
+                                                       const FGameplayEventData* Payload)
 {
 	bEnding = false;
+	ExecutionId = FGuid::NewGuid();
 	const auto* Definition = GetDefinition();
 	TArray<FText> Errors;
-	if (!Definition || !Definition->ValidateDefinition(Errors) || !CommitAbility(Handle, Info, ActivationInfo))
+	if (!Definition || !Definition->ValidateDefinition(Errors))
+	{
+		UE_LOG(LogTemp, Error, TEXT("Invalid execution definition [%s] for ability [%s]."), *GetNameSafe(Definition), *GetPathName());
+		for (const FText& Error : Errors) { UE_LOG(LogTemp, Error, TEXT("%s"), *Error.ToString()); }
+		FinishExecution(true, true);
+		return;
+	}
+	if (!CommitAbility(Handle, Info, ActivationInfo))
 	{
 		FinishExecution(true, true);
 		return;
@@ -62,28 +81,56 @@ void UHodgeGameplayAbility_Definition::ActivateAbility(FGameplayAbilitySpecHandl
 	}
 	UAnimInstance* Anim = Info->GetAnimInstance();
 	FAnimMontageInstance* Instance = Anim ? Anim->GetActiveInstanceForMontage(Config.Montage) : nullptr;
-	if (!Instance) { FinishExecution(true, true); return; }
+	if (!Instance)
+	{
+		FinishExecution(true, true);
+		return;
+	}
 	TimelineTask = UHodgeAbilityTask_PlayTimeline::PlayMontageTimeline(this, Config.TimelineTaskConfig.Timeline,
-		Anim, Config.Montage, Instance->GetInstanceID());
+	                                                                   Anim, Config.Montage, Instance->GetInstanceID());
 	TimelineTask->OnFinished.AddUObject(this, &ThisClass::OnTimelineFinished);
 	TimelineTask->OnWindowsChanged.AddUObject(this, &ThisClass::OnWindowsChanged);
 	TimelineTask->OnPoint.AddUObject(this, &ThisClass::OnPoint);
-	if (auto* Combo = Info->OwnerActor->FindComponentByClass<UHodgeComboComponent>()) { Combo->ExecutionStarted(this); }
-	if (IsActive() && TimelineTask) { TimelineTask->ReadyForActivation(); }
+	TimelineTask->OnWindowEntered.AddUObject(this, &ThisClass::OnExecutionWindowEntered);
+	TimelineTask->OnWindowExited.AddUObject(this, &ThisClass::OnExecutionWindowExited);
+	OnExecutionReady();
+	if (!IsActive() || bEnding || !TimelineTask) { return; }
+	if (auto* Combat = UHodgeCombatComponentBase::FindCombatComponent(Info->AvatarActor.Get()))
+	{
+		Combat->ExecutionStarted(this);
+	}
+	if (IsActive() && TimelineTask)
+	{
+		TimelineTask->ReadyForActivation();
+	}
 }
 
 void UHodgeGameplayAbility_Definition::FinishExecution(bool bCancelled, bool bReplicate)
 {
-	if (IsActive()) { EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, bReplicate, bCancelled); }
+	if (IsActive())
+	{
+		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, bReplicate, bCancelled);
+	}
 }
 
 void UHodgeGameplayAbility_Definition::EndAbility(FGameplayAbilitySpecHandle Handle,
-	const FGameplayAbilityActorInfo* Info, FGameplayAbilityActivationInfo ActivationInfo, bool bReplicate, bool bCancelled)
+                                                  const FGameplayAbilityActorInfo* Info,
+                                                  FGameplayAbilityActivationInfo ActivationInfo, bool bReplicate,
+                                                  bool bCancelled)
 {
-	if (bEnding || !IsActive()) { return; }
+	if (bEnding || !IsActive())
+	{
+		return;
+	}
 	TGuardValue<bool> Guard(bEnding, true);
+	// 先失效旧身份，清理期间的回调不能消费上一段结果。
+	const FGuid EndingExecutionId = ExecutionId;
+	ExecutionId.Invalidate();
+	OnExecutionEnding(EndingExecutionId);
 	if (TimelineTask)
 	{
+		TimelineTask->OnWindowEntered.RemoveAll(this);
+		TimelineTask->OnWindowExited.RemoveAll(this);
 		TimelineTask->OnFinished.RemoveAll(this);
 		TimelineTask->OnWindowsChanged.RemoveAll(this);
 		TimelineTask->OnPoint.RemoveAll(this);
@@ -95,7 +142,7 @@ void UHodgeGameplayAbility_Definition::EndAbility(FGameplayAbilitySpecHandle Han
 		ASC->StopDefinitionMontage(this, !bCancelled);
 		ASC->ClearAnimatingAbility(this);
 	}
-	if (auto* Combo = Info->OwnerActor->FindComponentByClass<UHodgeComboComponent>()) { Combo->ExecutionEnded(this); }
+	if (auto* Combat = UHodgeCombatComponentBase::FindCombatComponent(Info->AvatarActor.Get())) { Combat->ExecutionEnded(this); }
 	Super::EndAbility(Handle, Info, ActivationInfo, bReplicate, bCancelled);
 }
 
@@ -103,21 +150,49 @@ FGameplayTagContainer UHodgeGameplayAbility_Definition::GetExecutionWindows() co
 {
 	return TimelineTask ? TimelineTask->GetActiveWindowTags() : FGameplayTagContainer();
 }
+
 void UHodgeGameplayAbility_Definition::RefreshExecutionClock()
 {
-	if (TimelineTask) { TimelineTask->RefreshMontageClock(); }
+	if (TimelineTask)
+	{
+		TimelineTask->RefreshMontageClock();
+	}
 }
+
 void UHodgeGameplayAbility_Definition::OnTimelineFinished(EHodgeTimelineStopReason Reason)
 {
 	const auto* FinishedTask = TimelineTask.Get();
-	if (Reason == EHodgeTimelineStopReason::NaturalEnd) { OnPoint(HodgeGameplayTags::GameplayEvent_Attack_Timeline_End); }
-	if (TimelineTask == FinishedTask) { FinishExecution(Reason != EHodgeTimelineStopReason::NaturalEnd, true); }
+	if (Reason == EHodgeTimelineStopReason::NaturalEnd)
+	{
+		OnPoint(HodgeGameplayTags::GameplayEvent_Attack_Timeline_End);
+	}
+	if (TimelineTask == FinishedTask)
+	{
+		FinishExecution(Reason != EHodgeTimelineStopReason::NaturalEnd, true);
+	}
 }
+
 void UHodgeGameplayAbility_Definition::OnWindowsChanged()
 {
-	if (auto* Combo = GetOwningActorFromActorInfo()->FindComponentByClass<UHodgeComboComponent>()) { Combo->WindowsChanged(this); }
+	if (auto* Combat = UHodgeCombatComponentBase::FindCombatComponent(GetAvatarActorFromActorInfo()))
+	{
+		Combat->WindowsChanged(this);
+	}
 }
+
 void UHodgeGameplayAbility_Definition::OnPoint(FGameplayTag Tag)
 {
-	if (auto* Combo = GetOwningActorFromActorInfo()->FindComponentByClass<UHodgeComboComponent>()) { Combo->TimelineEvent(this, Tag); }
+	if (auto* Combat = UHodgeCombatComponentBase::FindCombatComponent(GetAvatarActorFromActorInfo()))
+	{
+		Combat->TimelineEvent(this, Tag);
+	}
+}
+
+void UHodgeGameplayAbility_Definition::ValidateExecutionConfiguration(
+	const UHodgeAbilityDefinition& Definition, TArray<FText>& Errors) const
+{
+	if (!Definition.HitWindows.IsEmpty())
+	{
+		Errors.Add(FText::FromString(TEXT("HitWindows require a melee ability or a subclass implementing hit-window behavior; migrate AbilityClass to HodgeGameplayAbility_Melee.")));
+	}
 }

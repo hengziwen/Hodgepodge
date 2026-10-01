@@ -155,11 +155,15 @@ void UHodgeAbilitySet::GiveToAbilitySystem(UHodgeAbilitySystemComponent* HodgeAS
 		}
 	}
 
- for (const FHodgeAbilitySet_Definition& Entry : GrantedAbilityDefinitions)
- {
-  const FGameplayAbilitySpecHandle Handle = HodgeASC->GiveAbilityDefinition(Entry.Definition, Entry.AbilityLevel, SourceObject);
-  if (OutGrantedHandles) { OutGrantedHandles->AddAbilitySpecHandle(Handle); }
- }
+	for (const FHodgeAbilitySet_Definition& Entry : GrantedAbilityDefinitions)
+	{
+		const FGameplayAbilitySpecHandle Handle = HodgeASC->GiveAbilityDefinition(
+			Entry.Definition, Entry.AbilityLevel, SourceObject);
+		if (OutGrantedHandles)
+		{
+			OutGrantedHandles->AddAbilitySpecHandle(Handle);
+		}
+	}
 
 	// 授予 GameplayEffect。
 	for (int32 EffectIndex = 0; EffectIndex < GrantedGameplayEffects.Num(); ++EffectIndex)

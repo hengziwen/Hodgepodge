@@ -35,9 +35,9 @@ bool UHodgeAbilityTimeline::ValidateForPlayback(TArray<FText>& OutErrors, float 
 	return ValidateEntries(OutErrors, EffectiveDuration, true);
 }
 
-bool UHodgeAbilityTimeline::ValidateEntries(TArray<FText>& OutErrors, float EffectiveDuration, bool bCheckDuration) const
+bool UHodgeAbilityTimeline::ValidateEntries(TArray<FText>& OutErrors, float EffectiveDuration,
+                                            bool bCheckDuration) const
 {
-
 	// 窗口终点仅允许舍入误差，求值时使用同一常量归一到总时长。
 	static constexpr float TimeTolerance = FHodgeTimelineEvaluator::WindowEndTolerance;
 
@@ -130,7 +130,7 @@ bool UHodgeAbilityTimeline::ValidateEntries(TArray<FText>& OutErrors, float Effe
 				// 第 7 位小数不同）。用 %.9g 是因为 float32 需要 9 位有效数字才看得出差别。
 				OutErrors.Add(FText::Format(
 					LOCTEXT("WindowEndTimeExceedsDuration",
-						"Events[{0}] 是 Window，EndTime 超过了 Duration（该区间永远无法正常退出）[EventID={1}, EndTime={2}, Duration={3}]"),
+					        "Events[{0}] 是 Window，EndTime 超过了 Duration（该区间永远无法正常退出）[EventID={1}, EndTime={2}, Duration={3}]"),
 					IndexText,
 					FText::FromName(Event.EventID),
 					FText::FromString(FString::Printf(TEXT("%.9g"), Event.EndTime)),
@@ -153,7 +153,9 @@ bool UHodgeAbilityTimeline::ValidateEntries(TArray<FText>& OutErrors, float Effe
 					|| Effect->StackingType != EGameplayEffectStackingType::None)
 				{
 					OutErrors.Add(FText::Format(
-						LOCTEXT("WindowEffectContract", "Events[{0}] 的 WindowEffectClass 必须是 Infinite 且 StackingType=None，保证窗口独占可回收的 GE 句柄"), IndexText));
+						LOCTEXT("WindowEffectContract",
+						        "Events[{0}] 的 WindowEffectClass 必须是 Infinite 且 StackingType=None，保证窗口独占可回收的 GE 句柄"),
+						IndexText));
 				}
 			}
 		}
@@ -176,7 +178,8 @@ bool UHodgeAbilityTimeline::ValidateEntries(TArray<FText>& OutErrors, float Effe
 					&& Effect->DurationPolicy != EGameplayEffectDurationType::HasDuration))
 				{
 					OutErrors.Add(FText::Format(
-						LOCTEXT("PointEffectMustNotBeInfinite", "Events[{0}] 是 Point，PointEffectClass 不能是 Infinite（Timeline 不会再回收它）"),
+						LOCTEXT("PointEffectMustNotBeInfinite",
+						        "Events[{0}] 是 Point，PointEffectClass 不能是 Infinite（Timeline 不会再回收它）"),
 						IndexText
 					));
 				}
@@ -185,7 +188,8 @@ bool UHodgeAbilityTimeline::ValidateEntries(TArray<FText>& OutErrors, float Effe
 				if (Event.NetPolicy == EHodgeTimelineEventNetPolicy::LocallyControlledOnly)
 				{
 					OutErrors.Add(FText::Format(
-						LOCTEXT("PointEffectWithLocallyControlledOnly", "Events[{0}] 配了 PointEffectClass，NetPolicy 就不能是 LocallyControlledOnly（远程客户端上这个 GE 永远不会施加；请改用 AuthorityOnly 或 LocalAndAuthority）"),
+						LOCTEXT("PointEffectWithLocallyControlledOnly",
+						        "Events[{0}] 配了 PointEffectClass，NetPolicy 就不能是 LocallyControlledOnly（远程客户端上这个 GE 永远不会施加；请改用 AuthorityOnly 或 LocalAndAuthority）"),
 						IndexText
 					));
 				}
@@ -229,7 +233,6 @@ bool UHodgeAbilityTimeline::ValidateEntries(TArray<FText>& OutErrors, float Effe
 					));
 				}
 			}
-
 		}
 	}
 	return OutErrors.Num() == InitialErrorCount;
@@ -239,7 +242,8 @@ bool UHodgeAbilityTimeline::ValidateEntries(TArray<FText>& OutErrors, float Effe
 
 EDataValidationResult UHodgeAbilityTimeline::IsDataValid(FDataValidationContext& Context) const
 {
-	EDataValidationResult Result = CombineDataValidationResults(Super::IsDataValid(Context), EDataValidationResult::Valid);
+	EDataValidationResult Result = CombineDataValidationResults(Super::IsDataValid(Context),
+	                                                            EDataValidationResult::Valid);
 	TArray<FText> Errors;
 	// 独立资产没有 Montage 上下文；动画边界由引用它的 Definition 校验。
 	if (!ValidateEntries(Errors, Duration, !bUseMontageDuration))
@@ -278,7 +282,8 @@ EDataValidationResult UHodgeAbilityTimeline::IsDataValid(FDataValidationContext&
 				if (bSameTag)
 				{
 					Context.AddWarning(FText::Format(
-						LOCTEXT("WindowTagIsAdjacent", "Events[{0}] 与 Events[{1}] 的 WindowTag 相同且首尾相接：边界处该标签会经历一次移除再添加。若本意是一段连续区间，请合并为一条 Window"),
+						LOCTEXT("WindowTagIsAdjacent",
+						        "Events[{0}] 与 Events[{1}] 的 WindowTag 相同且首尾相接：边界处该标签会经历一次移除再添加。若本意是一段连续区间，请合并为一条 Window"),
 						FText::AsNumber(LeftIndex),
 						FText::AsNumber(RightIndex)
 					));
@@ -286,7 +291,8 @@ EDataValidationResult UHodgeAbilityTimeline::IsDataValid(FDataValidationContext&
 				else if (Left.WindowEffectClass && Left.WindowEffectClass == Right.WindowEffectClass)
 				{
 					Context.AddWarning(FText::Format(
-						LOCTEXT("WindowEffectIsAdjacent", "Events[{0}] 与 Events[{1}] 的 WindowEffectClass 相同且首尾相接：边界处会先移除再重新施加，GameplayCue / OnActive 会被重新触发"),
+						LOCTEXT("WindowEffectIsAdjacent",
+						        "Events[{0}] 与 Events[{1}] 的 WindowEffectClass 相同且首尾相接：边界处会先移除再重新施加，GameplayCue / OnActive 会被重新触发"),
 						FText::AsNumber(LeftIndex),
 						FText::AsNumber(RightIndex)
 					));
@@ -316,7 +322,8 @@ EDataValidationResult UHodgeAbilityTimeline::IsDataValid(FDataValidationContext&
 				&& Left.Priority == Right.Priority)
 			{
 				Context.AddWarning(FText::Format(
-					LOCTEXT("PointsShareTimeAndPriority", "Events[{0}] 与 Events[{1}] 的 StartTime 和 Priority 完全相同：执行顺序只能由数组下标决定，建议显式区分 Priority"),
+					LOCTEXT("PointsShareTimeAndPriority",
+					        "Events[{0}] 与 Events[{1}] 的 StartTime 和 Priority 完全相同：执行顺序只能由数组下标决定，建议显式区分 Priority"),
 					FText::AsNumber(LeftIndex),
 					FText::AsNumber(RightIndex)
 				));

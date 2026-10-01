@@ -7,6 +7,7 @@
 
 // 武器实例继承自通用装备运行时实例。
 #include "Equipment/HodgeEquipmentInstance.h"
+#include "Combat/HodgeHitDetection.h"
 
 // 提供输入设备属性句柄，用于记录并移除武器激活的设备效果。
 #include "GameFramework/InputDevicePropertyHandle.h"
@@ -33,6 +34,10 @@ class HODGEPODGE_API UHodgeWeaponInstance : public UHodgeEquipmentInstance
 	GENERATED_BODY()
 
 public:
+	// 武器提供自身的 Socket 和尺寸，技能决定何时使用这些来源。
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Combat", meta=(TitleProperty="SourceTag"))
+	TArray<FHodgeHitSource> HitSources;
+
 	// 构造武器运行时实例。
 	UHodgeWeaponInstance(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 

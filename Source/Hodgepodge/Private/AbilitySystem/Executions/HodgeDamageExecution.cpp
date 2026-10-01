@@ -13,6 +13,9 @@
 
 // HealthSet 中定义 Damage Meta Attribute，用于接收最终伤害计算结果。
 #include "AbilitySystem/AttributeSet/HodgeHealthSet.h"
+#include "AbilitySystemComponent.h"
+#include "AbilitySystem/HodgeGameplayTags.h"
+#include "Combat/HodgeDamageRules.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeDamageExecution)
 
@@ -166,18 +169,15 @@ void UHodgeDamageExecution::Execute_Implementation(const FGameplayEffectCustomEx
 	// Apply rules for team damage/self damage/etc...
 	// 伤害交互倍率，用于处理敌我伤害、友军伤害、自伤等规则。
 	// 0 表示禁止造成伤害，1 表示允许完整伤害，也可以扩展为其他倍率。
-	float DamageInteractionAllowedMultiplier = 0.0f;
+	const UAbilitySystemComponent* SourceASC = ExecutionParams.GetSourceAbilitySystemComponent();
+	const AActor* SourceAvatar = SourceASC ? SourceASC->GetAvatarActor() : nullptr;
+	const AActor* TargetAvatar = TargetAbilitySystemComponent ? TargetAbilitySystemComponent->GetAvatarActor() : nullptr;
+	const bool bAllowFriendlyFire = Spec.GetDynamicAssetTags().HasTagExact(HodgeGameplayTags::GameplayEffect_Damage_AllowFriendlyFire);
+	const float DamageInteractionAllowedMultiplier = FHodgeDamageRules::CanDamage(SourceAvatar, TargetAvatar, bAllowFriendlyFire) ? 1.f : 0.f;
 
-	// 只有存在有效受击 Actor 时才能判断双方伤害关系。
-	if (HitActor)
-	{
-		// 原设计：通过 TeamSubsystem 判断 EffectCauser 是否允许对 HitActor 造成伤害。
-		// UHodgeTeamSubsystem* TeamSubsystem = HitActor->GetWorld()->GetSubsystem<UHodgeTeamSubsystem>();
-		// if (ensure(TeamSubsystem))
-		// {
-		//     DamageInteractionAllowedMultiplier = TeamSubsystem->CanCauseDamage(EffectCauser, HitActor) ? 1.0 : 0.0;
-		// }
-	}
+	// 缺省倍率为 1，已有使用本 Execution 的 GE 无需补填新参数。
+	const float DamageMultiplier = Spec.GetSetByCallerMagnitude(HodgeGameplayTags::SetByCaller_DamageMultiplier, false, 1.f);
+	if (!FMath::IsFinite(DamageMultiplier) || DamageMultiplier < 0.f || !FMath::IsFinite(BaseDamage)) { return; }
 
 	// Determine distance
 	// 默认使用 WORLD_MAX，表示暂时无法确定攻击来源与命中位置之间的距离。
@@ -237,10 +237,10 @@ void UHodgeDamageExecution::Execute_Implementation(const FGameplayEffectCustomEx
 	// 根据基础伤害、距离倍率、物理材质倍率以及伤害交互倍率计算最终伤害。
 	// 最终 Health 的上下限 Clamp 会在 HealthSet 将 Damage 转换为 -Health 时统一处理。
 	const float DamageDone = FMath::Max(
-		BaseDamage * DistanceAttenuation * PhysicalMaterialAttenuation * DamageInteractionAllowedMultiplier, 0.0f);
+		BaseDamage * DamageMultiplier * DistanceAttenuation * PhysicalMaterialAttenuation * DamageInteractionAllowedMultiplier, 0.0f);
 
 	// 只有最终伤害大于 0 时才向 ExecutionOutput 写入伤害结果。
-	if (DamageDone > 0.0f)
+	if (FMath::IsFinite(DamageDone) && DamageDone > 0.0f)
 	{
 		// Apply a damage modifier, this gets turned into - health on the target
 		// 将最终伤害以 Additive 方式写入目标 HealthSet 的 Damage Meta Attribute。

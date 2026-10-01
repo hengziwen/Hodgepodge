@@ -13,6 +13,7 @@
 // AbilitySet：用于批量授予 Ability、GameplayEffect、AttributeSet 等 GAS 资源。
 class UHodgeAbilitySet;
 class UHodgeComboDefinition;
+class UHodgeEquipmentDefinition;
 
 // CameraMode：定义 Pawn 默认使用的相机模式。
 class UHodgeCameraMode;
@@ -46,6 +47,10 @@ public:
 	// 实际创建 Pawn 时使用的 Pawn 类，通常应该继承自项目自己的 Pawn 或 Character 基类。
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hodge|Pawn")
 	TSubclassOf<APawn> PawnClass;
+
+	// ASC 就绪后由服务器装备的默认武器，留空表示不自动装备。
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hodge|Equipment")
+	TSubclassOf<UHodgeEquipmentDefinition> DefaultWeaponDefinition;
 
 	// Ability sets to grant to this pawn's ability system.
 	// 需要授予给这个 Pawn 的 ASC 的 AbilitySet 集合。

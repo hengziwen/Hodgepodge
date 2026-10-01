@@ -95,6 +95,12 @@ public:
 	                                                           UAnimInstance* AnimInstance, UAnimMontage* Montage,
 	                                                           int32 InstanceID);
 	FGameplayTagContainer GetActiveWindowTags() const;
+	bool IsWindowActive(int32 EventIndex) const;
+	// 条目身份只用于配对生命周期，不用于决定业务含义。
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FWindowEntered, int32, FGameplayTag);
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FWindowExited, int32, bool);
+	FWindowEntered OnWindowEntered;
+	FWindowExited OnWindowExited;
 	DECLARE_MULTICAST_DELEGATE(FWindowsChanged);
 	DECLARE_MULTICAST_DELEGATE_OneParam(FFinished, EHodgeTimelineStopReason);
 	DECLARE_MULTICAST_DELEGATE_OneParam(FPoint, FGameplayTag);
@@ -180,6 +186,9 @@ private:
 
 	// tag 账本：当前处于激活状态的 Window 下标。WindowTag 由配置推出，所以"下标集合"本身就是账本。
 	TArray<int32> ActiveWindowIndices;
+
+	// 单独记录已通知的窗口，保证中断和重入时也能配对退出。
+	TSet<int32> NotifiedWindowIndices;
 
 	// GE 账本：Window 下标 → 已施加的 Infinite GE 句柄。没配 GE 的窗口不在此表里。
 	TMap<int32, FActiveGameplayEffectHandle> WindowEffectHandles;

@@ -12,7 +12,6 @@
 
 // Experience 管理组件，用于监听当前 Experience 加载完成事件。
 #include "Component/HodgeExperienceManagerComponent.h"
-#include "Component/HodgeComboComponent.h"
 
 // GameFrameworkComponentManager，用于向 GameFeature / ModularGameplay 系统发送扩展事件。
 #include "Components/GameFrameworkComponentManager.h"
@@ -24,6 +23,7 @@
 #include "Core/PlayerController/HodgePlayerController.h"
 
 // 网络属性复制相关宏与类型。
+#include "AbilitySystem/AttributeSet/HodgeCombatSet.h"
 #include "Component/HodgePawnExtensionComponent.h"
 #include "Data/HodgeAbilitySet.h"
 #include "Data/HodgePawnData.h"
@@ -41,8 +41,6 @@ AHodgePlayerState::AHodgePlayerState(const FObjectInitializer& ObjectInitializer
 	AbilitySystemComponent = ObjectInitializer.CreateDefaultSubobject<UHodgeAbilitySystemComponent>(
 		this, TEXT("AbilitySystemComponent"));
 
-	CreateDefaultSubobject<UHodgeComboComponent>(TEXT("ComboComponent"));
-
 	// ASC 需要参与网络复制。
 	AbilitySystemComponent->SetIsReplicated(true);
 
@@ -52,6 +50,7 @@ AHodgePlayerState::AHodgePlayerState(const FObjectInitializer& ObjectInitializer
 	// These attribute sets will be detected by AbilitySystemComponent::InitializeComponent. Keeping a reference so that the sets don't get garbage collected before that.
 	// 创建 HealthSet，并保留强引用，确保 ASC 初始化发现 AttributeSet 之前不会被 GC 回收。
 	HealthSet = CreateDefaultSubobject<UHodgeHealthSet>(TEXT("HealthSet"));
+	CombatSet = CreateDefaultSubobject<UHodgeCombatSet>(TEXT("CombatSet"));
 
 	// AbilitySystemComponent needs to be updated at a high frequency.
 	// PlayerState 承载 ASC 和视角等高频同步数据，因此提高网络更新频率。

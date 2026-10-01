@@ -273,6 +273,17 @@ namespace HodgeGameplayTags
 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Attack_Active);
 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Attack_Recovery);
 
+	// 命中窗口与来源分开命名，窗口标签不作为运行会话的身份。
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Attack_HitCheck_Weapon);
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Attack_HitCheck_Body);
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Attack_HitCheck_HitBox);
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Combat_Source_Weapon_MainHand);
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Combat_Source_Body_Origin);
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Combat_Source_Body_RightFoot);
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Combat_Source_Hitbox_Chest);
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEffect_Damage_AllowFriendlyFire);
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(SetByCaller_DamageMultiplier);
+
 	// 取消窗口标签：同样由 UHodgeAbilityTask_PlayTimeline 按区间自动加减（loose tag，不复制）。
 	// 它与上面的"阶段标签"是两件事：
 	//   Status.Attack.Recovery   = 当前处于后摇（状态描述）

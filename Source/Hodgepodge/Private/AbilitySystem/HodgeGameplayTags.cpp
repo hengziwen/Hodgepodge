@@ -278,6 +278,16 @@ namespace HodgeGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Status_Attack_Active, "Status.Attack.Active");
 	UE_DEFINE_GAMEPLAY_TAG(Status_Attack_Recovery, "Status.Attack.Recovery");
 
+	UE_DEFINE_GAMEPLAY_TAG(Status_Attack_HitCheck_Weapon, "Status.Attack.HitCheck.Weapon");
+	UE_DEFINE_GAMEPLAY_TAG(Status_Attack_HitCheck_Body, "Status.Attack.HitCheck.Body");
+	UE_DEFINE_GAMEPLAY_TAG(Status_Attack_HitCheck_HitBox, "Status.Attack.HitCheck.HitBox");
+	UE_DEFINE_GAMEPLAY_TAG(Combat_Source_Weapon_MainHand, "Combat.Source.Weapon.MainHand");
+	UE_DEFINE_GAMEPLAY_TAG(Combat_Source_Body_Origin, "Combat.Source.Body.Origin");
+	UE_DEFINE_GAMEPLAY_TAG(Combat_Source_Body_RightFoot, "Combat.Source.Body.RightFoot");
+	UE_DEFINE_GAMEPLAY_TAG(Combat_Source_Hitbox_Chest, "Combat.Source.Hitbox.Chest");
+	UE_DEFINE_GAMEPLAY_TAG(GameplayEffect_Damage_AllowFriendlyFire, "GameplayEffect.Damage.AllowFriendlyFire");
+	UE_DEFINE_GAMEPLAY_TAG(SetByCaller_DamageMultiplier, "SetByCaller.DamageMultiplier");
+
 	// 取消窗口标签（授权语义，见 .h 中的说明）。
 	UE_DEFINE_GAMEPLAY_TAG(Status_Attack_Cancel, "Status.Attack.Cancel");
 	UE_DEFINE_GAMEPLAY_TAG(Status_Attack_Cancel_Move, "Status.Attack.Cancel.Move");

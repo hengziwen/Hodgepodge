@@ -10,7 +10,7 @@ world = sub.get_world()
 pc = unreal.GameplayStatics.get_player_controller(world, 0)
 pawn = pc.get_controlled_pawn()
 asc = unreal.AbilitySystemLibrary.get_ability_system_component(pawn)
-combo = pc.player_state.get_component_by_class(unreal.HodgeComboComponent)
+combo = pc.get_controlled_pawn().get_component_by_class(unreal.HodgeCombatComponentBase)
 anim = pawn.get_component_by_class(unreal.SkeletalMeshComponent).get_anim_instance()
 action = unreal.load_asset('/Game/Main/Input/InputAction/IA_Attack')
 definition = unreal.load_asset('/Game/CodexText/DefinitionCombo/DA_Attack_2')
@@ -59,7 +59,7 @@ def start(phase):
 
 
 def tick(delta):
-    global pawn, anim
+    global pawn, anim, combo
     try:
         elapsed = now() - state['start']
         phase = state['phase']
@@ -103,6 +103,9 @@ def tick(delta):
             if elapsed > 3 and 'checked' not in state['done']:
                 pawn = pc.get_controlled_pawn()
                 check('respawn_has_new_avatar', pawn is not None and pawn.get_path_name() != state['old_pawn'])
+                # 战斗组件归新 Pawn，重生后重新获取，不能继续读取旧组件。
+                combo = pawn.get_component_by_class(unreal.HodgeCombatComponentBase)
+                check('respawn_has_one_combat_component', len(pawn.get_components_by_class(unreal.HodgeCombatComponentBase)) == 1)
                 check('respawn_clears_old_session', node() == 'Combo.Entry' and clean())
                 check('respawn_preserves_playerstate_asc', unreal.AbilitySystemLibrary.get_ability_system_component(pawn) == asc)
                 anim = pawn.get_component_by_class(unreal.SkeletalMeshComponent).get_anim_instance()

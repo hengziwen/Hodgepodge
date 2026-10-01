@@ -1,0 +1,4 @@
+[
+  "(SourceTag=(TagName=\"Combat.Source.Body.Origin\"),ComponentName=\"\",WeaponActorIndex=0,Sockets=,SegmentSamples=5,LocalOffset=(X=0.000000,Y=120.000000,Z=88.000000),Radius=55.000000)",
+  "(SourceTag=(TagName=\"Combat.Source.Hitbox.Chest\"),ComponentName=\"MeleeTestHitBox\",WeaponActorIndex=0,Sockets=,SegmentSamples=5,LocalOffset=(X=0.000000,Y=0.000000,Z=0.000000),Radius=25.000000)"
+]

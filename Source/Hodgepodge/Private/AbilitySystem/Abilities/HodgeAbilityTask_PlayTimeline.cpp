@@ -314,21 +314,21 @@ void UHodgeAbilityTask_PlayTimeline::EnterWindow(int32 EventIndex)
 		const FActiveGameplayEffectHandle Handle = ApplyTimelineEffect(ASC, Event.WindowEffectClass);
 
 		// 施加失败（Tag 阻断 / 免疫 / 类无效）不入账，否则账本会失真。
-		if (!Handle.IsValid())
-		{
-			return;
-		}
-
 		// ---- 防线二：Apply 内部发生重入 ----
 		// 账本里没有这个句柄，不补偿就永久残留。
 		if (bCleanedUp)
 		{
-			ASC->RemoveActiveGameplayEffect(Handle);
+			if (Handle.IsValid()) { ASC->RemoveActiveGameplayEffect(Handle); }
 			return;
 		}
 
-		WindowEffectHandles.Add(EventIndex, Handle);
+		if (Handle.IsValid()) { WindowEffectHandles.Add(EventIndex, Handle); }
 	}
+
+	// 状态效果处理完再通知业务，先记账以支持回调中同步取消技能。
+	if (bStopped || bCleanedUp) { return; }
+	NotifiedWindowIndices.Add(EventIndex);
+	OnWindowEntered.Broadcast(EventIndex, Event.WindowTag);
 }
 
 void UHodgeAbilityTask_PlayTimeline::ExitWindow(int32 EventIndex)
@@ -345,7 +345,10 @@ void UHodgeAbilityTask_PlayTimeline::ExitWindow(int32 EventIndex)
 	}
 
 	UAbilitySystemComponent* ASC = AbilitySystemComponent.Get();
-	if (!ASC)
+	// 正常跨过终点时允许消费者采样最后一段运动；取消清理不补伤害。
+	if (NotifiedWindowIndices.Remove(EventIndex)) { OnWindowExited.Broadcast(EventIndex, true); }
+
+	if (!IsValid(ASC))
 	{
 		return;
 	}
@@ -497,6 +500,10 @@ void UHodgeAbilityTask_PlayTimeline::ClearAllWindowState()
 	// 所以这里立刻置位（而不是等函数返回）。
 	bCleanedUp = true;
 
+	const TSet<int32> Notifications = MoveTemp(NotifiedWindowIndices);
+	NotifiedWindowIndices.Reset();
+	for (int32 EventIndex : Notifications) { OnWindowExited.Broadcast(EventIndex, false); }
+
 	if (!ASC)
 	{
 		return;
@@ -599,6 +606,22 @@ FGameplayTagContainer UHodgeAbilityTask_PlayTimeline::GetActiveWindowTags() cons
 		if (Event.StartTime <= Position && Position < FHodgeTimelineEvaluator::WindowEnd(Event, EffectiveDuration)) { Result.AddTag(Event.WindowTag); }
 	}
 	return Result;
+}
+
+bool UHodgeAbilityTask_PlayTimeline::IsWindowActive(int32 EventIndex) const
+{
+	if (bStopped || !TimelineAsset || !ActiveWindowIndices.Contains(EventIndex) ||
+		!TimelineAsset->Events.IsValidIndex(EventIndex)) { return false; }
+	float Position = ElapsedTime;
+	if (ClockMontage)
+	{
+		UAnimInstance* Anim = ClockAnimInstance.Get();
+		const FAnimMontageInstance* Instance = Anim ? Anim->GetMontageInstanceForID(ClockInstanceID) : nullptr;
+		if (!Instance || Instance->Montage != ClockMontage || Instance->IsStopped()) { return false; }
+		Position = Instance->GetPosition();
+	}
+	const FHodgeTimelineEvent& Event = TimelineAsset->Events[EventIndex];
+	return Event.StartTime <= Position && Position < FHodgeTimelineEvaluator::WindowEnd(Event, EffectiveDuration);
 }
 
 void UHodgeAbilityTask_PlayTimeline::RefreshMontageClock()

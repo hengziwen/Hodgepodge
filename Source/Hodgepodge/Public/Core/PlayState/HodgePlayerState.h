@@ -185,6 +185,10 @@ private:
 	UPROPERTY()
 	TObjectPtr<const class UHodgeHealthSet> HealthSet;
 
+	// Combat attribute set used by this actor.
+	UPROPERTY()
+	TObjectPtr<const class UHodgeCombatSet> CombatSet;
+
 	// 玩家当前的连接状态，并同步到客户端。
 	UPROPERTY(Replicated)
 	EHodgePlayerConnectionType MyPlayerConnectionType;

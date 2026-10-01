@@ -14,6 +14,8 @@
 
 #include "Component/HodgeCharacterMovementComponent.h"
 #include "Components/GameFrameworkComponentManager.h"
+#include "Equipment/HodgeEquipmentManagerComponent.h"
+#include "Engine/Engine.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeCharacterBase)
 
@@ -42,6 +44,11 @@ void AHodgeCharacterBase::PreInitializeComponents()
 {
 	Super::PreInitializeComponents();
 	UGameFrameworkComponentManager::AddGameFrameworkComponentReceiver(this);
+
+	// [HODGE-DBG] 临时诊断：注册 Receiver 后立即检查组件请求是否已经落地。
+	UE_LOG(LogTemp, Warning, TEXT("[HODGE-DBG] CharBase AddReceiver %s NetMode=%d Role=%d HasEquipMgr=%d"),
+	       *GetNameSafe(this), static_cast<int32>(GetNetMode()), static_cast<int32>(GetLocalRole()),
+	       GetComponentByClass(UHodgeEquipmentManagerComponent::StaticClass()) ? 1 : 0);
 }
 
 /**
@@ -71,4 +78,12 @@ void AHodgeCharacterBase::BeginPlay()
 		this, UGameFrameworkComponentManager::NAME_GameActorReady);
 
 	Super::BeginPlay();
+
+	// [HODGE-DBG] 临时诊断：在屏幕上确认角色身上到底有没有装备组件。
+	const int32 HasEquipMgr =
+		GetComponentByClass(UHodgeEquipmentManagerComponent::StaticClass()) ? 1 : 0;
+
+	GEngine->AddOnScreenDebugMessage(INDEX_NONE, 20.0f, FColor::Yellow,
+	                                 FString::Printf(TEXT("[HODGE-DBG] %s HasEquipMgr=%d"), *GetNameSafe(this),
+	                                                 HasEquipMgr));
 }

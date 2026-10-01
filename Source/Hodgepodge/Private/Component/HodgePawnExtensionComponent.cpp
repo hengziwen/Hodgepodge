@@ -2,7 +2,6 @@
 
 
 #include "Component/HodgePawnExtensionComponent.h"
-#include "Component/HodgeComboComponent.h"
 
 #include "AbilitySystem/HodgeAbilitySystemComponent.h"
 #include "AbilitySystem/HodgeGameplayTags.h"
@@ -174,10 +173,6 @@ void UHodgePawnExtensionComponent::InitializeAbilitySystem(UHodgeAbilitySystemCo
 	{
 		// 根据 PawnData 设置 ASC 的 TagRelationshipMapping
 		InASC->SetTagRelationshipMapping(PawnData->TagRelationshipMapping);
-		if (auto* Combo = InOwnerActor->FindComponentByClass<UHodgeComboComponent>())
-		{
-			Combo->Configure(InASC, PawnData->ComboDefinition);
-		}
 	}
 
 	// 通知所有依赖 ASC 初始化完成的系统
@@ -196,10 +191,6 @@ void UHodgePawnExtensionComponent::UninitializeAbilitySystem()
 	// 如果 ASC 已经被其他 Pawn 接管，则说明其他 Pawn 已经完成了重新初始化
 	if (AbilitySystemComponent->GetAvatarActor() == GetOwner())
 	{
-		if (AActor* ASCOwner = AbilitySystemComponent->GetOwnerActor())
-		{
-			if (auto* Combo = ASCOwner->FindComponentByClass<UHodgeComboComponent>()) { Combo->Shutdown(); }
-		}
 		FGameplayTagContainer AbilityTypesToIgnore;
 
 		// 死亡后仍然需要保留的 Ability 不参与取消
@@ -224,10 +215,10 @@ void UHodgePawnExtensionComponent::UninitializeAbilitySystem()
 			// ASC 连 OwnerActor 都没有时，直接清除完整 ActorInfo
 			AbilitySystemComponent->ClearActorInfo();
 		}
-
-		// 通知依赖 ASC 的系统：ASC 已经解除初始化
-		OnAbilitySystemUninitialized.Broadcast();
 	}
+
+	// 即使 Avatar 已被接管，也要通知旧 Pawn 撤销自身持有的资源。
+	OnAbilitySystemUninitialized.Broadcast();
 
 	// 清除 PawnExtension 对 ASC 的缓存引用
 	AbilitySystemComponent = nullptr;
@@ -389,4 +380,10 @@ void UHodgePawnExtensionComponent::OnAbilitySystemUninitialized_Register(FSimple
 	{
 		OnAbilitySystemUninitialized.Add(Delegate);
 	}
+}
+
+void UHodgePawnExtensionComponent::UnregisterAbilitySystemDelegates(const UObject* Subscriber)
+{
+	OnAbilitySystemInitialized.RemoveAll(Subscriber);
+	OnAbilitySystemUninitialized.RemoveAll(Subscriber);
 }

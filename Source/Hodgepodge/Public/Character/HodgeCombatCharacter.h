@@ -8,6 +8,8 @@
 #include "HodgeCombatCharacter.generated.h"
 
 class UHodgeHealthComponent;
+class UHodgeEquipmentInstance;
+class UHodgeEquipmentManagerComponent;
 class UHodgePawnExtensionComponent;
 class UHodgeCameraComponent;
 class AHodgePlayerController;
@@ -196,6 +198,12 @@ protected:
 	// AbilitySystem 被反初始化后调用
 	virtual void OnAbilitySystemUninitialized();
 
+	// 为当前 Pawn 建立默认武器，重复初始化时保留已有实例。
+	void InitializeDefaultEquipment();
+
+	// 撤销本 Pawn 初始化时创建的武器及其授予内容。
+	void UninitializeDefaultEquipment();
+
 	// Pawn 被 Controller 占有时调用
 	virtual void PossessedBy(AController* NewController) override;
 
@@ -254,6 +262,17 @@ protected:
 	virtual bool CanJumpInternal_Implementation() const;
 
 private:
+	// 仅服务器记录默认武器，客户端通过装备组件接收复制。
+	UPROPERTY(Transient)
+	TObjectPtr<UHodgeEquipmentInstance> DefaultWeaponInstance;
+
+	// 记录实际创建默认武器的组件，避免清理时找到其他容器。
+	UPROPERTY(Transient)
+	TWeakObjectPtr<UHodgeEquipmentManagerComponent> DefaultEquipmentManager;
+
+	// 防止装备回调同步触发重复初始化。
+	bool bInitializingDefaultEquipment = false;
+
 	// Pawn 扩展组件，当前暂未启用
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hodge|Character", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UHodgePawnExtensionComponent> PawnExtComponent;

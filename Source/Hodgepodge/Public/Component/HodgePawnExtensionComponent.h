@@ -93,6 +93,9 @@ public:
 	// 注册 AbilitySystem 反初始化回调
 	void OnAbilitySystemUninitialized_Register(FSimpleMulticastDelegate::FDelegate Delegate);
 
+	// 动态组件移除时解除自身回调，避免重新添加后遗留旧监听。
+	void UnregisterAbilitySystemDelegates(const UObject* Subscriber);
+
 protected:
 	// 组件注册时调用
 	virtual void OnRegister() override;

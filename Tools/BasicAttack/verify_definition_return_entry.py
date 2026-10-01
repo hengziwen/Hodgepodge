@@ -10,7 +10,7 @@ world = sub.get_world()
 pc = unreal.GameplayStatics.get_player_controller(world, 0)
 peer = next(x for x in unreal.ObjectIterator(unreal.HodgePlayerState) if x.get_world() and x.has_authority()
             and x.get_editor_property('PlayerId') == pc.player_state.get_editor_property('PlayerId'))
-combos = [p.get_component_by_class(unreal.HodgeComboComponent) for p in [pc.player_state, peer]]
+combos = [p.get_pawn().get_component_by_class(unreal.HodgeCombatComponentBase) for p in [pc.player_state, peer]]
 systems = [p.get_component_by_class(unreal.HodgeAbilitySystemComponent) for p in [pc.player_state, peer]]
 tag = unreal.GameplayTag()
 tag.import_text('(TagName="Status.Attack")')

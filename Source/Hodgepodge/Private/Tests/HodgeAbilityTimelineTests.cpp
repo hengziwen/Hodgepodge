@@ -216,4 +216,83 @@ bool FHodgeTimelineCleanupTest::RunTest(const FString& Parameters)
 	return true;
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeTimelineWindowIdentityTest, "Hodge.Timeline.WindowIdentityAndCrossFrame",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FHodgeTimelineWindowIdentityTest::RunTest(const FString& Parameters)
+{
+	FTimelineWorld Fixture;
+	auto* Timeline = NewObject<UHodgeAbilityTimeline>();
+	FHodgeTimelineEvent Event = Window(TEXT("Hit"), HodgeGameplayTags::Status_Attack_HitCheck_Weapon, 0.1f, 0.12f);
+	Event.WindowEffectClass = nullptr;
+	Timeline->Events.Add(Event);
+	auto* Task = FHodgeTimelineTestAccess::Create(Fixture.ASC, Timeline);
+	TArray<int32> Order;
+	Task->OnWindowEntered.AddLambda([&Order](int32 Index, FGameplayTag) { Order.Add(Index + 1); });
+	Task->OnWindowExited.AddLambda([this, &Order](int32 Index, bool bFinal)
+	{
+		TestTrue(TEXT("Normal boundary requests final sample"), bFinal);
+		Order.Add(-(Index + 1));
+	});
+	Task->ReadyForActivation();
+	FHodgeTimelineTestAccess::Advance(Task, 0.2f);
+	TestTrue(TEXT("Short window emits enter and exit in one update"), Order == TArray<int32>({1, -1}));
+	Task->StopTimeline(EHodgeTimelineStopReason::AbilityCancelled);
+	TestEqual(TEXT("Completed window is not closed twice"), Order.Num(), 2);
+
+	// 两个 Task 对同一个 ASC 授予相同标签，仍各自收到独立的窗口生命周期。
+	Timeline->Events[0].StartTime = 0.f;
+	Timeline->Events[0].EndTime = 0.9f;
+	auto* First = FHodgeTimelineTestAccess::Create(Fixture.ASC, Timeline);
+	auto* Second = FHodgeTimelineTestAccess::Create(Fixture.ASC, Timeline);
+	int32 Enters = 0;
+	int32 Exits = 0;
+	First->OnWindowEntered.AddLambda([&Enters](int32, FGameplayTag) { ++Enters; });
+	Second->OnWindowEntered.AddLambda([&Enters](int32, FGameplayTag) { ++Enters; });
+	First->OnWindowExited.AddLambda([&Exits](int32, bool) { ++Exits; });
+	Second->OnWindowExited.AddLambda([&Exits](int32, bool) { ++Exits; });
+	First->ReadyForActivation();
+	Second->ReadyForActivation();
+	TestEqual(TEXT("Same tag has two independent starts"), Enters, 2);
+	First->StopTimeline(EHodgeTimelineStopReason::AbilityCancelled);
+	TestEqual(TEXT("Only first task has exited"), Exits, 1);
+	TestTrue(TEXT("Second window remains active"), Second->IsWindowActive(0));
+	Second->TaskOwnerEnded();
+	TestEqual(TEXT("Owner destruction closes remaining window"), Exits, 2);
+	TestEqual(TEXT("Both tag contributions are released"), Fixture.ASC->GetTagCount(Event.WindowTag), 0);
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeTimelineWindowReentryTest, "Hodge.Timeline.WindowCallbackReentry",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FHodgeTimelineWindowReentryTest::RunTest(const FString& Parameters)
+{
+	FTimelineWorld Fixture;
+	auto* Timeline = NewObject<UHodgeAbilityTimeline>();
+	FHodgeTimelineEvent Event = Window(TEXT("Hit"), HodgeGameplayTags::Status_Attack_HitCheck_Body, 0.f, 0.5f);
+	Event.WindowEffectClass = nullptr;
+	Timeline->Events.Add(Event);
+	auto* Task = FHodgeTimelineTestAccess::Create(Fixture.ASC, Timeline);
+	int32 Exits = 0;
+	Task->OnWindowEntered.AddLambda([Task](int32, FGameplayTag) { Task->StopTimeline(EHodgeTimelineStopReason::AbilityCancelled); });
+	Task->OnWindowExited.AddLambda([this, &Exits](int32, bool bFinal)
+	{
+		++Exits;
+		TestFalse(TEXT("Cancellation must not cause final damage sample"), bFinal);
+	});
+	Task->ReadyForActivation();
+	TestTrue(TEXT("Enter callback can cancel task"), Task->IsTimelineStopped());
+	Task->StopTimeline(EHodgeTimelineStopReason::AbilityCancelled);
+	TestEqual(TEXT("Reentrant cleanup exits exactly once"), Exits, 1);
+	TestEqual(TEXT("Cancellation removes tag"), Fixture.ASC->GetTagCount(Event.WindowTag), 0);
+
+	Task = FHodgeTimelineTestAccess::Create(Fixture.ASC, Timeline);
+	Task->OnWindowExited.AddLambda([Task](int32, bool) { Task->StopTimeline(EHodgeTimelineStopReason::AbilityCancelled); });
+	Task->ReadyForActivation();
+	FHodgeTimelineTestAccess::Advance(Task, 0.6f);
+	TestEqual(TEXT("Exit callback cancellation still balances tag"), Fixture.ASC->GetTagCount(Event.WindowTag), 0);
+	return true;
+}
+
 #endif
