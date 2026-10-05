@@ -29,7 +29,7 @@ bool FHodgeDefinitionGrantTest::RunTest(const FString& Parameters)
 	Definition->AbilityTag = HodgeGameplayTags::Status_Attack;
 	Definition->AbilityClass = UHodgeGameplayAbility_Definition::StaticClass();
 	Definition->ExecutionConfig.Montage = LoadObject<UAnimMontage>(nullptr,
-		TEXT("/Game/CodexText/Montage/AM_Attack01_Montage.AM_Attack01_Montage"));
+		TEXT("/Game/Main/Character/Hero/Anim/Montages/AM_Attack01_Montage.AM_Attack01_Montage"));
 	Definition->ExecutionConfig.TimelineTaskConfig.Timeline = NewObject<UHodgeAbilityTimeline>();
 	Definition->ExecutionConfig.TimelineTaskConfig.Timeline->bUseMontageDuration = true;
 	UObject* Source = NewObject<UHodgeAbilityTimeline>(Owner);
@@ -85,10 +85,129 @@ bool FHodgeComboValidationTest::RunTest(const FString& Parameters)
 
 struct FHodgeComboTestAccess
 {
-	static void SetNode(UHodgeCombatComponentBase* Combo, FGameplayTag Tag) { Combo->SetNode(Tag); }
+	static void SetNode(UHodgeCombatComponentBase* Combo, FGameplayTag Tag)
+	{
+		Combo->CurrentAbility = NewObject<UHodgeGameplayAbility_Definition>(Combo);
+		Combo->SetNode(Tag);
+	}
 	static const FHodgeComboTransition* Select(UHodgeCombatComponentBase* Combo, FGameplayTag Tag) { return Combo->SelectTransition(Tag, false); }
 	static FGameplayTag Input(UHodgeCombatComponentBase* Combo) { return Combo->BufferedInput; }
+	static UHodgeGameplayAbility_Definition* Begin(UHodgeCombatComponentBase* Combo, FGameplayTag Tag)
+	{
+		SetNode(Combo, Tag);
+		Combo->ComboMemory = {Tag, 0, 7};
+		return Combo->CurrentAbility;
+	}
+	static void Expire(UHodgeCombatComponentBase* Combo)
+	{
+		Combo->ComboMemory.ExpiresAt = Combo->ComboTime();
+		Combo->ExpireComboMemory();
+	}
+	static void Reset(UHodgeCombatComponentBase* Combo) { Combo->ResetSession(false); }
+	static void Reject(UHodgeCombatComponentBase* Combo) { Combo->RejectServerActivation(nullptr); }
+	static int16 SourceKey(UHodgeCombatComponentBase* Combo) { return Combo->ExecutionKey(); }
+	static void FailPreparedActivation(UHodgeCombatComponentBase* Combo)
+	{
+		Combo->PreviousComboMemory = Combo->ComboMemory;
+		Combo->ComboMemory = {};
+		Combo->bTransitionStarted = false;
+		Combo->bSwitching = true;
+		Combo->CompleteServerActivation();
+	}
+	static void FinishDuringActivation(UHodgeCombatComponentBase* Combo, UHodgeGameplayAbility_Definition* Ability)
+	{
+		Combo->bSwitching = true;
+		Combo->bTransitionStarted = true;
+		Combo->ExecutionEnded(Ability);
+		Combo->CompleteServerActivation();
+	}
 };
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeComboRetentionTest, "Hodge.Combo.Retention",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FHodgeComboRetentionTest::RunTest(const FString& Parameters)
+{
+	const auto Values = UWorld::InitializationValues().AllowAudioPlayback(false).CreatePhysicsScene(false)
+		.CreateNavigation(false).CreateAISystem(false);
+	UWorld* World = UWorld::CreateWorld(EWorldType::Game, false, NAME_None, nullptr, true, ERHIFeatureLevel::Num, &Values);
+	AActor* Owner = World->SpawnActor<AActor>();
+	auto* ASC = NewObject<UHodgeAbilitySystemComponent>(Owner);
+	ASC->RegisterComponent();
+	ASC->InitAbilityActorInfo(Owner, Owner);
+	auto* Combo = NewObject<UHodgeCombatComponentBase>(Owner);
+	Combo->RegisterComponent();
+	auto* Definition = NewObject<UHodgeComboDefinition>();
+	Definition->ComboTable = NewObject<UDataTable>();
+	Definition->ComboTable->RowStruct = FHodgeComboRow::StaticStruct();
+	Definition->EntryComboTag = HodgeGameplayTags::Status_Attack_Recovery;
+	Definition->ComboRetentionSeconds = 1.f;
+	const FGameplayTag Source = HodgeGameplayTags::Status_Attack_Active;
+	const FGameplayTag Target = HodgeGameplayTags::Status_Attack_Cancel_Move;
+	const FGameplayTag Intent = HodgeGameplayTags::InputTag_Move;
+	FHodgeComboRow Entry;
+	Entry.ComboTag = Definition->EntryComboTag;
+	FHodgeComboRow Attack;
+	Attack.ComboTag = Source;
+	Attack.AbilityTag = Source;
+	Attack.GrantedTags.AddTag(HodgeGameplayTags::Status_Attack);
+	FHodgeComboTransition Edge;
+	Edge.TriggerInputIntentTag = Intent;
+	Edge.TargetComboTag = Target;
+	Edge.RequiredWindowTags.AddTag(Intent);
+	Edge.bAllowAfterExecutionEnded = true;
+	Attack.Transitions.Add(Edge);
+	FHodgeComboRow Last;
+	Last.ComboTag = Target;
+	Last.AbilityTag = Target;
+	Last.GrantedTags = Attack.GrantedTags;
+	Definition->ComboTable->AddRow(Entry.ComboTag.GetTagName(), Entry);
+	Definition->ComboTable->AddRow(Source.GetTagName(), Attack);
+	Definition->ComboTable->AddRow(Target.GetTagName(), Last);
+	Combo->Configure(ASC, Definition);
+	auto* Execution = FHodgeComboTestAccess::Begin(Combo, Source);
+	ASC->AddLooseGameplayTag(Intent);
+	TestNull(TEXT("Resume permission never bypasses an active execution window"), FHodgeComboTestAccess::Select(Combo, Intent));
+	ASC->AddLooseGameplayTag(HodgeGameplayTags::Status_Attack);
+	Combo->ExecutionEnded(Execution);
+	TestEqual(TEXT("Stopped execution clears the active node"), Combo->GetCurrentComboTag(), Definition->EntryComboTag);
+	TestEqual(TEXT("Movement/ability interruption preserves the last started node"), Combo->GetRememberedComboTag(), Source);
+	TestEqual(TEXT("Idle continuation still identifies the last execution"), FHodgeComboTestAccess::SourceKey(Combo), int16(7));
+	TestEqual(TEXT("Only this execution's attack tag is removed"), ASC->GetTagCount(HodgeGameplayTags::Status_Attack), 1);
+	TestTrue(TEXT("Retention countdown begins at execution end"), FMath::IsNearlyEqual(Combo->GetComboMemoryRemainingTime(), 1.f));
+	TestNotNull(TEXT("Idle resume does not need a finished timeline window"), FHodgeComboTestAccess::Select(Combo, Intent));
+	FHodgeComboTestAccess::Reject(Combo);
+	TestEqual(TEXT("Rejected activation does not erase confirmed memory"), Combo->GetRememberedComboTag(), Source);
+	FHodgeComboTestAccess::FailPreparedActivation(Combo);
+	TestEqual(TEXT("Failed prepared activation restores confirmed progress"), Combo->GetRememberedComboTag(), Source);
+	Combo->ExecutionEnded(Execution);
+	TestEqual(TEXT("Duplicate old execution completion preserves memory"), Combo->GetRememberedComboTag(), Source);
+	FHodgeComboTestAccess::Expire(Combo);
+	TestFalse(TEXT("Deadline expiry clears memory"), Combo->GetRememberedComboTag().IsValid());
+	TestEqual(TEXT("Expiry discards the previous request identity"), FHodgeComboTestAccess::SourceKey(Combo), int16(0));
+	TestNull(TEXT("Expired memory cannot resume"), FHodgeComboTestAccess::Select(Combo, Intent));
+	Execution = FHodgeComboTestAccess::Begin(Combo, Target);
+	Combo->ExecutionEnded(Execution);
+	TestFalse(TEXT("Final node without resume edges resets immediately"), Combo->GetRememberedComboTag().IsValid());
+	Execution = FHodgeComboTestAccess::Begin(Combo, Source);
+	Definition->ComboRetentionSeconds = 0.f;
+	Combo->ExecutionEnded(Execution);
+	TestFalse(TEXT("Zero retention disables memory"), Combo->GetRememberedComboTag().IsValid());
+	Definition->ComboRetentionSeconds = 1.f;
+	Execution = FHodgeComboTestAccess::Begin(Combo, Source);
+	FHodgeComboTestAccess::FinishDuringActivation(Combo, Execution);
+	TestEqual(TEXT("Synchronous execution end still retains progress"), Combo->GetRememberedComboTag(), Source);
+	TestEqual(TEXT("Synchronous execution end cleans active node"), Combo->GetCurrentComboTag(), Definition->EntryComboTag);
+	FHodgeComboTestAccess::Reset(Combo);
+	TestFalse(TEXT("Explicit reset clears memory"), Combo->GetRememberedComboTag().IsValid());
+	Execution = FHodgeComboTestAccess::Begin(Combo, Source);
+	Combo->ExecutionEnded(Execution);
+	Combo->Shutdown();
+	TestFalse(TEXT("Pawn/component teardown clears memory"), Combo->GetRememberedComboTag().IsValid());
+	ASC->RemoveLooseGameplayTag(HodgeGameplayTags::Status_Attack);
+	ASC->RemoveLooseGameplayTag(Intent);
+	World->DestroyWorld(false);
+	return true;
+}
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeComboSessionTest, "Hodge.Combo.SessionRules",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
@@ -219,7 +338,7 @@ bool FHodgeMontageDurationTest::RunTest(const FString& Parameters)
 	Definition->AbilityTag = HodgeGameplayTags::Status_Attack;
 	Definition->AbilityClass = UHodgeGameplayAbility_Definition::StaticClass();
 	Definition->ExecutionConfig.Montage = LoadObject<UAnimMontage>(nullptr,
-		TEXT("/Game/CodexText/Montage/AM_Attack01_Montage.AM_Attack01_Montage"));
+		TEXT("/Game/Main/Character/Hero/Anim/Montages/AM_Attack01_Montage.AM_Attack01_Montage"));
 	Definition->ExecutionConfig.TimelineTaskConfig.Timeline = Timeline;
 	if (!TestNotNull(TEXT("Test montage loaded"), Definition->ExecutionConfig.Montage.Get())) { return false; }
 	Timeline->Events[0].StartTime = Definition->GetDuration() * .6f;

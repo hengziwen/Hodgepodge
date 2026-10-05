@@ -32,6 +32,10 @@ bool UHodgeComboDefinition::ValidateDefinition(TArray<FText>& Errors) const
 	{
 		Error(TEXT("Invalid movement threshold"));
 	}
+	if (!FMath::IsFinite(ComboRetentionSeconds) || ComboRetentionSeconds < 0.f)
+	{
+		Error(TEXT("Invalid combo retention duration"));
+	}
 	TSet<FGameplayTag> BoundInputs;
 	for (const auto& Binding : InputBindings)
 	{
@@ -64,6 +68,10 @@ bool UHodgeComboDefinition::ValidateDefinition(TArray<FText>& Errors) const
 			if (Edge.TriggerInputIntentTag.IsValid() == Edge.TriggerEventTag.IsValid())
 			{
 				Error(Context + TEXT("Exactly one input/event trigger is required"));
+			}
+			if (Edge.bAllowAfterExecutionEnded && (!Edge.TriggerInputIntentTag.IsValid() || Row.ComboTag == EntryComboTag))
+			{
+				Error(Context + TEXT("Resume requires an input transition from an attack node"));
 			}
 			if (!Edge.TargetComboTag.IsValid() || !FindNode(Edge.TargetComboTag))
 			{

@@ -5,6 +5,8 @@
 #include "Data/HodgeAbilityDefinition.h"
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimMontage.h"
+#include "Equipment/HodgeWeaponInstance.h"
+#include "GameFramework/Pawn.h"
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeGameplayAbility_Definition)
 
 UHodgeGameplayAbility_Definition::UHodgeGameplayAbility_Definition(const FObjectInitializer& Initializer)
@@ -47,6 +49,9 @@ bool UHodgeGameplayAbility_Definition::CanActivateAbility(FGameplayAbilitySpecHa
 	const auto* Combat = Info && Info->AvatarActor.IsValid()
 		                    ? UHodgeCombatComponentBase::FindCombatComponent(Info->AvatarActor.Get())
 		                    : nullptr;
+	const auto* Definition = ASC ? ASC->FindAbilityDefinition(Handle) : nullptr;
+	if (Definition && Definition->WeaponUseWindowTag.IsValid()
+		&& !UHodgeWeaponInstance::ResolvePresentationWeapon(Cast<APawn>(Info->AvatarActor.Get()))) { return false; }
 	return ASC && ASC->FindAbilityDefinition(Handle) && Combat && Combat->IsAuthorized(Handle)
 		&& Super::CanActivateAbility(Handle, Info, SourceTags, TargetTags, RelevantTags);
 }
@@ -57,6 +62,8 @@ void UHodgeGameplayAbility_Definition::ActivateAbility(FGameplayAbilitySpecHandl
                                                        const FGameplayEventData* Payload)
 {
 	bEnding = false;
+	PresentationWeapon.Reset();
+	WeaponUseHandles.Reset();
 	ExecutionId = FGuid::NewGuid();
 	const auto* Definition = GetDefinition();
 	TArray<FText> Errors;
@@ -66,6 +73,16 @@ void UHodgeGameplayAbility_Definition::ActivateAbility(FGameplayAbilitySpecHandl
 		for (const FText& Error : Errors) { UE_LOG(LogTemp, Error, TEXT("%s"), *Error.ToString()); }
 		FinishExecution(true, true);
 		return;
+	}
+	if (Definition->WeaponUseWindowTag.IsValid())
+	{
+		PresentationWeapon = UHodgeWeaponInstance::ResolvePresentationWeapon(Cast<APawn>(Info->AvatarActor.Get()), GetCurrentSourceObject());
+		if (!PresentationWeapon.IsValid())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Weapon presentation requires one equipped configured weapon: %s"), *GetPathName());
+			FinishExecution(true, true);
+			return;
+		}
 	}
 	if (!CommitAbility(Handle, Info, ActivationInfo))
 	{
@@ -91,8 +108,8 @@ void UHodgeGameplayAbility_Definition::ActivateAbility(FGameplayAbilitySpecHandl
 	TimelineTask->OnFinished.AddUObject(this, &ThisClass::OnTimelineFinished);
 	TimelineTask->OnWindowsChanged.AddUObject(this, &ThisClass::OnWindowsChanged);
 	TimelineTask->OnPoint.AddUObject(this, &ThisClass::OnPoint);
-	TimelineTask->OnWindowEntered.AddUObject(this, &ThisClass::OnExecutionWindowEntered);
-	TimelineTask->OnWindowExited.AddUObject(this, &ThisClass::OnExecutionWindowExited);
+	TimelineTask->OnWindowEntered.AddUObject(this, &ThisClass::HandleExecutionWindowEntered);
+	TimelineTask->OnWindowExited.AddUObject(this, &ThisClass::HandleExecutionWindowExited);
 	OnExecutionReady();
 	if (!IsActive() || bEnding || !TimelineTask) { return; }
 	if (auto* Combat = UHodgeCombatComponentBase::FindCombatComponent(Info->AvatarActor.Get()))
@@ -127,6 +144,9 @@ void UHodgeGameplayAbility_Definition::EndAbility(FGameplayAbilitySpecHandle Han
 	const FGuid EndingExecutionId = ExecutionId;
 	ExecutionId.Invalidate();
 	OnExecutionEnding(EndingExecutionId);
+	if (PresentationWeapon.IsValid()) { PresentationWeapon->ReleaseHandUsesForExecution(EndingExecutionId); }
+	WeaponUseHandles.Reset();
+	PresentationWeapon.Reset();
 	if (TimelineTask)
 	{
 		TimelineTask->OnWindowEntered.RemoveAll(this);
@@ -185,6 +205,29 @@ void UHodgeGameplayAbility_Definition::OnPoint(FGameplayTag Tag)
 	if (auto* Combat = UHodgeCombatComponentBase::FindCombatComponent(GetAvatarActorFromActorInfo()))
 	{
 		Combat->TimelineEvent(this, Tag);
+	}
+}
+
+void UHodgeGameplayAbility_Definition::HandleExecutionWindowEntered(int32 EventIndex, FGameplayTag WindowTag)
+{
+	const auto* Definition = GetDefinition();
+	if (Definition && WindowTag == Definition->WeaponUseWindowTag && PresentationWeapon.IsValid())
+	{
+		const auto Key = CurrentActivationInfo.GetActivationPredictionKey();
+		const int32 Id = Key.IsServerInitiatedKey() ? -Key.Current : Key.Current;
+		WeaponUseHandles.Add(EventIndex, PresentationWeapon->AcquireHandUse(ExecutionId, EventIndex, Id));
+	}
+	OnExecutionWindowEntered(EventIndex, WindowTag);
+}
+
+void UHodgeGameplayAbility_Definition::HandleExecutionWindowExited(int32 EventIndex, bool bSampleFinal)
+{
+	// 先结束几何采样，释放表现时不再有该窗口的命中会话。
+	OnExecutionWindowExited(EventIndex, bSampleFinal);
+	if (FGuid* Handle = WeaponUseHandles.Find(EventIndex))
+	{
+		if (PresentationWeapon.IsValid()) { PresentationWeapon->ReleaseHandUse(*Handle); }
+		WeaponUseHandles.Remove(EventIndex);
 	}
 }
 

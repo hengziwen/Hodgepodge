@@ -1,3 +1,5 @@
+> 2026-10-05 文件组织更新：原 `_Montage.cpp`、`_Validation.cpp` 已合入对应主 `.cpp`；下文保留原快照片段标题，源码链接指向合并后的文件。历史 snapshot.json 的路径/hash 不重写。
+
 # Data 源码参考
 
 [知识库首页](../README.md) · [参考入口](README.md)
@@ -177,7 +179,7 @@ PawnClass、AbilitySets、TagRelationshipMapping、InputConfig、DefaultCameraMo
 
 模块或基础类型入口。
 
-源码：[Source/Hodgepodge/Private/Data/HodgePawnData_Validation.cpp](../../../Source/Hodgepodge/Private/Data/HodgePawnData_Validation.cpp)
+源码：[Source/Hodgepodge/Private/Data/HodgePawnData.cpp](../../../Source/Hodgepodge/Private/Data/HodgePawnData.cpp)
 
 项目内直接 include（不是运行调用关系）：[Data/HodgePawnData.h](../../../Source/Hodgepodge/Public/Data/HodgePawnData.h)、[Data/HodgeAbilityDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilityDefinition.h)、[Data/HodgeAbilitySet.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilitySet.h)、[Data/HodgeAbilityTimeline.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilityTimeline.h)、[Data/HodgeComboDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeComboDefinition.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)
 

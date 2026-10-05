@@ -16,6 +16,34 @@
 - `.vsconfig` 声明 VS C++/游戏开发工作负载、MSVC 14.38、Windows SDK 22621 等；这是所需组件清单，尚未核实本机实际安装工具链。`Intermediate/ProjectFiles/UECommon.props` 指向本机 Build.bat，IDE 最终走 UBT，不直接用普通 C++ 编译器构建项目。
 - 初始工作区已有 `.uproject` 和两份动画资产修改：`Content/Main/Character/Hero/Anim/ABP_Pover_Base.uasset`、`Content/Main/Character/Hero/Anim/Layer/ABP_ItemAnimLayers_Pover_Base.uasset`。后续任务重新检查状态，不把此清单当作永久状态。
 
+## C++ 实现文件组织
+
+同一个项目自有类的非内联成员函数统一放在一个主 `.cpp`，不再按功能拆出同类的多个实现文件。例如连段实现放回 `HodgeCombatComponentBase.cpp`，武器表现放回 `HodgeWeaponInstance.cpp`，蒙太奇实现放回 `HodgeAbilitySystemComponent.cpp`，编辑器资产校验在 `HodgePawnData.cpp` 内用 `WITH_EDITOR` 保护。
+
+禁止通过 `#include "Other.cpp"`、`.inl` 或其他片段文件把该类的实现再次拆散。文件较长时使用清晰的函数分组；确有独立职责时再设计独立类型，不以整理文件为由引入额外模块。
+
+独立类自己的 `.h/.cpp`、测试和 UE 自动生成代码可以独立存在；例如 `HodgeWidgetFactory_Class` 与 `HodgeWidgetFactory` 是两个类，不因名称相近而合并。第三方插件及生成目录不做此类整理。
+
+本约定适用于后续新建和修改的项目自有 C++ 源码。修改前检查成员定义分布，而不只检查文件名后缀。
+
+### 2026-10-05 合并与验证记录
+
+- 已将 `_Combo.cpp`、`_Presentation.cpp`、`_Montage.cpp`、`_Validation.cpp` 四个同类实现片段合入上述对应主文件，并删除片段文件。保持原函数实现、反射入口和文件编码；PawnData 编辑器校验继续受 `WITH_EDITOR` 保护。
+- 扫描项目 `Source` 下的成员函数定义，合并后未发现同类定义分布于多个 `.cpp`；未整理第三方插件或生成代码。文档内相关源码链接同步更新，历史快照路径及 hash 保留原记录。
+- 修改前源码与规则备份：`E:/Project/Backups/Hodgepodge/CppImplementationMerge/20261005-225937`。本次未改动二进制资产，没有提交或回退已有工作。
+- 以下 Editor、Game 常规构建均退出 `0`。`-NoUBA`、`-NoUBALocal` 和单并行参数仅用于本次命令，不修改项目构建设置。既有编译警告保留。
+- 连段组 5 项、武器表现组 2 项自动化测试均为 `Success`，命令退出 `0`；`Hodge.Combo.DefinitionGrant` 有一条未配置 `GameplayCueNotifyPaths` 的现有警告。日志、报告和扫描结果位于 `Saved/CppImplementationMerge`。
+- 本次未执行蓝图编译、PIE、联机、Cook 或打包验证；原生测试与常规构建不代表这些验证通过。
+
+本机实际执行命令（PowerShell）：
+
+```powershell
+& 'E:/UE/UE_5.5/Engine/Build/BatchFiles/Build.bat' HodgepodgeEditor Win64 Development '-Project=E:/Project/Git/Hodgepodge/Hodgepodge.uproject' -WaitMutex -architecture=x64 -NoHotReloadFromIDE -NoUBA -NoUBALocal -MaxParallelActions=1
+& 'E:/UE/UE_5.5/Engine/Build/BatchFiles/Build.bat' Hodgepodge Win64 Development '-Project=E:/Project/Git/Hodgepodge/Hodgepodge.uproject' -WaitMutex -architecture=x64 -NoUBA -NoUBALocal -MaxParallelActions=1
+& 'E:/UE/UE_5.5/Engine/Binaries/Win64/UnrealEditor-Cmd.exe' 'E:/Project/Git/Hodgepodge/Hodgepodge.uproject' -unattended -NullRHI -nosplash '-ExecCmds=Automation RunTests Hodge.Combo' '-TestExit=Automation Test Queue Empty' '-ReportExportPath=E:/Project/Git/Hodgepodge/Saved/CppImplementationMerge/ComboAutomation' '-abslog=E:/Project/Git/Hodgepodge/Saved/CppImplementationMerge/ComboAutomation.log'
+& 'E:/UE/UE_5.5/Engine/Binaries/Win64/UnrealEditor-Cmd.exe' 'E:/Project/Git/Hodgepodge/Hodgepodge.uproject' -unattended -NullRHI -nosplash '-ExecCmds=Automation RunTests Hodge.WeaponPresentation' '-TestExit=Automation Test Queue Empty' '-ReportExportPath=E:/Project/Git/Hodgepodge/Saved/CppImplementationMerge/WeaponAutomation' '-abslog=E:/Project/Git/Hodgepodge/Saved/CppImplementationMerge/WeaponAutomation.log'
+```
+
 ## 编译验证
 
 1. 阅读 `git status --short`，检查目标改动和依赖。确定本机引擎路径；换机器不能照抄 D 盘路径。检查 `.vsconfig` 对应工具链是否安装。
@@ -39,7 +67,7 @@ if ($LASTEXITCODE -ne 0) { throw "Game build failed: $LASTEXITCODE" }
 5. 成功需记录目标、平台、配置、退出码和日志结果。失败时保留首个有效错误及上下文，区分环境、UHT、编译、链接、插件依赖；不以禁用不相关插件、删除用户缓存或改业务逻辑来掩盖环境错误。UBT 日志位置以命令输出为准，编辑器日志在 `Saved/Logs`。
 6. 新增/删除 C++ 文件、Target、模块或插件后按需刷新 IDE 项目：通过 `.uproject` 的 Generate Visual Studio project files 或 IDE 的 UE 项目生成入口。本机未发现 `Engine/Build/BatchFiles/GenerateProjectFiles.bat`，不要使用臆造脚本路径。现有 `.sln` 和 `Intermediate` 文件是生成物，不手工修改。
 7. VS 对应选择 Development Editor / Win64 构建 Hodgepodge 项目；Rider 选择 HodgepodgeEditor / Development / Win64。以上 Game 构建不是 Cook/打包，发布验证另行针对目标平台安排。
-8. Source 搜索未发现常规 Automation Test/Spec 注册；不能声称已有自动化回归通过。按实际变更补有价值的测试，不为文档修改运行 UE 全量编译。
+8. 2026-09-09 基线检查时未发现常规 Automation Test/Spec 注册；后续已新增测试，以当前 Source 和实际测试报告为准。按实际变更运行有价值的测试，不为文档修改运行 UE 全量编译。
 
 ## 需要用户在 UE 编辑器完成的操作
 

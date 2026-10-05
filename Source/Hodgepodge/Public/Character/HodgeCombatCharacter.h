@@ -8,6 +8,7 @@
 #include "HodgeCombatCharacter.generated.h"
 
 class UHodgeHealthComponent;
+class UHodgeCharacterRotationComponent;
 class UHodgeEquipmentInstance;
 class UHodgeEquipmentManagerComponent;
 class UHodgePawnExtensionComponent;
@@ -133,6 +134,11 @@ public:
 	// 获取当前角色使用的 Hodge AbilitySystemComponent
 	UFUNCTION(BlueprintCallable, Category = "Hodge|Character")
 	UHodgeAbilitySystemComponent* GetHodgeAbilitySystemComponent() const;
+
+	UFUNCTION(BlueprintPure, Category = "Hodge|Character")
+	UHodgeCharacterRotationComponent* GetCharacterRotationComponent() const { return RotationComponent; }
+
+	virtual void FaceRotation(FRotator NewControlRotation, float DeltaTime = 0.f) override;
 
 	// 实现 GAS 的 AbilitySystemInterface，返回角色对应的 AbilitySystemComponent
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
@@ -280,6 +286,9 @@ private:
 	// 角色生命值组件，当前暂未启用
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hodge|Character", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UHodgeHealthComponent> HealthComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hodge|Character", Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UHodgeCharacterRotationComponent> RotationComponent;
 
 	// 角色使用的 Camera Component
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hodge|Character", Meta = (AllowPrivateAccess = "true"))

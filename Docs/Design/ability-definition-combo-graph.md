@@ -380,7 +380,7 @@ DataTable 的一行可以显示成编辑器中的一个节点，Transitions 显�
 
 - **级别 / 检查项**：MAJOR；COMBO-08。
 - **状态**：未修复；运行复现与修复回归待执行。
-- **位置**：[HodgeCombatComponentBase_Combo.cpp](../../Source/Hodgepodge/Private/Component/HodgeCombatComponentBase_Combo.cpp)，`PrepareConfirmedActivation`，审查时第 179～188 行；载荷构造在 `TryTransition`。
+- **位置**：[HodgeCombatComponentBase.cpp](../../Source/Hodgepodge/Private/Component/HodgeCombatComponentBase.cpp)，`PrepareConfirmedActivation`；载荷构造在 `TryTransition`。2026-10-05 已合并原 `_Combo.cpp` 实现，旧审查行号不再适用。
 - **触发**：来源节点 A 与目标节点 B 引用同一 AbilityTag，由服务端 Timeline 事件触发 A → B。设计允许不同 ComboTag 复用同一技能。
 - **证据与影响**：事件载荷依次将来源和目标 ComboTag 放入 `Payload.TargetTags`；客户端按目标 SpecHandle 取首个匹配节点。A、B 对应同一 SpecHandle，因此先匹配 A 并将其设为 `PendingNode`。服务器进入 B、客户端仍按 A 维护标签及后续转移，后续输入可能因来源节点不符被拒绝。
 - **最小修复方向**：确认消息显式区分来源与目标 ComboTag，客户端使用明确的目标节点并校验其 SpecHandle，不通过技能句柄反推唯一图节点。
@@ -424,7 +424,7 @@ Definition 的 Montage 是该次执行总时长的唯一来源。配置好 Monta
 
 ## 统一战斗组件后的接入
 
-ASC 继续归 PlayerState；ASC 输入、Definition GA 授权与执行通知，以及激活请求校验，均定位当前 Avatar 的 CombatComponent。连招协调、移动取消 RPC 和观察者标签复制实现于 HodgeCombatComponentBase_Combo.cpp。原 ComboDefinition、DataTable、输入意图、窗口条件和预测键协议保留；组件换 Pawn 时清空旧执行状态。
+ASC 继续归 PlayerState；ASC 输入、Definition GA 授权与执行通知，以及激活请求校验，均定位当前 Avatar 的 CombatComponent。连招协调、移动取消 RPC 和观察者标签复制统一实现于 HodgeCombatComponentBase.cpp。原 ComboDefinition、DataTable、输入意图、窗口条件和预测键协议保留；组件换 Pawn 时清空旧执行状态。
 
 不再在 PlayerState 创建 ComboComponent，不要求蓝图再挂一份连招组件。Experience 的 CombatComponent 添加项同时提供连招与命中检测；PawnExtension 的 ASC 就绪回调负责配置 PawnData.ComboDefinition。未就绪、未注册、死亡或 ASC Avatar 不匹配的组件不能授权连招请求。合并不改变 GA 单段执行与伤害效果应用职责，也不修复后加入玩家属性集初始化时序。
 

@@ -16,7 +16,7 @@
 - `Source/Hodgepodge/Hodgepodge.Build.cs`：模块依赖及 Iris 支持设置（2026-09-28 新增 `CommonUI` / `CommonInput` / `Slate`，Private 新增 `ApplicationCore`）。
 - **`Source/HodgeAbilityEditor/`**（2026-09-29 新增，9 文件，**独立 Editor 模块**）：技能编辑器，编辑 `UHodgeAbilityDefinition`。已登记进 `HodgepodgeEditor.Target.cs`，不进 Runtime 构建。详见 [本轮记录](25-update-2026-09-29.md)。
 - **`Source/Hodgepodge/Public/Equipment/`**（2026-09-29 新增，4 个 `.h`）：装备四件套，`Definition` / `Instance` / `ManagerComponent` / `WeaponInstance`。**编译通过但零挂载**（无 `CreateDefaultSubobject`、非 `BlueprintSpawnableComponent`），别把它算进"已实现"。
-- `Source/Hodgepodge/Public/Data/` 新增 `HodgeAbilityDefinition` / `HodgeComboDefinition` / `HodgePawnData_Validation`（后者是 `IsDataValid` 校验）。
+- `Source/Hodgepodge/Public/Data/` 包含 `HodgeAbilityDefinition` / `HodgeComboDefinition`；`UHodgePawnData::IsDataValid` 校验统一实现在 `Private/Data/HodgePawnData.cpp`（原 `_Validation.cpp` 于 2026-10-05 合并）。
 - `Source/Hodgepodge/Public/UI`（2026-09-28 新增，41 个 `.h`）：Lyra UI 移植层，分 Basic / Common / Extension / Foundation / Frontend / IndicatorSystem / PerformanceStats / Subsystem / Weapons。⚠️ **其中 24 个文件是"待复活"状态** —— 逐行注释保留、文件头带 `[UI-MIGRATION-PENDING]` 标记，**不是有效代码**，别把它们算进"已实现"。详见 [本轮记录](24-update-2026-09-28.md)。
 - `Source/*.Target.cs`：已有 Game / Editor 目标。独立 Server Target 需要另行补充。
 - `Config`：默认地图、类重定向、AssetManager 扫描及输入设置。

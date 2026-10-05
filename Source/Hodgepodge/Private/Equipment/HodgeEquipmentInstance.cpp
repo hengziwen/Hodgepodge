@@ -140,6 +140,7 @@ void UHodgeEquipmentInstance::SpawnEquipmentActors(const TArray<FHodgeEquipmentA
 			// 保存实际生成的 Actor，供查询、网络复制以及卸装销毁使用。
 			SpawnedActors.Add(NewActor);
 		}
+		OnSpawnedActorsChanged();
 	}
 }
 
@@ -155,6 +156,13 @@ void UHodgeEquipmentInstance::DestroyEquipmentActors()
 			Actor->Destroy();
 		}
 	}
+	SpawnedActors.Reset();
+	OnSpawnedActorsChanged();
+}
+
+void UHodgeEquipmentInstance::OnRep_SpawnedActors()
+{
+	OnSpawnedActorsChanged();
 }
 
 // 装备正式生效时触发装备生命周期事件。

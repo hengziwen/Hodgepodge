@@ -269,6 +269,8 @@ namespace HodgeGameplayTags
 
 	// 攻击阶段标签：由 UHodgeAbilityTask_PlayTimeline 按区间自动加减（loose tag，不复制）
 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Attack);
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Rotation_Locked);
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Weapon_Hand);
 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Attack_Windup);
 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Attack_Active);
 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Attack_Recovery);

@@ -77,11 +77,20 @@ public:
 	// 获取角色当前移动状态下允许使用的最大速度。
 	virtual float GetMaxSpeed() const override;
 
+	virtual void PhysicsRotation(float DeltaTime) override;
+	virtual FNetworkPredictionData_Client* GetPredictionData_Client() const override;
+	virtual bool ClientUpdatePositionAfterServerUpdate() override;
+	virtual void SmoothCorrection(const FVector& OldLocation, const FQuat& OldRotation,
+		const FVector& NewLocation, const FQuat& NewRotation) override;
+
 	//~End of UMovementComponent interface
 
 protected:
 	// 初始化移动组件，并执行组件级初始化逻辑。
 	virtual void InitializeComponent() override;
+
+	virtual bool MoveUpdatedComponentImpl(const FVector& Delta, const FQuat& NewRotation, bool bSweep,
+		FHitResult* OutHit = nullptr, ETeleportType Teleport = ETeleportType::None) override;
 
 protected:
 	// 缓存角色当前脚下的地面信息，不要直接访问，应通过 GetGroundInfo() 获取。
@@ -90,4 +99,6 @@ protected:
 	// 标记当前是否已经获得过网络复制的加速度。
 	UPROPERTY(Transient)
 	bool bHasReplicatedAcceleration = false;
+
+	bool bApplyingRotationCorrection = false;
 };

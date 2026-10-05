@@ -4,7 +4,9 @@
 
 #include "AbilitySystemGlobals.h"
 #include "Character/HodgeCharacterBase.h"
+#include "Character/HodgeCombatCharacter.h"
 #include "Component/HodgeCharacterMovementComponent.h"
+#include "Component/HodgeCharacterRotationComponent.h"
 #include "Misc/DataValidation.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeAnimInstance)
@@ -62,6 +64,16 @@ void UHodgeAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
 	// 执行 UAnimInstance 默认的动画更新逻辑
 	Super::NativeUpdateAnimation(DeltaSeconds);
+	const AHodgeCombatCharacter* CombatCharacter = Cast<AHodgeCombatCharacter>(GetOwningActor());
+	const UHodgeCharacterRotationComponent* Rotation = CombatCharacter
+		                                                   ? CombatCharacter->GetCharacterRotationComponent()
+		                                                   : nullptr;
+	const float FullBodyWeight = FMath::Clamp(GetSlotMontageLocalWeight(FName(TEXT("FullBody"))), 0.f, 1.f);
+	bSuppressLocomotionYaw = FullBodyWeight > KINDA_SMALL_NUMBER
+		|| (Rotation && (Rotation->IsYawLocked() || Rotation->IsRecoveringFacing()));
+	LocomotionRootYawScale = 1.f - FullBodyWeight;
+	if (!bSuppressLocomotionYaw) { bResetLocomotionYaw = false; }
+	else if (FullBodyWeight >= 1.f - KINDA_SMALL_NUMBER) { bResetLocomotionYaw = true; }
 
 	// 获取当前动画实例所属的 HodgeCharacter
 	const AHodgeCharacterBase* Character = Cast<AHodgeCharacterBase>(GetOwningActor());

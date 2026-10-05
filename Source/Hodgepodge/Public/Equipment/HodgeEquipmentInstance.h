@@ -71,6 +71,7 @@ public:
 	virtual void OnUnequipped();
 
 protected:
+	virtual void OnSpawnedActorsChanged() {}
 #if UE_WITH_IRIS
 
 	/** Register all replication fragments */
@@ -93,6 +94,8 @@ private:
 	// Instigator 通过网络复制发生变化时调用的 RepNotify。
 	UFUNCTION()
 	void OnRep_Instigator();
+	UFUNCTION()
+	void OnRep_SpawnedActors();
 
 private:
 	// 创建或赋予这件装备的来源对象，并通过网络复制给客户端。
@@ -100,6 +103,6 @@ private:
 	TObjectPtr<UObject> Instigator;
 
 	// 当前装备实例生成的装备 Actor 列表，并通过网络进行复制。
-	UPROPERTY(Replicated)
+	UPROPERTY(ReplicatedUsing=OnRep_SpawnedActors)
 	TArray<TObjectPtr<AActor>> SpawnedActors;
 };

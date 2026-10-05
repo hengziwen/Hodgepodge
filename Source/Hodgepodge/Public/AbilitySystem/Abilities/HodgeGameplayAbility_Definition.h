@@ -4,6 +4,7 @@
 #include "HodgeGameplayAbility_Definition.generated.h"
 
 class UHodgeAbilityDefinition;
+class UHodgeWeaponInstance;
 
 /** Executes one granted definition; the combo coordinator owns transitions and input. */
 UCLASS(Blueprintable)
@@ -49,6 +50,10 @@ private:
 	void OnTimelineFinished(EHodgeTimelineStopReason Reason);
 	void OnWindowsChanged();
 	void OnPoint(FGameplayTag Tag);
+	void HandleExecutionWindowEntered(int32 EventIndex, FGameplayTag WindowTag);
+	void HandleExecutionWindowExited(int32 EventIndex, bool bSampleFinal);
+	UPROPERTY(Transient) TWeakObjectPtr<UHodgeWeaponInstance> PresentationWeapon;
+	TMap<int32, FGuid> WeaponUseHandles;
 	UPROPERTY(Transient)
 	TObjectPtr<UHodgeAbilityTask_PlayTimeline> TimelineTask;
 	bool bEnding = false;

@@ -1,3 +1,5 @@
+> 2026-10-05 文件组织更新：原 `_Montage.cpp`、`_Validation.cpp` 已合入对应主 `.cpp`；下文保留原快照片段标题，源码链接指向合并后的文件。历史 snapshot.json 的路径/hash 不重写。
+
 # 源码文件与有效定义索引
 
 [知识库首页](../README.md) · [参考入口](README.md)
@@ -357,7 +359,7 @@ Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动�
 
 ## HodgeAbilitySystemComponent_Montage.cpp
 
-[Source/Hodgepodge/Private/AbilitySystem/HodgeAbilitySystemComponent_Montage.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeAbilitySystemComponent_Montage.cpp)
+[Source/Hodgepodge/Private/AbilitySystem/HodgeAbilitySystemComponent.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeAbilitySystemComponent.cpp)
 
 模块定义或基础代码；请查看对应文件。
 
@@ -1266,7 +1268,7 @@ PawnClass、AbilitySets、TagRelationshipMapping、InputConfig、DefaultCameraMo
 
 ## HodgePawnData_Validation.cpp
 
-[Source/Hodgepodge/Private/Data/HodgePawnData_Validation.cpp](../../../Source/Hodgepodge/Private/Data/HodgePawnData_Validation.cpp)
+[Source/Hodgepodge/Private/Data/HodgePawnData.cpp](../../../Source/Hodgepodge/Private/Data/HodgePawnData.cpp)
 
 模块定义或基础代码；请查看对应文件。
 

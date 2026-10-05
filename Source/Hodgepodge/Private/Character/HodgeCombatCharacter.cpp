@@ -13,6 +13,7 @@
 #include "AbilitySystem/HodgeGameplayTags.h"
 #include "Camera/HodgeCameraComponent.h"
 #include "Component/HodgeCharacterMovementComponent.h"
+#include "Component/HodgeCharacterRotationComponent.h"
 #include "Component/HodgeHealthComponent.h"
 #include "Component/HodgeCombatComponentBase.h"
 #include "Component/HodgePawnExtensionComponent.h"
@@ -117,6 +118,7 @@ AHodgeCombatCharacter::AHodgeCombatCharacter(const FObjectInitializer& ObjectIni
 
 	//Pawn 扩展组件，负责连接 Pawn 与 AbilitySystem 等系统
 	PawnExtComponent = CreateDefaultSubobject<UHodgePawnExtensionComponent>(TEXT("PawnExtensionComponent"));
+	RotationComponent = CreateDefaultSubobject<UHodgeCharacterRotationComponent>(TEXT("CharacterRotationComponent"));
 
 	//Pawn 的 AbilitySystem 初始化完成后注册回调
 	PawnExtComponent->OnAbilitySystemInitialized_RegisterAndCall(
@@ -190,6 +192,7 @@ void AHodgeCombatCharacter::BeginPlay()
 // Actor 结束游戏
 void AHodgeCombatCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	RotationComponent->UninitializeFromAbilitySystem();
 	// 判定组件由 Experience 按需添加，卸载体验后组件可能已不存在。
 	if (auto* Combat = FindComponentByClass<UHodgeCombatComponentBase>())
 	{
@@ -328,6 +331,7 @@ void AHodgeCombatCharacter::OnAbilitySystemInitialized()
 	// 获取角色对应的 Hodge ASC
 	UHodgeAbilitySystemComponent* HodgeASC = GetHodgeAbilitySystemComponent();
 	check(HodgeASC);
+	RotationComponent->InitializeWithAbilitySystem(HodgeASC);
 
 	// 使用 ASC 初始化生命值组件
 	HealthComponent->InitializeWithAbilitySystem(HodgeASC);
@@ -341,11 +345,23 @@ void AHodgeCombatCharacter::OnAbilitySystemInitialized()
 // AbilitySystem 反初始化时调用
 void AHodgeCombatCharacter::OnAbilitySystemUninitialized()
 {
+	RotationComponent->UninitializeFromAbilitySystem();
 	if (auto* Combat = FindComponentByClass<UHodgeCombatComponentBase>()) { Combat->Shutdown(); }
 	UninitializeDefaultEquipment();
 
 	// 解除生命值组件与 ASC 的绑定
 	HealthComponent->UninitializeFromAbilitySystem();
+}
+
+void AHodgeCombatCharacter::FaceRotation(FRotator NewControlRotation, float DeltaTime)
+{
+	if (bUseControllerRotationYaw && RotationComponent && GetLocalRole() != ROLE_SimulatedProxy)
+	{
+		Super::FaceRotation(RotationComponent->FilterControlRotation(NewControlRotation, DeltaTime), DeltaTime);
+		RotationComponent->NotifyFacingApplied(NewControlRotation.Yaw);
+		return;
+	}
+	Super::FaceRotation(NewControlRotation, DeltaTime);
 }
 
 void AHodgeCombatCharacter::InitializeDefaultEquipment()

@@ -5,6 +5,8 @@
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemGlobals.h"
 #include "Components/CapsuleComponent.h"
+#include "Character/HodgeCombatCharacter.h"
+#include "Component/HodgeCharacterRotationComponent.h"
 #include "GameFramework/Character.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeCharacterMovementComponent)
@@ -22,6 +24,71 @@ namespace HodgeCharacter
 		TEXT("HodgeCharacter.GroundTraceDistance"), GroundTraceDistance,
 		TEXT("Distance to trace down when generating ground information."), ECVF_Cheat);
 };
+
+namespace HodgeRotationPrediction
+{
+	UHodgeCharacterRotationComponent* FindRotation(const ACharacter* Character)
+	{
+		const AHodgeCombatCharacter* CombatCharacter = Cast<AHodgeCombatCharacter>(Character);
+		return CombatCharacter ? CombatCharacter->GetCharacterRotationComponent() : nullptr;
+	}
+
+	class FSavedMove final : public FSavedMove_Character
+	{
+	public:
+		FHodgeCharacterRotationState RotationState;
+
+		virtual void Clear() override
+		{
+			Super::Clear();
+			RotationState = {};
+		}
+
+		virtual void SetMoveFor(ACharacter* Character, float InDeltaTime, const FVector& NewAcceleration,
+			FNetworkPredictionData_Client_Character& ClientData) override
+		{
+			Super::SetMoveFor(Character, InDeltaTime, NewAcceleration, ClientData);
+			if (const UHodgeCharacterRotationComponent* Rotation = FindRotation(Character))
+			{
+				RotationState = Rotation->GetResolvedState();
+			}
+		}
+
+		virtual bool CanCombineWith(const FSavedMovePtr& NewMove, ACharacter* Character, float MaxDelta) const override
+		{
+			const FSavedMove* Other = static_cast<const FSavedMove*>(NewMove.Get());
+			if (!Other || RotationState.bYawLocked != Other->RotationState.bYawLocked
+				|| RotationState.bRecoveringFacing != Other->RotationState.bRecoveringFacing
+				|| (RotationState.bYawLocked && FMath::Abs(FMath::FindDeltaAngleDegrees(
+					RotationState.LockedYaw, Other->RotationState.LockedYaw)) > KINDA_SMALL_NUMBER))
+			{
+				return false;
+			}
+			return Super::CanCombineWith(NewMove, Character, MaxDelta);
+		}
+
+		virtual void PrepMoveFor(ACharacter* Character) override
+		{
+			Super::PrepMoveFor(Character);
+			if (UHodgeCharacterRotationComponent* Rotation = FindRotation(Character))
+			{
+				Rotation->SetMoveReplayState(RotationState);
+			}
+		}
+
+	private:
+		using Super = FSavedMove_Character;
+	};
+
+	class FClientPredictionData final : public FNetworkPredictionData_Client_Character
+	{
+	public:
+		explicit FClientPredictionData(const UCharacterMovementComponent& Movement)
+			: FNetworkPredictionData_Client_Character(Movement) {}
+
+		virtual FSavedMovePtr AllocateNewMove() override { return FSavedMovePtr(new FSavedMove()); }
+	};
+}
 
 
 UHodgeCharacterMovementComponent::UHodgeCharacterMovementComponent(const FObjectInitializer& ObjectInitializer)
@@ -160,6 +227,9 @@ void UHodgeCharacterMovementComponent::SetReplicatedAcceleration(const FVector& 
 // 获取角色在当前帧允许产生的旋转变化
 FRotator UHodgeCharacterMovementComponent::GetDeltaRotation(float DeltaTime) const
 {
+	const UHodgeCharacterRotationComponent* Rotation = HodgeRotationPrediction::FindRotation(CharacterOwner);
+	const bool bApplyLocalConstraint = CharacterOwner && CharacterOwner->GetLocalRole() != ROLE_SimulatedProxy;
+	if (Rotation && bApplyLocalConstraint && Rotation->IsYawLocked()) { return FRotator::ZeroRotator; }
 	// 从角色 Owner 上获取对应的 AbilitySystemComponent
 	if (UAbilitySystemComponent* ASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(GetOwner()))
 	{
@@ -172,7 +242,80 @@ FRotator UHodgeCharacterMovementComponent::GetDeltaRotation(float DeltaTime) con
 	}
 
 	// 没有禁止移动时使用 CharacterMovementComponent 默认的旋转计算
-	return Super::GetDeltaRotation(DeltaTime);
+	FRotator Delta = Super::GetDeltaRotation(DeltaTime);
+	if (Rotation && bApplyLocalConstraint && Rotation->IsRecoveringFacing())
+	{
+		Delta.Yaw = FMath::Min(FMath::Abs(Delta.Yaw), Rotation->GetRecoveryTurnRate() * FMath::Max(0.f, DeltaTime));
+	}
+	return Delta;
+}
+
+void UHodgeCharacterMovementComponent::PhysicsRotation(float DeltaTime)
+{
+	UHodgeCharacterRotationComponent* Rotation = HodgeRotationPrediction::FindRotation(CharacterOwner);
+	if (Rotation && Rotation->IsYawLocked() && CharacterOwner->GetLocalRole() != ROLE_SimulatedProxy) { return; }
+	FRotator DesiredRotation = CharacterOwner ? CharacterOwner->GetActorRotation() : FRotator::ZeroRotator;
+	if (Rotation && Rotation->IsRecoveringFacing() && CharacterOwner)
+	{
+		if (bOrientRotationToMovement)
+		{
+			FRotator Delta = GetDeltaRotation(DeltaTime);
+			DesiredRotation = ComputeOrientToMovementRotation(DesiredRotation, DeltaTime, Delta);
+		}
+		else if (bUseControllerDesiredRotation && CharacterOwner->Controller)
+		{
+			DesiredRotation = CharacterOwner->Controller->GetDesiredRotation();
+		}
+	}
+	Super::PhysicsRotation(DeltaTime);
+	if (Rotation && (bOrientRotationToMovement || bUseControllerDesiredRotation))
+	{
+		Rotation->NotifyFacingApplied(DesiredRotation.Yaw);
+	}
+}
+
+bool UHodgeCharacterMovementComponent::MoveUpdatedComponentImpl(const FVector& Delta, const FQuat& NewRotation,
+	bool bSweep, FHitResult* OutHit, ETeleportType Teleport)
+{
+	FQuat AppliedRotation = NewRotation;
+	const UHodgeCharacterRotationComponent* Rotation = HodgeRotationPrediction::FindRotation(CharacterOwner);
+	if (Rotation && Rotation->IsYawLocked() && CharacterOwner->GetLocalRole() != ROLE_SimulatedProxy
+		&& Teleport == ETeleportType::None && !bApplyingRotationCorrection && UpdatedComponent
+		&& !UpdatedComponent->IsSimulatingPhysics())
+	{
+		// 约束最终胶囊 Yaw，保留根运动位移和引擎允许的 Pitch/Roll。
+		FRotator Constrained = NewRotation.Rotator();
+		Constrained.Yaw = Rotation->GetLockedYaw();
+		AppliedRotation = Constrained.Quaternion();
+	}
+	return Super::MoveUpdatedComponentImpl(Delta, AppliedRotation, bSweep, OutHit, Teleport);
+}
+
+FNetworkPredictionData_Client* UHodgeCharacterMovementComponent::GetPredictionData_Client() const
+{
+	if (!ClientPredictionData)
+	{
+		UHodgeCharacterMovementComponent* MutableThis = const_cast<UHodgeCharacterMovementComponent*>(this);
+		MutableThis->ClientPredictionData = new HodgeRotationPrediction::FClientPredictionData(*this);
+	}
+	return ClientPredictionData;
+}
+
+bool UHodgeCharacterMovementComponent::ClientUpdatePositionAfterServerUpdate()
+{
+	const bool bResult = Super::ClientUpdatePositionAfterServerUpdate();
+	if (UHodgeCharacterRotationComponent* Rotation = HodgeRotationPrediction::FindRotation(CharacterOwner))
+	{
+		Rotation->ClearMoveReplayState();
+	}
+	return bResult;
+}
+
+void UHodgeCharacterMovementComponent::SmoothCorrection(const FVector& OldLocation, const FQuat& OldRotation,
+	const FVector& NewLocation, const FQuat& NewRotation)
+{
+	TGuardValue<bool> CorrectionGuard(bApplyingRotationCorrection, true);
+	Super::SmoothCorrection(OldLocation, OldRotation, NewLocation, NewRotation);
 }
 
 // 获取角色当前最大移动速度

@@ -8,6 +8,7 @@
 // 武器实例继承自通用装备运行时实例。
 #include "Equipment/HodgeEquipmentInstance.h"
 #include "Combat/HodgeHitDetection.h"
+#include "Equipment/HodgeWeaponPresentationTypes.h"
 
 // 提供输入设备属性句柄，用于记录并移除武器激活的设备效果。
 #include "GameFramework/InputDevicePropertyHandle.h"
@@ -19,6 +20,8 @@ class UObject;
 struct FFrame;
 struct FGameplayTagContainer;
 class UInputDeviceProperty;
+class UHodgeWeaponPresentationProfile;
+class USkeletalMeshComponent;
 
 /**
  * UHodgeWeaponInstance
@@ -38,8 +41,27 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Combat", meta=(TitleProperty="SourceTag"))
 	TArray<FHodgeHitSource> HitSources;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Presentation")
+	TObjectPtr<UHodgeWeaponPresentationProfile> PresentationProfile;
+	UFUNCTION(BlueprintPure, Category="Hodge|Presentation")
+	UHodgeWeaponPresentationProfile* GetPresentationProfile() const { return PresentationProfile; }
+	UFUNCTION(BlueprintCallable, Category="Hodge|Presentation")
+	FGuid AcquireHandUse(FGuid ExecutionId, int32 EventIndex, int32 ActivationKey = 0);
+	UFUNCTION(BlueprintCallable, Category="Hodge|Presentation")
+	void ReleaseHandUse(FGuid Handle);
+	void ReleaseHandUsesForExecution(const FGuid& ExecutionId);
+	void RejectPredictedHandUse(int32 ActivationKey);
+	UFUNCTION(BlueprintPure, Category="Hodge|Presentation")
+	int32 GetHandUseCount() const { return HandRequests.Num(); }
+	UFUNCTION(BlueprintPure, Category="Hodge|Presentation")
+	FHodgeWeaponPresentationState GetPresentationState() const;
+	double GetPresentationTime() const;
+	void RefreshPresentationActors();
+	static UHodgeWeaponInstance* ResolvePresentationWeapon(APawn* Pawn, UObject* SourceObject = nullptr);
+
 	// 构造武器运行时实例。
 	UHodgeWeaponInstance(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	//~UHodgeEquipmentInstance interface
 
@@ -62,6 +84,8 @@ public:
 	float GetTimeSinceLastInteractedWith() const;
 
 protected:
+	virtual void OnSpawnedActorsChanged() override;
+	virtual void BeginDestroy() override;
 	// 装备状态下根据角色外观标签选择动画层的配置，目前暂未启用。
 	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Animation)
 	//FHodgeAnimLayerSelectionSet EquippedAnimSet;
@@ -114,6 +138,28 @@ protected:
 	void RemoveDeviceProperties();
 
 private:
+	friend struct FHodgeWeaponPresentationTestAccess;
+	struct FHandRequest { FGuid ExecutionId; int32 EventIndex = INDEX_NONE; int32 ActivationKey = 0; };
+	TMap<FGuid, FHandRequest> HandRequests;
+	FTimerHandle PresentationTimer;
+	bool bPresentationEquipped = false;
+	bool bPresentationDisabled = false;
+	bool bPredictedPresentation = false;
+	FHodgeWeaponPresentationState LocalPresentation;
+	UPROPERTY(ReplicatedUsing=OnRep_PresentationState)
+	FHodgeWeaponPresentationState ReplicatedPresentation;
+	UFUNCTION() void OnRep_PresentationState();
+	void InitializePresentation();
+	void ShutdownPresentation();
+	void SetPresentationPhase(EHodgeWeaponPresentationPhase Phase, int32 ActivationKey);
+	void SchedulePresentationPhase(EHodgeWeaponPresentationPhase Phase, float Seconds);
+	void BeginIdlePresentation();
+	bool CanDrivePresentation() const;
+	void ClearPresentationTimer();
+	void UpdateOwnerPosePolicy();
+	TWeakObjectPtr<USkeletalMeshComponent> PoseMesh;
+	uint8 SavedPosePolicy = 0;
+	bool bPosePolicyOverridden = false;
 	/** Set of device properties activated by this weapon. Populated by ApplyDeviceProperties */
 
 	// 保存当前武器实际激活的设备属性句柄，作为后续清理这些效果的运行时记录。

@@ -274,6 +274,8 @@ namespace HodgeGameplayTags
 
 	// 攻击阶段标签：由 Timeline Task 按区间自动加减（loose tag，不复制）
 	UE_DEFINE_GAMEPLAY_TAG(Status_Attack, "Status.Attack");
+	UE_DEFINE_GAMEPLAY_TAG(Status_Rotation_Locked, "Status.Rotation.Locked");
+	UE_DEFINE_GAMEPLAY_TAG(Status_Weapon_Hand, "Status.Weapon.Hand");
 	UE_DEFINE_GAMEPLAY_TAG(Status_Attack_Windup, "Status.Attack.Windup");
 	UE_DEFINE_GAMEPLAY_TAG(Status_Attack_Active, "Status.Attack.Active");
 	UE_DEFINE_GAMEPLAY_TAG(Status_Attack_Recovery, "Status.Attack.Recovery");

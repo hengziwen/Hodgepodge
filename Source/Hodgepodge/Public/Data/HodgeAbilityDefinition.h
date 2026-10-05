@@ -56,6 +56,9 @@ public:
 	// 同一 WindowTag 只能配置一次；多个窗口可复用该绑定。
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Combat", meta=(TitleProperty="WindowTag"))
 	TArray<FHodgeHitWindowBinding> HitWindows;
+	// 留空保持原行为；配置后使用该窗口占用当前武器的手持表现。
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Presentation")
+	FGameplayTag WeaponUseWindowTag;
 	UFUNCTION(BlueprintPure) float GetDuration() const;
 	bool ValidateDefinition(TArray<FText>& Errors) const;
 #if WITH_EDITOR

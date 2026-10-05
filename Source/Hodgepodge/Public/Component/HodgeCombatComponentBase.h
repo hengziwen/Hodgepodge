@@ -16,6 +16,15 @@ struct FGameplayEventData;
 struct FHodgeComboTransition;
 
 USTRUCT()
+struct FHodgeComboMemoryState
+{
+	GENERATED_BODY()
+	UPROPERTY() FGameplayTag Node;
+	UPROPERTY() double ExpiresAt = 0;
+	UPROPERTY() int16 ExecutionKey = 0;
+};
+
+USTRUCT()
 struct FHodgeHitDetectionSession
 {
 	GENERATED_BODY()
@@ -52,8 +61,13 @@ public:
 	void RejectServerActivation(const FGameplayEventData* Payload);
 	bool PrepareConfirmedActivation(FGameplayAbilitySpecHandle Handle, const FGameplayEventData& Payload);
 	void CompleteServerActivation();
+	void HandlePredictionRejected();
 	UFUNCTION(BlueprintPure, Category="Hodge|Combat")
 	FGameplayTag GetCurrentComboTag() const { return CurrentComboTag; }
+	UFUNCTION(BlueprintPure, Category="Hodge|Combat")
+	FGameplayTag GetRememberedComboTag() const;
+	UFUNCTION(BlueprintPure, Category="Hodge|Combat")
+	float GetComboMemoryRemainingTime() const;
 
 	static UHodgeCombatComponentBase* FindCombatComponent(const AActor* Avatar);
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
@@ -101,6 +115,13 @@ private:
 	bool TryTransition(FGameplayTag Trigger, bool bEvent);
 	bool PrepareTransition(const FHodgeComboTransition& Edge, FGameplayAbilitySpecHandle Handle);
 	void ResetSession(bool bEndAbility);
+	void EndCurrentExecution();
+	void RetainComboMemory();
+	void ExpireComboMemory();
+	void PublishComboMemory();
+	bool HasResumeTransition(FGameplayTag Node) const;
+	FGameplayTag TransitionSourceNode() const;
+	double ComboTime() const;
 	void SetNode(FGameplayTag Node);
 	int16 ExecutionKey() const;
 	UFUNCTION(Server, Reliable)
@@ -109,6 +130,12 @@ private:
 	void ServerReturnToEntry(AActor* Avatar, FGameplayTag SourceNode, int32 Key, FGameplayTag Intent);
 	UFUNCTION(Client, Reliable)
 	void ClientMoveCancelResult();
+	UFUNCTION(Server, Reliable)
+	void ServerSynchronizeComboMemory();
+	UFUNCTION(Client, Reliable)
+	void ClientCorrectComboMemory(FHodgeComboMemoryState State);
+	UFUNCTION()
+	void OnRep_ComboMemory();
 	UFUNCTION()
 	void OnRep_ObserverTags(const FGameplayTagContainer& Previous);
 	UPROPERTY(Transient)
@@ -119,6 +146,10 @@ private:
 	TObjectPtr<UHodgeGameplayAbility_Definition> CurrentAbility;
 	UPROPERTY(Transient)
 	FGameplayTag CurrentComboTag;
+	UPROPERTY(ReplicatedUsing=OnRep_ComboMemory)
+	FHodgeComboMemoryState ReplicatedComboMemory;
+	FHodgeComboMemoryState ComboMemory;
+	FHodgeComboMemoryState PreviousComboMemory;
 	UPROPERTY(ReplicatedUsing=OnRep_ObserverTags)
 	FGameplayTagContainer ObserverTags;
 	FGameplayTagContainer OwnedNodeTags;
@@ -127,6 +158,8 @@ private:
 	FGameplayAbilitySpecHandle AuthorizedHandle;
 	FGameplayTag PendingNode;
 	bool bSwitching = false;
+	bool bTransitionStarted = false;
+	bool bMemoryCorrectionPending = false;
 	bool bMoveRequestPending = false;
 	bool bEvaluating = false;
 	bool bShuttingDown = false;

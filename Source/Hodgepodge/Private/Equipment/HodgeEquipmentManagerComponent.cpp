@@ -16,6 +16,7 @@
 
 // 提供装备运行时实例。
 #include "Equipment/HodgeEquipmentInstance.h"
+#include "Equipment/HodgeWeaponInstance.h"
 
 // 提供 DOREPLIFETIME 等 UE 网络复制功能。
 #include "Net/UnrealNetwork.h"
@@ -77,6 +78,11 @@ void FHodgeEquipmentList::PostReplicatedAdd(const TArrayView<int32> AddedIndices
 // 客户端收到已有 FastArray 条目内容变化后调用，目前没有额外处理逻辑。
 void FHodgeEquipmentList::PostReplicatedChange(const TArrayView<int32> ChangedIndices, int32 FinalSize)
 {
+	// 延迟映射的实例可能错过首次新增回调，装备入口应能重复初始化。
+	for (int32 Index : ChangedIndices)
+	{
+		if (auto* Weapon = Cast<UHodgeWeaponInstance>(Entries[Index].Instance)) { Weapon->OnEquipped(); }
+	}
 	// 	for (int32 Index : ChangedIndices)
 	// 	{
 	// 		const FGameplayTagStack& Stack = Stacks[Index];

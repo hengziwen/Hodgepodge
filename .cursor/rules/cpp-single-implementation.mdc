@@ -1,0 +1,12 @@
+---
+description: 同一个项目自有 C++ 类只允许一个主实现文件
+globs: Source/**/*.{h,cpp,inl}
+alwaysApply: false
+---
+
+- 遵守 AGENTS.md 和 Docs/AI_DEVELOPMENT.md 的 C++ 实现文件组织约定。
+- 同一类的非内联成员函数集中在一个主 .cpp，禁止按功能拆为多个 .cpp 或其他实现片段。
+- 不允许通过 include 其他 .cpp 或 .inl 来绕过；头文件内原有的内联/模板定义按其语言需要保留。
+- 连段放在 HodgeCombatComponentBase.cpp；武器表现放在 HodgeWeaponInstance.cpp；蒙太奇放在 HodgeAbilitySystemComponent.cpp；PawnData 的编辑器校验在主 .cpp 内使用 WITH_EDITOR。
+- 独立类各自的实现文件、测试及 UE 生成代码可单独存在；不修改第三方代码来套用此规则。
+- 开始修改前检查同类成员定义分布，结束后确认无重复定义并按项目约定构建。

@@ -448,7 +448,7 @@ python Tools/Combat/configure_melee_fixture_experience.py
 
 外部仅通过 Pawn 的 HodgeCombatComponentBase 处理连招输入、授权、网络确认和命中检测。保留现有类名与 HitSources 属性，既有组件蓝图和 Experience AddComponents 继续使用；删除 PlayerState 的默认 HodgeComboComponent 及原类文件。连招状态是当前 Pawn 的执行状态，换 Pawn 后重新开始，不跨重生延续输入缓存。
 
-统一组件的实现分为两个 cpp：HodgeCombatComponentBase.cpp 管理几何会话；HodgeCombatComponentBase_Combo.cpp 管理连招协调、RPC、观察者标签及 ASC 绑定。两者属于同一 UActorComponent，不新增挂载组件或 Runtime 模块；连招状态与检测历史各自保存为私有状态。只有当前角色上的 CombatComponent 是对外战斗入口。
+统一组件的实现集中在 HodgeCombatComponentBase.cpp，包含几何会话、连招协调、RPC、观察者标签及 ASC 绑定。2026-10-05 已合并原 `_Combo.cpp`；后续禁止将同类成员实现按功能拆分到多个文件。不新增挂载组件或 Runtime 模块；连招状态与检测历史各自保存为私有状态。只有当前角色上的 CombatComponent 是对外战斗入口。
 
 输入链路：HeroComponent→ASC→ASC 当前 Avatar 的 CombatComponent.InputPressed→连招转移→Definition/Melee GA。GA 的 CanActivateAbility、执行开始/结束、窗口变化和 Point 通知，以及 ASC 的服务器激活验证、服务器发起激活确认，全部查找当前 Avatar 上的组件，不再查找 ASC Owner/PlayerState。
 

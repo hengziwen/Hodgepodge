@@ -42,4 +42,14 @@ protected:
 	// 角色与地面的距离，-1 表示当前还没有有效的地面距离数据
 	UPROPERTY(BlueprintReadOnly, Category = "Character State Data")
 	float GroundDistance = -1.0f;
+
+	// 游戏线程缓存旋转策略，动画线程只读取这份表现快照。
+	UPROPERTY(BlueprintReadOnly, Category = "Character State Data")
+	bool bSuppressLocomotionYaw = false;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Character State Data")
+	bool bResetLocomotionYaw = false;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Character State Data")
+	float LocomotionRootYawScale = 1.f;
 };

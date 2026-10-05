@@ -5,6 +5,7 @@
 - 以当前 `.uproject`、`Source`、`Config`、插件描述为事实依据；README、Lyra 学习文档和架构方案是背景，不代表功能已经实现。
 - 保持 UE 5.5 兼容；本机核实为 5.5.4。不要自行升级引擎、插件或构建设置。
 - 业务代码属于单一 `Hodgepodge` Runtime 模块，维持 `Public` / `Private` 对应目录和 `Hodge` 命名。不要为了整理目录引入额外模块。
+- 同一个项目自有 C++ 类的非内联成员函数必须集中在一个主 `.cpp` 中，禁止按功能拆成 `_Combo.cpp`、`_Presentation.cpp`、`_Montage.cpp`、`_Validation.cpp` 等多个实现文件；编辑器实现使用主文件内的 `WITH_EDITOR`。不得通过 `#include` 其他 `.cpp` 绕过。独立类、测试文件和 UE 生成代码不属于这种拆分。
 - 优先沿用 Experience、PawnData、GameFeature、GAS 和 Init State 设计；修改前追踪实际调用链，不把 Lyra 示例当成本项目现状。
 - 玩家 ASC 的 PlayerState 所有权、服务器权限与客户端复制入口必须同时考虑；新增初始化需处理重复调用、解绑和 Pawn 更换。
 - 遵循相邻代码风格、UE 类型前缀和反射宏；`.generated.h` 放在头文件 include 末尾，反射实现沿用 `UE_INLINE_GENERATED_CPP_BY_NAME`。

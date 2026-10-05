@@ -3,6 +3,7 @@
 #include "AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h"
 #include "Animation/AnimMontage.h"
 #include "Data/HodgeAbilityTimeline.h"
+#include "AbilitySystem/HodgeTimelineEvaluator.h"
 #if WITH_EDITOR
 #include "Misc/DataValidation.h"
 #endif
@@ -96,6 +97,29 @@ bool UHodgeAbilityDefinition::ValidateDefinition(TArray<FText>& Errors) const
 		}
 	}
 	TSet<FGameplayTag> BoundTags;
+	if (WeaponUseWindowTag.IsValid() && C.TimelineTaskConfig.Timeline)
+	{
+		const auto& Events = C.TimelineTaskConfig.Timeline->Events;
+		const bool bHasUseWindow = Events.ContainsByPredicate([this](const FHodgeTimelineEvent& Event)
+		{ return Event.Kind == EHodgeTimelineEventKind::Window && Event.WindowTag == WeaponUseWindowTag; });
+		if (!bHasUseWindow) { Error(TEXT("WeaponUseWindowTag requires a matching Timeline window")); }
+		for (const auto& Binding : HitWindows)
+		{
+			for (const auto& HitEvent : Events)
+			{
+				if (HitEvent.Kind != EHodgeTimelineEventKind::Window || HitEvent.WindowTag != Binding.WindowTag) { continue; }
+				const bool bCovered = Events.ContainsByPredicate([this, &HitEvent](const FHodgeTimelineEvent& UseEvent)
+				{
+					const float UseEnd = FHodgeTimelineEvaluator::WindowEnd(UseEvent, GetDuration());
+					const float HitEnd = FHodgeTimelineEvaluator::WindowEnd(HitEvent, GetDuration());
+					return UseEvent.Kind == EHodgeTimelineEventKind::Window && UseEvent.WindowTag == WeaponUseWindowTag
+						&& UseEvent.StartTime <= HitEvent.StartTime && UseEnd >= HitEnd
+						&& (UseEvent.StartTime < HitEvent.StartTime || UseEvent.Priority < HitEvent.Priority);
+				});
+				if (!bCovered) { Error(TEXT("Hand-use window must cover hit window and enter before its first sample")); }
+			}
+		}
+	}
 	TMap<FName, float> GroupIntervals;
 	for (const FHodgeHitWindowBinding& Binding : HitWindows)
 	{
