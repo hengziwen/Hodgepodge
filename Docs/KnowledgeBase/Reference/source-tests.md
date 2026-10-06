@@ -12,14 +12,15 @@
 
 源码：[Source/Hodgepodge/Private/Tests/HodgeAbilityDefinitionTests.cpp](../../../Source/Hodgepodge/Private/Tests/HodgeAbilityDefinitionTests.cpp)
 
-项目内直接 include（不是运行调用关系）：[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)、[AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)、[Data/HodgeAbilityDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilityDefinition.h)、[Data/HodgeAbilityTimeline.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilityTimeline.h)、[Data/HodgeComboDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeComboDefinition.h)、[Component/HodgeComboComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeComboComponent.h)
+项目内直接 include（不是运行调用关系）：[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)、[AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)、[Data/HodgeAbilityDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilityDefinition.h)、[Data/HodgeAbilityTimeline.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilityTimeline.h)、[Data/HodgeComboDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeComboDefinition.h)、[Component/HodgeCombatComponentBase.h](../../../Source/Hodgepodge/Public/Component/HodgeCombatComponentBase.h)
 
 定义候选（多行签名仅展示首行）：
 
 - L19: `bool FHodgeDefinitionGrantTest::RunTest(const FString& Parameters)`
 - L55: `bool FHodgeComboValidationTest::RunTest(const FString& Parameters)`
-- L95: `bool FHodgeComboSessionTest::RunTest(const FString& Parameters)`
-- L177: `bool FHodgeMontageDurationTest::RunTest(const FString& Parameters)`
+- L128: `bool FHodgeComboRetentionTest::RunTest(const FString& Parameters)`
+- L214: `bool FHodgeComboSessionTest::RunTest(const FString& Parameters)`
+- L303: `bool FHodgeMontageDurationTest::RunTest(const FString& Parameters)`
 
 ## HodgeAbilityTimelineTests.cpp
 
@@ -34,6 +35,47 @@
 - L77: `bool FHodgeTimelineValidationTest::RunTest(const FString& Parameters)`
 - L115: `bool FHodgeTimelineRejectTest::RunTest(const FString& Parameters)`
 - L157: `bool FHodgeTimelineCleanupTest::RunTest(const FString& Parameters)`
+- L222: `bool FHodgeTimelineWindowIdentityTest::RunTest(const FString& Parameters)`
+- L269: `bool FHodgeTimelineWindowReentryTest::RunTest(const FString& Parameters)`
+
+## HodgeCharacterRotationTests.cpp
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Private/Tests/HodgeCharacterRotationTests.cpp](../../../Source/Hodgepodge/Private/Tests/HodgeCharacterRotationTests.cpp)
+
+项目内直接 include（不是运行调用关系）：[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)、[Character/HodgeCombatCharacter.h](../../../Source/Hodgepodge/Public/Character/HodgeCombatCharacter.h)、[Component/HodgeCharacterMovementComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeCharacterMovementComponent.h)、[Component/HodgeCharacterRotationComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeCharacterRotationComponent.h)
+
+定义候选（多行签名仅展示首行）：
+
+- L14: `bool FHodgeCharacterRotationConstraintsTest::RunTest(const FString& Parameters)`
+
+## HodgeHitDetectionTests.cpp
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Private/Tests/HodgeHitDetectionTests.cpp](../../../Source/Hodgepodge/Private/Tests/HodgeHitDetectionTests.cpp)
+
+项目内直接 include（不是运行调用关系）：[Combat/HodgeHitDetection.h](../../../Source/Hodgepodge/Public/Combat/HodgeHitDetection.h)
+
+定义候选（多行签名仅展示首行）：
+
+- L11: `bool FHodgeHitGeometryTest::RunTest(const FString& Parameters)`
+- L36: `bool FHodgeHitProfileValidationTest::RunTest(const FString& Parameters)`
+
+## HodgeMeleeRoutingTests.cpp
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Private/Tests/HodgeMeleeRoutingTests.cpp](../../../Source/Hodgepodge/Private/Tests/HodgeMeleeRoutingTests.cpp)
+
+项目内直接 include（不是运行调用关系）：[AbilitySystem/Abilities/HodgeAbilityTask_WaitHitResults.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeAbilityTask_WaitHitResults.h)、[AbilitySystem/Abilities/HodgeGameplayAbility_Melee.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Melee.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)、[AbilitySystem/HodgeGameplayEffectContext.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayEffectContext.h)、[AbilitySystem/AttributeSet/HodgeCombatSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeCombatSet.h)、[Component/HodgeCombatComponentBase.h](../../../Source/Hodgepodge/Public/Component/HodgeCombatComponentBase.h)
+
+定义候选（多行签名仅展示首行）：
+
+- L82: `bool FHodgeDetectionRoutingTest::RunTest(const FString& Parameters)`
+- L112: `bool FHodgeMeleeHitHistoryTest::RunTest(const FString& Parameters)`
+- L135: `bool FHodgeMeleeSpecContextTest::RunTest(const FString& Parameters)`
 
 ## HodgeTimelineEvaluatorTests.cpp
 
@@ -46,3 +88,16 @@
 定义候选（多行签名仅展示首行）：
 
 - L8: `bool FHodgeEvaluatorTest::RunTest(const FString& Parameters)`
+
+## HodgeWeaponPresentationTests.cpp
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Private/Tests/HodgeWeaponPresentationTests.cpp](../../../Source/Hodgepodge/Private/Tests/HodgeWeaponPresentationTests.cpp)
+
+项目内直接 include（不是运行调用关系）：[Equipment/HodgeWeaponInstance.h](../../../Source/Hodgepodge/Public/Equipment/HodgeWeaponInstance.h)、[Equipment/HodgeWeaponPresentationActor.h](../../../Source/Hodgepodge/Public/Equipment/HodgeWeaponPresentationActor.h)、[Equipment/HodgeWeaponPresentationProfile.h](../../../Source/Hodgepodge/Public/Equipment/HodgeWeaponPresentationProfile.h)
+
+定义候选（多行签名仅展示首行）：
+
+- L21: `bool FHodgeWeaponRequestsTest::RunTest(const FString& Parameters)`
+- L83: `bool FHodgeWeaponGeometryTest::RunTest(const FString& Parameters)`

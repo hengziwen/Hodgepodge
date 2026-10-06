@@ -1,5 +1,7 @@
 # Timeline 与 PlayTimeline AbilityTask：第一阶段设计（统一事件模型）
 
+> 2026-10-06 状态同步：统一事件模型已有实现与历史验证；本文初版设计和示例不包含后续统一 Combat、旋转/手持窗口与连段记忆，操作以当前源码和专题记录为准。 当前项目事实见 [本轮更新](../KnowledgeBase/26-update-2026-10-06.md)。
+
 > **文档状态：设计草案，尚未实现；数据模型已定型（经五轮评审）。** 最近更新 2026-09-18。
 > 本文件覆盖 `UHodgeAbilityTimeline` 与消费它的 `UHodgeAbilityTask_PlayTimeline`。
 > 统一事件模型（单一 `Events[]`，`Kind = Window / Point`）**已定稿，不再回到 `Phases[] + Events[]`**。

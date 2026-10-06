@@ -1,5 +1,7 @@
 # CodexText ALS 式地面运动实验
 
+> 2026-10-06 状态同步：旧 ALS/Grounded 实验及其历史验证，不是当前 Main 固定移动层；当前主角色说明见 Main/Character/Hero/Anim/README.md。 当前项目事实见 [本轮更新](../../Docs/KnowledgeBase/26-update-2026-10-06.md)。
+
 入口地图：`/Game/CodexText/Locomotion/L_LocomotionLab`。Play 后点击游戏视口。
 
 - WASD 移动，鼠标沿用 Hodge 视角输入。
@@ -70,7 +72,7 @@ C++ `UHodgeALSLocomotion : UHodgeAnimInstance` 保留 Hodge 原生动画基类�
 
 ## 已执行验证（2026-09-15，UE 5.5.4）
 
-- `Build.bat HodgepodgeEditor Win64 Development -Project=D:/Hodgepodge/Hodgepodge.uproject -WaitMutex -architecture=x64`：退出码0，日志 `D:/CodexUE55Lab/als-build.log`。
+- `Build.bat HodgepodgeEditor Win64 Development -Project=E:/Project/Git/Hodgepodge/Hodgepodge.uproject -WaitMutex -architecture=x64`：退出码0，日志 `D:/CodexUE55Lab/als-build.log`。
 - 新动画蓝图编译通过。节点审计：根图含状态机、Slot、输出；运动机8状态、56条显式转换；每个方向图含四组走跑混合及八个播放器。见 graph-audit.json。
 - 32/32 PIE 组合通过：走跑×两种面向×8方向。检查实际速度、角色局部方向、主导权重及蓝图实际活动状态，见 direction-results.json。测试使用原生函数控制走跑和面向，暂停键盘轮询但保留旋转 Tick。
 - 8/8 Enhanced Input IA_Move 注入通过，经 HodgeHeroComponent，在镜头90度时世界移动方向正确，见 input-results.json。不是硬件长按测试。

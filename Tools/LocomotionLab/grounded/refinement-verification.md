@@ -1,11 +1,13 @@
 # 2026-09-21 动画精修验证
 
+> 2026-10-06 状态同步：旧 ALS/Grounded 实验及其历史验证，不是当前 Main 固定移动层；当前主角色说明见 Main/Character/Hero/Anim/README.md。 当前项目事实见 [本轮更新](../../../Docs/KnowledgeBase/26-update-2026-10-06.md)。
+
 范围：CodexText 实验角色及 ABP_ALS_Grounded。保留原 Hodge 输入、移动、GAS/PlayerState 初始化。没有启用蹲伏、Lean 或添加独立起步动画。
 
 ## 构建与接入
 
-- `Build.bat HodgepodgeEditor Win64 Development -Project=D:/Hodgepodge/Hodgepodge.uproject -WaitMutex -architecture=x64`：退出0；最新日志 `D:/CodexUE55Lab/refined-final-editor-build.log`。关闭编辑器后常规构建，再重新打开验证。
-- `Build.bat Hodgepodge Win64 Development -Project=D:/Hodgepodge/Hodgepodge.uproject -WaitMutex -architecture=x64`：退出6；最新日志 `D:/CodexUE55Lab/refined-final-game-build.log`。本轮运行时代码编译通过，整个 Game 目标仍阻断于原 `HodgeEnemyCharacter.cpp:53` 的 PostEditChangeProperty 条件编译问题。未改动该文件。
+- `Build.bat HodgepodgeEditor Win64 Development -Project=E:/Project/Git/Hodgepodge/Hodgepodge.uproject -WaitMutex -architecture=x64`：退出0；最新日志 `D:/CodexUE55Lab/refined-final-editor-build.log`。关闭编辑器后常规构建，再重新打开验证。
+- `Build.bat Hodgepodge Win64 Development -Project=E:/Project/Git/Hodgepodge/Hodgepodge.uproject -WaitMutex -architecture=x64`：退出6；最新日志 `D:/CodexUE55Lab/refined-final-game-build.log`。本轮运行时代码编译通过，整个 Game 目标仍阻断于原 `HodgeEnemyCharacter.cpp:53` 的 PostEditChangeProperty 条件编译问题。未改动该文件。
 - ABP_ALS_Grounded 通过项目原生 authoring helper 编译并保存，实际 PIE 使用该类。曲线修改仅在 Anim/Grounded 的19个副本中；保留原 Skeleton。
 - 新增步幅、地形与分层图使用本机 UE5.5.4 API。AnimationWarping 已由项目启用，本次仅为编辑器建图补充 Build.cs 编辑器条件依赖，没有升级或重新启用插件。
 

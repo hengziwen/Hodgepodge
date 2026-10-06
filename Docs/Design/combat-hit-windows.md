@@ -1,5 +1,7 @@
 # Timeline 命中窗口接入
 
+> 2026-10-06 状态同步：命中框架和测试夹具已有实现与伤害验证；正式五段 DA_Attack 的 HitWindows 仍为空，需配置后补实际伤害回归。 当前项目事实见 [本轮更新](../KnowledgeBase/26-update-2026-10-06.md)。
+
 > 后续更正：本文所述原生 HodgeMeleeDamageEffect 和角色默认 CombatComponent 均已移除。当前配置显式引用既有 GameplayEffectParent_Damage_Basic，并由 Experience 的 AddComponents 添加判定组件；下文仅保留历史事实。
 
 > 2026-10-01：本文已转为上一版实现与测试资产的历史记录。后续编码以 [近战命中检测与 GA 效果应用：重构设计](melee-detection-ga-effects.md) 为依据。本文中“CombatComponent 构建并提交伤害 GE”、组件驱动 Timeline 时钟及组件持有攻击去重规则的方案已被替代；下方旧配置步骤不作为新设计的接入验收依据。原生职责重构已编码，蓝图迁移和运行验证待执行，具体步骤见新文档第 13 节。

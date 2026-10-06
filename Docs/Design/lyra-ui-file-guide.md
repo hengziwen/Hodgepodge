@@ -1,5 +1,7 @@
 # Lyra UI 迁移文件导览（79 文件逐个说明 + 学习优先级）
 
+> 2026-10-06 状态同步：UI 迁移/学习材料：CommonUI 已引入，部分 UIExtension/Indicator 代码有效；依赖 CommonGame/GameSettings/CommonUser 的停用内容与完整前端/HUD 尚未接通。本文不作为游戏 UI 已出画面的声明。 当前项目事实见 [本轮更新](../KnowledgeBase/26-update-2026-10-06.md)。
+
 > **文档类型：参考索引，不是设计草案。** 基线 2026-09-26。
 > 目录：`Source/Hodgepodge/Public/UI/**` + `Private/UI/**`，共 **79 个文件**（40 头文件 + 39 实现）。
 > 图例：✅ 在编（53）｜⏸ 已整体注释、待复活（26，清单见 [迁移执行文档 §10.2](lyra-ui-migration-plan.md)）

@@ -1,5 +1,7 @@
 # Lyra GameplayTag 全量对照表
 
+> 2026-10-06 状态同步：Lyra 标签对照是上游学习材料；Hodge 实际注册清单由 Reference/gameplay-tags.md 生成，已含 Status.Rotation.Locked 和 Status.Weapon.Hand。 当前项目事实见 [本轮更新](../Docs/KnowledgeBase/26-update-2026-10-06.md)。
+
 > 由 `LyraStarterGame` (UE 5.5) 自动汇总，合并日期 2026-09-25。
 > 可直接导入的 ini 见同目录 `DefaultGameplayTags.ini`。
 
@@ -432,4 +434,3 @@
 3. `Content/ContextEffects/DT_AnimEffectTags.uasset`、`DT_SurfaceTypes.uasset`（若拷贝，请取消合并 ini 中 `+GameplayTagTableList` 两行注释）。
 4. 四个插件标签表：`ShooterCoreTags.ini` / `ShooterExplorerTags.ini` / `TopDownArenaTags.ini` / `PluginTags.ini`（已合并进新 ini，可不再单独拷贝；若要保留插件级隔离则带上，且需保证 GameFeature 插件挂载 / `AddTagIniSearchPath`）。
 5. `Config/DefaultGame.ini` 的 `+GameplayCueNotifyPaths` 及 `Content/GameplayCueNotifies`、`Content/GameplayCues` 目录（GameplayCue 标签解析用）。
-

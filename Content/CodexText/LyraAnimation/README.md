@@ -1,5 +1,7 @@
 # Pover 的 Lyra 动画实验
 
+> 2026-10-06 状态同步：动画主资源已迁 Main/Character/Hero/Anim，主图当前 ABP_Pover_Base；本目录保留实验地图/测试角色。DefinitionCombo/BasicAttack/WeaponPresentation 仍是正式默认玩法依赖，不整体删除 CodexText。 当前项目事实见 [本轮更新](../../../Docs/KnowledgeBase/26-update-2026-10-06.md)。
+
 2026-10-05 已按用户授权迁入 `/Game/Main/Character/Hero/Anim` 并替换正式角色的引用。当前运行路径、备份、验证及恢复说明见 `Content/Main/Character/Hero/Anim/README.md`。本目录保留实验地图、测试角色和工具；下文是迁移前的开发记录，其中旧资源路径不再代表当前存放位置。工具脚本已更新为 Main 资源路径。
 
 ## 直接体验

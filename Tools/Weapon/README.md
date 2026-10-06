@@ -1,5 +1,7 @@
 # 武器材质恢复
 
+> 2026-10-06 状态同步：原模型/材质修复记录保留；正式剑的显隐使用独立 WeaponPresentation 材质副本，不修改原材质。 当前项目事实见 [本轮更新](../../Docs/KnowledgeBase/26-update-2026-10-06.md)。
+
 2026-09-29，通过 UE MCP 执行 `restore_weapon_materials.py`。
 
 两个 SkeletalMesh 原先都绑定 WorldGridMaterial：

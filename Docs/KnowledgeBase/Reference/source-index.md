@@ -1,5 +1,3 @@
-> 2026-10-05 文件组织更新：原 `_Montage.cpp`、`_Validation.cpp` 已合入对应主 `.cpp`；下文保留原快照片段标题，源码链接指向合并后的文件。历史 snapshot.json 的路径/hash 不重写。
-
 # 源码文件与有效定义索引
 
 [知识库首页](../README.md) · [参考入口](README.md)
@@ -71,6 +69,27 @@
 [Source/HodgeAbilityEditor/Private/HodgeAbilityEditorToolkit.h](../../../Source/HodgeAbilityEditor/Private/HodgeAbilityEditorToolkit.h)
 
 模块定义或基础代码；请查看对应文件。
+
+## HodgeAnimationAuthoringLibrary.cpp
+
+[Source/HodgeAbilityEditor/Private/HodgeAnimationAuthoringLibrary.cpp](../../../Source/HodgeAbilityEditor/Private/HodgeAnimationAuthoringLibrary.cpp)
+
+Editor 动画文本导入、属性/引用修正、编译诊断与实验 PIE 配置。
+
+- `UHodgeAnimationAuthoringLibrary::ImportAnimationBlueprintText` — L97
+- `UHodgeAnimationAuthoringLibrary::SetAnimationDefault` — L163
+- `UHodgeAnimationAuthoringLibrary::SetAnimationNodeProperty` — L172
+- `UHodgeAnimationAuthoringLibrary::RemapAnimationReferences` — L183
+- `UHodgeAnimationAuthoringLibrary::CompileAnimationBlueprint` — L206
+- `UHodgeAnimationAuthoringLibrary::GetSkeletonBoneNames` — L223
+- `UHodgeAnimationAuthoringLibrary::ConfigureAnimationLabPIE` — L233
+- `UHodgeAnimationAuthoringLibrary::ConfigureAnimationLabGameMode` — L243
+
+## HodgeAnimationAuthoringLibrary.h
+
+[Source/HodgeAbilityEditor/Private/HodgeAnimationAuthoringLibrary.h](../../../Source/HodgeAbilityEditor/Private/HodgeAnimationAuthoringLibrary.h)
+
+Editor 动画文本导入、属性/引用修正、编译诊断与实验 PIE 配置。
 
 ## SHodgeAbilityPreview.cpp
 
@@ -152,21 +171,45 @@
 - `UHodgeAbilityTask_PlayTimeline::HasAuthorityOnAvatar` — L268
 - `UHodgeAbilityTask_PlayTimeline::EnterWindow` — L274
 - `UHodgeAbilityTask_PlayTimeline::ExitWindow` — L334
-- `UHodgeAbilityTask_PlayTimeline::ApplyTimelineEffect` — L383
-- `UHodgeAbilityTask_PlayTimeline::FirePointEvent` — L407
-- `UHodgeAbilityTask_PlayTimeline::FireSystemEvent` — L471
-- `UHodgeAbilityTask_PlayTimeline::ClearAllWindowState` — L484
-- `UHodgeAbilityTask_PlayTimeline::StopTimeline` — L527
-- `UHodgeAbilityTask_PlayTimeline::OnDestroy` — L560
-- `UHodgeAbilityTask_PlayTimeline::PlayMontageTimeline` — L572
-- `UHodgeAbilityTask_PlayTimeline::GetActiveWindowTags` — L583
-- `UHodgeAbilityTask_PlayTimeline::RefreshMontageClock` — L604
+- `UHodgeAbilityTask_PlayTimeline::ApplyTimelineEffect` — L386
+- `UHodgeAbilityTask_PlayTimeline::FirePointEvent` — L410
+- `UHodgeAbilityTask_PlayTimeline::FireSystemEvent` — L474
+- `UHodgeAbilityTask_PlayTimeline::ClearAllWindowState` — L487
+- `UHodgeAbilityTask_PlayTimeline::StopTimeline` — L534
+- `UHodgeAbilityTask_PlayTimeline::OnDestroy` — L567
+- `UHodgeAbilityTask_PlayTimeline::PlayMontageTimeline` — L579
+- `UHodgeAbilityTask_PlayTimeline::GetActiveWindowTags` — L590
+- `UHodgeAbilityTask_PlayTimeline::IsWindowActive` — L611
+- `UHodgeAbilityTask_PlayTimeline::RefreshMontageClock` — L627
+
+## HodgeAbilityTask_WaitHitResults.cpp
+
+[Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeAbilityTask_WaitHitResults.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeAbilityTask_WaitHitResults.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `FHodgeHitResultsTickFunction::ExecuteTick` — L11
+- `FHodgeHitResultsTickFunction::DiagnosticMessage` — L17
+- `UHodgeAbilityTask_WaitHitResults::WaitHitResults` — L22
+- `UHodgeAbilityTask_WaitHitResults::IsRunningForExecution` — L35
+- `UHodgeAbilityTask_WaitHitResults::Activate` — L47
+- `UHodgeAbilityTask_WaitHitResults::CreateWindow` — L66
+- `UHodgeAbilityTask_WaitHitResults::IsBatchCurrent` — L83
+- `UHodgeAbilityTask_WaitHitResults::SampleWindow` — L90
+- `UHodgeAbilityTask_WaitHitResults::CloseWindow` — L108
+- `UHodgeAbilityTask_WaitHitResults::TickDetection` — L122
+- `UHodgeAbilityTask_WaitHitResults::UpdateTickState` — L145
+- `UHodgeAbilityTask_WaitHitResults::Pause` — L150
+- `UHodgeAbilityTask_WaitHitResults::Resume` — L156
+- `UHodgeAbilityTask_WaitHitResults::ReleaseSessions` — L171
+- `UHodgeAbilityTask_WaitHitResults::OnDestroy` — L183
+- `UHodgeAbilityTask_WaitHitResults::BeginDestroy` — L189
 
 ## HodgeAbilityTask_WaitMoveCancel.cpp
 
 [Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeAbilityTask_WaitMoveCancel.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeAbilityTask_WaitMoveCancel.cpp)
 
-把“取消窗口（Timeline 授权）”与“移动意图（输入层）”两个变化驱动信号合流的 AbilityTask：同时成立时广播 OnMoveCancel 一次后自结束。本地控制端语义；AI/模拟代理找不到 HeroComponent 时永不成立。工作区新增，未编译、未 PIE。
+合流取消窗口与本地移动意图，广播 OnMoveCancel 后结束；已有取消验证，当前 Combat 主链与旧 BasicAttack 消费方需区分。
 
 - `UHodgeAbilityTask_WaitMoveCancel::UHodgeAbilityTask_WaitMoveCancel` — L14
 - `UHodgeAbilityTask_WaitMoveCancel::TickTask` — L20
@@ -231,20 +274,44 @@
 
 [Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.cpp)
 
-模块定义或基础代码；请查看对应文件。
+执行单段 Definition、本次 Montage 时钟 Timeline 与手持窗口，按执行清理；Melee 子类扩展命中。
 
-- `UHodgeGameplayAbility_Definition::UHodgeGameplayAbility_Definition` — L10
-- `UHodgeGameplayAbility_Definition::GetDefinition` — L19
-- `UHodgeGameplayAbility_Definition::ActivateConfirmedDefinition` — L25
-- `UHodgeGameplayAbility_Definition::CanActivateAbility` — L35
-- `UHodgeGameplayAbility_Definition::ActivateAbility` — L45
-- `UHodgeGameplayAbility_Definition::FinishExecution` — L75
-- `UHodgeGameplayAbility_Definition::EndAbility` — L80
-- `UHodgeGameplayAbility_Definition::GetExecutionWindows` — L102
-- `UHodgeGameplayAbility_Definition::RefreshExecutionClock` — L106
-- `UHodgeGameplayAbility_Definition::OnTimelineFinished` — L110
-- `UHodgeGameplayAbility_Definition::OnWindowsChanged` — L116
-- `UHodgeGameplayAbility_Definition::OnPoint` — L120
+- `UHodgeGameplayAbility_Definition::UHodgeGameplayAbility_Definition` — L12
+- `UHodgeGameplayAbility_Definition::GetDefinition` — L21
+- `UHodgeGameplayAbility_Definition::ActivateConfirmedDefinition` — L27
+- `UHodgeGameplayAbility_Definition::CanActivateAbility` — L42
+- `UHodgeGameplayAbility_Definition::ActivateAbility` — L59
+- `UHodgeGameplayAbility_Definition::FinishExecution` — L125
+- `UHodgeGameplayAbility_Definition::EndAbility` — L133
+- `UHodgeGameplayAbility_Definition::GetExecutionWindows` — L169
+- `UHodgeGameplayAbility_Definition::RefreshExecutionClock` — L174
+- `UHodgeGameplayAbility_Definition::OnTimelineFinished` — L182
+- `UHodgeGameplayAbility_Definition::OnWindowsChanged` — L195
+- `UHodgeGameplayAbility_Definition::OnPoint` — L203
+- `UHodgeGameplayAbility_Definition::HandleExecutionWindowEntered` — L211
+- `UHodgeGameplayAbility_Definition::HandleExecutionWindowExited` — L223
+- `UHodgeGameplayAbility_Definition::ValidateExecutionConfiguration` — L234
+
+## HodgeGameplayAbility_Melee.cpp
+
+[Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility_Melee.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility_Melee.cpp)
+
+接收服务器命中结果，为每次命中构建独立 GE Spec/Context 并施加。
+
+- `FHodgeMeleeHitHistory::CanHit` — L17
+- `FHodgeMeleeHitHistory::RecordHit` — L24
+- `UHodgeGameplayAbility_Melee::ValidateExecutionConfiguration` — L29
+- `UHodgeGameplayAbility_Melee::OnExecutionReady` — L45
+- `UHodgeGameplayAbility_Melee::OnExecutionEnding` — L65
+- `UHodgeGameplayAbility_Melee::OnExecutionWindowEntered` — L79
+- `UHodgeGameplayAbility_Melee::OnExecutionWindowExited` — L106
+- `UHodgeGameplayAbility_Melee::IsMeleeBatchCurrent` — L113
+- `UHodgeGameplayAbility_Melee::OnHitResults` — L120
+- `UHodgeGameplayAbility_Melee::CanApplyMeleeHit_Implementation` — L130
+- `UHodgeGameplayAbility_Melee::MakeMeleeHitContext` — L136
+- `UHodgeGameplayAbility_Melee::BuildMeleeHitSpec` — L157
+- `UHodgeGameplayAbility_Melee::ProcessMeleeHitResults_Implementation` — L176
+- `UHodgeGameplayAbility_Melee::ApplyMeleeHitEffects_Implementation` — L209
 
 ## HodgeAttributeSet.cpp
 
@@ -260,7 +327,7 @@
 
 [Source/Hodgepodge/Private/AbilitySystem/AttributeSet/HodgeCombatSet.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/AttributeSet/HodgeCombatSet.cpp)
 
-模块定义或基础代码；请查看对应文件。
+BaseDamage/BaseHeal 战斗属性，OwnerOnly 复制，供伤害/治疗 Execution 捕获。
 
 - `UHodgeCombatSet::UHodgeCombatSet` — L11
 - `UHodgeCombatSet::GetLifetimeReplicatedProps` — L20
@@ -271,7 +338,7 @@
 
 [Source/Hodgepodge/Private/AbilitySystem/AttributeSet/HodgeHealthSet.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/AttributeSet/HodgeHealthSet.cpp)
 
-Health/MaxHealth、BaseDamage/BaseHeal 和 Damage/Healing 元属性；有效结算、夹取、免疫和耗尽广播。
+Health/MaxHealth、Damage/Healing 元属性、结算夹取/免疫/耗尽广播；BaseDamage/BaseHeal 位于 CombatSet。
 
 - `UHodgeHealthSet::UHodgeHealthSet` — L33
 - `UHodgeHealthSet::GetLifetimeReplicatedProps` — L50
@@ -288,10 +355,10 @@ Health/MaxHealth、BaseDamage/BaseHeal 和 Damage/Healing 元属性；有效结�
 
 [Source/Hodgepodge/Private/AbilitySystem/Executions/HodgeDamageExecution.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/Executions/HodgeDamageExecution.cpp)
 
-模块定义或基础代码；请查看对应文件。
+BaseDamage × SetByCaller 倍率 × 距离/材质衰减 × 共享目标规则；不再恒零。
 
-- `UHodgeDamageExecution::UHodgeDamageExecution` — L47
-- `UHodgeDamageExecution::Execute_Implementation` — L54
+- `UHodgeDamageExecution::UHodgeDamageExecution` — L50
+- `UHodgeDamageExecution::Execute_Implementation` — L57
 
 ## HodgeHealExecution.cpp
 
@@ -319,57 +386,51 @@ Health/MaxHealth、BaseDamage/BaseHeal 和 Damage/Healing 元属性；有效结�
 
 [Source/Hodgepodge/Private/AbilitySystem/HodgeAbilitySystemComponent.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeAbilitySystemComponent.cpp)
 
-Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动态 Tag GE。
+Tag 输入、激活组、关系映射、Montage 复制和全局注册；失败时恢复武器预测与连段记忆。
 
-- `UHodgeAbilitySystemComponent::UHodgeAbilitySystemComponent` — L32
-- `UHodgeAbilitySystemComponent::EndPlay` — L48
-- `UHodgeAbilitySystemComponent::InitAbilityActorInfo` — L60
-- `UHodgeAbilitySystemComponent::TryActivateAbilitiesOnSpawn` — L136
-- `UHodgeAbilitySystemComponent::CancelAbilitiesByFunc` — L153
-- `UHodgeAbilitySystemComponent::CancelInputActivatedAbilities` — L221
-- `UHodgeAbilitySystemComponent::AbilitySpecInputPressed` — L238
-- `UHodgeAbilitySystemComponent::AbilitySpecInputReleased` — L265
-- `UHodgeAbilitySystemComponent::AbilityInputTagPressed` — L292
-- `UHodgeAbilitySystemComponent::AbilityInputTagReleased` — L317
-- `UHodgeAbilitySystemComponent::ProcessAbilityInput` — L338
-- `UHodgeAbilitySystemComponent::ClearAbilityInput` — L468
-- `UHodgeAbilitySystemComponent::NotifyAbilityActivated` — L481
-- `UHodgeAbilitySystemComponent::NotifyAbilityFailed` — L495
-- `UHodgeAbilitySystemComponent::NotifyAbilityEnded` — L517
-- `UHodgeAbilitySystemComponent::ApplyAbilityBlockAndCancelTags` — L531
-- `UHodgeAbilitySystemComponent::HandleChangeAbilityCanBeCanceled` — L560
-- `UHodgeAbilitySystemComponent::GetAdditionalActivationTagRequirements` — L571
-- `UHodgeAbilitySystemComponent::SetTagRelationshipMapping` — L584
-- `UHodgeAbilitySystemComponent::ClientNotifyAbilityFailed_Implementation` — L590
-- `UHodgeAbilitySystemComponent::HandleAbilityFailed` — L597
-- `UHodgeAbilitySystemComponent::IsActivationGroupBlocked` — L610
-- `UHodgeAbilitySystemComponent::AddAbilityToActivationGroup` — L641
-- `UHodgeAbilitySystemComponent::RemoveAbilityFromActivationGroup` — L689
-- `UHodgeAbilitySystemComponent::CancelActivationGroupAbilities` — L702
-- `UHodgeAbilitySystemComponent::AddDynamicTagGameplayEffect` — L718
-- `UHodgeAbilitySystemComponent::RemoveDynamicTagGameplayEffect` — L754
-- `UHodgeAbilitySystemComponent::GetAbilityTargetData` — L779
-- `UHodgeAbilitySystemComponent::GetLifetimeReplicatedProps` — L794
-- `UHodgeAbilitySystemComponent::GiveAbilityDefinition` — L801
-- `UHodgeAbilitySystemComponent::FindAbilityDefinition` — L829
-- `UHodgeAbilitySystemComponent::FindDefinitionAbility` — L839
-- `UHodgeAbilitySystemComponent::OnRemoveAbility` — L854
-- `UHodgeAbilitySystemComponent::InternalServerTryActivateAbility` — L860
-- `UHodgeAbilitySystemComponent::ClientActivateAbilitySucceedWithEventData_Implementation` — L885
-
-## HodgeAbilitySystemComponent_Montage.cpp
-
-[Source/Hodgepodge/Private/AbilitySystem/HodgeAbilitySystemComponent.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeAbilitySystemComponent.cpp)
-
-模块定义或基础代码；请查看对应文件。
-
-- `UHodgeAbilitySystemComponent::PlayMontage` — L6
-- `UHodgeAbilitySystemComponent::PlayMontageSimulated` — L21
-- `UHodgeAbilitySystemComponent::ApplyDefinitionMontageSettings` — L28
-- `UHodgeAbilitySystemComponent::OnRep_DefinitionMontage` — L42
-- `UHodgeAbilitySystemComponent::OnRep_ReplicatedAnimMontage` — L51
-- `UHodgeAbilitySystemComponent::StopDefinitionMontage` — L57
-- `UHodgeAbilitySystemComponent::CurrentMontageStop` — L64
+- `UHodgeAbilitySystemComponent::UHodgeAbilitySystemComponent` — L36
+- `UHodgeAbilitySystemComponent::EndPlay` — L52
+- `UHodgeAbilitySystemComponent::InitAbilityActorInfo` — L64
+- `UHodgeAbilitySystemComponent::TryActivateAbilitiesOnSpawn` — L140
+- `UHodgeAbilitySystemComponent::CancelAbilitiesByFunc` — L157
+- `UHodgeAbilitySystemComponent::CancelInputActivatedAbilities` — L225
+- `UHodgeAbilitySystemComponent::AbilitySpecInputPressed` — L242
+- `UHodgeAbilitySystemComponent::AbilitySpecInputReleased` — L269
+- `UHodgeAbilitySystemComponent::AbilityInputTagPressed` — L296
+- `UHodgeAbilitySystemComponent::AbilityInputTagReleased` — L321
+- `UHodgeAbilitySystemComponent::ProcessAbilityInput` — L342
+- `UHodgeAbilitySystemComponent::ClearAbilityInput` — L472
+- `UHodgeAbilitySystemComponent::NotifyAbilityActivated` — L485
+- `UHodgeAbilitySystemComponent::NotifyAbilityFailed` — L499
+- `UHodgeAbilitySystemComponent::NotifyAbilityEnded` — L521
+- `UHodgeAbilitySystemComponent::ApplyAbilityBlockAndCancelTags` — L535
+- `UHodgeAbilitySystemComponent::HandleChangeAbilityCanBeCanceled` — L564
+- `UHodgeAbilitySystemComponent::GetAdditionalActivationTagRequirements` — L575
+- `UHodgeAbilitySystemComponent::SetTagRelationshipMapping` — L588
+- `UHodgeAbilitySystemComponent::ClientNotifyAbilityFailed_Implementation` — L594
+- `UHodgeAbilitySystemComponent::HandleAbilityFailed` — L601
+- `UHodgeAbilitySystemComponent::IsActivationGroupBlocked` — L614
+- `UHodgeAbilitySystemComponent::AddAbilityToActivationGroup` — L645
+- `UHodgeAbilitySystemComponent::RemoveAbilityFromActivationGroup` — L693
+- `UHodgeAbilitySystemComponent::CancelActivationGroupAbilities` — L706
+- `UHodgeAbilitySystemComponent::AddDynamicTagGameplayEffect` — L722
+- `UHodgeAbilitySystemComponent::RemoveDynamicTagGameplayEffect` — L758
+- `UHodgeAbilitySystemComponent::GetAbilityTargetData` — L783
+- `UHodgeAbilitySystemComponent::GetLifetimeReplicatedProps` — L798
+- `UHodgeAbilitySystemComponent::GiveAbilityDefinition` — L805
+- `UHodgeAbilitySystemComponent::FindAbilityDefinition` — L833
+- `UHodgeAbilitySystemComponent::FindDefinitionAbility` — L843
+- `UHodgeAbilitySystemComponent::OnRemoveAbility` — L858
+- `UHodgeAbilitySystemComponent::InternalServerTryActivateAbility` — L864
+- `UHodgeAbilitySystemComponent::ClientActivateAbilitySucceedWithEventData_Implementation` — L894
+- `UHodgeAbilitySystemComponent::ClientActivateAbilityFailed_Implementation` — L914
+- `UHodgeAbilitySystemComponent::PlayMontage` — L930
+- `UHodgeAbilitySystemComponent::PlayMontageSimulated` — L945
+- `UHodgeAbilitySystemComponent::ApplyDefinitionMontageSettings` — L952
+- `UHodgeAbilitySystemComponent::OnRep_DefinitionMontage` — L966
+- `UHodgeAbilitySystemComponent::OnRep_ReplicatedAnimMontage` — L975
+- `UHodgeAbilitySystemComponent::StopDefinitionMontage` — L981
+- `UHodgeAbilitySystemComponent::CurrentMontageStop` — L988
 
 ## HodgeAbilitySystemGlobals.cpp
 
@@ -479,13 +540,13 @@ Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动�
 
 [Source/Hodgepodge/Private/Animation/HodgeAnimInstance.cpp](../../../Source/Hodgepodge/Private/Animation/HodgeAnimInstance.cpp)
 
-ASC GameplayTag 属性映射和 GroundDistance 更新。
+ASC 属性映射、GroundDistance 与旋转策略快照；FullBody 权重协调蓝图程序性根 Yaw。
 
-- `UHodgeAnimInstance::UHodgeAnimInstance` — L13
-- `UHodgeAnimInstance::InitializeWithAbilitySystem` — L18
-- `UHodgeAnimInstance::IsDataValid` — L29
-- `UHodgeAnimInstance::NativeInitializeAnimation` — L43
-- `UHodgeAnimInstance::NativeUpdateAnimation` — L61
+- `UHodgeAnimInstance::UHodgeAnimInstance` — L15
+- `UHodgeAnimInstance::InitializeWithAbilitySystem` — L20
+- `UHodgeAnimInstance::IsDataValid` — L31
+- `UHodgeAnimInstance::NativeInitializeAnimation` — L45
+- `UHodgeAnimInstance::NativeUpdateAnimation` — L63
 
 ## HodgeCameraComponent.cpp
 
@@ -576,62 +637,65 @@ UI 相机管理扩展，不代表 UI 系统已接入。
 
 原生 Character 基础、替换移动组件；Receiver 在 PreInit 注册、EndPlay 成对移除。
 
-- `AHodgeCharacterBase::AHodgeCharacterBase` — L29
-- `AHodgeCharacterBase::PreInitializeComponents` — L41
-- `AHodgeCharacterBase::EndPlay` — L55
-- `AHodgeCharacterBase::BeginPlay` — L68
+- `AHodgeCharacterBase::AHodgeCharacterBase` — L31
+- `AHodgeCharacterBase::PreInitializeComponents` — L43
+- `AHodgeCharacterBase::EndPlay` — L62
+- `AHodgeCharacterBase::BeginPlay` — L75
 
 ## HodgeCombatCharacter.cpp
 
 [Source/Hodgepodge/Private/Character/HodgeCombatCharacter.cpp](../../../Source/Hodgepodge/Private/Character/HodgeCombatCharacter.cpp)
 
-PawnExtension、相机、ASC 查询、移动标签、复制与死亡占位逻辑。
+PawnExtension、相机、HealthComponent、原生 RotationComponent；ASC、移动/旋转约束、复制与死亡清理。
 
-- `AHodgeCombatCharacter::AHodgeCombatCharacter` — L37
-- `AHodgeCombatCharacter::PreInitializeComponents` — L154
-- `AHodgeCombatCharacter::BeginPlay` — L161
-- `AHodgeCombatCharacter::EndPlay` — L184
-- `AHodgeCombatCharacter::Reset` — L207
-- `AHodgeCombatCharacter::GetLifetimeReplicatedProps` — L220
-- `AHodgeCombatCharacter::PreReplication` — L232
-- `AHodgeCombatCharacter::NotifyControllerChanged` — L259
-- `AHodgeCombatCharacter::GetHodgePlayerController` — L279
-- `AHodgeCombatCharacter::GetHodgePlayerState` — L286
-- `AHodgeCombatCharacter::GetHodgeAbilitySystemComponent` — L293
-- `AHodgeCombatCharacter::GetAbilitySystemComponent` — L300
-- `AHodgeCombatCharacter::OnAbilitySystemInitialized` — L312
-- `AHodgeCombatCharacter::OnAbilitySystemUninitialized` — L326
-- `AHodgeCombatCharacter::PossessedBy` — L333
-- `AHodgeCombatCharacter::UnPossessed` — L359
-- `AHodgeCombatCharacter::OnRep_Controller` — L385
-- `AHodgeCombatCharacter::OnRep_PlayerState` — L394
-- `AHodgeCombatCharacter::SetupPlayerInputComponent` — L403
-- `AHodgeCombatCharacter::InitializeGameplayTags` — L414
-- `AHodgeCombatCharacter::GetOwnedGameplayTags` — L449
-- `AHodgeCombatCharacter::HasMatchingGameplayTag` — L459
-- `AHodgeCombatCharacter::HasAllMatchingGameplayTags` — L471
-- `AHodgeCombatCharacter::HasAnyMatchingGameplayTags` — L483
-- `AHodgeCombatCharacter::FellOutOfWorld` — L495
-- `AHodgeCombatCharacter::OnDeathStarted` — L502
-- `AHodgeCombatCharacter::OnDeathFinished` — L509
-- `AHodgeCombatCharacter::DisableMovementAndCollision` — L516
-- `AHodgeCombatCharacter::DestroyDueToDeath` — L546
-- `AHodgeCombatCharacter::UninitAndDestroy` — L556
-- `AHodgeCombatCharacter::OnMovementModeChanged` — L584
-- `AHodgeCombatCharacter::SetMovementModeTag` — L600
-- `AHodgeCombatCharacter::ToggleCrouch` — L629
-- `AHodgeCombatCharacter::OnStartCrouch` — L648
-- `AHodgeCombatCharacter::OnEndCrouch` — L662
-- `AHodgeCombatCharacter::CanJumpInternal_Implementation` — L676
-- `AHodgeCombatCharacter::OnRep_ReplicatedAcceleration` — L683
-- `AHodgeCombatCharacter::OnControllerChangedTeam` — L713
-- `AHodgeCombatCharacter::OnRep_MyTeamID` — L726
-- `AHodgeCombatCharacter::UpdateSharedReplication` — L733
-- `AHodgeCombatCharacter::FastSharedReplication_Implementation` — L766
-- `FSharedRepMovement::FSharedRepMovement` — L808
-- `FSharedRepMovement::FillForCharacter` — L815
-- `FSharedRepMovement::Equals` — L862
-- `FSharedRepMovement::NetSerialize` — L905
+- `AHodgeCombatCharacter::AHodgeCombatCharacter` — L45
+- `AHodgeCombatCharacter::PreInitializeComponents` — L163
+- `AHodgeCombatCharacter::BeginPlay` — L170
+- `AHodgeCombatCharacter::EndPlay` — L193
+- `AHodgeCombatCharacter::Reset` — L224
+- `AHodgeCombatCharacter::GetLifetimeReplicatedProps` — L237
+- `AHodgeCombatCharacter::PreReplication` — L249
+- `AHodgeCombatCharacter::NotifyControllerChanged` — L276
+- `AHodgeCombatCharacter::GetHodgePlayerController` — L296
+- `AHodgeCombatCharacter::GetHodgePlayerState` — L303
+- `AHodgeCombatCharacter::GetHodgeAbilitySystemComponent` — L310
+- `AHodgeCombatCharacter::GetAbilitySystemComponent` — L317
+- `AHodgeCombatCharacter::OnAbilitySystemInitialized` — L329
+- `AHodgeCombatCharacter::OnAbilitySystemUninitialized` — L346
+- `AHodgeCombatCharacter::FaceRotation` — L356
+- `AHodgeCombatCharacter::InitializeDefaultEquipment` — L367
+- `AHodgeCombatCharacter::UninitializeDefaultEquipment` — L424
+- `AHodgeCombatCharacter::PossessedBy` — L446
+- `AHodgeCombatCharacter::UnPossessed` — L472
+- `AHodgeCombatCharacter::OnRep_Controller` — L498
+- `AHodgeCombatCharacter::OnRep_PlayerState` — L507
+- `AHodgeCombatCharacter::SetupPlayerInputComponent` — L516
+- `AHodgeCombatCharacter::InitializeGameplayTags` — L527
+- `AHodgeCombatCharacter::GetOwnedGameplayTags` — L562
+- `AHodgeCombatCharacter::HasMatchingGameplayTag` — L572
+- `AHodgeCombatCharacter::HasAllMatchingGameplayTags` — L584
+- `AHodgeCombatCharacter::HasAnyMatchingGameplayTags` — L596
+- `AHodgeCombatCharacter::FellOutOfWorld` — L608
+- `AHodgeCombatCharacter::OnDeathStarted` — L615
+- `AHodgeCombatCharacter::OnDeathFinished` — L624
+- `AHodgeCombatCharacter::DisableMovementAndCollision` — L631
+- `AHodgeCombatCharacter::DestroyDueToDeath` — L661
+- `AHodgeCombatCharacter::UninitAndDestroy` — L671
+- `AHodgeCombatCharacter::OnMovementModeChanged` — L699
+- `AHodgeCombatCharacter::SetMovementModeTag` — L715
+- `AHodgeCombatCharacter::ToggleCrouch` — L744
+- `AHodgeCombatCharacter::OnStartCrouch` — L763
+- `AHodgeCombatCharacter::OnEndCrouch` — L777
+- `AHodgeCombatCharacter::CanJumpInternal_Implementation` — L791
+- `AHodgeCombatCharacter::OnRep_ReplicatedAcceleration` — L798
+- `AHodgeCombatCharacter::OnControllerChangedTeam` — L828
+- `AHodgeCombatCharacter::OnRep_MyTeamID` — L841
+- `AHodgeCombatCharacter::UpdateSharedReplication` — L848
+- `AHodgeCombatCharacter::FastSharedReplication_Implementation` — L881
+- `FSharedRepMovement::FSharedRepMovement` — L923
+- `FSharedRepMovement::FillForCharacter` — L930
+- `FSharedRepMovement::Equals` — L977
+- `FSharedRepMovement::NetSerialize` — L1020
 
 ## HodgeEnemyCharacter.cpp
 
@@ -753,6 +817,28 @@ CodexText 实验：代码构建的 Survivor HUD UserWidget。
 - `UHodgeSurvivorHUD::Menu` — L167
 - `UHodgeSurvivorHUD::Pause` — L168
 
+## HodgeDamageRules.cpp
+
+[Source/Hodgepodge/Private/Combat/HodgeDamageRules.cpp](../../../Source/Hodgepodge/Private/Combat/HodgeDamageRules.cpp)
+
+检测和 Execution 共用目标、ASC、死亡/Health、自伤/友伤及队伍规则。
+
+- `FHodgeDamageRules::CanDamage` — L23
+
+## HodgeHitDetection.cpp
+
+[Source/Hodgepodge/Private/Combat/HodgeHitDetection.cpp](../../../Source/Hodgepodge/Private/Combat/HodgeHitDetection.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `UHodgeHitDetectionProfile::UHodgeHitDetectionProfile` — L23
+- `UHodgeHitDetectionProfile::Validate` — L29
+- `UHodgeHitDetectionProfile::IsDataValid` — L53
+- `UHodgeSocketSweepStrategy::Capture` — L64
+- `UHodgeSocketSweepStrategy::Detect` — L97
+- `UHodgeBoxSweepStrategy::Capture` — L114
+- `UHodgeBoxSweepStrategy::Detect` — L126
+
 ## HodgeActorComponentBase.cpp
 
 [Source/Hodgepodge/Private/Component/HodgeActorComponentBase.cpp](../../../Source/Hodgepodge/Private/Component/HodgeActorComponentBase.cpp)
@@ -770,59 +856,112 @@ CodexText 实验：代码构建的 Survivor HUD UserWidget。
 
 [Source/Hodgepodge/Private/Component/HodgeCharacterMovementComponent.cpp](../../../Source/Hodgepodge/Private/Component/HodgeCharacterMovementComponent.cpp)
 
-CharacterMovement 扩展、地面距离、加速度和能力系统相关移动入口。
+地面距离/加速度、最终旋转过滤、SavedMove 旋转策略重放与权威校正。
 
-- `UHodgeCharacterMovementComponent::UHodgeCharacterMovementComponent` — L27
-- `UHodgeCharacterMovementComponent::SimulateMovement` — L33
-- `UHodgeCharacterMovementComponent::CanAttemptJump` — L54
-- `UHodgeCharacterMovementComponent::InitializeComponent` — L63
-- `UHodgeCharacterMovementComponent::GetGroundInfo` — L70
-- `UHodgeCharacterMovementComponent::SetReplicatedAcceleration` — L151
-- `UHodgeCharacterMovementComponent::GetDeltaRotation` — L161
-- `UHodgeCharacterMovementComponent::GetMaxSpeed` — L179
+- `UHodgeCharacterMovementComponent::UHodgeCharacterMovementComponent` — L94
+- `UHodgeCharacterMovementComponent::SimulateMovement` — L100
+- `UHodgeCharacterMovementComponent::CanAttemptJump` — L121
+- `UHodgeCharacterMovementComponent::InitializeComponent` — L130
+- `UHodgeCharacterMovementComponent::GetGroundInfo` — L137
+- `UHodgeCharacterMovementComponent::SetReplicatedAcceleration` — L218
+- `UHodgeCharacterMovementComponent::GetDeltaRotation` — L228
+- `UHodgeCharacterMovementComponent::PhysicsRotation` — L253
+- `UHodgeCharacterMovementComponent::MoveUpdatedComponentImpl` — L277
+- `UHodgeCharacterMovementComponent::GetPredictionData_Client` — L294
+- `UHodgeCharacterMovementComponent::ClientUpdatePositionAfterServerUpdate` — L304
+- `UHodgeCharacterMovementComponent::SmoothCorrection` — L314
+- `UHodgeCharacterMovementComponent::GetMaxSpeed` — L322
+
+## HodgeCharacterRotationComponent.cpp
+
+[Source/Hodgepodge/Private/Component/HodgeCharacterRotationComponent.cpp](../../../Source/Hodgepodge/Private/Component/HodgeCharacterRotationComponent.cpp)
+
+ASC 旋转标签约束、锁定 Yaw、恢复、权威复制与移动重放状态。
+
+- `UHodgeCharacterRotationComponent::UHodgeCharacterRotationComponent` — L11
+- `UHodgeCharacterRotationComponent::InitializeWithAbilitySystem` — L18
+- `UHodgeCharacterRotationComponent::UninitializeFromAbilitySystem` — L35
+- `UHodgeCharacterRotationComponent::HandleConstraintTagChanged` — L58
+- `UHodgeCharacterRotationComponent::RefreshLocalState` — L63
+- `UHodgeCharacterRotationComponent::PublishAuthorityState` — L77
+- `UHodgeCharacterRotationComponent::IsReplayingMove` — L87
+- `UHodgeCharacterRotationComponent::GetResolvedState` — L93
+- `UHodgeCharacterRotationComponent::IsYawLocked` — L101
+- `UHodgeCharacterRotationComponent::IsRecoveringFacing` — L102
+- `UHodgeCharacterRotationComponent::GetLockedYaw` — L103
+- `UHodgeCharacterRotationComponent::FilterControlRotation` — L105
+- `UHodgeCharacterRotationComponent::NotifyFacingApplied` — L118
+- `UHodgeCharacterRotationComponent::SetMoveReplayState` — L129
+- `UHodgeCharacterRotationComponent::ClearMoveReplayState` — L135
+- `UHodgeCharacterRotationComponent::OnRep_RotationState` — L141
+- `UHodgeCharacterRotationComponent::GetLifetimeReplicatedProps` — L151
+- `UHodgeCharacterRotationComponent::EndPlay` — L157
 
 ## HodgeCombatComponentBase.cpp
 
 [Source/Hodgepodge/Private/Component/HodgeCombatComponentBase.cpp](../../../Source/Hodgepodge/Private/Component/HodgeCombatComponentBase.cpp)
 
-战斗组件占位，当前构造关闭 Tick，尚无完整命中或连招实现。
+Experience 注入 Pawn 的统一战斗协调者；连段输入/记忆/预测校正，服务器采样、去重与结果上报；GA 负责效果施加。
 
-- `UHodgeCombatComponentBase::UHodgeCombatComponentBase` — L23
-
-## HodgeComboComponent.cpp
-
-[Source/Hodgepodge/Private/Component/HodgeComboComponent.cpp](../../../Source/Hodgepodge/Private/Component/HodgeComboComponent.cpp)
-
-模块定义或基础代码；请查看对应文件。
-
-- `UHodgeComboComponent::UHodgeComboComponent` — L14
-- `UHodgeComboComponent::Configure` — L20
-- `UHodgeComboComponent::Shutdown` — L31
-- `UHodgeComboComponent::ClearInput` — L40
-- `UHodgeComboComponent::InputPressed` — L46
-- `UHodgeComboComponent::SelectTransition` — L65
-- `UHodgeComboComponent::IsAuthorized` — L82
-- `UHodgeComboComponent::ExecutionKey` — L87
-- `UHodgeComboComponent::PrepareTransition` — L94
-- `UHodgeComboComponent::TryTransition` — L116
-- `UHodgeComboComponent::PrepareServerActivation` — L153
-- `UHodgeComboComponent::PrepareConfirmedActivation` — L174
-- `UHodgeComboComponent::RejectServerActivation` — L194
-- `UHodgeComboComponent::CompleteServerActivation` — L202
-- `UHodgeComboComponent::ExecutionStarted` — L211
-- `UHodgeComboComponent::ExecutionEnded` — L218
-- `UHodgeComboComponent::WindowsChanged` — L225
-- `UHodgeComboComponent::TimelineEvent` — L234
-- `UHodgeComboComponent::DrainEvents` — L241
-- `UHodgeComboComponent::SetNode` — L259
-- `UHodgeComboComponent::ResetSession` — L273
-- `UHodgeComboComponent::TickComponent` — L284
-- `UHodgeComboComponent::ServerMoveCancel_Implementation` — L310
-- `UHodgeComboComponent::ClientMoveCancelResult_Implementation` — L322
-- `UHodgeComboComponent::ServerReturnToEntry_Implementation` — L324
-- `UHodgeComboComponent::GetLifetimeReplicatedProps` — L336
-- `UHodgeComboComponent::OnRep_ObserverTags` — L342
-- `UHodgeComboComponent::EndPlay` — L351
+- `UHodgeCombatComponentBase::UHodgeCombatComponentBase` — L39
+- `UHodgeCombatComponentBase::EndPlay` — L47
+- `UHodgeCombatComponentBase::ResolveSource` — L53
+- `UHodgeCombatComponentBase::IsSourceValid` — L88
+- `UHodgeCombatComponentBase::CreateDetectionSession` — L100
+- `UHodgeCombatComponentBase::IsDetectionSessionValid` — L134
+- `UHodgeCombatComponentBase::ResetDetectionHistory` — L140
+- `UHodgeCombatComponentBase::GetDetectionSourceComponent` — L153
+- `UHodgeCombatComponentBase::EndDetectionSession` — L160
+- `UHodgeCombatComponentBase::EndDetectionSessionsForExecution` — L166
+- `UHodgeCombatComponentBase::EndAllDetectionSessions` — L174
+- `UHodgeCombatComponentBase::SampleDetection` — L179
+- `UHodgeCombatComponentBase::Configure` — L255
+- `UHodgeCombatComponentBase::Shutdown` — L272
+- `UHodgeCombatComponentBase::ClearInput` — L296
+- `UHodgeCombatComponentBase::InputPressed` — L302
+- `UHodgeCombatComponentBase::SelectTransition` — L321
+- `UHodgeCombatComponentBase::IsAuthorized` — L341
+- `UHodgeCombatComponentBase::ExecutionKey` — L346
+- `UHodgeCombatComponentBase::PrepareTransition` — L353
+- `UHodgeCombatComponentBase::TryTransition` — L385
+- `UHodgeCombatComponentBase::PrepareServerActivation` — L423
+- `UHodgeCombatComponentBase::PrepareConfirmedActivation` — L445
+- `UHodgeCombatComponentBase::RejectServerActivation` — L469
+- `UHodgeCombatComponentBase::CompleteServerActivation` — L475
+- `UHodgeCombatComponentBase::ExecutionStarted` — L496
+- `UHodgeCombatComponentBase::ExecutionEnded` — L507
+- `UHodgeCombatComponentBase::WindowsChanged` — L521
+- `UHodgeCombatComponentBase::TimelineEvent` — L530
+- `UHodgeCombatComponentBase::DrainEvents` — L537
+- `UHodgeCombatComponentBase::SetNode` — L555
+- `UHodgeCombatComponentBase::ResetSession` — L569
+- `UHodgeCombatComponentBase::ComboTime` — L583
+- `UHodgeCombatComponentBase::GetRememberedComboTag` — L590
+- `UHodgeCombatComponentBase::GetComboMemoryRemainingTime` — L596
+- `UHodgeCombatComponentBase::TransitionSourceNode` — L602
+- `UHodgeCombatComponentBase::HasResumeTransition` — L609
+- `UHodgeCombatComponentBase::RetainComboMemory` — L618
+- `UHodgeCombatComponentBase::ExpireComboMemory` — L629
+- `UHodgeCombatComponentBase::PublishComboMemory` — L639
+- `UHodgeCombatComponentBase::EndCurrentExecution` — L648
+- `UHodgeCombatComponentBase::OnRep_ComboMemory` — L653
+- `UHodgeCombatComponentBase::HandlePredictionRejected` — L662
+- `UHodgeCombatComponentBase::ServerSynchronizeComboMemory_Implementation` — L670
+- `UHodgeCombatComponentBase::ClientCorrectComboMemory_Implementation` — L676
+- `UHodgeCombatComponentBase::TickComponent` — L682
+- `UHodgeCombatComponentBase::ServerMoveCancel_Implementation` — L709
+- `UHodgeCombatComponentBase::ClientMoveCancelResult_Implementation` — L721
+- `UHodgeCombatComponentBase::ServerReturnToEntry_Implementation` — L723
+- `UHodgeCombatComponentBase::GetLifetimeReplicatedProps` — L736
+- `UHodgeCombatComponentBase::OnRep_ObserverTags` — L743
+- `UHodgeCombatComponentBase::FindCombatComponent` — L754
+- `UHodgeCombatComponentBase::IsComboReady` — L759
+- `UHodgeCombatComponentBase::BindPawnExtension` — L767
+- `UHodgeCombatComponentBase::HandleAbilitySystemInitialized` — L778
+- `UHodgeCombatComponentBase::HandleAbilitySystemUninitialized` — L785
+- `UHodgeCombatComponentBase::OnRegister` — L790
+- `UHodgeCombatComponentBase::BeginPlay` — L796
+- `UHodgeCombatComponentBase::OnUnregister` — L803
 
 ## HodgeExperienceManagerComponent.cpp
 
@@ -924,25 +1063,26 @@ GameState 上的 Experience 复制、资源加载、插件激活、Action 执行
 
 PawnData 复制、Init State、ASC 关联/解除、TagRelationshipMapping 与 ClearAbilityInput；需验证退出顺序。
 
-- `UHodgePawnExtensionComponent::NAME_ActorFeatureName` — L19
-- `UHodgePawnExtensionComponent::UHodgePawnExtensionComponent` — L21
-- `UHodgePawnExtensionComponent::GetLifetimeReplicatedProps` — L35
-- `UHodgePawnExtensionComponent::OnRegister` — L43
-- `UHodgePawnExtensionComponent::BeginPlay` — L62
-- `UHodgePawnExtensionComponent::EndPlay` — L76
-- `UHodgePawnExtensionComponent::SetPawnData` — L87
-- `UHodgePawnExtensionComponent::OnRep_PawnData` — L117
-- `UHodgePawnExtensionComponent::InitializeAbilitySystem` — L123
-- `UHodgePawnExtensionComponent::UninitializeAbilitySystem` — L187
-- `UHodgePawnExtensionComponent::HandleControllerChanged` — L236
-- `UHodgePawnExtensionComponent::HandlePlayerStateReplicated` — L260
-- `UHodgePawnExtensionComponent::SetupPlayerInputComponent` — L266
-- `UHodgePawnExtensionComponent::CheckDefaultInitialization` — L272
-- `UHodgePawnExtensionComponent::CanChangeInitState` — L287
-- `UHodgePawnExtensionComponent::HandleChangeInitState` — L347
-- `UHodgePawnExtensionComponent::OnActorInitStateChanged` — L357
-- `UHodgePawnExtensionComponent::OnAbilitySystemInitialized_RegisterAndCall` — L369
-- `UHodgePawnExtensionComponent::OnAbilitySystemUninitialized_Register` — L385
+- `UHodgePawnExtensionComponent::NAME_ActorFeatureName` — L18
+- `UHodgePawnExtensionComponent::UHodgePawnExtensionComponent` — L20
+- `UHodgePawnExtensionComponent::GetLifetimeReplicatedProps` — L34
+- `UHodgePawnExtensionComponent::OnRegister` — L42
+- `UHodgePawnExtensionComponent::BeginPlay` — L61
+- `UHodgePawnExtensionComponent::EndPlay` — L75
+- `UHodgePawnExtensionComponent::SetPawnData` — L86
+- `UHodgePawnExtensionComponent::OnRep_PawnData` — L116
+- `UHodgePawnExtensionComponent::InitializeAbilitySystem` — L122
+- `UHodgePawnExtensionComponent::UninitializeAbilitySystem` — L182
+- `UHodgePawnExtensionComponent::HandleControllerChanged` — L227
+- `UHodgePawnExtensionComponent::HandlePlayerStateReplicated` — L251
+- `UHodgePawnExtensionComponent::SetupPlayerInputComponent` — L257
+- `UHodgePawnExtensionComponent::CheckDefaultInitialization` — L263
+- `UHodgePawnExtensionComponent::CanChangeInitState` — L278
+- `UHodgePawnExtensionComponent::HandleChangeInitState` — L338
+- `UHodgePawnExtensionComponent::OnActorInitStateChanged` — L348
+- `UHodgePawnExtensionComponent::OnAbilitySystemInitialized_RegisterAndCall` — L360
+- `UHodgePawnExtensionComponent::OnAbilitySystemUninitialized_Register` — L376
+- `UHodgePawnExtensionComponent::UnregisterAbilitySystemDelegates` — L385
 
 ## HodgeGameInstanceBase.cpp
 
@@ -1107,29 +1247,29 @@ GameState 基础扩展生命周期。
 
 - `AHodgePlayerState::NAME_HodgeAbilityReady` — L35
 - `AHodgePlayerState::AHodgePlayerState` — L38
-- `AHodgePlayerState::GetHodgePlayerController` — L68
-- `AHodgePlayerState::GetAbilitySystemComponent` — L75
-- `AHodgePlayerState::SetPawnData` — L82
-- `AHodgePlayerState::PreInitializeComponents` — L127
-- `AHodgePlayerState::PostInitializeComponents` — L165
-- `AHodgePlayerState::Reset` — L172
-- `AHodgePlayerState::ClientInitialize` — L179
-- `AHodgePlayerState::CopyProperties` — L192
-- `AHodgePlayerState::GetLifetimeReplicatedProps` — L202
-- `AHodgePlayerState::OnDeactivated` — L236
-- `AHodgePlayerState::OnReactivated` — L272
-- `AHodgePlayerState::SetPlayerConnectionType` — L286
-- `AHodgePlayerState::SetSquadID` — L296
-- `AHodgePlayerState::AddStatTagStack` — L310
-- `AHodgePlayerState::RemoveStatTagStack` — L317
-- `AHodgePlayerState::GetStatTagStackCount` — L324
-- `AHodgePlayerState::HasStatTag` — L331
-- `AHodgePlayerState::GetReplicatedViewRotation` — L338
-- `AHodgePlayerState::SetReplicatedViewRotation` — L345
-- `AHodgePlayerState::OnExperienceLoaded` — L359
-- `AHodgePlayerState::OnRep_PawnData` — L382
-- `AHodgePlayerState::OnRep_MyTeamID` — L388
-- `AHodgePlayerState::OnRep_MySquadID` — L395
+- `AHodgePlayerState::GetHodgePlayerController` — L67
+- `AHodgePlayerState::GetAbilitySystemComponent` — L74
+- `AHodgePlayerState::SetPawnData` — L81
+- `AHodgePlayerState::PreInitializeComponents` — L126
+- `AHodgePlayerState::PostInitializeComponents` — L164
+- `AHodgePlayerState::Reset` — L171
+- `AHodgePlayerState::ClientInitialize` — L178
+- `AHodgePlayerState::CopyProperties` — L191
+- `AHodgePlayerState::GetLifetimeReplicatedProps` — L201
+- `AHodgePlayerState::OnDeactivated` — L235
+- `AHodgePlayerState::OnReactivated` — L271
+- `AHodgePlayerState::SetPlayerConnectionType` — L285
+- `AHodgePlayerState::SetSquadID` — L295
+- `AHodgePlayerState::AddStatTagStack` — L309
+- `AHodgePlayerState::RemoveStatTagStack` — L316
+- `AHodgePlayerState::GetStatTagStackCount` — L323
+- `AHodgePlayerState::HasStatTag` — L330
+- `AHodgePlayerState::GetReplicatedViewRotation` — L337
+- `AHodgePlayerState::SetReplicatedViewRotation` — L344
+- `AHodgePlayerState::OnExperienceLoaded` — L358
+- `AHodgePlayerState::OnRep_PawnData` — L381
+- `AHodgePlayerState::OnRep_MyTeamID` — L387
+- `AHodgePlayerState::OnRep_MySquadID` — L394
 
 ## HodgePlayerStateBase.cpp
 
@@ -1147,13 +1287,13 @@ PlayerState ModularGameplay Receiver 注册、注销及组件 Reset/CopyProperti
 
 [Source/Hodgepodge/Private/Data/HodgeAbilityDefinition.cpp](../../../Source/Hodgepodge/Private/Data/HodgeAbilityDefinition.cpp)
 
-模块定义或基础代码；请查看对应文件。
+Montage/Blend/Timeline、HitWindows、WeaponUseWindowTag；校验手持区间覆盖命中并先进入。
 
-- `FHodgeAbilityBlendSettings::MakeBlend` — L11
-- `FHodgeAbilityBlendSettings::IsValid` — L19
-- `UHodgeAbilityDefinition::GetDuration` — L25
-- `UHodgeAbilityDefinition::ValidateDefinition` — L29
-- `UHodgeAbilityDefinition::IsDataValid` — L65
+- `FHodgeAbilityBlendSettings::MakeBlend` — L12
+- `FHodgeAbilityBlendSettings::IsValid` — L21
+- `UHodgeAbilityDefinition::GetDuration` — L28
+- `UHodgeAbilityDefinition::ValidateDefinition` — L33
+- `UHodgeAbilityDefinition::IsDataValid` — L158
 
 ## HodgeAbilitySet.cpp
 
@@ -1176,8 +1316,8 @@ PlayerState ModularGameplay Receiver 注册、注销及组件 Reset/CopyProperti
 
 - `UHodgeAbilityTimeline::ValidateForPlayback` — L27
 - `UHodgeAbilityTimeline::ValidateEntries` — L38
-- `UHodgeAbilityTimeline::IsDataValid` — L240
-- `UHodgeAbilityTimeline::PostEditChangeProperty` — L350
+- `UHodgeAbilityTimeline::IsDataValid` — L243
+- `UHodgeAbilityTimeline::PostEditChangeProperty` — L357
 
 ## HodgeAssetManager.cpp
 
@@ -1213,11 +1353,11 @@ PlayerState ModularGameplay Receiver 注册、注销及组件 Reset/CopyProperti
 
 [Source/Hodgepodge/Private/Data/HodgeComboDefinition.cpp](../../../Source/Hodgepodge/Private/Data/HodgeComboDefinition.cpp)
 
-模块定义或基础代码；请查看对应文件。
+跳转 DataTable、输入缓存、结束后连段记忆与 bAllowAfterExecutionEnded 续段许可。
 
 - `UHodgeComboDefinition::FindNode` — L7
-- `UHodgeComboDefinition::ValidateDefinition` — L12
-- `UHodgeComboDefinition::IsDataValid` — L49
+- `UHodgeComboDefinition::ValidateDefinition` — L14
+- `UHodgeComboDefinition::IsDataValid` — L93
 
 ## HodgeExperienceActionSet.cpp
 
@@ -1262,23 +1402,16 @@ PlayerState ModularGameplay Receiver 注册、注销及组件 Reset/CopyProperti
 
 [Source/Hodgepodge/Private/Data/HodgePawnData.cpp](../../../Source/Hodgepodge/Private/Data/HodgePawnData.cpp)
 
-PawnClass、AbilitySets、TagRelationshipMapping、InputConfig、DefaultCameraMode 配置。
+PawnClass、AbilitySets、ComboDefinition、DefaultWeaponDefinition、输入/相机/关系映射配置，编辑器校验统一在主 cpp。
 
-- `UHodgePawnData::UHodgePawnData` — L8
-
-## HodgePawnData_Validation.cpp
-
-[Source/Hodgepodge/Private/Data/HodgePawnData.cpp](../../../Source/Hodgepodge/Private/Data/HodgePawnData.cpp)
-
-模块定义或基础代码；请查看对应文件。
-
-- `UHodgePawnData::IsDataValid` — L10
+- `UHodgePawnData::UHodgePawnData` — L17
+- `UHodgePawnData::IsDataValid` — L27
 
 ## HodgeEquipmentDefinition.cpp
 
 [Source/Hodgepodge/Private/Equipment/HodgeEquipmentDefinition.cpp](../../../Source/Hodgepodge/Private/Equipment/HodgeEquipmentDefinition.cpp)
 
-模块定义或基础代码；请查看对应文件。
+装备实例类、Actor 挂接与 AbilitySets 配置。
 
 - `UHodgeEquipmentDefinition::UHodgeEquipmentDefinition` — L11
 
@@ -1286,7 +1419,7 @@ PawnClass、AbilitySets、TagRelationshipMapping、InputConfig、DefaultCameraMo
 
 [Source/Hodgepodge/Private/Equipment/HodgeEquipmentInstance.cpp](../../../Source/Hodgepodge/Private/Equipment/HodgeEquipmentInstance.cpp)
 
-模块定义或基础代码；请查看对应文件。
+Pawn 所属复制 UObject、SpawnedActors RepNotify 和装备/卸装生命周期。
 
 - `UHodgeEquipmentInstance::UHodgeEquipmentInstance` — L31
 - `UHodgeEquipmentInstance::GetWorld` — L37
@@ -1295,51 +1428,98 @@ PawnClass、AbilitySets、TagRelationshipMapping、InputConfig、DefaultCameraMo
 - `UHodgeEquipmentInstance::GetPawn` — L82
 - `UHodgeEquipmentInstance::GetTypedPawn` — L88
 - `UHodgeEquipmentInstance::SpawnEquipmentActors` — L109
-- `UHodgeEquipmentInstance::DestroyEquipmentActors` — L147
-- `UHodgeEquipmentInstance::OnEquipped` — L161
-- `UHodgeEquipmentInstance::OnUnequipped` — L168
-- `UHodgeEquipmentInstance::OnRep_Instigator` — L175
+- `UHodgeEquipmentInstance::DestroyEquipmentActors` — L148
+- `UHodgeEquipmentInstance::OnRep_SpawnedActors` — L163
+- `UHodgeEquipmentInstance::OnEquipped` — L169
+- `UHodgeEquipmentInstance::OnUnequipped` — L176
+- `UHodgeEquipmentInstance::OnRep_Instigator` — L183
 
 ## HodgeEquipmentManagerComponent.cpp
 
 [Source/Hodgepodge/Private/Equipment/HodgeEquipmentManagerComponent.cpp](../../../Source/Hodgepodge/Private/Equipment/HodgeEquipmentManagerComponent.cpp)
 
-模块定义或基础代码；请查看对应文件。
+Experience 注入 Pawn，ASC 就绪后装备默认剑，来源授予句柄精确撤销与客户端迟到绑定。
 
-- `FHodgeAppliedEquipmentEntry::GetDebugString` — L32
-- `FHodgeEquipmentList::PreReplicatedRemove` — L41
-- `FHodgeEquipmentList::PostReplicatedAdd` — L58
-- `FHodgeEquipmentList::PostReplicatedChange` — L75
-- `FHodgeEquipmentList::GetAbilitySystemComponent` — L85
-- `FHodgeEquipmentList::AddEntry` — L98
-- `FHodgeEquipmentList::RemoveEntry` — L165
-- `UHodgeEquipmentManagerComponent::UHodgeEquipmentManagerComponent` — L200
-- `UHodgeEquipmentManagerComponent::GetLifetimeReplicatedProps` — L212
-- `UHodgeEquipmentManagerComponent::EquipItem` — L222
-- `UHodgeEquipmentManagerComponent::UnequipItem` — L253
-- `UHodgeEquipmentManagerComponent::ReplicateSubobjects` — L273
-- `UHodgeEquipmentManagerComponent::InitializeComponent` — L298
-- `UHodgeEquipmentManagerComponent::UninitializeComponent` — L305
-- `UHodgeEquipmentManagerComponent::ReadyForReplication` — L329
-- `UHodgeEquipmentManagerComponent::GetFirstInstanceOfType` — L356
-- `UHodgeEquipmentManagerComponent::GetEquipmentInstancesOfType` — L379
+- `FHodgeAppliedEquipmentEntry::GetDebugString` — L36
+- `FHodgeEquipmentList::PreReplicatedRemove` — L45
+- `FHodgeEquipmentList::PostReplicatedAdd` — L62
+- `FHodgeEquipmentList::PostReplicatedChange` — L79
+- `FHodgeEquipmentList::GetAbilitySystemComponent` — L94
+- `FHodgeEquipmentList::AddEntry` — L107
+- `FHodgeEquipmentList::RemoveEntry` — L176
+- `UHodgeEquipmentManagerComponent::UHodgeEquipmentManagerComponent` — L211
+- `UHodgeEquipmentManagerComponent::GetLifetimeReplicatedProps` — L223
+- `UHodgeEquipmentManagerComponent::EquipItem` — L233
+- `UHodgeEquipmentManagerComponent::UnequipItem` — L264
+- `UHodgeEquipmentManagerComponent::ReplicateSubobjects` — L284
+- `UHodgeEquipmentManagerComponent::InitializeComponent` — L309
+- `UHodgeEquipmentManagerComponent::UninitializeComponent` — L325
+- `UHodgeEquipmentManagerComponent::ReadyForReplication` — L349
+- `UHodgeEquipmentManagerComponent::GetFirstInstanceOfType` — L376
+- `UHodgeEquipmentManagerComponent::GetEquipmentInstancesOfType` — L399
 
 ## HodgeWeaponInstance.cpp
 
 [Source/Hodgepodge/Private/Equipment/HodgeWeaponInstance.cpp](../../../Source/Hodgepodge/Private/Equipment/HodgeWeaponInstance.cpp)
 
-模块定义或基础代码；请查看对应文件。
+手持请求、显现阶段、计时器、复制/拥有者预测及拒绝恢复，不新增角色常驻武器表现组件。
 
-- `UHodgeWeaponInstance::UHodgeWeaponInstance` — L32
-- `UHodgeWeaponInstance::OnEquipped` — L57
-- `UHodgeWeaponInstance::OnUnequipped` — L76
-- `UHodgeWeaponInstance::UpdateFiringTime` — L86
-- `UHodgeWeaponInstance::GetTimeSinceLastInteractedWith` — L99
-- `UHodgeWeaponInstance::PickBestAnimLayer` — L128
-- `UHodgeWeaponInstance::GetOwningUserId` — L139
-- `UHodgeWeaponInstance::ApplyDeviceProperties` — L153
-- `UHodgeWeaponInstance::RemoveDeviceProperties` — L191
-- `UHodgeWeaponInstance::OnDeathStarted` — L214
+- `UHodgeWeaponInstance::UHodgeWeaponInstance` — L42
+- `UHodgeWeaponInstance::OnEquipped` — L67
+- `UHodgeWeaponInstance::OnUnequipped` — L89
+- `UHodgeWeaponInstance::UpdateFiringTime` — L100
+- `UHodgeWeaponInstance::GetTimeSinceLastInteractedWith` — L113
+- `UHodgeWeaponInstance::PickBestAnimLayer` — L142
+- `UHodgeWeaponInstance::GetOwningUserId` — L153
+- `UHodgeWeaponInstance::ApplyDeviceProperties` — L167
+- `UHodgeWeaponInstance::RemoveDeviceProperties` — L205
+- `UHodgeWeaponInstance::OnDeathStarted` — L228
+- `UHodgeWeaponInstance::GetLifetimeReplicatedProps` — L243
+- `UHodgeWeaponInstance::GetPresentationTime` — L249
+- `UHodgeWeaponInstance::CanDrivePresentation` — L256
+- `UHodgeWeaponInstance::ResolvePresentationWeapon` — L264
+- `UHodgeWeaponInstance::InitializePresentation` — L284
+- `UHodgeWeaponInstance::ClearPresentationTimer` — L300
+- `UHodgeWeaponInstance::ShutdownPresentation` — L305
+- `UHodgeWeaponInstance::AcquireHandUse` — L317
+- `UHodgeWeaponInstance::ReleaseHandUse` — L343
+- `UHodgeWeaponInstance::ReleaseHandUsesForExecution` — L350
+- `UHodgeWeaponInstance::BeginIdlePresentation` — L357
+- `UHodgeWeaponInstance::SchedulePresentationPhase` — L363
+- `UHodgeWeaponInstance::SetPresentationPhase` — L378
+- `UHodgeWeaponInstance::GetPresentationState` — L406
+- `UHodgeWeaponInstance::OnRep_PresentationState` — L412
+- `UHodgeWeaponInstance::RejectPredictedHandUse` — L426
+- `UHodgeWeaponInstance::RefreshPresentationActors` — L441
+- `UHodgeWeaponInstance::OnSpawnedActorsChanged` — L447
+- `UHodgeWeaponInstance::BeginDestroy` — L453
+- `UHodgeWeaponInstance::UpdateOwnerPosePolicy` — L459
+
+## HodgeWeaponPresentationActor.cpp
+
+[Source/Hodgepodge/Private/Equipment/HodgeWeaponPresentationActor.cpp](../../../Source/Hodgepodge/Private/Equipment/HodgeWeaponPresentationActor.cpp)
+
+检测 Mesh 留手，可见 Mesh 回背/悬浮/消隐挂 BackSocket，手持时挂回检测 Mesh。
+
+- `AHodgeWeaponPresentationActor::AHodgeWeaponPresentationActor` — L14
+- `AHodgeWeaponPresentationActor::BeginPlay` — L36
+- `AHodgeWeaponPresentationActor::TryBindWeapon` — L44
+- `AHodgeWeaponPresentationActor::ConfigureProfile` — L56
+- `AHodgeWeaponPresentationActor::BindWeapon` — L73
+- `AHodgeWeaponPresentationActor::RefreshPresentation` — L97
+- `AHodgeWeaponPresentationActor::GetVisualTransform` — L105
+- `AHodgeWeaponPresentationActor::EvaluatePresentation` — L110
+- `AHodgeWeaponPresentationActor::Tick` — L182
+- `AHodgeWeaponPresentationActor::EndPlay` — L188
+
+## HodgeWeaponPresentationProfile.cpp
+
+[Source/Hodgepodge/Private/Equipment/HodgeWeaponPresentationProfile.cpp](../../../Source/Hodgepodge/Private/Equipment/HodgeWeaponPresentationProfile.cpp)
+
+模型/材质、手背插槽/偏移、曲线/时间；BackSocket 默认 WeaponOnBack，BackTransform 为插槽内偏移。
+
+- `UHodgeWeaponPresentationProfile::Validate` — L8
+- `UHodgeWeaponPresentationProfile::IsDataValid` — L25
 
 ## GameFeatureAction_AddAbilities.cpp
 
@@ -1536,8 +1716,9 @@ Enhanced Input 用户设置派生入口；须核对实际设置类配置。
 
 - `FHodgeDefinitionGrantTest::RunTest` — L19
 - `FHodgeComboValidationTest::RunTest` — L55
-- `FHodgeComboSessionTest::RunTest` — L95
-- `FHodgeMontageDurationTest::RunTest` — L177
+- `FHodgeComboRetentionTest::RunTest` — L128
+- `FHodgeComboSessionTest::RunTest` — L214
+- `FHodgeMontageDurationTest::RunTest` — L303
 
 ## HodgeAbilityTimelineTests.cpp
 
@@ -1548,6 +1729,35 @@ Enhanced Input 用户设置派生入口；须核对实际设置类配置。
 - `FHodgeTimelineValidationTest::RunTest` — L77
 - `FHodgeTimelineRejectTest::RunTest` — L115
 - `FHodgeTimelineCleanupTest::RunTest` — L157
+- `FHodgeTimelineWindowIdentityTest::RunTest` — L222
+- `FHodgeTimelineWindowReentryTest::RunTest` — L269
+
+## HodgeCharacterRotationTests.cpp
+
+[Source/Hodgepodge/Private/Tests/HodgeCharacterRotationTests.cpp](../../../Source/Hodgepodge/Private/Tests/HodgeCharacterRotationTests.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `FHodgeCharacterRotationConstraintsTest::RunTest` — L14
+
+## HodgeHitDetectionTests.cpp
+
+[Source/Hodgepodge/Private/Tests/HodgeHitDetectionTests.cpp](../../../Source/Hodgepodge/Private/Tests/HodgeHitDetectionTests.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `FHodgeHitGeometryTest::RunTest` — L11
+- `FHodgeHitProfileValidationTest::RunTest` — L36
+
+## HodgeMeleeRoutingTests.cpp
+
+[Source/Hodgepodge/Private/Tests/HodgeMeleeRoutingTests.cpp](../../../Source/Hodgepodge/Private/Tests/HodgeMeleeRoutingTests.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `FHodgeDetectionRoutingTest::RunTest` — L82
+- `FHodgeMeleeHitHistoryTest::RunTest` — L112
+- `FHodgeMeleeSpecContextTest::RunTest` — L135
 
 ## HodgeTimelineEvaluatorTests.cpp
 
@@ -1556,6 +1766,15 @@ Enhanced Input 用户设置派生入口；须核对实际设置类配置。
 模块定义或基础代码；请查看对应文件。
 
 - `FHodgeEvaluatorTest::RunTest` — L8
+
+## HodgeWeaponPresentationTests.cpp
+
+[Source/Hodgepodge/Private/Tests/HodgeWeaponPresentationTests.cpp](../../../Source/Hodgepodge/Private/Tests/HodgeWeaponPresentationTests.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `FHodgeWeaponRequestsTest::RunTest` — L21
+- `FHodgeWeaponGeometryTest::RunTest` — L83
 
 ## MaterialProgressBar.cpp
 
@@ -2035,11 +2254,17 @@ Enhanced Input 用户设置派生入口；须核对实际设置类配置。
 
 驱动 HodgeAbilityTimeline 的唯一 AbilityTask：初始化与 Tick 共用 CollectNodes + SortNodes 统一 Scheduler，推进逻辑时间，维护 WindowTag 与 GE 两个账本，派发 Point 与系统事件。窗口 GE 施加/移除、Point 与 Timeline.End 派发、中途取消清理已实测通过；重入类时序、NetPolicy 跨端、时钟倒退未验证。
 
+## HodgeAbilityTask_WaitHitResults.h
+
+[Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeAbilityTask_WaitHitResults.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeAbilityTask_WaitHitResults.h)
+
+模块定义或基础代码；请查看对应文件。
+
 ## HodgeAbilityTask_WaitMoveCancel.h
 
 [Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeAbilityTask_WaitMoveCancel.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeAbilityTask_WaitMoveCancel.h)
 
-把“取消窗口（Timeline 授权）”与“移动意图（输入层）”两个变化驱动信号合流的 AbilityTask：同时成立时广播 OnMoveCancel 一次后自结束。本地控制端语义；AI/模拟代理找不到 HeroComponent 时永不成立。工作区新增，未编译、未 PIE。
+合流取消窗口与本地移动意图，广播 OnMoveCancel 后结束；已有取消验证，当前 Combat 主链与旧 BasicAttack 消费方需区分。
 
 ## HodgeGameplayAbility.h
 
@@ -2057,7 +2282,13 @@ Enhanced Input 用户设置派生入口；须核对实际设置类配置。
 
 [Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h)
 
-模块定义或基础代码；请查看对应文件。
+执行单段 Definition、本次 Montage 时钟 Timeline 与手持窗口，按执行清理；Melee 子类扩展命中。
+
+## HodgeGameplayAbility_Melee.h
+
+[Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Melee.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Melee.h)
+
+接收服务器命中结果，为每次命中构建独立 GE Spec/Context 并施加。
 
 ## HodgeAttributeSet.h
 
@@ -2069,19 +2300,19 @@ Enhanced Input 用户设置派生入口；须核对实际设置类配置。
 
 [Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeCombatSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeCombatSet.h)
 
-模块定义或基础代码；请查看对应文件。
+BaseDamage/BaseHeal 战斗属性，OwnerOnly 复制，供伤害/治疗 Execution 捕获。
 
 ## HodgeHealthSet.h
 
 [Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeHealthSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeHealthSet.h)
 
-Health/MaxHealth、BaseDamage/BaseHeal 和 Damage/Healing 元属性；有效结算、夹取、免疫和耗尽广播。
+Health/MaxHealth、Damage/Healing 元属性、结算夹取/免疫/耗尽广播；BaseDamage/BaseHeal 位于 CombatSet。
 
 ## HodgeDamageExecution.h
 
 [Source/Hodgepodge/Public/AbilitySystem/Executions/HodgeDamageExecution.h](../../../Source/Hodgepodge/Public/AbilitySystem/Executions/HodgeDamageExecution.h)
 
-模块定义或基础代码；请查看对应文件。
+BaseDamage × SetByCaller 倍率 × 距离/材质衰减 × 共享目标规则；不再恒零。
 
 ## HodgeHealExecution.h
 
@@ -2099,7 +2330,7 @@ Health/MaxHealth、BaseDamage/BaseHeal 和 Damage/Healing 元属性；有效结�
 
 [Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)
 
-Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动态 Tag GE。
+Tag 输入、激活组、关系映射、Montage 复制和全局注册；失败时恢复武器预测与连段记忆。
 
 ## HodgeAbilitySystemGlobals.h
 
@@ -2153,7 +2384,7 @@ Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动�
 
 [Source/Hodgepodge/Public/Animation/HodgeAnimInstance.h](../../../Source/Hodgepodge/Public/Animation/HodgeAnimInstance.h)
 
-ASC GameplayTag 属性映射和 GroundDistance 更新。
+ASC 属性映射、GroundDistance 与旋转策略快照；FullBody 权重协调蓝图程序性根 Yaw。
 
 ## HodgeCameraAssistInterface.h
 
@@ -2207,7 +2438,7 @@ UI 相机管理扩展，不代表 UI 系统已接入。
 
 [Source/Hodgepodge/Public/Character/HodgeCombatCharacter.h](../../../Source/Hodgepodge/Public/Character/HodgeCombatCharacter.h)
 
-PawnExtension、相机、ASC 查询、移动标签、复制与死亡占位逻辑。
+PawnExtension、相机、HealthComponent、原生 RotationComponent；ASC、移动/旋转约束、复制与死亡清理。
 
 ## HodgeEnemyCharacter.h
 
@@ -2245,6 +2476,18 @@ CodexText 实验：在 ALS 基础动画上增加平地起停/转身/脚锁，并
 
 模块定义或基础代码；请查看对应文件。
 
+## HodgeDamageRules.h
+
+[Source/Hodgepodge/Public/Combat/HodgeDamageRules.h](../../../Source/Hodgepodge/Public/Combat/HodgeDamageRules.h)
+
+检测和 Execution 共用目标、ASC、死亡/Health、自伤/友伤及队伍规则。
+
+## HodgeHitDetection.h
+
+[Source/Hodgepodge/Public/Combat/HodgeHitDetection.h](../../../Source/Hodgepodge/Public/Combat/HodgeHitDetection.h)
+
+模块定义或基础代码；请查看对应文件。
+
 ## HodgeActorComponentBase.h
 
 [Source/Hodgepodge/Public/Component/HodgeActorComponentBase.h](../../../Source/Hodgepodge/Public/Component/HodgeActorComponentBase.h)
@@ -2255,19 +2498,19 @@ CodexText 实验：在 ALS 基础动画上增加平地起停/转身/脚锁，并
 
 [Source/Hodgepodge/Public/Component/HodgeCharacterMovementComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeCharacterMovementComponent.h)
 
-CharacterMovement 扩展、地面距离、加速度和能力系统相关移动入口。
+地面距离/加速度、最终旋转过滤、SavedMove 旋转策略重放与权威校正。
+
+## HodgeCharacterRotationComponent.h
+
+[Source/Hodgepodge/Public/Component/HodgeCharacterRotationComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeCharacterRotationComponent.h)
+
+ASC 旋转标签约束、锁定 Yaw、恢复、权威复制与移动重放状态。
 
 ## HodgeCombatComponentBase.h
 
 [Source/Hodgepodge/Public/Component/HodgeCombatComponentBase.h](../../../Source/Hodgepodge/Public/Component/HodgeCombatComponentBase.h)
 
-战斗组件占位，当前构造关闭 Tick，尚无完整命中或连招实现。
-
-## HodgeComboComponent.h
-
-[Source/Hodgepodge/Public/Component/HodgeComboComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeComboComponent.h)
-
-模块定义或基础代码；请查看对应文件。
+Experience 注入 Pawn 的统一战斗协调者；连段输入/记忆/预测校正，服务器采样、去重与结果上报；GA 负责效果施加。
 
 ## HodgeExperienceManagerComponent.h
 
@@ -2369,7 +2612,7 @@ PlayerState ModularGameplay Receiver 注册、注销及组件 Reset/CopyProperti
 
 [Source/Hodgepodge/Public/Data/HodgeAbilityDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilityDefinition.h)
 
-模块定义或基础代码；请查看对应文件。
+Montage/Blend/Timeline、HitWindows、WeaponUseWindowTag；校验手持区间覆盖命中并先进入。
 
 ## HodgeAbilitySet.h
 
@@ -2402,7 +2645,7 @@ PlayerState ModularGameplay Receiver 注册、注销及组件 Reset/CopyProperti
 
 [Source/Hodgepodge/Public/Data/HodgeComboDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeComboDefinition.h)
 
-模块定义或基础代码；请查看对应文件。
+跳转 DataTable、输入缓存、结束后连段记忆与 bAllowAfterExecutionEnded 续段许可。
 
 ## HodgeExperienceActionSet.h
 
@@ -2432,31 +2675,49 @@ PlayerState ModularGameplay Receiver 注册、注销及组件 Reset/CopyProperti
 
 [Source/Hodgepodge/Public/Data/HodgePawnData.h](../../../Source/Hodgepodge/Public/Data/HodgePawnData.h)
 
-PawnClass、AbilitySets、TagRelationshipMapping、InputConfig、DefaultCameraMode 配置。
+PawnClass、AbilitySets、ComboDefinition、DefaultWeaponDefinition、输入/相机/关系映射配置，编辑器校验统一在主 cpp。
 
 ## HodgeEquipmentDefinition.h
 
 [Source/Hodgepodge/Public/Equipment/HodgeEquipmentDefinition.h](../../../Source/Hodgepodge/Public/Equipment/HodgeEquipmentDefinition.h)
 
-模块定义或基础代码；请查看对应文件。
+装备实例类、Actor 挂接与 AbilitySets 配置。
 
 ## HodgeEquipmentInstance.h
 
 [Source/Hodgepodge/Public/Equipment/HodgeEquipmentInstance.h](../../../Source/Hodgepodge/Public/Equipment/HodgeEquipmentInstance.h)
 
-模块定义或基础代码；请查看对应文件。
+Pawn 所属复制 UObject、SpawnedActors RepNotify 和装备/卸装生命周期。
 
 ## HodgeEquipmentManagerComponent.h
 
 [Source/Hodgepodge/Public/Equipment/HodgeEquipmentManagerComponent.h](../../../Source/Hodgepodge/Public/Equipment/HodgeEquipmentManagerComponent.h)
 
-模块定义或基础代码；请查看对应文件。
+Experience 注入 Pawn，ASC 就绪后装备默认剑，来源授予句柄精确撤销与客户端迟到绑定。
 
 ## HodgeWeaponInstance.h
 
 [Source/Hodgepodge/Public/Equipment/HodgeWeaponInstance.h](../../../Source/Hodgepodge/Public/Equipment/HodgeWeaponInstance.h)
 
-模块定义或基础代码；请查看对应文件。
+手持请求、显现阶段、计时器、复制/拥有者预测及拒绝恢复，不新增角色常驻武器表现组件。
+
+## HodgeWeaponPresentationActor.h
+
+[Source/Hodgepodge/Public/Equipment/HodgeWeaponPresentationActor.h](../../../Source/Hodgepodge/Public/Equipment/HodgeWeaponPresentationActor.h)
+
+检测 Mesh 留手，可见 Mesh 回背/悬浮/消隐挂 BackSocket，手持时挂回检测 Mesh。
+
+## HodgeWeaponPresentationProfile.h
+
+[Source/Hodgepodge/Public/Equipment/HodgeWeaponPresentationProfile.h](../../../Source/Hodgepodge/Public/Equipment/HodgeWeaponPresentationProfile.h)
+
+模型/材质、手背插槽/偏移、曲线/时间；BackSocket 默认 WeaponOnBack，BackTransform 为插槽内偏移。
+
+## HodgeWeaponPresentationTypes.h
+
+[Source/Hodgepodge/Public/Equipment/HodgeWeaponPresentationTypes.h](../../../Source/Hodgepodge/Public/Equipment/HodgeWeaponPresentationTypes.h)
+
+表现阶段与复制快照：服务器时间、起始变换/可见度、版本和激活身份。
 
 ## GameFeatureAction_AddAbilities.h
 

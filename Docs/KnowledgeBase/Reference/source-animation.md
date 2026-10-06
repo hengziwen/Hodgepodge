@@ -8,23 +8,23 @@
 
 ## HodgeAnimInstance.cpp
 
-ASC GameplayTag 属性映射和 GroundDistance 更新。
+ASC 属性映射、GroundDistance 与旋转策略快照；FullBody 权重协调蓝图程序性根 Yaw。
 
 源码：[Source/Hodgepodge/Private/Animation/HodgeAnimInstance.cpp](../../../Source/Hodgepodge/Private/Animation/HodgeAnimInstance.cpp)
 
-项目内直接 include（不是运行调用关系）：[Animation/HodgeAnimInstance.h](../../../Source/Hodgepodge/Public/Animation/HodgeAnimInstance.h)、[Character/HodgeCharacterBase.h](../../../Source/Hodgepodge/Public/Character/HodgeCharacterBase.h)、[Component/HodgeCharacterMovementComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeCharacterMovementComponent.h)
+项目内直接 include（不是运行调用关系）：[Animation/HodgeAnimInstance.h](../../../Source/Hodgepodge/Public/Animation/HodgeAnimInstance.h)、[Character/HodgeCharacterBase.h](../../../Source/Hodgepodge/Public/Character/HodgeCharacterBase.h)、[Character/HodgeCombatCharacter.h](../../../Source/Hodgepodge/Public/Character/HodgeCombatCharacter.h)、[Component/HodgeCharacterMovementComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeCharacterMovementComponent.h)、[Component/HodgeCharacterRotationComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeCharacterRotationComponent.h)
 
 定义候选（多行签名仅展示首行）：
 
-- L13: `UHodgeAnimInstance::UHodgeAnimInstance(const FObjectInitializer& ObjectInitializer)`
-- L18: `void UHodgeAnimInstance::InitializeWithAbilitySystem(UAbilitySystemComponent* ASC)`
-- L29: `EDataValidationResult UHodgeAnimInstance::IsDataValid(class FDataValidationContext& Context) const`
-- L43: `void UHodgeAnimInstance::NativeInitializeAnimation()`
-- L61: `void UHodgeAnimInstance::NativeUpdateAnimation(float DeltaSeconds)`
+- L15: `UHodgeAnimInstance::UHodgeAnimInstance(const FObjectInitializer& ObjectInitializer)`
+- L20: `void UHodgeAnimInstance::InitializeWithAbilitySystem(UAbilitySystemComponent* ASC)`
+- L31: `EDataValidationResult UHodgeAnimInstance::IsDataValid(class FDataValidationContext& Context) const`
+- L45: `void UHodgeAnimInstance::NativeInitializeAnimation()`
+- L63: `void UHodgeAnimInstance::NativeUpdateAnimation(float DeltaSeconds)`
 
 ## HodgeAnimInstance.h
 
-ASC GameplayTag 属性映射和 GroundDistance 更新。
+ASC 属性映射、GroundDistance 与旋转策略快照；FullBody 权重协调蓝图程序性根 Yaw。
 
 源码：[Source/Hodgepodge/Public/Animation/HodgeAnimInstance.h](../../../Source/Hodgepodge/Public/Animation/HodgeAnimInstance.h)
 
@@ -54,5 +54,11 @@ ASC GameplayTag 属性映射和 GroundDistance 更新。
   40: 	FGameplayTagBlueprintPropertyMap GameplayTagPropertyMap;
   43: 	UPROPERTY(BlueprintReadOnly, Category = "Character State Data")
   44: 	float GroundDistance = -1.0f;
-  45: };
+  47: 	UPROPERTY(BlueprintReadOnly, Category = "Character State Data")
+  48: 	bool bSuppressLocomotionYaw = false;
+  50: 	UPROPERTY(BlueprintReadOnly, Category = "Character State Data")
+  51: 	bool bResetLocomotionYaw = false;
+  53: 	UPROPERTY(BlueprintReadOnly, Category = "Character State Data")
+  54: 	float LocomotionRootYawScale = 1.f;
+  55: };
 ```

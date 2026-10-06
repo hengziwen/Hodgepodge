@@ -1,67 +1,36 @@
-# 术语、决策记录与维护规范
+# 术语、决策与维护规范
 
-> 最近源码核对：2026-09-22。源码接入状态与运行验收分开记录。
-[返回首页](README.md)
+[返回知识库](README.md) · [本轮更新](26-update-2026-10-06.md)
 
-## 项目术语
+> 当前核对：2026-10-06；运行结论仅限已记录范围。
 
-- Experience：玩法配置及加载单元，包含 PawnData、插件和 Actions。
-- ActionSet：供多个 Experience 组合复用的一组动作配置。
-- PawnData：生成类、能力集合、输入和相机等 Pawn 配置。
-- ASC：AbilitySystemComponent，管理能力、效果、标签和属性关联。
-- OwnerActor：ASC 的所属对象；玩家通常是 PlayerState。
-- AvatarActor：当前执行能力的身体；玩家通常是 Hero Pawn。
-- Ability Spec：某次能力授予的描述与运行句柄，不等于 Ability 类或实例。
-- GE：GameplayEffect，表达属性/Tag 等效果。
-- EffectContext：效果的来源、命中等上下文；自定义字段需考虑分配与序列化。
-- Cue：表现事件/资源入口，不替代伤害结算。
-- IMC：物理输入到 InputAction 的映射上下文。
-- InputConfig：InputAction 与项目 GameplayTag 的映射配置。
-- Init State：组件依赖就绪协议，不能天然保证全部业务完成。
-- Receiver：参与 ModularGameplay 扩展事件的 Actor。
-- CDO：类默认对象；Experience 加载方式会读取它。
-- PrimaryAssetId：由类型和名称组成的资产标识，不等同于文件路径。
-- Mixed：GAS 效果复制策略；并不意味着所有数据只复制给拥有者。
-- Timeline：AbilityTimeline，描述“什么时候发生什么”的 `UPrimaryDataAsset`（`UHodgeAbilityTimeline`），由唯一消费者 `UHodgeAbilityTask_PlayTimeline` 驱动；本身不播动画、不推进连击。已随 HEAD 提交并部分验证（**窗口 GE 施加/移除、Point 与 `Timeline.End` 派发、中途取消清理均已实测通过；重入类时序、`NetPolicy` 跨端、时钟倒退未验证**）。⚠️ 2026-09-17 那版**双数组**（`Phases[]` + `Events[]`）实现已丢弃，与本词条不是同一套模型。
-- ComboSet（⚠️ **仍不存在**）：一套攻击形态的节点集合，持有 Timeline 并定义入口与转移（`UHodgeComboSet` / `FindNode`）。当前工作区无该类，连击需从零实现。
-- Bundle：PrimaryAsset 的可命名资源分组；项目用 `FHodgeBundles::Equipped` 声明 Experience 需要加载的资源集合（`UHodgeExperienceManagerComponent::StartExperienceLoad()`）。⚠️ 早先"承载进战斗前要预加载的 Montage"的说法依赖**从未落地**的授予期预加载（`PreloadPrimaryAssetsOnGrant`）。
-- loose tag：不经过 GE、直接加到 ASC 的标签；Timeline 阶段标签用非复制的 loose tag。
-- 移动意图（Move Intent）：`UHodgeHeroComponent` 记录的 `Input_Move` **原始输入量**（不是角色位移），对外 `HasMoveIntent` / `GetMoveIntent` / `OnMoveIntentChanged`；只在本地控制端存在、不复制。⚠️ 采集点在屏蔽输入之前，攻击期间禁止移动**不要**用 `SetIgnoreMoveInput` / `DisableMovement` 实现，否则意图恒为 false、依赖它的取消逻辑会静默失效。
-- 取消窗口（Cancel Window）：Timeline 的 Window 授予的 `Status.Attack.Cancel.*` loose tag，表达“当前允许因某种意图结束这次攻击”（**授权**），与 `Status.Attack.Recovery`（**状态描述**）分开配 Window，两者会分叉。当前消费方为 `UHodgeAbilityTask_WaitMoveCancel`（工作区新增，**未验证**）。
-- PrimaryAsset 预加载：按 PrimaryAssetId + Bundle 同步加载一组资产并保存句柄，区别于普通 `LoadObject`。
+## 现有术语
 
-## 现有架构选择及依据
+- Owner/Avatar：玩家 ASC 所有者 PlayerState 与当前身体 Pawn。
+- Experience/ActionSet：玩法与动作配置，GameFeatureAction 在激活期间执行扩展。
+- PawnData：角色类、输入、相机、AbilitySets、Combo 与默认装备配置。
+- Definition：单段技能执行配置；Timeline：Window/Point 统一事件时间轴；CombatComponent：当前连段和检测协调者。
+- ComboMemory：最近成功启动段与期限，不是当前动作、不授予攻击状态；InputBuffer 是 0.3 秒单槽输入缓存。
+- RotationLock：约束角色 Yaw，保留镜头操作；恢复阶段平滑追随控制方向。
+- HandUse：每个执行/窗口独立持有武器表现请求；最后一个释放才启动回收。
+- BackSocket：当前默认 WeaponOnBack；BackTransform 是相对插槽的偏移，非旧 Pawn 根位置。
+- Detection Mesh / Visual Mesh：手部命中来源与可移动显隐模型；外观轨迹不构成权威伤害。
+- Equipped Bundle：Experience 资源分组；不表示不存在的授予期预加载已完成。
 
-### 玩家 ASC 放 PlayerState
+旧 ComboSet、双数组 Timeline、PlayerState 独立 ComboComponent 是历史命名/实现，当前不再作为操作入口。
 
-依据：PlayerState 构造创建 ASC，PawnExtension 以 PS 为 Owner、当前 Pawn 为 Avatar 完成绑定。收益是玩家数据与身体分离。能力授予与防重现已由 PlayerState::SetPawnData 承担（未记录句柄）；换 Pawn 的重绑定、属性重置与能力保留策略仍需明确。
+## 已采用的组织约定
 
-### 使用 Experience 控制玩法
+玩家 ASC 留在 PlayerState；Avatar 通过组件初始化链绑定。Equipment/Combat 用 Experience 注入，基础旋转策略是 CombatCharacter 原生组件。当前单把默认武器的表现放 WeaponInstance，不为该功能新增角色常驻组件。
 
-依据：GameMode 选择 ID，ExperienceManager 加载并通知，再允许生成玩家。扩展新玩法应优先配置数据，避免在 GameMode 按地图名堆业务分支。
+固定移动动画层不随武器切换；Start 无入口、Stop 保留、常态 Pivot 禁用，冲刺 GA 与 Pivot 后续另做。武器背部跟随骨骼插槽，配置保留局部偏移。
 
-### 使用组件协调初始化
+同一项目自有类的非内联成员集中一个主 cpp，编辑器实现使用 WITH_EDITOR；禁止 _Combo/_Presentation/_Montage/_Validation 等同类片段及 include cpp 绕过。独立类型、测试、内联模板和生成代码不属该限制；不顺手重构第三方。
 
-依据：PawnExtension 与 HeroComponent 均有有效状态机，Hero 构造已挂载组件；HeroCharacter 的 PossessedBy/OnRep_PlayerState 已退化为只调用 Super，ASC 接入统一到组件路径。剩余问题是换 Pawn/重生时的清理验证。
+## 文档维护
 
-### 移除 ALS 代码依赖
+创建者/调用者/配置入口/运行证据分别记录；静态源码、资产读取、蓝图编译、PIE、联机、打包分别陈述。历史日期/hash 不改写为新成功；旧快照归档后刷新当前索引。人工页变化在 refresh 前完成，最终 check 必须无断链/漂移。
 
-依据：CharacterBase 直接继承 ACharacter，Build.cs 不含 ALS。资源迁移和动画替换仍是独立工作，不因移除 include 而自动完成。
+不要根据某个组件没有 CreateDefaultSubobject 就认定未挂载，也不要从类/标签存在推断能力已运行。CodexText 有正式引用依赖，不能整目录清理。
 
-## 待决策事项
-
-HealthSet 已采用 Damage/Healing 元属性转换，仍需确定具体 GE/Execution 的数值来源；敌人 ASC 放哪个对象；玩家重生保留哪些效果；基础输入与玩法输入各由谁管理；在线 Session 是否近期引入；PlayerState::SetPawnData 授予技能时未记录 GrantedHandles，撤销与防重策略待定。这些未形成完整实现，不能伪装成既定规范。
-
-## 文档维护规则
-
-人工章节只写能说明依据的结论。新增“已接通”结论应同时给出创建者、调用者、配置入口和验收证据；新增“缺失”结论应说明扫描范围以及是否排除蓝图。不要根据全文 rg 命中次数把注释调用算有效调用。
-
-代码发生变化后先运行 check，阅读漂移文件，再更新相关人工章节，最后 refresh。refresh 不修改章节事实，只生成导航和快照；快照刷新不等于人工核对完成。
-
-Reference 中的类型和函数通过轻量词法规则提取，会遗漏宏生成、复杂模板、多行特殊签名等情况；预处理分支也不等于当前目标一定编译。源码是最终依据，编译器是语法和链接的判定者。
-
-## 新增决策记录模板
-
-题目；日期；状态（提议/采用/废弃）；触发问题；现状证据；可选方案；选定方案；取舍；需修改的代码与资产；网络和生命周期影响；验收方法；关联 KB 条目。
-
-避免为了“完整”大量复制上游文档。优先记录本项目与上游的差异、当前调用链和未接通位置。
+新决策记录：日期、状态、触发问题、现状依据、职责、配置迁移、网络/生命周期、验证范围与剩余工作。

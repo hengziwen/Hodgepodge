@@ -1,122 +1,30 @@
 # Hodgepodge 本地知识库
 
-> 人工核对日期：2026-09-29。对象：本仓库 HEAD `abb9224`，工作区有 2 个 `CodexText` 资产改动（未提交）。此知识库是项目本地文档，不依赖在线服务。
+> 人工核对：2026-10-06。依据当前源码、uproject、Config、只读资产解析与已保存验收证据。本次只更新文档和参考元数据，没有编译 C++、执行 PIE 或修改资产。
 
 ## 从这里开始
 
-Hodgepodge 是 UE 5.5 的个人动作 RPG 框架工程，正在将角色、GAS、输入、相机**与 UI** 迁移到 Lyra 式组件协作架构。当前最重要的事情是**打通"打中掉血"的战斗闭环**（连招已能跑完但伤害恒 0），其次让 UI 出画面、让装备系统挂上，而不是扩展开放世界或后端。
+项目已接入 Experience/Init State、PlayerState ASC、输入相机、Main 固定移动动画层、统一 CombatComponent、默认剑、旋转锁、连段记忆与武器显隐。正式普攻仍未填写 HitWindows；测试伤害链成立不等于正式五段已造成伤害。
 
-这套文档区分四类内容：
+- [最新完整更新](26-update-2026-10-06.md)：当前路径、职责、调参及验证边界。
+- [当前接通状态](12-integration-backlog.md)、[验证与未验证](16-validation.md)。
+- [项目 README](../../README.md)、[设计文档目录](../README.md)。
 
-- **源码已实现**：有效 C++ 或配置存在，仍不代表已经经过本轮运行验证。
-- **未接通 / 草稿**：调用入口、配置、挂载或实际函数体缺失；整段注释不算实现。
-- **待编辑器验证**：二进制资产内部字段、蓝图逻辑、实际地图覆盖、运行效果。
-- **建议 / 目标**：后续开发设计，不能当成已有功能。
+## 按系统阅读
 
-本轮执行了 Editor 构建（UBT 报 `Target is up to date`）与 `kb.py check` / `refresh`；**没有启动 PIE、没有编译蓝图、没有联机或打包**。自动索引是静态导航工具，不是 C++ 编译器或蓝图解析器。
+- [项目地图](01-project-map.md)、[所有权](02-architecture.md)、[启动](03-runtime-startup.md)、[Pawn 初始化](04-pawn-initialization.md)。
+- [数据资产](05-data-assets.md)、[输入](06-input.md)、[GAS 与连段](07-gas.md)、[命中伤害和装备](08-combat-health.md)。
+- [相机/动画/旋转](09-camera-animation.md)、[GameFeature](10-game-features.md)、[复制和服务器](11-network.md)。
+- [构建配置](13-build-config.md)、[排障](14-troubleshooting.md)、[开发步骤](15-development-recipes.md)。
+- [维护术语](17-maintenance-glossary.md)、[FAQ](18-faq.md)、[评审材料](20-code-review.md)。
+- [源码、Tag、资产、配置参考](Reference/README.md)、[扫描快照](Reference/snapshot.md)、[工具说明](tools/README.md)。
 
-## 阅读路线
+## 文档可信度与历史
 
-### 第一次接触项目
+当前状态以 01～18 章节、本轮更新和实际代码/资产为准；Reference 是静态索引。Design 中既有规划也有已实施方案，状态在每篇开头注明。历史评审和验证只说明当时的基线，不能当作当前缺陷清单或当前测试通过证据。
 
-1. [项目定位、目录与文档可信度](01-project-map.md)
-2. [架构职责与对象所有权](02-architecture.md)
-3. [从启动到生成玩家的调用链](03-runtime-startup.md)
-4. [PawnExtension 与 Hero 初始化](04-pawn-initialization.md)
-5. [当前状态、断点与接通顺序](12-integration-backlog.md)
+- [09-13](19-update-2026-09-13.md)、[09-17](21-update-2026-09-17.md)、[09-19](22-update-2026-09-19.md)、[09-22](23-update-2026-09-22.md)、[09-28](24-update-2026-09-28.md)、[09-29](25-update-2026-09-29.md)。
+- [更新前快照](History/snapshot-before-20261006.json) 保留原日期/hash；当前 snapshot.json 由维护工具重新生成。
+- [更新前长版 README](../History/README-before-20261006.md) 保留旧架构解说。
 
-### 按系统查询
-
-- [数据资产与 AssetManager](05-data-assets.md)
-- [Enhanced Input 与技能输入](06-input.md)
-- [GAS、AbilitySet 与技能生命周期](07-gas.md)
-- [属性、伤害、战斗与死亡](08-combat-health.md)
-- [相机、移动与动画](09-camera-animation.md)
-- [Experience 与 GameFeature 扩展](10-game-features.md)
-- [网络、复制与 Dedicated Server](11-network.md)
-
-### 动手开发与排查
-
-- [本地环境、构建与配置](13-build-config.md)
-- [按症状定位的排障手册](14-troubleshooting.md)
-- [新增角色、技能、玩法的操作手册](15-development-recipes.md)
-- [验收场景与调试观察点](16-validation.md)
-- [术语、决策记录与维护规范](17-maintenance-glossary.md)
-- [常见问题](18-faq.md)
-- [2026-09-13 更新记录与验证边界](19-update-2026-09-13.md)
-- [代码评审顺序与检查清单](20-code-review.md)
-- [2026-09-17 更新记录与验证边界](21-update-2026-09-17.md)
-- [2026-09-19 更新记录：AbilityTimeline 实现与验证边界](22-update-2026-09-19.md)
-- [2026-09-22 更新记录：移动取消后摇的消费方与输入意图信号](23-update-2026-09-22.md)
-- [2026-09-28 更新记录：Lyra UI 源码迁移落地与战斗管线核对](24-update-2026-09-28.md)
-- [2026-09-29 更新记录：连击系统、技能编辑器与装备系统源码落地](25-update-2026-09-29.md)
-- [项目 AI 开发流程](../AI_DEVELOPMENT.md)
-- [项目开发约定](../../AGENTS.md)
-
-### 精确查代码与资源
-
-- [源码文件与有效定义索引](Reference/source-index.md)
-- [源码子目录参考入口](Reference/README.md)
-- [GameplayTag 注册索引](Reference/gameplay-tags.md)
-- [Content/Main 资产清单](Reference/assets.md)
-- [配置逐节索引](Reference/config.md)
-- [插件描述与启用声明](Reference/plugins.md)
-- [扫描快照与源码漂移报告](Reference/snapshot.md)
-- [原始项目 README](../../README.md)
-- [Lyra 学习参考](../../LYRA_LEARNING_GUIDE.md)
-- [Lyra 运行参考](../../LYRA_RUNTIME_FLOW.md)
-- [原始架构目标方案](<../../UE5 开放世界动作 RPG 架构方案 V2.md>)
-
-## 最新状态提示
-
-2026-09-29 本轮：**连击系统已换代为 Definition + Combo 并验证通过，技能编辑器可用，装备四件套落地但未挂载**（详见 [本轮记录](25-update-2026-09-29.md)）。
-
-- **连招主链路**：`UHodgeAbilityDefinition`（单段技能）+ `UHodgeComboDefinition`（DataTable 跳转表）+ `UHodgeComboComponent`（**已挂 `AHodgePlayerState`**）+ `UHodgeGameplayAbility_Definition`。**长期缺口 `UHodgeComboSet` 至此由 ComboDefinition 填上**。验证：两目标构建 + PIE 14 项 + Listen Server 23/19 + 网络模拟 15 项 + 自动化 7/7（**不含命中与伤害**）。
-- **旧 `UHodgeGameplayAbility_BasicAttack` 已成孤儿**（`DA_Pover` 已移除授予、C++ 零引用）→ 两套连招模型并存，按旧章节接新东西会踩坑。
-- **技能编辑器**：新增独立 Editor 模块 `Source/HodgeAbilityEditor/`（9 文件），双击 `UHodgeAbilityDefinition` 打开，六面板 + 蒙太奇预览 + 自绘时间轴轨道；编辑器与运行时共用 `UHodgeTimelineEvaluator`。
-- **装备系统**：`Equipment/` 四件套（Lyra 移植）编译通过但**零挂载**（无 `CreateDefaultSubobject`、非 `BlueprintSpawnableComponent`）。
-- 其它：仇远武器模型（骨骼+材质，**无动画**）、根目录新增 `CODE_REVIEW.md`（96 项评审**标准**，不是"已通过"声明）。
-
-> ⚠️ **边界**：本轮**未 PIE**。🔴 **伤害倍率仍恒 `0.0f`** —— 连招能完整跑完，但打不掉血，这是"战斗闭环"唯一的最大缺口。装备未挂载、装备 UI 与 Cosmetics 动画层仍是空壳。
-
-2026-09-28 本轮：**Lyra UI 源码已整体迁移并编译，战斗推进到"能打但不掉血"**（详见 [本轮记录](24-update-2026-09-28.md)）。`UI/` 新增 **81 个文件**（41 `.h` + 40 `.cpp`）并启用 **CommonUI**；`AHodgeHUDBase` 删除改为 `AHodgeHUD`；`GameFeatureAction_AddWidget` 从整文件注释恢复为完整实现；Crouch 输入被临时屏蔽。**其中 24 个文件"待复活"** —— 依赖不满足的代码逐行注释保留，文件头带 `[UI-MIGRATION-PENDING]` 标记，复活需 CommonGame / GameSettings / CommonUser。
-
-> ⚠️ **边界**：本轮**未 PIE**。UI 目前不会出画面（`PrimaryGameLayout` / `GameUIPolicy` 缺依赖，`_AddWidget` 的 `PushContentToLayer_ForPlayer` 仍注释）。战斗侧：`UHodgeHealthComponent` 已挂载、死亡流程已串联；🔴 **但 `HodgeDamageExecution` 的敌我倍率恒 `0.0f`，打中也不掉血** —— 这是当前"战斗闭环"最大的缺口。
->
-> 📌 该轮记录的攻击链路（`UHodgeGameplayAbility_BasicAttack` 五段连招，09-24 验证）**已被 2026-09-29 的 Definition + Combo 链路取代**，旧类成孤儿。
-
-2026-09-22 本轮：**"移动取消后摇"的消费方已落地源码，但未验证**（详见 [本轮记录](23-update-2026-09-22.md)）。新增两个 loose tag `Status.Attack.Cancel` / `.Move`（授权语义，由 Timeline 的 Window 授予）；新增 AbilityTask `UHodgeAbilityTask_WaitMoveCancel`，把"窗口开放（Timeline）+ 玩家有移动意图（输入层）"两个变化驱动信号合流为一次 `OnMoveCancel`；`UHodgeHeroComponent` 增加"移动意图"信号（`HasMoveIntent` / `GetMoveIntent` / `OnMoveIntentChanged`），`Input_Move` 记意图、新增 `Input_MoveStopped` 绑到 `Completed`/`Canceled` 清零。CodexText 实验区继续精修（Overlay、左手握持、步幅/地形 IK），`Build.cs` 编辑器块新增 `AnimationWarpingRuntime`/`AnimationWarpingEditor`。
-
-> ⚠️ **边界**：本轮知识库未编译、未 PIE。`UHodgeAbilityTask_WaitMoveCancel` 本身**零运行证据**（且无法确认新文件已编入 DLL）。已有运行证据的是：移动意图（`simulate_input` 实测 `False → True → False`）与时间轴主路径 / 取消路径（见 [上一轮记录](22-update-2026-09-19.md)）。**"移动取消后摇"这条端到端闭环尚未接通**——目前没有正式攻击 Ability 消费 `OnMoveCancel`，`GA_Attack` 是否接线未在资产层确认。
-
-2026-09-19 本轮：**AbilityTimeline 统一事件模型已实现并实测**（详见 [本轮记录](22-update-2026-09-19.md)）。`UHodgeAbilityTimeline` + `UHodgeAbilityTask_PlayTimeline` 已按 [第一阶段设计](../Design/ability-timeline-stage1.md) 重写并**编译通过**；数据校验规则、以及调度器（窗口进入/退出、自然结束清理、起点接续不重放历史）已在编辑器与 PIE 实测通过。
-
-> ✅ **两条主用途已补测通过**：窗口 GE 的施加 / 移除（GE 实例数 `0 → 1 → 0`，无泄漏）与 Point / `Timeline.End` 事件派发都已在 PIE 实测通过（见 [本轮记录](22-update-2026-09-19.md) 的证据表）。
-> ✅ **中途取消的清理也已通过**：`clear_ability(handle)` 打断后窗口标签与 GE 均归零、时间轴不再推进（`Interrupted` 不派发符合设计）。
-> ⚠️ 仍未验证的是**重入类时序**：`EnterWindow` 两道防线、`ExitWindow` 不对称约束、清理幂等、GE 施加失败补偿，以及 `NetPolicy` 跨端分派、时钟倒退、`Interrupted` 派发分支（本阶段无触发者）。**"在回调里重入"这一类最刁钻的时序零运行证据**，别把"PIE 跑过"当成功能可用。
-
-2026-09-17 已核对（仍然有效）：ASC 接入收敛到 HeroComponent→PawnExtension 单一入口（Hero 的 PossessedBy/OnRep_PlayerState 只调 Super）；CharacterBase Receiver 生命周期成对；PlayerState::SetPawnData 已在权威端授予 PawnData->AbilitySets（未记录句柄）；HeroComponent 的额外输入移除已实现并在 EndPlay 统一解绑；相机资产换为 CM_ThirdPerson / CM_ThirdPerson_Death；新增 CodexText 独立实验模块与 Editor-only MCP 插件（**MCP 连接与工具调用已于 2026-09-19 实测通过**，坑见 [排障手册](14-troubleshooting.md)）。
-
-> ⚠️ **旧回退标注已部分失效**：[21-update-2026-09-17.md](21-update-2026-09-17.md) 的"AbilityTimeline / PlayTimeline 已丢弃、需从零实现"只对**当时的双数组版本**成立。当前 **HEAD（`77b7dba`）已提交**按统一事件模型重写的 Timeline 与 PlayTimeline（`Public/Data/HodgeAbilityTimeline.h`、`Public/AbilitySystem/Abilities/HodgeAbilityTask_PlayTimeline.h` 及对应 `.cpp`）；但 `HodgeComboSet`、Bundle 预加载（`PreloadPrimaryAssetBundles` / `PreloadPrimaryAssetsOnGrant`）**仍然不存在**。
-
-> ✅ **"没有 Attack 标签"的旧结论已作废**：`HodgeGameplayTags.h/.cpp` 现已集中声明 `Status.Attack`（`.Windup` / `.Active` / `.Recovery`）与 `GameplayEvent.Attack`（`.Test` / `.Timeline.End` / `.Interrupted`）。**仍不存在**的是旧设计的 `Attack.Entry.*` / `Attack.Transition.*` / `Status.AttackMode.*`，以及 ComboWindow / HitCheck / JumpSection / Phase 系列事件标签。
-
-剩余重点：🔴 伤害倍率恒 0（连招能跑完但打不掉血，是**唯一的最大缺口**）；装备系统挂载（武器挂手 + 装备 UI + Cosmetics 动画层）；清理孤儿 `UHodgeGameplayAbility_BasicAttack`；UI 出画面（需 CommonGame）；AbilitySet 授予句柄与撤销（可参照装备 ManagerComponent 的写法）；Cue 路径注册与预加载；敌人 ASC；专服启动；时间轴的**重入类时序**与跨端、时钟倒退；连招的**组合触发 B、Section 跳转 / 循环、图形编辑器**（均未包含）。
-
-不要把 Lyra 参考文档里的 ShooterCore、FrontEnd 地图当成本项目现有资源。CommonUI 现在**已启用**，但 Lyra 的 `GameUIPolicy` / `PrimaryGameLayout` / 前端地图资产**都还没有** —— 别把"插件启用"当成"前端流程可用"。
-
-## 本地使用和维护
-
-用 VS Code、Rider 的 Markdown 预览或任意本地 Markdown 阅读器打开本页。文档采用相对链接，仓库移动后仍可阅读；源码链接优先指向文件，符号与行号另列供 IDE 搜索。
-
-在仓库根目录运行：
-
-```powershell
-python Docs/KnowledgeBase/tools/kb.py check
-python Docs/KnowledgeBase/tools/kb.py search "PawnData"
-python Docs/KnowledgeBase/tools/kb.py refresh
-```
-
-`check` 检查文档链接和快照漂移；`search` 搜索本知识库；`refresh` 仅重建 Reference 自动索引和扫描快照，不会更新人工章节的结论。代码变化后必须人工复核对应章节，不能只刷新快照就宣布知识库已更新。
-
-工具行为、退出码、扫描范围与解析限制见 [维护工具说明](tools/README.md)。
+check → 核对变化 → 修改人工章节 → refresh → check。不要清理默认玩法仍引用的 CodexText 资产，也不要把本轮静态核对说成新的游戏回归。

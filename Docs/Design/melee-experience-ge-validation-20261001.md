@@ -1,5 +1,7 @@
 # Experience 判定组件与既有伤害 GE 复跑记录
 
+> 2026-10-06 状态同步：历史记录：保留当时基线、方案和结果，不代表当前组件/资产或当前测试通过。 当前项目事实见 [本轮更新](../KnowledgeBase/26-update-2026-10-06.md)。
+
 日期：2026-10-01。项目：E:/Project/Git/Hodgepodge/Hodgepodge.uproject，UE 5.5.4。用户完成常规编译后，通过本机原生 MCP 执行资产迁移、真实 PIE 与双玩家 Listen Server。本轮没有执行 C++ 构建或打包。
 
 ## 结果

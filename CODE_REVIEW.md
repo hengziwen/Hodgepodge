@@ -1,5 +1,7 @@
 # Hodgepodge Code Review 标准
 
+> 2026-10-06 状态同步：评审标准，不是代码已通过全部审查的结果。现同类实现须集中主 cpp；正式伤害、重生/卸载、窗口边界与打包仍需专项检查。 当前项目事实见 [本轮更新](Docs/KnowledgeBase/26-update-2026-10-06.md)。
+
 适用于本项目 C++、蓝图、数据资产、配置和插件接入变更。目标是先发现权威、生命周期、战斗结算和复制错误，再处理维护性问题。本文是审查标准，不是当前代码已通过审查的声明。
 
 ## 使用方法与证据要求
@@ -27,7 +29,7 @@
 主要源码入口（头文件在对应 `Public` 目录）：
 
 - 初始化与授予：[PlayerState](Source/Hodgepodge/Private/Core/PlayState/HodgePlayerState.cpp)、[GameMode](Source/Hodgepodge/Private/Core/GameMode/HodgeGameModeBase.cpp)、[HeroComponent](Source/Hodgepodge/Private/Component/HodgeHeroComponent.cpp)、[PawnExtension](Source/Hodgepodge/Private/Component/HodgePawnExtensionComponent.cpp)、[AbilitySet](Source/Hodgepodge/Private/Data/HodgeAbilitySet.cpp)。
-- 技能与连击：[ASC](Source/Hodgepodge/Private/AbilitySystem/HodgeAbilitySystemComponent.cpp)、[Definition Ability](Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.cpp)、[ComboComponent](Source/Hodgepodge/Private/Component/HodgeComboComponent.cpp)、[Timeline Task](Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeAbilityTask_PlayTimeline.cpp)、[Montage 扩展](Source/Hodgepodge/Private/AbilitySystem/HodgeAbilitySystemComponent_Montage.cpp)。
+- 技能与连击：[ASC](Source/Hodgepodge/Private/AbilitySystem/HodgeAbilitySystemComponent.cpp)、[Definition Ability](Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.cpp)、[ComboComponent](Source/Hodgepodge/Private/Component/HodgeCombatComponentBase.cpp)、[Timeline Task](Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeAbilityTask_PlayTimeline.cpp)、[Montage 扩展](Source/Hodgepodge/Private/AbilitySystem/HodgeAbilitySystemComponent.cpp)。
 - 数据契约：[AbilityDefinition](Source/Hodgepodge/Public/Data/HodgeAbilityDefinition.h)、[ComboDefinition](Source/Hodgepodge/Public/Data/HodgeComboDefinition.h)、[Timeline](Source/Hodgepodge/Public/Data/HodgeAbilityTimeline.h)、[PawnData](Source/Hodgepodge/Public/Data/HodgePawnData.h)。
 - 属性与伤害：[HealthSet](Source/Hodgepodge/Private/AbilitySystem/AttributeSet/HodgeHealthSet.cpp)、[DamageExecution](Source/Hodgepodge/Private/AbilitySystem/Executions/HodgeDamageExecution.cpp)、[EffectContext](Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayEffectContext.cpp)。
 

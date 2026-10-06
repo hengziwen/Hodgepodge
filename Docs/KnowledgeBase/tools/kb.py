@@ -25,7 +25,7 @@ PURPOSE = {
     'HodgeAssetManager': '资产入口、GameData 缓存、启动任务、同步加载、加载进度。Cue 初始化钩子仍需接通。（PreloadPrimaryAssetBundles 已随未提交改动回退，当前不存在。）',
     'HodgeAssetManagerStartupJob': '封装启动任务与进度权重，供 AssetManager 执行启动工作。',
     'HodgeGameData': '全局伤害、治疗、动态 Tag GE 的软类引用配置；需编辑器核对实际赋值。',
-    'HodgePawnData': 'PawnClass、AbilitySets、TagRelationshipMapping、InputConfig、DefaultCameraMode 配置。',
+    'HodgePawnData': 'PawnClass、AbilitySets、ComboDefinition、DefaultWeaponDefinition、输入/相机/关系映射配置，编辑器校验统一在主 cpp。',
     'HodgeAbilitySet': '权威端批量授予属性集、技能和 GE，并用句柄集合撤销。',
     'HodgeExperienceDefinition': '声明玩法所需插件、默认 PawnData、直接 Actions 和组合 ActionSets。',
     'HodgeExperienceActionSet': '复用 GameFeature 插件和动作配置的数据资产。',
@@ -41,24 +41,24 @@ PURPOSE = {
     'HodgeLocalPlayerBase': '本地玩家对象及控制器、PlayerState、Pawn 就绪事件桥。',
     'HodgeHUD': '项目 HUD 类：GameFrameworkComponent 接收器注册与 GAS 调试 Actor 列表；不代表 CommonUI 已完成。',
     'HodgeCharacterBase': '原生 Character 基础、替换移动组件；Receiver 在 PreInit 注册、EndPlay 成对移除。',
-    'HodgeCombatCharacter': 'PawnExtension、相机、ASC 查询、移动标签、复制与死亡占位逻辑。',
+    'HodgeCombatCharacter': 'PawnExtension、相机、HealthComponent、原生 RotationComponent；ASC、移动/旋转约束、复制与死亡清理。',
     'HodgeHeroCharacter': '构造挂载 HeroComponent；PossessedBy/OnRep_PlayerState 只调用 Super，ASC 接入已收敛。',
     'HodgeEnemyCharacter': '仅设置 AI 自动控制；旋转/移动参数继承 Combat 基类，尚未完成敌人 ASC 初始化。',
     'HodgePawnExtensionComponent': 'PawnData 复制、Init State、ASC 关联/解除、TagRelationshipMapping 与 ClearAbilityInput；需验证退出顺序。',
     'HodgeHeroComponent': '玩家 Init State 协调、ASC 接入、输入与相机；额外输入句柄持久化并在移除/EndPlay 解绑。新增“移动意图”信号（HasMoveIntent / GetMoveIntent / OnMoveIntentChanged），记 Input_Move 原始输入量、Completed/Canceled 清零，供移动取消后摇消费。',
-    'HodgeCharacterMovementComponent': 'CharacterMovement 扩展、地面距离、加速度和能力系统相关移动入口。',
+    'HodgeCharacterMovementComponent': '地面距离/加速度、最终旋转过滤、SavedMove 旋转策略重放与权威校正。',
     'HodgeActorComponentBase': '通用 ActorComponent 基础访问与扩展。',
-    'HodgeCombatComponentBase': '战斗组件占位，当前构造关闭 Tick，尚无完整命中或连招实现。',
+    'HodgeCombatComponentBase': 'Experience 注入 Pawn 的统一战斗协调者；连段输入/记忆/预测校正，服务器采样、去重与结果上报；GA 负责效果施加。',
     'HodgeInteractionComponentBase': '交互组件基础占位；完整扫描、交互规则与 UI 需另行实现。',
     'HodgeMovementComponentBase': '通用移动组件基础占位，与 CharacterMovement 派生类需区分。',
-    'HodgeAbilitySystemComponent': 'Tag 输入缓存、激活组、关系映射、全局注册、失败通知与动态 Tag GE。',
+    'HodgeAbilitySystemComponent': 'Tag 输入、激活组、关系映射、Montage 复制和全局注册；失败时恢复武器预测与连段记忆。',
     'HodgeGameplayAbility': '项目技能基类：激活策略、互斥组、额外 Cost、失败与 EffectContext 扩展。（PreloadPrimaryAssetsOnGrant 已随未提交改动回退，当前不存在。）',
     'HodgeAbilityCost': '自定义额外能力消耗的扩展契约。',
     'HodgeAbilityTagRelationshipMapping': '数据驱动的能力阻断、取消与激活条件关系。',
     'HodgeGameplayEffectContext': '项目 GE 上下文与序列化扩展，已有 HodgeAbilitySystemGlobals 分配配套。',
     'HodgeGameplayCueManager': '项目 Cue 管理类已配置；启动预加载及 Feature Cue 观察者生命周期仍未完整接通。',
     'HodgeGlobalAbilitySystem': '世界级全局能力/效果授予及 ASC 注册表。',
-    'HodgeHealthSet': 'Health/MaxHealth、BaseDamage/BaseHeal 和 Damage/Healing 元属性；有效结算、夹取、免疫和耗尽广播。',
+    'HodgeHealthSet': 'Health/MaxHealth、Damage/Healing 元属性、结算夹取/免疫/耗尽广播；BaseDamage/BaseHeal 位于 CombatSet。',
     'HodgeAttributeSet': '项目 AttributeSet 基础和 ASC 访问。',
     'HodgeGameplayTags': '原生 GameplayTag 注册和移动状态标签映射；含攻击时间轴依赖的 Status.Attack.*（阶段 + 取消窗口 .Cancel.*）与 GameplayEvent.Attack.*。标签存在不等于对应玩法实现。',
     'GameplayTagStack': '带计数的标签栈及复制数据结构，区别于只判断有无的 TagContainer。',
@@ -75,7 +75,7 @@ PURPOSE = {
     'HodgePlayerCameraManager': '由 HodgePlayerController 构造选用的项目相机管理器；运行效果待验收。',
     'HodgeUICameraManagerComponent': 'UI 相机管理扩展，不代表 UI 系统已接入。',
     'HodgeCameraAssistInterface': '相机辅助接口契约。',
-    'HodgeAnimInstance': 'ASC GameplayTag 属性映射和 GroundDistance 更新。',
+    'HodgeAnimInstance': 'ASC 属性映射、GroundDistance 与旋转策略快照；FullBody 权重协调蓝图程序性根 Yaw。',
     'HodgeActorBase': '项目 Actor 基类扩展。',
     'HodgeAbilitySourceInterface': '技能来源与相关计算契约。',
     'LoadingProcessInterface': '加载状态/原因查询契约；不是独立加载界面。',
@@ -89,7 +89,7 @@ PURPOSE = {
     'HodgeGameFeaturePolicy': '已配置的 GameFeature 策略；Hotfix 观察者注册，Cue 路径观察者创建仍注释。',
     'HodgeAbilityTimeline': '技能逻辑时间轴数据资产（统一事件模型：单一 Events[]，Kind = Window / Point）。只描述“何时发生什么”，不含业务判断；没有 Montage 字段、不做 Bundle 收集。',
     'HodgeAbilityTask_PlayTimeline': '驱动 HodgeAbilityTimeline 的唯一 AbilityTask：初始化与 Tick 共用 CollectNodes + SortNodes 统一 Scheduler，推进逻辑时间，维护 WindowTag 与 GE 两个账本，派发 Point 与系统事件。窗口 GE 施加/移除、Point 与 Timeline.End 派发、中途取消清理已实测通过；重入类时序、NetPolicy 跨端、时钟倒退未验证。',
-    'HodgeAbilityTask_WaitMoveCancel': '把“取消窗口（Timeline 授权）”与“移动意图（输入层）”两个变化驱动信号合流的 AbilityTask：同时成立时广播 OnMoveCancel 一次后自结束。本地控制端语义；AI/模拟代理找不到 HeroComponent 时永不成立。工作区新增，未编译、未 PIE。',
+    'HodgeAbilityTask_WaitMoveCancel': '合流取消窗口与本地移动意图，广播 OnMoveCancel 后结束；已有取消验证，当前 Combat 主链与旧 BasicAttack 消费方需区分。',
     # 注意：UHodgeComboSet 曾于 2026-09-17 出现在未提交的工作区改动中，随后已回退，源码中仍不存在。
     # 时间轴本身（HodgeAbilityTimeline / HodgeAbilityTask_PlayTimeline）已按统一事件模型重写并随 HEAD 提交，见上面两条。
     'HodgeALSLocomotion': 'CodexText 实验：6 向地面运动动画实例，不属于主 Hero 动画链。',
@@ -100,6 +100,22 @@ PURPOSE = {
     'HodgeSurvivorHero': 'CodexText 实验：直接继承 ACharacter 的 Survivor 角色，不走 Hodge GAS/Experience。',
     'HodgeSurvivorMode': 'CodexText 实验：直接继承 AGameModeBase 的 Survivor 玩法循环。',
     'HodgeSurvivorHUD': 'CodexText 实验：代码构建的 Survivor HUD UserWidget。',
+    'HodgeCombatSet': 'BaseDamage/BaseHeal 战斗属性，OwnerOnly 复制，供伤害/治疗 Execution 捕获。',
+    'HodgeDamageExecution': 'BaseDamage × SetByCaller 倍率 × 距离/材质衰减 × 共享目标规则；不再恒零。',
+    'HodgeDamageRules': '检测和 Execution 共用目标、ASC、死亡/Health、自伤/友伤及队伍规则。',
+    'HodgeGameplayAbility_Definition': '执行单段 Definition、本次 Montage 时钟 Timeline 与手持窗口，按执行清理；Melee 子类扩展命中。',
+    'HodgeGameplayAbility_Melee': '接收服务器命中结果，为每次命中构建独立 GE Spec/Context 并施加。',
+    'HodgeAbilityDefinition': 'Montage/Blend/Timeline、HitWindows、WeaponUseWindowTag；校验手持区间覆盖命中并先进入。',
+    'HodgeComboDefinition': '跳转 DataTable、输入缓存、结束后连段记忆与 bAllowAfterExecutionEnded 续段许可。',
+    'HodgeCharacterRotationComponent': 'ASC 旋转标签约束、锁定 Yaw、恢复、权威复制与移动重放状态。',
+    'HodgeEquipmentDefinition': '装备实例类、Actor 挂接与 AbilitySets 配置。',
+    'HodgeEquipmentInstance': 'Pawn 所属复制 UObject、SpawnedActors RepNotify 和装备/卸装生命周期。',
+    'HodgeEquipmentManagerComponent': 'Experience 注入 Pawn，ASC 就绪后装备默认剑，来源授予句柄精确撤销与客户端迟到绑定。',
+    'HodgeWeaponInstance': '手持请求、显现阶段、计时器、复制/拥有者预测及拒绝恢复，不新增角色常驻武器表现组件。',
+    'HodgeWeaponPresentationActor': '检测 Mesh 留手，可见 Mesh 回背/悬浮/消隐挂 BackSocket，手持时挂回检测 Mesh。',
+    'HodgeWeaponPresentationProfile': '模型/材质、手背插槽/偏移、曲线/时间；BackSocket 默认 WeaponOnBack，BackTransform 为插槽内偏移。',
+    'HodgeWeaponPresentationTypes': '表现阶段与复制快照：服务器时间、起始变换/可见度、版本和激活身份。',
+    'HodgeAnimationAuthoringLibrary': 'Editor 动画文本导入、属性/引用修正、编译诊断与实验 PIE 配置。',
 }
 
 
@@ -130,6 +146,11 @@ def files() -> list[Path]:
                ROOT / 'LYRA_LEARNING_GUIDE.md', ROOT / 'UE5 开放世界动作 RPG 架构方案 V2.md',
                ROOT / 'AGENTS.md', ROOT / 'Docs/AI_DEVELOPMENT.md']
     result += list((ROOT / 'Plugins').rglob('*.uplugin'))
+    for directory in ('BasicAttack', 'DefinitionCombo', 'WeaponPresentation', 'CombatHitWindows'):
+        result += list((ROOT / 'Content/CodexText' / directory).rglob('*'))
+    result += [p for p in (ROOT / 'Docs').rglob('*')
+               if p.suffix in {'.md', '.py'} and 'Reference' not in p.relative_to(ROOT / 'Docs').parts]
+    result += list((ROOT / '.cursor/rules').glob('*.mdc'))
     return sorted({p for p in result if p.is_file()})
 
 
@@ -216,11 +237,13 @@ def refresh() -> int:
         body.append('')
     write('gameplay-tags.md', 'GameplayTag 原生注册索引', '\n'.join(body))
 
-    assets = sorted(p for p in (ROOT / 'Content/Main').rglob('*') if p.is_file())
+    asset_roots = [ROOT / 'Content/Main'] + [ROOT / 'Content/CodexText' / name
+                   for name in ('BasicAttack', 'DefinitionCombo', 'WeaponPresentation', 'CombatHitWindows')]
+    assets = sorted(p for directory in asset_roots for p in directory.rglob('*') if p.is_file())
     body = ['仅确认磁盘路径与大小，未解析二进制资产。IA 的轴类型、蓝图父类、DA 引用等请在编辑器验证。\n']
     last = None
     for path in assets:
-        parent = path.parent.relative_to(ROOT / 'Content/Main').as_posix()
+        parent = path.parent.relative_to(ROOT / 'Content').as_posix()
         if last != parent:
             body.append(f'\n## {parent}\n')
             last = parent
@@ -263,7 +286,7 @@ def refresh() -> int:
     tracked = files()
     data = {'schema': 1, 'generated_at_utc': datetime.now(timezone.utc).isoformat(),
             'git_head': git('rev-parse', 'HEAD'),
-            'scope': 'Source/**, Config/**, Content/Main/**, uproject, root documents, AGENTS.md, Docs/AI_DEVELOPMENT.md, Plugins/**/*.uplugin; excludes plugin implementation',
+            'scope': 'Source/**, Config/**, Content/Main/**, Content/CodexText/{BasicAttack,DefinitionCombo,WeaponPresentation,CombatHitWindows}/**, uproject, root documents, Docs/**/*.md/py except Reference, AGENTS.md, .cursor/rules/*.mdc, Plugins/**/*.uplugin; excludes plugin implementation and generated Reference',
             'files': {p.relative_to(ROOT).as_posix(): digest(p) for p in tracked}}
     SNAPSHOT.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     status = git('status', '--short', '--untracked-files=no')
@@ -272,7 +295,7 @@ def refresh() -> int:
 - UTC：{data['generated_at_utc']}
 - Git HEAD：`{data['git_head']}`
 - 源文件（h/cpp/cs）：{len(source)}
-- Content/Main 文件：{len(assets)}
+- Main 与选定 CodexText 正式依赖文件：{len(assets)}
 - 原生标签注册条目：{sum(map(len, tags.values()))}
 - 漂移跟踪文件：{len(tracked)}
 
@@ -286,11 +309,11 @@ def refresh() -> int:
 
 ## 验证边界
 
-没有运行 Unreal 编译、PIE、打包或蓝图数据解析。Content/Main 之外只统计顶层文件数量，不做引用结论。函数与宏索引是导航候选，不做 C++ 语义解析。人工章节核对日期不会由 refresh 自动更新。
+索引刷新本身没有运行 Unreal 编译、PIE、打包或蓝图数据解析。资产页包括 Main 与选定 CodexText 正式依赖目录；路径存在不证明内部引用正确。人工章节记录的独立只读资产解析和历史运行验收不由本工具执行。函数与宏索引是导航候选，不做 C++ 语义解析。人工章节核对日期不会由 refresh 自动更新。
 
 运行 `python Docs/KnowledgeBase/tools/kb.py check` 检查相对链接和跟踪文件漂移。发现变化后，先复核人工章节，再刷新快照。
 ''')
-    print(f'已刷新 {len(list(REF.glob("*.md")))} 份参考文档；{len(source)} 个源文件，{len(assets)} 个 Main 文件。')
+    print(f'已刷新 {len(list(REF.glob("*.md")))} 份参考文档；{len(source)} 个源文件，{len(assets)} 个 Main/选定 CodexText 文件。')
     return 0
 
 

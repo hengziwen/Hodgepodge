@@ -1,5 +1,7 @@
 # UMG 与 Slate：读懂 Indicator 系统所需的最小心智模型
 
+> 2026-10-06 状态同步：UI 迁移/学习材料：CommonUI 已引入，部分 UIExtension/Indicator 代码有效；依赖 CommonGame/GameSettings/CommonUser 的停用内容与完整前端/HUD 尚未接通。本文不作为游戏 UI 已出画面的声明。 当前项目事实见 [本轮更新](../KnowledgeBase/26-update-2026-10-06.md)。
+
 > **文档类型：入门说明 / 学习笔记**（不是设计草案，也不是功能声明）。
 > 基线 2026-09-26。所有引擎侧对应关系均在 `E:\UE\UE_5.5` 源码中核实，项目侧结论带文件与行号。
 > 目的：把"只会写 `UUserWidget`"和"看懂 `SPanel / Slot / OnArrangeChildren`"之间的那道坎填上。

@@ -1,5 +1,7 @@
 # 单段技能 Definition 与连招跳转表设计
 
+> 2026-10-06 状态同步：已实施并演进。当前协调者为 Pawn 上 Experience 注入的 HodgeCombatComponentBase，当前执行与 1 秒连段记忆分离，末段后摇可接第一段；旧独立 ComboComponent 设计属于历史。 当前项目事实见 [本轮更新](../KnowledgeBase/26-update-2026-10-06.md)。
+
 > 2026-10-01 组件统一：运行时连招入口已从 PlayerState 的 HodgeComboComponent 迁入 Pawn 上由 Experience 添加的 HodgeCombatComponentBase。旧实施记录仅代表合并前结果；生命周期、RPC 与待验证步骤见 [伤害设计第 17 节](melee-detection-ga-effects.md)。
 
 > 状态：用户确认决策后已授权实施。第一版运行时、五段资产及默认配置已落地；实际验证结果见[实施记录](../Validation/definition-combo-2026-09-28.md)。

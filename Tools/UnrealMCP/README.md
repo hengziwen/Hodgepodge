@@ -1,12 +1,14 @@
 # Hodgepodge Blueprint MCP
 
+> 2026-10-06 状态同步：当前本机项目路径 E:/Project/Git/Hodgepodge，引擎 E:/UE/UE_5.5；工具仅服务编辑器，关闭编辑器时服务不可用，不能用工具成功替代常规 C++ 构建。 当前项目事实见 [本轮更新](../../Docs/KnowledgeBase/26-update-2026-10-06.md)。
+
 Project configuration: `../../.codex/config.toml`.
 Start the Hodgepodge UE 5.5 editor, then open this project in Codex and call `bridge_status`.
 The bridge rejects connections to other projects. Close other UnrealMCP-enabled editors if port 55557 is occupied.
 
 Runtime: `.venv/Scripts/python.exe`; server: `server.py`. Use `python -m pip` rather than pip.exe when maintaining this copied environment.
 
-Verified 2026-09-10: MCP initialization, listing 15 tools, project identity D:/Hodgepodge/Hodgepodge.uproject, and reading the project's asset list.
+Verified 2026-09-10: MCP initialization, listing 15 tools, project identity E:/Project/Git/Hodgepodge/Hodgepodge.uproject, and reading the project's asset list.
 Previously verified in an isolated UE 5.5 project: create Actor Blueprint, read EventGraph, add Branch, connect BeginPlay, compile, read connections back, save asset.
 No gameplay/PIE test or edits to existing Hodgepodge Blueprint assets were performed by this installation.
 

@@ -1,5 +1,7 @@
 # R2T1PlayerMaleMd10011 材质修复（2026-09-14）
 
+> 2026-10-06 状态同步：原模型/材质修复记录保留；正式剑的显隐使用独立 WeaponPresentation 材质副本，不修改原材质。 当前项目事实见 [本轮更新](../../Docs/KnowledgeBase/26-update-2026-10-06.md)。
+
 交付资产：/Game/CodexText/Model/R2T1PlayerMaleMd10011。
 6 个材质槽指向同文件夹材质；5 张 D 贴图接 Base Color，上下装 N 以 BC5 法线压缩重建 RG 法线。头发双面、不将未知 alpha 当透明度。六个材质支持骨骼及 Morph Target。MI_3XingStar 未提供贴图，使用金色常量替代。粗糙度为估计值，未还原原游戏卡通阴影、描边、ID/HM 遮罩驱动效果。
 

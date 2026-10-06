@@ -1,5 +1,7 @@
 # AbilityTimeline 设计方案：逻辑时间轴与表现分离
 
+> 2026-10-06 状态同步：设计参考与部分后续目标。当前为单一 Events/Window/Point 模型，Definition GA 使用本次 Montage 时钟；旧双数组/ComboSet/授予期预加载示例不作为实现事实。 当前项目事实见 [本轮更新](../KnowledgeBase/26-update-2026-10-06.md)。
+
 > **文档状态：设计草案（类型已落地，尚未接线）**。撰写日期 2026-09-16，最近状态更新 2026-09-17。
 > 本文描述的是**目标设计**。文中出现的 `UHodgeAbilityTimeline`、`UHodgeAbilityTask_PlayTimeline`、
 > `UHodgeComboSet` 等类型**现已在 `Source/Hodgepodge/*/AbilitySystem/Timeline/` 与 `Data/HodgeComboSet` 中实现**

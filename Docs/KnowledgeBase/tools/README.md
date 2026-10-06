@@ -21,7 +21,7 @@ python Docs/KnowledgeBase/tools/kb.py check
 
 检查知识库 Markdown 中本地文件链接的存在性，以及快照范围内文件是否新增、删除或改变 SHA-256。任一链接错误或漂移返回退出码 1，全部通过返回 0。它不验证 Markdown 页内锚点、源码行号仍指向原符号或 UE 资源引用完整性。
 
-漂移范围是 Source、Config、Content/Main、uproject、四份原始根目录文档、AGENTS.md、Docs/AI_DEVELOPMENT.md 及本地 uplugin 描述。插件实现、Saved、Intermediate、Binaries、Content 其他目录内容不做哈希跟踪。全 Content 只在资产参考页按顶层目录统计文件数。
+漂移范围含 Source、Config、Content/Main、选定 CodexText 正式依赖（BasicAttack/DefinitionCombo/WeaponPresentation/CombatHitWindows）、uproject、根文档、Docs 人工 Markdown/工具 Python、AGENTS、规则和本地 uplugin 描述。生成 Reference 排除以避免自引用；插件实现和构建/运行缓存不跟踪。资产页同时列出 Main 与上述 CodexText 目录，全 Content 另做顶层计数。
 
 ## 刷新
 
@@ -52,3 +52,7 @@ python Docs/KnowledgeBase/tools/kb.py refresh
 ## 本次实际验证
 
 已执行 refresh、check 和包含中文/英文类名的 search，历史版本检查过注释 Hero 文件不会产生有效定义；2026-09-13 已更新为有效 Hero 类的索引，校正了 Super 调用误入定义索引的问题，并确认配置摘录隐藏凭据类字段。UE 编译、PIE、网络与资产内部值不在此工具验证范围内。
+
+## 2026-10-06 同步
+
+人工章节与源码职责元数据已更新，旧快照已归档；refresh 会生成包含统一 Combat、Rotation、WeaponPresentation 与实际模块的当前索引。MCP 关闭时只读资产可用 UE Python Commandlet，索引本身仍不解析 uasset。

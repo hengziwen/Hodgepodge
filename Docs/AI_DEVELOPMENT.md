@@ -1,6 +1,8 @@
 # AI 开发与验证流程
 
-## 核实基线（2026-09-09）
+> 2026-10-06 状态同步：当前基线见知识库：业务 Runtime + Editor 工具，正式 Hero 可移动，默认组件由 Experience 注入；初次环境与工作区记录保持历史日期。文档修改只验证文档/差异，既有构建和游戏测试不自动算本次复跑。 当前项目事实见 [本轮更新](KnowledgeBase/26-update-2026-10-06.md)。
+
+## 初次核实基线（2026-09-09，历史记录）
 
 本次读取了 README、Lyra 设计理念及架构方案相关章节、项目描述、全部项目 Target/Build.cs、Source 目录及关键角色/数据/生成流程、Config、ALS/RiderLink 插件描述和 ALS 构建规则。原项目未发现 AGENTS.md 或 .mdc 开发规则。没有修改业务代码、资产、插件或现有配置；没有执行本次编译或编辑器运行验证。
 
@@ -51,8 +53,8 @@
 3. 在 PowerShell 执行以下 Editor 构建。它是正常 UBT 构建，按需运行 UHT、编译和链接；不是清缓存后的全量重建。
 
 ```powershell
-$ueRoot = 'D:\UE_5.5'
-$projectFile = 'D:\Hodgepodge\Hodgepodge.uproject'
+$ueRoot = 'E:\UE\UE_5.5'
+$projectFile = (Resolve-Path './Hodgepodge.uproject').Path
 & "$ueRoot\Engine\Build\BatchFiles\Build.bat" HodgepodgeEditor Win64 Development "-Project=$projectFile" -WaitMutex -architecture=x64
 if ($LASTEXITCODE -ne 0) { throw "Editor build failed: $LASTEXITCODE" }
 ```
@@ -76,9 +78,9 @@ if ($LASTEXITCODE -ne 0) { throw "Game build failed: $LASTEXITCODE" }
 1. 常规编译前保存当前地图和正在编辑的资产，再关闭编辑器；编译成功后用 UE 5.5.4 打开 `Hodgepodge.uproject`。如果提示切换引擎或缺插件，记录具体提示，先核实环境。
 2. 打开 `/Game/ThirdPerson/Maps/ThirdPersonMap`（当前默认地图）。检查 World Settings 的 GameMode Override 和实际生成的 Pawn/PlayerState/GameState，确认没有地图覆盖导致使用其他类。配置中的旧 GameMode/GameInstance 类名依赖 CoreRedirects，不随手删除重定向。
 3. 涉及角色/动画反射接口时，打开受影响角色蓝图及动画蓝图执行 Compile，查看错误、失效引脚、父类、Anim Instance 和动画层引用；确认无误后保存。当前两份已修改动画资产尤其要保留用户未提交工作，不批量重存无关资产。
-4. 涉及 Experience/PawnData 时，检查 `/Game/Main/Experiences/Exp_HodgeDefaultExperience` 和 `/Game/Main/Data/DA_Dafult_PawnData`，确认 Experience 的 DefaultPawnData 与 PawnData.PawnClass 指向预期资产。GameData 配置指向 `/Game/Main/Data/DA_Dafult_GameData`。磁盘存在资产不等于内部属性已正确赋值。
-5. 当前 `HodgePawnData.h` 只有 PawnClass 暴露；AbilitySets、InputConfig、TagRelationshipMapping、DefaultCameraMode 仍注释，不能要求在 Details 中填写它们。GameMode 的 PawnExtension.SetPawnData 调用也仍注释；这些是代码后续任务，单靠编辑器配置不能修复初始化链。
-6. 单人 PIE：查看 Output Log 的 Experience 选择及加载、Pawn 生成、输入响应和相关功能。记录预期与实际；历史 README 已提示角色不可操控，不能把移动失败自动归因于本次变更，也不能仅因 PIE 启动就判定玩法通过。
+4. 涉及 Experience/PawnData 时，检查 `/Game/Main/Experiences/Exp_HodgeDefaultExperience` 和 `/Game/Main/Data/PawnData/DA_Dafult_PawnData`，确认 Experience 的 DefaultPawnData 与 PawnData.PawnClass 指向预期资产。GameData 配置指向 `/Game/Main/Data/DA_Dafult_GameData`。磁盘存在资产不等于内部属性已正确赋值。
+5. 当前 PawnData 的输入/相机/AbilitySets/ComboDefinition/DefaultWeaponDefinition 均已启用；GameMode 已注入 PawnData，Hero/PawnExtension 接入 ASC，Experience 为 Pawn 注入 Combat/Equipment。不要重复创建已有组件，重点核对当前资产引用与生命周期。
+6. 单人 PIE：查看 Output Log 的 Experience 选择及加载、Pawn 生成、输入响应和相关功能。记录预期与实际；当前正式 Hero 已有移动/攻击验证，遇到失败先追踪实际地图、输入配置与组件状态，也不能仅因 PIE 启动就判定玩法通过。
 7. 网络/GAS/复制改动：在 PIE 使用 2 个玩家、Play As Listen Server，分别核对服务器和客户端的 Pawn、ASC Owner/Avatar、输入、能力及重生；需要时补 Play As Client/独立进程验证。PIE 服务端测试不等于构建了 Dedicated Server 可执行文件。
 8. 反馈具体地图、资产、复现步骤、网络模式及 Output Log 错误。AI 汇报必须分别标记 C++ 构建、蓝图编译、PIE、联机和打包的“通过/失败/未执行”。
 

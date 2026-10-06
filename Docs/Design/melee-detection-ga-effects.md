@@ -1,5 +1,7 @@
 > 2026-10-01 后续统一组件：连招协调已迁入 Pawn 上的 HodgeCombatComponentBase，PlayerState 不再创建 HodgeComboComponent。当前编码见第 17 节，合并后运行结果见第 18 节；此前运行记录对应合并前版本。
 
+> 2026-10-06 状态同步：当前 CombatComponent 负责检测/协调，Melee GA 负责独立 Spec 和效果施加；DamageRules 已接通。正式普攻仍未配 HitWindows；同类实现统一主 cpp。 当前项目事实见 [本轮更新](../KnowledgeBase/26-update-2026-10-06.md)。
+
 # 近战命中检测与 GA 效果应用：重构设计
 
 日期：2026-10-01。状态：原生重构和攻击蓝图迁移已完成，三项新增原生测试通过；PIE 已验证三种来源及取消/重生，联机发现后加入玩家基础伤害初始化问题，尚未全部验收。本文是近战检测与伤害接入的编码依据。

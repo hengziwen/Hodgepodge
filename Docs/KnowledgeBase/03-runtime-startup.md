@@ -1,6 +1,11 @@
 # 从启动到生成玩家的调用链
 
-> 最近源码核对：2026-09-17。源码接入状态与运行验收分开记录。
+> 当前核对：2026-10-06。源码、配置与磁盘资产已复核；运行通过范围见本轮更新与验收页。
+
+## 当前默认配置
+
+默认 Experience 指向 Main/Data/PawnData/DA_Dafult_PawnData，实际创建 Main Hero、绑定输入/CM_ThirdPerson，并通过 AddComponents 注入 Combat/Equipment。ASC 就绪后服务器依据 DefaultWeaponDefinition 装备默认剑。Config 根目录同名 PawnData 仅是回退。
+
 [返回首页](README.md)
 
 ## 启动前的选择
@@ -51,7 +56,7 @@ GameMode 对 Experience 未完成的玩家暂缓 HandleStartingNewPlayer；完�
 
 GetPawnDataForController 按以下顺序取数据：PlayerState 上的数据 → 已加载 Experience 的 DefaultPawnData → AssetManager 默认 PawnData。Experience 尚未加载时返回空。
 
-GetDefaultPawnClassForController 优先 PawnData.PawnClass；空时回退构造函数的 AHodgeCharacterBase。SpawnDefaultPawnAtTransform 使用延迟构造，为 FinishSpawning 之前注入数据留了位置，当前已经实际调用 PawnExtension::SetPawnData，然后 FinishSpawning。这一旧缺口已在源码接通；PawnClass 资产值仍需确认。
+GetDefaultPawnClassForController 优先 PawnData.PawnClass；空时回退构造函数的 AHodgeCharacterBase。SpawnDefaultPawnAtTransform 使用延迟构造，为 FinishSpawning 之前注入数据留了位置，当前已经实际调用 PawnExtension::SetPawnData，然后 FinishSpawning。当前默认 Experience 的 PawnClass 已只读确认是 BP_Hero_Pover；自定义玩法仍需核对其实际资产。
 
 ## 失败与退出边界
 

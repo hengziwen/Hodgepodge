@@ -1,5 +1,7 @@
 # UIExtension：职责边界与完整流程
 
+> 2026-10-06 状态同步：UI 迁移/学习材料：CommonUI 已引入，部分 UIExtension/Indicator 代码有效；依赖 CommonGame/GameSettings/CommonUser 的停用内容与完整前端/HUD 尚未接通。本文不作为游戏 UI 已出画面的声明。 当前项目事实见 [本轮更新](../KnowledgeBase/26-update-2026-10-06.md)。
+
 > **文档类型：子系统说明 + 学习笔记。**
 > 迁移状态：**已并入 `Hodgepodge` 模块并编译通过**（2026-09-27，Editor / Game 双构建 EXIT=0）。
 > **运行验证：未执行**（未开编辑器、未 PIE、未做蓝图编译）。

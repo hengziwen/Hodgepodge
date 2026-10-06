@@ -1,6 +1,11 @@
 # Experience 与 GameFeature 扩展
 
-> 最近源码核对：2026-09-17。源码接入状态与运行验收分开记录。
+> 当前核对：2026-10-06。源码、配置与磁盘资产已复核；运行通过范围见本轮更新与验收页。
+
+## 已配置的 AddComponents
+
+默认 Experience 使用引擎 AddComponents 注入 EquipmentManager 与 HodgeCombatComponentBase，经过 Receiver/组件管理器的真实链路；不存在原生默认子对象不表示未挂载。旋转是角色基础组件，武器表现由实例/Actor 实现。CommonUI 已引入，CommonGame 等停用依赖仍未接通。
+
 [返回首页](README.md)
 
 ## 概念边界
@@ -31,7 +36,7 @@ WorldActionBase 为需要参与世界生命周期的 Action 提供上下文和 W
 
 Cue 路径 Action 提供目录配置和编辑器校验；观察者的注册回调现已实现 AddGameplayCueNotifyPath 和资源库刷新，但 Policy::InitGameFeatureManager 创建 Cue 观察者的一行仍注释，注销回调的移除主体也仍停用。CueManager 与 Policy 类配置已经加入，启动预加载钩子仍为空。加载插件资源、注册 Cue 搜索路径、预加载 Cue 是不同步骤，应分别验收。
 
-Policy 中保留了上游迁移注释；检查实际激活类配置及有效函数体。不要照搬依赖 CommonGame、CommonUI、GameSettings 等未引入模块的代码。
+Policy 中保留了上游迁移注释；检查实际激活类配置及有效函数体。不要照搬依赖 CommonGame、GameSettings 等尚未接通模块（CommonUI 已引入）的代码。
 
 ## AddWidget 与 SplitscreenConfig
 

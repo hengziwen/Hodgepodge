@@ -163,6 +163,64 @@
   70: };
 ```
 
+## HodgeAnimationAuthoringLibrary.cpp
+
+Editor 动画文本导入、属性/引用修正、编译诊断与实验 PIE 配置。
+
+源码：[Source/HodgeAbilityEditor/Private/HodgeAnimationAuthoringLibrary.cpp](../../../Source/HodgeAbilityEditor/Private/HodgeAnimationAuthoringLibrary.cpp)
+
+定义候选（多行签名仅展示首行）：
+
+- L97: `UAnimBlueprint* UHodgeAnimationAuthoringLibrary::ImportAnimationBlueprintText(const FString& AssetPath, const FString& TextFilename, UClass* ParentClass, USkeleton* TargetSkeleton)`
+- L163: `bool UHodgeAnimationAuthoringLibrary::SetAnimationDefault(UBlueprint* Blueprint, const FString& PropertyName, const FString& Value)`
+- L172: `bool UHodgeAnimationAuthoringLibrary::SetAnimationNodeProperty(UBlueprint* Blueprint, const FString& NodePath, const FString& PropertyPath, const FString& Value)`
+- L183: `bool UHodgeAnimationAuthoringLibrary::RemapAnimationReferences(UBlueprint* Blueprint, const TArray<UObject*>& Sources, const TArray<UObject*>& Destinations)`
+- L206: `FString UHodgeAnimationAuthoringLibrary::CompileAnimationBlueprint(UBlueprint* Blueprint)`
+- L223: `TArray<FName> UHodgeAnimationAuthoringLibrary::GetSkeletonBoneNames(USkeleton* Skeleton)`
+- L233: `bool UHodgeAnimationAuthoringLibrary::ConfigureAnimationLabPIE(int32 PlayerCount, bool bListenServer)`
+- L243: `bool UHodgeAnimationAuthoringLibrary::ConfigureAnimationLabGameMode(UBlueprint* Blueprint, TSubclassOf<APawn> PawnClass)`
+
+## HodgeAnimationAuthoringLibrary.h
+
+Editor 动画文本导入、属性/引用修正、编译诊断与实验 PIE 配置。
+
+源码：[Source/HodgeAbilityEditor/Private/HodgeAnimationAuthoringLibrary.h](../../../Source/HodgeAbilityEditor/Private/HodgeAnimationAuthoringLibrary.h)
+
+有效头文件声明摘录（未展开宏，未求值预处理分支）：
+
+```cpp
+   1: #pragma once
+   3: #include "CoreMinimal.h"
+   4: #include "Kismet/BlueprintFunctionLibrary.h"
+   6: #include "HodgeAnimationAuthoringLibrary.generated.h"
+   8: class UAnimBlueprint;
+   9: class UBlueprint;
+  10: class USkeleton;
+  11: class APawn;
+  14: UCLASS()
+  15: class HODGEABILITYEDITOR_API UHodgeAnimationAuthoringLibrary : public UBlueprintFunctionLibrary
+  16: {
+  18: 	GENERATED_BODY()
+  20: public:
+  22: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Editor|Animation")
+  23: 	static UAnimBlueprint* ImportAnimationBlueprintText(const FString& AssetPath, const FString& TextFilename, UClass* ParentClass = nullptr, USkeleton* TargetSkeleton = nullptr);
+  26: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Editor|Animation")
+  27: 	static bool SetAnimationDefault(UBlueprint* Blueprint, const FString& PropertyName, const FString& Value);
+  30: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Editor|Animation")
+  31: 	static bool SetAnimationNodeProperty(UBlueprint* Blueprint, const FString& NodePath, const FString& PropertyPath, const FString& Value);
+  34: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Editor|Animation")
+  35: 	static bool RemapAnimationReferences(UBlueprint* Blueprint, const TArray<UObject*>& Sources, const TArray<UObject*>& Destinations);
+  38: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Editor|Animation")
+  39: 	static FString CompileAnimationBlueprint(UBlueprint* Blueprint);
+  42: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Editor|Animation")
+  43: 	static bool ConfigureAnimationLabGameMode(UBlueprint* Blueprint, TSubclassOf<APawn> PawnClass);
+  46: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Editor|Animation")
+  47: 	static bool ConfigureAnimationLabPIE(int32 PlayerCount, bool bListenServer);
+  49: 	UFUNCTION(BlueprintPure, Category = "Hodge|Editor|Animation")
+  50: 	static TArray<FName> GetSkeletonBoneNames(USkeleton* Skeleton);
+  51: };
+```
+
 ## SHodgeAbilityPreview.cpp
 
 模块或基础类型入口。

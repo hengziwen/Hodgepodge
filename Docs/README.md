@@ -1,20 +1,26 @@
 # 项目文档
 
-[打开 Hodgepodge 本地知识库](KnowledgeBase/README.md)
+2026-10-06 同步。先看 [项目 README](../README.md)、[本地知识库](KnowledgeBase/README.md)、[当前状态与待办](KnowledgeBase/12-integration-backlog.md)。精确代码与资产见 [参考索引](KnowledgeBase/Reference/README.md)。
 
-知识库包含项目架构、启动和初始化链、输入/GAS/战斗/动画/网络详解、现有断点、开发与验收指南，以及可更新的源码、Tag、资产和配置索引。
+## 已实施方案与配置
 
-从当前行为出发请先看 [接通清单](KnowledgeBase/12-integration-backlog.md)；精确定位代码请看 [源码索引](KnowledgeBase/Reference/source-index.md)。
+- [Timeline](Design/ability-timeline-stage1.md)、[Definition/连段](Design/ability-definition-combo-graph.md)、[技能编辑器](Design/ability-definition-editor.md)。
+- [统一检测与 Melee GE](Design/melee-detection-ga-effects.md)、[命中窗口](Design/combat-hit-windows.md)、[装备基础](Design/equipment-weapon-system.md)。
+- [旋转约束](Design/character-rotation-policy.md)、[连段记忆与末段重开](Design/combo-retention.md)、[武器显现/插槽回背](Design/weapon-presentation.md)。
+- [正式动画说明](../Content/Main/Character/Hero/Anim/README.md)、[Lyra 动画研究过程](Design/lyra-animation-inspection-20261004.md)。
 
-## 设计文档
+Design 并非全是未实现草案：各篇开头区分当前实现、历史设计和后续目标；历史示例不覆盖当前事实。
 
-`Design/` 存放**尚未实现的设计草案**，与知识库的"已核实当前状态"严格区分。
+## UI 迁移与学习
 
-- [AbilityTimeline 设计方案：逻辑时间轴与表现分离](Design/ability-timeline.md)
-- [Timeline 与 PlayTimeline AbilityTask：第一阶段最小闭环设计](Design/ability-timeline-stage1.md)
-- [Lyra UI 架构迁移执行文档（阶段一）](Design/lyra-ui-migration-plan.md)
-- [Lyra UI 迁移文件导览（79 文件说明 + 学习优先级）](Design/lyra-ui-file-guide.md)
-- [Hodge UI 模块化注入链：架构总览与逐条核实](Design/hodge-ui-architecture.md)
-- [UMG 与 Slate：读懂 Indicator 系统所需的最小心智模型](Design/umg-slate-mental-model.md)
-- [UIExtension：职责边界与完整流程](Design/ui-extension-system.md)
-- [Indicator UI 系统：职责边界与完整流程](Design/indicator-ui-system.md)
+- [迁移计划](Design/lyra-ui-migration-plan.md)、[文件导览](Design/lyra-ui-file-guide.md)、[当前架构](Design/hodge-ui-architecture.md)。
+- [UMG/Slate](Design/umg-slate-mental-model.md)、[UIExtension](Design/ui-extension-system.md)、[Indicator](Design/indicator-ui-system.md)。
+
+CommonUI 已引入，但完整前端/HUD、GameViewport 和部分停用依赖仍需接通。
+
+## 验证与维护
+
+- [实际验证范围](KnowledgeBase/16-validation.md)、[本轮状态](KnowledgeBase/26-update-2026-10-06.md)。
+- Validation 和 Design 中带日期的验收记录保留当时结果；不得据此宣称当前正式伤害、重生或打包全部通过。
+- [开发流程](AI_DEVELOPMENT.md)、[开发约定](../AGENTS.md)、[评审标准](../CODE_REVIEW.md)。
+- [旧长版 README](History/README-before-20261006.md)、[旧扫描快照](KnowledgeBase/History/snapshot-before-20261006.json) 保留历史。

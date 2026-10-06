@@ -1,5 +1,7 @@
 # 武器显现、回背与消隐
 
+> 2026-10-06 状态同步：方案已实施；BackSocket 默认 WeaponOnBack，BackTransform 为插槽内偏移，当前 Profile 为 Identity。检测来源与可见 Mesh 分离；验证范围与未测项保留原记录。 当前项目事实见 [本轮更新](../KnowledgeBase/26-update-2026-10-06.md)。
+
 ## 已核实的项目基线
 
 最初实施前，默认装备 BP_Equipment_Sword 使用 BP_WeaponInstance_Sword，生成 BP_Weapon_Sword，挂接角色 Mesh 的 WeaponOnHand，初始偏移为单位变换。原武器 Actor 可复制、未启用移动复制，继承 BP_Weapon_Base；可见组件为 SkeletalMesh，模型 /Game/Wuwa/Weapon/Sword_Qiuyuan，材质 MI_R5Sword506Md20001Effect。当时没有专门的背部 Socket；2026-10-05 用户已在当前角色骨骼添加 WeaponOnBack，本次据此改为插槽停靠。

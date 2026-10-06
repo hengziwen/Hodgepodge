@@ -1,5 +1,7 @@
 # Timeline 普通攻击验证（2026-09-24）
 
+> 2026-10-06 状态同步：历史记录：保留当时基线、方案和结果，不代表当前组件/资产或当前测试通过。 当前项目事实见 [本轮更新](../KnowledgeBase/26-update-2026-10-06.md)。
+
 实现为数据配置型 `GA_BasicAttack` 蓝图，父类 `UHodgeGameplayAbility_BasicAttack` 执行可复用的 GAS Task 流程。蓝图 Class Defaults 的 `AttackSteps` 持有五组 Montage / Timeline；EventGraph 不重复实现原生流程。
 
 ## 资产与授予

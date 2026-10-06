@@ -1,10 +1,12 @@
 # Pover 动画系统
 
+> 2026-10-06 状态同步：正式主图现为 ABP_Pover_Base；固定层/FullBody/Stop 保留，Start 无入口、Pivot 禁用。角色旋转锁按 Timeline，武器可见 Mesh 在 WeaponOnBack 插槽停靠，检测 Mesh 留手部。下文迁移验收为历史过程，当前路径已同步。 当前项目事实见 [本轮更新](../../../../../Docs/KnowledgeBase/26-update-2026-10-06.md)。
+
 2026-10-05 将已验收的 CodexText 动画系统迁入本目录。正式角色 `/Game/Main/Character/Hero/BP_Hero_Pover` 已切换到下列资源，现有 Experience、PawnData、PlayerState ASC、输入及默认剑初始化继续使用原调用链。
 
 ## 当前运行资源
 
-- 主动画：`/Game/Main/Character/Hero/Anim/ABP_Pover_Lyra`，父类仍为 `HodgeAnimInstance`。
+- 主动画：`/Game/Main/Character/Hero/Anim/ABP_Pover_Base`，父类仍为 `HodgeAnimInstance`。
 - 固定层：`/Game/Main/Character/Hero/Anim/Layer/ABP_Pover_LocomotionBase`。主图默认 Linked Layer 和角色 BeginPlay 的 LinkAnimClassLayers 指向同一类，装备不切换移动资源。
 - 接口：`Layer/ALI_Pover_LocomotionInterface`；枚举、结构体位于 `Types`。曲线压缩设置统一使用根目录的 `UniformIndexableCurveCompressionSettings`，与原始动画共用同一配置。
 - 网格及骨架：`Model/SKM_Pover_LyraLab`、`Model/SK_Pover_LyraLab`。保留已验证的脚踝虚拟骨骼及与原 Wuwa 骨架的兼容设置；名称中的 LyraLab 暂时保留。
@@ -15,7 +17,7 @@
 
 Start 仍无入口，Idle/Stop 开始移动直接进入 Cycle。Stop、连续镜头转身及 FullBody 攻击时抑制腿部 IK 的修正保留；EnablePivot=False，保留 Pivot 资源和图供后续冲刺使用。
 
-迁移后又按用户授权清理了原 Main 的 `ABP_Pover_Base`、旧 Layer、根目录旧枚举/结构体和旧 Pover BlendSpace。正式角色使用上述主图和固定层。实验地图及测试角色继续位于 `/Game/CodexText/LyraAnimation/Maps`、`Test`，它们也引用已迁入 Main 的资源。
+迁移时按用户授权清理了原 Main 的旧 `ABP_Pover_Base`，新迁入主图最初命名 `ABP_Pover_Lyra`，随后用户将它改名为当前 `ABP_Pover_Base`；同时清理旧 Layer、根目录旧枚举/结构体和旧 Pover BlendSpace。正式角色使用上述主图和固定层。实验地图及测试角色继续位于 `/Game/CodexText/LyraAnimation/Maps`、`Test`，它们也引用已迁入 Main 的资源。
 
 ## 迁移前备份
 

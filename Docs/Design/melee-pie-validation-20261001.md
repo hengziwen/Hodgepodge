@@ -1,5 +1,7 @@
 # 近战进入游戏验收记录
 
+> 2026-10-06 状态同步：历史记录：保留当时基线、方案和结果，不代表当前组件/资产或当前测试通过。 当前项目事实见 [本轮更新](../KnowledgeBase/26-update-2026-10-06.md)。
+
 日期：2026-10-01。项目：`E:/Project/Git/Hodgepodge/Hodgepodge.uproject`，UE 5.5.4。通过原生 MCP 启动真实 PIE 与双玩家 Listen Server，未执行 C++ 构建或打包。
 
 后续代码与配置已改为复用 GameplayEffectParent_Damage_Basic、通过 Experience 添加 CombatComponent；本记录对应修改前的已编译版本，不作为上述更正的运行验证结果。

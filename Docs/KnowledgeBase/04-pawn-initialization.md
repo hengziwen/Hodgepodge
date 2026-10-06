@@ -1,12 +1,18 @@
 # PawnExtension 与 Hero 初始化
 
+> 当前核对：2026-10-06。源码、配置与磁盘资产已复核；运行通过范围见本轮更新与验收页。
+
+## 本轮生命周期补充
+
+默认 PawnClass 已只读确认是 BP_Hero_Pover。PawnExtension 的 ASC 初始化/解绑通知被 Combat、Equipment 和角色旋转消费；重复、迟到引用与 Pawn 变化需幂等清理。连段记忆和手持请求不得跨已解绑 Pawn 残留，完整重生仍需专项验证。
+
 [返回首页](README.md) · [输入](06-input.md) · [GAS](07-gas.md) · [本轮变更](21-update-2026-09-17.md)
 
-> 最近源码核对：2026-09-17。两个组件现在都已启用，以下描述有效源码；本轮未执行 PIE。
+> 最近源码核对：2026-09-17。两个组件现在都已启用，以下描述有效源码；运行验收参见 16-validation.md；本次文档任务未复跑 PIE。
 
 ## 创建与所有权
 
-AHodgeCombatCharacter 构造创建 PawnExtension；AHodgeHeroCharacter 构造新增 HeroComponent。GameMode 延迟生成 Pawn，在 FinishSpawning 前查找 PawnExtension 并调用 SetPawnData。PlayerState 仍拥有 ASC，Pawn 是 Avatar。新 GameMode 默认选择 AHodgePlayerController，默认 PawnClass 回退仍是 CharacterBase，实际 PawnData.PawnClass 待资产确认。
+AHodgeCombatCharacter 构造创建 PawnExtension；AHodgeHeroCharacter 构造新增 HeroComponent。GameMode 延迟生成 Pawn，在 FinishSpawning 前查找 PawnExtension 并调用 SetPawnData。PlayerState 仍拥有 ASC，Pawn 是 Avatar。新 GameMode 默认选择 AHodgePlayerController，默认 PawnClass 回退仍是 CharacterBase，实际 PawnData.PawnClass 已只读确认 BP_Hero_Pover。
 
 SetPawnData 只接受权威端首次赋值，随后 ForceNetUpdate 并检查状态；客户端 OnRep_PawnData 也检查状态。这个 setter 不支持随意重复切换配置，换职业/换 Pawn 需定义生命周期。
 

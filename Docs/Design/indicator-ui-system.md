@@ -1,5 +1,7 @@
 # Indicator UI 系统：职责边界与完整流程
 
+> 2026-10-06 状态同步：UI 迁移/学习材料：CommonUI 已引入，部分 UIExtension/Indicator 代码有效；依赖 CommonGame/GameSettings/CommonUser 的停用内容与完整前端/HUD 尚未接通。本文不作为游戏 UI 已出画面的声明。 当前项目事实见 [本轮更新](../KnowledgeBase/26-update-2026-10-06.md)。
+
 > **文档类型：学习笔记 + 源码核实说明**（不是设计草案，也不是"已实现功能"的声明）。
 > 基线 2026-09-26，代码位置：`Source/Hodgepodge/{Public,Private}/UI/IndicatorSystem/`，共 11 个文件（**全部在编**）。
 > 本文所有行号均指向本项目当前工作区；引用上游处会明确标注。

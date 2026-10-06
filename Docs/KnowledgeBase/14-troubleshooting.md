@@ -1,6 +1,16 @@
 # 按症状定位的排障手册
 
-> 最近源码核对：2026-09-22。源码接入状态与运行验收分开记录。
+> 当前核对：2026-10-06。源码、配置与磁盘资产已复核；运行通过范围见本轮更新与验收页。
+
+## 当前高频排障
+
+- 普攻取消后从头开始：查 ComboRetentionSeconds、记忆剩余时间与 bAllowAfterExecutionEnded；末段结束清记忆是当前规则。
+- 末段后摇无法接 1：查 DT_LightCombo 的 Combo.Light.04 → .01 和 NextAttack 窗口，不必等整段结束。
+- 攻击期间角色随镜头转：查 RotationLock 标签/窗口、旋转组件绑定、FullBody 根 Yaw 快照。
+- 武器不显现：查 WeaponUseWindowTag 与 WeaponHand 标签匹配、Profile 与 Actor 引用；回背异常查 WeaponOnBack 是否在实际 Mesh 骨架上及 BackTransform 插槽偏移。
+- 动画缺失：查 Main/Anim/ABP_Pover_Base 和固定层；Start 已停用、Stop 保留、Pivot 禁用。
+- 攻击不掉血：当前正式 HitWindows 为空，先检查配置和 Melee GA，不再按“Execution 恒零”排查。
+
 [返回首页](README.md)
 
 ## 启动加载失败或看不到玩家
@@ -53,7 +63,7 @@
 
 **要主动打断时间轴做验证**：`asc.clear_ability(handle)`（用法见下面 MCP 一节）。取消后 `Status.Attack.*` 与窗口 GE 都应归零，且**此后不应再出现后续窗口标签或 Point 派发**（出现就是"停不下来还在 tick"）。注意 `GameplayEvent.Attack.Interrupted` **在取消时不会派发**，这是设计约定（`AbilityCancelled` 不广播；`Interrupted` 只给"被外力抢占"，本阶段没有触发者）——别把它当成漏派发的 bug 去查。
 
-**移动取消不生效（推杆没有取消后摇）**：`UHodgeAbilityTask_WaitMoveCancel` 需要三条链同时成立——① 资产里确实有 Window 授予 `Status.Attack.Cancel.Move`；② 任务被真正创建且 C++ 调用方**自己调了 `ReadyForActivation()`**（漏了静默不跑）；③ 攻击 Ability 在 `OnMoveCancel` 回调里结束自己。缺任一条都不生效。**AI / 模拟代理 Pawn 上永远不生效是设计**（移动意图只在本地控制端存在）。另注意：若用 `SetIgnoreMoveInput` / `DisableMovement` 实现攻击期间禁移，`Input_Move` 不再回调、移动意图恒为 `false`，取消逻辑会**静默失效**。⚠️ 该任务目前未编译、未验证，先别把它当成已可用功能（见 [2026-09-22 记录](23-update-2026-09-22.md)）。
+**移动取消不生效（推杆没有取消后摇）**：`UHodgeAbilityTask_WaitMoveCancel` 需要三条链同时成立——① 资产里确实有 Window 授予 `Status.Attack.Cancel.Move`；② 任务被真正创建且 C++ 调用方**自己调了 `ReadyForActivation()`**（漏了静默不跑）；③ 攻击 Ability 在 `OnMoveCancel` 回调里结束自己。缺任一条都不生效。**AI / 模拟代理 Pawn 上永远不生效是设计**（移动意图只在本地控制端存在）。另注意：若用 `SetIgnoreMoveInput` / `DisableMovement` 实现攻击期间禁移，`Input_Move` 不再回调、移动意图恒为 `false`，取消逻辑会**静默失效**。该任务的历史状态见 09-22 记录；当前主链移动取消与记忆行为见 [本轮更新](26-update-2026-10-06.md)。
 
 ## ~~首次进战斗卡顿或 Montage 未加载~~（⚠️ 预加载实现不存在）
 

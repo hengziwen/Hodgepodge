@@ -1,6 +1,11 @@
 # 架构职责与对象所有权
 
-> 最近源码核对：2026-09-17。源码接入状态与运行验收分开记录。
+> 当前核对：2026-10-06。源码、配置与磁盘资产已复核；运行通过范围见本轮更新与验收页。
+
+## 当前新增所有权
+
+CombatComponent 与 EquipmentManager 在 Pawn 上由 Experience 注入，旧 PlayerState ComboComponent 已移除。PlayerState 仍拥有 ASC；RotationComponent 是 CombatCharacter 原生组件。WeaponInstance 是复制 UObject，拥有手持请求/计时器；Actor 负责逐帧显隐和插槽表现，检测来源与外观分离。
+
 [返回首页](README.md) · [下一步：启动链](03-runtime-startup.md) · [本轮变更](21-update-2026-09-17.md)
 
 ## 全局与世界级对象

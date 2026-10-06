@@ -1,5 +1,7 @@
 # Lyra Starter Game 学习指南
 
+> 2026-10-06 状态同步：上游 Lyra 学习路线，保持参考内容；Hodge 的固定移动层和单默认武器不等于照搬全部 Lyra 武器动画层。 当前项目事实见 [本轮更新](Docs/KnowledgeBase/26-update-2026-10-06.md)。
+
 > 引擎版本：**UE 5.5** ｜ 主模块：`LyraGame`（Runtime）+ `LyraEditor`（Editor）
 > 代码规模：`Source/LyraGame` 约 227 个头文件 / 218 个实现文件，`Plugins` 下另有 12 个通用插件 + 5 个 GameFeature 插件
 

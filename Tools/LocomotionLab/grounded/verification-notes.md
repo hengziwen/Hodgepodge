@@ -1,5 +1,7 @@
 # Grounded 实验交付记录
 
+> 2026-10-06 状态同步：旧 ALS/Grounded 实验及其历史验证，不是当前 Main 固定移动层；当前主角色说明见 Main/Character/Hero/Anim/README.md。 当前项目事实见 [本轮更新](../../../Docs/KnowledgeBase/26-update-2026-10-06.md)。
+
 本轮实现保存在 `CodexText` 实验资产及对应 C++ 中。当前动画蓝图是 `/Game/CodexText/AnimInstance/ALS/ABP_ALS_Grounded`，实验入口是 `/Game/CodexText/Locomotion/L_LocomotionLab`。原始 Main/Wuwa 资产没有由本轮重存。
 
 ## 构建
@@ -7,8 +9,8 @@
 2026-09-20 常规构建命令：
 
 ```powershell
-& D:\UE_5.5\Engine\Build\BatchFiles\Build.bat HodgepodgeEditor Win64 Development -Project=D:\Hodgepodge\Hodgepodge.uproject -WaitMutex -architecture=x64
-& D:\UE_5.5\Engine\Build\BatchFiles\Build.bat Hodgepodge Win64 Development -Project=D:\Hodgepodge\Hodgepodge.uproject -WaitMutex -architecture=x64
+& D:\UE_5.5\Engine\Build\BatchFiles\Build.bat HodgepodgeEditor Win64 Development -Project=E:\Project\Git\Hodgepodge\Hodgepodge.uproject -WaitMutex -architecture=x64
+& D:\UE_5.5\Engine\Build\BatchFiles\Build.bat Hodgepodge Win64 Development -Project=E:\Project\Git\Hodgepodge\Hodgepodge.uproject -WaitMutex -architecture=x64
 ```
 
 Editor 目标通过，退出码0。Game 目标退出码6，仍被 `HodgeEnemyCharacter.cpp:53` 未加 WITH_EDITOR 保护的 PostEditChangeProperty 定义阻断；本轮实验代码编译通过。日志保存在 `D:/CodexUE55Lab/grounded-build-20260920.log` 与 `grounded-game-build-20260920.log`。未修改无关的 EnemyCharacter 错误，未声称打包通过。

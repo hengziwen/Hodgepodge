@@ -1,5 +1,7 @@
 # Lyra MCP 安装与动画系统研究记录
 
+> 2026-10-06 状态同步：这是 Lyra 研究与安装过程记录。正式 Main 主图已改名 ABP_Pover_Base，固定层不随武器切换；无 Start 入口、保留 Stop、Pivot 暂停，当前操作见 Main 动画 README。 当前项目事实见 [本轮更新](../KnowledgeBase/26-update-2026-10-06.md)。
+
 检查日期：2026-10-04。Lyra 路径：`E:/Project/UProject/study/Epic/LyraStarterGame`；Hodge 路径：`E:/Project/Git/Hodgepodge`。本机引擎核实为 `E:/UE/UE_5.5`，版本 5.5.4。
 
 本轮完成 Lyra MCP 插件安装和动画系统读取，为后续 Hodge 实现保留依据。本轮没有修改 Hodge 的 C++、配置或蓝图，没有执行动画系统迁移。

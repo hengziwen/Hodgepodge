@@ -1,6 +1,11 @@
 # 新增角色、技能、玩法的操作手册
 
-> 最近源码核对：2026-09-13。源码接入状态与运行验收分开记录。
+> 当前核对：2026-10-06。源码、配置与磁盘资产已复核；运行通过范围见本轮更新与验收页。
+
+## 当前扩展入口
+
+新增角色先复用 Experience→PawnData→Hero/ASC 链；默认武器使用 DefaultWeaponDefinition。新增 Definition 技能需要武器时填写 WeaponUseWindowTag 和 Timeline 手持区间，需要锁朝向时配 RotationLock，需要伤害时配 Melee 接入与 HitWindows/GE。手持/锁定窗口覆盖实际命中。不要重建已存在的 Combat/Equipment/Rotation；冲刺及 Pivot 是后续独立功能。
+
 [返回首页](README.md)
 
 > 以下是开发步骤和验收要求，不代表本轮已经执行。当前应按 [接通清单](12-integration-backlog.md) 验证已有基础并处理剩余缺口，不重复创建已启用的类。
