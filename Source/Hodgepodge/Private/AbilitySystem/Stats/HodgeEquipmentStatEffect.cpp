@@ -1,5 +1,6 @@
-#include "AbilitySystem/HodgeGameplayTags.h"
 #include "AbilitySystem/Stats/HodgeEquipmentStatEffect.h"
+#include "AbilitySystem/HodgeGameplayTags.h"
+
 #include "AbilitySystem/AttributeSet/HodgeHealthSet.h"
 #include "AbilitySystem/AttributeSet/HodgeCombatSet.h"
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeEquipmentStatEffect)
