@@ -6,6 +6,10 @@
 
 ## 已保存证据，不冒充本次复跑
 
+2026-10-06 随后执行正式资源迁移：39 个资产迁入 Main，12 个蓝图编译、39 项资产校验和冷启动重载通过；Editor/Game 常规构建、23 项原生回归及实际 Editor 的 DefinitionWorkflow 成功；单人 552 条验证六次出招、属性成长、材质与武器完整回收，双人 Listen Server 100ms 1908 条验证四个副本与拥有者属性复制。具体命令、修正过的测试预期及范围见 [本次迁移记录](../Validation/main-assets-migration-2026-10-06.md)。
+
+2026-10-06 属性首版：最终 Editor/Game 常规构建通过，新增属性原生 4 项与相关回归 19 项 Success，18 条资产校验记录 VALID；单人 298 条、双人 100ms 716 条验证出生/等级/装备数值与复制。完整 Hodge 的 headless Editor UI 用例崩溃，不计通过；具体命令、警告和范围见 [成长设计第 13 节](../Design/character-attribute-growth.md)。本项不是完整经验/存档或死亡复活玩法验收。
+
 - 2026-10-01：统一战斗组件、Experience 注入和 Melee 检测/既有 GE 夹具，验证输入→服务器命中→100 扣到 70 与 Listen Server。见 [GE 验证](../Design/melee-experience-ge-validation-20261001.md)、[统一组件验证](../Design/combat-component-unification-validation-20261001.md)。
 - 2026-10-05：Main 动画迁移、Stop/连续转身/FullBody 下半身姿势与双人副本；[动画说明](../../Content/Main/Character/Hero/Anim/README.md)。
 - 旋转：原生 ConstraintsAndReplay 与真实输入、RootMotion 对照、Authority/Autonomous/Simulated。模拟代理约束与移动复制不同包，存在暂时差值；[实施记录](../Design/character-rotation-policy.md)。

@@ -146,7 +146,7 @@ def files() -> list[Path]:
                ROOT / 'LYRA_LEARNING_GUIDE.md', ROOT / 'UE5 开放世界动作 RPG 架构方案 V2.md',
                ROOT / 'AGENTS.md', ROOT / 'Docs/AI_DEVELOPMENT.md']
     result += list((ROOT / 'Plugins').rglob('*.uplugin'))
-    for directory in ('BasicAttack', 'DefinitionCombo', 'WeaponPresentation', 'CombatHitWindows'):
+    for directory in ('BasicAttack', 'DefinitionCombo', 'WeaponPresentation', 'CombatHitWindows', 'CharacterStats'):
         result += list((ROOT / 'Content/CodexText' / directory).rglob('*'))
     result += [p for p in (ROOT / 'Docs').rglob('*')
                if p.suffix in {'.md', '.py'} and 'Reference' not in p.relative_to(ROOT / 'Docs').parts]
@@ -238,7 +238,7 @@ def refresh() -> int:
     write('gameplay-tags.md', 'GameplayTag 原生注册索引', '\n'.join(body))
 
     asset_roots = [ROOT / 'Content/Main'] + [ROOT / 'Content/CodexText' / name
-                   for name in ('BasicAttack', 'DefinitionCombo', 'WeaponPresentation', 'CombatHitWindows')]
+                   for name in ('BasicAttack', 'DefinitionCombo', 'WeaponPresentation', 'CombatHitWindows', 'CharacterStats')]
     assets = sorted(p for directory in asset_roots for p in directory.rglob('*') if p.is_file())
     body = ['仅确认磁盘路径与大小，未解析二进制资产。IA 的轴类型、蓝图父类、DA 引用等请在编辑器验证。\n']
     last = None
@@ -286,7 +286,7 @@ def refresh() -> int:
     tracked = files()
     data = {'schema': 1, 'generated_at_utc': datetime.now(timezone.utc).isoformat(),
             'git_head': git('rev-parse', 'HEAD'),
-            'scope': 'Source/**, Config/**, Content/Main/**, Content/CodexText/{BasicAttack,DefinitionCombo,WeaponPresentation,CombatHitWindows}/**, uproject, root documents, Docs/**/*.md/py except Reference, AGENTS.md, .cursor/rules/*.mdc, Plugins/**/*.uplugin; excludes plugin implementation and generated Reference',
+            'scope': 'Source/**, Config/**, Content/Main/**, Content/CodexText/{BasicAttack,DefinitionCombo,WeaponPresentation,CombatHitWindows,CharacterStats}/**, uproject, root documents, Docs/**/*.md/py except Reference, AGENTS.md, .cursor/rules/*.mdc, Plugins/**/*.uplugin; excludes plugin implementation and generated Reference',
             'files': {p.relative_to(ROOT).as_posix(): digest(p) for p in tracked}}
     SNAPSHOT.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     status = git('status', '--short', '--untracked-files=no')

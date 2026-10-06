@@ -56,7 +56,7 @@ FullBody 期间程序性根骨 Yaw 修正随蒙太奇覆盖权重退出，避免
 
 新增 Public/Private/Component/HodgeCharacterRotationComponent.h/.cpp；修改 CombatCharacter、CharacterMovement、HodgeAnimInstance 和 HodgeGameplayTags。编辑器辅助如需对当前 Main 动画图写入，仅扩展已授权动画目录的限制，不引入 Runtime 的 Editor 依赖。
 
-资产只涉及当前 Main 主图/固定层与 `/Game/CodexText/BasicAttack/DA_Attack01_Timeline` 至 05。先备份这些资产及本轮源码基线，保留用户已有迁移、清理、重命名和蒙太奇改动。
+资产只涉及当前 Main 主图/固定层与 `/Game/Main/Character/Hero/Ability/BasicAttack/Timeline/DA_Attack01_Timeline` 至 05。先备份这些资产及本轮源码基线，保留用户已有迁移、清理、重命名和蒙太奇改动。
 
 ## 验证与交付标准
 
@@ -137,6 +137,6 @@ python -X utf8 Saved/LyraAnimationWork/bridge_client.py python Saved/LyraAnimati
 ## 编辑器验收与后续调参
 
 1. 打开 `/Game/ThirdPerson/Maps/ThirdPersonMap`，Play 后连续旋转镜头并攻击：出手前可转，锁窗口内身体的攻击基准不跟着镜头转，窗口后平滑恢复。
-2. 打开 `/Game/CodexText/BasicAttack/DA_Attack01_Timeline` 至 05，在 Events 中找到 EventID=RotationLock、Kind=Window、WindowTag=Status.Rotation.Locked，调整 StartTime/EndTime。只修改时间，不通过 EventID 编写玩法分支。
+2. 打开 `/Game/Main/Character/Hero/Ability/BasicAttack/Timeline/DA_Attack01_Timeline` 至 05，在 Events 中找到 EventID=RotationLock、Kind=Window、WindowTag=Status.Rotation.Locked，调整 StartTime/EndTime。只修改时间，不通过 EventID 编写玩法分支。
 3. 角色继承的 CharacterRotationComponent 提供 RecoveryTurnRate（默认 360 度/秒），用于窗口结束后的朝向恢复。基础移动/视角仍用现有配置。
 4. 需要严格禁止输入转向的命中窗口，必须位于旋转锁区间内；需要蒙太奇自身转身的技能，应先设计明确的授权策略，不直接绕过组件写 Actor Rotation。

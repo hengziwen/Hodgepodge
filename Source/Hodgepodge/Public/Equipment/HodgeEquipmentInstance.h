@@ -11,6 +11,7 @@ class AActor;
 class APawn;
 struct FFrame;
 struct FHodgeEquipmentActorToSpawn;
+class UHodgeEquipmentStatProfile;
 
 /**
  * UHodgeEquipmentInstance
@@ -49,6 +50,10 @@ public:
 	// 获取当前装备实例所属的 Pawn。
 	UFUNCTION(BlueprintPure, Category=Equipment)
 	APawn* GetPawn() const;
+	UFUNCTION(BlueprintPure, Category="Hodge|Attributes") int32 GetEquipmentLevel() const { return EquipmentLevel; }
+	UFUNCTION(BlueprintPure, Category="Hodge|Attributes") FGuid GetEquipmentId() const { return EquipmentId; }
+	void SetStatIdentity(FGuid Id, int32 Level, const UHodgeEquipmentStatProfile* Profile);
+	const UHodgeEquipmentStatProfile* GetStatProfile() const { return StatProfile; }
 
 	// 获取指定 Pawn 类型的所属 Pawn，DeterminesOutputType 让蓝图输出类型跟随 PawnType。
 	UFUNCTION(BlueprintPure, Category=Equipment, meta=(DeterminesOutputType=PawnType))
@@ -101,6 +106,9 @@ private:
 	// 创建或赋予这件装备的来源对象，并通过网络复制给客户端。
 	UPROPERTY(ReplicatedUsing=OnRep_Instigator)
 	TObjectPtr<UObject> Instigator;
+	UPROPERTY(Replicated) FGuid EquipmentId;
+	UPROPERTY(Replicated) int32 EquipmentLevel = 1;
+	UPROPERTY(Replicated) TObjectPtr<const UHodgeEquipmentStatProfile> StatProfile;
 
 	// 当前装备实例生成的装备 Actor 列表，并通过网络进行复制。
 	UPROPERTY(ReplicatedUsing=OnRep_SpawnedActors)

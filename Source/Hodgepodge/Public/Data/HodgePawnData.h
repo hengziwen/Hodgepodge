@@ -14,6 +14,7 @@
 class UHodgeAbilitySet;
 class UHodgeComboDefinition;
 class UHodgeEquipmentDefinition;
+class UHodgeCharacterStatProfile;
 
 // CameraMode：定义 Pawn 默认使用的相机模式。
 class UHodgeCameraMode;
@@ -51,6 +52,8 @@ public:
 	// ASC 就绪后由服务器装备的默认武器，留空表示不自动装备。
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hodge|Equipment")
 	TSubclassOf<UHodgeEquipmentDefinition> DefaultWeaponDefinition;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Attributes")
+	TObjectPtr<UHodgeCharacterStatProfile> StatProfile;
 
 	// Ability sets to grant to this pawn's ability system.
 	// 需要授予给这个 Pawn 的 ASC 的 AbilitySet 集合。

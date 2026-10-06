@@ -6,6 +6,8 @@
 
 ## 配置所有权
 
+2026-10-06 属性首版：PawnData.StatProfile 引用角色成长配置，EquipmentDefinition.StatProfile 引用装备加成配置；正式角色用 DA_Pover_Stats，默认剑用 DA_Sword_Stats。曲线在 Main/Data/CharacterStats，角色基础为 Instant GE、装备为独立 Infinite GE。详见 [实现记录](../Design/character-attribute-growth.md)。
+
 Experience 声明 GameFeature、Actions/ActionSets 与 DefaultPawnData。PawnData 提供 PawnClass、AbilitySets、ComboDefinition、DefaultWeaponDefinition、InputConfig、DefaultCameraMode、TagRelationshipMapping；字段均已存在，不能再说只有 PawnClass。
 
 当前 Experience 指向 `/Game/Main/Data/PawnData/DA_Dafult_PawnData`，输入 DA_HodgeInputConfig、相机 CM_ThirdPerson、默认装备 BP_Equipment_Sword、连段 DA_LightCombo。AbilitySets 为 Main/Data/AbilitySet/DA_Pover 与 AS_LightCombo，关系映射为空。DefaultGame.ini 的 `/Game/Main/Data/DA_Dafult_PawnData` 只是回退入口。

@@ -2,6 +2,9 @@
 
 
 #include "AbilitySystem/Abilities/HodgeGameplayAbility.h"
+#include "Core/PlayState/HodgePlayerState.h"
+#include "Character/HodgeHeroCharacter.h"
+#include "AbilitySystem/AttributeSet/HodgeHealthSet.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemGlobals.h"
@@ -194,6 +197,21 @@ bool UHodgeGameplayAbility::CanActivateAbility(const FGameplayAbilitySpecHandle 
 		return false;
 	}
 
+    if (bRequiresInitializedAttributes && ActorInfo->AvatarActor.IsValid() && ActorInfo->AvatarActor->IsA<AHodgeHeroCharacter>())
+    {
+        const auto* PS = Cast<AHodgePlayerState>(ActorInfo->OwnerActor.Get());
+        if (!PS || !PS->AreAttributesReadyFor(Cast<APawn>(ActorInfo->AvatarActor.Get())))
+        {
+            if (OptionalRelevantTags) { OptionalRelevantTags->AddTag(HodgeGameplayTags::Ability_ActivateFail_AttributesNotReady); }
+            return false;
+        }
+		const auto* Health = ActorInfo->AbilitySystemComponent->GetSet<UHodgeHealthSet>();
+		if (!Health || Health->GetHealth() <= 0.f)
+		{
+			if (OptionalRelevantTags) { OptionalRelevantTags->AddTag(HodgeGameplayTags::Ability_ActivateFail_IsDead); }
+			return false;
+		}
+    }
 	// 先执行 UGameplayAbility 原本的通用激活条件检查。
 	if (!Super::CanActivateAbility(Handle, ActorInfo, SourceTags, TargetTags, OptionalRelevantTags))
 	{

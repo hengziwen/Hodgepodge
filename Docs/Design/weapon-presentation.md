@@ -20,7 +20,7 @@
 
 首版时间默认：显现 0.08 秒、收回宽限 0.06 秒、回背 0.3 秒、悬浮驻留 2 秒、消隐 0.35 秒。均为项目初始调参值，不宣称是鸣潮原值。悬浮可配置幅度、频率；材质参数 WeaponVisibility 表示 0 隐藏、1 完全显现。
 
-新表现资产放 /Game/CodexText/WeaponPresentation。正式装备定义引用新表现 Actor，原武器 Actor、实例蓝图和原始模型/材质保留。装备实例配置表现 Profile，五个普攻定义配置武器使用窗口，现有 Timeline 追加窗口；其他事件、连段顺序、攻击动画保持原状。
+新表现资产放 /Game/Main/Weapon/Presentation。正式装备定义引用新表现 Actor，原武器 Actor、实例蓝图和原始模型/材质保留。装备实例配置表现 Profile，五个普攻定义配置武器使用窗口，现有 Timeline 追加窗口；其他事件、连段顺序、攻击动画保持原状。
 
 ## 请求、状态与计时
 
@@ -70,7 +70,7 @@ Editor 关闭后按项目约定常规构建 Editor 和 Game；原生测试覆盖
 
 已实现本方案的实例状态、请求句柄、生命周期清理、复制及预测拒绝恢复。装备 Actor 引用使用 RepNotify；实例迟到映射时补初始化。原 BP_Weapon_Base 与 BP_Weapon_Sword 的磁盘内容与备份一致，原始 Wuwa 模型和材质未修改。
 
-新增资产为 /Game/CodexText/WeaponPresentation 下 M_SwordPresentation、MI_SwordPresentation、DA_SwordPresentation、BP_Weapon_SwordPresentation。材质复制原 M_Weapon_Restored 的着色和 MI 的参数，以 WeaponVisibility 和空间噪声产生遮罩消隐。原武器模型长轴为 X，实机检查后将背部姿势设为相对 Pawn 根 (-30,15,35) cm、Pitch=-90/Yaw=15/Roll=0、Scale=1，使剑从上背向下悬浮。
+新增资产为 /Game/Main/Weapon/Presentation 下 M_SwordPresentation、MI_SwordPresentation、DA_SwordPresentation、BP_Weapon_SwordPresentation。材质复制原 M_Weapon_Restored 的着色和 MI 的参数，以 WeaponVisibility 和空间噪声产生遮罩消隐。原武器模型长轴为 X，实机检查后将背部姿势设为相对 Pawn 根 (-30,15,35) cm、Pitch=-90/Yaw=15/Roll=0、Scale=1，使剑从上背向下悬浮。
 
 正式装备定义引用新 Actor，BP_WeaponInstance_Sword 配置上述 Profile。五个普攻定义和原 Timeline 接入 Status.Weapon.Hand 区间；既有事件保持不变。角色未增加常驻组件，也未添加额外 Runtime 模块。
 
@@ -105,8 +105,8 @@ Editor 关闭后按项目约定常规构建 Editor 和 Game；原生测试覆盖
 ## 使用与调参
 
 1. 在正式地图攻击：默认无武器显示，起手显现；停止继续攻击后，武器回背悬浮 2 秒再消隐。连续连段不会每段回背。
-2. /Game/CodexText/WeaponPresentation/DA_SwordPresentation：HandSocket、HandOffset、BackSocket（默认 WeaponOnBack）、BackTransform（插槽内偏移）、ReturnArcOffset、ReturnCurve、DrawSeconds、ReturnGraceSeconds、ReturnSeconds、HoverSeconds、FadeSeconds、HoverAmplitude、HoverFrequency 与 VisibilityParameter 已存在并可编辑。调整角色背部基础位置/朝向时编辑 WeaponOnBack；BackTransform 默认 Location/Rotation=0、Scale=1。
-3. /Game/CodexText/BasicAttack/DA_Attack01_Timeline 至 05：EventID=WeaponHand，WindowTag=Status.Weapon.Hand，调整 EndTime 控制角色何时释放武器。此时间跟随蒙太奇速度，不用另改延迟节点。
+2. /Game/Main/Weapon/Presentation/DA_SwordPresentation：HandSocket、HandOffset、BackSocket（默认 WeaponOnBack）、BackTransform（插槽内偏移）、ReturnArcOffset、ReturnCurve、DrawSeconds、ReturnGraceSeconds、ReturnSeconds、HoverSeconds、FadeSeconds、HoverAmplitude、HoverFrequency 与 VisibilityParameter 已存在并可编辑。调整角色背部基础位置/朝向时编辑 WeaponOnBack；BackTransform 默认 Location/Rotation=0、Scale=1。
+3. /Game/Main/Character/Hero/Ability/BasicAttack/Timeline/DA_Attack01_Timeline 至 05：EventID=WeaponHand，WindowTag=Status.Weapon.Hand，调整 EndTime 控制角色何时释放武器。此时间跟随蒙太奇速度，不用另改延迟节点。
 4. 其他 Definition 技能需要武器时，配置 WeaponUseWindowTag 并添加对应 Timeline 区间；统一清理会处理技能取消。非 Definition 技能可申请 AcquireHandUse 并在 EndAbility 释放相应句柄，不能用全局清空抢走其他技能请求。
 
 ## 2026-10-06 WeaponOnBack 验证记录

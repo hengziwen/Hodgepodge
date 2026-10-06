@@ -7,12 +7,14 @@
 #include "GenericTeamAgentInterface.h"
 #include "HodgePlayerStateBase.h"
 #include "AbilitySystem/GameplayTagStack.h"
+#include "AbilitySystem/Stats/HodgeAttributeTypes.h"
 #include "HodgePlayerState.generated.h"
 
 class UHodgeExperienceDefinition;
 class UHodgePawnData;
 class UHodgeAbilitySystemComponent;
 class AHodgePlayerController;
+class UHodgeAttributeCoordinator;
 
 /**
  * @brief 玩家当前的连接状态。
@@ -55,6 +57,14 @@ public:
 	// 获取玩家专属的 AbilitySystemComponent。
 	UFUNCTION(BlueprintCallable, Category = "Hodge|PlayerState")
 	UHodgeAbilitySystemComponent* GetHodgeAbilitySystemComponent() const { return AbilitySystemComponent; }
+	UFUNCTION(BlueprintPure, Category="Hodge|Attributes") int32 GetCharacterLevel() const { return CharacterProgression.Level; }
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category="Hodge|Attributes") bool SetCharacterLevel(int32 Level);
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category="Hodge|Attributes") bool RestoreCharacterHealth(float Health);
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category="Hodge|Attributes") bool InitializeCharacterProgression(FGuid CharacterId, int32 Level, float SavedHealth = -1.f);
+	UFUNCTION(BlueprintPure, Category="Hodge|Attributes") FHodgeAttributeReadyState GetAttributeReadyState() const { return AttributeReadyState; }
+	UHodgeAttributeCoordinator* GetAttributeCoordinator() const { return AttributeCoordinator; }
+	bool AreAttributesReadyFor(const APawn* Avatar) const;
+	void NotifyAttributeReadiness();
 
 	// 实现 IAbilitySystemInterface，返回玩家的 AbilitySystemComponent。
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
@@ -166,6 +176,12 @@ public:
 private:
 	// Experience 加载完成后的回调，用于根据当前 Experience 初始化玩家状态。
 	void OnExperienceLoaded(const UHodgeExperienceDefinition* CurrentExperience);
+	friend class UHodgeAttributeCoordinator;
+	UPROPERTY(VisibleAnywhere, Category="Hodge|Attributes") TObjectPtr<UHodgeAttributeCoordinator> AttributeCoordinator;
+	UPROPERTY(Replicated) FHodgeCharacterProgression CharacterProgression;
+	UPROPERTY(ReplicatedUsing=OnRep_AttributeReadyState) FHodgeAttributeReadyState AttributeReadyState;
+	UPROPERTY(Replicated) TArray<FHodgeOwnedEquipmentState> OwnedEquipmentStates;
+	UFUNCTION() void OnRep_AttributeReadyState();
 
 protected:
 	// PawnData 复制到客户端后触发的回调。

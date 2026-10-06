@@ -9,6 +9,7 @@
 ## Ability
 
 - `Ability.ActivateFail.ActivationGroup` — `Ability_ActivateFail_ActivationGroup`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L22
+- `Ability.ActivateFail.AttributesNotReady` — `Ability_ActivateFail_AttributesNotReady`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L294
 - `Ability.ActivateFail.Cooldown` — `Ability_ActivateFail_Cooldown`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L17
 - `Ability.ActivateFail.Cost` — `Ability_ActivateFail_Cost`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L18
 - `Ability.ActivateFail.IsDead` — `Ability_ActivateFail_IsDead`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L16
@@ -20,7 +21,7 @@
 - `Ability.Grenade.Duration.Message` — `Ability_Grenade_Duration_Message`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L38
 - `Ability.Interaction.Activate` — `Ability_Interaction_Activate`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L39
 - `Ability.Interaction.Duration.Message` — `Ability_Interaction_Duration_Message`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L40
-- `Ability.PlayMontageOnActivateFail.Message` — `TAG_ABILITY_PLAY_MONTAGE_FAILURE_MESSAGE`；[HodgeGameplayAbility.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility.cpp) L34
+- `Ability.PlayMontageOnActivateFail.Message` — `TAG_ABILITY_PLAY_MONTAGE_FAILURE_MESSAGE`；[HodgeGameplayAbility.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility.cpp) L37
 - `Ability.Respawn.Completed.Message` — `Ability_Respawn_Completed_Message`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L41
 - `Ability.Respawn.Duration.Message` — `Ability_Respawn_Duration_Message`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L42
 - `Ability.Type` — `Ability_Type`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L47
@@ -43,13 +44,13 @@
 - `Ability.Type.StatusChange` — `Ability_Type_StatusChange`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L64
 - `Ability.Type.StatusChange.Death` — `Ability_Type_StatusChange_Death`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L65
 - `Ability.Type.StatusChange.Spawning` — `Ability_Type_StatusChange_Spawning`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L66
-- `Ability.UserFacingSimpleActivateFail.Message` — `TAG_ABILITY_SIMPLE_FAILURE_MESSAGE`；[HodgeGameplayAbility.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility.cpp) L31
+- `Ability.UserFacingSimpleActivateFail.Message` — `TAG_ABILITY_SIMPLE_FAILURE_MESSAGE`；[HodgeGameplayAbility.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility.cpp) L34
 - `Ability.Weapon.NoFiring` — `Ability_Weapon_NoFiring`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L32
 
 ## Cheat
 
-- `Cheat.GodMode` — `Cheat_GodMode`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L307
-- `Cheat.UnlimitedHealth` — `Cheat_UnlimitedHealth`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L308
+- `Cheat.GodMode` — `Cheat_GodMode`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L310
+- `Cheat.UnlimitedHealth` — `Cheat_UnlimitedHealth`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L311
 
 ## Combat
 
@@ -191,12 +192,12 @@
 
 ## Movement
 
-- `Movement.Mode.Custom` — `Movement_Mode_Custom`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L328
-- `Movement.Mode.Falling` — `Movement_Mode_Falling`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L325
-- `Movement.Mode.Flying` — `Movement_Mode_Flying`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L327
-- `Movement.Mode.NavWalking` — `Movement_Mode_NavWalking`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L324
-- `Movement.Mode.Swimming` — `Movement_Mode_Swimming`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L326
-- `Movement.Mode.Walking` — `Movement_Mode_Walking`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L323
+- `Movement.Mode.Custom` — `Movement_Mode_Custom`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L331
+- `Movement.Mode.Falling` — `Movement_Mode_Falling`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L328
+- `Movement.Mode.Flying` — `Movement_Mode_Flying`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L330
+- `Movement.Mode.NavWalking` — `Movement_Mode_NavWalking`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L327
+- `Movement.Mode.Swimming` — `Movement_Mode_Swimming`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L329
+- `Movement.Mode.Walking` — `Movement_Mode_Walking`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L326
 
 ## Platform
 
@@ -221,9 +222,11 @@
 
 ## SetByCaller
 
-- `SetByCaller.Damage` — `SetByCaller_Damage`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L301
+- `SetByCaller.Damage` — `SetByCaller_Damage`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L304
 - `SetByCaller.DamageMultiplier` — `SetByCaller_DamageMultiplier`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L291
-- `SetByCaller.Heal` — `SetByCaller_Heal`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L302
+- `SetByCaller.Heal` — `SetByCaller_Heal`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L305
+- `SetByCaller.Stat.BaseDamage` — `SetByCaller_Stat_BaseDamage`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L293
+- `SetByCaller.Stat.MaxHealth` — `SetByCaller_Stat_MaxHealth`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L292
 
 ## ShooterGame
 
@@ -233,9 +236,9 @@
 
 - `Status.Attack` — `Status_Attack`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L276
 - `Status.Attack.Active` — `Status_Attack_Active`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L280
-- `Status.Attack.Cancel` — `Status_Attack_Cancel`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L294
-- `Status.Attack.Cancel.Move` — `Status_Attack_Cancel_Move`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L295
-- `Status.Attack.Cancel.NextAttack` — `Status_Attack_Cancel_NextAttack`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L296
+- `Status.Attack.Cancel` — `Status_Attack_Cancel`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L297
+- `Status.Attack.Cancel.Move` — `Status_Attack_Cancel_Move`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L298
+- `Status.Attack.Cancel.NextAttack` — `Status_Attack_Cancel_NextAttack`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L299
 - `Status.Attack.HitCheck.Body` — `Status_Attack_HitCheck_Body`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L284
 - `Status.Attack.HitCheck.HitBox` — `Status_Attack_HitCheck_HitBox`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L285
 - `Status.Attack.HitCheck.Weapon` — `Status_Attack_HitCheck_Weapon`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L283
@@ -259,11 +262,11 @@
 
 ## UI
 
-- `UI.Action.Back` — `UI_Action_Back`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L313
+- `UI.Action.Back` — `UI_Action_Back`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L316
 - `UI.Action.Escape` — `TAG_UI_ACTION_ESCAPE`；[HodgeHUDLayout.cpp](../../../Source/Hodgepodge/Private/UI/HodgeHUDLayout.cpp) L70
-- `UI.Action.Escape` — `UI_Action_Escape`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L314
-- `UI.Layer.Game` — `UI_Layer_Game`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L315
-- `UI.Layer.GameMenu` — `UI_Layer_GameMenu`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L316
+- `UI.Action.Escape` — `UI_Action_Escape`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L317
+- `UI.Layer.Game` — `UI_Layer_Game`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L318
+- `UI.Layer.GameMenu` — `UI_Layer_GameMenu`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L319
 - `UI.Layer.Menu` — `TAG_UI_LAYER_MENU`；[HodgeHUDLayout.cpp](../../../Source/Hodgepodge/Private/UI/HodgeHUDLayout.cpp) L66
-- `UI.Layer.Menu` — `UI_Layer_Menu`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L317
-- `UI.Layer.Modal` — `UI_Layer_Modal`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L318
+- `UI.Layer.Menu` — `UI_Layer_Menu`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L320
+- `UI.Layer.Modal` — `UI_Layer_Modal`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L321

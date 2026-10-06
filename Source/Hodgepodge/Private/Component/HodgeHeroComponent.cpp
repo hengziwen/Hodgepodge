@@ -249,9 +249,8 @@ bool UHodgeHeroComponent::CanChangeInitState(UGameFrameworkComponentManager* Man
 	else if (CurrentState == HodgeGameplayTags::InitState_DataInitialized && DesiredState ==
 		HodgeGameplayTags::InitState_GameplayReady)
 	{
-		// TODO add ability initialization checks?
-		// 当前没有额外检查，DataInitialized 后直接允许进入 GameplayReady。
-		return true;
+        const auto* PS = GetPlayerState<AHodgePlayerState>();
+        return PS && PS->AreAttributesReadyFor(Pawn);
 	}
 
 	// 其他未定义的状态切换全部禁止。

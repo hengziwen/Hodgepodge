@@ -285,6 +285,9 @@ namespace HodgeGameplayTags
 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Combat_Source_Hitbox_Chest);
 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEffect_Damage_AllowFriendlyFire);
 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(SetByCaller_DamageMultiplier);
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(SetByCaller_Stat_MaxHealth);
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(SetByCaller_Stat_BaseDamage);
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_ActivateFail_AttributesNotReady);
 
 	// 取消窗口标签：同样由 UHodgeAbilityTask_PlayTimeline 按区间自动加减（loose tag，不复制）。
 	// 它与上面的"阶段标签"是两件事：

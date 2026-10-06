@@ -3,6 +3,9 @@
 
 // AHodgePlayerState 类定义。
 #include "Core/PlayState/HodgePlayerState.h"
+#include "AbilitySystem/Stats/HodgeAttributeCoordinator.h"
+#include "Component/HodgeHeroComponent.h"
+#include "GameFramework/Pawn.h"
 
 // 项目自定义 AbilitySystemComponent。
 #include "AbilitySystem/HodgeAbilitySystemComponent.h"
@@ -51,6 +54,7 @@ AHodgePlayerState::AHodgePlayerState(const FObjectInitializer& ObjectInitializer
 	// 创建 HealthSet，并保留强引用，确保 ASC 初始化发现 AttributeSet 之前不会被 GC 回收。
 	HealthSet = CreateDefaultSubobject<UHodgeHealthSet>(TEXT("HealthSet"));
 	CombatSet = CreateDefaultSubobject<UHodgeCombatSet>(TEXT("CombatSet"));
+	AttributeCoordinator = CreateDefaultSubobject<UHodgeAttributeCoordinator>(TEXT("AttributeCoordinator"));
 
 	// AbilitySystemComponent needs to be updated at a high frequency.
 	// PlayerState 承载 ASC 和视角等高频同步数据，因此提高网络更新频率。
@@ -202,6 +206,9 @@ void AHodgePlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 {
 	// 先注册父类复制属性。
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(ThisClass, CharacterProgression);
+	DOREPLIFETIME(ThisClass, AttributeReadyState);
+	DOREPLIFETIME_CONDITION(ThisClass, OwnedEquipmentStates, COND_OwnerOnly);
 
 	// 创建一组公共复制参数。
 	FDoRepLifetimeParams SharedParams;
@@ -395,4 +402,44 @@ void AHodgePlayerState::OnRep_MySquadID()
 {
 	//@TODO: Let the squad subsystem know (once that exists)
 	// TODO：后续 SquadSubsystem 完成后，在这里通知小队系统当前玩家的小队发生变化。
+}
+
+bool AHodgePlayerState::SetCharacterLevel(int32 Level)
+{
+	return HasAuthority() && AttributeCoordinator && AttributeCoordinator->SetCharacterLevel(Level);
+}
+
+bool AHodgePlayerState::RestoreCharacterHealth(float Health)
+{
+	return HasAuthority() && AttributeCoordinator && AttributeCoordinator->RestoreHealth(Health);
+}
+
+bool AHodgePlayerState::InitializeCharacterProgression(FGuid CharacterId, int32 Level, float SavedHealth)
+{
+	if (!HasAuthority() || CharacterProgression.CharacterId.IsValid() || AttributeReadyState.LifeGeneration != 0 || Level < 1 || Level > 1000 || !FMath::IsFinite(SavedHealth) || SavedHealth < -1.f) { return false; }
+	if (SavedHealth >= 0.f && !AttributeCoordinator->SetInitialSavedHealth(SavedHealth)) { return false; }
+	CharacterProgression.CharacterId = CharacterId.IsValid() ? CharacterId : FGuid::NewGuid();
+	CharacterProgression.Level = Level;
+	++CharacterProgression.Revision;
+	ForceNetUpdate();
+	return true;
+}
+
+bool AHodgePlayerState::AreAttributesReadyFor(const APawn* Avatar) const
+{
+	return Avatar && AttributeReadyState.bReady && AttributeReadyState.Avatar == Avatar
+		&& AbilitySystemComponent && AbilitySystemComponent->GetAvatarActor() == Avatar;
+}
+
+void AHodgePlayerState::NotifyAttributeReadiness()
+{
+	if (APawn* Avatar = AttributeReadyState.Avatar)
+	{
+		if (auto* Hero = UHodgeHeroComponent::FindHeroComponent(Avatar)) { Hero->CheckDefaultInitialization(); }
+	}
+}
+
+void AHodgePlayerState::OnRep_AttributeReadyState()
+{
+	NotifyAttributeReadiness();
 }

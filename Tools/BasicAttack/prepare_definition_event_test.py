@@ -2,10 +2,10 @@
 import json
 import unreal
 
-root = '/Game/CodexText/DefinitionCombo/'
+root = '/Game/Main/Character/Hero/Ability/BasicAttack/'
 backup = '/Game/CodexText/Backups/DefinitionCombo_20260928/'
-table = unreal.load_asset(root + 'DT_LightCombo')
-timeline = unreal.load_asset(root + 'DA_Attack_1_Timeline')
+table = unreal.load_asset('/Game/Main/Data/Combo/DT_LightCombo')
+timeline = unreal.load_asset(root + 'DA_Attack_1').get_editor_property('execution_config').timeline_task_config.timeline
 for asset in [table, timeline]:
     destination = backup + asset.get_name() + '_BeforeEventTest'
     if not unreal.EditorAssetLibrary.does_asset_exist(destination):

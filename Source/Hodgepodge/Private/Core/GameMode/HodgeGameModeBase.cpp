@@ -1,5 +1,6 @@
-﻿// HodgeGameModeBase 的实现文件。
+// HodgeGameModeBase 的实现文件。
 #include "Core/GameMode/HodgeGameModeBase.h"
+#include "AbilitySystem/Stats/HodgeAttributeCoordinator.h"
 
 #include "GameMapsSettings.h"
 #include "Character/HodgeCharacterBase.h"
@@ -631,4 +632,13 @@ void AHodgeGameModeBase::FailedToRestartPlayer(AController* NewPlayer)
 		UE_LOG(LogTemp, Verbose, TEXT("FailedToRestartPlayer(%s) but there's no pawn class so giving up."),
 		       *GetPathNameSafe(NewPlayer));
 	}
+}
+
+void AHodgeGameModeBase::RestartPlayer(AController* NewPlayer)
+{
+    if (NewPlayer && !NewPlayer->GetPawn())
+    {
+        if (auto* PS = NewPlayer->GetPlayerState<AHodgePlayerState>()) { PS->GetAttributeCoordinator()->ExpectRespawn(); }
+    }
+    Super::RestartPlayer(NewPlayer);
 }

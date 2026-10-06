@@ -1,6 +1,8 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "Data/HodgeAbilitySet.h"
+#include "AbilitySystem/AttributeSet/HodgeHealthSet.h"
+#include "AbilitySystem/AttributeSet/HodgeCombatSet.h"
 
 #include "AbilitySystem/Abilities/HodgeGameplayAbility.h"
 #include "AbilitySystem/HodgeAbilitySystemComponent.h"
@@ -106,6 +108,17 @@ void UHodgeAbilitySet::GiveToAbilitySystem(UHodgeAbilitySystemComponent* HodgeAS
 			continue;
 		}
 
+        const bool bCoreSet = SetToGrant.AttributeSet->IsChildOf(UHodgeHealthSet::StaticClass()) || SetToGrant.AttributeSet->IsChildOf(UHodgeCombatSet::StaticClass());
+        if (bCoreSet)
+        {
+            bool bExists = false;
+            for (const UAttributeSet* Existing : HodgeASC->GetSpawnedAttributes())
+            {
+                bExists |= Existing && ((SetToGrant.AttributeSet->IsChildOf(UHodgeHealthSet::StaticClass()) && Existing->IsA<UHodgeHealthSet>())
+                    || (SetToGrant.AttributeSet->IsChildOf(UHodgeCombatSet::StaticClass()) && Existing->IsA<UHodgeCombatSet>()));
+            }
+            if (bExists) { UE_LOG(LogTemp, Error, TEXT("AbilitySet %s cannot duplicate a core AttributeSet"), *GetName()); continue; }
+        }
 		// 根据配置创建 AttributeSet 实例，Owner 设置为 ASC 的 OwnerActor
 		UAttributeSet* NewSet = NewObject<UAttributeSet>(HodgeASC->GetOwner(), SetToGrant.AttributeSet);
 

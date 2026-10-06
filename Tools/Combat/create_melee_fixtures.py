@@ -88,8 +88,8 @@ modifier.import_text('(Attribute=(AttributeName="BaseDamage",Attribute=/Script/H
 assert 'HodgeCombatSet:BaseDamage' in modifier.export_text(), modifier.export_text()
 effect_default.set_editor_property('modifiers', [modifier])
 
-original_set = unreal.load_asset('/Game/CodexText/DefinitionCombo/AS_LightCombo')
-original_combo = unreal.load_asset('/Game/CodexText/DefinitionCombo/DA_LightCombo')
+original_set = unreal.load_asset('/Game/Main/Data/AbilitySet/AS_LightCombo')
+original_combo = unreal.load_asset('/Game/Main/Data/Combo/DA_LightCombo')
 combo_table = duplicate(original_combo.get_editor_property('combo_table').get_path_name(), 'DT_MeleeTestCombo')
 rows = json.loads(unreal.DataTableFunctionLibrary.export_data_table_to_json_string(combo_table))
 rows = [row for row in rows if row['Name'] in ('Combo.Entry', 'Combo.Light.01')]

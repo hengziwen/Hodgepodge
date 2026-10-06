@@ -5,7 +5,7 @@ import unreal
 
 assert not any(x.get_world() for x in unreal.ObjectIterator(unreal.EnhancedInputLocalPlayerSubsystem)
                if 'Default__' not in x.get_name()), 'Stop PIE before migration'
-root = '/Game/CodexText/DefinitionCombo/'
+root = '/Game/Main/Character/Hero/Ability/BasicAttack/'
 pawn = unreal.load_asset('/Game/Main/Data/DA_Dafult_PawnData')
 legacy = unreal.load_asset('/Game/Main/Data/DA_Pover')
 before = {
@@ -16,7 +16,7 @@ prepare = Path(unreal.Paths.convert_relative_path_to_full(unreal.Paths.project_d
 exec(compile(prepare.read_text(encoding='utf-8').replace(
     'unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_begin_play()', ''), str(prepare), 'exec'))
 validator = unreal.get_editor_subsystem(unreal.EditorValidatorSubsystem)
-assets = [pawn, unreal.load_asset(root + 'DA_LightCombo')]
+assets = [pawn, unreal.load_asset('/Game/Main/Data/Combo/DA_LightCombo')]
 assets += [unreal.load_asset(root + 'DA_Attack_%d' % i) for i in range(1, 6)]
 validation = {}
 for asset in assets:

@@ -15,7 +15,8 @@
 - Source/Hodgepodge/Public 与 Private：反射接口、实现；同类实现集中一个主 cpp。
 - Source/HodgeAbilityEditor：Definition 编辑器、动画文本导入/引用修正/编译诊断，不进入 Game 目标。
 - Content/Main/Character/Hero/Anim：正式主图 ABP_Pover_Base、固定层、骨架、移动和 FullBody 攻击资源。
-- Content/CodexText/DefinitionCombo、BasicAttack、WeaponPresentation：默认玩法仍使用的技能、窗口和武器配置，不能整体清理。
+- Content/Main/Character/Hero/Ability/BasicAttack、Main/Data/Combo、Main/Weapon/Presentation、Main/Data/CharacterStats：正式技能、窗口、连段、武器表现与成长配置。
+- Content/CodexText：菜单、测试夹具、旧资源和历史备份；正式角色依赖的 39 个资产已迁入 Main。
 - Content/CodexText/LyraAnimation：实验地图、测试角色和研究入口；旧 ALS 风格 CodexText 源码仍是另一套实验。
 - Equipment、Combat、Component：默认装备与表现、检测规则与数据、连段/检测协调和旋转约束。
 - UI：CommonUI 迁移层；有停用代码和未接前端依赖，文件数量不代表完成度。

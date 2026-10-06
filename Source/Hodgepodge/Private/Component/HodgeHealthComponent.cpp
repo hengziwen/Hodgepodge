@@ -123,26 +123,27 @@ void UHodgeHealthComponent::InitializeWithAbilitySystem(UHodgeAbilitySystemCompo
 	// 监听 Health 耗尽事件，用于触发死亡相关 GameplayEvent。
 	HealthSet->OnOutOfHealth.AddUObject(this, &ThisClass::HandleOutOfHealth);
 
-	// TEMP: Reset attributes to default values.  Eventually this will be driven by a spread sheet.
-	// 临时逻辑：初始化生命组件时直接把 Health BaseValue 重置为当前 MaxHealth。
-	// 后续可以改为由数据表、PawnData、初始化 GameplayEffect 等数据驱动方式完成。
-	AbilitySystemComponent->SetNumericAttributeBase(UHodgeHealthSet::GetHealthAttribute(), HealthSet->GetMaxHealth());
-
-	// 清理 ASC 上可能残留的死亡状态 GameplayTag。
-	ClearGameplayTags();
+	// 数值与死亡状态由服务器明确的出生/重生入口设置，绑定只建立监听。
 
 	// 主动广播一次当前 Health，使 UI 等监听者初始化时能够立即获得生命值。
 	OnHealthChanged.Broadcast(this, HealthSet->GetHealth(), HealthSet->GetHealth(), nullptr);
 
 	// 主动广播一次当前生命属性状态，使相关监听者能够完成初始化。
-	OnMaxHealthChanged.Broadcast(this, HealthSet->GetHealth(), HealthSet->GetHealth(), nullptr);
+	OnMaxHealthChanged.Broadcast(this, HealthSet->GetMaxHealth(), HealthSet->GetMaxHealth(), nullptr);
+}
+
+void UHodgeHealthComponent::ResetForSpawn()
+{
+	if (!GetOwner()->HasAuthority() || !AbilitySystemComponent || AbilitySystemComponent->GetAvatarActor() != GetOwner()) { return; }
+	DeathState = EHodgeDeathState::NotDead;
+	ClearGameplayTags();
+	GetOwner()->ForceNetUpdate();
 }
 
 // 解除 HealthComponent 与 AbilitySystem 的绑定。
 void UHodgeHealthComponent::UninitializeFromAbilitySystem()
 {
-	// 先清除当前组件维护的死亡状态 GameplayTag。
-	ClearGameplayTags();
+	// 解绑不重置共享 ASC 的当前生命状态。
 
 	// 如果当前已经绑定 HealthSet。
 	if (HealthSet)

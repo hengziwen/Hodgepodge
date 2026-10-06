@@ -4,7 +4,7 @@ import shutil
 from pathlib import Path
 import unreal
 
-root = '/Game/CodexText/DefinitionCombo'
+root = '/Game/Main/Character/Hero/Ability/BasicAttack'
 project = Path(unreal.Paths.convert_relative_path_to_full(unreal.Paths.project_dir()))
 backup = project / 'Saved/Backups/TimelineMontageDuration_20260928'
 backup.mkdir(parents=True, exist_ok=True)
@@ -17,7 +17,7 @@ for index in range(1, 6):
     timeline = config.timeline_task_config.timeline
     assert timeline
     package = timeline.get_path_name().split('.')[0]
-    assert package.startswith('/Game/CodexText/'), package
+    assert package.startswith('/Game/Main/Character/Hero/Ability/BasicAttack/Timeline/'), package
     relative = package.removeprefix('/Game/') + '.uasset'
     source = project / 'Content' / relative
     destination = backup / relative

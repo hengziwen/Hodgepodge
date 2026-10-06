@@ -6,7 +6,7 @@
 
 ## 使用
 
-双击 `/Game/CodexText/DefinitionCombo/DA_Attack_5`（或任意 HodgeAbilityDefinition）打开。
+双击 `/Game/Main/Character/Hero/Ability/BasicAttack/DA_Attack_5`（或任意 HodgeAbilityDefinition）打开。
 
 - 左侧 **Ability Definition**：编辑 AbilityTag、AbilityClass、Montage、倍率、混合和 Timeline 引用。
 - 中间 **Preview**：Play / Pause、Step（源动画 1/30 秒）、Reset（回到 0 秒，不重置配置）、时间输入和预览 Mesh。
@@ -59,6 +59,6 @@ MCP 在编辑器执行 `Automation RunTests Hodge.`，最终 2026-09-29 14:35 �
 
 骨骼 CPU 姿势定位正确不等于渲染画面已刷新：自定义预览世界不 Tick，原先仅 MarkRenderDynamicDataDirty 会留下未提交的帧末更新。SetTime 现更新包围盒、标记变换和骨骼渲染数据，并调用预览世界 SendAllEndOfFrameUpdates；仍不 Tick 游戏逻辑、不触发 Notify、不常驻开启 realtime。
 
-本轮常规 Editor Win64 Development 构建通过；只修改 Editor 代码，未重复 Game 构建。编辑器工作流自动化复查，真实鼠标连续拖动因桌面控制工具启动失败未完成。编译前保存了用户已有未保存修改的 `/Game/CodexText/BasicAttack/DA_Attack05_Timeline`。
+本轮常规 Editor Win64 Development 构建通过；只修改 Editor 代码，未重复 Game 构建。编辑器工作流自动化复查，真实鼠标连续拖动因桌面控制工具启动失败未完成。编译前保存了用户已有未保存修改的 `/Game/Main/Character/Hero/Ability/BasicAttack/Timeline/DA_Attack05_Timeline`。
 
 后续修正：单独提交渲染数据仍不足。`SEditorViewport::Invalidate` 只维持 Slate active timer；须同时 `FEditorViewportClient::Invalidate(false, false)` 才会经 `FSceneViewport::InvalidateDisplay` 设置 `bNeedsRedraw`。每次 Seek 现同时请求视口重绘。工作流测试补充连续前进/后退 Seek，每次先清除重绘标志，再断言重新设置；旧实现会失败，不再仅检查 CPU 姿势。

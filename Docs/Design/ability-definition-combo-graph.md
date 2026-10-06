@@ -418,7 +418,7 @@ Definition 的 Montage 是该次执行总时长的唯一来源。配置好 Monta
 - Timeline 新增 `bUseMontageDuration`（编辑器显示 `Use Montage Duration`）。开启后隐藏手动 `Duration`，旧值仅保留用于兼容，不参与该模式的校验或播放。
 - Montage 模式下，Timeline 独立资产校验检查事件结构、时间数值和窗口关系；上界必须由 Definition 使用 `Montage->GetPlayLength()` 校验。通过独立 Task 播放且没有 Montage 时拒绝启动，避免静默退回旧时钟。
 - Definition 要求引用的 Timeline 开启此选项，并在授予和执行前检查动画边界。旧独立 Timeline 默认保持关闭，继续使用手动 Duration；资产生成脚本为新建 Definition Timeline 自动开启。
-- 当前五个 `DA_Attack_1～5` 实际引用 `/Game/CodexText/BasicAttack/DA_Attack01_Timeline` 至 `DA_Attack05_Timeline`。迁移沿用当前引用，仅修改时长模式，保留事件、窗口及旧 Duration 数值；不改回 `DefinitionCombo` 目录下的历史副本。
+- 当前五个 `DA_Attack_1～5` 实际引用 `/Game/Main/Character/Hero/Ability/BasicAttack/Timeline/DA_Attack01_Timeline` 至 `DA_Attack05_Timeline`。迁移沿用当前引用，仅修改时长模式，保留事件、窗口及旧 Duration 数值；不改回 `DefinitionCombo` 目录下的历史副本。
 - 迁移脚本为 `Tools/BasicAttack/migrate_timeline_montage_duration.py`，原始资产备份位于 `Saved/Backups/TimelineMontageDuration_20260928`。
 
 第 15 节的三项审查缺陷仍保持暂缓；本次不修改其事件派生、时间容差或复制重试逻辑。

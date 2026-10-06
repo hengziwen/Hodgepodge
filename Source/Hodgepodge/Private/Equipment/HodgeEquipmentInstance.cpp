@@ -1,6 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "Equipment/HodgeEquipmentInstance.h"
+#include "Data/HodgeEquipmentStatProfile.h"
 
 // 提供 USkeletalMeshComponent，用于 Character 装备 Actor 的骨骼 Socket 挂接。
 #include "Components/SkeletalMeshComponent.h"
@@ -54,6 +55,9 @@ void UHodgeEquipmentInstance::GetLifetimeReplicatedProps(TArray<FLifetimePropert
 {
 	// 保留父类需要注册的复制属性。
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(ThisClass, EquipmentId);
+	DOREPLIFETIME(ThisClass, EquipmentLevel);
+	DOREPLIFETIME(ThisClass, StatProfile);
 
 	// 将装备来源对象 Instigator 注册为复制属性。
 	DOREPLIFETIME(ThisClass, Instigator);
@@ -182,4 +186,13 @@ void UHodgeEquipmentInstance::OnUnequipped()
 // Instigator 在客户端通过网络复制发生变化时触发，目前没有额外处理逻辑。
 void UHodgeEquipmentInstance::OnRep_Instigator()
 {
+}
+
+void UHodgeEquipmentInstance::SetStatIdentity(FGuid Id, int32 Level, const UHodgeEquipmentStatProfile* Profile)
+{
+    if (!GetPawn() || !GetPawn()->HasAuthority()) { return; }
+    EquipmentId = Id;
+    EquipmentLevel = Level;
+    StatProfile = Profile;
+    GetPawn()->ForceNetUpdate();
 }

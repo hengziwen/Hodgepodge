@@ -14,7 +14,7 @@ combo = pc.get_controlled_pawn().get_component_by_class(unreal.HodgeCombatCompon
 anim = pawn.get_component_by_class(unreal.SkeletalMeshComponent).get_anim_instance()
 action = unreal.load_asset('/Game/Main/Input/InputAction/IA_Attack')
 rows = json.loads(unreal.DataTableFunctionLibrary.export_data_table_to_json_string(
-    unreal.load_asset('/Game/CodexText/DefinitionCombo/DT_LightCombo')))
+    unreal.load_asset('/Game/Main/Data/Combo/DT_LightCombo')))
 next_nodes = {}
 for row in rows:
     for transition in row['Transitions']:
@@ -30,7 +30,7 @@ while node:
 assert sorted(expected) == [1, 2, 3, 4, 5], expected
 assets = []
 for index in range(1, 6):
-    definition = unreal.load_asset('/Game/CodexText/DefinitionCombo/DA_Attack_%d' % index)
+    definition = unreal.load_asset('/Game/Main/Character/Hero/Ability/BasicAttack/DA_Attack_%d' % index)
     config = definition.get_editor_property('execution_config')
     timeline = config.timeline_task_config.timeline
     assert timeline.get_editor_property('use_montage_duration')

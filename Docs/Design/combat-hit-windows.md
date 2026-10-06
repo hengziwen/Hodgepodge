@@ -90,7 +90,7 @@ SourceTag 采用精确匹配。角色来源与所有已装备武器来源合计�
 
 ## 4. 连接 Definition 与 Timeline
 
-项目中已有 `/Game/CodexText/DefinitionCombo/DA_Attack_1` 及 `/Game/CodexText/DefinitionCombo/DA_Attack_1_Timeline`。先从当前 AbilitySet 的 GrantedDefinitions 确认实际引用，再修改对应资产，不修改备份目录。
+项目中已有 `/Game/Main/Character/Hero/Ability/BasicAttack/DA_Attack_1` 及 `/Game/CodexText/DefinitionCombo/DA_Attack_1_Timeline`。先从当前 AbilitySet 的 GrantedDefinitions 确认实际引用，再修改对应资产，不修改备份目录。
 
 在 Timeline 增加一条 Window：
 
@@ -159,7 +159,7 @@ Definition 复制自 DA_Attack_1，保留其 Montage、AbilityClass 和 AbilityT
 
 EditorValidatorSubsystem.validate_assets_with_settings 实测：8 requested、8 checked、8 valid、0 invalid、0 warnings、0 skipped。配置合法不代表来源组件、伤害属性和受击目标已在运行时接好。
 
-另一个已核实的引用：原 `/Game/CodexText/DefinitionCombo/DA_Attack_1` 当前实际引用 `/Game/CodexText/BasicAttack/DA_Attack01_Timeline`，不是同目录下的 DA_Attack_1_Timeline。修改前始终从 ExecutionConfig 展开实际引用。
+另一个已核实的引用：原 `/Game/Main/Character/Hero/Ability/BasicAttack/DA_Attack_1` 当前实际引用 `/Game/Main/Character/Hero/Ability/BasicAttack/Timeline/DA_Attack01_Timeline`，不是同目录下的 DA_Attack_1_Timeline。修改前始终从 ExecutionConfig 展开实际引用。
 
 ### 先跑通本体扣血
 

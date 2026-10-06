@@ -10,7 +10,7 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeAbilityEditorTest,"Hodge.Editor.Definitio
     EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
 bool FHodgeAbilityEditorTest::RunTest(const FString& Parameters)
 {
-    auto* Source=LoadObject<UHodgeAbilityDefinition>(nullptr,TEXT("/Game/CodexText/DefinitionCombo/DA_Attack_5.DA_Attack_5"));
+    auto* Source=LoadObject<UHodgeAbilityDefinition>(nullptr,TEXT("/Game/Main/Character/Hero/Ability/BasicAttack/DA_Attack_5.DA_Attack_5"));
     if(!TestNotNull(TEXT("Existing definition fixture"),Source)){return false;}
     auto* Definition=DuplicateObject<UHodgeAbilityDefinition>(Source,GetTransientPackage());
     auto* Timeline=DuplicateObject<UHodgeAbilityTimeline>(Source->ExecutionConfig.TimelineTaskConfig.Timeline,GetTransientPackage());

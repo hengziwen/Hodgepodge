@@ -289,6 +289,9 @@ namespace HodgeGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Combat_Source_Hitbox_Chest, "Combat.Source.Hitbox.Chest");
 	UE_DEFINE_GAMEPLAY_TAG(GameplayEffect_Damage_AllowFriendlyFire, "GameplayEffect.Damage.AllowFriendlyFire");
 	UE_DEFINE_GAMEPLAY_TAG(SetByCaller_DamageMultiplier, "SetByCaller.DamageMultiplier");
+	UE_DEFINE_GAMEPLAY_TAG(SetByCaller_Stat_MaxHealth, "SetByCaller.Stat.MaxHealth");
+	UE_DEFINE_GAMEPLAY_TAG(SetByCaller_Stat_BaseDamage, "SetByCaller.Stat.BaseDamage");
+	UE_DEFINE_GAMEPLAY_TAG(Ability_ActivateFail_AttributesNotReady, "Ability.ActivateFail.AttributesNotReady");
 
 	// 取消窗口标签（授权语义，见 .h 中的说明）。
 	UE_DEFINE_GAMEPLAY_TAG(Status_Attack_Cancel, "Status.Attack.Cancel");

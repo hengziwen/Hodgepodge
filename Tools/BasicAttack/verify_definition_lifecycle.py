@@ -13,7 +13,7 @@ asc = unreal.AbilitySystemLibrary.get_ability_system_component(pawn)
 combo = pc.get_controlled_pawn().get_component_by_class(unreal.HodgeCombatComponentBase)
 anim = pawn.get_component_by_class(unreal.SkeletalMeshComponent).get_anim_instance()
 action = unreal.load_asset('/Game/Main/Input/InputAction/IA_Attack')
-definition = unreal.load_asset('/Game/CodexText/DefinitionCombo/DA_Attack_2')
+definition = unreal.load_asset('/Game/Main/Character/Hero/Ability/BasicAttack/DA_Attack_2')
 original_config = definition.get_editor_property('execution_config').export_text()
 tags = []
 for name in ['Status.Attack', 'Status.Attack.Cancel.Move', 'Status.Attack.Cancel.NextAttack']:

@@ -1,6 +1,11 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "Equipment/HodgeEquipmentManagerComponent.h"
+#include "AbilitySystem/Stats/HodgeAttributeCoordinator.h"
+#include "AbilitySystem/HodgeGameplayTags.h"
+#include "Core/PlayState/HodgePlayerState.h"
+#include "Data/HodgeEquipmentStatProfile.h"
+#include "Character/HodgeCombatCharacter.h"
 
 // Hodge 自定义 ASC，用于装备时授予和卸下 AbilitySet。
 #include "AbilitySystem/HodgeAbilitySystemComponent.h"
@@ -27,6 +32,17 @@
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeEquipmentManagerComponent)
 
 class FLifetimeProperty;
+
+struct FHodgeEquipmentMutationScope
+{
+	UHodgeEquipmentManagerComponent& Manager;
+	explicit FHodgeEquipmentMutationScope(UHodgeEquipmentManagerComponent& InManager) : Manager(InManager) { Manager.bEquipmentMutation = true; }
+	~FHodgeEquipmentMutationScope()
+	{
+		Manager.bEquipmentMutation = false;
+		if (Manager.bPendingUninitialize) { Manager.bPendingUninitialize = false; Manager.UninitializeComponent(); }
+	}
+};
 struct FReplicationFlags;
 
 //////////////////////////////////////////////////////////////////////
@@ -104,7 +120,7 @@ UHodgeAbilitySystemComponent* FHodgeEquipmentList::GetAbilitySystemComponent() c
 }
 
 // 在服务器上根据 EquipmentDefinition 创建并添加一条新的已装备记录。
-UHodgeEquipmentInstance* FHodgeEquipmentList::AddEntry(TSubclassOf<UHodgeEquipmentDefinition> EquipmentDefinition)
+UHodgeEquipmentInstance* FHodgeEquipmentList::AddEntry(TSubclassOf<UHodgeEquipmentDefinition> EquipmentDefinition, FGuid Id, int32 Level)
 {
 	// 保存最终创建出来的运行时装备实例。
 	UHodgeEquipmentInstance* Result = nullptr;
@@ -130,6 +146,12 @@ UHodgeEquipmentInstance* FHodgeEquipmentList::AddEntry(TSubclassOf<UHodgeEquipme
 		InstanceType = UHodgeEquipmentInstance::StaticClass();
 	}
 
+    const UHodgeEquipmentStatProfile* Stats = EquipmentCDO->StatProfile.Get();
+    float HealthBonus = 0.f, DamageBonus = 0.f;
+    TArray<FText> Errors;
+    auto* ASC = GetAbilitySystemComponent();
+    if (!ASC || (Stats && (!Stats->Validate(Errors) || !Stats->Evaluate(Level, HealthBonus, DamageBonus)))) { return nullptr; }
+
 	// 在装备列表中创建一条新的默认 Entry，并取得其引用。
 	FHodgeAppliedEquipmentEntry& NewEntry = Entries.AddDefaulted_GetRef();
 
@@ -143,9 +165,23 @@ UHodgeEquipmentInstance* FHodgeEquipmentList::AddEntry(TSubclassOf<UHodgeEquipme
 
 	// 保存新创建的运行时装备实例作为返回值。
 	Result = NewEntry.Instance;
+    Result->SetStatIdentity(Id, Level, Stats);
+    if (Stats)
+    {
+        auto Context = ASC->MakeEffectContext();
+        Context.AddSourceObject(Result);
+        auto Spec = ASC->MakeOutgoingSpec(Stats->AttributeEffect, Level, Context);
+        if (Spec.IsValid())
+        {
+            Spec.Data->SetSetByCallerMagnitude(HodgeGameplayTags::SetByCaller_Stat_MaxHealth, HealthBonus);
+            Spec.Data->SetSetByCallerMagnitude(HodgeGameplayTags::SetByCaller_Stat_BaseDamage, DamageBonus);
+            NewEntry.AttributeHandle = ASC->ApplyGameplayEffectSpecToSelf(*Spec.Data.Get());
+        }
+        if (!NewEntry.AttributeHandle.IsValid()) { Entries.RemoveAt(Entries.Num() - 1); return nullptr; }
+    }
 
 	// 获取当前 Pawn 使用的 ASC，装备授予 GAS 内容需要由 ASC 完成。
-	if (UHodgeAbilitySystemComponent* ASC = GetAbilitySystemComponent())
+	if (ASC)
 	{
 		NewEntry.GrantedAbilitySystem = ASC;
 
@@ -188,6 +224,7 @@ void FHodgeEquipmentList::RemoveEntry(UHodgeEquipmentInstance* Instance)
 			if (UHodgeAbilitySystemComponent* ASC = Entry.GrantedAbilitySystem.Get())
 			{
 				// 根据装备时保存的 GrantedHandles 精确撤销 AbilitySet 授予的内容。
+                if (Entry.AttributeHandle.IsValid()) { ASC->RemoveActiveGameplayEffect(Entry.AttributeHandle); }
 				Entry.GrantedHandles.TakeFromAbilitySystem(ASC);
 			}
 
@@ -230,9 +267,27 @@ void UHodgeEquipmentManagerComponent::GetLifetimeReplicatedProps(TArray<FLifetim
 }
 
 // 在服务器上根据 EquipmentDefinition 为当前 Pawn 装备一件物品。
-UHodgeEquipmentInstance* UHodgeEquipmentManagerComponent::EquipItem(
-	TSubclassOf<UHodgeEquipmentDefinition> EquipmentClass)
+UHodgeEquipmentInstance* UHodgeEquipmentManagerComponent::EquipItem(TSubclassOf<UHodgeEquipmentDefinition> EquipmentClass)
 {
+    if (!EquipmentClass) { return nullptr; }
+    const UHodgeEquipmentStatProfile* Stats = EquipmentClass->GetDefaultObject<UHodgeEquipmentDefinition>()->StatProfile.Get();
+    return EquipItemWithState(EquipmentClass, FGuid::NewGuid(), Stats ? Stats->MinLevel : 1);
+}
+
+UHodgeEquipmentInstance* UHodgeEquipmentManagerComponent::EquipItemWithState(TSubclassOf<UHodgeEquipmentDefinition> EquipmentClass, FGuid Id, int32 Level)
+{
+	if (bEquipmentMutation) { return nullptr; }
+	FHodgeEquipmentMutationScope MutationScope(*this);
+    if (!GetOwner()->HasAuthority() || !Id.IsValid()) { return nullptr; }
+    if (auto* Existing = EquipmentList.Entries.FindByPredicate([Id](const auto& Entry) { return Entry.Instance && Entry.Instance->GetEquipmentId() == Id; }))
+    { return Existing->EquipmentDefinition == EquipmentClass ? Existing->Instance.Get() : nullptr; }
+    auto* ASC = Cast<UHodgeAbilitySystemComponent>(UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(GetOwner()));
+    auto* PS = ASC ? Cast<AHodgePlayerState>(ASC->GetOwnerActor()) : nullptr;
+    auto* Coordinator = PS ? PS->GetAttributeCoordinator() : nullptr;
+    const bool bBound = Coordinator && Coordinator->IsBoundTo(Cast<APawn>(GetOwner()));
+    if (bBound && Coordinator->IsUpdating() && !Coordinator->IsInitializing()) { return nullptr; }
+    const bool bOwnUpdate = bBound && !Coordinator->IsUpdating();
+    if (bOwnUpdate && !Coordinator->BeginEquipmentUpdate()) { return nullptr; }
 	// 保存最终创建出来的运行时装备实例。
 	UHodgeEquipmentInstance* Result = nullptr;
 
@@ -240,7 +295,7 @@ UHodgeEquipmentInstance* UHodgeEquipmentManagerComponent::EquipItem(
 	if (EquipmentClass != nullptr)
 	{
 		// 向装备列表添加 Entry，并创建 Instance、授予 AbilitySet、生成装备 Actor。
-		Result = EquipmentList.AddEntry(EquipmentClass);
+		Result = EquipmentList.AddEntry(EquipmentClass, Id, Level);
 
 		// EquipmentInstance 创建成功后继续执行装备生命周期。
 		if (Result != nullptr)
@@ -256,6 +311,8 @@ UHodgeEquipmentInstance* UHodgeEquipmentManagerComponent::EquipItem(
 		}
 	}
 
+    if (Result && Coordinator) { Coordinator->RememberEquipment(Id, EquipmentClass, Level); }
+    if (bOwnUpdate) { Coordinator->FinishEquipmentUpdate(Result != nullptr); }
 	// 返回新创建并装备完成的运行时装备实例。
 	return Result;
 }
@@ -263,6 +320,16 @@ UHodgeEquipmentInstance* UHodgeEquipmentManagerComponent::EquipItem(
 // 在服务器上卸下指定的运行时装备实例。
 void UHodgeEquipmentManagerComponent::UnequipItem(UHodgeEquipmentInstance* ItemInstance)
 {
+	if (bEquipmentMutation) { return; }
+	FHodgeEquipmentMutationScope MutationScope(*this);
+    if (!GetOwner()->HasAuthority() || !ItemInstance) { return; }
+    auto* ASC = Cast<UHodgeAbilitySystemComponent>(UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(GetOwner()));
+    auto* PS = ASC ? Cast<AHodgePlayerState>(ASC->GetOwnerActor()) : nullptr;
+    auto* Coordinator = PS ? PS->GetAttributeCoordinator() : nullptr;
+    const bool bBound = Coordinator && Coordinator->IsBoundTo(Cast<APawn>(GetOwner()));
+    if (bBound && Coordinator->IsUpdating() && !Coordinator->IsInitializing()) { return; }
+    const bool bOwnUpdate = bBound && !Coordinator->IsUpdating();
+    if (bOwnUpdate && !Coordinator->BeginEquipmentUpdate()) { return; }
 	// 只有传入有效 EquipmentInstance 时才执行卸装流程。
 	if (ItemInstance != nullptr)
 	{
@@ -277,6 +344,7 @@ void UHodgeEquipmentManagerComponent::UnequipItem(UHodgeEquipmentInstance* ItemI
 
 		// 从装备列表删除对应 Entry，并撤销 AbilitySet、销毁装备 Actor。
 		EquipmentList.RemoveEntry(ItemInstance);
+        if (bOwnUpdate) { Coordinator->FinishEquipmentUpdate(true); }
 	}
 }
 
@@ -310,6 +378,7 @@ void UHodgeEquipmentManagerComponent::InitializeComponent()
 {
 	// 当前没有额外初始化逻辑，仅执行父类实现。
 	Super::InitializeComponent();
+    if (auto* Character = Cast<AHodgeCombatCharacter>(GetOwner())) { Character->TryInitializeAttributesAndEquipment(); }
 
 	// [HODGE-DBG] 临时诊断：组件实例真正被创建时打印所属世界与角色。
 	UE_LOG(LogTemp, Warning, TEXT("[HODGE-DBG] EquipMgr InitializeComponent Owner=%s NetMode=%d Role=%d"),
@@ -324,6 +393,7 @@ void UHodgeEquipmentManagerComponent::InitializeComponent()
 // 组件反初始化时卸下并清理当前 Pawn 的全部装备。
 void UHodgeEquipmentManagerComponent::UninitializeComponent()
 {
+	if (bEquipmentMutation) { bPendingUninitialize = true; return; }
 	// 临时保存所有运行时装备实例，避免卸装修改 EquipmentList 导致原迭代器失效。
 	TArray<UHodgeEquipmentInstance*> AllEquipmentInstances;
 
@@ -419,4 +489,59 @@ TArray<UHodgeEquipmentInstance*> UHodgeEquipmentManagerComponent::GetEquipmentIn
 
 	// 返回所有符合类型要求的装备实例。
 	return Results;
+}
+
+UHodgeEquipmentInstance* UHodgeEquipmentManagerComponent::FindInstanceOfDefinition(TSubclassOf<UHodgeEquipmentDefinition> Definition) const
+{
+    const auto* Entry = EquipmentList.Entries.FindByPredicate([Definition](const auto& Item) { return Item.EquipmentDefinition == Definition; });
+    return Entry ? Entry->Instance.Get() : nullptr;
+}
+
+bool UHodgeEquipmentManagerComponent::SetEquipmentLevel(UHodgeEquipmentInstance* Instance, int32 Level)
+{
+	if (bEquipmentMutation) { return false; }
+	FHodgeEquipmentMutationScope MutationScope(*this);
+    if (!GetOwner()->HasAuthority() || !Instance) { return false; }
+    auto* Entry = EquipmentList.Entries.FindByPredicate([Instance](const auto& Item) { return Item.Instance == Instance; });
+    if (!Entry || !Entry->GrantedAbilitySystem.IsValid() || !Instance->GetStatProfile()) { return false; }
+    const auto* Stats = Instance->GetStatProfile();
+    float HealthBonus, DamageBonus;
+    TArray<FText> Errors;
+    if (!Stats->Validate(Errors) || !Stats->Evaluate(Level, HealthBonus, DamageBonus)) { return false; }
+    if (Instance->GetEquipmentLevel() == Level && Entry->GrantedAbilitySystem->GetActiveGameplayEffect(Entry->AttributeHandle)) { return true; }
+    auto* PS = Cast<AHodgePlayerState>(Entry->GrantedAbilitySystem->GetOwnerActor());
+    auto* Coordinator = PS ? PS->GetAttributeCoordinator() : nullptr;
+    const bool bBound = Coordinator && Coordinator->IsBoundTo(Cast<APawn>(GetOwner()));
+    if (bBound && (Coordinator->IsUpdating() || !Coordinator->BeginEquipmentUpdate())) { return false; }
+    bool bSuccess = false;
+    if (Entry->GrantedAbilitySystem->GetActiveGameplayEffect(Entry->AttributeHandle))
+    {
+        TMap<FGameplayTag, float> Values;
+        Values.Add(HodgeGameplayTags::SetByCaller_Stat_MaxHealth, HealthBonus);
+        Values.Add(HodgeGameplayTags::SetByCaller_Stat_BaseDamage, DamageBonus);
+        Entry->GrantedAbilitySystem->UpdateActiveGameplayEffectSetByCallerMagnitudes(Entry->AttributeHandle, Values);
+        Entry->GrantedAbilitySystem->SetActiveGameplayEffectLevel(Entry->AttributeHandle, Level);
+        bSuccess = true;
+    }
+    else
+    {
+        auto Context = Entry->GrantedAbilitySystem->MakeEffectContext();
+        Context.AddSourceObject(Instance);
+        auto Spec = Entry->GrantedAbilitySystem->MakeOutgoingSpec(Stats->AttributeEffect, Level, Context);
+        if (Spec.IsValid())
+        {
+            Spec.Data->SetSetByCallerMagnitude(HodgeGameplayTags::SetByCaller_Stat_MaxHealth, HealthBonus);
+            Spec.Data->SetSetByCallerMagnitude(HodgeGameplayTags::SetByCaller_Stat_BaseDamage, DamageBonus);
+            Entry->AttributeHandle = Entry->GrantedAbilitySystem->ApplyGameplayEffectSpecToSelf(*Spec.Data.Get());
+            bSuccess = Entry->AttributeHandle.IsValid();
+        }
+    }
+    if (bSuccess)
+    {
+        Instance->SetStatIdentity(Instance->GetEquipmentId(), Level, Stats);
+        EquipmentList.MarkItemDirty(*Entry);
+        if (Coordinator) { Coordinator->RememberEquipment(Instance->GetEquipmentId(), Entry->EquipmentDefinition, Level); }
+    }
+    if (bBound) { Coordinator->FinishEquipmentUpdate(bSuccess); }
+    return bSuccess;
 }

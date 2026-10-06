@@ -22,7 +22,7 @@
 
 ## 当前资产
 
-默认 Experience 使用 /Game/Main/Data/PawnData/DA_Dafult_PawnData，连段定义为 /Game/CodexText/DefinitionCombo/DA_LightCombo，表为同目录 DT_LightCombo。
+默认 Experience 使用 /Game/Main/Data/PawnData/DA_Dafult_PawnData，连段定义为 /Game/Main/Data/Combo/DA_LightCombo，表为同目录 DT_LightCombo。
 
 表内现有顺序 1→2→3→5→4 保持不变，前四个输入跳转显式允许动作结束后续接。末段 Combo.Light.04 的输入跳转直接指向 Combo.Light.01，RequiredWindowTags=Status.Attack.Cancel.NextAttack，bAllowAfterExecutionEnded=false，Priority=10。目标为第一段技能节点，不经过需要额外一次输入的 Entry 节点。
 
@@ -63,7 +63,7 @@
 
 ## 调整与验收
 
-1. 打开 /Game/CodexText/DefinitionCombo/DA_LightCombo，调整 ComboRetentionSeconds（秒）。0 表示不保留；InputBufferSeconds 仍只控制提前输入。
+1. 打开 /Game/Main/Data/Combo/DA_LightCombo，调整 ComboRetentionSeconds（秒）。0 表示不保留；InputBufferSeconds 仍只控制提前输入。
 2. 打开 DT_LightCombo，在相应输入跳转中设置 bAllowAfterExecutionEnded。播放中仍按 RequiredWindowTags 判断，结束后仍检查角色状态与技能可激活性。
 3. 第一段进入后摇后移动取消，1 秒内再次点击应播放第二段。等待超过 1 秒再点击应播放第一段。
 4. 第二段被中断后在保留时间内再次攻击应接第三段；Attack 4 的后摇接招窗口内点击应直接播放 Attack 1。窗口前最多使用现有 0.3 秒输入缓存，不允许提前跳过末段攻击。

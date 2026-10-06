@@ -8,6 +8,7 @@
  */
 
 #include "Character/HodgeCombatCharacter.h"
+#include "AbilitySystem/Stats/HodgeAttributeCoordinator.h"
 
 #include "SignificanceManager.h"
 #include "AbilitySystem/HodgeGameplayTags.h"
@@ -192,6 +193,10 @@ void AHodgeCombatCharacter::BeginPlay()
 // Actor 结束游戏
 void AHodgeCombatCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	if (auto* ASC = GetHodgeAbilitySystemComponent())
+	{
+		if (auto* PS = Cast<AHodgePlayerState>(ASC->GetOwnerActor())) { PS->GetAttributeCoordinator()->DetachAvatar(this); }
+	}
 	RotationComponent->UninitializeFromAbilitySystem();
 	// 判定组件由 Experience 按需添加，卸载体验后组件可能已不存在。
 	if (auto* Combat = FindComponentByClass<UHodgeCombatComponentBase>())
@@ -339,12 +344,16 @@ void AHodgeCombatCharacter::OnAbilitySystemInitialized()
 	// 初始化角色 GameplayTag
 	InitializeGameplayTags();
 
-	InitializeDefaultEquipment();
+	TryInitializeAttributesAndEquipment();
 }
 
 // AbilitySystem 反初始化时调用
 void AHodgeCombatCharacter::OnAbilitySystemUninitialized()
 {
+    if (auto* ASC = GetHodgeAbilitySystemComponent())
+    {
+        if (auto* PS = Cast<AHodgePlayerState>(ASC->GetOwnerActor())) { PS->GetAttributeCoordinator()->DetachAvatar(this); }
+    }
 	RotationComponent->UninitializeFromAbilitySystem();
 	if (auto* Combat = FindComponentByClass<UHodgeCombatComponentBase>()) { Combat->Shutdown(); }
 	UninitializeDefaultEquipment();
@@ -412,7 +421,14 @@ void AHodgeCombatCharacter::InitializeDefaultEquipment()
 	TGuardValue<bool> InitializationGuard(bInitializingDefaultEquipment, true);
 	UninitializeDefaultEquipment();
 	DefaultEquipmentManager = EquipmentManager;
-	DefaultWeaponInstance = EquipmentManager->EquipItem(PawnData->DefaultWeaponDefinition);
+	DefaultWeaponInstance = EquipmentManager->FindInstanceOfDefinition(PawnData->DefaultWeaponDefinition);
+    if (!DefaultWeaponInstance)
+    {
+        auto* PS = Cast<AHodgePlayerState>(ASC->GetOwnerActor());
+        const auto State = PS ? PS->GetAttributeCoordinator()->GetOrCreateDefaultEquipment(PawnData->DefaultWeaponDefinition) : FHodgeOwnedEquipmentState();
+        DefaultWeaponInstance = PS ? EquipmentManager->EquipItemWithState(PawnData->DefaultWeaponDefinition, State.InstanceId, State.Level)
+            : EquipmentManager->EquipItem(PawnData->DefaultWeaponDefinition);
+    }
 
 	// 装备回调可能同步触发解绑，返回后补清理刚创建的实例。
 	if (GetHodgeAbilitySystemComponent() != ASC || ASC->GetAvatarActor() != this)
@@ -1052,4 +1068,19 @@ bool FSharedRepMovement::NetSerialize(FArchive& Ar, class UPackageMap* Map, bool
 	}
 
 	return true;
+}
+
+void AHodgeCombatCharacter::TryInitializeAttributesAndEquipment()
+{
+    if (!HasAuthority() || !PawnExtComponent) { return; }
+    auto* ASC = GetHodgeAbilitySystemComponent();
+    auto* PS = ASC ? Cast<AHodgePlayerState>(ASC->GetOwnerActor()) : nullptr;
+    const auto* Data = PawnExtComponent->GetPawnData<UHodgePawnData>();
+    if (!PS || !Data) { return; }
+    auto* Coordinator = PS->GetAttributeCoordinator();
+    if (Coordinator->PrepareAvatar(this, Data))
+    {
+        InitializeDefaultEquipment();
+        Coordinator->CompleteAvatarInitialization();
+    }
 }

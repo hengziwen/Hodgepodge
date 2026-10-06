@@ -28,16 +28,16 @@ Montage/Blend/Timeline、HitWindows、WeaponUseWindowTag；校验手持区间覆
 
 源码：[Source/Hodgepodge/Private/Data/HodgeAbilitySet.cpp](../../../Source/Hodgepodge/Private/Data/HodgeAbilitySet.cpp)
 
-项目内直接 include（不是运行调用关系）：[Data/HodgeAbilitySet.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilitySet.h)、[AbilitySystem/Abilities/HodgeGameplayAbility.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility.h)、[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)
+项目内直接 include（不是运行调用关系）：[Data/HodgeAbilitySet.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilitySet.h)、[AbilitySystem/AttributeSet/HodgeHealthSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeHealthSet.h)、[AbilitySystem/AttributeSet/HodgeCombatSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeCombatSet.h)、[AbilitySystem/Abilities/HodgeGameplayAbility.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility.h)、[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)
 
 定义候选（多行签名仅展示首行）：
 
-- L11: `void FHodgeAbilitySet_GrantedHandles::AddAbilitySpecHandle(const FGameplayAbilitySpecHandle& Handle)`
-- L20: `void FHodgeAbilitySet_GrantedHandles::AddGameplayEffectHandle(const FActiveGameplayEffectHandle& Handle)`
-- L29: `void FHodgeAbilitySet_GrantedHandles::AddAttributeSet(UAttributeSet* Set)`
-- L35: `void FHodgeAbilitySet_GrantedHandles::TakeFromAbilitySystem(UHodgeAbilitySystemComponent* HodgeASC)`
-- L76: `UHodgeAbilitySet::UHodgeAbilitySet(const FObjectInitializer& ObjectInitializer)`
-- L82: `void UHodgeAbilitySet::GiveToAbilitySystem(UHodgeAbilitySystemComponent* HodgeASC,`
+- L13: `void FHodgeAbilitySet_GrantedHandles::AddAbilitySpecHandle(const FGameplayAbilitySpecHandle& Handle)`
+- L22: `void FHodgeAbilitySet_GrantedHandles::AddGameplayEffectHandle(const FActiveGameplayEffectHandle& Handle)`
+- L31: `void FHodgeAbilitySet_GrantedHandles::AddAttributeSet(UAttributeSet* Set)`
+- L37: `void FHodgeAbilitySet_GrantedHandles::TakeFromAbilitySystem(UHodgeAbilitySystemComponent* HodgeASC)`
+- L78: `UHodgeAbilitySet::UHodgeAbilitySet(const FObjectInitializer& ObjectInitializer)`
+- L84: `void UHodgeAbilitySet::GiveToAbilitySystem(UHodgeAbilitySystemComponent* HodgeASC,`
 
 ## HodgeAbilityTimeline.cpp
 
@@ -92,6 +92,21 @@ Montage/Blend/Timeline、HitWindows、WeaponUseWindowTag；校验手持区间覆
 
 - L13: `TSharedPtr<FStreamableHandle> FHodgeAssetManagerStartupJob::DoJob() const`
 
+## HodgeCharacterStatProfile.cpp
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Private/Data/HodgeCharacterStatProfile.cpp](../../../Source/Hodgepodge/Private/Data/HodgeCharacterStatProfile.cpp)
+
+项目内直接 include（不是运行调用关系）：[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)、[Data/HodgeCharacterStatProfile.h](../../../Source/Hodgepodge/Public/Data/HodgeCharacterStatProfile.h)、[AbilitySystem/Stats/HodgeCharacterBaseStatEffect.h](../../../Source/Hodgepodge/Public/AbilitySystem/Stats/HodgeCharacterBaseStatEffect.h)、[AbilitySystem/AttributeSet/HodgeHealthSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeHealthSet.h)、[AbilitySystem/AttributeSet/HodgeCombatSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeCombatSet.h)
+
+定义候选（多行签名仅展示首行）：
+
+- L11: `UHodgeCharacterStatProfile::UHodgeCharacterStatProfile()`
+- L16: `bool UHodgeCharacterStatProfile::Evaluate(int32 Level, float& Health, float& Damage) const`
+- L24: `bool UHodgeCharacterStatProfile::Validate(TArray<FText>& Errors) const`
+- L52: `EDataValidationResult UHodgeCharacterStatProfile::IsDataValid(FDataValidationContext& Context) const`
+
 ## HodgeComboDefinition.cpp
 
 跳转 DataTable、输入缓存、结束后连段记忆与 bAllowAfterExecutionEnded 续段许可。
@@ -105,6 +120,21 @@ Montage/Blend/Timeline、HitWindows、WeaponUseWindowTag；校验手持区间覆
 - L7: `const FHodgeComboRow* UHodgeComboDefinition::FindNode(FGameplayTag Tag) const`
 - L14: `bool UHodgeComboDefinition::ValidateDefinition(TArray<FText>& Errors) const`
 - L93: `EDataValidationResult UHodgeComboDefinition::IsDataValid(FDataValidationContext& Context) const`
+
+## HodgeEquipmentStatProfile.cpp
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Private/Data/HodgeEquipmentStatProfile.cpp](../../../Source/Hodgepodge/Private/Data/HodgeEquipmentStatProfile.cpp)
+
+项目内直接 include（不是运行调用关系）：[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)、[Data/HodgeEquipmentStatProfile.h](../../../Source/Hodgepodge/Public/Data/HodgeEquipmentStatProfile.h)、[AbilitySystem/Stats/HodgeEquipmentStatEffect.h](../../../Source/Hodgepodge/Public/AbilitySystem/Stats/HodgeEquipmentStatEffect.h)、[AbilitySystem/AttributeSet/HodgeHealthSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeHealthSet.h)、[AbilitySystem/AttributeSet/HodgeCombatSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeCombatSet.h)
+
+定义候选（多行签名仅展示首行）：
+
+- L11: `UHodgeEquipmentStatProfile::UHodgeEquipmentStatProfile()`
+- L16: `bool UHodgeEquipmentStatProfile::Evaluate(int32 Level, float& Health, float& Damage) const`
+- L24: `bool UHodgeEquipmentStatProfile::Validate(TArray<FText>& Errors) const`
+- L52: `EDataValidationResult UHodgeEquipmentStatProfile::IsDataValid(FDataValidationContext& Context) const`
 
 ## HodgeExperienceActionSet.cpp
 
@@ -167,12 +197,12 @@ PawnClass、AbilitySets、ComboDefinition、DefaultWeaponDefinition、输入/相
 
 源码：[Source/Hodgepodge/Private/Data/HodgePawnData.cpp](../../../Source/Hodgepodge/Private/Data/HodgePawnData.cpp)
 
-项目内直接 include（不是运行调用关系）：[Data/HodgePawnData.h](../../../Source/Hodgepodge/Public/Data/HodgePawnData.h)、[Data/HodgeAbilityDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilityDefinition.h)、[Data/HodgeAbilitySet.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilitySet.h)、[Data/HodgeAbilityTimeline.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilityTimeline.h)、[Data/HodgeComboDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeComboDefinition.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)
+项目内直接 include（不是运行调用关系）：[Data/HodgePawnData.h](../../../Source/Hodgepodge/Public/Data/HodgePawnData.h)、[Data/HodgeCharacterStatProfile.h](../../../Source/Hodgepodge/Public/Data/HodgeCharacterStatProfile.h)、[Data/HodgeAbilityDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilityDefinition.h)、[Data/HodgeAbilitySet.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilitySet.h)、[Data/HodgeAbilityTimeline.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilityTimeline.h)、[Data/HodgeComboDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeComboDefinition.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)
 
 定义候选（多行签名仅展示首行）：
 
-- L17: `UHodgePawnData::UHodgePawnData(const FObjectInitializer& ObjectInitializer)`
-- L27: `EDataValidationResult UHodgePawnData::IsDataValid(FDataValidationContext& Context) const`
+- L18: `UHodgePawnData::UHodgePawnData(const FObjectInitializer& ObjectInitializer)`
+- L28: `EDataValidationResult UHodgePawnData::IsDataValid(FDataValidationContext& Context) const`
 
 ## HodgeAbilityDefinition.h
 
@@ -610,6 +640,41 @@ Montage/Blend/Timeline、HitWindows、WeaponUseWindowTag；校验手持区间覆
  213: };
 ```
 
+## HodgeCharacterStatProfile.h
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Public/Data/HodgeCharacterStatProfile.h](../../../Source/Hodgepodge/Public/Data/HodgeCharacterStatProfile.h)
+
+有效头文件声明摘录（未展开宏，未求值预处理分支）：
+
+```cpp
+   1: #pragma once
+   3: #include "CoreMinimal.h"
+   4: #include "Engine/DataAsset.h"
+   5: #include "ScalableFloat.h"
+   6: #include "HodgeCharacterStatProfile.generated.h"
+   8: class UGameplayEffect;
+  11: UCLASS(BlueprintType, Const)
+  12: class HODGEPODGE_API UHodgeCharacterStatProfile : public UDataAsset
+  13: {
+  14: 	GENERATED_BODY()
+  15: public:
+  16: 	UHodgeCharacterStatProfile();
+  17: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ClampMin="1", ClampMax="1000")) int32 MinLevel = 1;
+  18: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ClampMin="1", ClampMax="1000")) int32 MaxLevel = 90;
+  19: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ClampMin="1")) int32 ConfigurationVersion = 1;
+  20: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) FScalableFloat MaxHealth = FScalableFloat(100.f);
+  21: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) FScalableFloat BaseDamage = FScalableFloat(20.f);
+  22: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) TSubclassOf<UGameplayEffect> InitializationEffect;
+  23: 	bool Evaluate(int32 Level, float& Health, float& Damage) const;
+  24: 	bool Validate(TArray<FText>& Errors) const;
+  25: #if WITH_EDITOR
+  26: 	virtual EDataValidationResult IsDataValid(FDataValidationContext& Context) const override;
+  27: #endif
+  28: };
+```
+
 ## HodgeComboDefinition.h
 
 跳转 DataTable、输入缓存、结束后连段记忆与 bAllowAfterExecutionEnded 续段许可。
@@ -672,6 +737,40 @@ Montage/Blend/Timeline、HitWindows、WeaponUseWindowTag；校验手持区间覆
   57: 	virtual EDataValidationResult IsDataValid(FDataValidationContext& Context) const override;
   58: #endif
   59: };
+```
+
+## HodgeEquipmentStatProfile.h
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Public/Data/HodgeEquipmentStatProfile.h](../../../Source/Hodgepodge/Public/Data/HodgeEquipmentStatProfile.h)
+
+有效头文件声明摘录（未展开宏，未求值预处理分支）：
+
+```cpp
+   1: #pragma once
+   3: #include "CoreMinimal.h"
+   4: #include "Engine/DataAsset.h"
+   5: #include "ScalableFloat.h"
+   6: #include "HodgeEquipmentStatProfile.generated.h"
+   8: class UGameplayEffect;
+  11: UCLASS(BlueprintType, Const)
+  12: class HODGEPODGE_API UHodgeEquipmentStatProfile : public UDataAsset
+  13: {
+  14: 	GENERATED_BODY()
+  15: public:
+  16: 	UHodgeEquipmentStatProfile();
+  17: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ClampMin="1", ClampMax="1000")) int32 MinLevel = 1;
+  18: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ClampMin="1", ClampMax="1000")) int32 MaxLevel = 90;
+  19: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) FScalableFloat MaxHealthBonus = FScalableFloat(0.f);
+  20: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) FScalableFloat BaseDamageBonus = FScalableFloat(0.f);
+  21: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) TSubclassOf<UGameplayEffect> AttributeEffect;
+  22: 	bool Evaluate(int32 Level, float& Health, float& Damage) const;
+  23: 	bool Validate(TArray<FText>& Errors) const;
+  24: #if WITH_EDITOR
+  25: 	virtual EDataValidationResult IsDataValid(FDataValidationContext& Context) const override;
+  26: #endif
+  27: };
 ```
 
 ## HodgeExperienceActionSet.h
@@ -829,32 +928,35 @@ PawnClass、AbilitySets、ComboDefinition、DefaultWeaponDefinition、输入/相
   14: class UHodgeAbilitySet;
   15: class UHodgeComboDefinition;
   16: class UHodgeEquipmentDefinition;
-  19: class UHodgeCameraMode;
-  22: class UHodgeInputConfig;
-  25: class UHodgeAbilityTagRelationshipMapping;
-  33: UCLASS()
-  34: class HODGEPODGE_API UHodgePawnData : public UPrimaryDataAsset
-  35: {
-  36: 	GENERATED_BODY()
-  38: public:
-  40: 	UHodgePawnData(const FObjectInitializer& ObjectInitializer);
-  41: #if WITH_EDITOR
-  42: 	virtual EDataValidationResult IsDataValid(FDataValidationContext& Context) const override;
-  43: #endif
-  45: public:
-  48: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hodge|Pawn")
-  49: 	TSubclassOf<APawn> PawnClass;
-  52: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hodge|Equipment")
-  53: 	TSubclassOf<UHodgeEquipmentDefinition> DefaultWeaponDefinition;
-  57: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hodge|Abilities")
-  58: 	TArray<TObjectPtr<UHodgeAbilitySet>> AbilitySets;
-  60: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Abilities")
-  61: 	TObjectPtr<UHodgeComboDefinition> ComboDefinition;
-  65: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hodge|Abilities")
-  66: 	TObjectPtr<UHodgeAbilityTagRelationshipMapping> TagRelationshipMapping;
-  70: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hodge|Input")
-  71: 	TObjectPtr<UHodgeInputConfig> InputConfig;
-  75: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hodge|Camera")
-  76: 	TSubclassOf<UHodgeCameraMode> DefaultCameraMode;
-  77: };
+  17: class UHodgeCharacterStatProfile;
+  20: class UHodgeCameraMode;
+  23: class UHodgeInputConfig;
+  26: class UHodgeAbilityTagRelationshipMapping;
+  34: UCLASS()
+  35: class HODGEPODGE_API UHodgePawnData : public UPrimaryDataAsset
+  36: {
+  37: 	GENERATED_BODY()
+  39: public:
+  41: 	UHodgePawnData(const FObjectInitializer& ObjectInitializer);
+  42: #if WITH_EDITOR
+  43: 	virtual EDataValidationResult IsDataValid(FDataValidationContext& Context) const override;
+  44: #endif
+  46: public:
+  49: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hodge|Pawn")
+  50: 	TSubclassOf<APawn> PawnClass;
+  53: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hodge|Equipment")
+  54: 	TSubclassOf<UHodgeEquipmentDefinition> DefaultWeaponDefinition;
+  55: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Attributes")
+  56: 	TObjectPtr<UHodgeCharacterStatProfile> StatProfile;
+  60: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hodge|Abilities")
+  61: 	TArray<TObjectPtr<UHodgeAbilitySet>> AbilitySets;
+  63: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Abilities")
+  64: 	TObjectPtr<UHodgeComboDefinition> ComboDefinition;
+  68: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hodge|Abilities")
+  69: 	TObjectPtr<UHodgeAbilityTagRelationshipMapping> TagRelationshipMapping;
+  73: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hodge|Input")
+  74: 	TObjectPtr<UHodgeInputConfig> InputConfig;
+  78: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hodge|Camera")
+  79: 	TSubclassOf<UHodgeCameraMode> DefaultCameraMode;
+  80: };
 ```

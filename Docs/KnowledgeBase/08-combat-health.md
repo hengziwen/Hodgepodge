@@ -6,6 +6,8 @@
 
 ## 当前分工
 
+属性初始化/成长首版已实施：PlayerState 拥有属性协调器和等级/装备来源记录，HealthComponent 只绑定/通知；出生等待默认装备属性后补满，角色升级保持比例，装备变化保留绝对值。重算期间上限夹取延后，真实资源变化仍记录；现有属性名和伤害结算入口保持。完整死亡 GA 与复活玩法仍待接入。见 [成长与装备属性](../Design/character-attribute-growth.md)。
+
 Experience 通过 AddComponents 给 Pawn 添加 HodgeCombatComponentBase 与 EquipmentManager。CombatComponent 协调连段和服务器检测会话、去重及命中结果；HodgeGameplayAbility_Melee 接收结果并构建/施加 GE，组件不直接写 Health。
 
 检测支持身体、武器组件/socket 和 HitBox 配置。策略选择、采样和目标规则位于 Combat 目录；共享 FHodgeDamageRules 同时用于检测与伤害 Execution。

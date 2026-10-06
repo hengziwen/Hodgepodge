@@ -2,9 +2,13 @@
 
 [返回知识库](README.md) · [本轮更新](26-update-2026-10-06.md)
 
+[Lyra 迁移检查清单](../Design/lyra-migration-status.md) 单独记录死亡 GA、UI、Cue、消息、加载、阵营、库存和交互的迁移状态。
+
 > 当前核对：2026-10-06；运行结论仅限已记录范围。
 
 ## 已接通，避免重复建设
+
+- 角色等级/装备属性首版：成长 Profile、Instant 基础 GE、Infinite 装备加成、PlayerState 协调器、幂等与就绪/资源策略已接入。正式曲线为示例数据；完整经验、突破、后端存档和多角色切换仍是后续工作。
 
 - KB-01～04：Experience 选择/加载、PawnData 注入、Hero 输入相机、PlayerState ASC→Pawn Avatar 已成立，正式角色可移动与攻击。
 - KB-08：服务器检测、Melee GA、伤害规则、GE、Health 元属性结算已接通并由夹具验证；伤害交互倍率不再恒为零。
@@ -50,6 +54,6 @@ CommonUI 已启用，UIExtension/Indicator 等有有效代码；依赖 CommonGam
 
 ## 操作入口
 
-当前 PawnData 为 `/Game/Main/Data/PawnData/DA_Dafult_PawnData`，不要误改 AssetManager 的同名回退。普攻配置 `CodexText/DefinitionCombo`，窗口 `CodexText/BasicAttack`，武器 Profile `CodexText/WeaponPresentation/DA_SwordPresentation`。
+当前 PawnData 为 `/Game/Main/Data/PawnData/DA_Dafult_PawnData`，不要误改 AssetManager 的同名回退。普攻配置 `Main/Character/Hero/Ability/BasicAttack`，连段 `Main/Data/Combo`，窗口 `Main/Character/Hero/Ability/BasicAttack/Timeline`，武器 Profile `Main/Weapon/Presentation/DA_SwordPresentation`。
 
 详见 [本轮更新](26-update-2026-10-06.md)、[验收范围](16-validation.md)。

@@ -10,3 +10,7 @@
 备份：D:/CodexUE55Lab/ModelRepairBackup/Model。
 源目录哈希：D:/CodexUE55Lab/ModelRepairBackup/source-hashes.json。
 过程中验证脚本误保存源材质的 Morph 使用标记，已从与修复前哈希完全一致的 Git LFS 对象恢复六个源文件，并重载编辑器中的源材质内存。最终源目录所有已记录文件 SHA-256 一致。verify.py 已改为只读并增加路径断言。
+
+## 2026-10-06 正式资源迁移
+
+正式 Hero 使用的六个材质、七张贴图已通过 UE AssetTools 迁入 Main/Character/Hero/Anim/Model/Materials 和 Textures。实验模型仍在 CodexText/Model，其材质引用已同步更新。上文“同文件夹”描述为历史交付状态；这里的创建/修复脚本保留历史输出路径，不应直接复跑覆盖正式材料或重建副本。当前映射见 [迁移记录](../../Docs/Validation/main-assets-migration-2026-10-06.md)。

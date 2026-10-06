@@ -16,6 +16,7 @@ UHodgeGameplayAbility_Definition::UHodgeGameplayAbility_Definition(const FObject
 	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::LocalPredicted;
 	ActivationGroup = EHodgeAbilityActivationGroup::Exclusive_Replaceable;
 	bServerRespectsRemoteAbilityCancellation = false;
+	bRequiresInitializedAttributes = true;
 }
 
 const UHodgeAbilityDefinition* UHodgeGameplayAbility_Definition::GetDefinition() const

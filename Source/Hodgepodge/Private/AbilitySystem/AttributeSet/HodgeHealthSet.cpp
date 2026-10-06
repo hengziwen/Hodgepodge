@@ -167,6 +167,7 @@ bool UHodgeHealthSet::PreGameplayEffectExecute(FGameplayEffectModCallbackData& D
 
 	// 同时缓存执行前的 MaxHealth。
 	MaxHealthBeforeAttributeChange = GetMaxHealth();
+	GameplayResourceSnapshots.Add(FVector2D(HealthBeforeAttributeChange, MaxHealthBeforeAttributeChange));
 
 	// 允许本次 GameplayEffect 修改继续执行。
 	return true;
@@ -177,6 +178,9 @@ void UHodgeHealthSet::PostGameplayEffectExecute(const FGameplayEffectModCallback
 {
 	// 先执行父类后处理逻辑。
 	Super::PostGameplayEffectExecute(Data);
+    const FVector2D Snapshot = GameplayResourceSnapshots.IsEmpty() ? FVector2D(GetHealth(), GetMaxHealth()) : GameplayResourceSnapshots.Pop();
+    const float OldHealthForEffect = Snapshot.X;
+    const float OldMaxForEffect = Snapshot.Y;
 
 	// 判断当前效果是否属于自毁伤害。
 	const bool bIsDamageFromSelfDestruct = Data.EffectSpec.GetDynamicAssetTags().HasTagExact(
@@ -235,7 +239,7 @@ void UHodgeHealthSet::PostGameplayEffectExecute(const FGameplayEffectModCallback
 
 		// Convert into -Health and then clamp
 		// 将 Damage Meta Attribute 真正转换为 Health 减少，并限制在 MinimumHealth ~ MaxHealth 范围。
-		SetHealth(FMath::Clamp(GetHealth() - GetDamage(), MinimumHealth, GetMaxHealth()));
+		SetHealth(FMath::Clamp(GetHealth() - GetDamage(), MinimumHealth, GetResourceClampMax()));
 
 		// Damage 只是一次性 Meta Attribute，消费完成后立即清零，避免污染下一次伤害计算。
 		SetDamage(0.0f);
@@ -246,7 +250,7 @@ void UHodgeHealthSet::PostGameplayEffectExecute(const FGameplayEffectModCallback
 	{
 		// Convert into +Health and then clamo
 		// 将 Healing Meta Attribute 转换为 Health 增加，并限制在 MinimumHealth ~ MaxHealth 范围。
-		SetHealth(FMath::Clamp(GetHealth() + GetHealing(), MinimumHealth, GetMaxHealth()));
+		SetHealth(FMath::Clamp(GetHealth() + GetHealing(), MinimumHealth, GetResourceClampMax()));
 
 		// Healing 消费完成后清零，等待下一次治疗重新写入。
 		SetHealing(0.0f);
@@ -257,7 +261,7 @@ void UHodgeHealthSet::PostGameplayEffectExecute(const FGameplayEffectModCallback
 	{
 		// Clamp and fall into out of health handling below
 		// 对直接修改后的 Health 再做一次合法范围限制。
-		SetHealth(FMath::Clamp(GetHealth(), MinimumHealth, GetMaxHealth()));
+		SetHealth(FMath::Clamp(GetHealth(), MinimumHealth, GetResourceClampMax()));
 	}
 
 	// 本次 GameplayEffect 修改的是 MaxHealth。
@@ -269,16 +273,22 @@ void UHodgeHealthSet::PostGameplayEffectExecute(const FGameplayEffectModCallback
 		// Notify on any requested max health changes
 		// 广播 MaxHealth 变化事件，并携带完整 GameplayEffect 上下文。
 		OnMaxHealthChanged.Broadcast(Instigator, Causer, &Data.EffectSpec, Data.EvaluatedData.Magnitude,
-		                             MaxHealthBeforeAttributeChange, GetMaxHealth());
+		                             OldMaxForEffect, GetMaxHealth());
 	}
 
 	// If health has actually changed activate callbacks
 	// 只有最终 Health 确实发生变化时才广播 HealthChanged。
-	if (GetHealth() != HealthBeforeAttributeChange)
+	if (AttributeRebuildDepth > 0 && (Data.EvaluatedData.Attribute == GetHealthAttribute() || Data.EvaluatedData.Attribute == GetDamageAttribute() || Data.EvaluatedData.Attribute == GetHealingAttribute()))
+	{
+		AttributeRebuildResourceDelta += GetHealth() - OldHealthForEffect;
+		bReachedZeroDuringRebuild |= GetHealth() <= 0.f;
+	}
+	const bool bResourceExecution = Data.EvaluatedData.Attribute == GetHealthAttribute() || Data.EvaluatedData.Attribute == GetDamageAttribute() || Data.EvaluatedData.Attribute == GetHealingAttribute();
+	if ((AttributeRebuildDepth == 0 || bResourceExecution) && GetHealth() != OldHealthForEffect)
 	{
 		// 广播生命值变化，并携带伤害来源、GE、修改前 Health 和修改后 Health。
 		OnHealthChanged.Broadcast(Instigator, Causer, &Data.EffectSpec, Data.EvaluatedData.Magnitude,
-		                          HealthBeforeAttributeChange, GetHealth());
+		                          OldHealthForEffect, GetHealth());
 	}
 
 	// Health 首次下降到 0 或以下时触发生命耗尽事件。
@@ -286,7 +296,7 @@ void UHodgeHealthSet::PostGameplayEffectExecute(const FGameplayEffectModCallback
 	{
 		// 广播 OutOfHealth，供死亡系统等逻辑继续处理。
 		OnOutOfHealth.Broadcast(Instigator, Causer, &Data.EffectSpec, Data.EvaluatedData.Magnitude,
-		                        HealthBeforeAttributeChange, GetHealth());
+		                        OldHealthForEffect, GetHealth());
 	}
 
 	// Check health again in case an event above changed it.
@@ -327,7 +337,7 @@ void UHodgeHealthSet::PostAttributeChange(const FGameplayAttribute& Attribute, f
 		// MaxHealth 降低后，需要保证当前 Health 不会继续高于新的最大生命值。
 
 		// 当前 Health 已经超过新的 MaxHealth。
-		if (GetHealth() > NewValue)
+		if (AttributeRebuildDepth == 0 && GetHealth() > NewValue)
 		{
 			// 获取拥有当前 AttributeSet 的项目 ASC。
 			UHodgeAbilitySystemComponent* HodgeASC = GetHodgeAbilitySystemComponent();
@@ -348,6 +358,42 @@ void UHodgeHealthSet::PostAttributeChange(const FGameplayAttribute& Attribute, f
 	}
 }
 
+void UHodgeHealthSet::BeginAttributeRebuild()
+{
+	if (AttributeRebuildDepth++ == 0)
+	{
+		AttributeRebuildClampMax = FMath::Max(1.f, GetMaxHealth());
+		AttributeRebuildResourceDelta = 0.f;
+		bReachedZeroDuringRebuild = false;
+	}
+}
+
+float UHodgeHealthSet::EndAttributeRebuild(bool& bReachedZero)
+{
+	check(AttributeRebuildDepth > 0);
+	--AttributeRebuildDepth;
+	bReachedZero = bReachedZeroDuringRebuild;
+	return AttributeRebuildResourceDelta;
+}
+
+float UHodgeHealthSet::GetResourceClampMax() const
+{
+	return AttributeRebuildDepth > 0 ? AttributeRebuildClampMax : GetMaxHealth();
+}
+
+bool UHodgeHealthSet::SetHealthForAttributeCommit(float NewHealth)
+{
+	auto* ASC = GetHodgeAbilitySystemComponent();
+	if (!ASC || !ASC->IsOwnerActorAuthoritative() || !FMath::IsFinite(NewHealth) || AttributeRebuildDepth != 0) { return false; }
+	const float OldHealth = GetHealth();
+	ASC->SetNumericAttributeBase(GetHealthAttribute(), FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));
+	if (!FMath::IsNearlyEqual(OldHealth, GetHealth()))
+	{
+		OnHealthChanged.Broadcast(nullptr, nullptr, nullptr, GetHealth() - OldHealth, OldHealth, GetHealth());
+	}
+	return true;
+}
+
 // 对不同生命属性执行统一的数值范围限制。
 void UHodgeHealthSet::ClampAttribute(const FGameplayAttribute& Attribute, float& NewValue) const
 {
@@ -356,7 +402,7 @@ void UHodgeHealthSet::ClampAttribute(const FGameplayAttribute& Attribute, float&
 	{
 		// Do not allow health to go negative or above max health.
 		// Health 最低为 0，最高不能超过当前 MaxHealth。
-		NewValue = FMath::Clamp(NewValue, 0.0f, GetMaxHealth());
+		NewValue = FMath::Clamp(NewValue, 0.0f, GetResourceClampMax());
 	}
 
 	// 当前正在修改 MaxHealth。

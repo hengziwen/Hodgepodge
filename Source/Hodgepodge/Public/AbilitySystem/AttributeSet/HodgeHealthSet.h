@@ -1,4 +1,4 @@
-﻿
+
 // 111屎山代码来袭
 
 #pragma once
@@ -69,6 +69,9 @@ public:
 
 	// 生成 Damage 对应的 GAS Attribute 访问函数。
 	ATTRIBUTE_ACCESSORS(UHodgeHealthSet, Damage);
+	void BeginAttributeRebuild();
+	float EndAttributeRebuild(bool& bReachedZero);
+	bool SetHealthForAttributeCommit(float NewHealth);
 
 	// Delegate when health changes due to damage/healing, some information may be missing on the client
 	// Health 因伤害、治疗或其他效果发生变化时广播；客户端通过属性复制触发时可能缺少完整 GE 上下文。
@@ -105,6 +108,12 @@ protected:
 
 	// Attribute 完成变化后调用，用于处理 MaxHealth 变化后修正 Health 等关联逻辑。
 	virtual void PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue) override;
+	float GetResourceClampMax() const;
+	TArray<FVector2D> GameplayResourceSnapshots;
+	int32 AttributeRebuildDepth = 0;
+	float AttributeRebuildClampMax = 1.f;
+	float AttributeRebuildResourceDelta = 0.f;
+	bool bReachedZeroDuringRebuild = false;
 
 	// 根据 Attribute 类型限制 NewValue 的合法范围，例如 Health 不超过 MaxHealth。
 	void ClampAttribute(const FGameplayAttribute& Attribute, float& NewValue) const;

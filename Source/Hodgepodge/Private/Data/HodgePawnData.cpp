@@ -2,6 +2,7 @@
 
 
 #include "Data/HodgePawnData.h"
+#include "Data/HodgeCharacterStatProfile.h"
 
 #if WITH_EDITOR
 #include "Data/HodgeAbilityDefinition.h"
@@ -27,6 +28,13 @@ UHodgePawnData::UHodgePawnData(const FObjectInitializer& ObjectInitializer)
 EDataValidationResult UHodgePawnData::IsDataValid(FDataValidationContext& Context) const
 {
 	const auto Parent = Super::IsDataValid(Context);
+	if (StatProfile)
+	{
+		TArray<FText> Errors;
+		StatProfile->Validate(Errors);
+		for (const auto& Error : Errors) { Context.AddError(Error); }
+		if (!Errors.IsEmpty()) { return EDataValidationResult::Invalid; }
+	}
 	if (!ComboDefinition) { return Parent; }
 	TArray<FText> Errors;
 	ComboDefinition->ValidateDefinition(Errors);

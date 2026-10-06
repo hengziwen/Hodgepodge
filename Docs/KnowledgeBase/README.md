@@ -8,6 +8,8 @@
 
 - [最新完整更新](26-update-2026-10-06.md)：当前路径、职责、调参及验证边界。
 - [当前接通状态](12-integration-backlog.md)、[验证与未验证](16-validation.md)。
+- [Lyra 迁移现状与检查清单](../Design/lyra-migration-status.md)：查看迁移了一部分的系统及逐项验收。
+- [属性初始化／成长／装备加成](../Design/character-attribute-growth.md)：首版已实现，实际类型、配置及验证见第 13 节；经验/存档后端等扩展仍未实现。
 - [项目 README](../../README.md)、[设计文档目录](../README.md)。
 
 ## 按系统阅读

@@ -101,6 +101,7 @@ class HODGEPODGE_API UHodgeGameplayAbility : public UGameplayAbility
 public:
 	// 初始化 HodgeGameplayAbility 默认属性。
 	UHodgeGameplayAbility(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Attributes") bool bRequiresInitializedAttributes = false;
 
 	// 从 Ability 的 ActorInfo 中获取项目自定义的 AbilitySystemComponent。
 	UFUNCTION(BlueprintCallable, Category = "Hodge|Ability")

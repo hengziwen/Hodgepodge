@@ -10,6 +10,7 @@
 class AActor;
 class UHodgeAbilitySet;
 class UHodgeEquipmentInstance;
+class UHodgeEquipmentStatProfile;
 
 /**
  * 描述装备时需要生成并挂接到 Pawn 上的一个 Actor。
@@ -67,6 +68,8 @@ public:
 	// 装备时需要授予给 Pawn AbilitySystemComponent 的 AbilitySet 列表。
 	UPROPERTY(EditDefaultsOnly, Category=Equipment)
 	TArray<TObjectPtr<const UHodgeAbilitySet>> AbilitySetsToGrant;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Attributes")
+	TObjectPtr<UHodgeEquipmentStatProfile> StatProfile;
 
 	// Actors to spawn on the pawn when this is equipped
 

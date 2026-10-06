@@ -27,58 +27,59 @@ PawnExtension、相机、HealthComponent、原生 RotationComponent；ASC、移�
 
 源码：[Source/Hodgepodge/Private/Character/HodgeCombatCharacter.cpp](../../../Source/Hodgepodge/Private/Character/HodgeCombatCharacter.cpp)
 
-项目内直接 include（不是运行调用关系）：[Character/HodgeCombatCharacter.h](../../../Source/Hodgepodge/Public/Character/HodgeCombatCharacter.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)、[Camera/HodgeCameraComponent.h](../../../Source/Hodgepodge/Public/Camera/HodgeCameraComponent.h)、[Component/HodgeCharacterMovementComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeCharacterMovementComponent.h)、[Component/HodgeCharacterRotationComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeCharacterRotationComponent.h)、[Component/HodgeHealthComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeHealthComponent.h)、[Component/HodgeCombatComponentBase.h](../../../Source/Hodgepodge/Public/Component/HodgeCombatComponentBase.h)、[Component/HodgePawnExtensionComponent.h](../../../Source/Hodgepodge/Public/Component/HodgePawnExtensionComponent.h)、[Core/PlayerController/HodgePlayerController.h](../../../Source/Hodgepodge/Public/Core/PlayerController/HodgePlayerController.h)、[Core/PlayState/HodgePlayerState.h](../../../Source/Hodgepodge/Public/Core/PlayState/HodgePlayerState.h)、[Data/HodgePawnData.h](../../../Source/Hodgepodge/Public/Data/HodgePawnData.h)、[Equipment/HodgeEquipmentDefinition.h](../../../Source/Hodgepodge/Public/Equipment/HodgeEquipmentDefinition.h)、[Equipment/HodgeEquipmentInstance.h](../../../Source/Hodgepodge/Public/Equipment/HodgeEquipmentInstance.h)、[Equipment/HodgeEquipmentManagerComponent.h](../../../Source/Hodgepodge/Public/Equipment/HodgeEquipmentManagerComponent.h)、[Equipment/HodgeWeaponInstance.h](../../../Source/Hodgepodge/Public/Equipment/HodgeWeaponInstance.h)
+项目内直接 include（不是运行调用关系）：[Character/HodgeCombatCharacter.h](../../../Source/Hodgepodge/Public/Character/HodgeCombatCharacter.h)、[AbilitySystem/Stats/HodgeAttributeCoordinator.h](../../../Source/Hodgepodge/Public/AbilitySystem/Stats/HodgeAttributeCoordinator.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)、[Camera/HodgeCameraComponent.h](../../../Source/Hodgepodge/Public/Camera/HodgeCameraComponent.h)、[Component/HodgeCharacterMovementComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeCharacterMovementComponent.h)、[Component/HodgeCharacterRotationComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeCharacterRotationComponent.h)、[Component/HodgeHealthComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeHealthComponent.h)、[Component/HodgeCombatComponentBase.h](../../../Source/Hodgepodge/Public/Component/HodgeCombatComponentBase.h)、[Component/HodgePawnExtensionComponent.h](../../../Source/Hodgepodge/Public/Component/HodgePawnExtensionComponent.h)、[Core/PlayerController/HodgePlayerController.h](../../../Source/Hodgepodge/Public/Core/PlayerController/HodgePlayerController.h)、[Core/PlayState/HodgePlayerState.h](../../../Source/Hodgepodge/Public/Core/PlayState/HodgePlayerState.h)、[Data/HodgePawnData.h](../../../Source/Hodgepodge/Public/Data/HodgePawnData.h)、[Equipment/HodgeEquipmentDefinition.h](../../../Source/Hodgepodge/Public/Equipment/HodgeEquipmentDefinition.h)、[Equipment/HodgeEquipmentInstance.h](../../../Source/Hodgepodge/Public/Equipment/HodgeEquipmentInstance.h)、[Equipment/HodgeEquipmentManagerComponent.h](../../../Source/Hodgepodge/Public/Equipment/HodgeEquipmentManagerComponent.h)、[Equipment/HodgeWeaponInstance.h](../../../Source/Hodgepodge/Public/Equipment/HodgeWeaponInstance.h)
 
 定义候选（多行签名仅展示首行）：
 
-- L45: `AHodgeCombatCharacter::AHodgeCombatCharacter(const FObjectInitializer& ObjectInitializer)`
-- L163: `void AHodgeCombatCharacter::PreInitializeComponents()`
-- L170: `void AHodgeCombatCharacter::BeginPlay()`
-- L193: `void AHodgeCombatCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)`
-- L224: `void AHodgeCombatCharacter::Reset()`
-- L237: `void AHodgeCombatCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const`
-- L249: `void AHodgeCombatCharacter::PreReplication(IRepChangedPropertyTracker& ChangedPropertyTracker)`
-- L276: `void AHodgeCombatCharacter::NotifyControllerChanged()`
-- L296: `AHodgePlayerController* AHodgeCombatCharacter::GetHodgePlayerController() const`
-- L303: `AHodgePlayerState* AHodgeCombatCharacter::GetHodgePlayerState() const`
-- L310: `UHodgeAbilitySystemComponent* AHodgeCombatCharacter::GetHodgeAbilitySystemComponent() const`
-- L317: `UAbilitySystemComponent* AHodgeCombatCharacter::GetAbilitySystemComponent() const`
-- L329: `void AHodgeCombatCharacter::OnAbilitySystemInitialized()`
-- L346: `void AHodgeCombatCharacter::OnAbilitySystemUninitialized()`
-- L356: `void AHodgeCombatCharacter::FaceRotation(FRotator NewControlRotation, float DeltaTime)`
-- L367: `void AHodgeCombatCharacter::InitializeDefaultEquipment()`
-- L424: `void AHodgeCombatCharacter::UninitializeDefaultEquipment()`
-- L446: `void AHodgeCombatCharacter::PossessedBy(AController* NewController)`
-- L472: `void AHodgeCombatCharacter::UnPossessed()`
-- L498: `void AHodgeCombatCharacter::OnRep_Controller()`
-- L507: `void AHodgeCombatCharacter::OnRep_PlayerState()`
-- L516: `void AHodgeCombatCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)`
-- L527: `void AHodgeCombatCharacter::InitializeGameplayTags()`
-- L562: `void AHodgeCombatCharacter::GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const`
-- L572: `bool AHodgeCombatCharacter::HasMatchingGameplayTag(FGameplayTag TagToCheck) const`
-- L584: `bool AHodgeCombatCharacter::HasAllMatchingGameplayTags(const FGameplayTagContainer& TagContainer) const`
-- L596: `bool AHodgeCombatCharacter::HasAnyMatchingGameplayTags(const FGameplayTagContainer& TagContainer) const`
-- L608: `void AHodgeCombatCharacter::FellOutOfWorld(const class UDamageType& dmgType)`
-- L615: `void AHodgeCombatCharacter::OnDeathStarted(AActor*)`
-- L624: `void AHodgeCombatCharacter::OnDeathFinished(AActor*)`
-- L631: `void AHodgeCombatCharacter::DisableMovementAndCollision()`
-- L661: `void AHodgeCombatCharacter::DestroyDueToDeath()`
-- L671: `void AHodgeCombatCharacter::UninitAndDestroy()`
-- L699: `void AHodgeCombatCharacter::OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousCustomMode)`
-- L715: `void AHodgeCombatCharacter::SetMovementModeTag(EMovementMode MovementMode, uint8 CustomMovementMode, bool bTagEnabled)`
-- L744: `void AHodgeCombatCharacter::ToggleCrouch()`
-- L763: `void AHodgeCombatCharacter::OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust)`
-- L777: `void AHodgeCombatCharacter::OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust)`
-- L791: `bool AHodgeCombatCharacter::CanJumpInternal_Implementation() const`
-- L798: `void AHodgeCombatCharacter::OnRep_ReplicatedAcceleration()`
-- L828: `void AHodgeCombatCharacter::OnControllerChangedTeam(UObject* TeamAgent, int32 OldTeam, int32 NewTeam)`
-- L841: `void AHodgeCombatCharacter::OnRep_MyTeamID(FGenericTeamId OldTeamID)`
-- L848: `bool AHodgeCombatCharacter::UpdateSharedReplication()`
-- L881: `void AHodgeCombatCharacter::FastSharedReplication_Implementation(const FSharedRepMovement& SharedRepMovement)`
-- L923: `FSharedRepMovement::FSharedRepMovement()`
-- L930: `bool FSharedRepMovement::FillForCharacter(ACharacter* Character)`
-- L977: `bool FSharedRepMovement::Equals(const FSharedRepMovement& Other, ACharacter* Character) const`
-- L1020: `bool FSharedRepMovement::NetSerialize(FArchive& Ar, class UPackageMap* Map, bool& bOutSuccess)`
+- L46: `AHodgeCombatCharacter::AHodgeCombatCharacter(const FObjectInitializer& ObjectInitializer)`
+- L164: `void AHodgeCombatCharacter::PreInitializeComponents()`
+- L171: `void AHodgeCombatCharacter::BeginPlay()`
+- L194: `void AHodgeCombatCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)`
+- L229: `void AHodgeCombatCharacter::Reset()`
+- L242: `void AHodgeCombatCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const`
+- L254: `void AHodgeCombatCharacter::PreReplication(IRepChangedPropertyTracker& ChangedPropertyTracker)`
+- L281: `void AHodgeCombatCharacter::NotifyControllerChanged()`
+- L301: `AHodgePlayerController* AHodgeCombatCharacter::GetHodgePlayerController() const`
+- L308: `AHodgePlayerState* AHodgeCombatCharacter::GetHodgePlayerState() const`
+- L315: `UHodgeAbilitySystemComponent* AHodgeCombatCharacter::GetHodgeAbilitySystemComponent() const`
+- L322: `UAbilitySystemComponent* AHodgeCombatCharacter::GetAbilitySystemComponent() const`
+- L334: `void AHodgeCombatCharacter::OnAbilitySystemInitialized()`
+- L351: `void AHodgeCombatCharacter::OnAbilitySystemUninitialized()`
+- L365: `void AHodgeCombatCharacter::FaceRotation(FRotator NewControlRotation, float DeltaTime)`
+- L376: `void AHodgeCombatCharacter::InitializeDefaultEquipment()`
+- L440: `void AHodgeCombatCharacter::UninitializeDefaultEquipment()`
+- L462: `void AHodgeCombatCharacter::PossessedBy(AController* NewController)`
+- L488: `void AHodgeCombatCharacter::UnPossessed()`
+- L514: `void AHodgeCombatCharacter::OnRep_Controller()`
+- L523: `void AHodgeCombatCharacter::OnRep_PlayerState()`
+- L532: `void AHodgeCombatCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)`
+- L543: `void AHodgeCombatCharacter::InitializeGameplayTags()`
+- L578: `void AHodgeCombatCharacter::GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const`
+- L588: `bool AHodgeCombatCharacter::HasMatchingGameplayTag(FGameplayTag TagToCheck) const`
+- L600: `bool AHodgeCombatCharacter::HasAllMatchingGameplayTags(const FGameplayTagContainer& TagContainer) const`
+- L612: `bool AHodgeCombatCharacter::HasAnyMatchingGameplayTags(const FGameplayTagContainer& TagContainer) const`
+- L624: `void AHodgeCombatCharacter::FellOutOfWorld(const class UDamageType& dmgType)`
+- L631: `void AHodgeCombatCharacter::OnDeathStarted(AActor*)`
+- L640: `void AHodgeCombatCharacter::OnDeathFinished(AActor*)`
+- L647: `void AHodgeCombatCharacter::DisableMovementAndCollision()`
+- L677: `void AHodgeCombatCharacter::DestroyDueToDeath()`
+- L687: `void AHodgeCombatCharacter::UninitAndDestroy()`
+- L715: `void AHodgeCombatCharacter::OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousCustomMode)`
+- L731: `void AHodgeCombatCharacter::SetMovementModeTag(EMovementMode MovementMode, uint8 CustomMovementMode, bool bTagEnabled)`
+- L760: `void AHodgeCombatCharacter::ToggleCrouch()`
+- L779: `void AHodgeCombatCharacter::OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust)`
+- L793: `void AHodgeCombatCharacter::OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust)`
+- L807: `bool AHodgeCombatCharacter::CanJumpInternal_Implementation() const`
+- L814: `void AHodgeCombatCharacter::OnRep_ReplicatedAcceleration()`
+- L844: `void AHodgeCombatCharacter::OnControllerChangedTeam(UObject* TeamAgent, int32 OldTeam, int32 NewTeam)`
+- L857: `void AHodgeCombatCharacter::OnRep_MyTeamID(FGenericTeamId OldTeamID)`
+- L864: `bool AHodgeCombatCharacter::UpdateSharedReplication()`
+- L897: `void AHodgeCombatCharacter::FastSharedReplication_Implementation(const FSharedRepMovement& SharedRepMovement)`
+- L939: `FSharedRepMovement::FSharedRepMovement()`
+- L946: `bool FSharedRepMovement::FillForCharacter(ACharacter* Character)`
+- L993: `bool FSharedRepMovement::Equals(const FSharedRepMovement& Other, ACharacter* Character) const`
+- L1036: `bool FSharedRepMovement::NetSerialize(FArchive& Ar, class UPackageMap* Map, bool& bOutSuccess)`
+- L1073: `void AHodgeCombatCharacter::TryInitializeAttributesAndEquipment()`
 
 ## HodgeEnemyCharacter.cpp
 
@@ -216,81 +217,82 @@ PawnExtension、相机、HealthComponent、原生 RotationComponent；ASC、移�
  136: 	UHodgeAbilitySystemComponent* GetHodgeAbilitySystemComponent() const;
  138: 	UFUNCTION(BlueprintPure, Category = "Hodge|Character")
  139: 	UHodgeCharacterRotationComponent* GetCharacterRotationComponent() const { return RotationComponent; }
- 141: 	virtual void FaceRotation(FRotator NewControlRotation, float DeltaTime = 0.f) override;
- 144: 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
- 147: 	virtual void GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const override;
- 150: 	virtual bool HasMatchingGameplayTag(FGameplayTag TagToCheck) const override;
- 153: 	virtual bool HasAllMatchingGameplayTags(const FGameplayTagContainer& TagContainer) const override;
- 156: 	virtual bool HasAnyMatchingGameplayTags(const FGameplayTagContainer& TagContainer) const override;
- 159: 	void ToggleCrouch();
- 164: 	virtual void PreInitializeComponents() override;
- 167: 	virtual void BeginPlay() override;
- 170: 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
- 173: 	virtual void Reset() override;
- 176: 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
- 179: 	virtual void PreReplication(IRepChangedPropertyTracker& ChangedPropertyTracker) override;
- 186: 	virtual void NotifyControllerChanged() override;
- 191: 	UFUNCTION(NetMulticast, unreliable)
- 192: 	void FastSharedReplication(const FSharedRepMovement& SharedRepMovement);
- 195: 	FSharedRepMovement LastSharedReplication;
- 198: 	virtual bool UpdateSharedReplication();
- 200: protected:
- 202: 	virtual void OnAbilitySystemInitialized();
- 205: 	virtual void OnAbilitySystemUninitialized();
- 208: 	void InitializeDefaultEquipment();
- 211: 	void UninitializeDefaultEquipment();
- 214: 	virtual void PossessedBy(AController* NewController) override;
- 217: 	virtual void UnPossessed() override;
- 220: 	virtual void OnRep_Controller() override;
- 223: 	virtual void OnRep_PlayerState() override;
- 226: 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
- 229: 	void InitializeGameplayTags();
- 232: 	virtual void FellOutOfWorld(const class UDamageType& dmgType) override;
- 235: 	UFUNCTION()
- 236: 	virtual void OnDeathStarted(AActor* OwningActor);
- 239: 	UFUNCTION()
- 240: 	virtual void OnDeathFinished(AActor* OwningActor);
- 243: 	void DisableMovementAndCollision();
- 246: 	void DestroyDueToDeath();
- 249: 	void UninitAndDestroy();
- 252: 	UFUNCTION(BlueprintImplementableEvent, meta=(DisplayName="OnDeathFinished"))
- 253: 	void K2_OnDeathFinished();
- 256: 	virtual void OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousCustomMode) override;
- 259: 	void SetMovementModeTag(EMovementMode MovementMode, uint8 CustomMovementMode, bool bTagEnabled);
- 262: 	virtual void OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
- 265: 	virtual void OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
- 268: 	virtual bool CanJumpInternal_Implementation() const;
- 270: private:
- 272: 	UPROPERTY(Transient)
- 273: 	TObjectPtr<UHodgeEquipmentInstance> DefaultWeaponInstance;
- 276: 	UPROPERTY(Transient)
- 277: 	TWeakObjectPtr<UHodgeEquipmentManagerComponent> DefaultEquipmentManager;
- 280: 	bool bInitializingDefaultEquipment = false;
- 283: 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hodge|Character", Meta = (AllowPrivateAccess = "true"))
- 284: 	TObjectPtr<UHodgePawnExtensionComponent> PawnExtComponent;
- 287: 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hodge|Character", Meta = (AllowPrivateAccess = "true"))
- 288: 	TObjectPtr<UHodgeHealthComponent> HealthComponent;
- 290: 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hodge|Character", Meta = (AllowPrivateAccess = "true"))
- 291: 	TObjectPtr<UHodgeCharacterRotationComponent> RotationComponent;
- 294: 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hodge|Character", Meta = (AllowPrivateAccess = "true"))
- 295: 	TObjectPtr<UHodgeCameraComponent> CameraComponent;
- 298: 	UPROPERTY(Transient, ReplicatedUsing = OnRep_ReplicatedAcceleration)
- 299: 	FHodgeReplicatedAcceleration ReplicatedAcceleration;
- 302: 	UPROPERTY(ReplicatedUsing = OnRep_MyTeamID)
- 303: 	FGenericTeamId MyTeamID;
- 305: protected:
- 307: 	virtual FGenericTeamId DetermineNewTeamAfterPossessionEnds(FGenericTeamId OldTeamID) const
- 308: 	{
- 310: 		return FGenericTeamId::NoTeam;
- 311: 	}
- 313: private:
- 315: 	UFUNCTION()
- 316: 	void OnControllerChangedTeam(UObject* TeamAgent, int32 OldTeam, int32 NewTeam);
- 319: 	UFUNCTION()
- 320: 	void OnRep_ReplicatedAcceleration();
- 323: 	UFUNCTION()
- 324: 	void OnRep_MyTeamID(FGenericTeamId OldTeamID);
- 325: };
+ 140: 	void TryInitializeAttributesAndEquipment();
+ 142: 	virtual void FaceRotation(FRotator NewControlRotation, float DeltaTime = 0.f) override;
+ 145: 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+ 148: 	virtual void GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const override;
+ 151: 	virtual bool HasMatchingGameplayTag(FGameplayTag TagToCheck) const override;
+ 154: 	virtual bool HasAllMatchingGameplayTags(const FGameplayTagContainer& TagContainer) const override;
+ 157: 	virtual bool HasAnyMatchingGameplayTags(const FGameplayTagContainer& TagContainer) const override;
+ 160: 	void ToggleCrouch();
+ 165: 	virtual void PreInitializeComponents() override;
+ 168: 	virtual void BeginPlay() override;
+ 171: 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+ 174: 	virtual void Reset() override;
+ 177: 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+ 180: 	virtual void PreReplication(IRepChangedPropertyTracker& ChangedPropertyTracker) override;
+ 187: 	virtual void NotifyControllerChanged() override;
+ 192: 	UFUNCTION(NetMulticast, unreliable)
+ 193: 	void FastSharedReplication(const FSharedRepMovement& SharedRepMovement);
+ 196: 	FSharedRepMovement LastSharedReplication;
+ 199: 	virtual bool UpdateSharedReplication();
+ 201: protected:
+ 203: 	virtual void OnAbilitySystemInitialized();
+ 206: 	virtual void OnAbilitySystemUninitialized();
+ 209: 	void InitializeDefaultEquipment();
+ 212: 	void UninitializeDefaultEquipment();
+ 215: 	virtual void PossessedBy(AController* NewController) override;
+ 218: 	virtual void UnPossessed() override;
+ 221: 	virtual void OnRep_Controller() override;
+ 224: 	virtual void OnRep_PlayerState() override;
+ 227: 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+ 230: 	void InitializeGameplayTags();
+ 233: 	virtual void FellOutOfWorld(const class UDamageType& dmgType) override;
+ 236: 	UFUNCTION()
+ 237: 	virtual void OnDeathStarted(AActor* OwningActor);
+ 240: 	UFUNCTION()
+ 241: 	virtual void OnDeathFinished(AActor* OwningActor);
+ 244: 	void DisableMovementAndCollision();
+ 247: 	void DestroyDueToDeath();
+ 250: 	void UninitAndDestroy();
+ 253: 	UFUNCTION(BlueprintImplementableEvent, meta=(DisplayName="OnDeathFinished"))
+ 254: 	void K2_OnDeathFinished();
+ 257: 	virtual void OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousCustomMode) override;
+ 260: 	void SetMovementModeTag(EMovementMode MovementMode, uint8 CustomMovementMode, bool bTagEnabled);
+ 263: 	virtual void OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
+ 266: 	virtual void OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
+ 269: 	virtual bool CanJumpInternal_Implementation() const;
+ 271: private:
+ 273: 	UPROPERTY(Transient)
+ 274: 	TObjectPtr<UHodgeEquipmentInstance> DefaultWeaponInstance;
+ 277: 	UPROPERTY(Transient)
+ 278: 	TWeakObjectPtr<UHodgeEquipmentManagerComponent> DefaultEquipmentManager;
+ 281: 	bool bInitializingDefaultEquipment = false;
+ 284: 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hodge|Character", Meta = (AllowPrivateAccess = "true"))
+ 285: 	TObjectPtr<UHodgePawnExtensionComponent> PawnExtComponent;
+ 288: 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hodge|Character", Meta = (AllowPrivateAccess = "true"))
+ 289: 	TObjectPtr<UHodgeHealthComponent> HealthComponent;
+ 291: 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hodge|Character", Meta = (AllowPrivateAccess = "true"))
+ 292: 	TObjectPtr<UHodgeCharacterRotationComponent> RotationComponent;
+ 295: 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hodge|Character", Meta = (AllowPrivateAccess = "true"))
+ 296: 	TObjectPtr<UHodgeCameraComponent> CameraComponent;
+ 299: 	UPROPERTY(Transient, ReplicatedUsing = OnRep_ReplicatedAcceleration)
+ 300: 	FHodgeReplicatedAcceleration ReplicatedAcceleration;
+ 303: 	UPROPERTY(ReplicatedUsing = OnRep_MyTeamID)
+ 304: 	FGenericTeamId MyTeamID;
+ 306: protected:
+ 308: 	virtual FGenericTeamId DetermineNewTeamAfterPossessionEnds(FGenericTeamId OldTeamID) const
+ 309: 	{
+ 311: 		return FGenericTeamId::NoTeam;
+ 312: 	}
+ 314: private:
+ 316: 	UFUNCTION()
+ 317: 	void OnControllerChangedTeam(UObject* TeamAgent, int32 OldTeam, int32 NewTeam);
+ 320: 	UFUNCTION()
+ 321: 	void OnRep_ReplicatedAcceleration();
+ 324: 	UFUNCTION()
+ 325: 	void OnRep_MyTeamID(FGenericTeamId OldTeamID);
+ 326: };
 ```
 
 ## HodgeEnemyCharacter.h

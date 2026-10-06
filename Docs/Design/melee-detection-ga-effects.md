@@ -353,14 +353,14 @@ Melee GA 提供以下替换入口：
 
 离线读取的序列化引用显示 Experience 使用 `/Game/Main/Data/PawnData/DA_Dafult_PawnData`；该 PawnData 关联 BP_Hero_Pover 及 DefinitionCombo 中的 AS_LightCombo、DA_LightCombo。不要根据 AI_DEVELOPMENT.md 的历史路径配置旧的 `/Game/Main/Data/DA_Dafult_PawnData`。
 
-`/Game/CodexText/DefinitionCombo/GA_Attack_1` 至 `GA_Attack_5` 在迁移前直接继承 HodgeGameplayAbility_Definition，现已通过 MCP 改为 HodgeGameplayAbility_Melee。`DA_Attack_1` 的实际 Timeline 引用仍为 `/Game/CodexText/BasicAttack/DA_Attack01_Timeline`，不是旁边的 DA_Attack_1_Timeline。运行前必须在每个 Definition 的 ExecutionConfig 展开确认实际 Timeline。
+`/Game/Main/Character/Hero/Ability/BasicAttack/GA_Attack_1` 至 `GA_Attack_5` 在迁移前直接继承 HodgeGameplayAbility_Definition，现已通过 MCP 改为 HodgeGameplayAbility_Melee。`DA_Attack_1` 的实际 Timeline 引用仍为 `/Game/Main/Character/Hero/Ability/BasicAttack/Timeline/DA_Attack01_Timeline`，不是旁边的 DA_Attack_1_Timeline。运行前必须在每个 Definition 的 ExecutionConfig 展开确认实际 Timeline。
 
 原生编码阶段只读取资产；用户编译完成后的 MCP 阶段修改了上述五个 GA，并新增第 14 节的测试资产。实际 Timeline 的 C++ 数据校验实现 `Source/Hodgepodge/Private/Data/HodgeAbilityTimeline.cpp` 未在这两个阶段被修改。
 
 ### 13.3 编译后迁移步骤
 
 1. 保存编辑器工作，关闭本项目编辑器，按项目流程由用户执行常规 Editor/Game 构建，再打开项目。
-2. 打开 `/Game/CodexText/DefinitionCombo/GA_Attack_1` 至 `GA_Attack_5`，通过 File → Reparent Blueprint 将父类改为 HodgeGameplayAbility_Melee。保留现有类默认值、变量及事件；逐个检查失效节点后编译保存。不要另建同 AbilityTag 的能力再重复授予。
+2. 打开 `/Game/Main/Character/Hero/Ability/BasicAttack/GA_Attack_1` 至 `GA_Attack_5`，通过 File → Reparent Blueprint 将父类改为 HodgeGameplayAbility_Melee。保留现有类默认值、变量及事件；逐个检查失效节点后编译保存。不要另建同 AbilityTag 的能力再重复授予。
 3. 打开同目录的 DA_Attack_1 至 DA_Attack_5，确认 AbilityClass 仍指向对应已换父类的 GA。没有 HitWindows 的段仍只播放原逻辑；要检测的段配置 HitWindows，并保证 WindowTag 在实际引用 Timeline 中有 Window 条目。
 4. 首先用已有 `/Game/CodexText/CombatHitWindows/DA_Test_Body` 验证。确认 AbilityClass 是 GA_Attack_1 或自己的 Melee 子类；Timeline 引用 DA_Test_Body_Timeline，绑定 SourceTag=Combat.Source.Body.Origin、Profile=DA_Hit_SocketSweep，DamageEffect=GameplayEffectParent_Damage_Basic、DamageMultiplier=1.5、RepeatHitInterval=0、HitGroup 留空。
 5. 在 Experience 的 AddComponents 中选择判定组件蓝图，在该组件蓝图的 HitSources 配置唯一的 Combat.Source.Body.Origin 来源，Sockets 留空，LocalOffset 指向前方，Radius 覆盖测试目标。不要在角色构造函数或角色蓝图再添加第二份组件；测试来源迁移见第 16 节。

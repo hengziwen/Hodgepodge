@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
@@ -137,6 +137,7 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Hodge|Character")
 	UHodgeCharacterRotationComponent* GetCharacterRotationComponent() const { return RotationComponent; }
+	void TryInitializeAttributesAndEquipment();
 
 	virtual void FaceRotation(FRotator NewControlRotation, float DeltaTime = 0.f) override;
 

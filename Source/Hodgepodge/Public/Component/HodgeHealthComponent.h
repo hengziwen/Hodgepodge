@@ -98,6 +98,7 @@ public:
 	// 解除 HealthComponent 与 ASC / HealthSet 的绑定并清理相关引用。
 	UFUNCTION(BlueprintCallable, Category = "Hodge|Health")
 	void UninitializeFromAbilitySystem();
+	void ResetForSpawn();
 
 	// Returns the current health value.
 	// 获取 HealthSet 当前生命值。

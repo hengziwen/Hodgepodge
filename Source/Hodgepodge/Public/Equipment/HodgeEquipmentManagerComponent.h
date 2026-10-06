@@ -66,6 +66,7 @@ private:
 	// 仅服务器记录原始 ASC，Pawn 解绑后仍可准确撤销授予。
 	UPROPERTY(NotReplicated)
 	TWeakObjectPtr<UHodgeAbilitySystemComponent> GrantedAbilitySystem;
+	UPROPERTY(NotReplicated) FActiveGameplayEffectHandle AttributeHandle;
 };
 
 /** List of applied equipment */
@@ -110,7 +111,7 @@ public:
 	}
 
 	// 根据 EquipmentDefinition 创建一条新的已装备记录，并返回对应运行时 EquipmentInstance。
-	UHodgeEquipmentInstance* AddEntry(TSubclassOf<UHodgeEquipmentDefinition> EquipmentDefinition);
+	UHodgeEquipmentInstance* AddEntry(TSubclassOf<UHodgeEquipmentDefinition> EquipmentDefinition, FGuid Id, int32 Level);
 
 	// 根据运行时 EquipmentInstance 找到并移除对应的装备记录。
 	void RemoveEntry(UHodgeEquipmentInstance* Instance);
@@ -160,6 +161,9 @@ public:
 	// 在服务器上根据 EquipmentDefinition 为 Pawn 装备一件物品，并返回创建的运行时实例。
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
 	UHodgeEquipmentInstance* EquipItem(TSubclassOf<UHodgeEquipmentDefinition> EquipmentDefinition);
+	UHodgeEquipmentInstance* EquipItemWithState(TSubclassOf<UHodgeEquipmentDefinition> Definition, FGuid Id, int32 Level);
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category="Hodge|Attributes") bool SetEquipmentLevel(UHodgeEquipmentInstance* Instance, int32 Level);
+	UHodgeEquipmentInstance* FindInstanceOfDefinition(TSubclassOf<UHodgeEquipmentDefinition> Definition) const;
 
 	// 在服务器上卸下指定的运行时装备实例。
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
@@ -210,6 +214,9 @@ public:
 
 private:
 	// 当前 Pawn 的已装备列表，通过 FastArray 增量复制到客户端。
+	friend struct FHodgeEquipmentMutationScope;
+	bool bEquipmentMutation = false;
+	bool bPendingUninitialize = false;
 	UPROPERTY(Replicated)
 	FHodgeEquipmentList EquipmentList;
 };
