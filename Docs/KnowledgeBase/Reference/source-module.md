@@ -221,6 +221,42 @@ Editor 动画文本导入、属性/引用修正、编译诊断与实验 PIE 配�
   51: };
 ```
 
+## HodgeCombatValidationLibrary.cpp
+
+模块或基础类型入口。
+
+源码：[Source/HodgeAbilityEditor/Private/HodgeCombatValidationLibrary.cpp](../../../Source/HodgeAbilityEditor/Private/HodgeCombatValidationLibrary.cpp)
+
+项目内直接 include（不是运行调用关系）：[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)
+
+定义候选（多行签名仅展示首行）：
+
+- L8: `bool UHodgeCombatValidationLibrary::QueueAbilityAction(UHodgeAbilitySystemComponent* ASC, FGameplayAbilitySpecHandle Handle, bool bCancel)`
+
+## HodgeCombatValidationLibrary.h
+
+模块或基础类型入口。
+
+源码：[Source/HodgeAbilityEditor/Private/HodgeCombatValidationLibrary.h](../../../Source/HodgeAbilityEditor/Private/HodgeCombatValidationLibrary.h)
+
+有效头文件声明摘录（未展开宏，未求值预处理分支）：
+
+```cpp
+   1: #pragma once
+   2: #include "Kismet/BlueprintFunctionLibrary.h"
+   3: #include "GameplayAbilitySpecHandle.h"
+   4: #include "HodgeCombatValidationLibrary.generated.h"
+   6: class UHodgeAbilitySystemComponent;
+   9: UCLASS()
+  10: class HODGEABILITYEDITOR_API UHodgeCombatValidationLibrary : public UBlueprintFunctionLibrary
+  11: {
+  12: 	GENERATED_BODY()
+  13: public:
+  14: 	UFUNCTION(BlueprintCallable, Category="Hodge|Editor|Validation")
+  15: 	static bool QueueAbilityAction(UHodgeAbilitySystemComponent* ASC, FGameplayAbilitySpecHandle Handle, bool bCancel = false);
+  16: };
+```
+
 ## SHodgeAbilityPreview.cpp
 
 模块或基础类型入口。

@@ -64,28 +64,34 @@
 
 ## Main/Character/Hero/Ability/BasicAttack
 
-- [DA_Attack_1.uasset](../../../Content/Main/Character/Hero/Ability/BasicAttack/DA_Attack_1.uasset) — `/Game/Main/Character/Hero/Ability/BasicAttack/DA_Attack_1`；3,288 字节
-- [DA_Attack_2.uasset](../../../Content/Main/Character/Hero/Ability/BasicAttack/DA_Attack_2.uasset) — `/Game/Main/Character/Hero/Ability/BasicAttack/DA_Attack_2`；3,288 字节
-- [DA_Attack_3.uasset](../../../Content/Main/Character/Hero/Ability/BasicAttack/DA_Attack_3.uasset) — `/Game/Main/Character/Hero/Ability/BasicAttack/DA_Attack_3`；3,288 字节
+- [DA_Attack_1.uasset](../../../Content/Main/Character/Hero/Ability/BasicAttack/DA_Attack_1.uasset) — `/Game/Main/Character/Hero/Ability/BasicAttack/DA_Attack_1`；4,614 字节
+- [DA_Attack_2.uasset](../../../Content/Main/Character/Hero/Ability/BasicAttack/DA_Attack_2.uasset) — `/Game/Main/Character/Hero/Ability/BasicAttack/DA_Attack_2`；4,614 字节
+- [DA_Attack_3.uasset](../../../Content/Main/Character/Hero/Ability/BasicAttack/DA_Attack_3.uasset) — `/Game/Main/Character/Hero/Ability/BasicAttack/DA_Attack_3`；4,614 字节
 - [DA_Attack_4.uasset](../../../Content/Main/Character/Hero/Ability/BasicAttack/DA_Attack_4.uasset) — `/Game/Main/Character/Hero/Ability/BasicAttack/DA_Attack_4`；3,288 字节
-- [DA_Attack_5.uasset](../../../Content/Main/Character/Hero/Ability/BasicAttack/DA_Attack_5.uasset) — `/Game/Main/Character/Hero/Ability/BasicAttack/DA_Attack_5`；3,288 字节
+- [DA_Attack_5.uasset](../../../Content/Main/Character/Hero/Ability/BasicAttack/DA_Attack_5.uasset) — `/Game/Main/Character/Hero/Ability/BasicAttack/DA_Attack_5`；4,614 字节
 - [GA_Attack_1.uasset](../../../Content/Main/Character/Hero/Ability/BasicAttack/GA_Attack_1.uasset) — `/Game/Main/Character/Hero/Ability/BasicAttack/GA_Attack_1`；17,432 字节
 - [GA_Attack_2.uasset](../../../Content/Main/Character/Hero/Ability/BasicAttack/GA_Attack_2.uasset) — `/Game/Main/Character/Hero/Ability/BasicAttack/GA_Attack_2`；17,432 字节
 - [GA_Attack_3.uasset](../../../Content/Main/Character/Hero/Ability/BasicAttack/GA_Attack_3.uasset) — `/Game/Main/Character/Hero/Ability/BasicAttack/GA_Attack_3`；17,432 字节
 - [GA_Attack_4.uasset](../../../Content/Main/Character/Hero/Ability/BasicAttack/GA_Attack_4.uasset) — `/Game/Main/Character/Hero/Ability/BasicAttack/GA_Attack_4`；17,432 字节
 - [GA_Attack_5.uasset](../../../Content/Main/Character/Hero/Ability/BasicAttack/GA_Attack_5.uasset) — `/Game/Main/Character/Hero/Ability/BasicAttack/GA_Attack_5`；17,432 字节
+- [GE_MeleeDamage_Instant.uasset](../../../Content/Main/Character/Hero/Ability/BasicAttack/GE_MeleeDamage_Instant.uasset) — `/Game/Main/Character/Hero/Ability/BasicAttack/GE_MeleeDamage_Instant`；14,338 字节
 
 ## Main/Character/Hero/Ability/BasicAttack/Timeline
 
-- [DA_Attack01_Timeline.uasset](../../../Content/Main/Character/Hero/Ability/BasicAttack/Timeline/DA_Attack01_Timeline.uasset) — `/Game/Main/Character/Hero/Ability/BasicAttack/Timeline/DA_Attack01_Timeline`；5,366 字节
-- [DA_Attack02_Timeline.uasset](../../../Content/Main/Character/Hero/Ability/BasicAttack/Timeline/DA_Attack02_Timeline.uasset) — `/Game/Main/Character/Hero/Ability/BasicAttack/Timeline/DA_Attack02_Timeline`；5,366 字节
-- [DA_Attack03_Timeline.uasset](../../../Content/Main/Character/Hero/Ability/BasicAttack/Timeline/DA_Attack03_Timeline.uasset) — `/Game/Main/Character/Hero/Ability/BasicAttack/Timeline/DA_Attack03_Timeline`；5,366 字节
+- [DA_Attack01_Timeline.uasset](../../../Content/Main/Character/Hero/Ability/BasicAttack/Timeline/DA_Attack01_Timeline.uasset) — `/Game/Main/Character/Hero/Ability/BasicAttack/Timeline/DA_Attack01_Timeline`；5,975 字节
+- [DA_Attack02_Timeline.uasset](../../../Content/Main/Character/Hero/Ability/BasicAttack/Timeline/DA_Attack02_Timeline.uasset) — `/Game/Main/Character/Hero/Ability/BasicAttack/Timeline/DA_Attack02_Timeline`；6,498 字节
+- [DA_Attack03_Timeline.uasset](../../../Content/Main/Character/Hero/Ability/BasicAttack/Timeline/DA_Attack03_Timeline.uasset) — `/Game/Main/Character/Hero/Ability/BasicAttack/Timeline/DA_Attack03_Timeline`；5,975 字节
 - [DA_Attack04_Timeline.uasset](../../../Content/Main/Character/Hero/Ability/BasicAttack/Timeline/DA_Attack04_Timeline.uasset) — `/Game/Main/Character/Hero/Ability/BasicAttack/Timeline/DA_Attack04_Timeline`；5,366 字节
-- [DA_Attack05_Timeline.uasset](../../../Content/Main/Character/Hero/Ability/BasicAttack/Timeline/DA_Attack05_Timeline.uasset) — `/Game/Main/Character/Hero/Ability/BasicAttack/Timeline/DA_Attack05_Timeline`；5,366 字节
+- [DA_Attack05_Timeline.uasset](../../../Content/Main/Character/Hero/Ability/BasicAttack/Timeline/DA_Attack05_Timeline.uasset) — `/Game/Main/Character/Hero/Ability/BasicAttack/Timeline/DA_Attack05_Timeline`；7,020 字节
+
+## Main/Character/Hero/Ability
+
+- [GA_Hero_Death.uasset](../../../Content/Main/Character/Hero/Ability/GA_Hero_Death.uasset) — `/Game/Main/Character/Hero/Ability/GA_Hero_Death`；87,177 字节
+- [GA_Hero_Jump.uasset](../../../Content/Main/Character/Hero/Ability/GA_Hero_Jump.uasset) — `/Game/Main/Character/Hero/Ability/GA_Hero_Jump`；36,703 字节
 
 ## Main/Character/Hero/Anim
 
-- [ABP_Pover_Base.uasset](../../../Content/Main/Character/Hero/Anim/ABP_Pover_Base.uasset) — `/Game/Main/Character/Hero/Anim/ABP_Pover_Base`；1,880,363 字节
+- [ABP_Pover_Base.uasset](../../../Content/Main/Character/Hero/Anim/ABP_Pover_Base.uasset) — `/Game/Main/Character/Hero/Anim/ABP_Pover_Base`；1,877,273 字节
 
 ## Main/Character/Hero/Anim/BlendSpaces
 
@@ -127,6 +133,7 @@
 - [AM_Attack03_Montage.uasset](../../../Content/Main/Character/Hero/Anim/Montages/AM_Attack03_Montage.uasset) — `/Game/Main/Character/Hero/Anim/Montages/AM_Attack03_Montage`；9,190 字节
 - [AM_Attack04_Montage.uasset](../../../Content/Main/Character/Hero/Anim/Montages/AM_Attack04_Montage.uasset) — `/Game/Main/Character/Hero/Anim/Montages/AM_Attack04_Montage`；8,997 字节
 - [AM_Attack05_Montage.uasset](../../../Content/Main/Character/Hero/Anim/Montages/AM_Attack05_Montage.uasset) — `/Game/Main/Character/Hero/Anim/Montages/AM_Attack05_Montage`；9,251 字节
+- [AM_Pover_Death.uasset](../../../Content/Main/Character/Hero/Anim/Montages/AM_Pover_Death.uasset) — `/Game/Main/Character/Hero/Anim/Montages/AM_Pover_Death`；9,095 字节
 
 ## Main/Character/Hero/Anim
 
@@ -191,10 +198,17 @@
 - [DA_TimeLineText.uasset](../../../Content/Main/Character/Hero/DA_TimeLineText.uasset) — `/Game/Main/Character/Hero/DA_TimeLineText`；2,735 字节
 - [GA_Attack.uasset](../../../Content/Main/Character/Hero/GA_Attack.uasset) — `/Game/Main/Character/Hero/GA_Attack`；93,698 字节
 
+## Main/Combat/HitProfiles
+
+- [DA_Hit_ConfirmedTarget.uasset](../../../Content/Main/Combat/HitProfiles/DA_Hit_ConfirmedTarget.uasset) — `/Game/Main/Combat/HitProfiles/DA_Hit_ConfirmedTarget`；1,753 字节
+- [DA_Hit_VolumeDash.uasset](../../../Content/Main/Combat/HitProfiles/DA_Hit_VolumeDash.uasset) — `/Game/Main/Combat/HitProfiles/DA_Hit_VolumeDash`；1,874 字节
+- [DA_Hit_VolumeOverlap.uasset](../../../Content/Main/Combat/HitProfiles/DA_Hit_VolumeOverlap.uasset) — `/Game/Main/Combat/HitProfiles/DA_Hit_VolumeOverlap`；2,124 字节
+- [DA_Hit_VolumeSweep.uasset](../../../Content/Main/Combat/HitProfiles/DA_Hit_VolumeSweep.uasset) — `/Game/Main/Combat/HitProfiles/DA_Hit_VolumeSweep`；1,807 字节
+
 ## Main/Data/AbilitySet
 
 - [AS_LightCombo.uasset](../../../Content/Main/Data/AbilitySet/AS_LightCombo.uasset) — `/Game/Main/Data/AbilitySet/AS_LightCombo`；2,602 字节
-- [DA_Pover.uasset](../../../Content/Main/Data/AbilitySet/DA_Pover.uasset) — `/Game/Main/Data/AbilitySet/DA_Pover`；1,467 字节
+- [DA_Pover.uasset](../../../Content/Main/Data/AbilitySet/DA_Pover.uasset) — `/Game/Main/Data/AbilitySet/DA_Pover`；3,653 字节
 
 ## Main/Data/CharacterStats
 
@@ -224,7 +238,7 @@
 
 ## Main/Data/PawnData
 
-- [DA_Dafult_PawnData.uasset](../../../Content/Main/Data/PawnData/DA_Dafult_PawnData.uasset) — `/Game/Main/Data/PawnData/DA_Dafult_PawnData`；3,317 字节
+- [DA_Dafult_PawnData.uasset](../../../Content/Main/Data/PawnData/DA_Dafult_PawnData.uasset) — `/Game/Main/Data/PawnData/DA_Dafult_PawnData`；3,162 字节
 
 ## Main/Experiences/CodexText
 
@@ -266,7 +280,7 @@
 
 - [BP_Weapon_Base.uasset](../../../Content/Main/Weapon/BP_Weapon_Base.uasset) — `/Game/Main/Weapon/BP_Weapon_Base`；23,822 字节
 - [BP_Weapon_Sword.uasset](../../../Content/Main/Weapon/BP_Weapon_Sword.uasset) — `/Game/Main/Weapon/BP_Weapon_Sword`；38,400 字节
-- [BP_WeaponInstance_Sword.uasset](../../../Content/Main/Weapon/BP_WeaponInstance_Sword.uasset) — `/Game/Main/Weapon/BP_WeaponInstance_Sword`；6,181 字节
+- [BP_WeaponInstance_Sword.uasset](../../../Content/Main/Weapon/BP_WeaponInstance_Sword.uasset) — `/Game/Main/Weapon/BP_WeaponInstance_Sword`；7,090 字节
 
 ## Main/Weapon/Presentation
 
@@ -279,10 +293,10 @@
 
 - `Assets`：645 个文件（包含源资源，不等于 UE 资产数）。
 - `Characters`：148 个文件（包含源资源，不等于 UE 资产数）。
-- `CodexText`：513 个文件（包含源资源，不等于 UE 资产数）。
+- `CodexText`：527 个文件（包含源资源，不等于 UE 资产数）。
 - `GameplayEffects`：15 个文件（包含源资源，不等于 UE 资产数）。
 - `LevelPrototyping`：13 个文件（包含源资源，不等于 UE 资产数）。
-- `Main`：133 个文件（包含源资源，不等于 UE 资产数）。
+- `Main`：141 个文件（包含源资源，不等于 UE 资产数）。
 - `ThirdPerson`：8 个文件（包含源资源，不等于 UE 资产数）。
 - `Wuwa`：698 个文件（包含源资源，不等于 UE 资产数）。
 - `__ExternalActors__`：258 个文件（包含源资源，不等于 UE 资产数）。

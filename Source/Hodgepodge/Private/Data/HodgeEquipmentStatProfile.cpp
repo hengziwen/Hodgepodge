@@ -1,5 +1,5 @@
-#include "AbilitySystem/HodgeGameplayTags.h"
 #include "Data/HodgeEquipmentStatProfile.h"
+#include "AbilitySystem/HodgeGameplayTags.h"
 #include "AbilitySystem/Stats/HodgeEquipmentStatEffect.h"
 #include "AbilitySystem/AttributeSet/HodgeHealthSet.h"
 #include "AbilitySystem/AttributeSet/HodgeCombatSet.h"

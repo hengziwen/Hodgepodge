@@ -20,6 +20,7 @@ public:
 	void FinishExecution(bool bCancelled, bool bReplicate);
 	void RefreshExecutionClock();
 	FGuid GetExecutionId() const { return ExecutionId; }
+	bool IsComboCoordinated() const;
 	bool IsExecutionEnding() const { return bEnding; }
 	virtual void ValidateExecutionConfiguration(const UHodgeAbilityDefinition& Definition, TArray<FText>& Errors) const;
 	void ActivateConfirmedDefinition(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* Info,
@@ -35,6 +36,7 @@ protected:
 	virtual void OnExecutionEnding(const FGuid& EndingExecutionId) {}
 	virtual void OnExecutionWindowEntered(int32 EventIndex, FGameplayTag WindowTag) {}
 	virtual void OnExecutionWindowExited(int32 EventIndex, bool bSampleFinal) {}
+	virtual void OnExecutionPoint(int32 EventIndex, FGameplayTag PointTag) {}
 	UHodgeAbilityTask_PlayTimeline* GetExecutionTimeline() const { return TimelineTask; }
 	virtual void ActivateAbility(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
 	                             FGameplayAbilityActivationInfo ActivationInfo,
@@ -50,6 +52,7 @@ private:
 	void OnTimelineFinished(EHodgeTimelineStopReason Reason);
 	void OnWindowsChanged();
 	void OnPoint(FGameplayTag Tag);
+	void HandleExecutionPoint(int32 EventIndex, FGameplayTag Tag);
 	void HandleExecutionWindowEntered(int32 EventIndex, FGameplayTag WindowTag);
 	void HandleExecutionWindowExited(int32 EventIndex, bool bSampleFinal);
 	UPROPERTY(Transient) TWeakObjectPtr<UHodgeWeaponInstance> PresentationWeapon;

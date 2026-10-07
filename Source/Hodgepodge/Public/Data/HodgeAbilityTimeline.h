@@ -89,10 +89,12 @@ struct FHodgeTimelineEvent
 	FName EventID;
 
 	// 区间起点（秒）；Point 用它表示触发时刻。
+	// 条目起点，单位动画源秒；改变播放倍率后不用改写这个时间。
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ClampMin=0.0, UIMin=0.0, Units="s"))
 	float StartTime = 0.f;
 
 	// 区间终点（秒），开区间：EndTime 时刻本条已经退出。仅 Window 有效。
+	// 窗口结束的动画源时间，必须晚于起点；0 不代表自动延续到动作末尾。
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,
 		meta=(ClampMin=0.0, UIMin=0.0, Units="s",
 			  EditCondition="Kind==EHodgeTimelineEventKind::Window", EditConditionHides))
@@ -156,6 +158,7 @@ class HODGEPODGE_API UHodgeAbilityTimeline : public UPrimaryDataAsset
 
 public:
 	// Definition 使用蒙太奇时长；独立 Timeline 保留手动时长，兼容已有资产。
+	// Definition 必须开启，时长来自实际蒙太奇；独立 Timeline Task 可以关闭并使用 Duration。
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool bUseMontageDuration = false;
 

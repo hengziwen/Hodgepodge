@@ -92,6 +92,22 @@
 - L112: `bool FHodgeMeleeHitHistoryTest::RunTest(const FString& Parameters)`
 - L135: `bool FHodgeMeleeSpecContextTest::RunTest(const FString& Parameters)`
 
+## HodgeSkillHitVolumeTests.cpp
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Private/Tests/HodgeSkillHitVolumeTests.cpp](../../../Source/Hodgepodge/Private/Tests/HodgeSkillHitVolumeTests.cpp)
+
+项目内直接 include（不是运行调用关系）：[Combat/HodgeHitDetection.h](../../../Source/Hodgepodge/Public/Combat/HodgeHitDetection.h)、[Component/HodgeCombatComponentBase.h](../../../Source/Hodgepodge/Public/Component/HodgeCombatComponentBase.h)、[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)、[AbilitySystem/Abilities/HodgeGameplayAbility_Melee.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Melee.h)、[AbilitySystem/Abilities/HodgeAbilityTask_PlayTimeline.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeAbilityTask_PlayTimeline.h)、[Data/HodgeAbilityDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilityDefinition.h)、[Data/HodgeAbilityTimeline.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilityTimeline.h)
+
+定义候选（多行签名仅展示首行）：
+
+- L79: `bool FHodgeConfiguredVolumesTest::RunTest(const FString&)`
+- L117: `bool FHodgeVolumeFilteringTest::RunTest(const FString&)`
+- L167: `bool FHodgeStandaloneRouteTest::RunTest(const FString&)`
+- L196: `bool FHodgeIndexedPointsTest::RunTest(const FString&)`
+- L237: `bool FHodgePointBindingValidationTest::RunTest(const FString&)`
+
 ## HodgeTimelineEvaluatorTests.cpp
 
 模块或基础类型入口。

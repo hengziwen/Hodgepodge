@@ -52,6 +52,7 @@ public:
 	// ASC 就绪后由服务器装备的默认武器，留空表示不自动装备。
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hodge|Equipment")
 	TSubclassOf<UHodgeEquipmentDefinition> DefaultWeaponDefinition;
+	// 角色初始属性和等级成长配置，攻击需要其初始化完成后才能激活。
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Attributes")
 	TObjectPtr<UHodgeCharacterStatProfile> StatProfile;
 
@@ -60,6 +61,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hodge|Abilities")
 	TArray<TObjectPtr<UHodgeAbilitySet>> AbilitySets;
 
+	// 此角色使用的连段图配置，不替代单段技能 Definition。
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Abilities")
 	TObjectPtr<UHodgeComboDefinition> ComboDefinition;
 

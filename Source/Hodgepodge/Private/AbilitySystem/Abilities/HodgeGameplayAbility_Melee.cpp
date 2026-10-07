@@ -10,6 +10,7 @@
 #include "Combat/HodgeDamageRules.h"
 #include "Component/HodgeCombatComponentBase.h"
 #include "Data/HodgeAbilityDefinition.h"
+#include "Data/HodgeAbilityTimeline.h"
 #include "Equipment/HodgeWeaponInstance.h"
 #include "Engine/World.h"
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeGameplayAbility_Melee)
@@ -29,7 +30,7 @@ void FHodgeMeleeHitHistory::RecordHit(UAbilitySystemComponent* Target, double Ti
 void UHodgeGameplayAbility_Melee::ValidateExecutionConfiguration(
 	const UHodgeAbilityDefinition& Definition, TArray<FText>& Errors) const
 {
-	for (const FHodgeHitWindowBinding& Binding : Definition.HitWindows)
+	auto ValidateEffect = [&Errors](const FHodgeHitEffectConfig& Binding)
 	{
 		const UGameplayEffect* Effect = Binding.DamageEffect.GetDefaultObject();
 		// 默认生命伤害的 GE 契约由近战能力校验，派生能力可以定义其他效果。
@@ -39,6 +40,41 @@ void UHodgeGameplayAbility_Melee::ValidateExecutionConfiguration(
 		{
 			Errors.Add(FText::FromString(TEXT("Configure DamageEffect with GameplayEffectParent_Damage_Basic or an Instant GE containing HodgeDamageExecution; override ability validation for other effects.")));
 		}
+	};
+	for (const auto& Binding : Definition.HitWindows) { ValidateEffect(Binding); }
+	for (const auto& Binding : Definition.HitPoints) { ValidateEffect(Binding); }
+}
+
+bool UHodgeGameplayAbility_Melee::PrepareHitExecutionContext_Implementation() { return true; }
+
+bool UHodgeGameplayAbility_Melee::SetHitAnchor(FName Key, const FTransform& WorldTransform)
+{
+	if (!IsActive() || IsExecutionEnding() || !GetExecutionId().IsValid() || !CurrentActorInfo || !CurrentActorInfo->IsNetAuthority() ||
+		Key.IsNone() || WorldTransform.ContainsNaN() || !WorldTransform.GetRotation().IsNormalized() ||
+		!WorldTransform.GetScale3D().Equals(FVector::OneVector)) { return false; }
+	HitAnchors.Add(Key, WorldTransform);
+	if (auto* Combat = UHodgeCombatComponentBase::FindCombatComponent(GetAvatarActorFromActorInfo()))
+	{
+		Combat->UpdateDetectionAnchor(GetExecutionId(), Key, WorldTransform);
+	}
+	return true;
+}
+
+bool UHodgeGameplayAbility_Melee::SetHitTarget(FName Key, AActor* Target)
+{
+	if (!IsActive() || IsExecutionEnding() || !GetExecutionId().IsValid() || !CurrentActorInfo || !CurrentActorInfo->IsNetAuthority() ||
+		Key.IsNone() || !FHodgeDamageRules::CanDamage(GetAvatarActorFromActorInfo(), Target, true) ||
+		Target->GetWorld() != GetWorld()) { return false; }
+	HitTargets.Add(Key, Target);
+	return true;
+}
+
+void UHodgeGameplayAbility_Melee::ResetHitGeometryHistory()
+{
+	if (!IsActive() || IsExecutionEnding() || !CurrentActorInfo || !CurrentActorInfo->IsNetAuthority()) { return; }
+	if (auto* Combat = UHodgeCombatComponentBase::FindCombatComponent(GetAvatarActorFromActorInfo()))
+	{
+		for (const auto& Pair : WindowStates) { Combat->ResetDetectionHistory(Pair.Value.SessionHandle, GetExecutionId()); }
 	}
 }
 
@@ -47,8 +83,13 @@ void UHodgeGameplayAbility_Melee::OnExecutionReady()
 	Super::OnExecutionReady();
 	WindowStates.Reset();
 	HitGroups.Reset();
+	HitAnchors.Reset();
+	HitTargets.Reset();
+	ConsumedPoints.Reset();
 	const UHodgeAbilityDefinition* Definition = GetDefinition();
-	if (!CurrentActorInfo || !CurrentActorInfo->IsNetAuthority() || !Definition || Definition->HitWindows.IsEmpty()) { return; }
+	if (!CurrentActorInfo || !CurrentActorInfo->IsNetAuthority() || !Definition || (Definition->HitWindows.IsEmpty() && Definition->HitPoints.IsEmpty())) { return; }
+	if (!PrepareHitExecutionContext()) { FinishExecution(true, true); return; }
+	if (!IsActive() || IsExecutionEnding()) { return; }
 	AActor* Avatar = GetAvatarActorFromActorInfo();
 	auto* Combat = Avatar ? Avatar->FindComponentByClass<UHodgeCombatComponentBase>() : nullptr;
 	if (!Combat)
@@ -73,6 +114,9 @@ void UHodgeGameplayAbility_Melee::OnExecutionEnding(const FGuid& EndingExecution
 	}
 	WindowStates.Reset();
 	HitGroups.Reset();
+	HitAnchors.Reset();
+	HitTargets.Reset();
+	ConsumedPoints.Reset();
 	Super::OnExecutionEnding(EndingExecutionId);
 }
 
@@ -83,24 +127,64 @@ void UHodgeGameplayAbility_Melee::OnExecutionWindowEntered(int32 EventIndex, FGa
 	const FHodgeHitWindowBinding* Binding = Definition ? Definition->HitWindows.FindByPredicate(
 		[WindowTag](const FHodgeHitWindowBinding& Entry) { return Entry.WindowTag == WindowTag; }) : nullptr;
 	if (!Binding) { return; }
+	if (OpenHit(EventIndex, *Binding)) { DetectionTask->SampleWindow(EventIndex); }
+}
+
+bool UHodgeGameplayAbility_Melee::OpenHit(int32 EventIndex, const FHodgeHitWindowBinding& Binding)
+{
+	if (!DetectionTask || !DetectionTask->IsRunningForExecution(GetExecutionId()) || WindowStates.Contains(EventIndex)) { return false; }
 	FHodgeHitDetectionRequest Request;
-	Request.SourceTag = Binding->SourceTag;
-	Request.Profile = Binding->Profile;
+	Request.SourceTag = Binding.SourceTag;
+	Request.Profile = Binding.Profile;
+	Request.Volume = Binding.Volume;
+	Request.TargetPolicy = Binding.TargetPolicy;
+	Request.MaxTargetDistance = Binding.MaxTargetDistance;
+	if (const FTransform* Anchor = HitAnchors.Find(Binding.Volume.AnchorKey)) { Request.RuntimeAnchor = *Anchor; Request.bHasRuntimeAnchor = true; }
+	if (const auto* Target = HitTargets.Find(Binding.TargetKey)) { Request.RuntimeTarget = *Target; }
+	if ((Binding.TargetPolicy != EHodgeHitTargetPolicy::AnyInVolume || Binding.Volume.AnchorKind == EHodgeHitAnchorKind::ExecutionTarget) &&
+		!FHodgeDamageRules::CanDamage(GetAvatarActorFromActorInfo(), Request.RuntimeTarget.Get(), Binding.bAllowFriendlyFire))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Hit occurrence [%d] requires a valid server target key [%s]."), EventIndex, *Binding.TargetKey.ToString());
+		return false;
+	}
 	const uint64 Handle = DetectionTask->CreateWindow(EventIndex, Request);
-	if (Handle == 0) { return; }
+	if (Handle == 0) { return false; }
 	FHodgeMeleeWindowState State;
-	State.Binding = *Binding;
+	State.Binding = Binding;
 	State.SessionHandle = Handle;
-	if (Binding->HitGroup.IsNone()) { State.History = MakeShared<FHodgeMeleeHitHistory>(); }
+	if (Binding.HitGroup.IsNone()) { State.History = MakeShared<FHodgeMeleeHitHistory>(); }
 	else
 	{
-		TSharedPtr<FHodgeMeleeHitHistory>& History = HitGroups.FindOrAdd(Binding->HitGroup);
+		FHodgeHitGroupKey Key;
+		Key.Group = Binding.HitGroup;
+		Key.bByTime = Binding.HitGroupScope == EHodgeHitGroupScope::TriggerTime;
+		if (Key.bByTime)
+		{
+			const auto* Timeline = GetDefinition()->ExecutionConfig.TimelineTaskConfig.Timeline.Get();
+			const float Start = Timeline->Events[EventIndex].StartTime == 0.f ? 0.f : Timeline->Events[EventIndex].StartTime;
+			FMemory::Memcpy(&Key.TimeKey, &Start, sizeof(Start));
+		}
+		TSharedPtr<FHodgeMeleeHitHistory>& History = HitGroups.FindOrAdd(Key);
 		if (!History) { History = MakeShared<FHodgeMeleeHitHistory>(); }
 		State.History = History;
 	}
 	WindowStates.Add(EventIndex, MoveTemp(State));
-	// 规则、句柄及接收者全部登记后再允许首次同步回调。
+	return true;
+}
+
+void UHodgeGameplayAbility_Melee::OnExecutionPoint(int32 EventIndex, FGameplayTag PointTag)
+{
+	if (EventIndex < 0 || ConsumedPoints.Contains(EventIndex) || !DetectionTask || !DetectionTask->IsRunningForExecution(GetExecutionId())) { return; }
+	const auto* Definition = GetDefinition();
+	const auto* Point = Definition ? Definition->HitPoints.FindByPredicate([PointTag](const auto& Entry) { return Entry.PointEventTag == PointTag; }) : nullptr;
+	if (!Point) { return; }
+	ConsumedPoints.Add(EventIndex);
+	FHodgeHitWindowBinding Binding;
+	static_cast<FHodgeHitEffectConfig&>(Binding) = *Point;
+	if (!OpenHit(EventIndex, Binding)) { return; }
+	const FGuid Execution = GetExecutionId();
 	DetectionTask->SampleWindow(EventIndex);
+	if (Execution == GetExecutionId() && DetectionTask) { DetectionTask->CloseWindow(EventIndex, false); WindowStates.Remove(EventIndex); }
 }
 
 void UHodgeGameplayAbility_Melee::OnExecutionWindowExited(int32 EventIndex, bool bSampleFinal)
@@ -190,6 +274,7 @@ void UHodgeGameplayAbility_Melee::ProcessMeleeHitResults_Implementation(const FH
 		AActor* HitActor = Hit.GetActor();
 		UAbilitySystemComponent* TargetASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(HitActor);
 		AActor* Target = TargetASC ? TargetASC->GetAvatarActor() : nullptr;
+		if (Snapshot.Binding.TargetPolicy != EHodgeHitTargetPolicy::AnyInVolume && Target != HitActor) { continue; }
 		if (!IsValid(Target) || TargetASC == SourceASC || Target == GetAvatarActorFromActorInfo() ||
 			!Hit.GetComponent() || BatchTargets.Contains(TWeakObjectPtr<UAbilitySystemComponent>(TargetASC))) { continue; }
 		if (!CanApplyMeleeHit(Target, Hit, Snapshot.Binding)) { continue; }

@@ -62,6 +62,11 @@ EDataValidationResult UHodgePawnData::IsDataValid(FDataValidationContext& Contex
 				continue;
 			}
 			const auto* Timeline = (*Found)[0]->ExecutionConfig.TimelineTaskConfig.Timeline.Get();
+			if ((*Found)[0]->ExecutionRoute != EHodgeAbilityExecutionRoute::ComboCoordinated)
+			{
+				Errors.Add(FText::FromString(Pair.Key.ToString() + TEXT(": Standalone definitions cannot be combo nodes")));
+				continue;
+			}
 			if (!Timeline) { continue; }
 			FGameplayTagContainer Windows;
 			FGameplayTagContainer Events;

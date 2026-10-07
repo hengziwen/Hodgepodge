@@ -52,6 +52,8 @@ private:
 	{
 		uint64 Handle = 0;
 		bool bClosing = false;
+		bool bSampled = false;
+		bool bOnce = false;
 	};
 	void TickDetection();
 	void ReleaseSessions();

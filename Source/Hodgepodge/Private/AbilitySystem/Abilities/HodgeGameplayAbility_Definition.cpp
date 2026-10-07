@@ -15,7 +15,7 @@ UHodgeGameplayAbility_Definition::UHodgeGameplayAbility_Definition(const FObject
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::LocalPredicted;
 	ActivationGroup = EHodgeAbilityActivationGroup::Exclusive_Replaceable;
-	bServerRespectsRemoteAbilityCancellation = false;
+	bServerRespectsRemoteAbilityCancellation = true;
 	bRequiresInitializedAttributes = true;
 }
 
@@ -23,6 +23,12 @@ const UHodgeAbilityDefinition* UHodgeGameplayAbility_Definition::GetDefinition()
 {
 	const auto* ASC = Cast<UHodgeAbilitySystemComponent>(GetAbilitySystemComponentFromActorInfo());
 	return ASC ? ASC->FindAbilityDefinition(GetCurrentAbilitySpecHandle()) : nullptr;
+}
+
+bool UHodgeGameplayAbility_Definition::IsComboCoordinated() const
+{
+	const auto* Definition = GetDefinition();
+	return Definition && Definition->ExecutionRoute == EHodgeAbilityExecutionRoute::ComboCoordinated;
 }
 
 void UHodgeGameplayAbility_Definition::ActivateConfirmedDefinition(FGameplayAbilitySpecHandle Handle,
@@ -53,7 +59,9 @@ bool UHodgeGameplayAbility_Definition::CanActivateAbility(FGameplayAbilitySpecHa
 	const auto* Definition = ASC ? ASC->FindAbilityDefinition(Handle) : nullptr;
 	if (Definition && Definition->WeaponUseWindowTag.IsValid()
 		&& !UHodgeWeaponInstance::ResolvePresentationWeapon(Cast<APawn>(Info->AvatarActor.Get()))) { return false; }
-	return ASC && ASC->FindAbilityDefinition(Handle) && Combat && Combat->IsAuthorized(Handle)
+	return ASC && Definition && Combat && Combat->IsRegistered() && Combat->GetOwner() == Info->AvatarActor.Get()
+		&& !ASC->HasMatchingGameplayTag(HodgeGameplayTags::Status_Death)
+		&& (Definition->ExecutionRoute == EHodgeAbilityExecutionRoute::Standalone || Combat->IsAuthorized(Handle))
 		&& Super::CanActivateAbility(Handle, Info, SourceTags, TargetTags, RelevantTags);
 }
 
@@ -75,6 +83,8 @@ void UHodgeGameplayAbility_Definition::ActivateAbility(FGameplayAbilitySpecHandl
 		FinishExecution(true, true);
 		return;
 	}
+	// 连段继续使用协调器授权；独立技能按 GA 配置响应远端结束。
+	CurrentActivationInfo.bCanBeEndedByOtherInstance = Definition->ExecutionRoute == EHodgeAbilityExecutionRoute::Standalone && bServerRespectsRemoteAbilityCancellation;
 	if (Definition->WeaponUseWindowTag.IsValid())
 	{
 		PresentationWeapon = UHodgeWeaponInstance::ResolvePresentationWeapon(Cast<APawn>(Info->AvatarActor.Get()), GetCurrentSourceObject());
@@ -109,11 +119,12 @@ void UHodgeGameplayAbility_Definition::ActivateAbility(FGameplayAbilitySpecHandl
 	TimelineTask->OnFinished.AddUObject(this, &ThisClass::OnTimelineFinished);
 	TimelineTask->OnWindowsChanged.AddUObject(this, &ThisClass::OnWindowsChanged);
 	TimelineTask->OnPoint.AddUObject(this, &ThisClass::OnPoint);
+	TimelineTask->OnIndexedPoint.AddUObject(this, &ThisClass::HandleExecutionPoint);
 	TimelineTask->OnWindowEntered.AddUObject(this, &ThisClass::HandleExecutionWindowEntered);
 	TimelineTask->OnWindowExited.AddUObject(this, &ThisClass::HandleExecutionWindowExited);
 	OnExecutionReady();
 	if (!IsActive() || bEnding || !TimelineTask) { return; }
-	if (auto* Combat = UHodgeCombatComponentBase::FindCombatComponent(Info->AvatarActor.Get()))
+	if (auto* Combat = IsComboCoordinated() ? UHodgeCombatComponentBase::FindCombatComponent(Info->AvatarActor.Get()) : nullptr)
 	{
 		Combat->ExecutionStarted(this);
 	}
@@ -155,6 +166,7 @@ void UHodgeGameplayAbility_Definition::EndAbility(FGameplayAbilitySpecHandle Han
 		TimelineTask->OnFinished.RemoveAll(this);
 		TimelineTask->OnWindowsChanged.RemoveAll(this);
 		TimelineTask->OnPoint.RemoveAll(this);
+		TimelineTask->OnIndexedPoint.RemoveAll(this);
 		TimelineTask->StopTimeline(EHodgeTimelineStopReason::AbilityCancelled);
 		TimelineTask = nullptr;
 	}
@@ -163,7 +175,7 @@ void UHodgeGameplayAbility_Definition::EndAbility(FGameplayAbilitySpecHandle Han
 		ASC->StopDefinitionMontage(this, !bCancelled);
 		ASC->ClearAnimatingAbility(this);
 	}
-	if (auto* Combat = UHodgeCombatComponentBase::FindCombatComponent(Info->AvatarActor.Get())) { Combat->ExecutionEnded(this); }
+	if (auto* Combat = IsComboCoordinated() ? UHodgeCombatComponentBase::FindCombatComponent(Info->AvatarActor.Get()) : nullptr) { Combat->ExecutionEnded(this); }
 	Super::EndAbility(Handle, Info, ActivationInfo, bReplicate, bCancelled);
 }
 
@@ -195,7 +207,7 @@ void UHodgeGameplayAbility_Definition::OnTimelineFinished(EHodgeTimelineStopReas
 
 void UHodgeGameplayAbility_Definition::OnWindowsChanged()
 {
-	if (auto* Combat = UHodgeCombatComponentBase::FindCombatComponent(GetAvatarActorFromActorInfo()))
+	if (auto* Combat = IsComboCoordinated() ? UHodgeCombatComponentBase::FindCombatComponent(GetAvatarActorFromActorInfo()) : nullptr)
 	{
 		Combat->WindowsChanged(this);
 	}
@@ -203,10 +215,15 @@ void UHodgeGameplayAbility_Definition::OnWindowsChanged()
 
 void UHodgeGameplayAbility_Definition::OnPoint(FGameplayTag Tag)
 {
-	if (auto* Combat = UHodgeCombatComponentBase::FindCombatComponent(GetAvatarActorFromActorInfo()))
+	if (auto* Combat = IsComboCoordinated() ? UHodgeCombatComponentBase::FindCombatComponent(GetAvatarActorFromActorInfo()) : nullptr)
 	{
 		Combat->TimelineEvent(this, Tag);
 	}
+}
+
+void UHodgeGameplayAbility_Definition::HandleExecutionPoint(int32 EventIndex, FGameplayTag Tag)
+{
+	if (IsActive() && !bEnding && ExecutionId.IsValid()) { OnExecutionPoint(EventIndex, Tag); }
 }
 
 void UHodgeGameplayAbility_Definition::HandleExecutionWindowEntered(int32 EventIndex, FGameplayTag WindowTag)
@@ -235,7 +252,7 @@ void UHodgeGameplayAbility_Definition::HandleExecutionWindowExited(int32 EventIn
 void UHodgeGameplayAbility_Definition::ValidateExecutionConfiguration(
 	const UHodgeAbilityDefinition& Definition, TArray<FText>& Errors) const
 {
-	if (!Definition.HitWindows.IsEmpty())
+	if (!Definition.HitWindows.IsEmpty() || !Definition.HitPoints.IsEmpty())
 	{
 		Errors.Add(FText::FromString(TEXT("HitWindows require a melee ability or a subclass implementing hit-window behavior; migrate AbilityClass to HodgeGameplayAbility_Melee.")));
 	}

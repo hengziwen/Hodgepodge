@@ -204,7 +204,7 @@ void UHodgeAbilityTask_PlayTimeline::InitializeTimeline(float InStartOffset)
 			break;
 
 		case EHodgeTimelineNodeKind::PointFire:
-			FirePointEvent(TimelineAsset->Events[Node.EventIndex]);
+			FirePointEvent(TimelineAsset->Events[Node.EventIndex], Node.EventIndex);
 			break;
 
 		case EHodgeTimelineNodeKind::WindowEnd:
@@ -253,7 +253,7 @@ void UHodgeAbilityTask_PlayTimeline::AdvanceTimeline(float PreviousTime, float C
 			break;
 
 		case EHodgeTimelineNodeKind::PointFire:
-			FirePointEvent(Event);
+			FirePointEvent(Event, Node.EventIndex);
 			break;
 		}
 
@@ -407,7 +407,7 @@ FActiveGameplayEffectHandle UHodgeAbilityTask_PlayTimeline::ApplyTimelineEffect(
 	return ASC->ApplyGameplayEffectSpecToSelf(*Spec.Data.Get());
 }
 
-void UHodgeAbilityTask_PlayTimeline::FirePointEvent(const FHodgeTimelineEvent& Event)
+void UHodgeAbilityTask_PlayTimeline::FirePointEvent(const FHodgeTimelineEvent& Event, int32 EventIndex)
 {
 	// 先算出"本端是否该执行"，再派发一次。
 	// listen server 上本地玩家的 Ability 会同时满足 HasAuthority 与 IsLocallyControlled，
@@ -452,6 +452,7 @@ void UHodgeAbilityTask_PlayTimeline::FirePointEvent(const FHodgeTimelineEvent& E
 
 	// 固定顺序 ①：先派发语义事件（同步，可能结束 Ability / 停止 Timeline）。
 	ASC->HandleGameplayEvent(Event.PointEventTag, &Payload);
+	if (!bStopped && EventIndex != INDEX_NONE) { OnIndexedPoint.Broadcast(EventIndex, Event.PointEventTag); }
 	if (!bStopped) { OnPoint.Broadcast(Event.PointEventTag); }
 
 	// 事件的处理者若结束了这一帧，就不再施加效果 —— 这是契约，不是 bug。

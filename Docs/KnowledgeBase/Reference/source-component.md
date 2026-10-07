@@ -78,73 +78,75 @@ ASC 旋转标签约束、锁定 Yaw、恢复、权威复制与移动重放状态
 
 ## HodgeCombatComponentBase.cpp
 
-Experience 注入 Pawn 的统一战斗协调者；连段输入/记忆/预测校正，服务器采样、去重与结果上报；GA 负责效果施加。
+Experience 注入 Pawn 的统一战斗协调者；连段输入/记忆/预测校正、来源/配置检测体、独立会话与过滤；GA 负责目标去重及效果施加。
 
 源码：[Source/Hodgepodge/Private/Component/HodgeCombatComponentBase.cpp](../../../Source/Hodgepodge/Private/Component/HodgeCombatComponentBase.cpp)
 
-项目内直接 include（不是运行调用关系）：[Component/HodgeCombatComponentBase.h](../../../Source/Hodgepodge/Public/Component/HodgeCombatComponentBase.h)、[Equipment/HodgeEquipmentManagerComponent.h](../../../Source/Hodgepodge/Public/Equipment/HodgeEquipmentManagerComponent.h)、[Equipment/HodgeWeaponInstance.h](../../../Source/Hodgepodge/Public/Equipment/HodgeWeaponInstance.h)、[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)、[AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h)、[Component/HodgeHeroComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeHeroComponent.h)、[Data/HodgeComboDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeComboDefinition.h)、[Component/HodgePawnExtensionComponent.h](../../../Source/Hodgepodge/Public/Component/HodgePawnExtensionComponent.h)、[Data/HodgePawnData.h](../../../Source/Hodgepodge/Public/Data/HodgePawnData.h)
+项目内直接 include（不是运行调用关系）：[Component/HodgeCombatComponentBase.h](../../../Source/Hodgepodge/Public/Component/HodgeCombatComponentBase.h)、[Equipment/HodgeEquipmentManagerComponent.h](../../../Source/Hodgepodge/Public/Equipment/HodgeEquipmentManagerComponent.h)、[Equipment/HodgeWeaponInstance.h](../../../Source/Hodgepodge/Public/Equipment/HodgeWeaponInstance.h)、[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)、[AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h)、[Component/HodgeHeroComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeHeroComponent.h)、[Data/HodgeComboDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeComboDefinition.h)、[Data/HodgeAbilityDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilityDefinition.h)、[Component/HodgePawnExtensionComponent.h](../../../Source/Hodgepodge/Public/Component/HodgePawnExtensionComponent.h)、[Data/HodgePawnData.h](../../../Source/Hodgepodge/Public/Data/HodgePawnData.h)
 
 定义候选（多行签名仅展示首行）：
 
-- L39: `UHodgeCombatComponentBase::UHodgeCombatComponentBase()`
-- L47: `void UHodgeCombatComponentBase::EndPlay(const EEndPlayReason::Type Reason)`
-- L53: `bool UHodgeCombatComponentBase::ResolveSource(FGameplayTag Tag, FHodgeHitDetectionSession& Session) const`
-- L88: `bool UHodgeCombatComponentBase::IsSourceValid(const FHodgeHitDetectionSession& Session) const`
-- L100: `uint64 UHodgeCombatComponentBase::CreateDetectionSession(const FGuid& ExecutionId, int32 EventIndex,`
-- L134: `bool UHodgeCombatComponentBase::IsDetectionSessionValid(uint64 Handle, const FGuid& ExecutionId) const`
-- L140: `bool UHodgeCombatComponentBase::ResetDetectionHistory(uint64 Handle, const FGuid& ExecutionId)`
-- L153: `USceneComponent* UHodgeCombatComponentBase::GetDetectionSourceComponent(uint64 Handle, const FGuid& ExecutionId) const`
-- L160: `void UHodgeCombatComponentBase::EndDetectionSession(uint64 Handle, const FGuid& ExecutionId)`
-- L166: `void UHodgeCombatComponentBase::EndDetectionSessionsForExecution(const FGuid& ExecutionId)`
-- L174: `void UHodgeCombatComponentBase::EndAllDetectionSessions()`
-- L179: `bool UHodgeCombatComponentBase::SampleDetection(uint64 Handle, const FGuid& ExecutionId,`
-- L255: `void UHodgeCombatComponentBase::Configure(UHodgeAbilitySystemComponent* InASC, const UHodgeComboDefinition* InDefinition)`
-- L272: `void UHodgeCombatComponentBase::Shutdown()`
-- L296: `void UHodgeCombatComponentBase::ClearInput()`
-- L302: `bool UHodgeCombatComponentBase::InputPressed(FGameplayTag InputTag)`
-- L321: `const FHodgeComboTransition* UHodgeCombatComponentBase::SelectTransition(FGameplayTag Trigger, bool bEvent) const`
-- L341: `bool UHodgeCombatComponentBase::IsAuthorized(FGameplayAbilitySpecHandle Handle) const`
-- L346: `int16 UHodgeCombatComponentBase::ExecutionKey() const`
-- L353: `bool UHodgeCombatComponentBase::PrepareTransition(const FHodgeComboTransition& Edge, FGameplayAbilitySpecHandle Handle)`
-- L385: `bool UHodgeCombatComponentBase::TryTransition(FGameplayTag Trigger, bool bEvent)`
-- L423: `bool UHodgeCombatComponentBase::PrepareServerActivation(FGameplayAbilitySpecHandle Handle, const FGameplayEventData* Payload)`
-- L445: `bool UHodgeCombatComponentBase::PrepareConfirmedActivation(FGameplayAbilitySpecHandle Handle,`
-- L469: `void UHodgeCombatComponentBase::RejectServerActivation(const FGameplayEventData* Payload)`
-- L475: `void UHodgeCombatComponentBase::CompleteServerActivation()`
-- L496: `void UHodgeCombatComponentBase::ExecutionStarted(UHodgeGameplayAbility_Definition* Ability)`
-- L507: `void UHodgeCombatComponentBase::ExecutionEnded(UHodgeGameplayAbility_Definition* Ability)`
-- L521: `void UHodgeCombatComponentBase::WindowsChanged(UHodgeGameplayAbility_Definition* Ability)`
-- L530: `void UHodgeCombatComponentBase::TimelineEvent(UHodgeGameplayAbility_Definition* Ability, FGameplayTag Event)`
-- L537: `void UHodgeCombatComponentBase::DrainEvents()`
-- L555: `void UHodgeCombatComponentBase::SetNode(FGameplayTag Node)`
-- L569: `void UHodgeCombatComponentBase::ResetSession(bool bEndAbility)`
-- L583: `double UHodgeCombatComponentBase::ComboTime() const`
-- L590: `FGameplayTag UHodgeCombatComponentBase::GetRememberedComboTag() const`
-- L596: `float UHodgeCombatComponentBase::GetComboMemoryRemainingTime() const`
-- L602: `FGameplayTag UHodgeCombatComponentBase::TransitionSourceNode() const`
-- L609: `bool UHodgeCombatComponentBase::HasResumeTransition(FGameplayTag Node) const`
-- L618: `void UHodgeCombatComponentBase::RetainComboMemory()`
-- L629: `void UHodgeCombatComponentBase::ExpireComboMemory()`
-- L639: `void UHodgeCombatComponentBase::PublishComboMemory()`
-- L648: `void UHodgeCombatComponentBase::EndCurrentExecution()`
-- L653: `void UHodgeCombatComponentBase::OnRep_ComboMemory()`
-- L662: `void UHodgeCombatComponentBase::HandlePredictionRejected()`
-- L670: `void UHodgeCombatComponentBase::ServerSynchronizeComboMemory_Implementation()`
-- L676: `void UHodgeCombatComponentBase::ClientCorrectComboMemory_Implementation(FHodgeComboMemoryState State)`
-- L682: `void UHodgeCombatComponentBase::TickComponent(float Delta, ELevelTick Type, FActorComponentTickFunction* Tick)`
-- L709: `void UHodgeCombatComponentBase::ServerMoveCancel_Implementation(AActor* Avatar, FGameplayAbilitySpecHandle Handle, int32 Key)`
-- L721: `void UHodgeCombatComponentBase::ClientMoveCancelResult_Implementation() { bMoveRequestPending = false; }`
-- L723: `void UHodgeCombatComponentBase::ServerReturnToEntry_Implementation(AActor* Avatar, FGameplayTag SourceNode, int32 Key,`
-- L736: `void UHodgeCombatComponentBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const`
-- L743: `void UHodgeCombatComponentBase::OnRep_ObserverTags(const FGameplayTagContainer& Previous)`
-- L754: `UHodgeCombatComponentBase* UHodgeCombatComponentBase::FindCombatComponent(const AActor* Avatar)`
-- L759: `bool UHodgeCombatComponentBase::IsComboReady() const`
-- L767: `void UHodgeCombatComponentBase::BindPawnExtension()`
-- L778: `void UHodgeCombatComponentBase::HandleAbilitySystemInitialized()`
-- L785: `void UHodgeCombatComponentBase::HandleAbilitySystemUninitialized()`
-- L790: `void UHodgeCombatComponentBase::OnRegister()`
-- L796: `void UHodgeCombatComponentBase::BeginPlay()`
-- L803: `void UHodgeCombatComponentBase::OnUnregister()`
+- L41: `UHodgeCombatComponentBase::UHodgeCombatComponentBase()`
+- L49: `void UHodgeCombatComponentBase::EndPlay(const EEndPlayReason::Type Reason)`
+- L55: `bool UHodgeCombatComponentBase::ResolveSource(FGameplayTag Tag, FHodgeHitDetectionSession& Session) const`
+- L90: `bool UHodgeCombatComponentBase::IsSourceValid(const FHodgeHitDetectionSession& Session) const`
+- L116: `bool UHodgeCombatComponentBase::CaptureDetectionGeometry(const FHodgeHitDetectionSession& Session, FHodgeHitGeometry& Out) const`
+- L154: `uint64 UHodgeCombatComponentBase::CreateDetectionSession(const FGuid& ExecutionId, int32 EventIndex,`
+- L199: `bool UHodgeCombatComponentBase::IsDetectionSessionValid(uint64 Handle, const FGuid& ExecutionId) const`
+- L205: `bool UHodgeCombatComponentBase::ResetDetectionHistory(uint64 Handle, const FGuid& ExecutionId)`
+- L217: `USceneComponent* UHodgeCombatComponentBase::GetDetectionSourceComponent(uint64 Handle, const FGuid& ExecutionId) const`
+- L224: `void UHodgeCombatComponentBase::EndDetectionSession(uint64 Handle, const FGuid& ExecutionId)`
+- L230: `void UHodgeCombatComponentBase::EndDetectionSessionsForExecution(const FGuid& ExecutionId)`
+- L238: `void UHodgeCombatComponentBase::EndAllDetectionSessions()`
+- L243: `void UHodgeCombatComponentBase::UpdateDetectionAnchor(const FGuid& ExecutionId, FName Key, const FTransform& Transform)`
+- L257: `bool UHodgeCombatComponentBase::SampleDetection(uint64 Handle, const FGuid& ExecutionId,`
+- L343: `void UHodgeCombatComponentBase::Configure(UHodgeAbilitySystemComponent* InASC, const UHodgeComboDefinition* InDefinition)`
+- L360: `void UHodgeCombatComponentBase::Shutdown()`
+- L384: `void UHodgeCombatComponentBase::ClearInput()`
+- L390: `bool UHodgeCombatComponentBase::InputPressed(FGameplayTag InputTag)`
+- L409: `const FHodgeComboTransition* UHodgeCombatComponentBase::SelectTransition(FGameplayTag Trigger, bool bEvent) const`
+- L429: `bool UHodgeCombatComponentBase::IsAuthorized(FGameplayAbilitySpecHandle Handle) const`
+- L434: `int16 UHodgeCombatComponentBase::ExecutionKey() const`
+- L441: `bool UHodgeCombatComponentBase::PrepareTransition(const FHodgeComboTransition& Edge, FGameplayAbilitySpecHandle Handle)`
+- L475: `bool UHodgeCombatComponentBase::TryTransition(FGameplayTag Trigger, bool bEvent)`
+- L513: `bool UHodgeCombatComponentBase::PrepareServerActivation(FGameplayAbilitySpecHandle Handle, const FGameplayEventData* Payload)`
+- L535: `bool UHodgeCombatComponentBase::PrepareConfirmedActivation(FGameplayAbilitySpecHandle Handle,`
+- L559: `void UHodgeCombatComponentBase::RejectServerActivation(const FGameplayEventData* Payload)`
+- L565: `void UHodgeCombatComponentBase::CompleteServerActivation()`
+- L586: `void UHodgeCombatComponentBase::ExecutionStarted(UHodgeGameplayAbility_Definition* Ability)`
+- L597: `void UHodgeCombatComponentBase::ExecutionEnded(UHodgeGameplayAbility_Definition* Ability)`
+- L611: `void UHodgeCombatComponentBase::WindowsChanged(UHodgeGameplayAbility_Definition* Ability)`
+- L620: `void UHodgeCombatComponentBase::TimelineEvent(UHodgeGameplayAbility_Definition* Ability, FGameplayTag Event)`
+- L627: `void UHodgeCombatComponentBase::DrainEvents()`
+- L645: `void UHodgeCombatComponentBase::SetNode(FGameplayTag Node)`
+- L659: `void UHodgeCombatComponentBase::ResetSession(bool bEndAbility)`
+- L673: `double UHodgeCombatComponentBase::ComboTime() const`
+- L680: `FGameplayTag UHodgeCombatComponentBase::GetRememberedComboTag() const`
+- L686: `float UHodgeCombatComponentBase::GetComboMemoryRemainingTime() const`
+- L692: `FGameplayTag UHodgeCombatComponentBase::TransitionSourceNode() const`
+- L699: `bool UHodgeCombatComponentBase::HasResumeTransition(FGameplayTag Node) const`
+- L708: `void UHodgeCombatComponentBase::RetainComboMemory()`
+- L719: `void UHodgeCombatComponentBase::ExpireComboMemory()`
+- L729: `void UHodgeCombatComponentBase::PublishComboMemory()`
+- L738: `void UHodgeCombatComponentBase::EndCurrentExecution()`
+- L743: `void UHodgeCombatComponentBase::OnRep_ComboMemory()`
+- L752: `void UHodgeCombatComponentBase::HandlePredictionRejected()`
+- L760: `void UHodgeCombatComponentBase::ServerSynchronizeComboMemory_Implementation()`
+- L766: `void UHodgeCombatComponentBase::ClientCorrectComboMemory_Implementation(FHodgeComboMemoryState State)`
+- L772: `void UHodgeCombatComponentBase::TickComponent(float Delta, ELevelTick Type, FActorComponentTickFunction* Tick)`
+- L799: `void UHodgeCombatComponentBase::ServerMoveCancel_Implementation(AActor* Avatar, FGameplayAbilitySpecHandle Handle, int32 Key)`
+- L811: `void UHodgeCombatComponentBase::ClientMoveCancelResult_Implementation() { bMoveRequestPending = false; }`
+- L813: `void UHodgeCombatComponentBase::ServerReturnToEntry_Implementation(AActor* Avatar, FGameplayTag SourceNode, int32 Key,`
+- L826: `void UHodgeCombatComponentBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const`
+- L833: `void UHodgeCombatComponentBase::OnRep_ObserverTags(const FGameplayTagContainer& Previous)`
+- L844: `UHodgeCombatComponentBase* UHodgeCombatComponentBase::FindCombatComponent(const AActor* Avatar)`
+- L849: `bool UHodgeCombatComponentBase::IsComboReady() const`
+- L857: `void UHodgeCombatComponentBase::BindPawnExtension()`
+- L868: `void UHodgeCombatComponentBase::HandleAbilitySystemInitialized()`
+- L875: `void UHodgeCombatComponentBase::HandleAbilitySystemUninitialized()`
+- L880: `void UHodgeCombatComponentBase::OnRegister()`
+- L886: `void UHodgeCombatComponentBase::BeginPlay()`
+- L893: `void UHodgeCombatComponentBase::OnUnregister()`
 
 ## HodgeExperienceManagerComponent.cpp
 
@@ -463,7 +465,7 @@ ASC 旋转标签约束、锁定 Yaw、恢复、权威复制与移动重放状态
 
 ## HodgeCombatComponentBase.h
 
-Experience 注入 Pawn 的统一战斗协调者；连段输入/记忆/预测校正，服务器采样、去重与结果上报；GA 负责效果施加。
+Experience 注入 Pawn 的统一战斗协调者；连段输入/记忆/预测校正、来源/配置检测体、独立会话与过滤；GA 负责目标去重及效果施加。
 
 源码：[Source/Hodgepodge/Public/Component/HodgeCombatComponentBase.h](../../../Source/Hodgepodge/Public/Component/HodgeCombatComponentBase.h)
 
@@ -507,126 +509,130 @@ Experience 注入 Pawn 的统一战斗协调者；连段输入/记忆/预测校�
   37: 	bool bWeaponSource = false;
   38: 	int32 SampleSequence = 0;
   39: 	FHodgeHitGeometry Previous;
-  40: };
-  43: UCLASS(Blueprintable, ClassGroup=(Combat), meta=(BlueprintSpawnableComponent))
-  44: class HODGEPODGE_API UHodgeCombatComponentBase : public UHodgeActorComponentBase
-  45: {
-  46: 	GENERATED_BODY()
-  47: public:
-  48: 	UHodgeCombatComponentBase();
-  51: 	void Configure(UHodgeAbilitySystemComponent* InASC, const UHodgeComboDefinition* InDefinition);
-  52: 	void Shutdown();
-  53: 	bool InputPressed(FGameplayTag InputTag);
-  54: 	void ClearInput();
-  55: 	void ExecutionStarted(UHodgeGameplayAbility_Definition* Ability);
-  56: 	void ExecutionEnded(UHodgeGameplayAbility_Definition* Ability);
-  57: 	void WindowsChanged(UHodgeGameplayAbility_Definition* Ability);
-  58: 	void TimelineEvent(UHodgeGameplayAbility_Definition* Ability, FGameplayTag Event);
-  59: 	bool IsAuthorized(FGameplayAbilitySpecHandle Handle) const;
-  60: 	bool PrepareServerActivation(FGameplayAbilitySpecHandle Handle, const FGameplayEventData* Payload);
-  61: 	void RejectServerActivation(const FGameplayEventData* Payload);
-  62: 	bool PrepareConfirmedActivation(FGameplayAbilitySpecHandle Handle, const FGameplayEventData& Payload);
-  63: 	void CompleteServerActivation();
-  64: 	void HandlePredictionRejected();
-  65: 	UFUNCTION(BlueprintPure, Category="Hodge|Combat")
-  66: 	FGameplayTag GetCurrentComboTag() const { return CurrentComboTag; }
+  40: 	FTransform FixedAnchor = FTransform::Identity;
+  41: 	bool bHasFixedAnchor = false;
+  42: };
+  45: UCLASS(Blueprintable, ClassGroup=(Combat), meta=(BlueprintSpawnableComponent))
+  46: class HODGEPODGE_API UHodgeCombatComponentBase : public UHodgeActorComponentBase
+  47: {
+  48: 	GENERATED_BODY()
+  49: public:
+  50: 	UHodgeCombatComponentBase();
+  53: 	void Configure(UHodgeAbilitySystemComponent* InASC, const UHodgeComboDefinition* InDefinition);
+  54: 	void Shutdown();
+  55: 	bool InputPressed(FGameplayTag InputTag);
+  56: 	void ClearInput();
+  57: 	void ExecutionStarted(UHodgeGameplayAbility_Definition* Ability);
+  58: 	void ExecutionEnded(UHodgeGameplayAbility_Definition* Ability);
+  59: 	void WindowsChanged(UHodgeGameplayAbility_Definition* Ability);
+  60: 	void TimelineEvent(UHodgeGameplayAbility_Definition* Ability, FGameplayTag Event);
+  61: 	bool IsAuthorized(FGameplayAbilitySpecHandle Handle) const;
+  62: 	bool PrepareServerActivation(FGameplayAbilitySpecHandle Handle, const FGameplayEventData* Payload);
+  63: 	void RejectServerActivation(const FGameplayEventData* Payload);
+  64: 	bool PrepareConfirmedActivation(FGameplayAbilitySpecHandle Handle, const FGameplayEventData& Payload);
+  65: 	void CompleteServerActivation();
+  66: 	void HandlePredictionRejected();
   67: 	UFUNCTION(BlueprintPure, Category="Hodge|Combat")
-  68: 	FGameplayTag GetRememberedComboTag() const;
+  68: 	FGameplayTag GetCurrentComboTag() const { return CurrentComboTag; }
   69: 	UFUNCTION(BlueprintPure, Category="Hodge|Combat")
-  70: 	float GetComboMemoryRemainingTime() const;
-  72: 	static UHodgeCombatComponentBase* FindCombatComponent(const AActor* Avatar);
-  73: 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-  76: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Hodge|Combat", meta=(TitleProperty="SourceTag"))
-  77: 	TArray<FHodgeHitSource> HitSources;
-  79: 	uint64 CreateDetectionSession(const FGuid& ExecutionId, int32 EventIndex, const FHodgeHitDetectionRequest& Request);
-  80: 	bool SampleDetection(uint64 Handle, const FGuid& ExecutionId, FHodgeHitDetectionBatch& OutBatch);
-  81: 	bool ResetDetectionHistory(uint64 Handle, const FGuid& ExecutionId);
-  82: 	bool IsDetectionSessionValid(uint64 Handle, const FGuid& ExecutionId) const;
-  83: 	USceneComponent* GetDetectionSourceComponent(uint64 Handle, const FGuid& ExecutionId) const;
-  84: 	void EndDetectionSession(uint64 Handle, const FGuid& ExecutionId);
-  85: 	void EndDetectionSessionsForExecution(const FGuid& ExecutionId);
-  86: 	void EndAllDetectionSessions();
-  87: protected:
-  88: 	virtual void OnRegister() override;
-  89: 	virtual void OnUnregister() override;
-  90: 	virtual void BeginPlay() override;
-  91: 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* TickFunction) override;
-  92: 	virtual void EndPlay(const EEndPlayReason::Type Reason) override;
-  93: private:
-  94: 	void BindPawnExtension();
-  95: 	bool IsComboReady() const;
-  96: 	void HandleAbilitySystemInitialized();
-  97: 	void HandleAbilitySystemUninitialized();
-  98: 	UPROPERTY(Transient) TWeakObjectPtr<UHodgePawnExtensionComponent> PawnExtension;
-  99: 	FGameplayTagContainer AppliedObserverTags;
- 102: 	friend struct FHodgeComboTestAccess;
- 104: 	struct FQueuedEvent
- 105: 	{
- 106: 		TWeakObjectPtr<UHodgeGameplayAbility_Definition> Ability;
- 107: 		int16 Key = 0;
- 108: 		FGameplayTag Tag;
- 109: 	};
- 111: 	void DrainEvents();
- 112: 	TArray<FQueuedEvent> QueuedEvents;
- 113: 	bool bDrainingEvents = false;
- 114: 	const FHodgeComboTransition* SelectTransition(FGameplayTag Trigger, bool bEvent) const;
- 115: 	bool TryTransition(FGameplayTag Trigger, bool bEvent);
- 116: 	bool PrepareTransition(const FHodgeComboTransition& Edge, FGameplayAbilitySpecHandle Handle);
- 117: 	void ResetSession(bool bEndAbility);
- 118: 	void EndCurrentExecution();
- 119: 	void RetainComboMemory();
- 120: 	void ExpireComboMemory();
- 121: 	void PublishComboMemory();
- 122: 	bool HasResumeTransition(FGameplayTag Node) const;
- 123: 	FGameplayTag TransitionSourceNode() const;
- 124: 	double ComboTime() const;
- 125: 	void SetNode(FGameplayTag Node);
- 126: 	int16 ExecutionKey() const;
- 127: 	UFUNCTION(Server, Reliable)
- 128: 	void ServerMoveCancel(AActor* Avatar, FGameplayAbilitySpecHandle Handle, int32 Key);
- 129: 	UFUNCTION(Server, Reliable)
- 130: 	void ServerReturnToEntry(AActor* Avatar, FGameplayTag SourceNode, int32 Key, FGameplayTag Intent);
- 131: 	UFUNCTION(Client, Reliable)
- 132: 	void ClientMoveCancelResult();
+  70: 	FGameplayTag GetRememberedComboTag() const;
+  71: 	UFUNCTION(BlueprintPure, Category="Hodge|Combat")
+  72: 	float GetComboMemoryRemainingTime() const;
+  74: 	static UHodgeCombatComponentBase* FindCombatComponent(const AActor* Avatar);
+  75: 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+  78: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Hodge|Combat", meta=(TitleProperty="SourceTag"))
+  79: 	TArray<FHodgeHitSource> HitSources;
+  81: 	uint64 CreateDetectionSession(const FGuid& ExecutionId, int32 EventIndex, const FHodgeHitDetectionRequest& Request);
+  82: 	bool SampleDetection(uint64 Handle, const FGuid& ExecutionId, FHodgeHitDetectionBatch& OutBatch);
+  83: 	bool ResetDetectionHistory(uint64 Handle, const FGuid& ExecutionId);
+  84: 	bool IsDetectionSessionValid(uint64 Handle, const FGuid& ExecutionId) const;
+  85: 	USceneComponent* GetDetectionSourceComponent(uint64 Handle, const FGuid& ExecutionId) const;
+  86: 	void EndDetectionSession(uint64 Handle, const FGuid& ExecutionId);
+  87: 	void EndDetectionSessionsForExecution(const FGuid& ExecutionId);
+  88: 	void EndAllDetectionSessions();
+  89: 	void UpdateDetectionAnchor(const FGuid& ExecutionId, FName Key, const FTransform& Transform);
+  90: protected:
+  91: 	virtual void OnRegister() override;
+  92: 	virtual void OnUnregister() override;
+  93: 	virtual void BeginPlay() override;
+  94: 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* TickFunction) override;
+  95: 	virtual void EndPlay(const EEndPlayReason::Type Reason) override;
+  96: private:
+  97: 	bool CaptureDetectionGeometry(const FHodgeHitDetectionSession& Session, FHodgeHitGeometry& Out) const;
+  98: 	void BindPawnExtension();
+  99: 	bool IsComboReady() const;
+ 100: 	void HandleAbilitySystemInitialized();
+ 101: 	void HandleAbilitySystemUninitialized();
+ 102: 	UPROPERTY(Transient) TWeakObjectPtr<UHodgePawnExtensionComponent> PawnExtension;
+ 103: 	FGameplayTagContainer AppliedObserverTags;
+ 106: 	friend struct FHodgeComboTestAccess;
+ 108: 	struct FQueuedEvent
+ 109: 	{
+ 110: 		TWeakObjectPtr<UHodgeGameplayAbility_Definition> Ability;
+ 111: 		int16 Key = 0;
+ 112: 		FGameplayTag Tag;
+ 113: 	};
+ 115: 	void DrainEvents();
+ 116: 	TArray<FQueuedEvent> QueuedEvents;
+ 117: 	bool bDrainingEvents = false;
+ 118: 	const FHodgeComboTransition* SelectTransition(FGameplayTag Trigger, bool bEvent) const;
+ 119: 	bool TryTransition(FGameplayTag Trigger, bool bEvent);
+ 120: 	bool PrepareTransition(const FHodgeComboTransition& Edge, FGameplayAbilitySpecHandle Handle);
+ 121: 	void ResetSession(bool bEndAbility);
+ 122: 	void EndCurrentExecution();
+ 123: 	void RetainComboMemory();
+ 124: 	void ExpireComboMemory();
+ 125: 	void PublishComboMemory();
+ 126: 	bool HasResumeTransition(FGameplayTag Node) const;
+ 127: 	FGameplayTag TransitionSourceNode() const;
+ 128: 	double ComboTime() const;
+ 129: 	void SetNode(FGameplayTag Node);
+ 130: 	int16 ExecutionKey() const;
+ 131: 	UFUNCTION(Server, Reliable)
+ 132: 	void ServerMoveCancel(AActor* Avatar, FGameplayAbilitySpecHandle Handle, int32 Key);
  133: 	UFUNCTION(Server, Reliable)
- 134: 	void ServerSynchronizeComboMemory();
+ 134: 	void ServerReturnToEntry(AActor* Avatar, FGameplayTag SourceNode, int32 Key, FGameplayTag Intent);
  135: 	UFUNCTION(Client, Reliable)
- 136: 	void ClientCorrectComboMemory(FHodgeComboMemoryState State);
- 137: 	UFUNCTION()
- 138: 	void OnRep_ComboMemory();
- 139: 	UFUNCTION()
- 140: 	void OnRep_ObserverTags(const FGameplayTagContainer& Previous);
- 141: 	UPROPERTY(Transient)
- 142: 	TObjectPtr<UHodgeAbilitySystemComponent> ASC;
- 143: 	UPROPERTY(Transient)
- 144: 	TObjectPtr<const UHodgeComboDefinition> Definition;
+ 136: 	void ClientMoveCancelResult();
+ 137: 	UFUNCTION(Server, Reliable)
+ 138: 	void ServerSynchronizeComboMemory();
+ 139: 	UFUNCTION(Client, Reliable)
+ 140: 	void ClientCorrectComboMemory(FHodgeComboMemoryState State);
+ 141: 	UFUNCTION()
+ 142: 	void OnRep_ComboMemory();
+ 143: 	UFUNCTION()
+ 144: 	void OnRep_ObserverTags(const FGameplayTagContainer& Previous);
  145: 	UPROPERTY(Transient)
- 146: 	TObjectPtr<UHodgeGameplayAbility_Definition> CurrentAbility;
+ 146: 	TObjectPtr<UHodgeAbilitySystemComponent> ASC;
  147: 	UPROPERTY(Transient)
- 148: 	FGameplayTag CurrentComboTag;
- 149: 	UPROPERTY(ReplicatedUsing=OnRep_ComboMemory)
- 150: 	FHodgeComboMemoryState ReplicatedComboMemory;
- 151: 	FHodgeComboMemoryState ComboMemory;
- 152: 	FHodgeComboMemoryState PreviousComboMemory;
- 153: 	UPROPERTY(ReplicatedUsing=OnRep_ObserverTags)
- 154: 	FGameplayTagContainer ObserverTags;
- 155: 	FGameplayTagContainer OwnedNodeTags;
- 156: 	FGameplayTag BufferedInput;
- 157: 	double InputExpiresAt = 0;
- 158: 	FGameplayAbilitySpecHandle AuthorizedHandle;
- 159: 	FGameplayTag PendingNode;
- 160: 	bool bSwitching = false;
- 161: 	bool bTransitionStarted = false;
- 162: 	bool bMemoryCorrectionPending = false;
- 163: 	bool bMoveRequestPending = false;
- 164: 	bool bEvaluating = false;
- 165: 	bool bShuttingDown = false;
- 167: 	bool ResolveSource(FGameplayTag Tag, FHodgeHitDetectionSession& Session) const;
- 168: 	bool IsSourceValid(const FHodgeHitDetectionSession& Session) const;
- 169: 	UPROPERTY(Transient)
- 170: 	TMap<uint64, FHodgeHitDetectionSession> Sessions;
- 171: 	uint64 NextHandle = 0;
- 172: };
+ 148: 	TObjectPtr<const UHodgeComboDefinition> Definition;
+ 149: 	UPROPERTY(Transient)
+ 150: 	TObjectPtr<UHodgeGameplayAbility_Definition> CurrentAbility;
+ 151: 	UPROPERTY(Transient)
+ 152: 	FGameplayTag CurrentComboTag;
+ 153: 	UPROPERTY(ReplicatedUsing=OnRep_ComboMemory)
+ 154: 	FHodgeComboMemoryState ReplicatedComboMemory;
+ 155: 	FHodgeComboMemoryState ComboMemory;
+ 156: 	FHodgeComboMemoryState PreviousComboMemory;
+ 157: 	UPROPERTY(ReplicatedUsing=OnRep_ObserverTags)
+ 158: 	FGameplayTagContainer ObserverTags;
+ 159: 	FGameplayTagContainer OwnedNodeTags;
+ 160: 	FGameplayTag BufferedInput;
+ 161: 	double InputExpiresAt = 0;
+ 162: 	FGameplayAbilitySpecHandle AuthorizedHandle;
+ 163: 	FGameplayTag PendingNode;
+ 164: 	bool bSwitching = false;
+ 165: 	bool bTransitionStarted = false;
+ 166: 	bool bMemoryCorrectionPending = false;
+ 167: 	bool bMoveRequestPending = false;
+ 168: 	bool bEvaluating = false;
+ 169: 	bool bShuttingDown = false;
+ 171: 	bool ResolveSource(FGameplayTag Tag, FHodgeHitDetectionSession& Session) const;
+ 172: 	bool IsSourceValid(const FHodgeHitDetectionSession& Session) const;
+ 173: 	UPROPERTY(Transient)
+ 174: 	TMap<uint64, FHodgeHitDetectionSession> Sessions;
+ 175: 	uint64 NextHandle = 0;
+ 176: };
 ```
 
 ## HodgeExperienceManagerComponent.h

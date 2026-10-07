@@ -21,7 +21,9 @@ USTRUCT(BlueprintType)
 struct FHodgeAbilitySet_Definition
 {
  GENERATED_BODY()
+ // 授予的动作 Definition，不能把其 GA 再重复加入普通能力列表。
  UPROPERTY(EditDefaultsOnly) TObjectPtr<UHodgeAbilityDefinition> Definition;
+ // 授予到 AbilitySpec 的等级，Definition 的等级必须至少为 1。
  UPROPERTY(EditDefaultsOnly, meta=(ClampMin="1")) int32 AbilityLevel = 1;
 };
 
@@ -152,6 +154,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Abilities", meta=(TitleProperty=Ability))
 	TArray<FHodgeAbilitySet_GameplayAbility> GrantedGameplayAbilities;
 
+	// 授予动作配置并建立 Spec 与 Definition 的关联，普攻和独立动作技能使用此列表。
 	UPROPERTY(EditDefaultsOnly, Category="Gameplay Abilities", meta=(TitleProperty="Definition"))
 	TArray<FHodgeAbilitySet_Definition> GrantedAbilityDefinitions;
 

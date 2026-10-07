@@ -1,16 +1,20 @@
 # 属性、命中、装备与死亡
 
+攻击字段含义与配置步骤统一见[攻击能力配置手册](../Guides/attack-ability-configuration.md)；后续配置问答优先引用手册相应章节，本章说明系统职责和状态。
+
 [返回知识库](README.md) · [本轮更新](26-update-2026-10-06.md)
 
 > 当前核对：2026-10-06；运行结论仅限已记录范围。
 
 ## 当前分工
 
-属性初始化/成长首版已实施：PlayerState 拥有属性协调器和等级/装备来源记录，HealthComponent 只绑定/通知；出生等待默认装备属性后补满，角色升级保持比例，装备变化保留绝对值。重算期间上限夹取延后，真实资源变化仍记录；现有属性名和伤害结算入口保持。完整死亡 GA 与复活玩法仍待接入。见 [成长与装备属性](../Design/character-attribute-growth.md)。
+属性初始化/成长首版已实施：PlayerState 拥有属性协调器和等级/装备来源记录，HealthComponent 只绑定/通知；出生等待默认装备属性后补满，角色升级保持比例，装备变化保留绝对值。重算期间上限夹取延后，真实资源变化仍记录；现有属性名和伤害结算入口保持。死亡 GA 已由用户接入，真实致死 GE 能触发死亡事件并完成 8 秒死亡阶段与 Pawn 销毁，但互斥计数和 PIE 清理仍有错误；复活玩法待接入。见 [死亡验证](../Validation/jump-death-2026-10-06.md) 与 [成长方案](../Design/character-attribute-growth.md)。
 
 Experience 通过 AddComponents 给 Pawn 添加 HodgeCombatComponentBase 与 EquipmentManager。CombatComponent 协调连段和服务器检测会话、去重及命中结果；HodgeGameplayAbility_Melee 接收结果并构建/施加 GE，组件不直接写 Health。
 
 检测支持身体、武器组件/socket 和 HitBox 配置。策略选择、采样和目标规则位于 Combat 目录；共享 FHodgeDamageRules 同时用于检测与伤害 Execution。
+
+2026-10-06 本轮扩展：Definition 可配置无需常驻组件的球／盒／胶囊检测体，支持服务器锚点、固定／跟随、Window／Point 多段、共享组作用域与指定目标。Standalone 走正常 GAS 激活和远端取消，ComboCoordinated 保留连段授权。Actor 独立存续、通用客户端 TargetData、锁定系统及演出尚未实现。配置与验证见[使用说明](../Design/skill-hit-volumes-usage.md)和[本轮验收](../Validation/skill-hit-volumes-2026-10-06.md)。
 
 ## 伤害已不恒为零
 
@@ -18,7 +22,7 @@ DamageExecution 捕获 Source CombatSet.BaseDamage，乘 SetByCaller.DamageMulti
 
 HealthSet 管 Health/MaxHealth、Damage/Healing 元属性与夹取/通知；CombatSet 管 BaseDamage/BaseHeal。HealthComponent 已挂角色，监听耗尽并推进 DeathState，角色禁移动/碰撞并执行销毁清理。完整击杀消息、敌人 ASC 与重生策略仍待补。
 
-2026-10-01 夹具已验证真实攻击输入→Timeline→服务器检测→既有 GE→100 扣到 70，以及 Listen Server 路径。正式五段普攻 HitWindows 目前均为空，需要填写来源、Profile 与 GE 后补完整回归；夹具通过不能代替正式资产接入。
+2026-10-01 夹具已验证真实攻击输入→Timeline→服务器检测→既有 GE→100 扣到 70，以及 Listen Server 路径。2026-10-06 本轮实际读取正式五段 Definition，用户已填写 HitWindows；本轮保留其配置，并验证真实第一段输入被独立技能打断时连段记忆保持。仍未完成五段实际刀刃覆盖的完整验收，测试例子通过不能代替所有正式动作接入。
 
 ## 默认装备与表现
 

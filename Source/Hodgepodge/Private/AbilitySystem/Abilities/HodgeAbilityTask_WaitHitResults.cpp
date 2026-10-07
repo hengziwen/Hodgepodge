@@ -75,6 +75,7 @@ uint64 UHodgeAbilityTask_WaitHitResults::CreateWindow(int32 EventIndex, const FH
 	}
 	FWindow Window;
 	Window.Handle = Handle;
+	Window.bOnce = Request.Profile && Request.Profile->SampleMode == EHodgeHitSampleMode::OnceOnEnter;
 	Windows.Add(EventIndex, Window);
 	UpdateTickState();
 	return Handle;
@@ -90,8 +91,9 @@ bool UHodgeAbilityTask_WaitHitResults::IsBatchCurrent(const FHodgeHitDetectionBa
 void UHodgeAbilityTask_WaitHitResults::SampleWindow(int32 EventIndex)
 {
 	if (bSampling || IsPaused() || !IsRunningForExecution(ExecutionId)) { return; }
-	const FWindow* Window = Windows.Find(EventIndex);
-	if (!Window) { return; }
+	FWindow* Window = Windows.Find(EventIndex);
+	if (!Window || (Window->bOnce && Window->bSampled)) { return; }
+	Window->bSampled = true;
 	const uint64 Handle = Window->Handle;
 	TGuardValue<bool> Guard(bSampling, true);
 	FHodgeHitDetectionBatch Batch;
@@ -103,6 +105,7 @@ void UHodgeAbilityTask_WaitHitResults::SampleWindow(int32 EventIndex)
 		return;
 	}
 	if (IsBatchCurrent(Batch) && ShouldBroadcastAbilityTaskDelegates()) { OnHitResults.Broadcast(Batch); }
+	UpdateTickState();
 }
 
 void UHodgeAbilityTask_WaitHitResults::CloseWindow(int32 EventIndex, bool bSampleFinal)
@@ -134,6 +137,7 @@ void UHodgeAbilityTask_WaitHitResults::TickDetection()
 		if (!IsRunningForExecution(TickExecution)) { break; }
 		const FWindow* Window = Windows.Find(EventIndex);
 		if (!Window || Window->bClosing) { continue; }
+		if (Window->bOnce && Window->bSampled) { continue; }
 		if (TimelineTask->IsWindowActive(EventIndex)) { SampleWindow(EventIndex); }
 		else if (!CombatComponent->ResetDetectionHistory(Window->Handle, TickExecution))
 		{
@@ -144,7 +148,9 @@ void UHodgeAbilityTask_WaitHitResults::TickDetection()
 
 void UHodgeAbilityTask_WaitHitResults::UpdateTickState()
 {
-	DetectionTick.SetTickFunctionEnable(!bStopped && !IsPaused() && !Windows.IsEmpty());
+	bool bNeedsTick = false;
+	for (const auto& Pair : Windows) { bNeedsTick |= !Pair.Value.bOnce || !Pair.Value.bSampled; }
+	DetectionTick.SetTickFunctionEnable(!bStopped && !IsPaused() && bNeedsTick);
 }
 
 void UHodgeAbilityTask_WaitHitResults::Pause()

@@ -5,7 +5,7 @@ public class HodgeAbilityEditor : ModuleRules
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
         PrivateDependencyModuleNames.AddRange(new string[] {
-            "Core", "CoreUObject", "Engine", "Hodgepodge", "GameplayTags",
+            "Core", "CoreUObject", "Engine", "Hodgepodge", "GameplayTags", "GameplayAbilities",
             "UnrealEd", "AssetTools", "AssetRegistry", "PropertyEditor", "Slate", "SlateCore",
             "InputCore", "EditorFramework", "AdvancedPreviewScene", "AnimGraph", "ToolMenus",
             "BlueprintGraph", "KismetCompiler"

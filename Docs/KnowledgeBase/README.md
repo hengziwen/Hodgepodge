@@ -4,7 +4,9 @@
 
 ## 从这里开始
 
-项目已接入 Experience/Init State、PlayerState ASC、输入相机、Main 固定移动动画层、统一 CombatComponent、默认剑、旋转锁、连段记忆与武器显隐。正式普攻仍未填写 HitWindows；测试伤害链成立不等于正式五段已造成伤害。
+项目已接入 Experience/Init State、PlayerState ASC、输入相机、Main 固定移动动画层、统一 CombatComponent、默认剑、旋转锁、连段记忆与武器显隐。最新读取中正式五段已填写 HitWindows；仍需完整验收每段实际刀刃覆盖，不能只凭配置或夹具通过判定全部正式动作完成。
+
+- [攻击能力配置手册](../Guides/attack-ability-configuration.md)：Definition、Timeline、HitCheck、Profile、连段表、授予与输入的统一字段说明；后续配置问答优先引用相应章节。
 
 - [最新完整更新](26-update-2026-10-06.md)：当前路径、职责、调参及验证边界。
 - [当前接通状态](12-integration-backlog.md)、[验证与未验证](16-validation.md)。

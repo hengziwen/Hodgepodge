@@ -91,6 +91,20 @@ Editor 动画文本导入、属性/引用修正、编译诊断与实验 PIE 配�
 
 Editor 动画文本导入、属性/引用修正、编译诊断与实验 PIE 配置。
 
+## HodgeCombatValidationLibrary.cpp
+
+[Source/HodgeAbilityEditor/Private/HodgeCombatValidationLibrary.cpp](../../../Source/HodgeAbilityEditor/Private/HodgeCombatValidationLibrary.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `UHodgeCombatValidationLibrary::QueueAbilityAction` — L8
+
+## HodgeCombatValidationLibrary.h
+
+[Source/HodgeAbilityEditor/Private/HodgeCombatValidationLibrary.h](../../../Source/HodgeAbilityEditor/Private/HodgeCombatValidationLibrary.h)
+
+模块定义或基础代码；请查看对应文件。
+
 ## SHodgeAbilityPreview.cpp
 
 [Source/HodgeAbilityEditor/Private/SHodgeAbilityPreview.cpp](../../../Source/HodgeAbilityEditor/Private/SHodgeAbilityPreview.cpp)
@@ -173,14 +187,14 @@ Editor 动画文本导入、属性/引用修正、编译诊断与实验 PIE 配�
 - `UHodgeAbilityTask_PlayTimeline::ExitWindow` — L334
 - `UHodgeAbilityTask_PlayTimeline::ApplyTimelineEffect` — L386
 - `UHodgeAbilityTask_PlayTimeline::FirePointEvent` — L410
-- `UHodgeAbilityTask_PlayTimeline::FireSystemEvent` — L474
-- `UHodgeAbilityTask_PlayTimeline::ClearAllWindowState` — L487
-- `UHodgeAbilityTask_PlayTimeline::StopTimeline` — L534
-- `UHodgeAbilityTask_PlayTimeline::OnDestroy` — L567
-- `UHodgeAbilityTask_PlayTimeline::PlayMontageTimeline` — L579
-- `UHodgeAbilityTask_PlayTimeline::GetActiveWindowTags` — L590
-- `UHodgeAbilityTask_PlayTimeline::IsWindowActive` — L611
-- `UHodgeAbilityTask_PlayTimeline::RefreshMontageClock` — L627
+- `UHodgeAbilityTask_PlayTimeline::FireSystemEvent` — L475
+- `UHodgeAbilityTask_PlayTimeline::ClearAllWindowState` — L488
+- `UHodgeAbilityTask_PlayTimeline::StopTimeline` — L535
+- `UHodgeAbilityTask_PlayTimeline::OnDestroy` — L568
+- `UHodgeAbilityTask_PlayTimeline::PlayMontageTimeline` — L580
+- `UHodgeAbilityTask_PlayTimeline::GetActiveWindowTags` — L591
+- `UHodgeAbilityTask_PlayTimeline::IsWindowActive` — L612
+- `UHodgeAbilityTask_PlayTimeline::RefreshMontageClock` — L628
 
 ## HodgeAbilityTask_WaitHitResults.cpp
 
@@ -194,16 +208,16 @@ Editor 动画文本导入、属性/引用修正、编译诊断与实验 PIE 配�
 - `UHodgeAbilityTask_WaitHitResults::IsRunningForExecution` — L35
 - `UHodgeAbilityTask_WaitHitResults::Activate` — L47
 - `UHodgeAbilityTask_WaitHitResults::CreateWindow` — L66
-- `UHodgeAbilityTask_WaitHitResults::IsBatchCurrent` — L83
-- `UHodgeAbilityTask_WaitHitResults::SampleWindow` — L90
-- `UHodgeAbilityTask_WaitHitResults::CloseWindow` — L108
-- `UHodgeAbilityTask_WaitHitResults::TickDetection` — L122
-- `UHodgeAbilityTask_WaitHitResults::UpdateTickState` — L145
-- `UHodgeAbilityTask_WaitHitResults::Pause` — L150
-- `UHodgeAbilityTask_WaitHitResults::Resume` — L156
-- `UHodgeAbilityTask_WaitHitResults::ReleaseSessions` — L171
-- `UHodgeAbilityTask_WaitHitResults::OnDestroy` — L183
-- `UHodgeAbilityTask_WaitHitResults::BeginDestroy` — L189
+- `UHodgeAbilityTask_WaitHitResults::IsBatchCurrent` — L84
+- `UHodgeAbilityTask_WaitHitResults::SampleWindow` — L91
+- `UHodgeAbilityTask_WaitHitResults::CloseWindow` — L111
+- `UHodgeAbilityTask_WaitHitResults::TickDetection` — L125
+- `UHodgeAbilityTask_WaitHitResults::UpdateTickState` — L149
+- `UHodgeAbilityTask_WaitHitResults::Pause` — L156
+- `UHodgeAbilityTask_WaitHitResults::Resume` — L162
+- `UHodgeAbilityTask_WaitHitResults::ReleaseSessions` — L177
+- `UHodgeAbilityTask_WaitHitResults::OnDestroy` — L189
+- `UHodgeAbilityTask_WaitHitResults::BeginDestroy` — L195
 
 ## HodgeAbilityTask_WaitMoveCancel.cpp
 
@@ -270,6 +284,18 @@ Editor 动画文本导入、属性/引用修正、编译诊断与实验 PIE 配�
 - `UHodgeGameplayAbility_BasicAttack::ClearStep` — L137
 - `UHodgeGameplayAbility_BasicAttack::EndAbility` — L168
 
+## HodgeGameplayAbility_Death.cpp
+
+[Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility_Death.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility_Death.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `UHodgeGameplayAbility_Death::UHodgeGameplayAbility_Death` — L13
+- `UHodgeGameplayAbility_Death::ActivateAbility` — L31
+- `UHodgeGameplayAbility_Death::EndAbility` — L65
+- `UHodgeGameplayAbility_Death::StartDeath` — L79
+- `UHodgeGameplayAbility_Death::FinishDeath` — L91
+
 ## HodgeGameplayAbility_Definition.cpp
 
 [Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.cpp)
@@ -278,40 +304,60 @@ Editor 动画文本导入、属性/引用修正、编译诊断与实验 PIE 配�
 
 - `UHodgeGameplayAbility_Definition::UHodgeGameplayAbility_Definition` — L12
 - `UHodgeGameplayAbility_Definition::GetDefinition` — L22
-- `UHodgeGameplayAbility_Definition::ActivateConfirmedDefinition` — L28
-- `UHodgeGameplayAbility_Definition::CanActivateAbility` — L43
-- `UHodgeGameplayAbility_Definition::ActivateAbility` — L60
-- `UHodgeGameplayAbility_Definition::FinishExecution` — L126
-- `UHodgeGameplayAbility_Definition::EndAbility` — L134
-- `UHodgeGameplayAbility_Definition::GetExecutionWindows` — L170
-- `UHodgeGameplayAbility_Definition::RefreshExecutionClock` — L175
-- `UHodgeGameplayAbility_Definition::OnTimelineFinished` — L183
-- `UHodgeGameplayAbility_Definition::OnWindowsChanged` — L196
-- `UHodgeGameplayAbility_Definition::OnPoint` — L204
-- `UHodgeGameplayAbility_Definition::HandleExecutionWindowEntered` — L212
-- `UHodgeGameplayAbility_Definition::HandleExecutionWindowExited` — L224
-- `UHodgeGameplayAbility_Definition::ValidateExecutionConfiguration` — L235
+- `UHodgeGameplayAbility_Definition::IsComboCoordinated` — L28
+- `UHodgeGameplayAbility_Definition::ActivateConfirmedDefinition` — L34
+- `UHodgeGameplayAbility_Definition::CanActivateAbility` — L49
+- `UHodgeGameplayAbility_Definition::ActivateAbility` — L68
+- `UHodgeGameplayAbility_Definition::FinishExecution` — L137
+- `UHodgeGameplayAbility_Definition::EndAbility` — L145
+- `UHodgeGameplayAbility_Definition::GetExecutionWindows` — L182
+- `UHodgeGameplayAbility_Definition::RefreshExecutionClock` — L187
+- `UHodgeGameplayAbility_Definition::OnTimelineFinished` — L195
+- `UHodgeGameplayAbility_Definition::OnWindowsChanged` — L208
+- `UHodgeGameplayAbility_Definition::OnPoint` — L216
+- `UHodgeGameplayAbility_Definition::HandleExecutionPoint` — L224
+- `UHodgeGameplayAbility_Definition::HandleExecutionWindowEntered` — L229
+- `UHodgeGameplayAbility_Definition::HandleExecutionWindowExited` — L241
+- `UHodgeGameplayAbility_Definition::ValidateExecutionConfiguration` — L252
+
+## HodgeGameplayAbility_Jump.cpp
+
+[Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility_Jump.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility_Jump.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `UHodgeGameplayAbility_Jump::UHodgeGameplayAbility_Jump` — L13
+- `UHodgeGameplayAbility_Jump::CanActivateAbility` — L20
+- `UHodgeGameplayAbility_Jump::EndAbility` — L45
+- `UHodgeGameplayAbility_Jump::CharacterJumpStart` — L56
+- `UHodgeGameplayAbility_Jump::CharacterJumpStop` — L68
 
 ## HodgeGameplayAbility_Melee.cpp
 
 [Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility_Melee.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility_Melee.cpp)
 
-接收服务器命中结果，为每次命中构建独立 GE Spec/Context 并施加。
+接收服务器 Window/Point 命中结果，准备锚点/目标、逐段/共享去重，构建独立 GE Spec/Context 并施加。
 
-- `FHodgeMeleeHitHistory::CanHit` — L17
-- `FHodgeMeleeHitHistory::RecordHit` — L24
-- `UHodgeGameplayAbility_Melee::ValidateExecutionConfiguration` — L29
-- `UHodgeGameplayAbility_Melee::OnExecutionReady` — L45
-- `UHodgeGameplayAbility_Melee::OnExecutionEnding` — L65
-- `UHodgeGameplayAbility_Melee::OnExecutionWindowEntered` — L79
-- `UHodgeGameplayAbility_Melee::OnExecutionWindowExited` — L106
-- `UHodgeGameplayAbility_Melee::IsMeleeBatchCurrent` — L113
-- `UHodgeGameplayAbility_Melee::OnHitResults` — L120
-- `UHodgeGameplayAbility_Melee::CanApplyMeleeHit_Implementation` — L130
-- `UHodgeGameplayAbility_Melee::MakeMeleeHitContext` — L136
-- `UHodgeGameplayAbility_Melee::BuildMeleeHitSpec` — L157
-- `UHodgeGameplayAbility_Melee::ProcessMeleeHitResults_Implementation` — L176
-- `UHodgeGameplayAbility_Melee::ApplyMeleeHitEffects_Implementation` — L209
+- `FHodgeMeleeHitHistory::CanHit` — L18
+- `FHodgeMeleeHitHistory::RecordHit` — L25
+- `UHodgeGameplayAbility_Melee::ValidateExecutionConfiguration` — L30
+- `UHodgeGameplayAbility_Melee::PrepareHitExecutionContext_Implementation` — L48
+- `UHodgeGameplayAbility_Melee::SetHitAnchor` — L50
+- `UHodgeGameplayAbility_Melee::SetHitTarget` — L63
+- `UHodgeGameplayAbility_Melee::ResetHitGeometryHistory` — L72
+- `UHodgeGameplayAbility_Melee::OnExecutionReady` — L81
+- `UHodgeGameplayAbility_Melee::OnExecutionEnding` — L106
+- `UHodgeGameplayAbility_Melee::OnExecutionWindowEntered` — L123
+- `UHodgeGameplayAbility_Melee::OpenHit` — L133
+- `UHodgeGameplayAbility_Melee::OnExecutionPoint` — L175
+- `UHodgeGameplayAbility_Melee::OnExecutionWindowExited` — L190
+- `UHodgeGameplayAbility_Melee::IsMeleeBatchCurrent` — L197
+- `UHodgeGameplayAbility_Melee::OnHitResults` — L204
+- `UHodgeGameplayAbility_Melee::CanApplyMeleeHit_Implementation` — L214
+- `UHodgeGameplayAbility_Melee::MakeMeleeHitContext` — L220
+- `UHodgeGameplayAbility_Melee::BuildMeleeHitSpec` — L241
+- `UHodgeGameplayAbility_Melee::ProcessMeleeHitResults_Implementation` — L260
+- `UHodgeGameplayAbility_Melee::ApplyMeleeHitEffects_Implementation` — L294
 
 ## HodgeAttributeSet.cpp
 
@@ -422,19 +468,19 @@ Tag 输入、激活组、关系映射、Montage 复制和全局注册；失败�
 - `UHodgeAbilitySystemComponent::GetAbilityTargetData` — L783
 - `UHodgeAbilitySystemComponent::GetLifetimeReplicatedProps` — L798
 - `UHodgeAbilitySystemComponent::GiveAbilityDefinition` — L805
-- `UHodgeAbilitySystemComponent::FindAbilityDefinition` — L833
-- `UHodgeAbilitySystemComponent::FindDefinitionAbility` — L843
-- `UHodgeAbilitySystemComponent::OnRemoveAbility` — L858
-- `UHodgeAbilitySystemComponent::InternalServerTryActivateAbility` — L864
-- `UHodgeAbilitySystemComponent::ClientActivateAbilitySucceedWithEventData_Implementation` — L894
-- `UHodgeAbilitySystemComponent::ClientActivateAbilityFailed_Implementation` — L914
-- `UHodgeAbilitySystemComponent::PlayMontage` — L930
-- `UHodgeAbilitySystemComponent::PlayMontageSimulated` — L945
-- `UHodgeAbilitySystemComponent::ApplyDefinitionMontageSettings` — L952
-- `UHodgeAbilitySystemComponent::OnRep_DefinitionMontage` — L966
-- `UHodgeAbilitySystemComponent::OnRep_ReplicatedAnimMontage` — L975
-- `UHodgeAbilitySystemComponent::StopDefinitionMontage` — L981
-- `UHodgeAbilitySystemComponent::CurrentMontageStop` — L988
+- `UHodgeAbilitySystemComponent::FindAbilityDefinition` — L837
+- `UHodgeAbilitySystemComponent::FindDefinitionAbility` — L847
+- `UHodgeAbilitySystemComponent::OnRemoveAbility` — L862
+- `UHodgeAbilitySystemComponent::InternalServerTryActivateAbility` — L868
+- `UHodgeAbilitySystemComponent::ClientActivateAbilitySucceedWithEventData_Implementation` — L900
+- `UHodgeAbilitySystemComponent::ClientActivateAbilityFailed_Implementation` — L921
+- `UHodgeAbilitySystemComponent::PlayMontage` — L938
+- `UHodgeAbilitySystemComponent::PlayMontageSimulated` — L953
+- `UHodgeAbilitySystemComponent::ApplyDefinitionMontageSettings` — L960
+- `UHodgeAbilitySystemComponent::OnRep_DefinitionMontage` — L974
+- `UHodgeAbilitySystemComponent::OnRep_ReplicatedAnimMontage` — L983
+- `UHodgeAbilitySystemComponent::StopDefinitionMontage` — L989
+- `UHodgeAbilitySystemComponent::CurrentMontageStop` — L996
 
 ## HodgeAbilitySystemGlobals.cpp
 
@@ -536,26 +582,26 @@ Tag 输入、激活组、关系映射、Montage 复制和全局注册；失败�
 
 模块定义或基础代码；请查看对应文件。
 
-- `UHodgeAttributeCoordinator::GetPlayerState` — L17
-- `UHodgeAttributeCoordinator::IsBoundTo` — L18
-- `UHodgeAttributeCoordinator::IsCurrentAvatar` — L19
-- `UHodgeAttributeCoordinator::IsReadyFor` — L20
-- `UHodgeAttributeCoordinator::ValidateCoreSets` — L26
-- `UHodgeAttributeCoordinator::PublishReady` — L38
-- `UHodgeAttributeCoordinator::BeginUpdate` — L53
-- `UHodgeAttributeCoordinator::ApplyCharacterBase` — L68
-- `UHodgeAttributeCoordinator::PrepareAvatar` — L81
-- `UHodgeAttributeCoordinator::CompleteAvatarInitialization` — L112
-- `UHodgeAttributeCoordinator::CommitUpdate` — L125
-- `UHodgeAttributeCoordinator::DetachAvatar` — L167
-- `UHodgeAttributeCoordinator::SetCharacterLevel` — L180
-- `UHodgeAttributeCoordinator::RestoreHealth` — L196
-- `UHodgeAttributeCoordinator::BeginEquipmentUpdate` — L205
-- `UHodgeAttributeCoordinator::FinishEquipmentUpdate` — L206
-- `UHodgeAttributeCoordinator::ExpectRespawn` — L207
-- `UHodgeAttributeCoordinator::SetInitialSavedHealth` — L209
-- `UHodgeAttributeCoordinator::GetOrCreateDefaultEquipment` — L217
-- `UHodgeAttributeCoordinator::RememberEquipment` — L232
+- `UHodgeAttributeCoordinator::GetPlayerState` — L18
+- `UHodgeAttributeCoordinator::IsBoundTo` — L19
+- `UHodgeAttributeCoordinator::IsCurrentAvatar` — L20
+- `UHodgeAttributeCoordinator::IsReadyFor` — L21
+- `UHodgeAttributeCoordinator::ValidateCoreSets` — L27
+- `UHodgeAttributeCoordinator::PublishReady` — L39
+- `UHodgeAttributeCoordinator::BeginUpdate` — L54
+- `UHodgeAttributeCoordinator::ApplyCharacterBase` — L69
+- `UHodgeAttributeCoordinator::PrepareAvatar` — L82
+- `UHodgeAttributeCoordinator::CompleteAvatarInitialization` — L113
+- `UHodgeAttributeCoordinator::CommitUpdate` — L126
+- `UHodgeAttributeCoordinator::DetachAvatar` — L168
+- `UHodgeAttributeCoordinator::SetCharacterLevel` — L181
+- `UHodgeAttributeCoordinator::RestoreHealth` — L197
+- `UHodgeAttributeCoordinator::BeginEquipmentUpdate` — L206
+- `UHodgeAttributeCoordinator::FinishEquipmentUpdate` — L207
+- `UHodgeAttributeCoordinator::ExpectRespawn` — L208
+- `UHodgeAttributeCoordinator::SetInitialSavedHealth` — L210
+- `UHodgeAttributeCoordinator::GetOrCreateDefaultEquipment` — L218
+- `UHodgeAttributeCoordinator::RememberEquipment` — L233
 
 ## HodgeCharacterBaseStatEffect.cpp
 
@@ -571,7 +617,7 @@ Tag 输入、激活组、关系映射、Montage 复制和全局注册；失败�
 
 模块定义或基础代码；请查看对应文件。
 
-- `UHodgeEquipmentStatEffect::UHodgeEquipmentStatEffect` — L7
+- `UHodgeEquipmentStatEffect::UHodgeEquipmentStatEffect` — L8
 
 ## HodgeActorBase.cpp
 
@@ -879,13 +925,16 @@ CodexText 实验：代码构建的 Survivor HUD UserWidget。
 
 模块定义或基础代码；请查看对应文件。
 
-- `UHodgeHitDetectionProfile::UHodgeHitDetectionProfile` — L23
-- `UHodgeHitDetectionProfile::Validate` — L29
-- `UHodgeHitDetectionProfile::IsDataValid` — L53
-- `UHodgeSocketSweepStrategy::Capture` — L64
-- `UHodgeSocketSweepStrategy::Detect` — L97
-- `UHodgeBoxSweepStrategy::Capture` — L114
-- `UHodgeBoxSweepStrategy::Detect` — L126
+- `FHodgeHitVolumeConfig::Validate` — L122
+- `UHodgeHitDetectionProfile::UHodgeHitDetectionProfile` — L149
+- `UHodgeHitDetectionProfile::Validate` — L155
+- `UHodgeHitDetectionProfile::IsDataValid` — L179
+- `UHodgeSocketSweepStrategy::Capture` — L190
+- `UHodgeSocketSweepStrategy::Detect` — L223
+- `UHodgeBoxSweepStrategy::Capture` — L246
+- `UHodgeBoxSweepStrategy::Detect` — L258
+- `UHodgeShapeQueryStrategy::Capture` — L287
+- `UHodgeShapeQueryStrategy::Detect` — L293
 
 ## HodgeActorComponentBase.cpp
 
@@ -949,67 +998,69 @@ ASC 旋转标签约束、锁定 Yaw、恢复、权威复制与移动重放状态
 
 [Source/Hodgepodge/Private/Component/HodgeCombatComponentBase.cpp](../../../Source/Hodgepodge/Private/Component/HodgeCombatComponentBase.cpp)
 
-Experience 注入 Pawn 的统一战斗协调者；连段输入/记忆/预测校正，服务器采样、去重与结果上报；GA 负责效果施加。
+Experience 注入 Pawn 的统一战斗协调者；连段输入/记忆/预测校正、来源/配置检测体、独立会话与过滤；GA 负责目标去重及效果施加。
 
-- `UHodgeCombatComponentBase::UHodgeCombatComponentBase` — L39
-- `UHodgeCombatComponentBase::EndPlay` — L47
-- `UHodgeCombatComponentBase::ResolveSource` — L53
-- `UHodgeCombatComponentBase::IsSourceValid` — L88
-- `UHodgeCombatComponentBase::CreateDetectionSession` — L100
-- `UHodgeCombatComponentBase::IsDetectionSessionValid` — L134
-- `UHodgeCombatComponentBase::ResetDetectionHistory` — L140
-- `UHodgeCombatComponentBase::GetDetectionSourceComponent` — L153
-- `UHodgeCombatComponentBase::EndDetectionSession` — L160
-- `UHodgeCombatComponentBase::EndDetectionSessionsForExecution` — L166
-- `UHodgeCombatComponentBase::EndAllDetectionSessions` — L174
-- `UHodgeCombatComponentBase::SampleDetection` — L179
-- `UHodgeCombatComponentBase::Configure` — L255
-- `UHodgeCombatComponentBase::Shutdown` — L272
-- `UHodgeCombatComponentBase::ClearInput` — L296
-- `UHodgeCombatComponentBase::InputPressed` — L302
-- `UHodgeCombatComponentBase::SelectTransition` — L321
-- `UHodgeCombatComponentBase::IsAuthorized` — L341
-- `UHodgeCombatComponentBase::ExecutionKey` — L346
-- `UHodgeCombatComponentBase::PrepareTransition` — L353
-- `UHodgeCombatComponentBase::TryTransition` — L385
-- `UHodgeCombatComponentBase::PrepareServerActivation` — L423
-- `UHodgeCombatComponentBase::PrepareConfirmedActivation` — L445
-- `UHodgeCombatComponentBase::RejectServerActivation` — L469
-- `UHodgeCombatComponentBase::CompleteServerActivation` — L475
-- `UHodgeCombatComponentBase::ExecutionStarted` — L496
-- `UHodgeCombatComponentBase::ExecutionEnded` — L507
-- `UHodgeCombatComponentBase::WindowsChanged` — L521
-- `UHodgeCombatComponentBase::TimelineEvent` — L530
-- `UHodgeCombatComponentBase::DrainEvents` — L537
-- `UHodgeCombatComponentBase::SetNode` — L555
-- `UHodgeCombatComponentBase::ResetSession` — L569
-- `UHodgeCombatComponentBase::ComboTime` — L583
-- `UHodgeCombatComponentBase::GetRememberedComboTag` — L590
-- `UHodgeCombatComponentBase::GetComboMemoryRemainingTime` — L596
-- `UHodgeCombatComponentBase::TransitionSourceNode` — L602
-- `UHodgeCombatComponentBase::HasResumeTransition` — L609
-- `UHodgeCombatComponentBase::RetainComboMemory` — L618
-- `UHodgeCombatComponentBase::ExpireComboMemory` — L629
-- `UHodgeCombatComponentBase::PublishComboMemory` — L639
-- `UHodgeCombatComponentBase::EndCurrentExecution` — L648
-- `UHodgeCombatComponentBase::OnRep_ComboMemory` — L653
-- `UHodgeCombatComponentBase::HandlePredictionRejected` — L662
-- `UHodgeCombatComponentBase::ServerSynchronizeComboMemory_Implementation` — L670
-- `UHodgeCombatComponentBase::ClientCorrectComboMemory_Implementation` — L676
-- `UHodgeCombatComponentBase::TickComponent` — L682
-- `UHodgeCombatComponentBase::ServerMoveCancel_Implementation` — L709
-- `UHodgeCombatComponentBase::ClientMoveCancelResult_Implementation` — L721
-- `UHodgeCombatComponentBase::ServerReturnToEntry_Implementation` — L723
-- `UHodgeCombatComponentBase::GetLifetimeReplicatedProps` — L736
-- `UHodgeCombatComponentBase::OnRep_ObserverTags` — L743
-- `UHodgeCombatComponentBase::FindCombatComponent` — L754
-- `UHodgeCombatComponentBase::IsComboReady` — L759
-- `UHodgeCombatComponentBase::BindPawnExtension` — L767
-- `UHodgeCombatComponentBase::HandleAbilitySystemInitialized` — L778
-- `UHodgeCombatComponentBase::HandleAbilitySystemUninitialized` — L785
-- `UHodgeCombatComponentBase::OnRegister` — L790
-- `UHodgeCombatComponentBase::BeginPlay` — L796
-- `UHodgeCombatComponentBase::OnUnregister` — L803
+- `UHodgeCombatComponentBase::UHodgeCombatComponentBase` — L41
+- `UHodgeCombatComponentBase::EndPlay` — L49
+- `UHodgeCombatComponentBase::ResolveSource` — L55
+- `UHodgeCombatComponentBase::IsSourceValid` — L90
+- `UHodgeCombatComponentBase::CaptureDetectionGeometry` — L116
+- `UHodgeCombatComponentBase::CreateDetectionSession` — L154
+- `UHodgeCombatComponentBase::IsDetectionSessionValid` — L199
+- `UHodgeCombatComponentBase::ResetDetectionHistory` — L205
+- `UHodgeCombatComponentBase::GetDetectionSourceComponent` — L217
+- `UHodgeCombatComponentBase::EndDetectionSession` — L224
+- `UHodgeCombatComponentBase::EndDetectionSessionsForExecution` — L230
+- `UHodgeCombatComponentBase::EndAllDetectionSessions` — L238
+- `UHodgeCombatComponentBase::UpdateDetectionAnchor` — L243
+- `UHodgeCombatComponentBase::SampleDetection` — L257
+- `UHodgeCombatComponentBase::Configure` — L343
+- `UHodgeCombatComponentBase::Shutdown` — L360
+- `UHodgeCombatComponentBase::ClearInput` — L384
+- `UHodgeCombatComponentBase::InputPressed` — L390
+- `UHodgeCombatComponentBase::SelectTransition` — L409
+- `UHodgeCombatComponentBase::IsAuthorized` — L429
+- `UHodgeCombatComponentBase::ExecutionKey` — L434
+- `UHodgeCombatComponentBase::PrepareTransition` — L441
+- `UHodgeCombatComponentBase::TryTransition` — L475
+- `UHodgeCombatComponentBase::PrepareServerActivation` — L513
+- `UHodgeCombatComponentBase::PrepareConfirmedActivation` — L535
+- `UHodgeCombatComponentBase::RejectServerActivation` — L559
+- `UHodgeCombatComponentBase::CompleteServerActivation` — L565
+- `UHodgeCombatComponentBase::ExecutionStarted` — L586
+- `UHodgeCombatComponentBase::ExecutionEnded` — L597
+- `UHodgeCombatComponentBase::WindowsChanged` — L611
+- `UHodgeCombatComponentBase::TimelineEvent` — L620
+- `UHodgeCombatComponentBase::DrainEvents` — L627
+- `UHodgeCombatComponentBase::SetNode` — L645
+- `UHodgeCombatComponentBase::ResetSession` — L659
+- `UHodgeCombatComponentBase::ComboTime` — L673
+- `UHodgeCombatComponentBase::GetRememberedComboTag` — L680
+- `UHodgeCombatComponentBase::GetComboMemoryRemainingTime` — L686
+- `UHodgeCombatComponentBase::TransitionSourceNode` — L692
+- `UHodgeCombatComponentBase::HasResumeTransition` — L699
+- `UHodgeCombatComponentBase::RetainComboMemory` — L708
+- `UHodgeCombatComponentBase::ExpireComboMemory` — L719
+- `UHodgeCombatComponentBase::PublishComboMemory` — L729
+- `UHodgeCombatComponentBase::EndCurrentExecution` — L738
+- `UHodgeCombatComponentBase::OnRep_ComboMemory` — L743
+- `UHodgeCombatComponentBase::HandlePredictionRejected` — L752
+- `UHodgeCombatComponentBase::ServerSynchronizeComboMemory_Implementation` — L760
+- `UHodgeCombatComponentBase::ClientCorrectComboMemory_Implementation` — L766
+- `UHodgeCombatComponentBase::TickComponent` — L772
+- `UHodgeCombatComponentBase::ServerMoveCancel_Implementation` — L799
+- `UHodgeCombatComponentBase::ClientMoveCancelResult_Implementation` — L811
+- `UHodgeCombatComponentBase::ServerReturnToEntry_Implementation` — L813
+- `UHodgeCombatComponentBase::GetLifetimeReplicatedProps` — L826
+- `UHodgeCombatComponentBase::OnRep_ObserverTags` — L833
+- `UHodgeCombatComponentBase::FindCombatComponent` — L844
+- `UHodgeCombatComponentBase::IsComboReady` — L849
+- `UHodgeCombatComponentBase::BindPawnExtension` — L857
+- `UHodgeCombatComponentBase::HandleAbilitySystemInitialized` — L868
+- `UHodgeCombatComponentBase::HandleAbilitySystemUninitialized` — L875
+- `UHodgeCombatComponentBase::OnRegister` — L880
+- `UHodgeCombatComponentBase::BeginPlay` — L886
+- `UHodgeCombatComponentBase::OnUnregister` — L893
 
 ## HodgeExperienceManagerComponent.cpp
 
@@ -1343,13 +1394,13 @@ PlayerState ModularGameplay Receiver 注册、注销及组件 Reset/CopyProperti
 
 [Source/Hodgepodge/Private/Data/HodgeAbilityDefinition.cpp](../../../Source/Hodgepodge/Private/Data/HodgeAbilityDefinition.cpp)
 
-Montage/Blend/Timeline、HitWindows、WeaponUseWindowTag；校验手持区间覆盖命中并先进入。
+Montage/Blend/Timeline、HitWindows/HitPoints、Volume、独立/连段路由及输入；校验几何、权威消息与手持覆盖。
 
 - `FHodgeAbilityBlendSettings::MakeBlend` — L12
 - `FHodgeAbilityBlendSettings::IsValid` — L21
 - `UHodgeAbilityDefinition::GetDuration` — L28
 - `UHodgeAbilityDefinition::ValidateDefinition` — L33
-- `UHodgeAbilityDefinition::IsDataValid` — L158
+- `UHodgeAbilityDefinition::IsDataValid` — L202
 
 ## HodgeAbilitySet.cpp
 
@@ -1851,6 +1902,18 @@ Enhanced Input 用户设置派生入口；须核对实际设置类配置。
 - `FHodgeDetectionRoutingTest::RunTest` — L82
 - `FHodgeMeleeHitHistoryTest::RunTest` — L112
 - `FHodgeMeleeSpecContextTest::RunTest` — L135
+
+## HodgeSkillHitVolumeTests.cpp
+
+[Source/Hodgepodge/Private/Tests/HodgeSkillHitVolumeTests.cpp](../../../Source/Hodgepodge/Private/Tests/HodgeSkillHitVolumeTests.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `FHodgeConfiguredVolumesTest::RunTest` — L79
+- `FHodgeVolumeFilteringTest::RunTest` — L117
+- `FHodgeStandaloneRouteTest::RunTest` — L167
+- `FHodgeIndexedPointsTest::RunTest` — L196
+- `FHodgePointBindingValidationTest::RunTest` — L237
 
 ## HodgeTimelineEvaluatorTests.cpp
 
@@ -2371,17 +2434,29 @@ Enhanced Input 用户设置派生入口；须核对实际设置类配置。
 
 模块定义或基础代码；请查看对应文件。
 
+## HodgeGameplayAbility_Death.h
+
+[Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Death.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Death.h)
+
+模块定义或基础代码；请查看对应文件。
+
 ## HodgeGameplayAbility_Definition.h
 
 [Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h)
 
 执行单段 Definition、本次 Montage 时钟 Timeline 与手持窗口，按执行清理；Melee 子类扩展命中。
 
+## HodgeGameplayAbility_Jump.h
+
+[Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Jump.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Jump.h)
+
+模块定义或基础代码；请查看对应文件。
+
 ## HodgeGameplayAbility_Melee.h
 
 [Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Melee.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Melee.h)
 
-接收服务器命中结果，为每次命中构建独立 GE Spec/Context 并施加。
+接收服务器 Window/Point 命中结果，准备锚点/目标、逐段/共享去重，构建独立 GE Spec/Context 并施加。
 
 ## HodgeAttributeSet.h
 
@@ -2627,7 +2702,7 @@ ASC 旋转标签约束、锁定 Yaw、恢复、权威复制与移动重放状态
 
 [Source/Hodgepodge/Public/Component/HodgeCombatComponentBase.h](../../../Source/Hodgepodge/Public/Component/HodgeCombatComponentBase.h)
 
-Experience 注入 Pawn 的统一战斗协调者；连段输入/记忆/预测校正，服务器采样、去重与结果上报；GA 负责效果施加。
+Experience 注入 Pawn 的统一战斗协调者；连段输入/记忆/预测校正、来源/配置检测体、独立会话与过滤；GA 负责目标去重及效果施加。
 
 ## HodgeExperienceManagerComponent.h
 
@@ -2729,7 +2804,7 @@ PlayerState ModularGameplay Receiver 注册、注销及组件 Reset/CopyProperti
 
 [Source/Hodgepodge/Public/Data/HodgeAbilityDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilityDefinition.h)
 
-Montage/Blend/Timeline、HitWindows、WeaponUseWindowTag；校验手持区间覆盖命中并先进入。
+Montage/Blend/Timeline、HitWindows/HitPoints、Volume、独立/连段路由及输入；校验几何、权威消息与手持覆盖。
 
 ## HodgeAbilitySet.h
 

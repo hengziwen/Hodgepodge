@@ -15,7 +15,7 @@
 
 | 系统 | Hodge 当前状态 | 缺口／建议 |
 | --- | --- | --- |
-| 死亡流程 | 部分迁入：生命值、DeathState、死亡事件发送已有 | 优先核对／迁入死亡 GA，接通事件消费、死亡开始与结束 |
+| 死亡流程 | 死亡 GA 已授予，事件和死亡阶段已测试 | 互斥能力计数／PIE 清理错误待处理；死亡表现和重生待补 |
 | UI 基础闭环 | 部分迁入：CommonUI、基础控件、UIExtension 已有 | 最值得补完的较大迁移；接 CommonGame 依赖、根布局、输入路由与 HUD 注入 |
 | GameplayCue | Manager 已迁入，生命周期未接完整 | 补目录注册、启动初始化、Feature 注销与加载策略 |
 | 战斗消息 | 消息调用保留为注释，消息类型与 Router 未接 | 迁入 GameplayMessageRouter 后建立最小战斗消息，明确与 Cue 的分工 |
@@ -39,10 +39,10 @@
 
 Lyra 的 `LyraGameplayAbility_Death` 监听 `GameplayEvent.Death`，取消不保留的能力，切到阻塞激活组，再调用 HealthComponent.StartDeath；能力结束时调用 FinishDeath。
 
-Hodge 的 [HealthComponent](../../Source/Hodgepodge/Private/Component/HodgeHealthComponent.cpp) 已发送死亡事件并提供状态接口；未发现对应 C++ 死亡 GA。现有 C++ StartDeath/FinishDeath 调用主要在复制通知内，不能把客户端补执行当成服务器的死亡启动入口。此前只读检查中，默认 PawnData 两个 AbilitySet 的普通 GA 授予数组为空，连段通过 Definition 授予；迁移时仍须核对实际授予与事件触发。
+Hodge 已由用户迁入 HodgeGameplayAbility_Death，并在 `/Game/Main/Data/AbilitySet/DA_Pover` 授予 GA_Hero_Death。真实致死伤害能够通过 [HealthComponent](../../Source/Hodgepodge/Private/Component/HodgeHealthComponent.cpp) 发送事件，由服务器 GA 开始/结束死亡，拥有者和模拟代理同步阶段并销毁 Pawn。但攻击中死亡及结束 PIE 出现互斥能力计数与活动 Spec 清理错误，整体验收尚未通过，详见 [本次验证](../Validation/jump-death-2026-10-06.md)。此前“普通 GA 授予为空”是迁入前状态。
 
-- [ ] 迁入并按 Hodge 命名适配死亡 GA，服务器消费 Death 事件。
-- [ ] 将死亡 GA 授予到实际默认 AbilitySet，确认不会重复授予。
+- [x] 迁入并按 Hodge 命名适配死亡 GA，服务器消费 Death 事件。
+- [x] 将死亡 GA 授予到实际默认 AbilitySet，确认不会重复授予。
 - [ ] 接死亡表现与开始／结束清理；蒙太奇 Slot 使用当前动画系统契约。
 - [ ] 验证零血量只触发一次、取消战斗／清理手持请求、禁移与 Pawn 清理。
 - [ ] 验证服务器、拥有者、模拟代理；另行定义重生与保留能力策略。

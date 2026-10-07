@@ -15,6 +15,15 @@ struct FHodgeMeleeHitHistory
 	void RecordHit(UAbilitySystemComponent* Target, double Time);
 };
 
+struct FHodgeHitGroupKey
+{
+	FName Group;
+	uint32 TimeKey = 0;
+	bool bByTime = false;
+	bool operator==(const FHodgeHitGroupKey& Other) const { return Group == Other.Group && TimeKey == Other.TimeKey && bByTime == Other.bByTime; }
+	friend uint32 GetTypeHash(const FHodgeHitGroupKey& Key) { return HashCombine(GetTypeHash(Key.Group), HashCombine(Key.TimeKey, uint32(Key.bByTime))); }
+};
+
 USTRUCT()
 struct FHodgeMeleeWindowState
 {
@@ -32,12 +41,21 @@ class HODGEPODGE_API UHodgeGameplayAbility_Melee : public UHodgeGameplayAbility_
 	GENERATED_BODY()
 public:
 	virtual void ValidateExecutionConfiguration(const UHodgeAbilityDefinition& Definition, TArray<FText>& Errors) const override;
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category="Hodge|Combat")
+	bool SetHitAnchor(FName Key, const FTransform& WorldTransform);
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category="Hodge|Combat")
+	bool SetHitTarget(FName Key, AActor* Target);
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category="Hodge|Combat")
+	void ResetHitGeometryHistory();
 
 protected:
 	virtual void OnExecutionReady() override;
 	virtual void OnExecutionEnding(const FGuid& EndingExecutionId) override;
 	virtual void OnExecutionWindowEntered(int32 EventIndex, FGameplayTag WindowTag) override;
 	virtual void OnExecutionWindowExited(int32 EventIndex, bool bSampleFinal) override;
+	virtual void OnExecutionPoint(int32 EventIndex, FGameplayTag PointTag) override;
+	UFUNCTION(BlueprintNativeEvent, Category="Hodge|Combat") bool PrepareHitExecutionContext();
+	virtual bool PrepareHitExecutionContext_Implementation();
 
 	// 覆盖此事件会替换整批处理，可用于没有 ASC 的交互目标。
 	UFUNCTION(BlueprintNativeEvent, Category="Hodge|Melee")
@@ -60,6 +78,7 @@ protected:
 	virtual FGameplayEffectSpecHandle BuildMeleeHitSpec(const FHodgeHitDetectionBatch& Batch,
 		const FHitResult& Hit, const FHodgeHitWindowBinding& Binding) const;
 	bool IsMeleeBatchCurrent(const FHodgeHitDetectionBatch& Batch) const;
+	bool OpenHit(int32 EventIndex, const FHodgeHitWindowBinding& Binding);
 
 private:
 	friend struct FHodgeMeleeTestAccess;
@@ -67,5 +86,8 @@ private:
 	UPROPERTY(Transient) TObjectPtr<UHodgeAbilityTask_WaitHitResults> DetectionTask;
 	UPROPERTY(Transient) TMap<int32, FHodgeMeleeWindowState> WindowStates;
 	// 共享组记录保留到 GA 执行结束，允许相邻或不相邻窗口共用次数。
-	TMap<FName, TSharedPtr<FHodgeMeleeHitHistory>> HitGroups;
+	TMap<FHodgeHitGroupKey, TSharedPtr<FHodgeMeleeHitHistory>> HitGroups;
+	UPROPERTY(Transient) TMap<FName, FTransform> HitAnchors;
+	UPROPERTY(Transient) TMap<FName, TWeakObjectPtr<AActor>> HitTargets;
+	TSet<int32> ConsumedPoints;
 };

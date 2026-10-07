@@ -48,6 +48,7 @@ public:
 	 * 必须属于 "InputTag" 分类(Categories = "InputTag")。
 	 * 例如:InputTag.Ability.Attack、InputTag.Move。
 	 */
+	// 输入语义标签，必须与连段输入映射或独立技能的 Spec 输入标签精确匹配。
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (Categories = "InputTag"))
 	FGameplayTag InputTag;
 };

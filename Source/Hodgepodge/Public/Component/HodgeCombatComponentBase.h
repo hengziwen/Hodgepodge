@@ -37,6 +37,8 @@ struct FHodgeHitDetectionSession
 	bool bWeaponSource = false;
 	int32 SampleSequence = 0;
 	FHodgeHitGeometry Previous;
+	FTransform FixedAnchor = FTransform::Identity;
+	bool bHasFixedAnchor = false;
 };
 
 /** Pawn 级战斗入口，统一连招协调和几何检测；命中规则与 GE 应用仍由攻击 GA 处理。 */
@@ -84,6 +86,7 @@ public:
 	void EndDetectionSession(uint64 Handle, const FGuid& ExecutionId);
 	void EndDetectionSessionsForExecution(const FGuid& ExecutionId);
 	void EndAllDetectionSessions();
+	void UpdateDetectionAnchor(const FGuid& ExecutionId, FName Key, const FTransform& Transform);
 protected:
 	virtual void OnRegister() override;
 	virtual void OnUnregister() override;
@@ -91,6 +94,7 @@ protected:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* TickFunction) override;
 	virtual void EndPlay(const EEndPlayReason::Type Reason) override;
 private:
+	bool CaptureDetectionGeometry(const FHodgeHitDetectionSession& Session, FHodgeHitGeometry& Out) const;
 	void BindPawnExtension();
 	bool IsComboReady() const;
 	void HandleAbilitySystemInitialized();

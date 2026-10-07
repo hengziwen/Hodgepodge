@@ -86,6 +86,8 @@ if ($LASTEXITCODE -ne 0) { throw "Game build failed: $LASTEXITCODE" }
 
 ## 文档维护边界
 
+攻击能力配置问题优先查阅并引用 [攻击能力配置手册](Guides/attack-ability-configuration.md) 的具体章节；字段含义以当前源码核实，变化后先更新手册，不重复维护互相冲突的配置答案。
+
 README 的历史编译结论不可用作新修改的验证证据；架构方案含早期 ALS 路线与示例 AOW 类名，新增实现沿用实际 Hodge 类型。修改插件启用状态需同时检查资产引用与运行加载，不能直接从 Build.cs 删除依赖来证明完成迁移。
 
 `.gitignore` 虽包含 Hodgepodge.uproject，但该文件当前已被 Git 跟踪，仍会显示修改。本次读取资产 diff 时 Git LFS 因 `.git/lfs/tmp` 写入权限受限而失败，未取得二进制内容差异；这不影响项目描述和源码的只读检查，也不能据此宣称两份资产内容已验证。

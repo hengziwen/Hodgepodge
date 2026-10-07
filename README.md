@@ -6,6 +6,7 @@
 
 ## 文档入口
 
+- [攻击能力配置手册](Docs/Guides/attack-ability-configuration.md)：Definition、Timeline、HitCheck、Profile、连段与输入的逐字段说明、配置配方和排查入口。
 - [本地知识库](Docs/KnowledgeBase/README.md)：对象职责、初始化链、配置、操作与排障。
 - [本轮完整更新](Docs/KnowledgeBase/26-update-2026-10-06.md)：10 月以来的战斗、动画、旋转、连段及武器变化。
 - [当前接通状态与待办](Docs/KnowledgeBase/12-integration-backlog.md)、[验证范围](Docs/KnowledgeBase/16-validation.md)。

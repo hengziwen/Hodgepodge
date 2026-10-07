@@ -107,6 +107,8 @@ public:
 	FWindowsChanged OnWindowsChanged;
 	FFinished OnFinished;
 	FPoint OnPoint;
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FIndexedPoint, int32, FGameplayTag);
+	FIndexedPoint OnIndexedPoint;
 	void RefreshMontageClock();
 
 	// 是否已经停止推进。已销毁必然是已停止，反之不成立。
@@ -141,7 +143,7 @@ protected:
 	void ExitWindow(int32 EventIndex);
 
 	// Point：按 NetPolicy 决定本端是否派发，然后"先派发事件、再施加 GE"。
-	void FirePointEvent(const FHodgeTimelineEvent& Event);
+	void FirePointEvent(const FHodgeTimelineEvent& Event, int32 EventIndex = INDEX_NONE);
 
 	// 派发 Task 自身产生的系统事件（Timeline.End / Interrupted），复用 FirePointEvent。
 	void FireSystemEvent(const FGameplayTag& EventTag);
@@ -158,6 +160,7 @@ protected:
 	bool HasAuthorityOnAvatar() const;
 
 private:
+	friend struct FHodgeSkillTimelineTestAccess;
 	friend struct FHodgeTimelineTestAccess;
 	TWeakObjectPtr<UAnimInstance> ClockAnimInstance;
 	UPROPERTY()
