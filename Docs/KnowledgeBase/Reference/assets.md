@@ -89,7 +89,7 @@
 
 ## Main/Character/Hero/Anim
 
-- [README.md](../../../Content/Main/Character/Hero/Anim/README.md) — `/Game/Main/Character/Hero/Anim/README`；12,108 字节
+- [README.md](../../../Content/Main/Character/Hero/Anim/README.md) — `/Game/Main/Character/Hero/Anim/README`；12,215 字节
 
 ## Main/Character/Hero/Anim/Sequences
 
@@ -168,7 +168,7 @@
 - [CT_Sword_Growth.uasset](../../../Content/Main/Data/CharacterStats/CT_Sword_Growth.uasset) — `/Game/Main/Data/CharacterStats/CT_Sword_Growth`；3,033 字节
 - [DA_Pover_Stats.uasset](../../../Content/Main/Data/CharacterStats/DA_Pover_Stats.uasset) — `/Game/Main/Data/CharacterStats/DA_Pover_Stats`；2,335 字节
 - [DA_Sword_Stats.uasset](../../../Content/Main/Data/CharacterStats/DA_Sword_Stats.uasset) — `/Game/Main/Data/CharacterStats/DA_Sword_Stats`；2,345 字节
-- [README.md](../../../Content/Main/Data/CharacterStats/README.md) — `/Game/Main/Data/CharacterStats/README`；2,870 字节
+- [README.md](../../../Content/Main/Data/CharacterStats/README.md) — `/Game/Main/Data/CharacterStats/README`；2,898 字节
 
 ## Main/Data/Combo
 
@@ -194,7 +194,7 @@
 
 ## Main/Experiences
 
-- [Exp_HodgeDefaultExperience.uasset](../../../Content/Main/Experiences/Exp_HodgeDefaultExperience.uasset) — `/Game/Main/Experiences/Exp_HodgeDefaultExperience`；8,342 字节
+- [Exp_HodgeDefaultExperience.uasset](../../../Content/Main/Experiences/Exp_HodgeDefaultExperience.uasset) — `/Game/Main/Experiences/Exp_HodgeDefaultExperience`；8,589 字节
 
 ## Main/Input
 
@@ -224,6 +224,29 @@
 - [IA_ViewMode.uasset](../../../Content/Main/Input/InputAction/IA_ViewMode.uasset) — `/Game/Main/Input/InputAction/IA_ViewMode`；2,032 字节
 - [IA_Walk.uasset](../../../Content/Main/Input/InputAction/IA_Walk.uasset) — `/Game/Main/Input/InputAction/IA_Walk`；1,994 字节
 
+## Main/UI
+
+- [EAS_HodgeGameplayUI.uasset](../../../Content/Main/UI/EAS_HodgeGameplayUI.uasset) — `/Game/Main/UI/EAS_HodgeGameplayUI`；4,046 字节
+
+## Main/UI/Foundation
+
+- [B_HodgeUIInputData.uasset](../../../Content/Main/UI/Foundation/B_HodgeUIInputData.uasset) — `/Game/Main/UI/Foundation/B_HodgeUIInputData`；6,320 字节
+- [DT_UIInputActions.uasset](../../../Content/Main/UI/Foundation/DT_UIInputActions.uasset) — `/Game/Main/UI/Foundation/DT_UIInputActions`；13,908 字节
+- [WBP_HodgePrimaryLayout.uasset](../../../Content/Main/UI/Foundation/WBP_HodgePrimaryLayout.uasset) — `/Game/Main/UI/Foundation/WBP_HodgePrimaryLayout`；12,226 字节
+- [WBP_UIButton.uasset](../../../Content/Main/UI/Foundation/WBP_UIButton.uasset) — `/Game/Main/UI/Foundation/WBP_UIButton`；45,896 字节
+
+## Main/UI/HUD
+
+- [WBP_AbilityBar.uasset](../../../Content/Main/UI/HUD/WBP_AbilityBar.uasset) — `/Game/Main/UI/HUD/WBP_AbilityBar`；105,163 字节
+- [WBP_AbilitySlot.uasset](../../../Content/Main/UI/HUD/WBP_AbilitySlot.uasset) — `/Game/Main/UI/HUD/WBP_AbilitySlot`；114,846 字节
+- [WBP_HodgeHUD.uasset](../../../Content/Main/UI/HUD/WBP_HodgeHUD.uasset) — `/Game/Main/UI/HUD/WBP_HodgeHUD`；13,743 字节
+- [WBP_PlayerVitals.uasset](../../../Content/Main/UI/HUD/WBP_PlayerVitals.uasset) — `/Game/Main/UI/HUD/WBP_PlayerVitals`；147,796 字节
+
+## Main/UI/Menu
+
+- [WBP_HodgeConfirmation.uasset](../../../Content/Main/UI/Menu/WBP_HodgeConfirmation.uasset) — `/Game/Main/UI/Menu/WBP_HodgeConfirmation`；106,181 字节
+- [WBP_HodgePauseMenu.uasset](../../../Content/Main/UI/Menu/WBP_HodgePauseMenu.uasset) — `/Game/Main/UI/Menu/WBP_HodgePauseMenu`；192,752 字节
+
 ## Main/Weapon
 
 - [BP_Weapon_Base.uasset](../../../Content/Main/Weapon/BP_Weapon_Base.uasset) — `/Game/Main/Weapon/BP_Weapon_Base`；23,822 字节
@@ -244,8 +267,8 @@
 - `CodexText`：505 个文件（包含源资源，不等于 UE 资产数）。
 - `GameplayEffects`：15 个文件（包含源资源，不等于 UE 资产数）。
 - `LevelPrototyping`：13 个文件（包含源资源，不等于 UE 资产数）。
-- `Main`：135 个文件（包含源资源，不等于 UE 资产数）。
-- `ThirdPerson`：7 个文件（包含源资源，不等于 UE 资产数）。
+- `Main`：146 个文件（包含源资源，不等于 UE 资产数）。
+- `ThirdPerson`：8 个文件（包含源资源，不等于 UE 资产数）。
 - `Wuwa`：698 个文件（包含源资源，不等于 UE 资产数）。
 - `__ExternalActors__`：258 个文件（包含源资源，不等于 UE 资产数）。
 - `__ExternalObjects__`：19 个文件（包含源资源，不等于 UE 资产数）。

@@ -4,6 +4,8 @@
 
 ## 从这里开始
 
+- [UI 基础闭环更新](28-update-2026-10-08-ui.md)、[UI 配置指南](../Guides/ui-foundation-configuration.md)：正式 Main HUD、血条／技能栏、菜单输入和玩家生命周期。
+
 项目已接入 Experience/Init State、PlayerState ASC、输入相机、Main 固定移动动画层、统一 CombatComponent、默认剑、旋转锁、连段记忆与武器显隐。正式五段已使用命中 Notify／NotifyState，第四段直接读取 Bip001LHand；仍需按美术动作调整覆盖与半径，配置和数值测试不代表逐帧视觉打磨完成。
 
 - [攻击能力配置手册](../Guides/attack-ability-configuration.md)：Definition、AnimNotify、HitCheck、Profile、连段表、授予与输入的统一字段说明；后续配置问答优先引用相应章节。

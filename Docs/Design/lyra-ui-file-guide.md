@@ -1,3 +1,5 @@
+> 2026-10-08：本文保留当时的源码导览与判断。当前自有根布局／HUD／菜单已接通，现行实现见 [Hodge UI 基础闭环](hodge-ui-foundation.md) 和 [配置指南](../Guides/ui-foundation-configuration.md)。
+
 # Lyra UI 迁移文件导览（79 文件逐个说明 + 学习优先级）
 
 > 2026-10-06 状态同步：UI 迁移/学习材料：CommonUI 已引入，部分 UIExtension/Indicator 代码有效；依赖 CommonGame/GameSettings/CommonUser 的停用内容与完整前端/HUD 尚未接通。本文不作为游戏 UI 已出画面的声明。 当前项目事实见 [本轮更新](../KnowledgeBase/26-update-2026-10-06.md)。

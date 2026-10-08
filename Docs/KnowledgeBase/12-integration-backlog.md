@@ -1,3 +1,5 @@
+> 2026-10-08：UI 基础闭环已接通；当前方案不引入 CommonGame／CommonUser／ModularGameplayActors，详见 [本轮 UI 更新](28-update-2026-10-08-ui.md)。以下旧条目中的 HUD／GameViewport 未完成描述已被本轮更新覆盖。
+
 > 2026-10-07 更新：本文中旧 Timeline／HitWindows 的字段与制作步骤仅保留为历史；当前攻击入口以 [通知配置手册](../Guides/attack-ability-configuration.md) 和 [通知迁移更新](27-update-2026-10-07-anim-notify.md) 为准。
 
 # 当前状态、断点与接通顺序

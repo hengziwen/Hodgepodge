@@ -65,6 +65,8 @@ public:
 	UHodgeAttributeCoordinator* GetAttributeCoordinator() const { return AttributeCoordinator; }
 	bool AreAttributesReadyFor(const APawn* Avatar) const;
 	void NotifyAttributeReadiness();
+	// 同一就绪入口通知本地订阅者，玩法代码不引用具体 UI。
+	FSimpleMulticastDelegate OnAttributeReadinessChanged;
 
 	// 实现 IAbilitySystemInterface，返回玩家的 AbilitySystemComponent。
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;

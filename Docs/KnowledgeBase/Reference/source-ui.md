@@ -123,6 +123,29 @@
 
 - L9: `TSubclassOf<UUserWidget> UHodgeWidgetFactory_Class::FindWidgetClassForData_Implementation(const UObject* Data) const`
 
+## HodgeGameplayUIDataSource.cpp
+
+每个本地玩家共享的生命订阅、属性就绪与技能状态/输入接入；布局和按钮行为保存在 WBP。
+
+源码：[Source/Hodgepodge/Private/UI/Data/HodgeGameplayUIDataSource.cpp](../../../Source/Hodgepodge/Private/UI/Data/HodgeGameplayUIDataSource.cpp)
+
+项目内直接 include（不是运行调用关系）：[UI/Data/HodgeGameplayUIDataSource.h](../../../Source/Hodgepodge/Public/UI/Data/HodgeGameplayUIDataSource.h)、[UI/Subsystem/HodgeUIManagerSubsystem.h](../../../Source/Hodgepodge/Public/UI/Subsystem/HodgeUIManagerSubsystem.h)、[Core/LocalPlayer/HodgeLocalPlayerBase.h](../../../Source/Hodgepodge/Public/Core/LocalPlayer/HodgeLocalPlayerBase.h)、[Core/PlayerController/HodgePlayerController.h](../../../Source/Hodgepodge/Public/Core/PlayerController/HodgePlayerController.h)、[Core/PlayState/HodgePlayerState.h](../../../Source/Hodgepodge/Public/Core/PlayState/HodgePlayerState.h)、[Component/HodgeHealthComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeHealthComponent.h)、[Component/HodgePawnExtensionComponent.h](../../../Source/Hodgepodge/Public/Component/HodgePawnExtensionComponent.h)、[Component/HodgeCombatComponentBase.h](../../../Source/Hodgepodge/Public/Component/HodgeCombatComponentBase.h)、[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)、[Data/HodgeComboDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeComboDefinition.h)
+
+定义候选（多行签名仅展示首行）：
+
+- L18: `void UHodgeGameplayUIDataSource::Initialize(UHodgeLocalPlayerBase* Player, APlayerController* InController)`
+- L30: `void UHodgeGameplayUIDataSource::UnbindPawn()`
+- L41: `void UHodgeGameplayUIDataSource::UnbindState()`
+- L47: `void UHodgeGameplayUIDataSource::Shutdown()`
+- L60: `void UHodgeGameplayUIDataSource::StateChanged(UHodgeLocalPlayerBase* Player, APlayerState* State)`
+- L68: `void UHodgeGameplayUIDataSource::PawnChanged(UHodgeLocalPlayerBase* Player, APawn* Pawn)`
+- L90: `void UHodgeGameplayUIDataSource::Refresh()`
+- L105: `void UHodgeGameplayUIDataSource::AttributeChanged(UHodgeHealthComponent* Component, float Old, float New, AActor* Instigator) { Refresh(); }`
+- L106: `void UHodgeGameplayUIDataSource::DeathChanged(AActor* Actor) { Refresh(); }`
+- L108: `bool UHodgeGameplayUIDataSource::CanUseGameplay() const`
+- L115: `FHodgeUIAbilityDisplayState UHodgeGameplayUIDataSource::GetAbilityDisplayState(FGameplayTag InputTag) const`
+- L145: `bool UHodgeGameplayUIDataSource::SubmitInput(FGameplayTag InputTag)`
+
 ## UIExtensionPointWidget.cpp
 
 模块或基础类型入口。
@@ -134,13 +157,14 @@
 定义候选（多行签名仅展示首行）：
 
 - L39: `UUIExtensionPointWidget::UUIExtensionPointWidget(const FObjectInitializer& ObjectInitializer)`
-- L45: `void UUIExtensionPointWidget::ReleaseSlateResources(bool bReleaseChildren)`
-- L56: `TSharedRef<SWidget> UUIExtensionPointWidget::RebuildWidget()`
-- L123: `void UUIExtensionPointWidget::ResetExtensionPoint()`
-- L142: `void UUIExtensionPointWidget::RegisterExtensionPoint()`
-- L186: `void UUIExtensionPointWidget::RegisterExtensionPointForPlayerState(UHodgeLocalPlayerBase* LocalPlayer,`
-- L214: `void UUIExtensionPointWidget::OnAddOrRemoveExtension(EUIExtensionAction Action, const FUIExtensionRequest& Request)`
-- L297: `void UUIExtensionPointWidget::ValidateCompiledDefaults(IWidgetCompilerLog& CompileLog) const`
+- L44: `void UUIExtensionPointWidget::SetExtensionPointTag(FGameplayTag Tag)`
+- L50: `void UUIExtensionPointWidget::ReleaseSlateResources(bool bReleaseChildren)`
+- L61: `TSharedRef<SWidget> UUIExtensionPointWidget::RebuildWidget()`
+- L132: `void UUIExtensionPointWidget::ResetExtensionPoint()`
+- L156: `void UUIExtensionPointWidget::RegisterExtensionPoint()`
+- L200: `void UUIExtensionPointWidget::RegisterExtensionPointForPlayerState(UHodgeLocalPlayerBase* LocalPlayer,`
+- L230: `void UUIExtensionPointWidget::OnAddOrRemoveExtension(EUIExtensionAction Action, const FUIExtensionRequest& Request)`
+- L313: `void UUIExtensionPointWidget::ValidateCompiledDefaults(IWidgetCompilerLog& CompileLog) const`
 
 ## UIExtensionSystem.cpp
 
@@ -245,6 +269,28 @@
 - L18: `void UHodgeLoadingScreenSubsystem::SetLoadingScreenContentWidget(TSubclassOf<UUserWidget> NewWidgetClass)`
 - L28: `TSubclassOf<UUserWidget> UHodgeLoadingScreenSubsystem::GetLoadingScreenContentWidget() const`
 
+## HodgePrimaryGameLayout.cpp
+
+绑定 Designer 四个容器的本地玩家根布局，Push/Pop、异步加载取消与令牌恢复；不再生成运行时控件树。
+
+源码：[Source/Hodgepodge/Private/UI/Foundation/HodgePrimaryGameLayout.cpp](../../../Source/Hodgepodge/Private/UI/Foundation/HodgePrimaryGameLayout.cpp)
+
+项目内直接 include（不是运行调用关系）：[UI/Foundation/HodgePrimaryGameLayout.h](../../../Source/Hodgepodge/Public/UI/Foundation/HodgePrimaryGameLayout.h)、[UI/Subsystem/HodgeUIManagerSubsystem.h](../../../Source/Hodgepodge/Public/UI/Subsystem/HodgeUIManagerSubsystem.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)
+
+定义候选（多行签名仅展示首行）：
+
+- L13: `void UHodgePrimaryGameLayout::NativeOnInitialized()`
+- L23: `void UHodgePrimaryGameLayout::RegisterLayer(FGameplayTag Tag, UCommonActivatableWidgetContainerBase* Container)`
+- L28: `UCommonActivatableWidgetContainerBase* UHodgePrimaryGameLayout::GetLayer(FGameplayTag Tag) const`
+- L34: `UCommonActivatableWidget* UHodgePrimaryGameLayout::Push(FGameplayTag Tag, TSubclassOf<UCommonActivatableWidget> WidgetClass)`
+- L43: `void UHodgePrimaryGameLayout::Pop(UCommonActivatableWidget* Widget)`
+- L52: `bool UHodgePrimaryGameLayout::HasBlockingPage() const`
+- L66: `FGuid UHodgePrimaryGameLayout::PushAsync(FGameplayTag Tag, TSoftClassPtr<UCommonActivatableWidget> WidgetClass,`
+- L85: `void UHodgePrimaryGameLayout::FinishPush(FGuid Id, FGameplayTag Tag, TSoftClassPtr<UCommonActivatableWidget> WidgetClass)`
+- L96: `void UHodgePrimaryGameLayout::CancelPush(FGuid Id)`
+- L106: `void UHodgePrimaryGameLayout::ReleaseLayout()`
+- L120: `void UHodgePrimaryGameLayout::NativeDestruct()`
+
 ## ApplyFrontendPerfSettingsAction.cpp
 
 模块或基础类型入口。
@@ -293,11 +339,14 @@
 
 ## HodgeGameViewportClient.cpp
 
-模块或基础类型入口。
+引擎 CommonUI 视口路由，已在 DefaultEngine.ini 启用。
 
 源码：[Source/Hodgepodge/Private/UI/HodgeGameViewportClient.cpp](../../../Source/Hodgepodge/Private/UI/HodgeGameViewportClient.cpp)
 
-**全部为注释或空白；无有效声明/实现。**
+项目内直接 include（不是运行调用关系）：[UI/HodgeGameViewportClient.h](../../../Source/Hodgepodge/Public/UI/HodgeGameViewportClient.h)
+
+定义候选（多行签名仅展示首行）：
+
 
 ## HodgeHUDLayout.cpp
 
@@ -305,22 +354,24 @@
 
 源码：[Source/Hodgepodge/Private/UI/HodgeHUDLayout.cpp](../../../Source/Hodgepodge/Private/UI/HodgeHUDLayout.cpp)
 
-项目内直接 include（不是运行调用关系）：[UI/HodgeHUDLayout.h](../../../Source/Hodgepodge/Public/UI/HodgeHUDLayout.h)、[UI/Foundation/HodgeControllerDisconnectedScreen.h](../../../Source/Hodgepodge/Public/UI/Foundation/HodgeControllerDisconnectedScreen.h)、[UI/HodgeActivatableWidget.h](../../../Source/Hodgepodge/Public/UI/HodgeActivatableWidget.h)
+项目内直接 include（不是运行调用关系）：[UI/HodgeHUDLayout.h](../../../Source/Hodgepodge/Public/UI/HodgeHUDLayout.h)、[UI/Foundation/HodgeControllerDisconnectedScreen.h](../../../Source/Hodgepodge/Public/UI/Foundation/HodgeControllerDisconnectedScreen.h)、[UI/HodgeActivatableWidget.h](../../../Source/Hodgepodge/Public/UI/HodgeActivatableWidget.h)、[UI/Foundation/HodgePrimaryGameLayout.h](../../../Source/Hodgepodge/Public/UI/Foundation/HodgePrimaryGameLayout.h)、[UI/Subsystem/HodgeUIManagerSubsystem.h](../../../Source/Hodgepodge/Public/UI/Subsystem/HodgeUIManagerSubsystem.h)
 
 定义候选（多行签名仅展示首行）：
 
-- L77: `UHodgeHUDLayout::UHodgeHUDLayout(const FObjectInitializer& ObjectInitializer)`
-- L90: `void UHodgeHUDLayout::NativeOnInitialized()`
-- L139: `void UHodgeHUDLayout::NativeDestruct()`
-- L169: `void UHodgeHUDLayout::EnsureMenuLayerStack()`
-- L199: `void UHodgeHUDLayout::HandleEscapeAction()`
-- L247: `void UHodgeHUDLayout::HandleInputDeviceConnectionChanged(EInputDeviceConnectionState NewConnectionState,`
-- L271: `void UHodgeHUDLayout::HandleInputDevicePairingChanged(FInputDeviceId InputDeviceId, FPlatformUserId NewUserPlatformId,`
-- L295: `bool UHodgeHUDLayout::ShouldPlatformDisplayControllerDisconnectScreen() const`
-- L328: `void UHodgeHUDLayout::NotifyControllerStateChangeForDisconnectScreen()`
-- L369: `void UHodgeHUDLayout::ProcessControllerDevicesHavingChangedForDisconnectScreen()`
-- L442: `void UHodgeHUDLayout::DisplayControllerDisconnectedMenu_Implementation()`
-- L481: `void UHodgeHUDLayout::HideControllerDisconnectedMenu_Implementation()`
+- L73: `UHodgeHUDLayout::UHodgeHUDLayout(const FObjectInitializer& ObjectInitializer)`
+- L86: `void UHodgeHUDLayout::NativeOnInitialized()`
+- L137: `void UHodgeHUDLayout::NativeDestruct()`
+- L168: `void UHodgeHUDLayout::CloseOwnedMenu()`
+- L176: `void UHodgeHUDLayout::NativeOnDeactivated()`
+- L184: `void UHodgeHUDLayout::EnsureMenuLayerStack()`
+- L193: `void UHodgeHUDLayout::HandleEscapeAction()`
+- L210: `void UHodgeHUDLayout::HandleInputDeviceConnectionChanged(EInputDeviceConnectionState NewConnectionState,`
+- L234: `void UHodgeHUDLayout::HandleInputDevicePairingChanged(FInputDeviceId InputDeviceId, FPlatformUserId NewUserPlatformId,`
+- L258: `bool UHodgeHUDLayout::ShouldPlatformDisplayControllerDisconnectScreen() const`
+- L291: `void UHodgeHUDLayout::NotifyControllerStateChangeForDisconnectScreen()`
+- L332: `void UHodgeHUDLayout::ProcessControllerDevicesHavingChangedForDisconnectScreen()`
+- L405: `void UHodgeHUDLayout::DisplayControllerDisconnectedMenu_Implementation()`
+- L444: `void UHodgeHUDLayout::HideControllerDisconnectedMenu_Implementation()`
 
 ## HodgeJoystickWidget.cpp
 
@@ -505,11 +556,32 @@
 
 ## HodgeUIManagerSubsystem.cpp
 
-模块或基础类型入口。
+GameInstance 所属的本地玩家 UI 管理器：根布局、Controller 绑定、输入挂起和精确撤销；专服不创建。
 
 源码：[Source/Hodgepodge/Private/UI/Subsystem/HodgeUIManagerSubsystem.cpp](../../../Source/Hodgepodge/Private/UI/Subsystem/HodgeUIManagerSubsystem.cpp)
 
-**全部为注释或空白；无有效声明/实现。**
+项目内直接 include（不是运行调用关系）：[UI/Subsystem/HodgeUIManagerSubsystem.h](../../../Source/Hodgepodge/Public/UI/Subsystem/HodgeUIManagerSubsystem.h)、[UI/Foundation/HodgePrimaryGameLayout.h](../../../Source/Hodgepodge/Public/UI/Foundation/HodgePrimaryGameLayout.h)、[Core/LocalPlayer/HodgeLocalPlayerBase.h](../../../Source/Hodgepodge/Public/Core/LocalPlayer/HodgeLocalPlayerBase.h)、[Core/GameInstance/HodgeGameInstanceBase.h](../../../Source/Hodgepodge/Public/Core/GameInstance/HodgeGameInstanceBase.h)、[Core/PlayerController/HodgePlayerController.h](../../../Source/Hodgepodge/Public/Core/PlayerController/HodgePlayerController.h)、[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)、[Component/HodgeHeroComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeHeroComponent.h)、[UI/Data/HodgeGameplayUIDataSource.h](../../../Source/Hodgepodge/Public/UI/Data/HodgeGameplayUIDataSource.h)
+
+定义候选（多行签名仅展示首行）：
+
+- L16: `bool UHodgeUIManagerSubsystem::ShouldCreateSubsystem(UObject* Outer) const`
+- L22: `void UHodgeUIManagerSubsystem::Initialize(FSubsystemCollectionBase& Collection)`
+- L28: `void UHodgeUIManagerSubsystem::PlayerAdded(ULocalPlayer* Player)`
+- L45: `void UHodgeUIManagerSubsystem::ControllerChanged(ULocalPlayer* Player, APlayerController* Controller)`
+- L65: `void UHodgeUIManagerSubsystem::CreateRoot(ULocalPlayer* Player, TWeakObjectPtr<APlayerController> Controller)`
+- L77: `void UHodgeUIManagerSubsystem::DestroyRoot(ULocalPlayer* Player)`
+- L98: `void UHodgeUIManagerSubsystem::PlayerRemoved(ULocalPlayer* Player)`
+- L108: `void UHodgeUIManagerSubsystem::Deinitialize()`
+- L117: `UHodgePrimaryGameLayout* UHodgeUIManagerSubsystem::GetRootLayout(ULocalPlayer* Player) const`
+- L123: `bool UHodgeUIManagerSubsystem::IsGameInputAllowed(ULocalPlayer* Player) const`
+- L131: `bool UHodgeUIManagerSubsystem::AllowsGameplayInput(const APlayerController* Controller)`
+- L139: `void UHodgeUIManagerSubsystem::ClearGameplayInput(ULocalPlayer* Player)`
+- L149: `void UHodgeUIManagerSubsystem::RefreshInputState(ULocalPlayer* Player)`
+- L154: `void UHodgeUIManagerSubsystem::SuspendInput(ULocalPlayer* Player, FName Token)`
+- L167: `void UHodgeUIManagerSubsystem::ResumeInput(ULocalPlayer* Player, FName Token)`
+- L178: `UHodgeUIManagerSubsystem* UHodgeUIManagerSubsystem::GetUIManager(const UObject* WorldContextObject)`
+- L183: `UHodgePrimaryGameLayout* UHodgeUIManagerSubsystem::GetRootLayoutForController(APlayerController* Controller)`
+- L190: `UHodgeGameplayUIDataSource* UHodgeUIManagerSubsystem::GetGameplayDataForController(APlayerController* Controller)`
 
 ## HodgeUIMessaging.cpp
 
@@ -949,6 +1021,87 @@
   29: };
 ```
 
+## HodgeGameplayUIDataSource.h
+
+每个本地玩家共享的生命订阅、属性就绪与技能状态/输入接入；布局和按钮行为保存在 WBP。
+
+源码：[Source/Hodgepodge/Public/UI/Data/HodgeGameplayUIDataSource.h](../../../Source/Hodgepodge/Public/UI/Data/HodgeGameplayUIDataSource.h)
+
+有效头文件声明摘录（未展开宏，未求值预处理分支）：
+
+```cpp
+   1: #pragma once
+   2: #include "UObject/Object.h"
+   3: #include "GameplayTagContainer.h"
+   4: #include "HodgeGameplayUIDataSource.generated.h"
+   6: class UHodgeLocalPlayerBase;
+   7: class UHodgeHealthComponent;
+   8: class UHodgePawnExtensionComponent;
+   9: class AHodgePlayerState;
+  10: class APlayerController;
+  11: class APlayerState;
+  12: class APawn;
+  13: class AActor;
+  15: USTRUCT(BlueprintType)
+  16: struct FHodgeUIVitalsSnapshot
+  17: {
+  18: 	GENERATED_BODY()
+  19: 	UPROPERTY(BlueprintReadOnly) float Health = 0;
+  20: 	UPROPERTY(BlueprintReadOnly) float MaxHealth = 0;
+  21: 	UPROPERTY(BlueprintReadOnly) float Percent = 0;
+  22: 	UPROPERTY(BlueprintReadOnly) bool bReady = false;
+  23: 	UPROPERTY(BlueprintReadOnly) bool bDead = false;
+  24: };
+  26: USTRUCT(BlueprintType)
+  27: struct FHodgeUIAbilityDisplayState
+  28: {
+  29: 	GENERATED_BODY()
+  30: 	UPROPERTY(BlueprintReadOnly) bool bGranted = false;
+  31: 	UPROPERTY(BlueprintReadOnly) bool bInputAllowed = false;
+  32: 	UPROPERTY(BlueprintReadOnly) float CooldownRemaining = 0;
+  33: };
+  35: USTRUCT(BlueprintType)
+  36: struct FHodgeHUDAbilitySlot
+  37: {
+  38:     GENERATED_BODY()
+  40:     UPROPERTY(EditAnywhere, BlueprintReadWrite) FText Label;
+  42:     UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(Categories="InputTag")) FGameplayTag InputTag;
+  43: };
+  46: DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHodgeUIVitalsChanged, const FHodgeUIVitalsSnapshot&, Snapshot);
+  49: UCLASS(BlueprintType)
+  50: class HODGEPODGE_API UHodgeGameplayUIDataSource : public UObject
+  51: {
+  52: 	GENERATED_BODY()
+  53: public:
+  54: 	void Initialize(UHodgeLocalPlayerBase* Player, APlayerController* InController);
+  55: 	void Shutdown();
+  56: 	UPROPERTY(BlueprintAssignable, Category="Hodge|UI") FHodgeUIVitalsChanged OnVitalsChanged;
+  57: 	UFUNCTION(BlueprintPure, Category="Hodge|UI") FHodgeUIVitalsSnapshot GetVitals() const { return Vitals; }
+  58: 	UFUNCTION(BlueprintPure, Category="Hodge|UI") FHodgeUIAbilityDisplayState GetAbilityDisplayState(FGameplayTag InputTag) const;
+  59: 	UFUNCTION(BlueprintCallable, Category="Hodge|UI") bool SubmitInput(FGameplayTag InputTag);
+  60: private:
+  61: 	UPROPERTY(Transient) FHodgeUIVitalsSnapshot Vitals;
+  62: 	TWeakObjectPtr<UHodgeLocalPlayerBase> LocalPlayer;
+  63: 	TWeakObjectPtr<APlayerController> Controller;
+  64: 	TWeakObjectPtr<APawn> Avatar;
+  65: 	TWeakObjectPtr<UHodgeHealthComponent> Health;
+  66: 	TWeakObjectPtr<UHodgePawnExtensionComponent> Extension;
+  67: 	TWeakObjectPtr<AHodgePlayerState> PlayerState;
+  68: 	FDelegateHandle PawnDelegate;
+  69: 	FDelegateHandle PlayerStateDelegate;
+  70: 	FDelegateHandle ReadyDelegate;
+  71: 	bool bBound = false;
+  72: 	void PawnChanged(UHodgeLocalPlayerBase* Player, APawn* Pawn);
+  73: 	void StateChanged(UHodgeLocalPlayerBase* Player, APlayerState* State);
+  74: 	void UnbindPawn();
+  75: 	void UnbindState();
+  76: 	void Refresh();
+  77: 	bool CanUseGameplay() const;
+  78: 	UFUNCTION() void AttributeChanged(UHodgeHealthComponent* Component, float Old, float New, AActor* Instigator);
+  79: 	UFUNCTION() void DeathChanged(AActor* Actor);
+  80: };
+```
+
 ## UIExtensionPointWidget.h
 
 模块或基础类型入口。
@@ -970,34 +1123,38 @@
   38: {
   39: 	GENERATED_BODY()
   41: public:
-  47: 	DECLARE_DYNAMIC_DELEGATE_RetVal_OneParam(TSubclassOf<UUserWidget>, FOnGetWidgetClassForData, UObject*, DataItem);
-  51: 	DECLARE_DYNAMIC_DELEGATE_TwoParams(FOnConfigureWidgetForData, UUserWidget*, Widget, UObject*, DataItem);
-  54: 	UUIExtensionPointWidget(const FObjectInitializer& ObjectInitializer);
-  60: 	virtual void ReleaseSlateResources(bool bReleaseChildren) override;
-  64: 	virtual TSharedRef<SWidget> RebuildWidget() override;
-  66: #if WITH_EDITOR
-  68: 	virtual void ValidateCompiledDefaults(IWidgetCompilerLog& CompileLog) const override;
-  69: #endif
-  73: private:
-  78: 	void ResetExtensionPoint();
-  82: 	void RegisterExtensionPoint();
-  88: 	void RegisterExtensionPointForPlayerState(UHodgeLocalPlayerBase* LocalPlayer, APlayerState* PlayerState);
-  99: 	void OnAddOrRemoveExtension(EUIExtensionAction Action, const FUIExtensionRequest& Request);
- 101: protected:
- 113: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI Extension")
- 114: 	FGameplayTag ExtensionPointTag;
- 125: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI Extension")
- 126: 	EUIExtensionPointMatch ExtensionPointTagMatch = EUIExtensionPointMatch::ExactMatch;
- 132: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI Extension")
- 133: 	TArray<TObjectPtr<UClass>> DataClasses;
- 142: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="UI Extension", meta=( IsBindableEvent="True" ))
- 143: 	FOnGetWidgetClassForData GetWidgetClassForData;
- 149: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="UI Extension", meta=( IsBindableEvent="True" ))
- 150: 	FOnConfigureWidgetForData ConfigureWidgetForData;
- 158: 	TArray<FUIExtensionPointHandle> ExtensionPointHandles;
- 170: 	UPROPERTY(Transient)
- 171: 	TMap<FUIExtensionHandle, TObjectPtr<UUserWidget>> ExtensionMapping;
- 172: };
+  43: 	void SetExtensionPointTag(FGameplayTag Tag);
+  49: 	DECLARE_DYNAMIC_DELEGATE_RetVal_OneParam(TSubclassOf<UUserWidget>, FOnGetWidgetClassForData, UObject*, DataItem);
+  53: 	DECLARE_DYNAMIC_DELEGATE_TwoParams(FOnConfigureWidgetForData, UUserWidget*, Widget, UObject*, DataItem);
+  56: 	UUIExtensionPointWidget(const FObjectInitializer& ObjectInitializer);
+  62: 	virtual void ReleaseSlateResources(bool bReleaseChildren) override;
+  66: 	virtual TSharedRef<SWidget> RebuildWidget() override;
+  68: #if WITH_EDITOR
+  70: 	virtual void ValidateCompiledDefaults(IWidgetCompilerLog& CompileLog) const override;
+  71: #endif
+  75: private:
+  80: 	void ResetExtensionPoint();
+  84: 	void RegisterExtensionPoint();
+  90: 	void RegisterExtensionPointForPlayerState(UHodgeLocalPlayerBase* LocalPlayer, APlayerState* PlayerState);
+ 101: 	void OnAddOrRemoveExtension(EUIExtensionAction Action, const FUIExtensionRequest& Request);
+ 103: protected:
+ 115: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI Extension")
+ 116: 	FGameplayTag ExtensionPointTag;
+ 127: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI Extension")
+ 128: 	EUIExtensionPointMatch ExtensionPointTagMatch = EUIExtensionPointMatch::ExactMatch;
+ 134: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI Extension")
+ 135: 	TArray<TObjectPtr<UClass>> DataClasses;
+ 144: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="UI Extension", meta=( IsBindableEvent="True" ))
+ 145: 	FOnGetWidgetClassForData GetWidgetClassForData;
+ 151: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="UI Extension", meta=( IsBindableEvent="True" ))
+ 152: 	FOnConfigureWidgetForData ConfigureWidgetForData;
+ 160: 	TArray<FUIExtensionPointHandle> ExtensionPointHandles;
+ 172: 	UPROPERTY(Transient)
+ 173: 	TMap<FUIExtensionHandle, TObjectPtr<UUserWidget>> ExtensionMapping;
+ 174: 	TWeakObjectPtr<UHodgeLocalPlayerBase> BoundLocalPlayer;
+ 175: 	FDelegateHandle PlayerStateDelegate;
+ 176: 	FUIExtensionPointHandle PlayerStatePoint;
+ 177: };
 ```
 
 ## UIExtensionSystem.h
@@ -1376,6 +1533,65 @@
   43: };
 ```
 
+## HodgePrimaryGameLayout.h
+
+绑定 Designer 四个容器的本地玩家根布局，Push/Pop、异步加载取消与令牌恢复；不再生成运行时控件树。
+
+源码：[Source/Hodgepodge/Public/UI/Foundation/HodgePrimaryGameLayout.h](../../../Source/Hodgepodge/Public/UI/Foundation/HodgePrimaryGameLayout.h)
+
+有效头文件声明摘录（未展开宏，未求值预处理分支）：
+
+```cpp
+   1: #pragma once
+   2: #include "CommonUserWidget.h"
+   3: #include "GameplayTagContainer.h"
+   4: #include "HodgePrimaryGameLayout.generated.h"
+   6: class UCommonActivatableWidget;
+   7: class UCommonActivatableWidgetContainerBase;
+   8: struct FStreamableHandle;
+  11: UCLASS(Blueprintable)
+  12: class HODGEPODGE_API UHodgePrimaryGameLayout : public UCommonUserWidget
+  13: {
+  14: 	GENERATED_BODY()
+  16: public:
+  17: 	UFUNCTION(BlueprintCallable, Category="Hodge|UI")
+  18: 	void RegisterLayer(FGameplayTag Tag, UCommonActivatableWidgetContainerBase* Container);
+  19: 	UFUNCTION(BlueprintPure, Category="Hodge|UI")
+  20: 	UCommonActivatableWidgetContainerBase* GetLayer(FGameplayTag Tag) const;
+  21: 	UFUNCTION(BlueprintCallable, Category="Hodge|UI")
+  22: 	UCommonActivatableWidget* Push(FGameplayTag Tag, TSubclassOf<UCommonActivatableWidget> WidgetClass);
+  23: 	UFUNCTION(BlueprintCallable, Category="Hodge|UI")
+  24: 	void Pop(UCommonActivatableWidget* Widget);
+  25: 	UFUNCTION(BlueprintPure, Category="Hodge|UI")
+  26: 	bool HasBlockingPage() const;
+  27: 	FGuid PushAsync(FGameplayTag Tag, TSoftClassPtr<UCommonActivatableWidget> WidgetClass,
+  28: 	                TFunction<void(UCommonActivatableWidget*)> Completed, bool bSuspendInput = true);
+  29: 	void CancelPush(FGuid Request);
+  30: 	void ReleaseLayout();
+  31: 	int32 GetPendingRequestCount() const { return Requests.Num(); }
+  33: protected:
+  34:     UPROPERTY(meta=(BindWidget)) TObjectPtr<UCommonActivatableWidgetContainerBase> GameLayer;
+  35:     UPROPERTY(meta=(BindWidget)) TObjectPtr<UCommonActivatableWidgetContainerBase> GameMenuLayer;
+  36:     UPROPERTY(meta=(BindWidget)) TObjectPtr<UCommonActivatableWidgetContainerBase> MenuLayer;
+  37:     UPROPERTY(meta=(BindWidget)) TObjectPtr<UCommonActivatableWidgetContainerBase> ModalLayer;
+  38: 	virtual void NativeOnInitialized() override;
+  39: 	virtual void NativeDestruct() override;
+  41: private:
+  42: 	UPROPERTY(Transient)
+  43: 	TMap<FGameplayTag, TObjectPtr<UCommonActivatableWidgetContainerBase>> Layers;
+  45: 	struct FRequest
+  46: 	{
+  47: 		TSharedPtr<FStreamableHandle> Load;
+  48: 		TWeakObjectPtr<APlayerController> Controller;
+  49: 		TFunction<void(UCommonActivatableWidget*)> Completed;
+  50: 		FName InputToken;
+  51: 	};
+  53: 	TMap<FGuid, FRequest> Requests;
+  54: 	bool bReleased = false;
+  55: 	void FinishPush(FGuid Request, FGameplayTag Tag, TSoftClassPtr<UCommonActivatableWidget> WidgetClass);
+  56: };
+```
+
 ## ApplyFrontendPerfSettingsAction.h
 
 模块或基础类型入口。
@@ -1457,7 +1673,7 @@
   30: 	Menu
   31: };
   37: UCLASS(Abstract, Blueprintable)
-  38: class UHodgeActivatableWidget : public UCommonActivatableWidget
+  38: class HODGEPODGE_API UHodgeActivatableWidget : public UCommonActivatableWidget
   39: {
   40: 	GENERATED_BODY()
   42: public:
@@ -1478,11 +1694,22 @@
 
 ## HodgeGameViewportClient.h
 
-模块或基础类型入口。
+引擎 CommonUI 视口路由，已在 DefaultEngine.ini 启用。
 
 源码：[Source/Hodgepodge/Public/UI/HodgeGameViewportClient.h](../../../Source/Hodgepodge/Public/UI/HodgeGameViewportClient.h)
 
-**全部为注释或空白；无有效声明/实现。**
+有效头文件声明摘录（未展开宏，未求值预处理分支）：
+
+```cpp
+   1: #pragma once
+   2: #include "CommonGameViewportClient.h"
+   3: #include "HodgeGameViewportClient.generated.h"
+   6: UCLASS()
+   7: class HODGEPODGE_API UHodgeGameViewportClient : public UCommonGameViewportClient
+   8: {
+   9:     GENERATED_BODY()
+  10: };
+```
 
 ## HodgeHUDLayout.h
 
@@ -1503,39 +1730,43 @@
   27: class UHodgeControllerDisconnectedScreen;
   30: class UCommonActivatableWidgetStack;
   45: UCLASS(Abstract, BlueprintType, Blueprintable, Meta = (DisplayName = "Hodge HUD Layout", Category = "Hodge|HUD"))
-  46: class UHodgeHUDLayout : public UHodgeActivatableWidget
+  46: class HODGEPODGE_API UHodgeHUDLayout : public UHodgeActivatableWidget
   47: {
   48: 	GENERATED_BODY()
   50: public:
   52: 	UHodgeHUDLayout(const FObjectInitializer& ObjectInitializer);
   58: 	virtual void NativeOnInitialized() override;
   63: 	virtual void NativeDestruct() override;
-  65: protected:
-  70: 	void HandleEscapeAction();
-  73: 	void EnsureMenuLayerStack();
-  89: 	void HandleInputDeviceConnectionChanged(EInputDeviceConnectionState NewConnectionState,
-  90: 	                                        FPlatformUserId PlatformUserId, FInputDeviceId InputDeviceId);
- 104: 	void HandleInputDevicePairingChanged(FInputDeviceId InputDeviceId, FPlatformUserId NewUserPlatformId,
- 105: 	                                     FPlatformUserId OldUserPlatformId);
- 117: 	void NotifyControllerStateChangeForDisconnectScreen();
- 133: 	virtual void ProcessControllerDevicesHavingChangedForDisconnectScreen();
- 143: 	virtual bool ShouldPlatformDisplayControllerDisconnectScreen() const;
- 156: 	UFUNCTION(BlueprintNativeEvent, Category="Controller Disconnect Menu")
- 157: 	void DisplayControllerDisconnectedMenu();
- 166: 	UFUNCTION(BlueprintNativeEvent, Category="Controller Disconnect Menu")
- 167: 	void HideControllerDisconnectedMenu();
- 177: 	UPROPERTY(EditDefaultsOnly)
- 178: 	TSoftClassPtr<UCommonActivatableWidget> EscapeMenuClass;
- 185: 	UPROPERTY(EditDefaultsOnly, Category="Controller Disconnect Menu")
- 186: 	TSubclassOf<UHodgeControllerDisconnectedScreen> ControllerDisconnectedScreen;
- 202: 	UPROPERTY(EditDefaultsOnly, Category="Controller Disconnect Menu")
- 203: 	FGameplayTagContainer PlatformRequiresControllerDisconnectScreen;
- 211: 	UPROPERTY(Transient)
- 212: 	TObjectPtr<UCommonActivatableWidget> SpawnedControllerDisconnectScreen;
- 215: 	UPROPERTY(meta = (BindWidgetOptional))
- 216: 	TObjectPtr<UCommonActivatableWidgetStack> MenuLayerStack;
- 224: 	FTSTicker::FDelegateHandle RequestProcessControllerStateHandle;
- 225: };
+  64: 	virtual void NativeOnDeactivated() override;
+  66: protected:
+  71: 	void HandleEscapeAction();
+  72: 	void CloseOwnedMenu();
+  73: 	FGuid PendingEscapeMenu;
+  74: 	TWeakObjectPtr<UCommonActivatableWidget> EscapeMenuInstance;
+  77: 	void EnsureMenuLayerStack();
+  93: 	void HandleInputDeviceConnectionChanged(EInputDeviceConnectionState NewConnectionState,
+  94: 	                                        FPlatformUserId PlatformUserId, FInputDeviceId InputDeviceId);
+ 108: 	void HandleInputDevicePairingChanged(FInputDeviceId InputDeviceId, FPlatformUserId NewUserPlatformId,
+ 109: 	                                     FPlatformUserId OldUserPlatformId);
+ 121: 	void NotifyControllerStateChangeForDisconnectScreen();
+ 137: 	virtual void ProcessControllerDevicesHavingChangedForDisconnectScreen();
+ 147: 	virtual bool ShouldPlatformDisplayControllerDisconnectScreen() const;
+ 160: 	UFUNCTION(BlueprintNativeEvent, Category="Controller Disconnect Menu")
+ 161: 	void DisplayControllerDisconnectedMenu();
+ 170: 	UFUNCTION(BlueprintNativeEvent, Category="Controller Disconnect Menu")
+ 171: 	void HideControllerDisconnectedMenu();
+ 181: 	UPROPERTY(EditDefaultsOnly)
+ 182: 	TSoftClassPtr<UCommonActivatableWidget> EscapeMenuClass;
+ 189: 	UPROPERTY(EditDefaultsOnly, Category="Controller Disconnect Menu")
+ 190: 	TSubclassOf<UHodgeControllerDisconnectedScreen> ControllerDisconnectedScreen;
+ 206: 	UPROPERTY(EditDefaultsOnly, Category="Controller Disconnect Menu")
+ 207: 	FGameplayTagContainer PlatformRequiresControllerDisconnectScreen;
+ 215: 	UPROPERTY(Transient)
+ 216: 	TObjectPtr<UCommonActivatableWidget> SpawnedControllerDisconnectScreen;
+ 219: 	UPROPERTY(meta = (BindWidgetOptional))
+ 220: 	TObjectPtr<UCommonActivatableWidgetStack> MenuLayerStack;
+ 228: 	FTSTicker::FDelegateHandle RequestProcessControllerStateHandle;
+ 229: };
 ```
 
 ## HodgeJoystickWidget.h
@@ -2264,11 +2495,67 @@
 
 ## HodgeUIManagerSubsystem.h
 
-模块或基础类型入口。
+GameInstance 所属的本地玩家 UI 管理器：根布局、Controller 绑定、输入挂起和精确撤销；专服不创建。
 
 源码：[Source/Hodgepodge/Public/UI/Subsystem/HodgeUIManagerSubsystem.h](../../../Source/Hodgepodge/Public/UI/Subsystem/HodgeUIManagerSubsystem.h)
 
-**全部为注释或空白；无有效声明/实现。**
+有效头文件声明摘录（未展开宏，未求值预处理分支）：
+
+```cpp
+   1: #pragma once
+   2: #include "Subsystems/GameInstanceSubsystem.h"
+   3: #include "UObject/SoftObjectPtr.h"
+   4: #include "HodgeUIManagerSubsystem.generated.h"
+   5: class UHodgePrimaryGameLayout;
+   6: class UHodgeGameplayUIDataSource;
+   7: class ULocalPlayer;
+   8: class APlayerController;
+   9: struct FStreamableHandle;
+  10: DECLARE_MULTICAST_DELEGATE_TwoParams(FHodgeRootLayoutChanged, ULocalPlayer*, UHodgePrimaryGameLayout*);
+  12: USTRUCT()
+  13: struct FHodgePlayerUILayout
+  14: {
+  15:     GENERATED_BODY()
+  16:     UPROPERTY(Transient) TObjectPtr<UHodgePrimaryGameLayout> Root;
+  17:     UPROPERTY(Transient) TObjectPtr<UHodgeGameplayUIDataSource> GameplayData;
+  18:     UPROPERTY(Transient) TWeakObjectPtr<APlayerController> Controller;
+  19:     FDelegateHandle ControllerDelegate;
+  20:     FDelegateHandle InputModeDelegate;
+  21:     TSet<FName> InputTokens;
+  22:     TSharedPtr<FStreamableHandle> RootLoad;
+  23: };
+  26: UCLASS(Config=Game)
+  27: class HODGEPODGE_API UHodgeUIManagerSubsystem : public UGameInstanceSubsystem
+  28: {
+  29:     GENERATED_BODY()
+  30: public:
+  31:     virtual bool ShouldCreateSubsystem(UObject* Outer) const override;
+  32:     virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+  33:     virtual void Deinitialize() override;
+  34:     void PlayerAdded(ULocalPlayer* Player);
+  35:     void PlayerRemoved(ULocalPlayer* Player);
+  36:     UFUNCTION(BlueprintPure, Category="Hodge|UI") UHodgePrimaryGameLayout* GetRootLayout(ULocalPlayer* Player) const;
+  37:     UFUNCTION(BlueprintPure, Category="Hodge|UI") bool IsGameInputAllowed(ULocalPlayer* Player) const;
+  38:     UFUNCTION(BlueprintPure, Category="Hodge|UI", meta=(WorldContext="WorldContextObject"))
+  39:     static UHodgeUIManagerSubsystem* GetUIManager(const UObject* WorldContextObject);
+  40:     UFUNCTION(BlueprintPure, Category="Hodge|UI") static UHodgePrimaryGameLayout* GetRootLayoutForController(APlayerController* Controller);
+  41:     UFUNCTION(BlueprintPure, Category="Hodge|UI") static UHodgeGameplayUIDataSource* GetGameplayDataForController(APlayerController* Controller);
+  42:     static bool AllowsGameplayInput(const APlayerController* Controller);
+  43:     void SuspendInput(ULocalPlayer* Player, FName Token);
+  44:     void ResumeInput(ULocalPlayer* Player, FName Token);
+  45:     void RefreshInputState(ULocalPlayer* Player);
+  46:     FHodgeRootLayoutChanged OnRootLayoutChanged;
+  47:     int32 GetPlayerLayoutCount() const { return Players.Num(); }
+  48: protected:
+  50:     UPROPERTY(Config, EditDefaultsOnly, Category="UI") TSoftClassPtr<UHodgePrimaryGameLayout> RootLayoutClass;
+  51: private:
+  52:     UPROPERTY(Transient) TMap<TObjectPtr<ULocalPlayer>, FHodgePlayerUILayout> Players;
+  53:     void ControllerChanged(ULocalPlayer* Player, APlayerController* Controller);
+  54:     void CreateRoot(ULocalPlayer* Player, TWeakObjectPtr<APlayerController> Controller);
+  55:     void DestroyRoot(ULocalPlayer* Player);
+  56:     void ClearGameplayInput(ULocalPlayer* Player);
+  57: };
+```
 
 ## HodgeUIMessaging.h
 

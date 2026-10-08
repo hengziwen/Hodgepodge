@@ -59,6 +59,7 @@ public:
 	int32 GetPoseLeaseCount() const { return PoseLeases.Num(); }
 	int32 GetDetectionSessionCount() const { return Sessions.Num(); }
 	bool CanExecuteAbilities() const { return IsRegistered() && !bShuttingDown; }
+	const UHodgeComboDefinition* GetComboDefinition() const { return Definition; }
 	bool InputPressed(FGameplayTag InputTag);
 	void ClearInput();
 	void ExecutionStarted(UHodgeGameplayAbility_Definition* Ability);

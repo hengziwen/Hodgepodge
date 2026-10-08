@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+﻿// Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
 
@@ -39,6 +39,8 @@ class HODGEPODGE_API UUIExtensionPointWidget : public UDynamicEntryBoxBase
 	GENERATED_BODY()
 
 public:
+	// 在原生树构建阶段配置插槽；运行后的修改应通过重建控件进行。
+	void SetExtensionPointTag(FGameplayTag Tag);
 	// 当 Extension 携带的是普通 Data，而不是直接携带 WidgetClass 时，
 	// 通过这个委托根据 DataItem 决定应该创建哪一种 UUserWidget。
 	//
@@ -169,4 +171,7 @@ protected:
 	// 可以根据 ExtensionHandle 精确找到并删除对应 Widget。
 	UPROPERTY(Transient)
 	TMap<FUIExtensionHandle, TObjectPtr<UUserWidget>> ExtensionMapping;
+	TWeakObjectPtr<UHodgeLocalPlayerBase> BoundLocalPlayer;
+	FDelegateHandle PlayerStateDelegate;
+	FUIExtensionPointHandle PlayerStatePoint;
 };

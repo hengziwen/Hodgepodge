@@ -107,6 +107,9 @@ UCLASS(MinimalAPI, meta = (DisplayName = "Add Widgets"))
 class UGameFeatureAction_AddWidgets final : public UGameFeatureAction_WorldActionBase
 {
 	GENERATED_BODY()
+#if WITH_EDITOR
+    friend class UHodgeUIAuthoringLibrary;
+#endif
 
 public:
 	//~ Begin UGameFeatureAction interface
@@ -162,6 +165,12 @@ private:
 	 */
 	struct FPerActorData
 	{
+		TWeakObjectPtr<AActor> Actor;
+		TWeakObjectPtr<ULocalPlayer> Player;
+		TWeakObjectPtr<class UHodgePrimaryGameLayout> Root;
+		TWeakObjectPtr<class UHodgeUIManagerSubsystem> Manager;
+		FDelegateHandle RootChangedDelegate;
+		bool bAdded = false;
 		// 当前 Action 为这个 Actor 添加过的 HUD Layout 实例。
 		TArray<TWeakObjectPtr<UCommonActivatableWidget>> LayoutsAdded;
 
@@ -201,6 +210,7 @@ private:
 	// 清理某个 Context 下由当前 Action 创建的全部运行时状态。
 	// 包括：Actor 对应的 Layout、UIExtension、ComponentRequest
 	void Reset(FPerContextData& ActiveData);
+	void ClearActorContents(FPerActorData& Data);
 
 	// GameFrameworkComponentManager 的 Actor Extension 事件处理函数。
 	// 当目标 Actor 被添加、Ready、移除等事件发生时，根据 EventName 决定添加还是移除对应 UI。

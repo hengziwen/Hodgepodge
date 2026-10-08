@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+﻿// Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
 
@@ -115,6 +115,7 @@ public:
 	 */
 	UFUNCTION(BlueprintPure, Category = "Hodge|Hero|Input")
 	bool HasMoveIntent(float Threshold = 0.1f) const;
+	void ResetGameplayInput();
 
 	// 最近的二维移动输入原始值（X = 左右，Y = 前后；未做阈值判断），供需要方向或大小的消费方使用。
 	UFUNCTION(BlueprintPure, Category = "Hodge|Hero|Input")

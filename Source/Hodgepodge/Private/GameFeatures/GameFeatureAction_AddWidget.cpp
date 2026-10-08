@@ -34,6 +34,11 @@
 
 #endif
 
+#include "UI/Subsystem/HodgeUIManagerSubsystem.h"
+#include "UI/Foundation/HodgePrimaryGameLayout.h"
+#include "Engine/LocalPlayer.h"
+#include "GameFramework/PlayerController.h"
+
 #include UE_INLINE_GENERATED_CPP_BY_NAME(GameFeatureAction_AddWidget)
 
 // 当前文件本地化文本使用的命名空间。
@@ -186,25 +191,27 @@ void UGameFeatureAction_AddWidgets::AddToWorld(const FWorldContext& WorldContext
 }
 
 // 清理某一个 GameFeature Context 对应的运行时数据。
+void UGameFeatureAction_AddWidgets::ClearActorContents(FPerActorData& Data)
+{
+    Data.bAdded = false;
+    auto Layouts = MoveTemp(Data.LayoutsAdded);
+    auto Extensions = MoveTemp(Data.ExtensionHandles);
+    for (auto& Handle : Extensions) { Handle.Unregister(); }
+    if (auto* Root = Data.Root.Get())
+    { for (const auto& AddedLayout : Layouts) { if (AddedLayout.IsValid()) { Root->Pop(AddedLayout.Get()); } } }
+    Data.Root.Reset();
+}
+
 void UGameFeatureAction_AddWidgets::Reset(FPerContextData& ActiveData)
 {
-	// 清空 ComponentRequest Handle。
-	// FComponentRequestHandle 的生命周期结束后，对应注册到 GameFrameworkComponentManager 的 Extension Handler也会随之失效 / 注销。
-	ActiveData.ComponentRequests.Empty();
-
-	// 遍历当前 Context 下所有曾经处理过的 Actor。
-	for (TPair<FObjectKey, FPerActorData>& Pair : ActiveData.ActorData)
-	{
-		// 注销当前 Actor 对应的所有 UIExtension。
-		for (FUIExtensionHandle& Handle : Pair.Value.ExtensionHandles)
-		{
-			// 通知 UUIExtensionSubsystem 移除对应 Extension，对应的 UUIExtensionPointWidget 会收到 Removed并移除之前创建的动态 Widget。
-			Handle.Unregister();
-		}
-	}
-
-	// 清空所有 Actor 对应的运行时 UI 数据。
-	ActiveData.ActorData.Empty();
+    auto Records = MoveTemp(ActiveData.ActorData);
+    for (auto& Pair : Records)
+    {
+        auto& Data = Pair.Value;
+        if (auto* UI = Data.Manager.Get()) { UI->OnRootLayoutChanged.Remove(Data.RootChangedDelegate); }
+        ClearActorContents(Data);
+    }
+    ActiveData.ComponentRequests.Empty();
 }
 
 // 处理 GameFrameworkComponentManager 发来的 AHodgeHUD Extension 生命周期事件。
@@ -229,85 +236,59 @@ void UGameFeatureAction_AddWidgets::HandleActorExtension(AActor* Actor, FName Ev
 // 为指定 AHodgeHUD 对应的本地玩家添加当前 GameFeature 配置的 UI。
 void UGameFeatureAction_AddWidgets::AddWidgets(AActor* Actor, FPerContextData& ActiveData)
 {
-	// 当前 Extension Handler 只针对 AHodgeHUD 注册，因此这里要求传入 Actor 必须是 AHodgeHUD。
-	AHodgeHUD* HUD = CastChecked<AHodgeHUD>(Actor);
-
-	// HUD 必须已经拥有对应 PlayerController。
-	if (!HUD->GetOwningPlayerController())
-	{
-		return;//如果当前 HUD 还没有 OwningPlayerController就无法确定 UI 应该属于哪个玩家，因此直接返回。
-	}
-
-	// 从 HUD 的 OwningPlayerController 中取得真正的 ULocalPlayer。只有本地玩家才需要创建客户端 HUD UI。
-	if (ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(HUD->GetOwningPlayerController()->Player))
-	{
-		// 获取当前 HUD Actor 对应的运行时 UI 记录。后续所有新增 Layout 和 Extension Handle都应该记录在这个 ActorData 中，以便精确撤销。
-		FPerActorData& ActorData = ActiveData.ActorData.FindOrAdd(HUD);
-
-		// 遍历当前 Action 配置的所有 HUD Layout。
-		for (const FHodgeHUDLayoutRequest& Entry : Layout)
-		{
-			// SoftClass 必须已经能够解析出实际 Widget Class。
-			if (TSubclassOf<UCommonActivatableWidget> ConcreteWidgetClass = Entry.LayoutClass.Get())
-			{
-				// 设计意图：
-				// 将 Layout Widget Push 到当前 LocalPlayer对应的 CommonUI Layer 中，并把实际创建的 Layout Widget 保存到 LayoutsAdded，方便之后 RemoveWidgets 时 Deactivate。
-				//
-				// 当前 CommonUIExtensions 调用被注释，因此目前 Layout[] 实际不会创建 HUD Layout。
-				//ActorData.LayoutsAdded.Add(UCommonUIExtensions::PushContentToLayer_ForPlayer(LocalPlayer, Entry.LayerID, ConcreteWidgetClass));
-			}
-		}
-
-		// 从当前 HUD 所属 World 获取 UIExtensionSubsystem。普通 HUD Element 不直接 AddToViewport，而是通过 UIExtensionSystem 注册到对应 Slot。
-		UUIExtensionSubsystem* ExtensionSubsystem = HUD->GetWorld()->GetSubsystem<UUIExtensionSubsystem>();
-
-		// 遍历当前 Action 配置的所有 HUD Element。
-		for (const FHodgeHUDElementEntry& Entry : Widgets)
-		{
-			// 将 WidgetClass 注册为一条带 LocalPlayer Context 的 UIExtension。
-			// SlotID： 决定这条 Widget Extension 应该匹配哪个 UUIExtensionPointWidget。
-			// LocalPlayer： 保证这条 UI 只会被当前本地玩家对应的 ExtensionPoint 接收。
-			// WidgetClass： 是真正需要动态创建的 UUserWidget 类型。
-			// Priority = -1： 当前没有额外指定优先级。
-			// 返回的 FUIExtensionHandle 会保存下来供 RemoveWidgets / Reset 时精确注销。
-			ActorData.ExtensionHandles.Add(ExtensionSubsystem->RegisterExtensionAsWidgetForContext(Entry.SlotID, LocalPlayer, Entry.WidgetClass.Get(), -1));
-		}
-	}
+    auto* HUD = Cast<AHodgeHUD>(Actor);
+    auto* PC = HUD ? HUD->GetOwningPlayerController() : nullptr;
+    ULocalPlayer* Player = PC ? PC->GetLocalPlayer() : nullptr;
+    auto* Instance = Player ? Player->GetGameInstance() : nullptr;
+    auto* UI = Instance ? Instance->GetSubsystem<UHodgeUIManagerSubsystem>() : nullptr;
+    if (!UI) { return; }
+    auto& Data = ActiveData.ActorData.FindOrAdd(HUD);
+    Data.Actor = HUD;
+    Data.Player = Player;
+    Data.Manager = UI;
+    if (!Data.RootChangedDelegate.IsValid())
+    {
+        TWeakObjectPtr<AActor> WeakActor = Actor;
+        FGameFeatureStateChangeContext Context;
+        for (const auto& Pair : ContextData) { if (&Pair.Value == &ActiveData) { Context = Pair.Key; break; } }
+        Data.RootChangedDelegate = UI->OnRootLayoutChanged.AddWeakLambda(this,
+            [this, WeakActor, Context](ULocalPlayer* Changed, UHodgePrimaryGameLayout* Root)
+        {
+            auto* Active = ContextData.Find(Context);
+            auto* Record = Active && WeakActor.IsValid() ? Active->ActorData.Find(WeakActor.Get()) : nullptr;
+            if (!Record || Record->Player != Changed) { return; }
+            ClearActorContents(*Record);
+            if (Root) { AddWidgets(WeakActor.Get(), *Active); }
+        });
+    }
+    auto* Root = UI->GetRootLayout(Player);
+    if (!Root || Data.bAdded) { return; }
+    Data.Root = Root;
+    Data.bAdded = true;
+    for (const auto& Entry : Layout)
+    {
+        if (auto* Class = Entry.LayoutClass.Get())
+        { if (auto* Added = Root->Push(Entry.LayerID, Class)) { Data.LayoutsAdded.Add(Added); } }
+        else { UE_LOG(LogTemp, Error, TEXT("[Hodge UI] Layout not loaded in Client bundle: %s"), *Entry.LayoutClass.ToString()); }
+    }
+    if (auto* Extensions = HUD->GetWorld()->GetSubsystem<UUIExtensionSubsystem>())
+    {
+        for (const auto& Entry : Widgets)
+        {
+            if (auto* Class = Entry.WidgetClass.Get())
+            { Data.ExtensionHandles.Add(Extensions->RegisterExtensionAsWidgetForContext(Entry.SlotID, Player, Class, -1)); }
+            else { UE_LOG(LogTemp, Error, TEXT("[Hodge UI] Extension not loaded in Client bundle: %s"), *Entry.WidgetClass.ToString()); }
+        }
+    }
 }
 
 // 移除之前为指定 AHodgeHUD 添加的所有 UI。
 void UGameFeatureAction_AddWidgets::RemoveWidgets(AActor* Actor, FPerContextData& ActiveData)
 {
-	// 当前 Handler 只应该接收 AHodgeHUD。
-	AHodgeHUD* HUD = CastChecked<AHodgeHUD>(Actor);
-
-	// Only unregister if this is the same HUD actor that was registered, there can be multiple active at once on the client
-	// 只清理当前这个 HUD Actor 自己对应的数据。客户端同一时间可能存在多个活动 HUD Actor，因此不能简单地把当前 Context 下的所有 UI 全部清空。
-	FPerActorData* ActorData = ActiveData.ActorData.Find(HUD);
-
-	// 当前 HUD 确实曾经由这个 Action 添加过 UI 时才进行清理。
-	if (ActorData)
-	{
-		// 遍历当前 Action 为这个 HUD 添加过的所有 Layout。
-		for (TWeakObjectPtr<UCommonActivatableWidget>& AddedLayout : ActorData->LayoutsAdded)
-		{
-			// Layout 实例仍然有效时，通过 CommonActivatableWidget 生命周期将其停用。
-			if (AddedLayout.IsValid())
-			{
-				AddedLayout->DeactivateWidget();
-			}
-		}
-
-		// 注销当前 HUD 对应的所有 UIExtension。
-		for (FUIExtensionHandle& Handle : ActorData->ExtensionHandles)
-		{
-			// Extension 注销后，UUIExtensionSubsystem 会向匹配的 ExtensionPoint,广播 EUIExtensionAction::Removed,最终对应动态 Widget 会被移除。
-			Handle.Unregister();
-		}
-
-		// 当前 HUD 对应的 UI 已经全部清理完成，从 ActorData Map 中移除它的运行时记录。
-		ActiveData.ActorData.Remove(HUD);
-	}
+    FPerActorData Data;
+    if (!ActiveData.ActorData.RemoveAndCopyValue(Actor, Data)) { return; }
+    if (auto* UI = Data.Manager.Get()) { UI->OnRootLayoutChanged.Remove(Data.RootChangedDelegate); }
+    ClearActorContents(Data);
 }
 
 // 结束当前文件的本地化文本命名空间。

@@ -2,14 +2,7 @@
 
 #include "UI/HodgeHUDLayout.h"
 
-// 说明：Lyra 这里 include 的是 "CommonUIExtensions.h"（属于 CommonGame 插件）。
-//
-// 它提供的 Push / Pop 需要 CommonGame 的整条链：
-//   UGameUIManagerSubsystem → UGameUIPolicy → UPrimaryGameLayout
-//
-// 本项目不引入 CommonGame，因此改为直接使用引擎 CommonUI 自带的 ActivatableWidgetStack：
-//   UCommonUIExtensions::PushContentToLayer_ForPlayer  →  Stack->AddWidget(...)
-//   UCommonUIExtensions::PopContentFromLayer           →  Stack->RemoveWidget(...)
+// 菜单统一进入当前本地玩家的根布局，不依赖 CommonGame。
 
 // CommonUI 全局设置。
 // 用于读取当前平台的 PlatformTraits。
@@ -58,6 +51,9 @@
 
 #endif	// WITH_EDITOR
 
+#include "UI/Foundation/HodgePrimaryGameLayout.h"
+#include "UI/Subsystem/HodgeUIManagerSubsystem.h"
+
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeHUDLayout)
 
 // CommonUI 菜单层 GameplayTag。
@@ -95,7 +91,7 @@ void UHodgeHUDLayout::NativeOnInitialized()
 	// 准备菜单层容器。
 	//
 	// Escape 菜单与 Controller Disconnected Screen 都要 Push 到这一层；
-	// 这里先确保它存在（WBP 未提供时由 C++ 兜底创建）。
+	// 这里获取当前玩家根布局已经注册的 Menu 层。
 	EnsureMenuLayerStack();
 
 	// 注册 CommonUI Escape Action。
@@ -105,8 +101,10 @@ void UHodgeHUDLayout::NativeOnInitialized()
 	//
 	// 转换为 CommonUI 使用的 FUIActionTag，
 	// 当该 Action 被触发时调用 HandleEscapeAction。
-	RegisterUIActionBinding(FBindUIActionArgs(FUIActionTag::ConvertChecked(TAG_UI_ACTION_ESCAPE), false,
-	                                          FSimpleDelegate::CreateUObject(this, &ThisClass::HandleEscapeAction)));
+	FBindUIActionArgs EscapeBinding(FUIActionTag::ConvertChecked(TAG_UI_ACTION_ESCAPE), false,
+	    FSimpleDelegate::CreateUObject(this, &ThisClass::HandleEscapeAction));
+	EscapeBinding.InputMode = ECommonInputMode::Game;
+	RegisterUIActionBinding(EscapeBinding);
 
 	// If we can display a controller disconnect screen, then listen for the controller state change delegates
 
@@ -138,6 +136,8 @@ void UHodgeHUDLayout::NativeOnInitialized()
 // HUD Layout 销毁时调用。
 void UHodgeHUDLayout::NativeDestruct()
 {
+    CloseOwnedMenu();
+
 	// 先执行父类销毁逻辑。
 	Super::NativeDestruct();
 
@@ -165,82 +165,45 @@ void UHodgeHUDLayout::NativeDestruct()
 	}
 }
 
+void UHodgeHUDLayout::CloseOwnedMenu()
+{
+    const FGuid Pending = PendingEscapeMenu;
+    auto Menu = EscapeMenuInstance;
+    PendingEscapeMenu.Invalidate(); EscapeMenuInstance.Reset();
+    if (auto* Root = UHodgeUIManagerSubsystem::GetRootLayoutForController(GetOwningPlayer()))
+    { Root->CancelPush(Pending); Root->Pop(Menu.Get()); }
+}
+void UHodgeHUDLayout::NativeOnDeactivated()
+{
+    // 停用时立即撤销所属菜单，不等待 Slate 切换结束后才 Destruct。
+    CloseOwnedMenu();
+    Super::NativeOnDeactivated();
+}
+
 // 确保菜单层栈（对应 UI.Layer.Menu）可用。
 void UHodgeHUDLayout::EnsureMenuLayerStack()
 {
-	// 已经绑定到 WBP 里的 Stack，或已经兜底创建过，直接复用。
-	if (MenuLayerStack || !WidgetTree)
-	{
-		return;
-	}
-
-	// 找一个能挂子控件的根面板：
-	// - WBP 已经提供根面板 → 直接用它，不破坏 WBP 自己的布局；
-	// - 完全没有 → 造一个 UOverlay 当根。
-	UPanelWidget* RootPanel = Cast<UPanelWidget>(WidgetTree->RootWidget);
-	if (!RootPanel)
-	{
-		UOverlay* NewRootPanel = WidgetTree->ConstructWidget<UOverlay>(UOverlay::StaticClass(),
-		                                                              TEXT("HUDLayoutRoot"));
-		WidgetTree->RootWidget = NewRootPanel;
-		RootPanel = NewRootPanel;
-	}
-
-	// 构造引擎自带的可激活控件栈，并挂到根面板下。
-	MenuLayerStack = WidgetTree->ConstructWidget<UCommonActivatableWidgetStack>(
-		UCommonActivatableWidgetStack::StaticClass(), TEXT("MenuLayerStack"));
-
-	RootPanel->AddChild(MenuLayerStack);
-
-	UE_LOG(LogTemp, Log, TEXT("[%hs] WBP 未提供 MenuLayerStack，已由 C++ 兜底创建菜单层栈。"), __func__);
+    auto* GI = GetGameInstance();
+    auto* UI = GI ? GI->GetSubsystem<UHodgeUIManagerSubsystem>() : nullptr;
+    auto* Root = UI ? UI->GetRootLayout(GetOwningLocalPlayer()) : nullptr;
+    MenuLayerStack = Root ? Cast<UCommonActivatableWidgetStack>(Root->GetLayer(TAG_UI_LAYER_MENU)) : nullptr;
 }
 
 // 处理玩家触发 Escape / Pause UI Action。
 void UHodgeHUDLayout::HandleEscapeAction()
 {
-	// EscapeMenuClass 必须配置有效的 SoftClass。
-	if (!ensure(!EscapeMenuClass.IsNull()))
-	{
-		return;
-	}
-
-	// 没有层容器就没法 Push。
-	if (!MenuLayerStack)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[%hs] 菜单层栈不可用，Escape 菜单无法显示。"), __func__);
-		return;
-	}
-
-	// 设计意图：
-	// 将 EscapeMenuClass 异步加载后 Push 到 UI.Layer.Menu。
-	//
-	// EscapeMenuClass 是 TSoftClassPtr，而 Stack->AddWidget 需要已经加载好的 UClass，
-	// 所以这里用 FStreamableManager 异步加载，加载完成后再 Push，
-	// 避免创建 HUD 时同步加载菜单资源造成卡顿。
-	//
-	// 与 Lyra 的差异：
-	// Lyra 的 PushStreamedContentToLayer_ForPlayer 还会在加载期间挂起玩家输入
-	// （内部 bSuspendInputUntilComplete = true，走 UCommonInputSubsystem::SetInputTypeFilter）。
-	// 这里先不做输入挂起，等输入挂起 token 那一套补齐后再接。
-	FStreamableManager& StreamableManager = UAssetManager::Get().GetStreamableManager();
-	StreamableManager.RequestAsyncLoad(EscapeMenuClass.ToSoftObjectPath(),
-	                                   FStreamableDelegate::CreateWeakLambda(this, [this]()
-	                                   {
-		                                   // 加载完成后重新检查：
-		                                   // 这段时间内 HUD Layout 可能已经销毁。
-		                                   if (!MenuLayerStack)
-		                                   {
-			                                   return;
-		                                   }
-
-		                                   if (UClass* LoadedMenuClass = EscapeMenuClass.Get())
-		                                   {
-			                                   // AddWidget 会创建实例、加入栈，并完成激活
-			                                   // （激活后才接收 CommonUI 输入，也才有 Stack 的过渡表现）。
-			                                   MenuLayerStack->AddWidget<UCommonActivatableWidget>(
-				                                   LoadedMenuClass);
-		                                   }
-	                                   }));
+    auto* GI = GetGameInstance();
+    auto* UI = GI ? GI->GetSubsystem<UHodgeUIManagerSubsystem>() : nullptr;
+    auto* Root = UI ? UI->GetRootLayout(GetOwningLocalPlayer()) : nullptr;
+    if (!Root || EscapeMenuClass.IsNull()) { return; }
+    if (PendingEscapeMenu.IsValid()) { Root->CancelPush(PendingEscapeMenu); PendingEscapeMenu.Invalidate(); return; }
+    if (EscapeMenuInstance.IsValid() && EscapeMenuInstance->IsActivated())
+    { Root->Pop(EscapeMenuInstance.Get()); EscapeMenuInstance.Reset(); return; }
+    TWeakObjectPtr<UHodgeHUDLayout> Weak = this;
+    PendingEscapeMenu = Root->PushAsync(TAG_UI_LAYER_MENU, EscapeMenuClass, [Weak](UCommonActivatableWidget* Menu)
+    {
+        if (Weak.IsValid()) { Weak->PendingEscapeMenu.Invalidate(); Weak->EscapeMenuInstance = Menu; }
+    });
 }
 
 // 输入设备连接状态发生变化时调用。

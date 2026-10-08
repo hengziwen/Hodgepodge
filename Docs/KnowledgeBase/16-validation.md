@@ -1,3 +1,5 @@
+> 2026-10-08 UI 专项验收见 [UI 基础闭环报告](../Validation/ui-foundation-2026-10-08.md)，不将该报告扩大为所有系统或发布打包通过。
+
 > 2026-10-07 更新：本文中旧 Timeline／HitWindows 的字段与制作步骤仅保留为历史；当前攻击入口以 [通知配置手册](../Guides/attack-ability-configuration.md) 和 [通知迁移更新](27-update-2026-10-07-anim-notify.md) 为准。
 
 # 实际验证范围与验收步骤

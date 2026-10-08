@@ -1,3 +1,5 @@
+> 2026-10-08：本文保留原迁移草案。用户选择不引入 CommonGame／CommonUser／ModularGameplayActors，现行实现改用 [Hodge UI 基础闭环](hodge-ui-foundation.md)；当前配置和验收以新文档为准。
+
 # Lyra UI 架构迁移执行文档（阶段一）
 
 > 2026-10-06 状态同步：UI 迁移/学习材料：CommonUI 已引入，部分 UIExtension/Indicator 代码有效；依赖 CommonGame/GameSettings/CommonUser 的停用内容与完整前端/HUD 尚未接通。本文不作为游戏 UI 已出画面的声明。 当前项目事实见 [本轮更新](../KnowledgeBase/26-update-2026-10-06.md)。

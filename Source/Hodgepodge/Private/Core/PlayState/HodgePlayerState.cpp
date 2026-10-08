@@ -433,6 +433,7 @@ bool AHodgePlayerState::AreAttributesReadyFor(const APawn* Avatar) const
 
 void AHodgePlayerState::NotifyAttributeReadiness()
 {
+	OnAttributeReadinessChanged.Broadcast();
 	if (APawn* Avatar = AttributeReadyState.Avatar)
 	{
 		if (auto* Hero = UHodgeHeroComponent::FindHeroComponent(Avatar)) { Hero->CheckDefaultInitialization(); }

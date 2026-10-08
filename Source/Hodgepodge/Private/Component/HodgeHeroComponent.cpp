@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+﻿// Copyright Epic Games, Inc. All Rights Reserved.
 
 // HeroComponent 本体定义。
 #include "Component/HodgeHeroComponent.h"
@@ -59,6 +59,8 @@
 
 // Enhanced Input MappingContext。
 #include "InputMappingContext.h"
+
+#include "UI/Subsystem/HodgeUIManagerSubsystem.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeHeroComponent)
 
@@ -249,8 +251,8 @@ bool UHodgeHeroComponent::CanChangeInitState(UGameFrameworkComponentManager* Man
 	else if (CurrentState == HodgeGameplayTags::InitState_DataInitialized && DesiredState ==
 		HodgeGameplayTags::InitState_GameplayReady)
 	{
-        const auto* PS = GetPlayerState<AHodgePlayerState>();
-        return PS && PS->AreAttributesReadyFor(Pawn);
+		const auto* PS = GetPlayerState<AHodgePlayerState>();
+		return PS && PS->AreAttributesReadyFor(Pawn);
 	}
 
 	// 其他未定义的状态切换全部禁止。
@@ -764,6 +766,7 @@ bool UHodgeHeroComponent::IsReadyToBindInputs() const
 // Ability 类型输入按下时调用。
 void UHodgeHeroComponent::Input_AbilityInputTagPressed(FGameplayTag InputTag)
 {
+	if (!UHodgeUIManagerSubsystem::AllowsGameplayInput(GetController<APlayerController>())) { return; }
 	// [HODGE-DBG] 临时诊断：确认 Ability 输入是否真的触发并转发给 ASC（定位后删除）。
 	UE_LOG(LogTemp, Warning, TEXT("[HODGE-DBG] Hero input CALLBACK AbilityPressed %s"), *InputTag.ToString());
 
@@ -815,6 +818,7 @@ void UHodgeHeroComponent::Input_AbilityInputTagReleased(FGameplayTag InputTag)
 // 处理角色二维移动输入。
 void UHodgeHeroComponent::Input_Move(const FInputActionValue& InputActionValue)
 {
+	if (!UHodgeUIManagerSubsystem::AllowsGameplayInput(GetController<APlayerController>())) { return; }
 	// 记录移动意图。放在最前面：它是"攻击中允许移动取消"唯一要读的输入信号，
 	// 不能因为后面任何提前 return 而被跳过。
 	// 注意这里读的是**原始输入**而不是角色位移，所以攻击期间角色被蒙太奇钉住也不影响判定。
@@ -924,6 +928,7 @@ void UHodgeHeroComponent::RefreshMoveIntent()
 // 处理鼠标视角输入。
 void UHodgeHeroComponent::Input_LookMouse(const FInputActionValue& InputActionValue)
 {
+	if (!UHodgeUIManagerSubsystem::AllowsGameplayInput(GetController<APlayerController>())) { return; }
 	// [HODGE-DBG] 临时诊断：只在按下/松开鼠标视角时输出一次（定位后删除）。
 	static bool bDbgLookMouseActive = false;
 	const FVector2D DbgLookMouseValue = InputActionValue.Get<FVector2D>();
@@ -963,6 +968,7 @@ void UHodgeHeroComponent::Input_LookMouse(const FInputActionValue& InputActionVa
 // 处理手柄摇杆视角输入。
 void UHodgeHeroComponent::Input_LookStick(const FInputActionValue& InputActionValue)
 {
+	if (!UHodgeUIManagerSubsystem::AllowsGameplayInput(GetController<APlayerController>())) { return; }
 	// [HODGE-DBG] 临时诊断：只在按下/松开手柄视角时输出一次（定位后删除）。
 	static bool bDbgLookStickActive = false;
 	const FVector2D DbgLookStickValue = InputActionValue.Get<FVector2D>();
@@ -1010,6 +1016,7 @@ void UHodgeHeroComponent::Input_LookStick(const FInputActionValue& InputActionVa
 // 处理蹲伏输入。
 void UHodgeHeroComponent::Input_Crouch(const FInputActionValue& InputActionValue)
 {
+	if (!UHodgeUIManagerSubsystem::AllowsGameplayInput(GetController<APlayerController>())) { return; }
 	// [HODGE-DBG] 临时诊断：确认蹲伏输入是否真的触发回调（定位后删除）。
 	UE_LOG(LogTemp, Warning, TEXT("[HODGE-DBG] Hero input CALLBACK Crouch"));
 
@@ -1023,6 +1030,7 @@ void UHodgeHeroComponent::Input_Crouch(const FInputActionValue& InputActionValue
 // 处理自动奔跑输入。
 void UHodgeHeroComponent::Input_AutoRun(const FInputActionValue& InputActionValue)
 {
+	if (!UHodgeUIManagerSubsystem::AllowsGameplayInput(GetController<APlayerController>())) { return; }
 	// [HODGE-DBG] 临时诊断：确认自动奔跑输入是否真的触发回调（定位后删除）。
 	UE_LOG(LogTemp, Warning, TEXT("[HODGE-DBG] Hero input CALLBACK AutoRun"));
 
@@ -1100,4 +1108,10 @@ void UHodgeHeroComponent::ClearAbilityCameraMode(const FGameplayAbilitySpecHandl
 		// 重置当前相机覆盖对应的 AbilitySpecHandle。
 		AbilityCameraModeOwningSpecHandle = FGameplayAbilitySpecHandle();
 	}
+}
+
+void UHodgeHeroComponent::ResetGameplayInput()
+{
+	SetMoveIntent(FVector2D::ZeroVector);
+	if (auto* Pawn = GetPawn<APawn>()) { Pawn->ConsumeMovementInputVector(); }
 }

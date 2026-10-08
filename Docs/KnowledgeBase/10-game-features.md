@@ -4,7 +4,7 @@
 
 ## 已配置的 AddComponents
 
-默认 Experience 使用引擎 AddComponents 注入 EquipmentManager 与 HodgeCombatComponentBase，经过 Receiver/组件管理器的真实链路；不存在原生默认子对象不表示未挂载。旋转是角色基础组件，武器表现由实例/Actor 实现。CommonUI 已引入，CommonGame 等停用依赖仍未接通。
+默认 Experience 使用引擎 AddComponents 注入 EquipmentManager 与 HodgeCombatComponentBase，经过 Receiver/组件管理器的真实链路；不存在原生默认子对象不表示未挂载。旋转是角色基础组件，武器表现由实例/Actor 实现。CommonUI 的自有根布局与 Experience AddWidgets 已接通，使用 LocalPlayer Context 注入真实 HUD；CommonGame 等旧停用文件不启用。
 
 [返回首页](README.md)
 
@@ -40,7 +40,7 @@ Policy 中保留了上游迁移注释；检查实际激活类配置及有效函�
 
 ## AddWidget 与 SplitscreenConfig
 
-AddWidget 当前仍是注释实现，不能视为完整 HUD 注入。SplitscreenConfig 的职责是分屏策略，而非输入和玩家生成。项目使用专用 HUD 基类不等于已经接入 Lyra UIExtension。
+AddWidgets 已按 World Context＋HUD 保存记录，根布局就绪后 Push Game 层布局并按 LocalPlayer Context 注册 UIExtension；停用／根布局替换时撤销并重建。默认 Experience 已引用 Main/UI 的 ActionSet，冷加载和重复注入已实际回归。SplitscreenConfig 仍是分屏策略，不能据其存在宣称本轮验证了分屏。
 
 ## Receiver 生命周期
 

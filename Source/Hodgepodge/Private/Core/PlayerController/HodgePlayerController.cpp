@@ -1,4 +1,4 @@
-// 111屎山代码来袭
+﻿// 111屎山代码来袭
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 // AHodgePlayerController / AHodgeReplayPlayerController 类定义。
@@ -72,6 +72,8 @@
 // #include "Tests/HodgeGameplayRpcRegistrationComponent.h"
 // #include "HttpServerModule.h"
 // #endif
+
+#include "UI/Subsystem/HodgeUIManagerSubsystem.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgePlayerController)
 
@@ -543,7 +545,8 @@ void AHodgePlayerController::PostProcessInput(const float DeltaTime, const bool 
 	if (UHodgeAbilitySystemComponent* HodgeASC = GetHodgeAbilitySystemComponent())
 	{
 		// 在所有 InputAction 更新之后统一让 ASC 处理 Pressed / Held / Released Ability 输入。
-		HodgeASC->ProcessAbilityInput(DeltaTime, bGamePaused);
+		if (UHodgeUIManagerSubsystem::AllowsGameplayInput(this)) { HodgeASC->ProcessAbilityInput(DeltaTime, bGamePaused); }
+		else { HodgeASC->ReleaseAbilityInput(); }
 	}
 
 	// 最后执行父类输入后处理。

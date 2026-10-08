@@ -152,6 +152,50 @@ Editor 动画文本导入、属性/引用修正、编译诊断与实验 PIE 配�
   37: };
 ```
 
+## HodgeUIAuthoringLibrary.cpp
+
+仅 Editor 的 Main UI 资产制作、原生 PIE 命令调度、Slate 截图与只读检查入口。
+
+源码：[Source/HodgeAbilityEditor/Private/HodgeUIAuthoringLibrary.cpp](../../../Source/HodgeAbilityEditor/Private/HodgeUIAuthoringLibrary.cpp)
+
+项目内直接 include（不是运行调用关系）：[UI/Foundation/HodgePrimaryGameLayout.h](../../../Source/Hodgepodge/Public/UI/Foundation/HodgePrimaryGameLayout.h)、[UI/Subsystem/HodgeUIManagerSubsystem.h](../../../Source/Hodgepodge/Public/UI/Subsystem/HodgeUIManagerSubsystem.h)、[UI/Extension/UIExtensionPointWidget.h](../../../Source/Hodgepodge/Public/UI/Extension/UIExtensionPointWidget.h)、[Data/HodgeExperienceActionSet.h](../../../Source/Hodgepodge/Public/Data/HodgeExperienceActionSet.h)、[Data/HodgeExperienceDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeExperienceDefinition.h)、[GameFeatures/GameFeatureAction_AddWidget.h](../../../Source/Hodgepodge/Public/GameFeatures/GameFeatureAction_AddWidget.h)、[Component/HodgeExperienceManagerComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeExperienceManagerComponent.h)、[Component/HodgeHealthComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeHealthComponent.h)、[Component/HodgeHeroComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeHeroComponent.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)、[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)、[AbilitySystem/AttributeSet/HodgeHealthSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeHealthSet.h)、[Core/PlayerController/HodgePlayerController.h](../../../Source/Hodgepodge/Public/Core/PlayerController/HodgePlayerController.h)、[UI/Data/HodgeGameplayUIDataSource.h](../../../Source/Hodgepodge/Public/UI/Data/HodgeGameplayUIDataSource.h)、[UI/HodgeHUDLayout.h](../../../Source/Hodgepodge/Public/UI/HodgeHUDLayout.h)、[UI/HodgeActivatableWidget.h](../../../Source/Hodgepodge/Public/UI/HodgeActivatableWidget.h)
+
+定义候选（多行签名仅展示首行）：
+
+- L125: `FString UHodgeUIAuthoringLibrary::CreateFoundationAssets()`
+- L190: `FString UHodgeUIAuthoringLibrary::InspectPlayerUI(APlayerController* Player)`
+- L263: `bool UHodgeUIAuthoringLibrary::QueueUIAction(APlayerController* Player, FName Action, float Value)`
+- L822: `FString UHodgeUIAuthoringLibrary::MigrateDesignerAssets()`
+- L916: `FString UHodgeUIAuthoringLibrary::InspectDesignerAssets()`
+- L931: `FString UHodgeUIAuthoringLibrary::ConfigureDesignerPreviews()`
+
+## HodgeUIAuthoringLibrary.h
+
+仅 Editor 的 Main UI 资产制作、原生 PIE 命令调度、Slate 截图与只读检查入口。
+
+源码：[Source/HodgeAbilityEditor/Private/HodgeUIAuthoringLibrary.h](../../../Source/HodgeAbilityEditor/Private/HodgeUIAuthoringLibrary.h)
+
+有效头文件声明摘录（未展开宏，未求值预处理分支）：
+
+```cpp
+   1: #pragma once
+   2: #include "Kismet/BlueprintFunctionLibrary.h"
+   3: #include "HodgeUIAuthoringLibrary.generated.h"
+   4: class APlayerController;
+   7: UCLASS()
+   8: class UHodgeUIAuthoringLibrary : public UBlueprintFunctionLibrary
+   9: {
+  10:     GENERATED_BODY()
+  11: public:
+  12:     UFUNCTION(BlueprintCallable, Category="Hodge|Editor|UI") static FString CreateFoundationAssets();
+  13:     UFUNCTION(BlueprintCallable, Category="Hodge|Editor|UI") static FString MigrateDesignerAssets();
+  14:     UFUNCTION(BlueprintPure, Category="Hodge|Editor|UI") static FString InspectDesignerAssets();
+  15:     UFUNCTION(BlueprintCallable, Category="Hodge|Editor|UI") static FString ConfigureDesignerPreviews();
+  16:     UFUNCTION(BlueprintPure, Category="Hodge|Editor|UI") static FString InspectPlayerUI(APlayerController* Player);
+  17:     UFUNCTION(BlueprintCallable, Category="Hodge|Editor|UI") static bool QueueUIAction(APlayerController* Player, FName Action, float Value = 0);
+  18: };
+```
+
 ## Hodgepodge.Build.cs
 
 模块或基础类型入口。

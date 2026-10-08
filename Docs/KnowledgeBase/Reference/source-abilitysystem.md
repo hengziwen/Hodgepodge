@@ -333,6 +333,7 @@ Tag 输入、激活组、关系映射、Montage 复制和全局注册；失败�
 - L1070: `void UHodgeAbilitySystemComponent::OnRep_ReplicatedAnimMontage()`
 - L1076: `void UHodgeAbilitySystemComponent::StopDefinitionMontage(UGameplayAbility* Ability, bool bNatural)`
 - L1083: `void UHodgeAbilitySystemComponent::CurrentMontageStop(float OverrideBlendOutTime)`
+- L1104: `void UHodgeAbilitySystemComponent::ReleaseAbilityInput()`
 
 ## HodgeAbilitySystemGlobals.cpp
 
@@ -1384,72 +1385,73 @@ Tag 输入、激活组、关系映射、Montage 复制和全局注册；失败�
   95: 	void AbilityInputTagReleased(const FGameplayTag& InputTag);
   98: 	void ProcessAbilityInput(float DeltaTime, bool bGamePaused);
  101: 	void ClearAbilityInput();
- 104: 	bool IsActivationGroupBlocked(EHodgeAbilityActivationGroup Group) const;
- 107: 	void AddAbilityToActivationGroup(EHodgeAbilityActivationGroup Group, UHodgeGameplayAbility* HodgeAbility);
- 110: 	void RemoveAbilityFromActivationGroup(EHodgeAbilityActivationGroup Group, UHodgeGameplayAbility* HodgeAbility);
- 113: 	void CancelActivationGroupAbilities(EHodgeAbilityActivationGroup Group, UHodgeGameplayAbility* IgnoreHodgeAbility,
- 114: 	                                    bool bReplicateCancelAbility);
- 118: 	void AddDynamicTagGameplayEffect(const FGameplayTag& Tag);
- 122: 	void RemoveDynamicTagGameplayEffect(const FGameplayTag& Tag);
- 126: 	void GetAbilityTargetData(const FGameplayAbilitySpecHandle AbilityHandle,
- 127: 	                          FGameplayAbilityActivationInfo ActivationInfo,
- 128: 	                          FGameplayAbilityTargetDataHandle& OutTargetDataHandle);
- 132: 	void SetTagRelationshipMapping(UHodgeAbilityTagRelationshipMapping* NewMapping);
- 136: 	void GetAdditionalActivationTagRequirements(const FGameplayTagContainer& AbilityTags,
- 137: 	                                            FGameplayTagContainer& OutActivationRequired,
- 138: 	                                            FGameplayTagContainer& OutActivationBlocked) const;
- 140: protected:
- 141: 	UPROPERTY(ReplicatedUsing=OnRep_DefinitionMontage)
- 142: 	FHodgeDefinitionMontageState DefinitionMontage;
- 143: 	UFUNCTION()
- 144: 	void OnRep_DefinitionMontage();
- 145: 	virtual void OnRep_ReplicatedAnimMontage() override;
- 146: 	void ApplyDefinitionMontageSettings();
- 147: 	int32 ConfiguredMontageInstance = INDEX_NONE;
- 148: 	virtual void ClientActivateAbilitySucceedWithEventData_Implementation(
- 149: 		FGameplayAbilitySpecHandle Handle, FPredictionKey PredictionKey, FGameplayEventData TriggerEventData) override;
- 150: 	virtual void ClientActivateAbilityFailed_Implementation(FGameplayAbilitySpecHandle Handle, int16 PredictionKey) override;
- 151: 	TArray<int16> RecentComboPredictionKeys;
- 153: 	UPROPERTY(Transient) TMap<uint64, FGameplayEventData> DeferredComboPayloads;
- 154: 	uint64 NextDeferredComboRequest = 0;
- 155: 	bool bProcessingDeferredComboRequest = false;
- 156: 	float DeferredComboWaitSeconds = 0.f;
- 157: 	TMap<int16, double> PredictedComboStartTimes;
- 158: 	UFUNCTION(Client, Reliable)
- 159: 	void ClientConfirmComboTiming(AActor* Avatar, FGameplayAbilitySpecHandle Handle, int16 Key, float DeferredSeconds);
- 160: 	void ProcessDeferredComboRequest(uint64 RequestId, TWeakObjectPtr<AActor> Avatar, FGameplayAbilitySpecHandle Handle,
- 161: 	                                 bool InputPressed, FPredictionKey PredictionKey, double ReceivedAt, double ExpiresAt);
- 163: 	virtual void InternalServerTryActivateAbility(FGameplayAbilitySpecHandle Handle, bool InputPressed,
- 164: 	                                              const FPredictionKey& PredictionKey,
- 165: 	                                              const FGameplayEventData* TriggerEventData) override;
- 166: 	virtual void OnRemoveAbility(FGameplayAbilitySpec& AbilitySpec) override;
- 167: 	UPROPERTY(Replicated)
- 168: 	TArray<FHodgeGrantedAbilityDefinition> GrantedDefinitions;
- 171: 	void TryActivateAbilitiesOnSpawn();
- 174: 	virtual void AbilitySpecInputPressed(FGameplayAbilitySpec& Spec) override;
- 177: 	virtual void AbilitySpecInputReleased(FGameplayAbilitySpec& Spec) override;
- 180: 	virtual void NotifyAbilityActivated(const FGameplayAbilitySpecHandle Handle, UGameplayAbility* Ability) override;
- 183: 	virtual void NotifyAbilityFailed(const FGameplayAbilitySpecHandle Handle, UGameplayAbility* Ability,
- 184: 	                                 const FGameplayTagContainer& FailureReason) override;
- 187: 	virtual void NotifyAbilityEnded(FGameplayAbilitySpecHandle Handle, UGameplayAbility* Ability,
- 188: 	                                bool bWasCancelled) override;
- 191: 	virtual void ApplyAbilityBlockAndCancelTags(const FGameplayTagContainer& AbilityTags,
- 192: 	                                            UGameplayAbility* RequestingAbility, bool bEnableBlockTags,
- 193: 	                                            const FGameplayTagContainer& BlockTags, bool bExecuteCancelTags,
- 194: 	                                            const FGameplayTagContainer& CancelTags) override;
- 197: 	virtual void HandleChangeAbilityCanBeCanceled(const FGameplayTagContainer& AbilityTags,
- 198: 	                                              UGameplayAbility* RequestingAbility, bool bCanBeCanceled) override;
- 202: 	UFUNCTION(Client, Unreliable)
- 203: 	void ClientNotifyAbilityFailed(const UGameplayAbility* Ability, const FGameplayTagContainer& FailureReason);
- 206: 	void HandleAbilityFailed(const UGameplayAbility* Ability, const FGameplayTagContainer& FailureReason);
- 208: protected:
- 212: 	UPROPERTY()
- 213: 	TObjectPtr<UHodgeAbilityTagRelationshipMapping> TagRelationshipMapping;
- 217: 	TArray<FGameplayAbilitySpecHandle> InputPressedSpecHandles;
- 221: 	TArray<FGameplayAbilitySpecHandle> InputReleasedSpecHandles;
- 225: 	TArray<FGameplayAbilitySpecHandle> InputHeldSpecHandles;
- 229: 	int32 ActivationGroupCounts[(uint8)EHodgeAbilityActivationGroup::MAX];
- 230: };
+ 102: 	void ReleaseAbilityInput();
+ 105: 	bool IsActivationGroupBlocked(EHodgeAbilityActivationGroup Group) const;
+ 108: 	void AddAbilityToActivationGroup(EHodgeAbilityActivationGroup Group, UHodgeGameplayAbility* HodgeAbility);
+ 111: 	void RemoveAbilityFromActivationGroup(EHodgeAbilityActivationGroup Group, UHodgeGameplayAbility* HodgeAbility);
+ 114: 	void CancelActivationGroupAbilities(EHodgeAbilityActivationGroup Group, UHodgeGameplayAbility* IgnoreHodgeAbility,
+ 115: 	                                    bool bReplicateCancelAbility);
+ 119: 	void AddDynamicTagGameplayEffect(const FGameplayTag& Tag);
+ 123: 	void RemoveDynamicTagGameplayEffect(const FGameplayTag& Tag);
+ 127: 	void GetAbilityTargetData(const FGameplayAbilitySpecHandle AbilityHandle,
+ 128: 	                          FGameplayAbilityActivationInfo ActivationInfo,
+ 129: 	                          FGameplayAbilityTargetDataHandle& OutTargetDataHandle);
+ 133: 	void SetTagRelationshipMapping(UHodgeAbilityTagRelationshipMapping* NewMapping);
+ 137: 	void GetAdditionalActivationTagRequirements(const FGameplayTagContainer& AbilityTags,
+ 138: 	                                            FGameplayTagContainer& OutActivationRequired,
+ 139: 	                                            FGameplayTagContainer& OutActivationBlocked) const;
+ 141: protected:
+ 142: 	UPROPERTY(ReplicatedUsing=OnRep_DefinitionMontage)
+ 143: 	FHodgeDefinitionMontageState DefinitionMontage;
+ 144: 	UFUNCTION()
+ 145: 	void OnRep_DefinitionMontage();
+ 146: 	virtual void OnRep_ReplicatedAnimMontage() override;
+ 147: 	void ApplyDefinitionMontageSettings();
+ 148: 	int32 ConfiguredMontageInstance = INDEX_NONE;
+ 149: 	virtual void ClientActivateAbilitySucceedWithEventData_Implementation(
+ 150: 		FGameplayAbilitySpecHandle Handle, FPredictionKey PredictionKey, FGameplayEventData TriggerEventData) override;
+ 151: 	virtual void ClientActivateAbilityFailed_Implementation(FGameplayAbilitySpecHandle Handle, int16 PredictionKey) override;
+ 152: 	TArray<int16> RecentComboPredictionKeys;
+ 154: 	UPROPERTY(Transient) TMap<uint64, FGameplayEventData> DeferredComboPayloads;
+ 155: 	uint64 NextDeferredComboRequest = 0;
+ 156: 	bool bProcessingDeferredComboRequest = false;
+ 157: 	float DeferredComboWaitSeconds = 0.f;
+ 158: 	TMap<int16, double> PredictedComboStartTimes;
+ 159: 	UFUNCTION(Client, Reliable)
+ 160: 	void ClientConfirmComboTiming(AActor* Avatar, FGameplayAbilitySpecHandle Handle, int16 Key, float DeferredSeconds);
+ 161: 	void ProcessDeferredComboRequest(uint64 RequestId, TWeakObjectPtr<AActor> Avatar, FGameplayAbilitySpecHandle Handle,
+ 162: 	                                 bool InputPressed, FPredictionKey PredictionKey, double ReceivedAt, double ExpiresAt);
+ 164: 	virtual void InternalServerTryActivateAbility(FGameplayAbilitySpecHandle Handle, bool InputPressed,
+ 165: 	                                              const FPredictionKey& PredictionKey,
+ 166: 	                                              const FGameplayEventData* TriggerEventData) override;
+ 167: 	virtual void OnRemoveAbility(FGameplayAbilitySpec& AbilitySpec) override;
+ 168: 	UPROPERTY(Replicated)
+ 169: 	TArray<FHodgeGrantedAbilityDefinition> GrantedDefinitions;
+ 172: 	void TryActivateAbilitiesOnSpawn();
+ 175: 	virtual void AbilitySpecInputPressed(FGameplayAbilitySpec& Spec) override;
+ 178: 	virtual void AbilitySpecInputReleased(FGameplayAbilitySpec& Spec) override;
+ 181: 	virtual void NotifyAbilityActivated(const FGameplayAbilitySpecHandle Handle, UGameplayAbility* Ability) override;
+ 184: 	virtual void NotifyAbilityFailed(const FGameplayAbilitySpecHandle Handle, UGameplayAbility* Ability,
+ 185: 	                                 const FGameplayTagContainer& FailureReason) override;
+ 188: 	virtual void NotifyAbilityEnded(FGameplayAbilitySpecHandle Handle, UGameplayAbility* Ability,
+ 189: 	                                bool bWasCancelled) override;
+ 192: 	virtual void ApplyAbilityBlockAndCancelTags(const FGameplayTagContainer& AbilityTags,
+ 193: 	                                            UGameplayAbility* RequestingAbility, bool bEnableBlockTags,
+ 194: 	                                            const FGameplayTagContainer& BlockTags, bool bExecuteCancelTags,
+ 195: 	                                            const FGameplayTagContainer& CancelTags) override;
+ 198: 	virtual void HandleChangeAbilityCanBeCanceled(const FGameplayTagContainer& AbilityTags,
+ 199: 	                                              UGameplayAbility* RequestingAbility, bool bCanBeCanceled) override;
+ 203: 	UFUNCTION(Client, Unreliable)
+ 204: 	void ClientNotifyAbilityFailed(const UGameplayAbility* Ability, const FGameplayTagContainer& FailureReason);
+ 207: 	void HandleAbilityFailed(const UGameplayAbility* Ability, const FGameplayTagContainer& FailureReason);
+ 209: protected:
+ 213: 	UPROPERTY()
+ 214: 	TObjectPtr<UHodgeAbilityTagRelationshipMapping> TagRelationshipMapping;
+ 218: 	TArray<FGameplayAbilitySpecHandle> InputPressedSpecHandles;
+ 222: 	TArray<FGameplayAbilitySpecHandle> InputReleasedSpecHandles;
+ 226: 	TArray<FGameplayAbilitySpecHandle> InputHeldSpecHandles;
+ 230: 	int32 ActivationGroupCounts[(uint8)EHodgeAbilityActivationGroup::MAX];
+ 231: };
 ```
 
 ## HodgeAbilitySystemGlobals.h

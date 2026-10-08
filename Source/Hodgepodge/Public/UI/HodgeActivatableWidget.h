@@ -35,7 +35,7 @@ enum class EHodgeWidgetInputMode : uint8
 // Widget 激活后会根据自身配置自动向 CommonUI 提供期望的输入模式，
 // 从而控制当前输入应该交给游戏、UI，还是两者共同处理。
 UCLASS(Abstract, Blueprintable)
-class UHodgeActivatableWidget : public UCommonActivatableWidget
+class HODGEPODGE_API UHodgeActivatableWidget : public UCommonActivatableWidget
 {
 	GENERATED_BODY()
 

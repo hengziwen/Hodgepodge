@@ -41,6 +41,11 @@ UUIExtensionPointWidget::UUIExtensionPointWidget(const FObjectInitializer& Objec
 {
 }
 
+void UUIExtensionPointWidget::SetExtensionPointTag(FGameplayTag Tag)
+{
+    if (!GetCachedWidget().IsValid()) { ExtensionPointTag = Tag; }
+}
+
 // 当前 UWidget 释放底层 Slate 资源时调用。
 void UUIExtensionPointWidget::ReleaseSlateResources(bool bReleaseChildren)
 {
@@ -72,10 +77,14 @@ TSharedRef<SWidget> UUIExtensionPointWidget::RebuildWidget()
 		// CallAndRegister 表示：
 		// 如果 PlayerState 当前已经存在，则可以立即触发；
 		// 同时注册后续 PlayerState 设置时的回调。
-		FDelegateHandle Handle = GetOwningLocalPlayer<UHodgeLocalPlayerBase>()->CallAndRegister_OnPlayerStateSet(
-			UHodgeLocalPlayerBase::FPlayerStateSetDelegate::FDelegate::CreateUObject(
-				this, &UUIExtensionPointWidget::RegisterExtensionPointForPlayerState)
-		);
+		BoundLocalPlayer = GetOwningLocalPlayer<UHodgeLocalPlayerBase>();
+		if (BoundLocalPlayer.IsValid())
+		{
+			PlayerStateDelegate = BoundLocalPlayer->CallAndRegister_OnPlayerStateSet(
+				UHodgeLocalPlayerBase::FPlayerStateSetDelegate::FDelegate::CreateUObject(
+					this, &UUIExtensionPointWidget::RegisterExtensionPointForPlayerState)
+			);
+		}
 	}
 
 	// 编辑器设计时不真正注册 ExtensionPoint，
@@ -122,6 +131,11 @@ TSharedRef<SWidget> UUIExtensionPointWidget::RebuildWidget()
 // 重置当前 ExtensionPointWidget 的运行时状态。
 void UUIExtensionPointWidget::ResetExtensionPoint()
 {
+	if (BoundLocalPlayer.IsValid()) { BoundLocalPlayer->OnPlayerStateSet.Remove(PlayerStateDelegate); }
+	BoundLocalPlayer.Reset();
+	PlayerStateDelegate.Reset();
+	PlayerStatePoint.Unregister();
+
 	// 清空 UDynamicEntryBoxBase 当前已经创建的所有动态 Entry。
 	ResetInternal();
 
@@ -186,6 +200,8 @@ void UUIExtensionPointWidget::RegisterExtensionPoint()
 void UUIExtensionPointWidget::RegisterExtensionPointForPlayerState(UHodgeLocalPlayerBase* LocalPlayer,
                                                                    APlayerState* PlayerState)
 {
+	PlayerStatePoint.Unregister();
+	if (!PlayerState) { return; }
 	// 从当前 World 获取 UIExtensionSubsystem。
 	if (UUIExtensionSubsystem* ExtensionSubsystem = GetWorld()->GetSubsystem<UUIExtensionSubsystem>())
 	{
@@ -203,10 +219,10 @@ void UUIExtensionPointWidget::RegisterExtensionPointForPlayerState(UHodgeLocalPl
 		//
 		// 这样 Gameplay / GameFeature 可以把某条 UI Extension
 		// 精确关联到指定玩家的 PlayerState。
-		ExtensionPointHandles.Add(ExtensionSubsystem->RegisterExtensionPointForContext(
+		PlayerStatePoint = ExtensionSubsystem->RegisterExtensionPointForContext(
 			ExtensionPointTag, PlayerState, ExtensionPointTagMatch, AllowedDataClasses,
 			FExtendExtensionPointDelegate::CreateUObject(this, &ThisClass::OnAddOrRemoveExtension)
-		));
+		);
 	}
 }
 

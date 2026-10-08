@@ -43,7 +43,7 @@ class UCommonActivatableWidgetStack;
  * 同时负责 Escape / Pause 菜单以及控制器断连界面等 HUD 级全局交互。
  */
 UCLASS(Abstract, BlueprintType, Blueprintable, Meta = (DisplayName = "Hodge HUD Layout", Category = "Hodge|HUD"))
-class UHodgeHUDLayout : public UHodgeActivatableWidget
+class HODGEPODGE_API UHodgeHUDLayout : public UHodgeActivatableWidget
 {
 	GENERATED_BODY()
 
@@ -61,6 +61,7 @@ public:
 	//
 	// 用于解除事件监听、Ticker 等当前 HUD Layout 持有的运行时状态。
 	virtual void NativeDestruct() override;
+	virtual void NativeOnDeactivated() override;
 
 protected:
 	// 处理 Escape / Pause 输入。
@@ -68,6 +69,9 @@ protected:
 	// 通常用于将 EscapeMenuClass 对应的菜单
 	// Push 到 CommonUI 的菜单 Layer 中。
 	void HandleEscapeAction();
+	void CloseOwnedMenu();
+	FGuid PendingEscapeMenu;
+	TWeakObjectPtr<UCommonActivatableWidget> EscapeMenuInstance;
 
 	// 确保菜单层栈（对应 UI.Layer.Menu）可用。
 	void EnsureMenuLayerStack();

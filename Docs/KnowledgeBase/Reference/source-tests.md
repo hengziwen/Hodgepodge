@@ -88,6 +88,31 @@
 - L112: `bool FHodgeMeleeHitHistoryTest::RunTest(const FString& Parameters)`
 - L135: `bool FHodgeMeleeSpecContextTest::RunTest(const FString& Parameters)`
 
+## HodgeUIDataSourceTests.cpp
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Private/Tests/HodgeUIDataSourceTests.cpp](../../../Source/Hodgepodge/Private/Tests/HodgeUIDataSourceTests.cpp)
+
+项目内直接 include（不是运行调用关系）：[UI/Data/HodgeGameplayUIDataSource.h](../../../Source/Hodgepodge/Public/UI/Data/HodgeGameplayUIDataSource.h)、[UI/Subsystem/HodgeUIManagerSubsystem.h](../../../Source/Hodgepodge/Public/UI/Subsystem/HodgeUIManagerSubsystem.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)
+
+定义候选（多行签名仅展示首行）：
+
+- L8: `bool FHodgeUIInactiveDataTest::RunTest(const FString& Parameters)`
+
+## HodgeUIFoundationTests.cpp
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Private/Tests/HodgeUIFoundationTests.cpp](../../../Source/Hodgepodge/Private/Tests/HodgeUIFoundationTests.cpp)
+
+项目内直接 include（不是运行调用关系）：[UI/Foundation/HodgePrimaryGameLayout.h](../../../Source/Hodgepodge/Public/UI/Foundation/HodgePrimaryGameLayout.h)、[UI/Subsystem/HodgeUIManagerSubsystem.h](../../../Source/Hodgepodge/Public/UI/Subsystem/HodgeUIManagerSubsystem.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)
+
+定义候选（多行签名仅展示首行）：
+
+- L11: `bool FHodgeUIClosedRootTest::RunTest(const FString& Parameters)`
+- L34: `bool FHodgeUINonHodgeInstanceTest::RunTest(const FString& Parameters)`
+
 ## HodgeWeaponPresentationTests.cpp
 
 模块或基础类型入口。

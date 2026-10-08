@@ -1,6 +1,6 @@
 # Lyra → Hodgepodge 迁移现状与检查清单
 
-> 复核日期：2026-10-06。这是可持续更新的迁移清单，不是全部系统已验收的声明。
+> 复核日期：2026-10-08（本次更新 UI 项，其他条目保留各自验收范围）。这是可持续更新的迁移清单，不是全部系统已验收的声明。
 
 [项目文档目录](../README.md) · [知识库](../KnowledgeBase/README.md) · [当前接通状态](../KnowledgeBase/12-integration-backlog.md)
 
@@ -16,7 +16,7 @@
 | 系统 | Hodge 当前状态 | 缺口／建议 |
 | --- | --- | --- |
 | 死亡流程 | 死亡 GA 已授予，事件和死亡阶段已测试 | 互斥能力计数／PIE 清理错误待处理；死亡表现和重生待补 |
-| UI 基础闭环 | 部分迁入：CommonUI、基础控件、UIExtension 已有 | 最值得补完的较大迁移；接 CommonGame 依赖、根布局、输入路由与 HUD 注入 |
+| UI 基础闭环 | 自有根布局、Experience HUD、真实血条、基础技能栏与菜单已接通 | 不引入 CommonGame／CommonUser／ModularGameplayActors；完整前端、独立进程和打包待后续验证 |
 | GameplayCue | Manager 已迁入，生命周期未接完整 | 补目录注册、启动初始化、Feature 注销与加载策略 |
 | 战斗消息 | 消息调用保留为注释，消息类型与 Router 未接 | 迁入 GameplayMessageRouter 后建立最小战斗消息，明确与 Cue 的分工 |
 | 加载画面 | 部分迁入：接口与配置存储已有 | 需要转场时接 CommonLoadingScreen，补实际显示、输入阻断和就绪检查 |
@@ -28,7 +28,7 @@
 ## 建议顺序
 
 1. **死亡 GA 与实际战斗闭环**：优先补小而关键的死亡事件消费。正式五段 HitWindows 仍为空，填写命中配置是现有系统接线工作，不是继续迁移 Lyra 框架。
-2. **UI 最小闭环**：根布局、HUD Extension、血条／技能栏与输入路由，先验收一个完整入口。
+2. **UI 最小闭环已接通首版**：后续随玩法补图标、设置和业务页面；不要重复引入 CommonGame 框架。
 3. **GameplayCue 与战斗消息**：补项目生命周期与最小命中／死亡反馈，不混用两套职责。
 4. **敌人和阵营**：明确敌人 ASC 所有者、队伍接口、伤害许可及复制。
 5. **按玩法需要迁库存、交互和加载画面**；设置、联网登录、匹配和完整前端另行安排。
@@ -47,19 +47,18 @@ Hodge 已由用户迁入 HodgeGameplayAbility_Death，并在 `/Game/Main/Data/Ab
 - [ ] 验证零血量只触发一次、取消战斗／清理手持请求、禁移与 Pawn 清理。
 - [ ] 验证服务器、拥有者、模拟代理；另行定义重生与保留能力策略。
 
-### 2. UI 基础闭环：最明显的未完成迁移
+### 2. UI 基础闭环：已接通首版
 
-基础控件、CommonUI 和 UIExtension 有有效代码；24 个 UI 文件仍标记 `UI-MIGRATION-PENDING`。例如 [UIManagerSubsystem](../../Source/Hodgepodge/Public/UI/Subsystem/HodgeUIManagerSubsystem.h) 和 GameViewportClient 尚未参与编译。[AddWidgets](../../Source/Hodgepodge/Private/GameFeatures/GameFeatureAction_AddWidget.cpp) 的 Extension 注册部分有效，但 `PushContentToLayer_ForPlayer` 仍注释。
+用户明确选择保留 UGameInstance／ULocalPlayer 和现有 Controller，不引入 CommonGame、CommonUser、ModularGameplayActors。现有引擎 CommonUI／CommonInput 配合自有管理器与根布局实现所需契约；GameInstance 原有 Init State 初始化仍保留。
 
-Lyra 的 CommonGame 实际依赖 CommonUser、ModularGameplayActors 等；不能只解除注释而漏掉插件及继承链。Hodge 当前 GameInstance/LocalPlayer 分别继承 UGameInstance/ULocalPlayer，与 Lyra 的 CommonGame 基类存在差异。
+- [x] 现有依赖完成根布局、LocalPlayer 与 Controller 生命周期；专服不创建 UIManager。
+- [x] GameViewportClient 路由、CommonUI 输入配置、菜单焦点和玩法输入清理。
+- [x] Experience Client Bundle 加载、Layout／HUD Extension 注入与撤销。
+- [x] 正式 Main 资产、真实血条、基础普攻／跳跃栏、菜单和确认框。
+- [x] 单人、Listen Server／两个纯客户端的菜单隔离与重建；100ms 连段／移动取消回归。
+- [ ] 独立进程、Cook／打包、完整设置／登录／匹配前端。
 
-- [ ] 核对并接入 CommonGame 的实际依赖，保持 UE 5.5 兼容。
-- [ ] 适配 GameInstance、LocalPlayer、UIManager／UIPolicy 和根布局，保留现有 Init State 初始化。
-- [ ] 接 GameViewportClient 输入路由与必要配置。
-- [ ] 接通 Experience 的 Layout／HUD Extension 注入，制作最小血条／技能栏。
-- [ ] 验证添加、撤销、再激活、本地玩家隔离及菜单／游戏输入切换。
-
-完整设置、登录、匹配和前端流程不必和第一轮 HUD 同时实现。详见 [UI 迁移计划](lyra-ui-migration-plan.md)。
+设计见 [Hodge UI 基础闭环](hodge-ui-foundation.md)，配置见 [UI 配置指南](../Guides/ui-foundation-configuration.md)，运行证据见 [本轮验证](../Validation/ui-foundation-2026-10-08.md)。旧 UIPolicy／CommonGame 迁移文件仍作为停用学习材料，不应据文件存在判定已启用完整前端。
 
 ### 3. GameplayCue：Manager 已有，生命周期缺口仍在
 
@@ -142,4 +141,4 @@ Experience、ASC、PawnData、Init State、输入与相机主链已有接入。�
 未验证项／后续工作：
 ```
 
-本次仅将既有对照结论落入文档，未实现上述待办，未执行 C++ 构建、PIE 或打包；只验证文档差异、链接和知识库快照。
+2026-10-06 的原清单为静态核对；2026-10-08 更新的 UI 项已实际实现并验证，其他条目仍按各自历史报告判断，不扩展本轮通过范围。

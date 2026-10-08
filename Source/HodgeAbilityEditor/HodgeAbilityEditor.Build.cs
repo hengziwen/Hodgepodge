@@ -8,7 +8,7 @@ public class HodgeAbilityEditor : ModuleRules
             "Core", "CoreUObject", "Engine", "Hodgepodge", "GameplayTags", "GameplayAbilities",
             "UnrealEd", "AssetTools", "AssetRegistry", "PropertyEditor", "Slate", "SlateCore",
             "InputCore", "EditorFramework", "AdvancedPreviewScene", "AnimGraph", "ToolMenus",
-            "BlueprintGraph", "KismetCompiler"
+            "BlueprintGraph", "KismetCompiler", "UMG", "UMGEditor", "CommonUI", "CommonInput", "Json", "ApplicationCore", "GameFeatures"
         });
     }
 }

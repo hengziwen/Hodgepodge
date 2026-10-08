@@ -27,10 +27,13 @@ Design 并非全是未实现草案：各篇开头区分当前实现、历史设�
 
 ## UI 迁移与学习
 
+- [UMG 可视化制作与父类精简方案](Design/umg-authoring-ui-refactor.md)：已授权实施：布局已迁入 Designer，六个业务原生控件类归档，采用共享数据源；[本轮回归结果](Validation/umg-authoring-refactor-2026-10-08.md)。
+- [现行设计](Design/hodge-ui-foundation.md)、[配置指南](Guides/ui-foundation-configuration.md)、[实际验证](Validation/ui-foundation-2026-10-08.md)。
+
 - [迁移计划](Design/lyra-ui-migration-plan.md)、[文件导览](Design/lyra-ui-file-guide.md)、[当前架构](Design/hodge-ui-architecture.md)。
 - [UMG/Slate](Design/umg-slate-mental-model.md)、[UIExtension](Design/ui-extension-system.md)、[Indicator](Design/indicator-ui-system.md)。
 
-CommonUI 已引入，但完整前端/HUD、GameViewport 和部分停用依赖仍需接通。
+基础 HUD、根布局、GameViewport 和菜单路由已接通；用户选择不引入 CommonGame／CommonUser／ModularGameplayActors。旧计划保留为历史，完整前端另行制作。
 
 ## 验证与维护
 

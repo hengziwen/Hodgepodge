@@ -27,149 +27,150 @@
    6: GlobalDefaultGameMode=/Script/Hodgepodge.HodgepodgeGameModeBase
    7: GameInstanceClass=/Script/Hodgepodge.HodgeGameInstanceBase
    9: [/Script/Engine.Engine]
-  10: LocalPlayerClassName=/Script/Hodgepodge.HodgeLocalPlayerBase
-  12: [/Script/Engine.RendererSettings]
-  13: r.AllowStaticLighting=False
-  15: r.GenerateMeshDistanceFields=True
-  17: r.DynamicGlobalIlluminationMethod=1
-  19: r.ReflectionMethod=1
-  21: r.SkinCache.CompileShaders=True
-  23: r.RayTracing=True
-  25: r.Shadow.Virtual.Enable=1
-  27: r.DefaultFeature.AutoExposure.ExtendDefaultLuminanceRange=True
-  29: r.DefaultFeature.LocalExposure.HighlightContrastScale=0.8
-  31: r.DefaultFeature.LocalExposure.ShadowContrastScale=0.8
-  33: [/Script/WindowsTargetPlatform.WindowsTargetSettings]
-  34: DefaultGraphicsRHI=DefaultGraphicsRHI_DX12
+  10: GameViewportClientClassName=/Script/Hodgepodge.HodgeGameViewportClient
+  11: LocalPlayerClassName=/Script/Hodgepodge.HodgeLocalPlayerBase
+  13: [/Script/Engine.RendererSettings]
+  14: r.AllowStaticLighting=False
+  16: r.GenerateMeshDistanceFields=True
+  18: r.DynamicGlobalIlluminationMethod=1
+  20: r.ReflectionMethod=1
+  22: r.SkinCache.CompileShaders=True
+  24: r.RayTracing=True
+  26: r.Shadow.Virtual.Enable=1
+  28: r.DefaultFeature.AutoExposure.ExtendDefaultLuminanceRange=True
+  30: r.DefaultFeature.LocalExposure.HighlightContrastScale=0.8
+  32: r.DefaultFeature.LocalExposure.ShadowContrastScale=0.8
+  34: [/Script/WindowsTargetPlatform.WindowsTargetSettings]
   35: DefaultGraphicsRHI=DefaultGraphicsRHI_DX12
-  36: -D3D12TargetedShaderFormats=PCD3D_SM5
-  37: +D3D12TargetedShaderFormats=PCD3D_SM6
-  38: -D3D11TargetedShaderFormats=PCD3D_SM5
-  39: +D3D11TargetedShaderFormats=PCD3D_SM5
-  40: Compiler=Default
-  41: AudioSampleRate=48000
-  42: AudioCallbackBufferFrameSize=1024
-  43: AudioNumBuffersToEnqueue=1
-  44: AudioMaxChannels=0
-  45: AudioNumSourceWorkers=4
-  46: SpatializationPlugin=
-  47: SourceDataOverridePlugin=
-  48: ReverbPlugin=
-  49: OcclusionPlugin=
-  50: CompressionOverrides=(bOverrideCompressionTimes=False,DurationThreshold=5.000000,MaxNumRandomBranches=0,SoundCueQualityIndex=0)
-  51: CacheSizeKB=65536
-  52: MaxChunkSizeOverrideKB=0
-  53: bResampleForDevice=False
-  54: MaxSampleRate=48000.000000
-  55: HighSampleRate=32000.000000
-  56: MedSampleRate=24000.000000
-  57: LowSampleRate=12000.000000
-  58: MinSampleRate=8000.000000
-  59: CompressionQualityModifier=1.000000
-  60: AutoStreamingThreshold=0.000000
-  61: SoundCueCookQualityIndex=-1
-  63: [/Script/LinuxTargetPlatform.LinuxTargetSettings]
-  64: -TargetedRHIs=SF_VULKAN_SM5
-  65: +TargetedRHIs=SF_VULKAN_SM6
-  67: [/Script/HardwareTargeting.HardwareTargetingSettings]
-  68: TargetedHardwareClass=Desktop
-  69: AppliedTargetedHardwareClass=Desktop
-  70: DefaultGraphicsPerformance=Maximum
-  71: AppliedDefaultGraphicsPerformance=Maximum
-  73: [/Script/WorldPartitionEditor.WorldPartitionEditorSettings]
-  74: CommandletClass=Class'/Script/UnrealEd.WorldPartitionConvertCommandlet'
-  76: [/Script/Engine.UserInterfaceSettings]
-  77: bAuthorizeAutomaticWidgetVariableCreation=False
-  78: FontDPIPreset=Standard
-  79: FontDPI=72
-  81: [/Script/Engine.Engine]
-  82: +ActiveGameNameRedirects=(OldGameName="TP_BlankBP",NewGameName="/Script/Hodgepodge")
-  83: +ActiveGameNameRedirects=(OldGameName="/Script/TP_BlankBP",NewGameName="/Script/Hodgepodge")
-  84: AssetManagerClassName=/Script/Hodgepodge.HodgeAssetManager
-  86: [/Script/AndroidFileServerEditor.AndroidFileServerRuntimeSettings]
-  87: bEnablePlugin=True
-  88: bAllowNetworkConnection=True
-  89: SecurityToken=[REDACTED]
-  90: bIncludeInShipping=False
-  91: bAllowExternalStartInShipping=False
-  92: bCompileAFSProject=False
-  93: bUseCompression=False
-  94: bLogFiles=False
-  95: bReportStats=False
-  96: ConnectionType=USBOnly
-  97: bUseManualIPAddress=False
-  98: ManualIPAddress=
- 100: [/Script/Engine.GarbageCollectionSettings]
- 101: gc.DumpObjectCountsToLogWhenMaxObjectLimitExceeded=True
- 104: [CoreRedirects]
- 105: +ClassRedirects=(OldName="/Script/Hodgepodge.HodgepodgePlayerStateBase",NewName="/Script/Hodgepodge.HodgePlayerStateBase")
- 106: +ClassRedirects=(OldName="/Script/Hodgepodge.HodgepodgePlayerControllerBase",NewName="/Script/Hodgepodge.HodgePlayerControllerBase")
- 107: +ClassRedirects=(OldName="/Script/Hodgepodge.HodgepodgeGameStateBase",NewName="/Script/Hodgepodge.HodgeGameStateBase")
- 108: +ClassRedirects=(OldName="/Script/Hodgepodge.HodgepodgeGameModeBase",NewName="/Script/Hodgepodge.HodgeGameModeBase")
- 109: +ClassRedirects=(OldName="/Script/Hodgepodge.HodgepodgeGameInstanceBase",NewName="/Script/Hodgepodge.HodgeGameInstanceBase")
- 110: +ClassRedirects=(OldName="/Script/Hodgepodge.HodgepodgeActorComponentBase",NewName="/Script/Hodgepodge.HodgeActorComponentBase")
- 111: +ClassRedirects=(OldName="/Script/Hodgepodge.HodgepodgeCombatComponentBase",NewName="/Script/Hodgepodge.HodgeCombatComponentBase")
- 112: +ClassRedirects=(OldName="/Script/Hodgepodge.HodgepodgeCharacterBase",NewName="/Script/Hodgepodge.HodgeCharacterBase")
- 113: +ClassRedirects=(OldName="/Script/Hodgepodge.HodgepodgeActorBase",NewName="/Script/Hodgepodge.HodgeActorBase")
- 114: +ClassRedirects=(OldName="/Script/Hodgepodge.HodgepodgeAbilitySystemComponent",NewName="/Script/Hodgepodge.HodgeAbilitySystemComponent")
- 115: +ClassRedirects=(OldName="/Script/Hodgepodge.HodgepodgeAttributeSet",NewName="/Script/Hodgepodge.HodgeAttributeSet")
- 116: +ClassRedirects=(OldName="/Script/Hodgepodge.HodgepodgeGameplayAbilityBase",NewName="/Script/Hodgepodge.HodgeGameplayAbilityBase")
- 117: +ClassRedirects=(OldName="/Script/Hodgepodge.MyHodgeHeroCharacter",NewName="/Script/Hodgepodge.HodgeHeroCharacter")
- 118: +StructRedirects=(OldName="/Script/Hodgepodge.LyraPenetrationAvoidanceFeeler",NewName="/Script/Hodgepodge.HodgePenetrationAvoidanceFeeler")
- 119: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraGameplayCueManager",NewName="/Script/Hodgepodge.HodgeGameplayCueManager")
- 120: +ClassRedirects=(OldName="/Script/Hodgepodge.HodgeAbilitySystemComponentBase",NewName="/Script/Hodgepodge.HodgeAbilitySystemComponent")
- 121: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraGlobalAbilitySystem",NewName="/Script/Hodgepodge.HodgeGlobalAbilitySystem")
- 122: +StructRedirects=(OldName="/Script/Hodgepodge.LyraGameplayEffectContext",NewName="/Script/Hodgepodge.HodgeGameplayEffectContext")
- 123: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraAbilitySet",NewName="/Script/Hodgepodge.HodgeAbilitySet")
- 124: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraAbilityCost",NewName="/Script/Hodgepodge.HodgeAbilityCost")
- 125: +ClassRedirects=(OldName="/Script/Hodgepodge.HodgeInputComponentBase",NewName="/Script/Hodgepodge.HodgeInputComponent")
- 126: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraPlayerMappableKeyProfile",NewName="/Script/Hodgepodge.HodgePlayerMappableKeyProfile")
- 127: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraInputUserSettings",NewName="/Script/Hodgepodge.HodgeInputUserSettings")
- 128: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraAimSensitivityData",NewName="/Script/Hodgepodge.HodgeAimSensitivityData")
- 129: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraHeroComponent",NewName="/Script/Hodgepodge.HodgeHeroComponent")
- 130: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraActivatableWidget",NewName="/Script/Hodgepodge.HodgeActivatableWidget")
- 131: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraGameViewportClient",NewName="/Script/Hodgepodge.HodgeGameViewportClient")
- 132: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraHUD",NewName="/Script/Hodgepodge.HodgeHUD")
- 133: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraHUDLayout",NewName="/Script/Hodgepodge.HodgeHUDLayout")
- 134: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraJoystickWidget",NewName="/Script/Hodgepodge.HodgeJoystickWidget")
- 135: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraSettingScreen",NewName="/Script/Hodgepodge.HodgeSettingScreen")
- 136: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraSimulatedInputWidget",NewName="/Script/Hodgepodge.HodgeSimulatedInputWidget")
- 137: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraTaggedWidget",NewName="/Script/Hodgepodge.HodgeTaggedWidget")
- 138: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraTouchRegion",NewName="/Script/Hodgepodge.HodgeTouchRegion")
- 139: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraWeaponUserInterface",NewName="/Script/Hodgepodge.HodgeWeaponUserInterface")
- 140: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraReticleWidgetBase",NewName="/Script/Hodgepodge.HodgeReticleWidgetBase")
- 141: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraUIMessaging",NewName="/Script/Hodgepodge.HodgeUIMessaging")
- 142: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraUIManagerSubsystem",NewName="/Script/Hodgepodge.HodgeUIManagerSubsystem")
- 143: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraPerfStatWidgetBase",NewName="/Script/Hodgepodge.HodgePerfStatWidgetBase")
- 144: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraPerfStatContainerBase",NewName="/Script/Hodgepodge.HodgePerfStatContainerBase")
- 145: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraIndicatorManagerComponent",NewName="/Script/Hodgepodge.HodgeIndicatorManagerComponent")
- 146: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraLobbyBackground",NewName="/Script/Hodgepodge.HodgeLobbyBackground")
- 147: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraFrontendStateComponent",NewName="/Script/Hodgepodge.HodgeFrontendStateComponent")
- 148: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraActionWidget",NewName="/Script/Hodgepodge.HodgeActionWidget")
- 149: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraButtonBase",NewName="/Script/Hodgepodge.HodgeButtonBase")
- 150: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraLoadingScreenSubsystem",NewName="/Script/Hodgepodge.HodgeLoadingScreenSubsystem")
- 151: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraControllerDisconnectedScreen",NewName="/Script/Hodgepodge.HodgeControllerDisconnectedScreen")
- 152: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraConfirmationScreen",NewName="/Script/Hodgepodge.HodgeConfirmationScreen")
- 153: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraBoundActionButton",NewName="/Script/Hodgepodge.HodgeBoundActionButton")
- 154: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraWidgetFactory_Class",NewName="/Script/Hodgepodge.HodgeWidgetFactory_Class")
- 155: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraListView",NewName="/Script/Hodgepodge.HodgeListView")
- 156: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraTabButtonBase",NewName="/Script/Hodgepodge.HodgeTabButtonBase")
- 157: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraTabListWidgetBase",NewName="/Script/Hodgepodge.HodgeTabListWidgetBase")
- 158: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraWidgetFactory",NewName="/Script/Hodgepodge.HodgeWidgetFactory")
- 159: +ClassRedirects=(OldName="/Script/Hodgepodge.HogdeWeaponUserInterface",NewName="/Script/Hodgepodge.HodgeWeaponUserInterface")
- 160: +ClassRedirects=(OldName="/Script/Hodgepodge.HogdeButtonBase",NewName="/Script/Hodgepodge.HodgeButtonBase")
- 161: +ClassRedirects=(OldName="/Script/Hodgepodge.HogdeActivatableWidget",NewName="/Script/Hodgepodge.HodgeActivatableWidget")
- 162: +ClassRedirects=(OldName="/Script/Hodgepodge.HogdeSettingScreen",NewName="/Script/Hodgepodge.HodgeSettingScreen")
- 163: +ClassRedirects=(OldName="/Script/Hodgepodge.HogdeTouchRegion",NewName="/Script/Hodgepodge.HodgeTouchRegion")
- 164: +ClassRedirects=(OldName="/Script/Hodgepodge.HogdeTaggedWidget",NewName="/Script/Hodgepodge.HodgeTaggedWidget")
- 165: +ClassRedirects=(OldName="/Script/Hodgepodge.HogdeJoystickWidget",NewName="/Script/Hodgepodge.HodgeJoystickWidget")
- 166: +ClassRedirects=(OldName="/Script/Hodgepodge.HodgfeTaggedWidget",NewName="/Script/Hodgepodge.HodgeTaggedWidget")
- 167: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraWeaponInstance",NewName="/Script/Hodgepodge.HodgeWeaponInstance")
- 168: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraEquipmentManagerComponent",NewName="/Script/Hodgepodge.HodgeEquipmentManagerComponent")
- 169: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraEquipmentInstance",NewName="/Script/Hodgepodge.HodgeEquipmentInstance")
- 170: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraEquipmentDefinition",NewName="/Script/Hodgepodge.HodgeEquipmentDefinition")
- 171: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraGameplayAbility_Jump",NewName="/Script/Hodgepodge.HodgeGameplayAbility_Jump")
- 172: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraGameplayAbility_Death",NewName="/Script/Hodgepodge.HodgeGameplayAbility_Death")
+  36: DefaultGraphicsRHI=DefaultGraphicsRHI_DX12
+  37: -D3D12TargetedShaderFormats=PCD3D_SM5
+  38: +D3D12TargetedShaderFormats=PCD3D_SM6
+  39: -D3D11TargetedShaderFormats=PCD3D_SM5
+  40: +D3D11TargetedShaderFormats=PCD3D_SM5
+  41: Compiler=Default
+  42: AudioSampleRate=48000
+  43: AudioCallbackBufferFrameSize=1024
+  44: AudioNumBuffersToEnqueue=1
+  45: AudioMaxChannels=0
+  46: AudioNumSourceWorkers=4
+  47: SpatializationPlugin=
+  48: SourceDataOverridePlugin=
+  49: ReverbPlugin=
+  50: OcclusionPlugin=
+  51: CompressionOverrides=(bOverrideCompressionTimes=False,DurationThreshold=5.000000,MaxNumRandomBranches=0,SoundCueQualityIndex=0)
+  52: CacheSizeKB=65536
+  53: MaxChunkSizeOverrideKB=0
+  54: bResampleForDevice=False
+  55: MaxSampleRate=48000.000000
+  56: HighSampleRate=32000.000000
+  57: MedSampleRate=24000.000000
+  58: LowSampleRate=12000.000000
+  59: MinSampleRate=8000.000000
+  60: CompressionQualityModifier=1.000000
+  61: AutoStreamingThreshold=0.000000
+  62: SoundCueCookQualityIndex=-1
+  64: [/Script/LinuxTargetPlatform.LinuxTargetSettings]
+  65: -TargetedRHIs=SF_VULKAN_SM5
+  66: +TargetedRHIs=SF_VULKAN_SM6
+  68: [/Script/HardwareTargeting.HardwareTargetingSettings]
+  69: TargetedHardwareClass=Desktop
+  70: AppliedTargetedHardwareClass=Desktop
+  71: DefaultGraphicsPerformance=Maximum
+  72: AppliedDefaultGraphicsPerformance=Maximum
+  74: [/Script/WorldPartitionEditor.WorldPartitionEditorSettings]
+  75: CommandletClass=Class'/Script/UnrealEd.WorldPartitionConvertCommandlet'
+  77: [/Script/Engine.UserInterfaceSettings]
+  78: bAuthorizeAutomaticWidgetVariableCreation=False
+  79: FontDPIPreset=Standard
+  80: FontDPI=72
+  82: [/Script/Engine.Engine]
+  83: +ActiveGameNameRedirects=(OldGameName="TP_BlankBP",NewGameName="/Script/Hodgepodge")
+  84: +ActiveGameNameRedirects=(OldGameName="/Script/TP_BlankBP",NewGameName="/Script/Hodgepodge")
+  85: AssetManagerClassName=/Script/Hodgepodge.HodgeAssetManager
+  87: [/Script/AndroidFileServerEditor.AndroidFileServerRuntimeSettings]
+  88: bEnablePlugin=True
+  89: bAllowNetworkConnection=True
+  90: SecurityToken=[REDACTED]
+  91: bIncludeInShipping=False
+  92: bAllowExternalStartInShipping=False
+  93: bCompileAFSProject=False
+  94: bUseCompression=False
+  95: bLogFiles=False
+  96: bReportStats=False
+  97: ConnectionType=USBOnly
+  98: bUseManualIPAddress=False
+  99: ManualIPAddress=
+ 101: [/Script/Engine.GarbageCollectionSettings]
+ 102: gc.DumpObjectCountsToLogWhenMaxObjectLimitExceeded=True
+ 105: [CoreRedirects]
+ 106: +ClassRedirects=(OldName="/Script/Hodgepodge.HodgepodgePlayerStateBase",NewName="/Script/Hodgepodge.HodgePlayerStateBase")
+ 107: +ClassRedirects=(OldName="/Script/Hodgepodge.HodgepodgePlayerControllerBase",NewName="/Script/Hodgepodge.HodgePlayerControllerBase")
+ 108: +ClassRedirects=(OldName="/Script/Hodgepodge.HodgepodgeGameStateBase",NewName="/Script/Hodgepodge.HodgeGameStateBase")
+ 109: +ClassRedirects=(OldName="/Script/Hodgepodge.HodgepodgeGameModeBase",NewName="/Script/Hodgepodge.HodgeGameModeBase")
+ 110: +ClassRedirects=(OldName="/Script/Hodgepodge.HodgepodgeGameInstanceBase",NewName="/Script/Hodgepodge.HodgeGameInstanceBase")
+ 111: +ClassRedirects=(OldName="/Script/Hodgepodge.HodgepodgeActorComponentBase",NewName="/Script/Hodgepodge.HodgeActorComponentBase")
+ 112: +ClassRedirects=(OldName="/Script/Hodgepodge.HodgepodgeCombatComponentBase",NewName="/Script/Hodgepodge.HodgeCombatComponentBase")
+ 113: +ClassRedirects=(OldName="/Script/Hodgepodge.HodgepodgeCharacterBase",NewName="/Script/Hodgepodge.HodgeCharacterBase")
+ 114: +ClassRedirects=(OldName="/Script/Hodgepodge.HodgepodgeActorBase",NewName="/Script/Hodgepodge.HodgeActorBase")
+ 115: +ClassRedirects=(OldName="/Script/Hodgepodge.HodgepodgeAbilitySystemComponent",NewName="/Script/Hodgepodge.HodgeAbilitySystemComponent")
+ 116: +ClassRedirects=(OldName="/Script/Hodgepodge.HodgepodgeAttributeSet",NewName="/Script/Hodgepodge.HodgeAttributeSet")
+ 117: +ClassRedirects=(OldName="/Script/Hodgepodge.HodgepodgeGameplayAbilityBase",NewName="/Script/Hodgepodge.HodgeGameplayAbilityBase")
+ 118: +ClassRedirects=(OldName="/Script/Hodgepodge.MyHodgeHeroCharacter",NewName="/Script/Hodgepodge.HodgeHeroCharacter")
+ 119: +StructRedirects=(OldName="/Script/Hodgepodge.LyraPenetrationAvoidanceFeeler",NewName="/Script/Hodgepodge.HodgePenetrationAvoidanceFeeler")
+ 120: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraGameplayCueManager",NewName="/Script/Hodgepodge.HodgeGameplayCueManager")
+ 121: +ClassRedirects=(OldName="/Script/Hodgepodge.HodgeAbilitySystemComponentBase",NewName="/Script/Hodgepodge.HodgeAbilitySystemComponent")
+ 122: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraGlobalAbilitySystem",NewName="/Script/Hodgepodge.HodgeGlobalAbilitySystem")
+ 123: +StructRedirects=(OldName="/Script/Hodgepodge.LyraGameplayEffectContext",NewName="/Script/Hodgepodge.HodgeGameplayEffectContext")
+ 124: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraAbilitySet",NewName="/Script/Hodgepodge.HodgeAbilitySet")
+ 125: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraAbilityCost",NewName="/Script/Hodgepodge.HodgeAbilityCost")
+ 126: +ClassRedirects=(OldName="/Script/Hodgepodge.HodgeInputComponentBase",NewName="/Script/Hodgepodge.HodgeInputComponent")
+ 127: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraPlayerMappableKeyProfile",NewName="/Script/Hodgepodge.HodgePlayerMappableKeyProfile")
+ 128: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraInputUserSettings",NewName="/Script/Hodgepodge.HodgeInputUserSettings")
+ 129: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraAimSensitivityData",NewName="/Script/Hodgepodge.HodgeAimSensitivityData")
+ 130: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraHeroComponent",NewName="/Script/Hodgepodge.HodgeHeroComponent")
+ 131: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraActivatableWidget",NewName="/Script/Hodgepodge.HodgeActivatableWidget")
+ 132: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraGameViewportClient",NewName="/Script/Hodgepodge.HodgeGameViewportClient")
+ 133: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraHUD",NewName="/Script/Hodgepodge.HodgeHUD")
+ 134: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraHUDLayout",NewName="/Script/Hodgepodge.HodgeHUDLayout")
+ 135: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraJoystickWidget",NewName="/Script/Hodgepodge.HodgeJoystickWidget")
+ 136: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraSettingScreen",NewName="/Script/Hodgepodge.HodgeSettingScreen")
+ 137: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraSimulatedInputWidget",NewName="/Script/Hodgepodge.HodgeSimulatedInputWidget")
+ 138: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraTaggedWidget",NewName="/Script/Hodgepodge.HodgeTaggedWidget")
+ 139: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraTouchRegion",NewName="/Script/Hodgepodge.HodgeTouchRegion")
+ 140: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraWeaponUserInterface",NewName="/Script/Hodgepodge.HodgeWeaponUserInterface")
+ 141: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraReticleWidgetBase",NewName="/Script/Hodgepodge.HodgeReticleWidgetBase")
+ 142: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraUIMessaging",NewName="/Script/Hodgepodge.HodgeUIMessaging")
+ 143: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraUIManagerSubsystem",NewName="/Script/Hodgepodge.HodgeUIManagerSubsystem")
+ 144: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraPerfStatWidgetBase",NewName="/Script/Hodgepodge.HodgePerfStatWidgetBase")
+ 145: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraPerfStatContainerBase",NewName="/Script/Hodgepodge.HodgePerfStatContainerBase")
+ 146: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraIndicatorManagerComponent",NewName="/Script/Hodgepodge.HodgeIndicatorManagerComponent")
+ 147: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraLobbyBackground",NewName="/Script/Hodgepodge.HodgeLobbyBackground")
+ 148: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraFrontendStateComponent",NewName="/Script/Hodgepodge.HodgeFrontendStateComponent")
+ 149: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraActionWidget",NewName="/Script/Hodgepodge.HodgeActionWidget")
+ 150: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraButtonBase",NewName="/Script/Hodgepodge.HodgeButtonBase")
+ 151: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraLoadingScreenSubsystem",NewName="/Script/Hodgepodge.HodgeLoadingScreenSubsystem")
+ 152: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraControllerDisconnectedScreen",NewName="/Script/Hodgepodge.HodgeControllerDisconnectedScreen")
+ 153: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraConfirmationScreen",NewName="/Script/Hodgepodge.HodgeConfirmationScreen")
+ 154: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraBoundActionButton",NewName="/Script/Hodgepodge.HodgeBoundActionButton")
+ 155: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraWidgetFactory_Class",NewName="/Script/Hodgepodge.HodgeWidgetFactory_Class")
+ 156: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraListView",NewName="/Script/Hodgepodge.HodgeListView")
+ 157: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraTabButtonBase",NewName="/Script/Hodgepodge.HodgeTabButtonBase")
+ 158: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraTabListWidgetBase",NewName="/Script/Hodgepodge.HodgeTabListWidgetBase")
+ 159: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraWidgetFactory",NewName="/Script/Hodgepodge.HodgeWidgetFactory")
+ 160: +ClassRedirects=(OldName="/Script/Hodgepodge.HogdeWeaponUserInterface",NewName="/Script/Hodgepodge.HodgeWeaponUserInterface")
+ 161: +ClassRedirects=(OldName="/Script/Hodgepodge.HogdeButtonBase",NewName="/Script/Hodgepodge.HodgeButtonBase")
+ 162: +ClassRedirects=(OldName="/Script/Hodgepodge.HogdeActivatableWidget",NewName="/Script/Hodgepodge.HodgeActivatableWidget")
+ 163: +ClassRedirects=(OldName="/Script/Hodgepodge.HogdeSettingScreen",NewName="/Script/Hodgepodge.HodgeSettingScreen")
+ 164: +ClassRedirects=(OldName="/Script/Hodgepodge.HogdeTouchRegion",NewName="/Script/Hodgepodge.HodgeTouchRegion")
+ 165: +ClassRedirects=(OldName="/Script/Hodgepodge.HogdeTaggedWidget",NewName="/Script/Hodgepodge.HodgeTaggedWidget")
+ 166: +ClassRedirects=(OldName="/Script/Hodgepodge.HogdeJoystickWidget",NewName="/Script/Hodgepodge.HodgeJoystickWidget")
+ 167: +ClassRedirects=(OldName="/Script/Hodgepodge.HodgfeTaggedWidget",NewName="/Script/Hodgepodge.HodgeTaggedWidget")
+ 168: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraWeaponInstance",NewName="/Script/Hodgepodge.HodgeWeaponInstance")
+ 169: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraEquipmentManagerComponent",NewName="/Script/Hodgepodge.HodgeEquipmentManagerComponent")
+ 170: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraEquipmentInstance",NewName="/Script/Hodgepodge.HodgeEquipmentInstance")
+ 171: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraEquipmentDefinition",NewName="/Script/Hodgepodge.HodgeEquipmentDefinition")
+ 172: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraGameplayAbility_Jump",NewName="/Script/Hodgepodge.HodgeGameplayAbility_Jump")
+ 173: +ClassRedirects=(OldName="/Script/Hodgepodge.LyraGameplayAbility_Death",NewName="/Script/Hodgepodge.HodgeGameplayAbility_Death")
 ```
 
 ## DefaultGame.ini
@@ -213,7 +214,7 @@
   45: +PrimaryAssetTypesToScan=(PrimaryAssetType="GameFeatureData",AssetBaseClass="/Script/GameFeatures.GameFeatureData",bHasBlueprintClasses=False,bIsEditorOnly=False,Directories=((Path="/Game/Unused")),SpecificAssets=,Rules=(Priority=-1,ChunkId=-1,bApplyRecursively=True,CookRule=AlwaysCook))
   46: +PrimaryAssetTypesToScan=(PrimaryAssetType="HodgeExperienceDefinition",AssetBaseClass="/Script/Hodgepodge.HodgeExperienceDefinition",bHasBlueprintClasses=True,bIsEditorOnly=False,Directories=((Path="/Game/Main/Experiences")),SpecificAssets=,Rules=(Priority=-1,ChunkId=-1,bApplyRecursively=True,CookRule=AlwaysCook))
   47: +PrimaryAssetTypesToScan=(PrimaryAssetType="HodgePawnData",AssetBaseClass="/Script/Hodgepodge.HodgePawnData",bHasBlueprintClasses=False,bIsEditorOnly=False,Directories=((Path="/Game/Main/Data")),SpecificAssets=,Rules=(Priority=-1,ChunkId=-1,bApplyRecursively=True,CookRule=AlwaysCook))
-  48: +PrimaryAssetTypesToScan=(PrimaryAssetType="HodgeExperienceActionSet",AssetBaseClass="/Script/Hodgepodge.HodgeExperienceActionSet",bHasBlueprintClasses=True,bIsEditorOnly=False,Directories=((Path="/Game/Main/Experiences")),SpecificAssets=,Rules=(Priority=-1,ChunkId=-1,bApplyRecursively=True,CookRule=AlwaysCook))
+  48: +PrimaryAssetTypesToScan=(PrimaryAssetType="HodgeExperienceActionSet",AssetBaseClass="/Script/Hodgepodge.HodgeExperienceActionSet",bHasBlueprintClasses=False,bIsEditorOnly=False,Directories=((Path="/Game/Main/Experiences"),(Path="/Game/Main/UI")),SpecificAssets=,Rules=(Priority=-1,ChunkId=-1,bApplyRecursively=True,CookRule=AlwaysCook))
   49: bOnlyCookProductionAssets=False
   50: bShouldManagerDetermineTypeAndName=False
   51: bShouldGuessTypeAndNameInEditor=True
@@ -228,6 +229,10 @@
   61: bMultiListen=False
   62: bAllowNonLoopback=False
   63: bRequireCapabilityToken=[REDACTED]
+  66: [/Script/Hodgepodge.HodgeUIManagerSubsystem]
+  67: RootLayoutClass=/Game/Main/UI/Foundation/WBP_HodgePrimaryLayout.WBP_HodgePrimaryLayout_C
+  69: [/Script/CommonInput.CommonInputSettings]
+  70: InputData=/Game/Main/UI/Foundation/B_HodgeUIInputData.B_HodgeUIInputData_C
 ```
 
 ## DefaultGameplayTags.ini
@@ -235,171 +240,158 @@
 [打开源配置](../../../Config/DefaultGameplayTags.ini)
 
 ```ini
-   1: ; =============================================================================
-   2: ; Hodgepodge GameplayTag 注册表
-   3: ; -----------------------------------------------------------------------------
-   4: ; 由 LyraStarterGame (UE 5.5) 的 GameplayTag 全量对照表迁移而来，共 286 条。
-   5: ; 迁移规则：原 Lyra.* 命名空间整体重命名为 Hodge.*，其余标签保持原名。
-   6: ; 说明：
-   7: ;   1. 本文件只登记非原生标签；由 UE_DEFINE_GAMEPLAY_TAG 注册的标签见
-   8: ;      Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp
-   9: ;      （另有 HodgeHealthSet.cpp、HodgeGameplayAbility.cpp 等处的局部注册）。
-  10: ;   2. 原表中的 DataTable 标签（DT_AnimEffectTags / DT_SurfaceTypes）已展开到下方，
-  11: ;      故 GameplayTagTableList 暂作注释；日后拷贝同名 DataTable 再取消注释。
-  12: ;   3. Explorer.* / TopDownArena.* / Subtitle.* 等来自尚未移植的 Lyra 插件，
-  13: ;      此处只登记标签，不代表对应系统已经实现。
-  14: ; =============================================================================
-  16: [/Script/GameplayTags.GameplayTagsSettings]
-  17: ImportTagsFromConfig=True
-  18: WarnOnInvalidTags=True
-  19: ClearInvalidTags=False
-  20: AllowEditorTagUnloading=True
-  21: AllowGameTagUnloading=False
-  22: FastReplication=False
-  23: bDynamicReplication=False
-  24: InvalidTagCharacters="\"\',"
-  25: NumBitsForContainerSize=6
-  26: NetIndexFirstBitSegment=16
-  27: +GameplayTagList=(Tag="a",DevComment="")
-  28: +GameplayTagList=(Tag="Ability.ActivateFail.CellAlreadyContainsBomb",DevComment="")
-  29: +GameplayTagList=(Tag="Ability.ActivateFail.MagazineFull",DevComment="")
-  30: +GameplayTagList=(Tag="Ability.ActivateFail.NoSpareAmmo",DevComment="")
-  31: +GameplayTagList=(Tag="Ability.Attack",DevComment="")
-  32: +GameplayTagList=(Tag="Ability.Attack.Light.01",DevComment="Definition combo")
-  33: +GameplayTagList=(Tag="Ability.Attack.Light.02",DevComment="Definition combo")
-  34: +GameplayTagList=(Tag="Ability.Attack.Light.03",DevComment="Definition combo")
-  35: +GameplayTagList=(Tag="Ability.Attack.Light.04",DevComment="Definition combo")
-  36: +GameplayTagList=(Tag="Ability.Attack.Light.05",DevComment="Definition combo")
-  37: +GameplayTagList=(Tag="Ability.Type.Action.Skill",DevComment="Standalone combat skill")
-  38: +GameplayTagList=(Tag="AnimEffect.Footstep.Jog",DevComment="")
-  39: +GameplayTagList=(Tag="AnimEffect.Footstep.Jump",DevComment="")
-  40: +GameplayTagList=(Tag="AnimEffect.Footstep.Land",DevComment="")
-  41: +GameplayTagList=(Tag="AnimEffect.Footstep.Walk",DevComment="")
-  42: +GameplayTagList=(Tag="Combat.Source.Body.LeftHand",DevComment="")
-  43: +GameplayTagList=(Tag="Combo.Entry",DevComment="Definition combo")
-  44: +GameplayTagList=(Tag="Combo.Light.01",DevComment="Definition combo")
-  45: +GameplayTagList=(Tag="Combo.Light.02",DevComment="Definition combo")
-  46: +GameplayTagList=(Tag="Combo.Light.03",DevComment="Definition combo")
-  47: +GameplayTagList=(Tag="Combo.Light.04",DevComment="Definition combo")
-  48: +GameplayTagList=(Tag="Combo.Light.05",DevComment="Definition combo")
-  49: +GameplayTagList=(Tag="Event.Movement.ADS",DevComment="")
-  50: +GameplayTagList=(Tag="Event.Movement.Dash",DevComment="")
-  51: +GameplayTagList=(Tag="Event.Movement.Melee",DevComment="")
-  52: +GameplayTagList=(Tag="Event.Movement.Reload",DevComment="")
-  53: +GameplayTagList=(Tag="Event.Movement.WeaponFire",DevComment="")
-  54: +GameplayTagList=(Tag="Explorer",DevComment="")
-  55: +GameplayTagList=(Tag="Explorer.Mood.Angry",DevComment="")
-  56: +GameplayTagList=(Tag="Explorer.Mood.Awesome",DevComment="")
-  57: +GameplayTagList=(Tag="Explorer.Mood.Grumpy",DevComment="")
-  58: +GameplayTagList=(Tag="Explorer.Mood.Happy",DevComment="")
-  59: +GameplayTagList=(Tag="Explorer.Mood.None",DevComment="")
-  60: +GameplayTagList=(Tag="Explorer.SmartObject.Activity",DevComment="")
-  61: +GameplayTagList=(Tag="Explorer.SmartObject.Activity.Actions",DevComment="")
-  62: +GameplayTagList=(Tag="Explorer.SmartObject.Activity.Actions.Eat",DevComment="")
-  63: +GameplayTagList=(Tag="Explorer.SmartObject.Activity.Actions.Emote",DevComment="")
-  64: +GameplayTagList=(Tag="Explorer.SmartObject.Activity.Actions.Sit",DevComment="")
-  65: +GameplayTagList=(Tag="Explorer.SmartObject.Activity.Actions.Sleep",DevComment="")
-  66: +GameplayTagList=(Tag="Explorer.SmartObject.Activity.Actions.Sleep.AtNight",DevComment="")
-  67: +GameplayTagList=(Tag="Explorer.SmartObject.Activity.Actions.Sleep.DayTime",DevComment="")
-  68: +GameplayTagList=(Tag="Explorer.SmartObject.Activity.General",DevComment="")
-  69: +GameplayTagList=(Tag="Explorer.SmartObject.Activity.General.Default",DevComment="")
-  70: +GameplayTagList=(Tag="Explorer.SmartObject.Event",DevComment="")
-  71: +GameplayTagList=(Tag="Explorer.SmartObject.Event.Interaction",DevComment="")
-  72: +GameplayTagList=(Tag="Explorer.SmartObject.Event.Interaction.Ended",DevComment="")
-  73: +GameplayTagList=(Tag="Explorer.SmartObject.Event.Interaction.Required",DevComment="")
-  74: +GameplayTagList=(Tag="Explorer.SmartObject.Event.Interaction.Required.ToDisable",DevComment="")
-  75: +GameplayTagList=(Tag="Explorer.SmartObject.Event.Interaction.Required.ToEnable",DevComment="")
-  76: +GameplayTagList=(Tag="Explorer.SmartObject.Event.Interaction.Scripted",DevComment="")
-  77: +GameplayTagList=(Tag="Explorer.SmartObject.Event.Interaction.Scripted.ToDisable",DevComment="")
-  78: +GameplayTagList=(Tag="Explorer.SmartObject.Event.Interaction.Scripted.ToEnable",DevComment="")
-  79: +GameplayTagList=(Tag="Explorer.SmartObject.Event.Interaction.Started",DevComment="")
-  80: +GameplayTagList=(Tag="Explorer.SmartObject.Interact",DevComment="")
-  81: +GameplayTagList=(Tag="Explorer.SmartObject.Interact.NPC",DevComment="")
-  82: +GameplayTagList=(Tag="Explorer.SmartObject.Interact.Player",DevComment="")
-  83: +GameplayTagList=(Tag="Explorer.SmartObject.Slot",DevComment="")
-  84: +GameplayTagList=(Tag="Explorer.SmartObject.Slot.Sync",DevComment="")
-  85: +GameplayTagList=(Tag="Explorer.SmartObject.Slot.Sync.Action",DevComment="")
-  86: +GameplayTagList=(Tag="Explorer.SmartObject.Slot.Sync.Dependent",DevComment="")
-  87: +GameplayTagList=(Tag="Explorer.SmartObject.Slot.Sync.Primary",DevComment="")
-  88: +GameplayTagList=(Tag="Explorer.SmartObject.Slot.Sync.Ready",DevComment="")
-  89: +GameplayTagList=(Tag="Explorer.SmartObject.Slot.Sync.Stop",DevComment="")
-  90: +GameplayTagList=(Tag="Explorer.SmartObject.State",DevComment="")
-  91: +GameplayTagList=(Tag="Explorer.SmartObject.State.Broken",DevComment="")
-  92: +GameplayTagList=(Tag="Explorer.SmartObject.State.Enabled",DevComment="")
-  93: +GameplayTagList=(Tag="Explorer.SmartObject.State.Interaction",DevComment="")
-  94: +GameplayTagList=(Tag="Explorer.SmartObject.State.Interaction.Required",DevComment="")
-  95: +GameplayTagList=(Tag="Explorer.SmartObject.State.Interaction.Required.ToDisable",DevComment="")
-  96: +GameplayTagList=(Tag="Explorer.SmartObject.State.Interaction.Required.ToEnable",DevComment="")
-  97: +GameplayTagList=(Tag="Gameplay.Message.ADS",DevComment="Message to UI, Reticle")
-  98: +GameplayTagList=(Tag="Gameplay.Message.Nameplate.Add",DevComment="Register Nameplate Source")
-  99: +GameplayTagList=(Tag="Gameplay.Message.Nameplate.Discover",DevComment="Looking for nameplates")
- 100: +GameplayTagList=(Tag="Gameplay.Message.Nameplate.Remove",DevComment="Unregister Nameplate Source")
- 101: +GameplayTagList=(Tag="GameplayCue.Character.Spawn",DevComment="At spawning of the player in shooter game")
- 102: +GameplayTagList=(Tag="GameplayCue.ShooterGame.Interact.Collect",DevComment="")
- 103: +GameplayTagList=(Tag="GameplayCue.ShooterGame.Interact.WeaponPickup",DevComment="GCN for weapon pick FX attached to pawn")
- 104: +GameplayTagList=(Tag="GameplayCue.ShooterGame.UserMessage.MatchDecided",DevComment="")
- 105: +GameplayTagList=(Tag="GameplayCue.ShooterGame.UserMessage.WaitingForPlayers",DevComment="")
- 106: +GameplayTagList=(Tag="GameplayCue.TopDownArenaGame.PickupAcquired",DevComment="")
- 107: +GameplayTagList=(Tag="GameplayCue.TopDownArenaGame.UserMessage.GameOver",DevComment="")
- 108: +GameplayTagList=(Tag="GameplayCue.TopDownArenaGame.UserMessage.GetReady",DevComment="")
- 109: +GameplayTagList=(Tag="GameplayCue.TopDownArenaGame.UserMessage.WaitingForPlayers",DevComment="")
- 110: +GameplayTagList=(Tag="GameplayEvent.Attack.Hit.Finisher",DevComment="Final attack hit occurrence")
- 111: +GameplayTagList=(Tag="GameplayEvent.Attack.Hit.Pulse",DevComment="One discrete attack hit occurrence")
- 112: +GameplayTagList=(Tag="GameplayEvent.ReloadDone",DevComment="")
- 113: +GameplayTagList=(Tag="Hodge.AddNotification.KillFeed",DevComment="SendKillFeedInfo to UI")
- 114: +GameplayTagList=(Tag="Hodge.ShooterGame.Accolade.EliminationChain",DevComment="")
- 115: +GameplayTagList=(Tag="Hodge.ShooterGame.Accolade.EliminationChain.2x",DevComment="")
- 116: +GameplayTagList=(Tag="Hodge.ShooterGame.Accolade.EliminationChain.3x",DevComment="")
- 117: +GameplayTagList=(Tag="Hodge.ShooterGame.Accolade.EliminationChain.4x",DevComment="")
- 118: +GameplayTagList=(Tag="Hodge.ShooterGame.Accolade.EliminationChain.5x",DevComment="")
- 119: +GameplayTagList=(Tag="Hodge.ShooterGame.Accolade.EliminationStreak",DevComment="")
- 120: +GameplayTagList=(Tag="Hodge.ShooterGame.Accolade.EliminationStreak.5",DevComment="")
- 121: +GameplayTagList=(Tag="Hodge.ShooterGame.Accolade.EliminationStreak.10",DevComment="")
- 122: +GameplayTagList=(Tag="Hodge.ShooterGame.Accolade.EliminationStreak.15",DevComment="")
- 123: +GameplayTagList=(Tag="Hodge.ShooterGame.Accolade.EliminationStreak.20",DevComment="")
- 124: +GameplayTagList=(Tag="Hodge.ShooterGame.TDM.TeamScore",DevComment="")
- 125: +GameplayTagList=(Tag="Hodge.ShooterGame.Weapon.MagazineAmmo",DevComment="")
- 126: +GameplayTagList=(Tag="Hodge.ShooterGame.Weapon.MagazineSize",DevComment="")
- 127: +GameplayTagList=(Tag="Hodge.ShooterGame.Weapon.SpareAmmo",DevComment="")
- 128: +GameplayTagList=(Tag="HUD.Slot.EliminationFeed",DevComment="")
- 129: +GameplayTagList=(Tag="HUD.Slot.Equipment",DevComment="")
- 130: +GameplayTagList=(Tag="HUD.Slot.ModeStatus",DevComment="")
- 131: +GameplayTagList=(Tag="HUD.Slot.PerfStats.Graph",DevComment="")
- 132: +GameplayTagList=(Tag="HUD.Slot.PerfStats.Text",DevComment="")
- 133: +GameplayTagList=(Tag="HUD.Slot.Reticle",DevComment="")
- 134: +GameplayTagList=(Tag="HUD.Slot.TeamScore",DevComment="")
- 135: +GameplayTagList=(Tag="HUD.Slot.TopAccolades",DevComment="")
- 136: +GameplayTagList=(Tag="InputIntent.Attack.Light",DevComment="Definition combo")
- 137: +GameplayTagList=(Tag="InputTag.Ability.Emote",DevComment="")
- 138: +GameplayTagList=(Tag="InputTag.Ability.Interact",DevComment="")
- 139: +GameplayTagList=(Tag="InputTag.Ability.Quickslot.CycleBackward",DevComment="")
- 140: +GameplayTagList=(Tag="InputTag.Ability.Quickslot.CycleForward",DevComment="")
- 141: +GameplayTagList=(Tag="InputTag.Ability.Quickslot.SelectSlot",DevComment="Used to directly select one of the quickbar slots. Intended to be accompanied with a 0-based slot index.")
- 142: +GameplayTagList=(Tag="InputTag.Ability.ShowLeaderboard",DevComment="")
- 143: +GameplayTagList=(Tag="InputTag.Ability.Skill",DevComment="Standalone definition skill input")
- 144: +GameplayTagList=(Tag="InputTag.Ability.ToggleInventory",DevComment="")
- 145: +GameplayTagList=(Tag="InputTag.Ability.ToggleMap",DevComment="")
- 146: +GameplayTagList=(Tag="InputTag.Ability.ToggleMarkerInWorld",DevComment="")
- 147: +GameplayTagList=(Tag="ShooterGame.ControlPoint.Captured.Message",DevComment="Fired when a control point has been captured by a team")
- 148: +GameplayTagList=(Tag="ShooterGame.ControlPoint.TeamScore",DevComment="")
- 149: +GameplayTagList=(Tag="ShooterGame.ExtensionPoint.AbilityBar",DevComment="")
- 150: +GameplayTagList=(Tag="ShooterGame.GamePhase.Playing",DevComment="")
- 151: +GameplayTagList=(Tag="ShooterGame.GamePhase.PostGame",DevComment="")
- 152: +GameplayTagList=(Tag="ShooterGame.GamePhase.Warmup",DevComment="")
- 153: +GameplayTagList=(Tag="ShooterGame.Score.Assists",DevComment="")
- 154: +GameplayTagList=(Tag="ShooterGame.Score.ControlPointCapture",DevComment="")
- 155: +GameplayTagList=(Tag="ShooterGame.Score.Deaths",DevComment="")
- 156: +GameplayTagList=(Tag="ShooterGame.Score.Eliminations",DevComment="")
- 157: +GameplayTagList=(Tag="Subtitle.TextColor.White",DevComment="")
- 158: +GameplayTagList=(Tag="Subtitle.TextColor.Yellow",DevComment="")
- 159: +GameplayTagList=(Tag="SurfaceType.Character",DevComment="")
- 160: +GameplayTagList=(Tag="SurfaceType.Concrete",DevComment="")
- 161: +GameplayTagList=(Tag="SurfaceType.Default",DevComment="")
- 162: +GameplayTagList=(Tag="SurfaceType.Glass",DevComment="")
- 163: +GameplayTagList=(Tag="TODO.GameModeDamageImmunity",DevComment="")
- 164: +GameplayTagList=(Tag="TopDownArena.ExtensionPoint.AbilityBar",DevComment="")
- 165: +GameplayTagList=(Tag="TopDownArena.ExtensionPoint.Players",DevComment="")
- 166: +GameplayTagList=(Tag="TopDownArena.ExtensionPoint.StatsBar",DevComment="")
+   1: ;METADATA=(Diff=true, UseCommands=true)
+   2: [/Script/GameplayTags.GameplayTagsSettings]
+   3: ImportTagsFromConfig=True
+   4: WarnOnInvalidTags=True
+   5: ClearInvalidTags=False
+   6: AllowEditorTagUnloading=True
+   7: AllowGameTagUnloading=False
+   8: FastReplication=False
+   9: bDynamicReplication=False
+  10: InvalidTagCharacters="\"\',"
+  11: NumBitsForContainerSize=6
+  12: NetIndexFirstBitSegment=16
+  13: +GameplayTagList=(Tag="a",DevComment="")
+  14: +GameplayTagList=(Tag="Ability.ActivateFail.CellAlreadyContainsBomb",DevComment="")
+  15: +GameplayTagList=(Tag="Ability.ActivateFail.MagazineFull",DevComment="")
+  16: +GameplayTagList=(Tag="Ability.ActivateFail.NoSpareAmmo",DevComment="")
+  17: +GameplayTagList=(Tag="Ability.Attack",DevComment="")
+  18: +GameplayTagList=(Tag="Ability.Attack.Light.01",DevComment="Definition combo")
+  19: +GameplayTagList=(Tag="Ability.Attack.Light.02",DevComment="Definition combo")
+  20: +GameplayTagList=(Tag="Ability.Attack.Light.03",DevComment="Definition combo")
+  21: +GameplayTagList=(Tag="Ability.Attack.Light.04",DevComment="Definition combo")
+  22: +GameplayTagList=(Tag="Ability.Attack.Light.05",DevComment="Definition combo")
+  23: +GameplayTagList=(Tag="Ability.Type.Action.Skill",DevComment="Standalone combat skill")
+  24: +GameplayTagList=(Tag="AnimEffect.Footstep.Jog",DevComment="")
+  25: +GameplayTagList=(Tag="AnimEffect.Footstep.Jump",DevComment="")
+  26: +GameplayTagList=(Tag="AnimEffect.Footstep.Land",DevComment="")
+  27: +GameplayTagList=(Tag="AnimEffect.Footstep.Walk",DevComment="")
+  28: +GameplayTagList=(Tag="Combat.Source.Body.LeftHand",DevComment="")
+  29: +GameplayTagList=(Tag="Combo.Entry",DevComment="Definition combo")
+  30: +GameplayTagList=(Tag="Combo.Light.01",DevComment="Definition combo")
+  31: +GameplayTagList=(Tag="Combo.Light.02",DevComment="Definition combo")
+  32: +GameplayTagList=(Tag="Combo.Light.03",DevComment="Definition combo")
+  33: +GameplayTagList=(Tag="Combo.Light.04",DevComment="Definition combo")
+  34: +GameplayTagList=(Tag="Combo.Light.05",DevComment="Definition combo")
+  35: +GameplayTagList=(Tag="Event.Movement.ADS",DevComment="")
+  36: +GameplayTagList=(Tag="Event.Movement.Dash",DevComment="")
+  37: +GameplayTagList=(Tag="Event.Movement.Melee",DevComment="")
+  38: +GameplayTagList=(Tag="Event.Movement.Reload",DevComment="")
+  39: +GameplayTagList=(Tag="Event.Movement.WeaponFire",DevComment="")
+  40: +GameplayTagList=(Tag="Explorer",DevComment="")
+  41: +GameplayTagList=(Tag="Explorer.Mood.Angry",DevComment="")
+  42: +GameplayTagList=(Tag="Explorer.Mood.Awesome",DevComment="")
+  43: +GameplayTagList=(Tag="Explorer.Mood.Grumpy",DevComment="")
+  44: +GameplayTagList=(Tag="Explorer.Mood.Happy",DevComment="")
+  45: +GameplayTagList=(Tag="Explorer.Mood.None",DevComment="")
+  46: +GameplayTagList=(Tag="Explorer.SmartObject.Activity",DevComment="")
+  47: +GameplayTagList=(Tag="Explorer.SmartObject.Activity.Actions",DevComment="")
+  48: +GameplayTagList=(Tag="Explorer.SmartObject.Activity.Actions.Eat",DevComment="")
+  49: +GameplayTagList=(Tag="Explorer.SmartObject.Activity.Actions.Emote",DevComment="")
+  50: +GameplayTagList=(Tag="Explorer.SmartObject.Activity.Actions.Sit",DevComment="")
+  51: +GameplayTagList=(Tag="Explorer.SmartObject.Activity.Actions.Sleep",DevComment="")
+  52: +GameplayTagList=(Tag="Explorer.SmartObject.Activity.Actions.Sleep.AtNight",DevComment="")
+  53: +GameplayTagList=(Tag="Explorer.SmartObject.Activity.Actions.Sleep.DayTime",DevComment="")
+  54: +GameplayTagList=(Tag="Explorer.SmartObject.Activity.General",DevComment="")
+  55: +GameplayTagList=(Tag="Explorer.SmartObject.Activity.General.Default",DevComment="")
+  56: +GameplayTagList=(Tag="Explorer.SmartObject.Event",DevComment="")
+  57: +GameplayTagList=(Tag="Explorer.SmartObject.Event.Interaction",DevComment="")
+  58: +GameplayTagList=(Tag="Explorer.SmartObject.Event.Interaction.Ended",DevComment="")
+  59: +GameplayTagList=(Tag="Explorer.SmartObject.Event.Interaction.Required",DevComment="")
+  60: +GameplayTagList=(Tag="Explorer.SmartObject.Event.Interaction.Required.ToDisable",DevComment="")
+  61: +GameplayTagList=(Tag="Explorer.SmartObject.Event.Interaction.Required.ToEnable",DevComment="")
+  62: +GameplayTagList=(Tag="Explorer.SmartObject.Event.Interaction.Scripted",DevComment="")
+  63: +GameplayTagList=(Tag="Explorer.SmartObject.Event.Interaction.Scripted.ToDisable",DevComment="")
+  64: +GameplayTagList=(Tag="Explorer.SmartObject.Event.Interaction.Scripted.ToEnable",DevComment="")
+  65: +GameplayTagList=(Tag="Explorer.SmartObject.Event.Interaction.Started",DevComment="")
+  66: +GameplayTagList=(Tag="Explorer.SmartObject.Interact",DevComment="")
+  67: +GameplayTagList=(Tag="Explorer.SmartObject.Interact.NPC",DevComment="")
+  68: +GameplayTagList=(Tag="Explorer.SmartObject.Interact.Player",DevComment="")
+  69: +GameplayTagList=(Tag="Explorer.SmartObject.Slot",DevComment="")
+  70: +GameplayTagList=(Tag="Explorer.SmartObject.Slot.Sync",DevComment="")
+  71: +GameplayTagList=(Tag="Explorer.SmartObject.Slot.Sync.Action",DevComment="")
+  72: +GameplayTagList=(Tag="Explorer.SmartObject.Slot.Sync.Dependent",DevComment="")
+  73: +GameplayTagList=(Tag="Explorer.SmartObject.Slot.Sync.Primary",DevComment="")
+  74: +GameplayTagList=(Tag="Explorer.SmartObject.Slot.Sync.Ready",DevComment="")
+  75: +GameplayTagList=(Tag="Explorer.SmartObject.Slot.Sync.Stop",DevComment="")
+  76: +GameplayTagList=(Tag="Explorer.SmartObject.State",DevComment="")
+  77: +GameplayTagList=(Tag="Explorer.SmartObject.State.Broken",DevComment="")
+  78: +GameplayTagList=(Tag="Explorer.SmartObject.State.Enabled",DevComment="")
+  79: +GameplayTagList=(Tag="Explorer.SmartObject.State.Interaction",DevComment="")
+  80: +GameplayTagList=(Tag="Explorer.SmartObject.State.Interaction.Required",DevComment="")
+  81: +GameplayTagList=(Tag="Explorer.SmartObject.State.Interaction.Required.ToDisable",DevComment="")
+  82: +GameplayTagList=(Tag="Explorer.SmartObject.State.Interaction.Required.ToEnable",DevComment="")
+  83: +GameplayTagList=(Tag="Gameplay.Message.ADS",DevComment="Message to UI, Reticle")
+  84: +GameplayTagList=(Tag="Gameplay.Message.Nameplate.Add",DevComment="Register Nameplate Source")
+  85: +GameplayTagList=(Tag="Gameplay.Message.Nameplate.Discover",DevComment="Looking for nameplates")
+  86: +GameplayTagList=(Tag="Gameplay.Message.Nameplate.Remove",DevComment="Unregister Nameplate Source")
+  87: +GameplayTagList=(Tag="GameplayCue.Character.Spawn",DevComment="At spawning of the player in shooter game")
+  88: +GameplayTagList=(Tag="GameplayCue.ShooterGame.Interact.Collect",DevComment="")
+  89: +GameplayTagList=(Tag="GameplayCue.ShooterGame.Interact.WeaponPickup",DevComment="GCN for weapon pick FX attached to pawn")
+  90: +GameplayTagList=(Tag="GameplayCue.ShooterGame.UserMessage.MatchDecided",DevComment="")
+  91: +GameplayTagList=(Tag="GameplayCue.ShooterGame.UserMessage.WaitingForPlayers",DevComment="")
+  92: +GameplayTagList=(Tag="GameplayCue.TopDownArenaGame.PickupAcquired",DevComment="")
+  93: +GameplayTagList=(Tag="GameplayCue.TopDownArenaGame.UserMessage.GameOver",DevComment="")
+  94: +GameplayTagList=(Tag="GameplayCue.TopDownArenaGame.UserMessage.GetReady",DevComment="")
+  95: +GameplayTagList=(Tag="GameplayCue.TopDownArenaGame.UserMessage.WaitingForPlayers",DevComment="")
+  96: +GameplayTagList=(Tag="GameplayEvent.Attack.Hit.Finisher",DevComment="Final attack hit occurrence")
+  97: +GameplayTagList=(Tag="GameplayEvent.Attack.Hit.Pulse",DevComment="One discrete attack hit occurrence")
+  98: +GameplayTagList=(Tag="GameplayEvent.ReloadDone",DevComment="")
+  99: +GameplayTagList=(Tag="Hodge.AddNotification.KillFeed",DevComment="SendKillFeedInfo to UI")
+ 100: +GameplayTagList=(Tag="Hodge.ShooterGame.Accolade.EliminationChain",DevComment="")
+ 101: +GameplayTagList=(Tag="Hodge.ShooterGame.Accolade.EliminationChain.2x",DevComment="")
+ 102: +GameplayTagList=(Tag="Hodge.ShooterGame.Accolade.EliminationChain.3x",DevComment="")
+ 103: +GameplayTagList=(Tag="Hodge.ShooterGame.Accolade.EliminationChain.4x",DevComment="")
+ 104: +GameplayTagList=(Tag="Hodge.ShooterGame.Accolade.EliminationChain.5x",DevComment="")
+ 105: +GameplayTagList=(Tag="Hodge.ShooterGame.Accolade.EliminationStreak",DevComment="")
+ 106: +GameplayTagList=(Tag="Hodge.ShooterGame.Accolade.EliminationStreak.5",DevComment="")
+ 107: +GameplayTagList=(Tag="Hodge.ShooterGame.Accolade.EliminationStreak.10",DevComment="")
+ 108: +GameplayTagList=(Tag="Hodge.ShooterGame.Accolade.EliminationStreak.15",DevComment="")
+ 109: +GameplayTagList=(Tag="Hodge.ShooterGame.Accolade.EliminationStreak.20",DevComment="")
+ 110: +GameplayTagList=(Tag="Hodge.ShooterGame.TDM.TeamScore",DevComment="")
+ 111: +GameplayTagList=(Tag="Hodge.ShooterGame.Weapon.MagazineAmmo",DevComment="")
+ 112: +GameplayTagList=(Tag="Hodge.ShooterGame.Weapon.MagazineSize",DevComment="")
+ 113: +GameplayTagList=(Tag="Hodge.ShooterGame.Weapon.SpareAmmo",DevComment="")
+ 114: +GameplayTagList=(Tag="HUD.Slot.EliminationFeed",DevComment="")
+ 115: +GameplayTagList=(Tag="HUD.Slot.Equipment",DevComment="")
+ 116: +GameplayTagList=(Tag="HUD.Slot.ModeStatus",DevComment="")
+ 117: +GameplayTagList=(Tag="HUD.Slot.PerfStats.Graph",DevComment="")
+ 118: +GameplayTagList=(Tag="HUD.Slot.PerfStats.Text",DevComment="")
+ 119: +GameplayTagList=(Tag="HUD.Slot.Reticle",DevComment="")
+ 120: +GameplayTagList=(Tag="HUD.Slot.TeamScore",DevComment="")
+ 121: +GameplayTagList=(Tag="HUD.Slot.TopAccolades",DevComment="")
+ 122: +GameplayTagList=(Tag="InputIntent.Attack.Light",DevComment="Definition combo")
+ 123: +GameplayTagList=(Tag="InputTag.Ability.Emote",DevComment="")
+ 124: +GameplayTagList=(Tag="InputTag.Ability.Interact",DevComment="")
+ 125: +GameplayTagList=(Tag="InputTag.Ability.Quickslot.CycleBackward",DevComment="")
+ 126: +GameplayTagList=(Tag="InputTag.Ability.Quickslot.CycleForward",DevComment="")
+ 127: +GameplayTagList=(Tag="InputTag.Ability.Quickslot.SelectSlot",DevComment="Used to directly select one of the quickbar slots. Intended to be accompanied with a 0-based slot index.")
+ 128: +GameplayTagList=(Tag="InputTag.Ability.ShowLeaderboard",DevComment="")
+ 129: +GameplayTagList=(Tag="InputTag.Ability.Skill",DevComment="Standalone definition skill input")
+ 130: +GameplayTagList=(Tag="InputTag.Ability.ToggleInventory",DevComment="")
+ 131: +GameplayTagList=(Tag="InputTag.Ability.ToggleMap",DevComment="")
+ 132: +GameplayTagList=(Tag="InputTag.Ability.ToggleMarkerInWorld",DevComment="")
+ 133: +GameplayTagList=(Tag="ShooterGame.ControlPoint.Captured.Message",DevComment="Fired when a control point has been captured by a team")
+ 134: +GameplayTagList=(Tag="ShooterGame.ControlPoint.TeamScore",DevComment="")
+ 135: +GameplayTagList=(Tag="ShooterGame.ExtensionPoint.AbilityBar",DevComment="")
+ 136: +GameplayTagList=(Tag="ShooterGame.GamePhase.Playing",DevComment="")
+ 137: +GameplayTagList=(Tag="ShooterGame.GamePhase.PostGame",DevComment="")
+ 138: +GameplayTagList=(Tag="ShooterGame.GamePhase.Warmup",DevComment="")
+ 139: +GameplayTagList=(Tag="ShooterGame.Score.Assists",DevComment="")
+ 140: +GameplayTagList=(Tag="ShooterGame.Score.ControlPointCapture",DevComment="")
+ 141: +GameplayTagList=(Tag="ShooterGame.Score.Deaths",DevComment="")
+ 142: +GameplayTagList=(Tag="ShooterGame.Score.Eliminations",DevComment="")
+ 143: +GameplayTagList=(Tag="Subtitle.TextColor.White",DevComment="")
+ 144: +GameplayTagList=(Tag="Subtitle.TextColor.Yellow",DevComment="")
+ 145: +GameplayTagList=(Tag="SurfaceType.Character",DevComment="")
+ 146: +GameplayTagList=(Tag="SurfaceType.Concrete",DevComment="")
+ 147: +GameplayTagList=(Tag="SurfaceType.Default",DevComment="")
+ 148: +GameplayTagList=(Tag="SurfaceType.Glass",DevComment="")
+ 149: +GameplayTagList=(Tag="TODO.GameModeDamageImmunity",DevComment="")
+ 150: +GameplayTagList=(Tag="TopDownArena.ExtensionPoint.AbilityBar",DevComment="")
+ 151: +GameplayTagList=(Tag="TopDownArena.ExtensionPoint.Players",DevComment="")
+ 152: +GameplayTagList=(Tag="TopDownArena.ExtensionPoint.StatsBar",DevComment="")
 ```
 
 ## DefaultInput.ini
@@ -504,4 +496,7 @@
   95: DefaultTouchInterface=/Engine/MobileResources/HUD/DefaultVirtualJoysticks.DefaultVirtualJoysticks
   96: -ConsoleKeys=Tilde
   97: +ConsoleKeys=Tilde
+ 100: [/Script/CommonUI.CommonUIInputSettings]
+ 101: UIActionProcessingPriority=10000
+ 102: +InputActions=(ActionTag=UI.Action.Escape,DefaultDisplayName=NSLOCTEXT("HodgeUI","Menu","Menu"),KeyMappings=((Key=Escape),(Key=Gamepad_Special_Right)))
 ```

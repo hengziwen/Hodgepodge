@@ -62,6 +62,25 @@ Editor 动画文本导入、属性/引用修正、编译诊断与实验 PIE 配�
 
 模块定义或基础代码；请查看对应文件。
 
+## HodgeUIAuthoringLibrary.cpp
+
+[Source/HodgeAbilityEditor/Private/HodgeUIAuthoringLibrary.cpp](../../../Source/HodgeAbilityEditor/Private/HodgeUIAuthoringLibrary.cpp)
+
+仅 Editor 的 Main UI 资产制作、原生 PIE 命令调度、Slate 截图与只读检查入口。
+
+- `UHodgeUIAuthoringLibrary::CreateFoundationAssets` — L125
+- `UHodgeUIAuthoringLibrary::InspectPlayerUI` — L190
+- `UHodgeUIAuthoringLibrary::QueueUIAction` — L263
+- `UHodgeUIAuthoringLibrary::MigrateDesignerAssets` — L822
+- `UHodgeUIAuthoringLibrary::InspectDesignerAssets` — L916
+- `UHodgeUIAuthoringLibrary::ConfigureDesignerPreviews` — L931
+
+## HodgeUIAuthoringLibrary.h
+
+[Source/HodgeAbilityEditor/Private/HodgeUIAuthoringLibrary.h](../../../Source/HodgeAbilityEditor/Private/HodgeUIAuthoringLibrary.h)
+
+仅 Editor 的 Main UI 资产制作、原生 PIE 命令调度、Slate 截图与只读检查入口。
+
 ## Hodgepodge.Build.cs
 
 [Source/Hodgepodge/Hodgepodge.Build.cs](../../../Source/Hodgepodge/Hodgepodge.Build.cs)
@@ -351,6 +370,7 @@ Tag 输入、激活组、关系映射、Montage 复制和全局注册；失败�
 - `UHodgeAbilitySystemComponent::OnRep_ReplicatedAnimMontage` — L1070
 - `UHodgeAbilitySystemComponent::StopDefinitionMontage` — L1076
 - `UHodgeAbilitySystemComponent::CurrentMontageStop` — L1083
+- `UHodgeAbilitySystemComponent::ReleaseAbilityInput` — L1104
 
 ## HodgeAbilitySystemGlobals.cpp
 
@@ -1015,34 +1035,35 @@ GameState 上的 Experience 复制、资源加载、插件激活、Action 执行
 
 玩家 Init State 协调、ASC 接入、输入与相机；额外输入句柄持久化并在移除/EndPlay 解绑。新增“移动意图”信号（HasMoveIntent / GetMoveIntent / OnMoveIntentChanged），记 Input_Move 原始输入量、Completed/Canceled 清零，供移动取消后摇消费。
 
-- `UHodgeHeroComponent::NAME_BindInputsNow` — L81
-- `UHodgeHeroComponent::NAME_ActorFeatureName` — L84
-- `UHodgeHeroComponent::UHodgeHeroComponent` — L87
-- `UHodgeHeroComponent::OnRegister` — L98
-- `UHodgeHeroComponent::CanChangeInitState` — L142
-- `UHodgeHeroComponent::HandleChangeInitState` — L261
-- `UHodgeHeroComponent::OnActorInitStateChanged` — L328
-- `UHodgeHeroComponent::CheckDefaultInitialization` — L344
-- `UHodgeHeroComponent::BeginPlay` — L364
-- `UHodgeHeroComponent::EndPlay` — L388
-- `UHodgeHeroComponent::InitializePlayerInput` — L412
-- `UHodgeHeroComponent::AddAdditionalInputConfig` — L638
-- `UHodgeHeroComponent::RemoveAdditionalInputConfig` — L729
-- `UHodgeHeroComponent::IsReadyToBindInputs` — L758
-- `UHodgeHeroComponent::Input_AbilityInputTagPressed` — L765
-- `UHodgeHeroComponent::Input_AbilityInputTagReleased` — L788
-- `UHodgeHeroComponent::Input_Move` — L816
-- `UHodgeHeroComponent::Input_MoveStopped` — L889
-- `UHodgeHeroComponent::HasMoveIntent` — L897
-- `UHodgeHeroComponent::SetMoveIntent` — L904
-- `UHodgeHeroComponent::RefreshMoveIntent` — L911
-- `UHodgeHeroComponent::Input_LookMouse` — L925
-- `UHodgeHeroComponent::Input_LookStick` — L964
-- `UHodgeHeroComponent::Input_Crouch` — L1011
-- `UHodgeHeroComponent::Input_AutoRun` — L1024
-- `UHodgeHeroComponent::DetermineCameraMode` — L1044
-- `UHodgeHeroComponent::SetAbilityCameraMode` — L1077
-- `UHodgeHeroComponent::ClearAbilityCameraMode` — L1092
+- `UHodgeHeroComponent::NAME_BindInputsNow` — L83
+- `UHodgeHeroComponent::NAME_ActorFeatureName` — L86
+- `UHodgeHeroComponent::UHodgeHeroComponent` — L89
+- `UHodgeHeroComponent::OnRegister` — L100
+- `UHodgeHeroComponent::CanChangeInitState` — L144
+- `UHodgeHeroComponent::HandleChangeInitState` — L263
+- `UHodgeHeroComponent::OnActorInitStateChanged` — L330
+- `UHodgeHeroComponent::CheckDefaultInitialization` — L346
+- `UHodgeHeroComponent::BeginPlay` — L366
+- `UHodgeHeroComponent::EndPlay` — L390
+- `UHodgeHeroComponent::InitializePlayerInput` — L414
+- `UHodgeHeroComponent::AddAdditionalInputConfig` — L640
+- `UHodgeHeroComponent::RemoveAdditionalInputConfig` — L731
+- `UHodgeHeroComponent::IsReadyToBindInputs` — L760
+- `UHodgeHeroComponent::Input_AbilityInputTagPressed` — L767
+- `UHodgeHeroComponent::Input_AbilityInputTagReleased` — L791
+- `UHodgeHeroComponent::Input_Move` — L819
+- `UHodgeHeroComponent::Input_MoveStopped` — L893
+- `UHodgeHeroComponent::HasMoveIntent` — L901
+- `UHodgeHeroComponent::SetMoveIntent` — L908
+- `UHodgeHeroComponent::RefreshMoveIntent` — L915
+- `UHodgeHeroComponent::Input_LookMouse` — L929
+- `UHodgeHeroComponent::Input_LookStick` — L969
+- `UHodgeHeroComponent::Input_Crouch` — L1017
+- `UHodgeHeroComponent::Input_AutoRun` — L1031
+- `UHodgeHeroComponent::DetermineCameraMode` — L1052
+- `UHodgeHeroComponent::SetAbilityCameraMode` — L1085
+- `UHodgeHeroComponent::ClearAbilityCameraMode` — L1100
+- `UHodgeHeroComponent::ResetGameplayInput` — L1113
 
 ## HodgeInteractionComponentBase.cpp
 
@@ -1089,10 +1110,12 @@ PawnData 复制、Init State、ASC 关联/解除、TagRelationshipMapping 与 Cl
 
 注册 Init State 顺序、主控制器访问和全局生命周期扩展。
 
-- `UHodgeGameInstanceBase::UHodgeGameInstanceBase` — L17
-- `UHodgeGameInstanceBase::GetPrimaryPlayerController` — L22
-- `UHodgeGameInstanceBase::Shutdown` — L28
-- `UHodgeGameInstanceBase::Init` — L34
+- `UHodgeGameInstanceBase::UHodgeGameInstanceBase` — L19
+- `UHodgeGameInstanceBase::GetPrimaryPlayerController` — L24
+- `UHodgeGameInstanceBase::Shutdown` — L30
+- `UHodgeGameInstanceBase::Init` — L36
+- `UHodgeGameInstanceBase::AddLocalPlayer` — L85
+- `UHodgeGameInstanceBase::RemoveLocalPlayer` — L95
 
 ## HodgeGameModeBase.cpp
 
@@ -1159,7 +1182,7 @@ GameState 基础扩展生命周期。
 
 [Source/Hodgepodge/Private/Core/HUD/HodgeHUD.cpp](../../../Source/Hodgepodge/Private/Core/HUD/HodgeHUD.cpp)
 
-项目 HUD 类：GameFrameworkComponent 接收器注册与 GAS 调试 Actor 列表；不代表 CommonUI 已完成。
+HUD Receiver 提供 Experience AddWidgets 的真实注入／撤销入口，同时保留 GAS 调试 Actor 列表。
 
 - `AHodgeHUD::AHodgeHUD` — L37
 - `AHodgeHUD::PreInitializeComponents` — L46
@@ -1185,46 +1208,46 @@ GameState 基础扩展生命周期。
 
 具体控制器：每帧消费 ASC 输入、相机管理、AutoRun、UnPossess Avatar 清理及 Replay 扩展。
 
-- `AHodgePlayerController::AHodgePlayerController` — L96
-- `AHodgePlayerController::PreInitializeComponents` — L109
-- `AHodgePlayerController::BeginPlay` — L116
-- `AHodgePlayerController::EndPlay` — L141
-- `AHodgePlayerController::GetLifetimeReplicatedProps` — L148
-- `AHodgePlayerController::ReceivedPlayer` — L171
-- `AHodgePlayerController::PlayerTick` — L178
-- `AHodgePlayerController::GetHodgePlayerState` — L243
-- `AHodgePlayerController::GetHodgeAbilitySystemComponent` — L250
-- `AHodgePlayerController::GetHodgeHUD` — L260
-- `AHodgePlayerController::TryToRecordClientReplay` — L267
-- `AHodgePlayerController::ShouldRecordClientReplay` — L296
-- `AHodgePlayerController::OnPlayerStateChangedTeam` — L363
-- `AHodgePlayerController::OnPlayerStateChanged` — L370
-- `AHodgePlayerController::BroadcastOnPlayerStateChanged` — L377
-- `AHodgePlayerController::InitPlayerState` — L422
-- `AHodgePlayerController::CleanupPlayerState` — L432
-- `AHodgePlayerController::OnRep_PlayerState` — L442
-- `AHodgePlayerController::SetPlayer` — L452
-- `AHodgePlayerController::AddCheats` — L475
-- `AHodgePlayerController::ServerCheat_Implementation` — L486
-- `AHodgePlayerController::ServerCheat_Validate` — L499
-- `AHodgePlayerController::ServerCheatAll_Implementation` — L506
-- `AHodgePlayerController::ServerCheatAll_Validate` — L526
-- `AHodgePlayerController::PreProcessInput` — L533
-- `AHodgePlayerController::PostProcessInput` — L540
-- `AHodgePlayerController::OnCameraPenetratingTarget` — L554
-- `AHodgePlayerController::OnPossess` — L561
-- `AHodgePlayerController::SetIsAutoRunning` — L586
-- `AHodgePlayerController::GetIsAutoRunning` — L609
-- `AHodgePlayerController::OnStartAutoRun` — L626
-- `AHodgePlayerController::OnEndAutoRun` — L640
-- `AHodgePlayerController::UpdateForceFeedback` — L654
-- `AHodgePlayerController::UpdateHiddenComponents` — L677
-- `AHodgePlayerController::OnUnPossess` — L787
-- `AHodgeReplayPlayerController::Tick` — L816
-- `AHodgeReplayPlayerController::SmoothTargetViewRotation` — L854
-- `AHodgeReplayPlayerController::ShouldRecordClientReplay` — L864
-- `AHodgeReplayPlayerController::RecorderPlayerStateUpdated` — L871
-- `AHodgeReplayPlayerController::OnPlayerStatePawnSet` — L891
+- `AHodgePlayerController::AHodgePlayerController` — L98
+- `AHodgePlayerController::PreInitializeComponents` — L111
+- `AHodgePlayerController::BeginPlay` — L118
+- `AHodgePlayerController::EndPlay` — L143
+- `AHodgePlayerController::GetLifetimeReplicatedProps` — L150
+- `AHodgePlayerController::ReceivedPlayer` — L173
+- `AHodgePlayerController::PlayerTick` — L180
+- `AHodgePlayerController::GetHodgePlayerState` — L245
+- `AHodgePlayerController::GetHodgeAbilitySystemComponent` — L252
+- `AHodgePlayerController::GetHodgeHUD` — L262
+- `AHodgePlayerController::TryToRecordClientReplay` — L269
+- `AHodgePlayerController::ShouldRecordClientReplay` — L298
+- `AHodgePlayerController::OnPlayerStateChangedTeam` — L365
+- `AHodgePlayerController::OnPlayerStateChanged` — L372
+- `AHodgePlayerController::BroadcastOnPlayerStateChanged` — L379
+- `AHodgePlayerController::InitPlayerState` — L424
+- `AHodgePlayerController::CleanupPlayerState` — L434
+- `AHodgePlayerController::OnRep_PlayerState` — L444
+- `AHodgePlayerController::SetPlayer` — L454
+- `AHodgePlayerController::AddCheats` — L477
+- `AHodgePlayerController::ServerCheat_Implementation` — L488
+- `AHodgePlayerController::ServerCheat_Validate` — L501
+- `AHodgePlayerController::ServerCheatAll_Implementation` — L508
+- `AHodgePlayerController::ServerCheatAll_Validate` — L528
+- `AHodgePlayerController::PreProcessInput` — L535
+- `AHodgePlayerController::PostProcessInput` — L542
+- `AHodgePlayerController::OnCameraPenetratingTarget` — L557
+- `AHodgePlayerController::OnPossess` — L564
+- `AHodgePlayerController::SetIsAutoRunning` — L589
+- `AHodgePlayerController::GetIsAutoRunning` — L612
+- `AHodgePlayerController::OnStartAutoRun` — L629
+- `AHodgePlayerController::OnEndAutoRun` — L643
+- `AHodgePlayerController::UpdateForceFeedback` — L657
+- `AHodgePlayerController::UpdateHiddenComponents` — L680
+- `AHodgePlayerController::OnUnPossess` — L790
+- `AHodgeReplayPlayerController::Tick` — L819
+- `AHodgeReplayPlayerController::SmoothTargetViewRotation` — L857
+- `AHodgeReplayPlayerController::ShouldRecordClientReplay` — L867
+- `AHodgeReplayPlayerController::RecorderPlayerStateUpdated` — L874
+- `AHodgeReplayPlayerController::OnPlayerStatePawnSet` — L894
 
 ## HodgePlayerControllerBase.cpp
 
@@ -1275,7 +1298,7 @@ GameState 基础扩展生命周期。
 - `AHodgePlayerState::InitializeCharacterProgression` — L417
 - `AHodgePlayerState::AreAttributesReadyFor` — L428
 - `AHodgePlayerState::NotifyAttributeReadiness` — L434
-- `AHodgePlayerState::OnRep_AttributeReadyState` — L442
+- `AHodgePlayerState::OnRep_AttributeReadyState` — L443
 
 ## HodgePlayerStateBase.cpp
 
@@ -1611,14 +1634,15 @@ Experience 注入 Pawn，ASC 就绪后装备默认剑，来源授予句柄精确
 
 Widget 注入迁移草稿，当前实现停用。
 
-- `UGameFeatureAction_AddWidgets::OnGameFeatureDeactivating` — L46
-- `UGameFeatureAction_AddWidgets::AddAdditionalAssetBundleData` — L65
-- `UGameFeatureAction_AddWidgets::IsDataValid` — L80
-- `UGameFeatureAction_AddWidgets::AddToWorld` — L155
-- `UGameFeatureAction_AddWidgets::Reset` — L189
-- `UGameFeatureAction_AddWidgets::HandleActorExtension` — L211
-- `UGameFeatureAction_AddWidgets::AddWidgets` — L230
-- `UGameFeatureAction_AddWidgets::RemoveWidgets` — L279
+- `UGameFeatureAction_AddWidgets::OnGameFeatureDeactivating` — L51
+- `UGameFeatureAction_AddWidgets::AddAdditionalAssetBundleData` — L70
+- `UGameFeatureAction_AddWidgets::IsDataValid` — L85
+- `UGameFeatureAction_AddWidgets::AddToWorld` — L160
+- `UGameFeatureAction_AddWidgets::ClearActorContents` — L194
+- `UGameFeatureAction_AddWidgets::Reset` — L205
+- `UGameFeatureAction_AddWidgets::HandleActorExtension` — L218
+- `UGameFeatureAction_AddWidgets::AddWidgets` — L237
+- `UGameFeatureAction_AddWidgets::RemoveWidgets` — L286
 
 ## GameFeatureAction_SplitscreenConfig.cpp
 
@@ -1787,6 +1811,23 @@ Enhanced Input 用户设置派生入口；须核对实际设置类配置。
 - `FHodgeMeleeHitHistoryTest::RunTest` — L112
 - `FHodgeMeleeSpecContextTest::RunTest` — L135
 
+## HodgeUIDataSourceTests.cpp
+
+[Source/Hodgepodge/Private/Tests/HodgeUIDataSourceTests.cpp](../../../Source/Hodgepodge/Private/Tests/HodgeUIDataSourceTests.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `FHodgeUIInactiveDataTest::RunTest` — L8
+
+## HodgeUIFoundationTests.cpp
+
+[Source/Hodgepodge/Private/Tests/HodgeUIFoundationTests.cpp](../../../Source/Hodgepodge/Private/Tests/HodgeUIFoundationTests.cpp)
+
+模块定义或基础代码；请查看对应文件。
+
+- `FHodgeUIClosedRootTest::RunTest` — L11
+- `FHodgeUINonHodgeInstanceTest::RunTest` — L34
+
 ## HodgeWeaponPresentationTests.cpp
 
 [Source/Hodgepodge/Private/Tests/HodgeWeaponPresentationTests.cpp](../../../Source/Hodgepodge/Private/Tests/HodgeWeaponPresentationTests.cpp)
@@ -1885,6 +1926,25 @@ Enhanced Input 用户设置派生入口；须核对实际设置类配置。
 
 - `UHodgeWidgetFactory_Class::FindWidgetClassForData_Implementation` — L9
 
+## HodgeGameplayUIDataSource.cpp
+
+[Source/Hodgepodge/Private/UI/Data/HodgeGameplayUIDataSource.cpp](../../../Source/Hodgepodge/Private/UI/Data/HodgeGameplayUIDataSource.cpp)
+
+每个本地玩家共享的生命订阅、属性就绪与技能状态/输入接入；布局和按钮行为保存在 WBP。
+
+- `UHodgeGameplayUIDataSource::Initialize` — L18
+- `UHodgeGameplayUIDataSource::UnbindPawn` — L30
+- `UHodgeGameplayUIDataSource::UnbindState` — L41
+- `UHodgeGameplayUIDataSource::Shutdown` — L47
+- `UHodgeGameplayUIDataSource::StateChanged` — L60
+- `UHodgeGameplayUIDataSource::PawnChanged` — L68
+- `UHodgeGameplayUIDataSource::Refresh` — L90
+- `UHodgeGameplayUIDataSource::AttributeChanged` — L105
+- `UHodgeGameplayUIDataSource::DeathChanged` — L106
+- `UHodgeGameplayUIDataSource::CanUseGameplay` — L108
+- `UHodgeGameplayUIDataSource::GetAbilityDisplayState` — L115
+- `UHodgeGameplayUIDataSource::SubmitInput` — L145
+
 ## UIExtensionPointWidget.cpp
 
 [Source/Hodgepodge/Private/UI/Extension/UIExtensionPointWidget.cpp](../../../Source/Hodgepodge/Private/UI/Extension/UIExtensionPointWidget.cpp)
@@ -1892,13 +1952,14 @@ Enhanced Input 用户设置派生入口；须核对实际设置类配置。
 模块定义或基础代码；请查看对应文件。
 
 - `UUIExtensionPointWidget::UUIExtensionPointWidget` — L39
-- `UUIExtensionPointWidget::ReleaseSlateResources` — L45
-- `UUIExtensionPointWidget::RebuildWidget` — L56
-- `UUIExtensionPointWidget::ResetExtensionPoint` — L123
-- `UUIExtensionPointWidget::RegisterExtensionPoint` — L142
-- `UUIExtensionPointWidget::RegisterExtensionPointForPlayerState` — L186
-- `UUIExtensionPointWidget::OnAddOrRemoveExtension` — L214
-- `UUIExtensionPointWidget::ValidateCompiledDefaults` — L297
+- `UUIExtensionPointWidget::SetExtensionPointTag` — L44
+- `UUIExtensionPointWidget::ReleaseSlateResources` — L50
+- `UUIExtensionPointWidget::RebuildWidget` — L61
+- `UUIExtensionPointWidget::ResetExtensionPoint` — L132
+- `UUIExtensionPointWidget::RegisterExtensionPoint` — L156
+- `UUIExtensionPointWidget::RegisterExtensionPointForPlayerState` — L200
+- `UUIExtensionPointWidget::OnAddOrRemoveExtension` — L230
+- `UUIExtensionPointWidget::ValidateCompiledDefaults` — L313
 
 ## UIExtensionSystem.cpp
 
@@ -1983,6 +2044,24 @@ Enhanced Input 用户设置派生入口；须核对实际设置类配置。
 - `UHodgeLoadingScreenSubsystem::SetLoadingScreenContentWidget` — L18
 - `UHodgeLoadingScreenSubsystem::GetLoadingScreenContentWidget` — L28
 
+## HodgePrimaryGameLayout.cpp
+
+[Source/Hodgepodge/Private/UI/Foundation/HodgePrimaryGameLayout.cpp](../../../Source/Hodgepodge/Private/UI/Foundation/HodgePrimaryGameLayout.cpp)
+
+绑定 Designer 四个容器的本地玩家根布局，Push/Pop、异步加载取消与令牌恢复；不再生成运行时控件树。
+
+- `UHodgePrimaryGameLayout::NativeOnInitialized` — L13
+- `UHodgePrimaryGameLayout::RegisterLayer` — L23
+- `UHodgePrimaryGameLayout::GetLayer` — L28
+- `UHodgePrimaryGameLayout::Push` — L34
+- `UHodgePrimaryGameLayout::Pop` — L43
+- `UHodgePrimaryGameLayout::HasBlockingPage` — L52
+- `UHodgePrimaryGameLayout::PushAsync` — L66
+- `UHodgePrimaryGameLayout::FinishPush` — L85
+- `UHodgePrimaryGameLayout::CancelPush` — L96
+- `UHodgePrimaryGameLayout::ReleaseLayout` — L106
+- `UHodgePrimaryGameLayout::NativeDestruct` — L120
+
 ## ApplyFrontendPerfSettingsAction.cpp
 
 [Source/Hodgepodge/Private/UI/Frontend/ApplyFrontendPerfSettingsAction.cpp](../../../Source/Hodgepodge/Private/UI/Frontend/ApplyFrontendPerfSettingsAction.cpp)
@@ -2020,9 +2099,7 @@ Enhanced Input 用户设置派生入口；须核对实际设置类配置。
 
 [Source/Hodgepodge/Private/UI/HodgeGameViewportClient.cpp](../../../Source/Hodgepodge/Private/UI/HodgeGameViewportClient.cpp)
 
-模块定义或基础代码；请查看对应文件。
-
-状态：文件无有效非注释内容。
+引擎 CommonUI 视口路由，已在 DefaultEngine.ini 启用。
 
 ## HodgeHUDLayout.cpp
 
@@ -2030,18 +2107,20 @@ Enhanced Input 用户设置派生入口；须核对实际设置类配置。
 
 模块定义或基础代码；请查看对应文件。
 
-- `UHodgeHUDLayout::UHodgeHUDLayout` — L77
-- `UHodgeHUDLayout::NativeOnInitialized` — L90
-- `UHodgeHUDLayout::NativeDestruct` — L139
-- `UHodgeHUDLayout::EnsureMenuLayerStack` — L169
-- `UHodgeHUDLayout::HandleEscapeAction` — L199
-- `UHodgeHUDLayout::HandleInputDeviceConnectionChanged` — L247
-- `UHodgeHUDLayout::HandleInputDevicePairingChanged` — L271
-- `UHodgeHUDLayout::ShouldPlatformDisplayControllerDisconnectScreen` — L295
-- `UHodgeHUDLayout::NotifyControllerStateChangeForDisconnectScreen` — L328
-- `UHodgeHUDLayout::ProcessControllerDevicesHavingChangedForDisconnectScreen` — L369
-- `UHodgeHUDLayout::DisplayControllerDisconnectedMenu_Implementation` — L442
-- `UHodgeHUDLayout::HideControllerDisconnectedMenu_Implementation` — L481
+- `UHodgeHUDLayout::UHodgeHUDLayout` — L73
+- `UHodgeHUDLayout::NativeOnInitialized` — L86
+- `UHodgeHUDLayout::NativeDestruct` — L137
+- `UHodgeHUDLayout::CloseOwnedMenu` — L168
+- `UHodgeHUDLayout::NativeOnDeactivated` — L176
+- `UHodgeHUDLayout::EnsureMenuLayerStack` — L184
+- `UHodgeHUDLayout::HandleEscapeAction` — L193
+- `UHodgeHUDLayout::HandleInputDeviceConnectionChanged` — L210
+- `UHodgeHUDLayout::HandleInputDevicePairingChanged` — L234
+- `UHodgeHUDLayout::ShouldPlatformDisplayControllerDisconnectScreen` — L258
+- `UHodgeHUDLayout::NotifyControllerStateChangeForDisconnectScreen` — L291
+- `UHodgeHUDLayout::ProcessControllerDevicesHavingChangedForDisconnectScreen` — L332
+- `UHodgeHUDLayout::DisplayControllerDisconnectedMenu_Implementation` — L405
+- `UHodgeHUDLayout::HideControllerDisconnectedMenu_Implementation` — L444
 
 ## HodgeJoystickWidget.cpp
 
@@ -2192,9 +2271,26 @@ Enhanced Input 用户设置派生入口；须核对实际设置类配置。
 
 [Source/Hodgepodge/Private/UI/Subsystem/HodgeUIManagerSubsystem.cpp](../../../Source/Hodgepodge/Private/UI/Subsystem/HodgeUIManagerSubsystem.cpp)
 
-模块定义或基础代码；请查看对应文件。
+GameInstance 所属的本地玩家 UI 管理器：根布局、Controller 绑定、输入挂起和精确撤销；专服不创建。
 
-状态：文件无有效非注释内容。
+- `UHodgeUIManagerSubsystem::ShouldCreateSubsystem` — L16
+- `UHodgeUIManagerSubsystem::Initialize` — L22
+- `UHodgeUIManagerSubsystem::PlayerAdded` — L28
+- `UHodgeUIManagerSubsystem::ControllerChanged` — L45
+- `UHodgeUIManagerSubsystem::CreateRoot` — L65
+- `UHodgeUIManagerSubsystem::DestroyRoot` — L77
+- `UHodgeUIManagerSubsystem::PlayerRemoved` — L98
+- `UHodgeUIManagerSubsystem::Deinitialize` — L108
+- `UHodgeUIManagerSubsystem::GetRootLayout` — L117
+- `UHodgeUIManagerSubsystem::IsGameInputAllowed` — L123
+- `UHodgeUIManagerSubsystem::AllowsGameplayInput` — L131
+- `UHodgeUIManagerSubsystem::ClearGameplayInput` — L139
+- `UHodgeUIManagerSubsystem::RefreshInputState` — L149
+- `UHodgeUIManagerSubsystem::SuspendInput` — L154
+- `UHodgeUIManagerSubsystem::ResumeInput` — L167
+- `UHodgeUIManagerSubsystem::GetUIManager` — L178
+- `UHodgeUIManagerSubsystem::GetRootLayoutForController` — L183
+- `UHodgeUIManagerSubsystem::GetGameplayDataForController` — L190
 
 ## HodgeUIMessaging.cpp
 
@@ -2620,7 +2716,7 @@ GameState 基础扩展生命周期。
 
 [Source/Hodgepodge/Public/Core/HUD/HodgeHUD.h](../../../Source/Hodgepodge/Public/Core/HUD/HodgeHUD.h)
 
-项目 HUD 类：GameFrameworkComponent 接收器注册与 GAS 调试 Actor 列表；不代表 CommonUI 已完成。
+HUD Receiver 提供 Experience AddWidgets 的真实注入／撤销入口，同时保留 GAS 调试 Actor 列表。
 
 ## HodgeLocalPlayerBase.h
 
@@ -2910,6 +3006,12 @@ Enhanced Input 用户设置派生入口；须核对实际设置类配置。
 
 模块定义或基础代码；请查看对应文件。
 
+## HodgeGameplayUIDataSource.h
+
+[Source/Hodgepodge/Public/UI/Data/HodgeGameplayUIDataSource.h](../../../Source/Hodgepodge/Public/UI/Data/HodgeGameplayUIDataSource.h)
+
+每个本地玩家共享的生命订阅、属性就绪与技能状态/输入接入；布局和按钮行为保存在 WBP。
+
 ## UIExtensionPointWidget.h
 
 [Source/Hodgepodge/Public/UI/Extension/UIExtensionPointWidget.h](../../../Source/Hodgepodge/Public/UI/Extension/UIExtensionPointWidget.h)
@@ -2954,6 +3056,12 @@ Enhanced Input 用户设置派生入口；须核对实际设置类配置。
 
 模块定义或基础代码；请查看对应文件。
 
+## HodgePrimaryGameLayout.h
+
+[Source/Hodgepodge/Public/UI/Foundation/HodgePrimaryGameLayout.h](../../../Source/Hodgepodge/Public/UI/Foundation/HodgePrimaryGameLayout.h)
+
+绑定 Designer 四个容器的本地玩家根布局，Push/Pop、异步加载取消与令牌恢复；不再生成运行时控件树。
+
 ## ApplyFrontendPerfSettingsAction.h
 
 [Source/Hodgepodge/Public/UI/Frontend/ApplyFrontendPerfSettingsAction.h](../../../Source/Hodgepodge/Public/UI/Frontend/ApplyFrontendPerfSettingsAction.h)
@@ -2984,9 +3092,7 @@ Enhanced Input 用户设置派生入口；须核对实际设置类配置。
 
 [Source/Hodgepodge/Public/UI/HodgeGameViewportClient.h](../../../Source/Hodgepodge/Public/UI/HodgeGameViewportClient.h)
 
-模块定义或基础代码；请查看对应文件。
-
-状态：文件无有效非注释内容。
+引擎 CommonUI 视口路由，已在 DefaultEngine.ini 启用。
 
 ## HodgeHUDLayout.h
 
@@ -3082,9 +3188,7 @@ Enhanced Input 用户设置派生入口；须核对实际设置类配置。
 
 [Source/Hodgepodge/Public/UI/Subsystem/HodgeUIManagerSubsystem.h](../../../Source/Hodgepodge/Public/UI/Subsystem/HodgeUIManagerSubsystem.h)
 
-模块定义或基础代码；请查看对应文件。
-
-状态：文件无有效非注释内容。
+GameInstance 所属的本地玩家 UI 管理器：根布局、Controller 绑定、输入挂起和精确撤销；专服不创建。
 
 ## HodgeUIMessaging.h
 

@@ -1,10 +1,12 @@
 # Hodgepodge
 
-基于 Unreal Engine 5.5.4 的动作 RPG 框架，沿用 Lyra 的 Experience、PawnData、GameFeature、Init State 与 GAS 组织方式。当前可运行玩家移动、固定移动动画层、五段普攻、攻击朝向约束与武器显隐；Dedicated Server、完整敌人战斗和前端 UI 仍需后续实现或验证。
+基于 Unreal Engine 5.5.4 的动作 RPG 框架，沿用 Lyra 的 Experience、PawnData、GameFeature、Init State 与 GAS 组织方式。当前可运行玩家移动、固定移动动画层、五段普攻、攻击朝向约束与武器显隐；基础 HUD、真实血条／技能栏与菜单已接通；独立专服发布、完整敌人战斗和完整前端仍需后续实现或验证。
 
-> 状态核对：2026-10-07，基于当前磁盘源码、配置及资产内部值。当前提交基线与文件 hash 见 [扫描快照](Docs/KnowledgeBase/Reference/snapshot.md)。本文不把历史构建通过等同于所有玩法、联机或打包通过。
+> 状态核对：2026-10-08，基于当前磁盘源码、配置及资产内部值。当前提交基线与文件 hash 见 [扫描快照](Docs/KnowledgeBase/Reference/snapshot.md)。本文不把历史构建通过等同于所有玩法、联机或打包通过。
 
 ## 文档入口
+
+- [UI 基础配置指南](Docs/Guides/ui-foundation-configuration.md)、[本轮 UI 验证](Docs/Validation/ui-foundation-2026-10-08.md)：自有根布局、Experience 注入、真实 HUD 与菜单输入路由。
 
 - [攻击能力配置手册](Docs/Guides/attack-ability-configuration.md)：Definition、AnimNotify、HitCheck、Profile、连段与输入的逐字段说明、配置配方和排查入口。
 - [客户端连段／移动取消窗口修复](Docs/Validation/client-combo-window-2026-10-07.md)：通知首帧授权顺序与正式连段客户端回归。
@@ -25,6 +27,8 @@ Experience 的 DefaultPawnData 实际指向 `/Game/Main/Data/PawnData/DA_Dafult_
 `DefaultGame.ini` 中 AssetManager 的回退 PawnData 仍是 `/Game/Main/Data/DA_Dafult_PawnData`。这是回退入口，不要把它与 Experience 正在使用的子目录资产混为一谈，也不要仅改文档就变更配置。
 
 ## 已接入的功能
+
+- Main/UI 的八个界面 WBP 已保存 Designer 控件树与 Graph；血条、技能栏、菜单和确认框使用引擎或通用页面基类，一个共享数据源接入玩法。旧业务 C++ 控件类型归档在 Archive/UI/NativePrototype。
 
 - 玩家 ASC 由 PlayerState 持有，PawnExtension 绑定当前 Pawn Avatar；HeroComponent 负责输入和相机就绪。Experience 加载完成后再允许生成玩家。
 - Experience 的 AddComponents 为 Pawn 添加 EquipmentManager 和统一 CombatComponent。CombatComponent 管连段、命中检测会话和结果上报；Melee GA 构建与应用伤害 GE。
@@ -65,10 +69,10 @@ Runtime 改动同时验证 Game。Live Coding 不替代常规构建；Game 构�
 
 - 正式普攻已迁移为通知驱动；实际伤害与窗口验证见 [迁移报告](Docs/Validation/anim-notify-migration-2026-10-07.md)，动作覆盖与美术打磨仍可继续调整。
 - 敌人 ASC、死亡/重生完整玩法、技能取消矩阵、双持/投掷、冲刺 GA 与冲刺 Pivot 尚待完善。常态 Pivot 当前刻意禁用。
-- CommonUI 源码部分可编译，依赖 CommonGame 等的迁移文件仍有停用内容；完整前端/HUD 注入与 GameViewportClient 配置尚未完成。
+- UI 基础闭环已接通，使用现有 CommonUI／CommonInput 和自有管理器，不引入 CommonGame／CommonUser／ModularGameplayActors。完整前端、设置持久化、登录和匹配另行制作。
 - PlayerState 的 PawnData AbilitySet 授予仍未收集撤销句柄；不要混同于装备 Manager 已支持的精确撤销。
 - Cue 路径观察者、预加载、热卸载与重生清理需要专项验证。网络后摇窗口内续段已有测试，延迟下所有窗口边界并未覆盖。
-- AN 迁移已执行 Editor/Game、18 项原生测试、单人与联机、专服 PIE 及目标地图 Cook；客户端窗口修复另有正式連段回归。未验证独立 Server 可执行文件、独立进程或完整发布打包；详见对应报告。
+- UI 本轮执行 Editor/Game、原生测试、单人、双人 Listen Server 与两客户端 PIE 回归；PIE 的专服世界不等于独立 Server 可执行文件。未执行 Cook/打包或独立进程，其他系统以各自报告为准。
 
 ## 维护
 
