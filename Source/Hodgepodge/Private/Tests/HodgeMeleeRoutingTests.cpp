@@ -18,7 +18,7 @@ struct FHodgeMeleeTestAccess
 {
 	static FGameplayEffectSpecHandle Build(UHodgeGameplayAbility_Melee* Ability, UAbilitySystemComponent* ASC,
 		FGameplayAbilitySpecHandle Handle, const FHodgeHitDetectionBatch& Batch, const FHitResult& Hit,
-		const FHodgeHitWindowBinding& Binding)
+		const FHodgeHitEffectConfig& Binding)
 	{
 		Ability->SetCurrentActorInfo(Handle, ASC->AbilityActorInfo.Get());
 		return Ability->BuildMeleeHitSpec(Batch, Hit, Binding);
@@ -155,7 +155,7 @@ bool FHodgeMeleeSpecContextTest::RunTest(const FString& Parameters)
 	if (!TestNotNull(TEXT("Granted melee has an actor instance"), Ability)) { return false; }
 	FHodgeHitDetectionBatch Batch;
 	Batch.SourceOrigin = FVector(50.f, 20.f, 10.f);
-	FHodgeHitWindowBinding Binding;
+	FHodgeHitEffectConfig Binding;
 	Binding.DamageMultiplier = 1.5f;
 	FHitResult FirstHit;
 	FirstHit.ImpactPoint = FVector(100.f, 0.f, 0.f);

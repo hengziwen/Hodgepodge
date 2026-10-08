@@ -2,7 +2,7 @@
 #include "AssetToolsModule.h"
 #include "AssetTypeActions_Base.h"
 #include "Data/HodgeAbilityDefinition.h"
-#include "HodgeAbilityEditorToolkit.h"
+#include "Toolkits/SimpleAssetEditor.h"
 class FHodgeAbilityDefinitionActions : public FAssetTypeActions_Base
 {
 public:
@@ -15,7 +15,7 @@ public:
         for (UObject* Object : Objects)
         {
             if (auto* Definition = Cast<UHodgeAbilityDefinition>(Object))
-            { MakeShared<FHodgeAbilityEditorToolkit>()->Init(Definition, Host); }
+            { FSimpleAssetEditor::CreateEditor(Host.IsValid() ? EToolkitMode::WorldCentric : EToolkitMode::Standalone, Host, Definition); }
         }
     }
 };

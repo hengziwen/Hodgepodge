@@ -1,3 +1,5 @@
+> 2026-10-07：本文保留为旧方案／验证历史。dev-AN 已改为 Montage 动画通知，当前配置请看 [攻击能力配置手册](../Guides/attack-ability-configuration.md)，旧文件见 [集中归档](../../Archive/Timeline/README.md)。
+
 # 配置检测体、多段攻击与独立技能：使用说明
 
 完整字段、默认值、适用条件和通用排查统一见[攻击能力配置手册](../Guides/attack-ability-configuration.md)；本文保留配置检测体的简明操作说明。

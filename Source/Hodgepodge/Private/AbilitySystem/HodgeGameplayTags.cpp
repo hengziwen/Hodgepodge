@@ -137,11 +137,11 @@ namespace HodgeGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_RequestReset, "GameplayEvent.RequestReset");
 
 	// =============================================================================
-	// GameplayEvent.Attack Tags（AbilityTimeline 第一阶段）
+	// GameplayEvent.Attack Tags（原生蒙太奇通知）
 	// =============================================================================
 	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_Attack, "GameplayEvent.Attack");
 	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_Attack_Test, "GameplayEvent.Attack.Test");
-	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_Attack_Timeline_End, "GameplayEvent.Attack.Timeline.End");
+	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_Attack_Completed, "GameplayEvent.Attack.Completed");
 	UE_DEFINE_GAMEPLAY_TAG(GameplayEvent_Attack_Interrupted, "GameplayEvent.Attack.Interrupted");
 
 	// =============================================================================
@@ -272,7 +272,7 @@ namespace HodgeGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Status_Death_Dying, "Status.Death.Dying");
 	UE_DEFINE_GAMEPLAY_TAG(Status_Death_Dead, "Status.Death.Dead");
 
-	// 攻击阶段标签：由 Timeline Task 按区间自动加减（loose tag，不复制）
+	// 攻击阶段标签：由 状态通知 按区间自动加减（loose tag，不复制）
 	UE_DEFINE_GAMEPLAY_TAG(Status_Attack, "Status.Attack");
 	UE_DEFINE_GAMEPLAY_TAG(Status_Rotation_Locked, "Status.Rotation.Locked");
 	UE_DEFINE_GAMEPLAY_TAG(Status_Weapon_Hand, "Status.Weapon.Hand");

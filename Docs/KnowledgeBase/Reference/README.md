@@ -6,22 +6,22 @@
 
 ## 按系统打开
 
-- [AbilitySystem：54 个文件](source-abilitysystem.md)
+- [AbilitySystem：48 个文件](source-abilitysystem.md)
 - [Actor：2 个文件](source-actor.md)
-- [Animation：2 个文件](source-animation.md)
+- [Animation：4 个文件](source-animation.md)
 - [Camera：12 个文件](source-camera.md)
 - [Character：8 个文件](source-character.md)
 - [CodexText：10 个文件](source-codextext.md)
 - [Combat：4 个文件](source-combat.md)
 - [Component：20 个文件](source-component.md)
 - [Core：20 个文件](source-core.md)
-- [Data：26 个文件](source-data.md)
+- [Data：24 个文件](source-data.md)
 - [Equipment：13 个文件](source-equipment.md)
 - [GameFeatures：16 个文件](source-gamefeatures.md)
 - [Input：12 个文件](source-input.md)
 - [Interface：4 个文件](source-interface.md)
-- [Module：18 个文件](source-module.md)
-- [Tests：9 个文件](source-tests.md)
+- [Module：11 个文件](source-module.md)
+- [Tests：7 个文件](source-tests.md)
 - [UI：81 个文件](source-ui.md)
 
 ## 数据与配置

@@ -1,3 +1,5 @@
+> 2026-10-07：本文保留为旧方案／验证历史。dev-AN 已改为 Montage 动画通知，当前配置请看 [攻击能力配置手册](../Guides/attack-ability-configuration.md)，旧文件见 [集中归档](../../Archive/Timeline/README.md)。
+
 > 2026-10-01 后续统一组件：连招协调已迁入 Pawn 上的 HodgeCombatComponentBase，PlayerState 不再创建 HodgeComboComponent。当前编码见第 17 节，合并后运行结果见第 18 节；此前运行记录对应合并前版本。
 
 > 2026-10-06 状态同步：当前 CombatComponent 负责检测/协调，Melee GA 负责独立 Spec 和效果施加；DamageRules 已接通。正式普攻仍未配 HitWindows；同类实现统一主 cpp。 当前项目事实见 [本轮更新](../KnowledgeBase/26-update-2026-10-06.md)。

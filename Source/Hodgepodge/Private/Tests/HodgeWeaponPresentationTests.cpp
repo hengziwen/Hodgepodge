@@ -8,6 +8,7 @@
 #include "Engine/SkeletalMesh.h"
 #include "Misc/AutomationTest.h"
 #include "TimerManager.h"
+#include "Component/HodgeCombatComponentBase.h"
 
 struct FHodgeWeaponPresentationTestAccess
 {
@@ -24,6 +25,8 @@ bool FHodgeWeaponRequestsTest::RunTest(const FString& Parameters)
 		.CreateNavigation(false).CreateAISystem(false);
 	UWorld* World = UWorld::CreateWorld(EWorldType::Game, false, NAME_None, nullptr, true, ERHIFeatureLevel::Num, &Values);
 	auto* Pawn = World->SpawnActor<ACharacter>();
+	auto* Combat = NewObject<UHodgeCombatComponentBase>(Pawn);
+	Combat->RegisterComponent();
 	const auto OriginalPosePolicy = Pawn->GetMesh()->VisibilityBasedAnimTickOption;
 	auto* Weapon = NewObject<UHodgeWeaponInstance>(Pawn);
 	Weapon->PresentationProfile = NewObject<UHodgeWeaponPresentationProfile>(Weapon);
@@ -38,6 +41,8 @@ bool FHodgeWeaponRequestsTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("Server evaluates hand sockets even outside the view"), Pawn->GetMesh()->VisibilityBasedAnimTickOption == EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones);
 	TestTrue(TEXT("Repeated window acquire is idempotent"), Weapon->AcquireHandUse(FirstExecution, 0, 12) == First);
 	const FGuid Second = Weapon->AcquireHandUse(SecondExecution, 0, 13);
+	const FGuid AbilityPoseLease = Combat->AcquirePoseLease();
+	TestEqual(TEXT("Weapon and ability share one pose-policy owner"), Combat->GetPoseLeaseCount(), 2);
 	TestEqual(TEXT("Two independent executions own two requests"), Weapon->GetHandUseCount(), 2);
 	Weapon->ReleaseHandUse(First);
 	Weapon->ReleaseHandUse(First);
@@ -56,6 +61,9 @@ bool FHodgeWeaponRequestsTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("Old execution cleanup leaves new request"), Weapon->GetHandUseCount(), 1);
 	Weapon->ReleaseHandUsesForExecution(SecondExecution);
 	TestEqual(TEXT("Execution cleanup closes all its windows"), Weapon->GetHandUseCount(), 0);
+	TestTrue(TEXT("Body ability lease survives the final weapon release"), Pawn->GetMesh()->VisibilityBasedAnimTickOption == EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones);
+	Combat->ReleasePoseLease(AbilityPoseLease);
+	Combat->ReleasePoseLease(AbilityPoseLease);
 	TestTrue(TEXT("Last request restores original owner pose policy"), Pawn->GetMesh()->VisibilityBasedAnimTickOption == OriginalPosePolicy);
 	++GFrameCounter;
 	World->GetTimerManager().Tick(.1f);

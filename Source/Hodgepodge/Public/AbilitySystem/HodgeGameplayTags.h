@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "NativeGameplayTags.h"
 
@@ -133,11 +133,11 @@ namespace HodgeGameplayTags
 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_RequestReset);
 
 	// =============================================================================
-	// GameplayEvent.Attack 标签（AbilityTimeline 第一阶段）
+	// GameplayEvent.Attack 标签（原生蒙太奇通知）
 	// =============================================================================
 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Attack);
 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Attack_Test);
-	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Attack_Timeline_End);
+	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Attack_Completed);
 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayEvent_Attack_Interrupted);
 
 	// =============================================================================
@@ -267,7 +267,7 @@ namespace HodgeGameplayTags
 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Death_Dying);
 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Death_Dead);
 
-	// 攻击阶段标签：由 UHodgeAbilityTask_PlayTimeline 按区间自动加减（loose tag，不复制）
+	// 攻击阶段标签：由 Hodge 状态通知 按区间自动加减（loose tag，不复制）
 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Attack);
 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Rotation_Locked);
 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Weapon_Hand);
@@ -289,7 +289,7 @@ namespace HodgeGameplayTags
 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(SetByCaller_Stat_BaseDamage);
 	HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_ActivateFail_AttributesNotReady);
 
-	// 取消窗口标签：同样由 UHodgeAbilityTask_PlayTimeline 按区间自动加减（loose tag，不复制）。
+	// 取消窗口标签：同样由 Hodge 状态通知 按区间自动加减（loose tag，不复制）。
 	// 它与上面的"阶段标签"是两件事：
 	//   Status.Attack.Recovery   = 当前处于后摇（状态描述）
 	//   Status.Attack.Cancel.*   = 当前允许因为某种意图而结束这次攻击（授权）

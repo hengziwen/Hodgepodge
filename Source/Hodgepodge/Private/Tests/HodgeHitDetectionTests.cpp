@@ -38,9 +38,6 @@ bool FHodgeHitProfileValidationTest::RunTest(const FString& Parameters)
 	auto* Profile = NewObject<UHodgeHitDetectionProfile>();
 	TArray<FText> Errors;
 	TestTrue(TEXT("Default profile is usable"), Profile->Validate(Errors));
-	Profile->Strategy = UHodgeHitDetectionStrategy::StaticClass();
-	TestFalse(TEXT("Abstract strategy is rejected"), Profile->Validate(Errors));
-	Profile->Strategy = UHodgeSocketSweepStrategy::StaticClass();
 	Profile->HalfAngleDegrees = std::numeric_limits<float>::quiet_NaN();
 	TestFalse(TEXT("NaN geometry is rejected"), Profile->Validate(Errors));
 	Profile->HalfAngleDegrees = 180.f;

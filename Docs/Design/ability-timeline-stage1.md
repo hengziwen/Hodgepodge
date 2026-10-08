@@ -1,3 +1,5 @@
+> 2026-10-07：本文保留为旧方案／验证历史。dev-AN 已改为 Montage 动画通知，当前配置请看 [攻击能力配置手册](../Guides/attack-ability-configuration.md)，旧文件见 [集中归档](../../Archive/Timeline/README.md)。
+
 # Timeline 与 PlayTimeline AbilityTask：第一阶段设计（统一事件模型）
 
 > 2026-10-06 状态同步：统一事件模型已有实现与历史验证；本文初版设计和示例不包含后续统一 Combat、旋转/手持窗口与连段记忆，操作以当前源码和专题记录为准。 当前项目事实见 [本轮更新](../KnowledgeBase/26-update-2026-10-06.md)。

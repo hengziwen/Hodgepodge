@@ -2,6 +2,7 @@
 
 #include "AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h"
 #include "Combat/HodgeHitDetection.h"
+#include "Animation/HodgeCombatAnimNotifies.h"
 #include "HodgeGameplayAbility_Melee.generated.h"
 
 class UHodgeAbilityTask_WaitHitResults;
@@ -18,17 +19,16 @@ struct FHodgeMeleeHitHistory
 struct FHodgeHitGroupKey
 {
 	FName Group;
-	uint32 TimeKey = 0;
-	bool bByTime = false;
-	bool operator==(const FHodgeHitGroupKey& Other) const { return Group == Other.Group && TimeKey == Other.TimeKey && bByTime == Other.bByTime; }
-	friend uint32 GetTypeHash(const FHodgeHitGroupKey& Key) { return HashCombine(GetTypeHash(Key.Group), HashCombine(Key.TimeKey, uint32(Key.bByTime))); }
+	FName Phase;
+	bool operator==(const FHodgeHitGroupKey& Other) const { return Group == Other.Group && Phase == Other.Phase; }
+	friend uint32 GetTypeHash(const FHodgeHitGroupKey& Key) { return HashCombine(GetTypeHash(Key.Group), GetTypeHash(Key.Phase)); }
 };
 
 USTRUCT()
-struct FHodgeMeleeWindowState
+struct FHodgeMeleeHitState
 {
 	GENERATED_BODY()
-	UPROPERTY() FHodgeHitWindowBinding Binding;
+	UPROPERTY() FHodgeHitEffectConfig Binding;
 	uint64 SessionHandle = 0;
 	int32 LastSampleSequence = 0;
 	TSharedPtr<FHodgeMeleeHitHistory> History;
@@ -48,12 +48,12 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category="Hodge|Combat")
 	void ResetHitGeometryHistory();
 
+	bool BeginNotifyHit(int32 OccurrenceId, const FHodgeAnimHitConfig& Config, USkeletalMeshComponent* Mesh, bool bSingle);
+
 protected:
 	virtual void OnExecutionReady() override;
 	virtual void OnExecutionEnding(const FGuid& EndingExecutionId) override;
-	virtual void OnExecutionWindowEntered(int32 EventIndex, FGameplayTag WindowTag) override;
-	virtual void OnExecutionWindowExited(int32 EventIndex, bool bSampleFinal) override;
-	virtual void OnExecutionPoint(int32 EventIndex, FGameplayTag PointTag) override;
+	virtual void OnNotifyResourceEnded(int32 OccurrenceId) override;
 	UFUNCTION(BlueprintNativeEvent, Category="Hodge|Combat") bool PrepareHitExecutionContext();
 	virtual bool PrepareHitExecutionContext_Implementation();
 
@@ -63,31 +63,30 @@ protected:
 	virtual void ProcessMeleeHitResults_Implementation(const FHodgeHitDetectionBatch& Batch);
 
 	UFUNCTION(BlueprintNativeEvent, Category="Hodge|Melee")
-	bool CanApplyMeleeHit(AActor* Target, const FHitResult& Hit, const FHodgeHitWindowBinding& Binding) const;
+	bool CanApplyMeleeHit(AActor* Target, const FHitResult& Hit, const FHodgeHitEffectConfig& Binding) const;
 	virtual bool CanApplyMeleeHit_Implementation(AActor* Target, const FHitResult& Hit,
-		const FHodgeHitWindowBinding& Binding) const;
+		const FHodgeHitEffectConfig& Binding) const;
 
 	// 覆盖此事件会替换默认 GE 提交；调用父实现时不要再次提交同一效果。
 	UFUNCTION(BlueprintNativeEvent, Category="Hodge|Melee")
 	void ApplyMeleeHitEffects(const FHodgeHitDetectionBatch& Batch, const FHitResult& Hit,
-		const FHodgeHitWindowBinding& Binding, UAbilitySystemComponent* TargetASC, const FGameplayEffectSpecHandle& Spec);
+		const FHodgeHitEffectConfig& Binding, UAbilitySystemComponent* TargetASC, const FGameplayEffectSpecHandle& Spec);
 	virtual void ApplyMeleeHitEffects_Implementation(const FHodgeHitDetectionBatch& Batch, const FHitResult& Hit,
-		const FHodgeHitWindowBinding& Binding, UAbilitySystemComponent* TargetASC, const FGameplayEffectSpecHandle& Spec);
+		const FHodgeHitEffectConfig& Binding, UAbilitySystemComponent* TargetASC, const FGameplayEffectSpecHandle& Spec);
 
 	virtual FGameplayEffectContextHandle MakeMeleeHitContext(const FHodgeHitDetectionBatch& Batch, const FHitResult& Hit) const;
 	virtual FGameplayEffectSpecHandle BuildMeleeHitSpec(const FHodgeHitDetectionBatch& Batch,
-		const FHitResult& Hit, const FHodgeHitWindowBinding& Binding) const;
+		const FHitResult& Hit, const FHodgeHitEffectConfig& Binding) const;
 	bool IsMeleeBatchCurrent(const FHodgeHitDetectionBatch& Batch) const;
-	bool OpenHit(int32 EventIndex, const FHodgeHitWindowBinding& Binding);
+	bool OpenHit(int32 OccurrenceId, const FHodgeHitEffectConfig& Binding, const FHodgeHitDetectionRequest& Request);
 
 private:
 	friend struct FHodgeMeleeTestAccess;
 	void OnHitResults(const FHodgeHitDetectionBatch& Batch);
 	UPROPERTY(Transient) TObjectPtr<UHodgeAbilityTask_WaitHitResults> DetectionTask;
-	UPROPERTY(Transient) TMap<int32, FHodgeMeleeWindowState> WindowStates;
+	UPROPERTY(Transient) TMap<int32, FHodgeMeleeHitState> HitStates;
 	// 共享组记录保留到 GA 执行结束，允许相邻或不相邻窗口共用次数。
 	TMap<FHodgeHitGroupKey, TSharedPtr<FHodgeMeleeHitHistory>> HitGroups;
 	UPROPERTY(Transient) TMap<FName, FTransform> HitAnchors;
 	UPROPERTY(Transient) TMap<FName, TWeakObjectPtr<AActor>> HitTargets;
-	TSet<int32> ConsumedPoints;
 };

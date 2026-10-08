@@ -1,10 +1,12 @@
 #pragma once
 #include "AbilitySystem/Abilities/HodgeGameplayAbility.h"
-#include "AbilitySystem/Abilities/HodgeAbilityTask_PlayTimeline.h"
+#include "Animation/AnimNotifies/AnimNotify.h"
 #include "HodgeGameplayAbility_Definition.generated.h"
 
 class UHodgeAbilityDefinition;
 class UHodgeWeaponInstance;
+class UHodgeCombatComponentBase;
+class UAnimMontage;
 
 /** Executes one granted definition; the combo coordinator owns transitions and input. */
 UCLASS(Blueprintable)
@@ -18,7 +20,13 @@ public:
 	const UHodgeAbilityDefinition* GetDefinition() const;
 	FGameplayTagContainer GetExecutionWindows() const;
 	void FinishExecution(bool bCancelled, bool bReplicate);
-	void RefreshExecutionClock();
+	bool AcceptsNotify(const FBranchingPointNotifyPayload& Payload) const;
+	int32 AllocateNotifyOccurrence();
+	int32 BeginNotifyResource(const FBranchingPointNotifyPayload& Payload);
+	void EndNotifyResource(const FBranchingPointNotifyPayload& Payload);
+	void AcquireNotifyTag(int32 OccurrenceId, FGameplayTag Tag);
+	void AcquireNotifyWeapon(int32 OccurrenceId);
+	void SendExecutionEvent(FGameplayTag Tag);
 	FGuid GetExecutionId() const { return ExecutionId; }
 	bool IsComboCoordinated() const;
 	bool IsExecutionEnding() const { return bEnding; }
@@ -31,13 +39,10 @@ public:
 	                                FGameplayTagContainer* OptionalRelevantTags = nullptr) const override;
 
 protected:
-	// 子类在 Timeline 激活前准备任务，窗口进入时即可安全消费结果。
+	// 播放蒙太奇前准备执行任务，原生通知可以直接消费本次请求。
 	virtual void OnExecutionReady() {}
 	virtual void OnExecutionEnding(const FGuid& EndingExecutionId) {}
-	virtual void OnExecutionWindowEntered(int32 EventIndex, FGameplayTag WindowTag) {}
-	virtual void OnExecutionWindowExited(int32 EventIndex, bool bSampleFinal) {}
-	virtual void OnExecutionPoint(int32 EventIndex, FGameplayTag PointTag) {}
-	UHodgeAbilityTask_PlayTimeline* GetExecutionTimeline() const { return TimelineTask; }
+	virtual void OnNotifyResourceEnded(int32 OccurrenceId) {}
 	virtual void ActivateAbility(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
 	                             FGameplayAbilityActivationInfo ActivationInfo,
 	                             const FGameplayEventData* TriggerEventData) override;
@@ -49,15 +54,22 @@ private:
 	// 同一个 GA 实例会重复激活，每次执行使用新的身份。
 	FGuid ExecutionId;
 
-	void OnTimelineFinished(EHodgeTimelineStopReason Reason);
-	void OnWindowsChanged();
-	void OnPoint(FGameplayTag Tag);
-	void HandleExecutionPoint(int32 EventIndex, FGameplayTag Tag);
-	void HandleExecutionWindowEntered(int32 EventIndex, FGameplayTag WindowTag);
-	void HandleExecutionWindowExited(int32 EventIndex, bool bSampleFinal);
+	void OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted, FGuid Execution, int32 InstanceId);
+	void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted, FGuid Execution, int32 InstanceId);
+	void NotifyWindowsChanged();
+	struct FNotifyResource
+	{
+		int32 OccurrenceId = INDEX_NONE;
+		FGameplayTag Tag;
+		FGuid WeaponHandle;
+	};
+	TMap<const UObject*, FNotifyResource> NotifyResources;
+	TMap<FGameplayTag, int32> StateCounts;
+	int32 NextOccurrence = 0;
+	int32 MontageInstanceId = INDEX_NONE;
+	FGuid PoseLease;
+	UPROPERTY(Transient) TWeakObjectPtr<UHodgeCombatComponentBase> ExecutionCombat;
 	UPROPERTY(Transient) TWeakObjectPtr<UHodgeWeaponInstance> PresentationWeapon;
-	TMap<int32, FGuid> WeaponUseHandles;
-	UPROPERTY(Transient)
-	TObjectPtr<UHodgeAbilityTask_PlayTimeline> TimelineTask;
 	bool bEnding = false;
+	bool bLifecycleEventSent = false;
 };

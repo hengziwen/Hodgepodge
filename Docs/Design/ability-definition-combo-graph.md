@@ -1,3 +1,5 @@
+> 2026-10-07：本文保留为旧方案／验证历史。dev-AN 已改为 Montage 动画通知，当前配置请看 [攻击能力配置手册](../Guides/attack-ability-configuration.md)，旧文件见 [集中归档](../../Archive/Timeline/README.md)。
+
 # 单段技能 Definition 与连招跳转表设计
 
 > 2026-10-06 状态同步：已实施并演进。当前协调者为 Pawn 上 Experience 注入的 HodgeCombatComponentBase，当前执行与 1 秒连段记忆分离，末段后摇可接第一段；旧独立 ComboComponent 设计属于历史。 当前项目事实见 [本轮更新](../KnowledgeBase/26-update-2026-10-06.md)。
@@ -51,11 +53,11 @@
 
 当前实现参考：
 
-- [普通攻击 GA](../../Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility_BasicAttack.cpp)
+- [普通攻击 GA](../../Archive/Timeline/Cpp/Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility_BasicAttack.cpp)
 - [ASC 输入与激活](../../Source/Hodgepodge/Private/AbilitySystem/HodgeAbilitySystemComponent.cpp)
 - [AbilitySet 授予](../../Source/Hodgepodge/Private/Data/HodgeAbilitySet.cpp)
-- [Timeline Task](../../Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeAbilityTask_PlayTimeline.cpp)
-- [Timeline 数据](../../Source/Hodgepodge/Public/Data/HodgeAbilityTimeline.h)
+- [Timeline Task](../../Archive/Timeline/Cpp/Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeAbilityTask_PlayTimeline.cpp)
+- [Timeline 数据](../../Archive/Timeline/Cpp/Source/Hodgepodge/Public/Data/HodgeAbilityTimeline.h)
 - [旧普攻验证记录](../Validation/basic-attack-2026-09-24.md)
 
 ## 3. 总体职责
@@ -392,7 +394,7 @@ DataTable 的一行可以显示成编辑器中的一个节点，Transitions 显�
 
 - **级别 / 检查项**：MAJOR；TIME-04、TIME-05。
 - **状态**：2026-09-29 随共享 Evaluator 修复；`Hodge.Timeline.SharedEvaluator` 自动化通过，Point 严格可达，窗口终点单独归一。详见 [编辑器说明](ability-definition-editor.md)。
-- **位置**：[HodgeAbilityTimeline.cpp](../../Source/Hodgepodge/Private/Data/HodgeAbilityTimeline.cpp)，`ValidateForPlayback`，审查时第 85～86 行；对应调度在 `UHodgeAbilityTask_PlayTimeline::CollectNodes`、`TickTask` 和 `RefreshMontageClock`。
+- **位置**：[HodgeAbilityTimeline.cpp](../../Archive/Timeline/Cpp/Source/Hodgepodge/Private/Data/HodgeAbilityTimeline.cpp)，`ValidateForPlayback`，审查时第 85～86 行；对应调度在 `UHodgeAbilityTask_PlayTimeline::CollectNodes`、`TickTask` 和 `RefreshMontageClock`。
 - **触发**：Duration 为 1 秒，Point 的 StartTime 为 `1.0005` 或 `-0.0005` 秒，其他字段合法。
 - **证据与影响**：新校验允许 StartTime 落在 `[-0.001, Duration + 0.001]`，但 Point 初始化仍使用精确相等，后续调度使用 `(PreviousTime, CurrentTime]`，时钟最大值仍钳制到 Duration。上述两种 Point 均可通过时间范围校验，却不会被播放消费，关联事件、GE 或派生逻辑静默遗漏。
 - **最小修复方向**：校验和调度使用同一套边界归一化规则；若只解决窗口终点浮点误差，则保留 Point 的严格可达性校验。不要只放宽校验而保持运行时边界不变。

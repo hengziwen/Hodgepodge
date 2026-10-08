@@ -1,3 +1,5 @@
+> 2026-10-07：本文保留为旧方案／验证历史。dev-AN 已改为 Montage 动画通知，当前配置请看 [攻击能力配置手册](../Guides/attack-ability-configuration.md)，旧文件见 [集中归档](../../Archive/Timeline/README.md)。
+
 # Timeline 命中窗口接入
 
 > 2026-10-06 状态同步：命中框架和测试夹具已有实现与伤害验证；正式五段 DA_Attack 的 HitWindows 仍为空，需配置后补实际伤害回归。 当前项目事实见 [本轮更新](../KnowledgeBase/26-update-2026-10-06.md)。

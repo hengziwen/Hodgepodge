@@ -8,6 +8,7 @@
 
 class UHodgeWeaponInstance;
 class USceneComponent;
+class USkeletalMeshComponent;
 class UHodgeAbilitySystemComponent;
 class UHodgeComboDefinition;
 class UHodgeGameplayAbility_Definition;
@@ -29,11 +30,12 @@ struct FHodgeHitDetectionSession
 {
 	GENERATED_BODY()
 	UPROPERTY() FGuid ExecutionId;
-	UPROPERTY() int32 EventIndex = INDEX_NONE;
+	UPROPERTY() int32 OccurrenceId = INDEX_NONE;
 	UPROPERTY() FHodgeHitDetectionRequest Request;
 	UPROPERTY() FHodgeHitSource Source;
 	UPROPERTY() TWeakObjectPtr<USceneComponent> SourceComponent;
 	UPROPERTY() TWeakObjectPtr<UHodgeWeaponInstance> Weapon;
+	TSubclassOf<UHodgeHitDetectionStrategy> Strategy;
 	bool bWeaponSource = false;
 	int32 SampleSequence = 0;
 	FHodgeHitGeometry Previous;
@@ -52,13 +54,20 @@ public:
 	// 连招输入、执行授权和网络确认统一通过当前 Pawn 的战斗组件。
 	void Configure(UHodgeAbilitySystemComponent* InASC, const UHodgeComboDefinition* InDefinition);
 	void Shutdown();
+	FGuid AcquirePoseLease();
+	void ReleasePoseLease(FGuid Handle);
+	int32 GetPoseLeaseCount() const { return PoseLeases.Num(); }
+	int32 GetDetectionSessionCount() const { return Sessions.Num(); }
+	bool CanExecuteAbilities() const { return IsRegistered() && !bShuttingDown; }
 	bool InputPressed(FGameplayTag InputTag);
 	void ClearInput();
 	void ExecutionStarted(UHodgeGameplayAbility_Definition* Ability);
 	void ExecutionEnded(UHodgeGameplayAbility_Definition* Ability);
 	void WindowsChanged(UHodgeGameplayAbility_Definition* Ability);
-	void TimelineEvent(UHodgeGameplayAbility_Definition* Ability, FGameplayTag Event);
+	void ExecutionEvent(UHodgeGameplayAbility_Definition* Ability, FGameplayTag Event);
 	bool IsAuthorized(FGameplayAbilitySpecHandle Handle) const;
+	float GetServerInputBufferSeconds() const;
+	bool CanBufferServerActivation(FGameplayAbilitySpecHandle Handle, const FGameplayEventData* Payload) const;
 	bool PrepareServerActivation(FGameplayAbilitySpecHandle Handle, const FGameplayEventData* Payload);
 	void RejectServerActivation(const FGameplayEventData* Payload);
 	bool PrepareConfirmedActivation(FGameplayAbilitySpecHandle Handle, const FGameplayEventData& Payload);
@@ -78,7 +87,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Hodge|Combat", meta=(TitleProperty="SourceTag"))
 	TArray<FHodgeHitSource> HitSources;
 
-	uint64 CreateDetectionSession(const FGuid& ExecutionId, int32 EventIndex, const FHodgeHitDetectionRequest& Request);
+	uint64 CreateDetectionSession(const FGuid& ExecutionId, int32 OccurrenceId, const FHodgeHitDetectionRequest& Request);
 	bool SampleDetection(uint64 Handle, const FGuid& ExecutionId, FHodgeHitDetectionBatch& OutBatch);
 	bool ResetDetectionHistory(uint64 Handle, const FGuid& ExecutionId);
 	bool IsDetectionSessionValid(uint64 Handle, const FGuid& ExecutionId) const;
@@ -94,6 +103,9 @@ protected:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* TickFunction) override;
 	virtual void EndPlay(const EEndPlayReason::Type Reason) override;
 private:
+	TSet<FGuid> PoseLeases;
+	TWeakObjectPtr<USkeletalMeshComponent> PoseMesh;
+	uint8 SavedPosePolicy = 0;
 	bool CaptureDetectionGeometry(const FHodgeHitDetectionSession& Session, FHodgeHitGeometry& Out) const;
 	void BindPawnExtension();
 	bool IsComboReady() const;
@@ -134,6 +146,8 @@ private:
 	void ServerReturnToEntry(AActor* Avatar, FGameplayTag SourceNode, int32 Key, FGameplayTag Intent);
 	UFUNCTION(Client, Reliable)
 	void ClientMoveCancelResult();
+	bool ValidateServerRequestIdentity(const FGameplayEventData* Payload) const;
+	void ProcessServerMoveCancel(TWeakObjectPtr<AActor> Avatar, FGameplayAbilitySpecHandle Handle, int32 Key);
 	UFUNCTION(Server, Reliable)
 	void ServerSynchronizeComboMemory();
 	UFUNCTION(Client, Reliable)

@@ -15,13 +15,13 @@ namespace
 {
 #if ENABLE_DRAW_DEBUG
 	TAutoConsoleVariable<int32> CVarHitDebugWeapon(TEXT("Hodge.Combat.DebugDraw.Weapon"), 1,
-		TEXT("Draw weapon hit detection geometry. 0: off, 1: on."));
+	                                               TEXT("Draw weapon hit detection geometry. 0: off, 1: on."));
 	TAutoConsoleVariable<int32> CVarHitDebugBody(TEXT("Hodge.Combat.DebugDraw.Body"), 1,
-		TEXT("Draw body hit detection geometry. 0: off, 1: on."));
+	                                             TEXT("Draw body hit detection geometry. 0: off, 1: on."));
 	TAutoConsoleVariable<int32> CVarHitDebugHitBox(TEXT("Hodge.Combat.DebugDraw.HitBox"), 1,
-		TEXT("Draw hitbox detection geometry. 0: off, 1: on."));
+	                                               TEXT("Draw hitbox detection geometry. 0: off, 1: on."));
 	TAutoConsoleVariable<float> CVarHitDebugDuration(TEXT("Hodge.Combat.DebugDraw.Duration"), 5.f,
-		TEXT("Lifetime in seconds for each hit detection debug drawing."));
+	                                                 TEXT("Lifetime in seconds for each hit detection debug drawing."));
 
 	struct FHitDebugSettings
 	{
@@ -66,7 +66,7 @@ namespace
 	}
 
 	void DrawSphereSweep(const UWorld* World, const FVector& Start, const FVector& End, float Radius,
-		const FHitDebugSettings& Settings, const TArray<FHitResult>& Hits)
+	                     const FHitDebugSettings& Settings, const TArray<FHitResult>& Hits)
 	{
 		if (!Settings.bEnabled) { return; }
 		const FColor Color = Hits.IsEmpty() ? Settings.Color : FColor::Green;
@@ -79,14 +79,14 @@ namespace
 		{
 			const FQuat Rotation = FQuat::FindBetweenNormals(FVector::UpVector, Delta.GetSafeNormal());
 			DrawDebugCapsule(World, (Start + End) * .5f, Delta.Size() * .5f + Radius, Radius,
-				Rotation, Color, false, Settings.Duration, 0, 1.f);
+			                 Rotation, Color, false, Settings.Duration, 0, 1.f);
 			DrawDebugLine(World, Start, End, Color, false, Settings.Duration, 0, 1.f);
 		}
 		DrawHitPoints(World, Hits, Settings.Duration);
 	}
 
 	void DrawBoxSweep(const UWorld* World, const FVector& Start, const FVector& End, const FVector& Extent,
-		const FQuat& Rotation, const FHitDebugSettings& Settings, const TArray<FHitResult>& Hits)
+	                  const FQuat& Rotation, const FHitDebugSettings& Settings, const TArray<FHitResult>& Hits)
 	{
 		if (!Settings.bEnabled) { return; }
 		const FColor Color = Hits.IsEmpty() ? Settings.Color : FColor::Green;
@@ -124,20 +124,24 @@ bool FHodgeHitVolumeConfig::Validate(TArray<FText>& Errors) const
 	const int32 Before = Errors.Num();
 	if (GeometryMode == EHodgeHitGeometryMode::ExistingSource) { return true; }
 	if (LocalTransform.ContainsNaN() || !LocalTransform.GetRotation().IsNormalized() ||
-		!LocalTransform.GetScale3D().Equals(FVector::OneVector) || !FMath::IsFinite(MaxAnchorDistance) || MaxAnchorDistance <= 0.f)
+		!LocalTransform.GetScale3D().Equals(FVector::OneVector) || !FMath::IsFinite(MaxAnchorDistance) ||
+		MaxAnchorDistance <= 0.f)
 	{
-		Errors.Add(FText::FromString(TEXT("Hit volume requires a finite unit-scale transform and positive anchor distance.")));
+		Errors.Add(FText::FromString(
+			TEXT("Hit volume requires a finite unit-scale transform and positive anchor distance.")));
 	}
 	if ((Shape == EHodgeHitShape::Sphere && (!FMath::IsFinite(SphereRadius) || SphereRadius <= 0.f)) ||
 		(Shape == EHodgeHitShape::Box && (BoxHalfExtent.ContainsNaN() || BoxHalfExtent.GetMin() <= 0.f)) ||
 		(Shape == EHodgeHitShape::Capsule && (!FMath::IsFinite(CapsuleRadius) || !FMath::IsFinite(CapsuleHalfHeight) ||
 			CapsuleRadius <= 0.f || CapsuleHalfHeight < CapsuleRadius)))
 	{
-		Errors.Add(FText::FromString(TEXT("Hit volume dimensions are invalid; capsule half height must include its radius.")));
+		Errors.Add(FText::FromString(
+			TEXT("Hit volume dimensions are invalid; capsule half height must include its radius.")));
 	}
 	if (AnchorKind == EHodgeHitAnchorKind::ExecutionTransform && AnchorKey.IsNone())
 	{
-		Errors.Add(FText::FromString(TEXT("ExecutionTransform requires an AnchorKey supplied by the active server ability.")));
+		Errors.Add(FText::FromString(
+			TEXT("ExecutionTransform requires an AnchorKey supplied by the active server ability.")));
 	}
 	if (AnchorKind != EHodgeHitAnchorKind::RegisteredSource && !AnchorSocket.IsNone())
 	{
@@ -148,16 +152,15 @@ bool FHodgeHitVolumeConfig::Validate(TArray<FText>& Errors) const
 
 UHodgeHitDetectionProfile::UHodgeHitDetectionProfile()
 {
-	Strategy = UHodgeSocketSweepStrategy::StaticClass();
 	ObjectTypes.Add(ECC_Pawn);
 }
 
 bool UHodgeHitDetectionProfile::Validate(TArray<FText>& Errors) const
 {
 	const int32 Before = Errors.Num();
-	if (!Strategy || Strategy->HasAnyClassFlags(CLASS_Abstract) || ObjectTypes.IsEmpty())
+	if (ObjectTypes.IsEmpty())
 	{
-		Errors.Add(FText::FromString(TEXT("Hit profile requires a concrete strategy and object channels.")));
+		Errors.Add(FText::FromString(TEXT("Hit profile requires valid object channels.")));
 	}
 	for (ECollisionChannel Channel : ObjectTypes)
 	{
@@ -167,7 +170,8 @@ bool UHodgeHitDetectionProfile::Validate(TArray<FText>& Errors) const
 		}
 	}
 	if (!FMath::IsFinite(HalfAngleDegrees) || HalfAngleDegrees < 0.f || HalfAngleDegrees > 180.f ||
-		!FMath::IsFinite(MaxSweepDistance) || MaxSweepDistance <= 0.f || RotationSubsteps < 1 || RotationSubsteps > 32 ||
+		!FMath::IsFinite(MaxSweepDistance) || MaxSweepDistance <= 0.f || RotationSubsteps < 1 || RotationSubsteps > 32
+		||
 		ObstructionChannel >= ECC_MAX)
 	{
 		Errors.Add(FText::FromString(TEXT("Hit profile geometry limits are invalid.")));
@@ -183,12 +187,13 @@ EDataValidationResult UHodgeHitDetectionProfile::IsDataValid(FDataValidationCont
 	Validate(Errors);
 	for (const FText& Error : Errors) { Context.AddError(Error); }
 	return Errors.IsEmpty() && Parent != EDataValidationResult::Invalid
-		? EDataValidationResult::Valid : EDataValidationResult::Invalid;
+		       ? EDataValidationResult::Valid
+		       : EDataValidationResult::Invalid;
 }
 #endif
 
 bool UHodgeSocketSweepStrategy::Capture(const USceneComponent* Component, const FHodgeHitSource& Source,
-	FHodgeHitGeometry& OutGeometry) const
+                                        FHodgeHitGeometry& OutGeometry) const
 {
 	if (!IsValid(Component) || !FMath::IsFinite(Source.Radius) || Source.Radius <= 0.f ||
 		Source.LocalOffset.ContainsNaN() || Source.SegmentSamples < 2 || Source.SegmentSamples > 32)
@@ -221,8 +226,9 @@ bool UHodgeSocketSweepStrategy::Capture(const USceneComponent* Component, const 
 }
 
 void UHodgeSocketSweepStrategy::Detect(UWorld* World, const FHodgeHitSource& Source,
-	const UHodgeHitDetectionProfile* Profile, const FHodgeHitGeometry& Previous,
-	const FHodgeHitGeometry& Current, const FCollisionQueryParams& Params, TArray<FHitResult>& OutHits) const
+                                       const UHodgeHitDetectionProfile* Profile, const FHodgeHitGeometry& Previous,
+                                       const FHodgeHitGeometry& Current, const FCollisionQueryParams& Params,
+                                       TArray<FHitResult>& OutHits) const
 {
 	const FCollisionObjectQueryParams Objects = MakeObjectQuery(Profile);
 #if ENABLE_DRAW_DEBUG
@@ -232,10 +238,13 @@ void UHodgeSocketSweepStrategy::Detect(UWorld* World, const FHodgeHitSource& Sou
 	{
 		const FVector End = Current.Points[Index];
 		FVector Start = Previous.Points.IsValidIndex(Index) ? Previous.Points[Index] : End;
-		if (!Profile->bContinuousMotion && FVector::DistSquared(Start, End) > FMath::Square(Profile->MaxSweepDistance)) { Start = End; }
+		if (!Profile->bContinuousMotion && FVector::DistSquared(Start, End) > FMath::Square(Profile->MaxSweepDistance))
+		{
+			Start = End;
+		}
 		TArray<FHitResult> Hits;
 		World->SweepMultiByObjectType(Hits, Start, End, FQuat::Identity, Objects,
-			FCollisionShape::MakeSphere(Source.Radius), Params);
+		                              FCollisionShape::MakeSphere(Source.Radius), Params);
 #if ENABLE_DRAW_DEBUG
 		DrawSphereSweep(World, Start, End, Source.Radius, Debug, Hits);
 #endif
@@ -244,7 +253,7 @@ void UHodgeSocketSweepStrategy::Detect(UWorld* World, const FHodgeHitSource& Sou
 }
 
 bool UHodgeBoxSweepStrategy::Capture(const USceneComponent* Component, const FHodgeHitSource& Source,
-	FHodgeHitGeometry& OutGeometry) const
+                                     FHodgeHitGeometry& OutGeometry) const
 {
 	const UBoxComponent* Box = Cast<UBoxComponent>(Component);
 	if (!IsValid(Box)) { return false; }
@@ -256,10 +265,12 @@ bool UHodgeBoxSweepStrategy::Capture(const USceneComponent* Component, const FHo
 }
 
 void UHodgeBoxSweepStrategy::Detect(UWorld* World, const FHodgeHitSource& Source,
-	const UHodgeHitDetectionProfile* Profile, const FHodgeHitGeometry& Previous,
-	const FHodgeHitGeometry& Current, const FCollisionQueryParams& Params, TArray<FHitResult>& OutHits) const
+                                    const UHodgeHitDetectionProfile* Profile, const FHodgeHitGeometry& Previous,
+                                    const FHodgeHitGeometry& Current, const FCollisionQueryParams& Params,
+                                    TArray<FHitResult>& OutHits) const
 {
-	const bool bTeleported = !Profile->bContinuousMotion && FVector::DistSquared(Previous.Transform.GetLocation(), Current.Transform.GetLocation()) >
+	const bool bTeleported = !Profile->bContinuousMotion && FVector::DistSquared(
+			Previous.Transform.GetLocation(), Current.Transform.GetLocation()) >
 		FMath::Square(Profile->MaxSweepDistance);
 	const FTransform Start = bTeleported ? Current.Transform : Previous.Transform;
 	const FCollisionObjectQueryParams Objects = MakeObjectQuery(Profile);
@@ -275,7 +286,7 @@ void UHodgeBoxSweepStrategy::Detect(UWorld* World, const FHodgeHitSource& Source
 		const FQuat Rotation = FQuat::Slerp(Start.GetRotation(), Current.Transform.GetRotation(), Alpha);
 		TArray<FHitResult> Hits;
 		World->SweepMultiByObjectType(Hits, PreviousPosition, Position, Rotation, Objects,
-			FCollisionShape::MakeBox(Current.BoxExtent), Params);
+		                              FCollisionShape::MakeBox(Current.BoxExtent), Params);
 #if ENABLE_DRAW_DEBUG
 		DrawBoxSweep(World, PreviousPosition, Position, Current.BoxExtent, Rotation, Debug, Hits);
 #endif
@@ -291,12 +302,15 @@ bool UHodgeShapeQueryStrategy::Capture(const USceneComponent*, const FHodgeHitSo
 }
 
 void UHodgeShapeQueryStrategy::Detect(UWorld* World, const FHodgeHitSource& Source,
-	const UHodgeHitDetectionProfile* Profile, const FHodgeHitGeometry& Previous, const FHodgeHitGeometry& Current,
-	const FCollisionQueryParams& Params, TArray<FHitResult>& OutHits) const
+                                      const UHodgeHitDetectionProfile* Profile, const FHodgeHitGeometry& Previous,
+                                      const FHodgeHitGeometry& Current,
+                                      const FCollisionQueryParams& Params, TArray<FHitResult>& OutHits) const
 {
-	const FCollisionShape Shape = Current.Shape == EHodgeHitShape::Box ? FCollisionShape::MakeBox(Current.BoxExtent)
-		: Current.Shape == EHodgeHitShape::Capsule ? FCollisionShape::MakeCapsule(Current.Radius, Current.HalfHeight)
-		: FCollisionShape::MakeSphere(Current.Radius);
+	const FCollisionShape Shape = Current.Shape == EHodgeHitShape::Box
+		                              ? FCollisionShape::MakeBox(Current.BoxExtent)
+		                              : Current.Shape == EHodgeHitShape::Capsule
+		                              ? FCollisionShape::MakeCapsule(Current.Radius, Current.HalfHeight)
+		                              : FCollisionShape::MakeSphere(Current.Radius);
 	const auto Objects = MakeObjectQuery(Profile);
 	const FVector End = Current.Transform.GetLocation();
 	TArray<FHitResult> Results;
@@ -320,7 +334,8 @@ void UHodgeShapeQueryStrategy::Detect(UWorld* World, const FHodgeHitSource& Sour
 	}
 	else
 	{
-		const bool bTeleport = !Profile->bContinuousMotion && FVector::DistSquared(Previous.Transform.GetLocation(), End) > FMath::Square(Profile->MaxSweepDistance);
+		const bool bTeleport = !Profile->bContinuousMotion && FVector::DistSquared(
+			Previous.Transform.GetLocation(), End) > FMath::Square(Profile->MaxSweepDistance);
 		const FTransform Start = bTeleport ? Current.Transform : Previous.Transform;
 		const int32 Steps = Current.Shape == EHodgeHitShape::Sphere ? 1 : Profile->RotationSubsteps;
 		FVector PreviousPosition = Start.GetLocation();
@@ -337,17 +352,25 @@ void UHodgeShapeQueryStrategy::Detect(UWorld* World, const FHodgeHitSource& Sour
 	}
 #if ENABLE_DRAW_DEBUG
 	FHodgeHitSource DebugSource = Source;
-	DebugSource.SourceTag = FGameplayTag::RequestGameplayTag(TEXT("Combat.Source.Hitbox.Chest"), false);
+	if (!DebugSource.SourceTag.IsValid())
+	{
+		DebugSource.SourceTag = FGameplayTag::RequestGameplayTag(TEXT("Combat.Source.Hitbox.Chest"), false);
+	}
 	const auto Debug = GetHitDebugSettings(World, DebugSource);
 	const FVector Start = Profile->QueryMode == EHodgeHitQueryMode::Overlap ||
-		(!Profile->bContinuousMotion && FVector::DistSquared(Previous.Transform.GetLocation(), End) > FMath::Square(Profile->MaxSweepDistance))
-		? End : Previous.Transform.GetLocation();
+	                      (!Profile->bContinuousMotion && FVector::DistSquared(Previous.Transform.GetLocation(), End) >
+		                      FMath::Square(Profile->MaxSweepDistance))
+		                      ? End
+		                      : Previous.Transform.GetLocation();
 	if (Current.Shape == EHodgeHitShape::Sphere) { DrawSphereSweep(World, Start, End, Current.Radius, Debug, Results); }
-	else if (Current.Shape == EHodgeHitShape::Box) { DrawBoxSweep(World, Start, End, Current.BoxExtent, Current.Transform.GetRotation(), Debug, Results); }
+	else if (Current.Shape == EHodgeHitShape::Box)
+	{
+		DrawBoxSweep(World, Start, End, Current.BoxExtent, Current.Transform.GetRotation(), Debug, Results);
+	}
 	else if (Debug.bEnabled)
 	{
 		DrawDebugCapsule(World, End, Current.HalfHeight, Current.Radius, Current.Transform.GetRotation(),
-			Results.IsEmpty() ? Debug.Color : FColor::Green, false, Debug.Duration, 0, 1.f);
+		                 Results.IsEmpty() ? Debug.Color : FColor::Green, false, Debug.Duration, 0, 1.f);
 		DrawDebugLine(World, Start, End, Debug.Color, false, Debug.Duration, 0, 1.f);
 		DrawHitPoints(World, Results, Debug.Duration);
 	}

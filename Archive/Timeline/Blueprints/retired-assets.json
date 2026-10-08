@@ -1,0 +1,262 @@
+[
+  {
+    "original": "Content/CodexText/Backups/DefinitionCombo_20260928/DA_Attack_1_BeforeRateTest.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/Backups/DefinitionCombo_20260928/DA_Attack_1_BeforeRateTest.uasset",
+    "sha256": "7c9654c8d5c8a4bd5a4cfcda7045b7b19571c209a7633856b93e63e5b650a5b7"
+  },
+  {
+    "original": "Content/CodexText/Backups/DefinitionCombo_20260928/DA_Attack_1_Timeline_BeforeEventTest.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/Backups/DefinitionCombo_20260928/DA_Attack_1_Timeline_BeforeEventTest.uasset",
+    "sha256": "cced6a1efb1ec0f62c958b134e00b6f66e8531933b499645e9e67b6d54ad7ba3"
+  },
+  {
+    "original": "Content/CodexText/Backups/DefinitionCombo_20260928/DA_Attack_2_BeforeFailureTest.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/Backups/DefinitionCombo_20260928/DA_Attack_2_BeforeFailureTest.uasset",
+    "sha256": "e54a4dcb9b25c21d372c56e6c133248b06459558b15bc14230574969693b2686"
+  },
+  {
+    "original": "Content/CodexText/Backups/DefinitionCombo_20260928/DA_Dafult_PawnData.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/Backups/DefinitionCombo_20260928/DA_Dafult_PawnData.uasset",
+    "sha256": "cc236afe58e56364f7335b7c26badad723a61b1ccf6c6a934aef2251720b9291"
+  },
+  {
+    "original": "Content/CodexText/Backups/DefinitionCombo_20260928/DA_Pover.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/Backups/DefinitionCombo_20260928/DA_Pover.uasset",
+    "sha256": "96dfe38af762fae64d1a98ab11be5b9179472f14790f5be24bef4b61023e9436"
+  },
+  {
+    "original": "Content/CodexText/Backups/DefinitionCombo_20260928/DT_LightCombo_BeforeEventTest.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/Backups/DefinitionCombo_20260928/DT_LightCombo_BeforeEventTest.uasset",
+    "sha256": "6e7a0173b38fa0bf98c62a80e89767d52c6a46f1110ab58848d8fab796681886"
+  },
+  {
+    "original": "Content/CodexText/Backups/DefinitionCombo_20260928/DT_LightCombo_InitialImport.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/Backups/DefinitionCombo_20260928/DT_LightCombo_InitialImport.uasset",
+    "sha256": "b67883c0b5a64ac2697c5f09d740865b2102b35504d0b1b338a08a91f352a3e4"
+  },
+  {
+    "original": "Content/CodexText/BasicAttack/GA_BasicAttack.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/BasicAttack/GA_BasicAttack.uasset",
+    "sha256": "b7c5210edb0a9b0e174e2180c86e836da927a45a2925f1b85185142469af207c"
+  },
+  {
+    "original": "Content/CodexText/CombatHitWindows/DA_Hit_BoxSweep.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/CombatHitWindows/DA_Hit_BoxSweep.uasset",
+    "sha256": "abdaae3487e1267ecf80959bcc4c76732c8c6f4ee88a70b4e5b38a5ad733407c"
+  },
+  {
+    "original": "Content/CodexText/CombatHitWindows/DA_Hit_SocketSweep.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/CombatHitWindows/DA_Hit_SocketSweep.uasset",
+    "sha256": "e63433418dfc479a23ae2a7004d334e19232a1387e3ae85d908e25c1ad4046d9"
+  },
+  {
+    "original": "Content/CodexText/CombatHitWindows/DA_Test_Body.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/CombatHitWindows/DA_Test_Body.uasset",
+    "sha256": "d45d215cdd2f0dd2ff1d0769acc160c6c86472d5c89b9038de8b21ddcd6ac70e"
+  },
+  {
+    "original": "Content/CodexText/CombatHitWindows/DA_Test_Body_Timeline.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/CombatHitWindows/DA_Test_Body_Timeline.uasset",
+    "sha256": "4438007d7d01a147d45f6ddc5a83ce3dff5482350e1dfdeadf51b5ec9e91d3b3"
+  },
+  {
+    "original": "Content/CodexText/CombatHitWindows/DA_Test_HitBox.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/CombatHitWindows/DA_Test_HitBox.uasset",
+    "sha256": "2e1362aa27e1b4895bf903e98adda16247d191b9ff778bbfa66cc03033abb6f5"
+  },
+  {
+    "original": "Content/CodexText/CombatHitWindows/DA_Test_HitBox_Timeline.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/CombatHitWindows/DA_Test_HitBox_Timeline.uasset",
+    "sha256": "77d6c8bcd078f9925cea451c913902844eb181c5621607599fa042a84473e877"
+  },
+  {
+    "original": "Content/CodexText/CombatHitWindows/DA_Test_Weapon.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/CombatHitWindows/DA_Test_Weapon.uasset",
+    "sha256": "d551471f03bf2150e367714bf2702a707c816b7e788a3bbfe580abfd185db01b"
+  },
+  {
+    "original": "Content/CodexText/CombatHitWindows/DA_Test_Weapon_Timeline.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/CombatHitWindows/DA_Test_Weapon_Timeline.uasset",
+    "sha256": "bff44afe587d5a1a276d2bc9405900654158314a05fe7cc8362c76c825fc3379"
+  },
+  {
+    "original": "Content/CodexText/CombatHitWindows/Fixture/AS_MeleeTest_Body.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/CombatHitWindows/Fixture/AS_MeleeTest_Body.uasset",
+    "sha256": "1d33dddbdf427ff2e7d6809830a2a1f0b5bec8546b77a3cb34505032113ba8ef"
+  },
+  {
+    "original": "Content/CodexText/CombatHitWindows/Fixture/AS_MeleeTest_HitBox.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/CombatHitWindows/Fixture/AS_MeleeTest_HitBox.uasset",
+    "sha256": "26dca08eb08dca98ccf1202e5c7d41f8f4d4365bf16db3c35284a6b6eb32bc0d"
+  },
+  {
+    "original": "Content/CodexText/CombatHitWindows/Fixture/AS_MeleeTest_Weapon.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/CombatHitWindows/Fixture/AS_MeleeTest_Weapon.uasset",
+    "sha256": "34d3b89715c4a243cbf51d5d4d03d958a8115113c57a0381f3a5894ed0a4bd45"
+  },
+  {
+    "original": "Content/CodexText/CombatHitWindows/Fixture/BP_MeleeTestCombatComponent.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/CombatHitWindows/Fixture/BP_MeleeTestCombatComponent.uasset",
+    "sha256": "33b6d7a7d142024a1db6adb09327631d9fc96aadb0c4c1a2e4ac060ede6ba0b9"
+  },
+  {
+    "original": "Content/CodexText/CombatHitWindows/Fixture/BP_MeleeTestEquipment.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/CombatHitWindows/Fixture/BP_MeleeTestEquipment.uasset",
+    "sha256": "857f38584ca767da3de5ba0f3f9df13940349c16a44fc76ec12b1566df7dd79d"
+  },
+  {
+    "original": "Content/CodexText/CombatHitWindows/Fixture/BP_MeleeTestHero.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/CombatHitWindows/Fixture/BP_MeleeTestHero.uasset",
+    "sha256": "e18cc5890e56005bf4007db67dbfc6e223798f8e7252a8e57694d120aa340490"
+  },
+  {
+    "original": "Content/CodexText/CombatHitWindows/Fixture/BP_MeleeTestWeaponInstance.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/CombatHitWindows/Fixture/BP_MeleeTestWeaponInstance.uasset",
+    "sha256": "79336fc8bc041741dc8f14f7ebdcc5e42bad23ccee737e3d6b3789a5b8695dac"
+  },
+  {
+    "original": "Content/CodexText/CombatHitWindows/Fixture/DA_MeleeTestCombo.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/CombatHitWindows/Fixture/DA_MeleeTestCombo.uasset",
+    "sha256": "8605692abdabbe6e64d704dce3c4ac83d2c4a062ea834b87acb459cee3b1184a"
+  },
+  {
+    "original": "Content/CodexText/CombatHitWindows/Fixture/DA_MeleeTestPawn_Body.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/CombatHitWindows/Fixture/DA_MeleeTestPawn_Body.uasset",
+    "sha256": "836bf8302791e3db818568fae34850629fd272383e3bd52bb42202daf6e3aa01"
+  },
+  {
+    "original": "Content/CodexText/CombatHitWindows/Fixture/DA_MeleeTestPawn_HitBox.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/CombatHitWindows/Fixture/DA_MeleeTestPawn_HitBox.uasset",
+    "sha256": "6784faa1fc1b9e7aa8b6c9c3006e0c5e3b8c5cb03b583aaa59b66fdc0842692b"
+  },
+  {
+    "original": "Content/CodexText/CombatHitWindows/Fixture/DA_MeleeTestPawn_Weapon.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/CombatHitWindows/Fixture/DA_MeleeTestPawn_Weapon.uasset",
+    "sha256": "e0cd199868d17e1ee9ac916ad7978f499287e6e29fc87fcf0940de59bf59d70d"
+  },
+  {
+    "original": "Content/CodexText/CombatHitWindows/Fixture/DT_MeleeTestCombo.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/CombatHitWindows/Fixture/DT_MeleeTestCombo.uasset",
+    "sha256": "8354d4289893bf44a586e473a47bb6e23252e5618ba885ad99b12abdce8a3700"
+  },
+  {
+    "original": "Content/CodexText/CombatHitWindows/Fixture/Exp_MeleeTestExperience.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/CombatHitWindows/Fixture/Exp_MeleeTestExperience.uasset",
+    "sha256": "5265ad544924821639fd5ddfaaa12246a812573f506dc23726a88dd3bcda4fc8"
+  },
+  {
+    "original": "Content/CodexText/CombatHitWindows/Fixture/GE_MeleeTestAttributes.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/CombatHitWindows/Fixture/GE_MeleeTestAttributes.uasset",
+    "sha256": "4a20f46e1cef37a335f4cb1afd29bfa356a5570b96f9e14a83d8124798b536fd"
+  },
+  {
+    "original": "Content/CodexText/DefinitionCombo/DA_Attack_1_Timeline.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/DefinitionCombo/DA_Attack_1_Timeline.uasset",
+    "sha256": "b79b23a9ed4885a7276101eb454f3e53b5559f9f73dc087b1c4e77b0c5dc9b0c"
+  },
+  {
+    "original": "Content/CodexText/DefinitionCombo/DA_Attack_2_Timeline.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/DefinitionCombo/DA_Attack_2_Timeline.uasset",
+    "sha256": "f7573d16d8cf41de2f0188659fcb288b806e426ba5cfd6dc5e668e025ba1eaea"
+  },
+  {
+    "original": "Content/CodexText/DefinitionCombo/DA_Attack_3_Timeline.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/DefinitionCombo/DA_Attack_3_Timeline.uasset",
+    "sha256": "ec5c80536235bfeafdb542c7d5b0f2b34dbc0e4c971e8e498ae9ae121737f19b"
+  },
+  {
+    "original": "Content/CodexText/DefinitionCombo/DA_Attack_4_Timeline.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/DefinitionCombo/DA_Attack_4_Timeline.uasset",
+    "sha256": "0012e709c4d66eca5accd4cc26af21b397d1edfb23fe0f4f17b1c5d342aa4cf2"
+  },
+  {
+    "original": "Content/CodexText/DefinitionCombo/DA_Attack_5_Timeline.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/DefinitionCombo/DA_Attack_5_Timeline.uasset",
+    "sha256": "17a72dc92d93a08ab482ed52acf41c2a74d8fd2a62368ad977f60446dea32ee5"
+  },
+  {
+    "original": "Content/CodexText/SkillHitVolumes/TL_VolumeOnceWindow.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/SkillHitVolumes/TL_VolumeOnceWindow.uasset",
+    "sha256": "a214125057c0d6c8bb6fba049e14f7853bb9ed2d5faaa0c8c181c135d0809784"
+  },
+  {
+    "original": "Content/CodexText/SkillHitVolumes/TL_VolumePoints.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/SkillHitVolumes/TL_VolumePoints.uasset",
+    "sha256": "29f4b7ca03b25123402cd78f5a228d857b407898b6a46f7ebfc0437c2fe6f3d5"
+  },
+  {
+    "original": "Content/CodexText/SkillHitVolumes/TL_VolumeWindows.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/SkillHitVolumes/TL_VolumeWindows.uasset",
+    "sha256": "c56c64bdf8173c55b6e82aa473d5bbb0ef8aa658023595256d4713ac40a86725"
+  },
+  {
+    "original": "Content/CodexText/Timeline/DA_TimelineTest.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/Timeline/DA_TimelineTest.uasset",
+    "sha256": "893e7609e116a01d13712cc102a273c32d2c96b476a2243e232d6c6e0589546b"
+  },
+  {
+    "original": "Content/CodexText/Timeline/DA_TimelineTest_Bad.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/Timeline/DA_TimelineTest_Bad.uasset",
+    "sha256": "42c0ff3425b71136f793d8c462848d4e565a9a2d236e3201bccac95525aaac31"
+  },
+  {
+    "original": "Content/CodexText/Timeline/GA_TimelineEndListener.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/Timeline/GA_TimelineEndListener.uasset",
+    "sha256": "c3c2935390a99f71fa3b19ef7cdfc381ec23ace0099dda747365947e02741c74"
+  },
+  {
+    "original": "Content/CodexText/Timeline/GA_TimelineInterruptListener.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/Timeline/GA_TimelineInterruptListener.uasset",
+    "sha256": "ee150c6bb07d42a15b2349a3acf7a1ce3871b4a7f7db197814dbee8c552f061c"
+  },
+  {
+    "original": "Content/CodexText/Timeline/GA_TimelineListener.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/Timeline/GA_TimelineListener.uasset",
+    "sha256": "528718bbe3db882778f6ac69dbe43d619050858847fd8e72798bb9b8e647eeda"
+  },
+  {
+    "original": "Content/CodexText/Timeline/GA_TimelineTest.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/Timeline/GA_TimelineTest.uasset",
+    "sha256": "602695321a303c6717e108e2acd49064c8b66ded85382c792463cfb85d8f1c0f"
+  },
+  {
+    "original": "Content/CodexText/Timeline/GE_TimelineTest_Infinite.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/CodexText/Timeline/GE_TimelineTest_Infinite.uasset",
+    "sha256": "a27fc8f8fefe91866cb0f6aef85fbaee8f11b9df494f4be16a2f9e5b0cc64b66"
+  },
+  {
+    "original": "Content/Main/Character/Hero/Ability/BasicAttack/Timeline/DA_Attack01_Timeline.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/Main/Character/Hero/Ability/BasicAttack/Timeline/DA_Attack01_Timeline.uasset",
+    "sha256": "5867248c799027299fc6d79ab6222a8d683f1375849815fc2147efe51a85a399"
+  },
+  {
+    "original": "Content/Main/Character/Hero/Ability/BasicAttack/Timeline/DA_Attack02_Timeline.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/Main/Character/Hero/Ability/BasicAttack/Timeline/DA_Attack02_Timeline.uasset",
+    "sha256": "db3477c9eb67fbd835804062bdd06fcd873bc6ff08d26f98f21f869435c6dd33"
+  },
+  {
+    "original": "Content/Main/Character/Hero/Ability/BasicAttack/Timeline/DA_Attack03_Timeline.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/Main/Character/Hero/Ability/BasicAttack/Timeline/DA_Attack03_Timeline.uasset",
+    "sha256": "417555a2bb1348006737c39b9bd15786fef599047fc5f80ef1fd504fec05935c"
+  },
+  {
+    "original": "Content/Main/Character/Hero/Ability/BasicAttack/Timeline/DA_Attack04_Timeline.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/Main/Character/Hero/Ability/BasicAttack/Timeline/DA_Attack04_Timeline.uasset",
+    "sha256": "b9f66d555d3a728c06d782732abf232ecf97fbc90c09cd5c64afd78e687695d7"
+  },
+  {
+    "original": "Content/Main/Character/Hero/Ability/BasicAttack/Timeline/DA_Attack05_Timeline.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/Main/Character/Hero/Ability/BasicAttack/Timeline/DA_Attack05_Timeline.uasset",
+    "sha256": "c7b77b7247e73dedd8f5da65df6fcf438328b7a3d86e7b844c06a0d8554f0a42"
+  },
+  {
+    "original": "Content/Main/Character/Hero/DA_TimeLineText.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/Main/Character/Hero/DA_TimeLineText.uasset",
+    "sha256": "a93123b5fc654e11036dde06790bdbc1b7298ff3de62d976eaf3af5720b7c020"
+  },
+  {
+    "original": "Content/Main/Experiences/CodexText/Exp_MeleeValidation.uasset",
+    "archive": "Archive/Timeline/Blueprints/Content/Main/Experiences/CodexText/Exp_MeleeValidation.uasset",
+    "sha256": "37aa08072fc39e2b8782fd6e96a9aef444f03fa5cd8ad3252bd14be245a226bc"
+  }
+]

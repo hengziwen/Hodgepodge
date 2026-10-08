@@ -5,7 +5,6 @@
 #include "Engine/EngineBaseTypes.h"
 #include "HodgeAbilityTask_WaitHitResults.generated.h"
 
-class UHodgeAbilityTask_PlayTimeline;
 class UHodgeGameplayAbility_Definition;
 class UHodgeCombatComponentBase;
 class UHodgeAbilityTask_WaitHitResults;
@@ -19,22 +18,22 @@ struct FHodgeHitResultsTickFunction final : FTickFunction
 	virtual FString DiagnosticMessage() override;
 };
 
-/** 一个 GA 执行拥有一个采样 Task，每个 Timeline 窗口拥有独立检测会话。 */
+/** 一个 GA 执行拥有一个采样 Task，每个通知区间拥有独立检测会话。 */
 UCLASS()
 class HODGEPODGE_API UHodgeAbilityTask_WaitHitResults : public UAbilityTask
 {
 	GENERATED_BODY()
 public:
 	static UHodgeAbilityTask_WaitHitResults* WaitHitResults(UHodgeGameplayAbility_Definition* OwningAbility,
-		UHodgeCombatComponentBase* Combat, UHodgeAbilityTask_PlayTimeline* Timeline, const FGuid& ExecutionId);
+		UHodgeCombatComponentBase* Combat, const FGuid& ExecutionId);
 
 	DECLARE_MULTICAST_DELEGATE_OneParam(FHitResults, const FHodgeHitDetectionBatch&);
 	FHitResults OnHitResults;
 
 	// 创建不回调；GA 登记规则和句柄后显式调用首次采样。
-	uint64 CreateWindow(int32 EventIndex, const FHodgeHitDetectionRequest& Request);
-	void SampleWindow(int32 EventIndex);
-	void CloseWindow(int32 EventIndex, bool bSampleFinal);
+	uint64 CreateWindow(int32 OccurrenceId, const FHodgeHitDetectionRequest& Request);
+	void SampleWindow(int32 OccurrenceId);
+	void CloseWindow(int32 OccurrenceId, bool bSampleFinal);
 	bool IsRunningForExecution(const FGuid& ExecutionId) const;
 	bool IsBatchCurrent(const FHodgeHitDetectionBatch& Batch) const;
 	virtual void Pause() override;
@@ -64,7 +63,6 @@ private:
 	FHodgeHitResultsTickFunction DetectionTick;
 	UPROPERTY() TWeakObjectPtr<UHodgeGameplayAbility_Definition> ExecutionAbility;
 	UPROPERTY() TWeakObjectPtr<UHodgeCombatComponentBase> CombatComponent;
-	UPROPERTY() TWeakObjectPtr<UHodgeAbilityTask_PlayTimeline> TimelineTask;
 	UPROPERTY() TWeakObjectPtr<AActor> Avatar;
 	bool bStopped = false;
 	bool bSampling = false;

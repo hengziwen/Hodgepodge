@@ -4,6 +4,7 @@
 #include "GameFramework/Character.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/PrimitiveComponent.h"
+#include "Components/BoxComponent.h"
 #include "Engine/World.h"
 #include "AbilitySystem/HodgeAbilitySystemComponent.h"
 #include "AbilitySystem/HodgeGameplayTags.h"
@@ -17,6 +18,7 @@
 #include "Component/HodgePawnExtensionComponent.h"
 #include "Data/HodgePawnData.h"
 
+#include "TimerManager.h"
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeCombatComponentBase)
 
 namespace
@@ -46,9 +48,38 @@ UHodgeCombatComponentBase::UHodgeCombatComponentBase()
 	SetIsReplicatedByDefault(true);
 }
 
+FGuid UHodgeCombatComponentBase::AcquirePoseLease()
+{
+	if (!CanExecuteAbilities() || !GetOwner() || !GetOwner()->HasAuthority()) { return {}; }
+	const auto* Character = Cast<ACharacter>(GetOwner());
+	if (!Character || !Character->GetMesh()) { return {}; }
+	if (PoseLeases.IsEmpty())
+	{
+		PoseMesh = Character->GetMesh();
+		SavedPosePolicy = static_cast<uint8>(PoseMesh->VisibilityBasedAnimTickOption);
+		PoseMesh->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
+	}
+	const FGuid Handle = FGuid::NewGuid();
+	PoseLeases.Add(Handle);
+	return Handle;
+}
+
+void UHodgeCombatComponentBase::ReleasePoseLease(FGuid Handle)
+{
+	if (!PoseLeases.Remove(Handle) || !PoseLeases.IsEmpty()) { return; }
+	if (PoseMesh.IsValid() && PoseMesh->VisibilityBasedAnimTickOption ==
+		EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones)
+	{
+		PoseMesh->VisibilityBasedAnimTickOption = static_cast<EVisibilityBasedAnimTickOption>(SavedPosePolicy);
+	}
+	PoseMesh.Reset();
+}
+
 void UHodgeCombatComponentBase::EndPlay(const EEndPlayReason::Type Reason)
 {
 	Shutdown();
+	TArray<FGuid> Leases = PoseLeases.Array();
+	for (FGuid Lease : Leases) { ReleasePoseLease(Lease); }
 	Super::EndPlay(Reason);
 }
 
@@ -95,13 +126,15 @@ bool UHodgeCombatComponentBase::IsSourceValid(const FHodgeHitDetectionSession& S
 	{
 		AActor* Target = Session.Request.RuntimeTarget.Get();
 		if (!IsValid(Target) || Target->GetWorld() != GetWorld() ||
-			FVector::DistSquared(GetOwner()->GetActorLocation(), Target->GetActorLocation()) > FMath::Square(Session.Request.MaxTargetDistance)) { return false; }
+			FVector::DistSquared(GetOwner()->GetActorLocation(), Target->GetActorLocation()) > FMath::Square(
+				Session.Request.MaxTargetDistance)) { return false; }
 	}
 	if (Session.Request.TargetPolicy == EHodgeHitTargetPolicy::ConfirmedTarget) { return true; }
 	if (Session.Request.Volume.GeometryMode == EHodgeHitGeometryMode::ConfiguredShape &&
 		Session.Request.Volume.AnchorKind != EHodgeHitAnchorKind::RegisteredSource)
 	{
-		return Session.Request.Volume.AnchorKind != EHodgeHitAnchorKind::ExecutionTransform || Session.Request.bHasRuntimeAnchor;
+		return Session.Request.Volume.AnchorKind != EHodgeHitAnchorKind::ExecutionTransform || Session.Request.
+			bHasRuntimeAnchor;
 	}
 	if (!Session.SourceComponent.IsValid()) { return false; }
 	if (Session.bWeaponSource)
@@ -113,7 +146,8 @@ bool UHodgeCombatComponentBase::IsSourceValid(const FHodgeHitDetectionSession& S
 	return Session.SourceComponent->GetOwner() == GetOwner();
 }
 
-bool UHodgeCombatComponentBase::CaptureDetectionGeometry(const FHodgeHitDetectionSession& Session, FHodgeHitGeometry& Out) const
+bool UHodgeCombatComponentBase::CaptureDetectionGeometry(const FHodgeHitDetectionSession& Session,
+                                                         FHodgeHitGeometry& Out) const
 {
 	if (!IsSourceValid(Session)) { return false; }
 	const auto& Request = Session.Request;
@@ -126,21 +160,27 @@ bool UHodgeCombatComponentBase::CaptureDetectionGeometry(const FHodgeHitDetectio
 	const auto& Volume = Request.Volume;
 	if (Volume.GeometryMode == EHodgeHitGeometryMode::ExistingSource)
 	{
-		return Request.Profile->Strategy.GetDefaultObject()->Capture(Session.SourceComponent.Get(), Session.Source, Out);
+		return Session.Strategy.GetDefaultObject()->Capture(Session.SourceComponent.Get(), Session.Source, Out);
 	}
 	FTransform Anchor;
 	if (Session.bHasFixedAnchor) { Anchor = Session.FixedAnchor; }
 	else if (Volume.AnchorKind == EHodgeHitAnchorKind::AvatarRoot) { Anchor = GetOwner()->GetActorTransform(); }
 	else if (Volume.AnchorKind == EHodgeHitAnchorKind::ExecutionTransform) { Anchor = Request.RuntimeAnchor; }
-	else if (Volume.AnchorKind == EHodgeHitAnchorKind::ExecutionTarget) { Anchor = Request.RuntimeTarget->GetActorTransform(); }
+	else if (Volume.AnchorKind == EHodgeHitAnchorKind::ExecutionTarget)
+	{
+		Anchor = Request.RuntimeTarget->GetActorTransform();
+	}
 	else
 	{
 		USceneComponent* Component = Session.SourceComponent.Get();
 		if (!Volume.AnchorSocket.IsNone() && !Component->DoesSocketExist(Volume.AnchorSocket)) { return false; }
-		Anchor = Volume.AnchorSocket.IsNone() ? Component->GetComponentTransform() : Component->GetSocketTransform(Volume.AnchorSocket);
+		Anchor = Volume.AnchorSocket.IsNone()
+			         ? Component->GetComponentTransform()
+			         : Component->GetSocketTransform(Volume.AnchorSocket);
 	}
 	if (Anchor.ContainsNaN() || !Anchor.GetRotation().IsNormalized() ||
-		FVector::DistSquared(GetOwner()->GetActorLocation(), Anchor.GetLocation()) > FMath::Square(Volume.MaxAnchorDistance)) { return false; }
+		FVector::DistSquared(GetOwner()->GetActorLocation(), Anchor.GetLocation()) > FMath::Square(
+			Volume.MaxAnchorDistance)) { return false; }
 	Anchor.SetScale3D(FVector::OneVector);
 	Out = FHodgeHitGeometry();
 	Out.Transform = Volume.LocalTransform * Anchor;
@@ -151,39 +191,52 @@ bool UHodgeCombatComponentBase::CaptureDetectionGeometry(const FHodgeHitDetectio
 	return !Out.Transform.ContainsNaN();
 }
 
-uint64 UHodgeCombatComponentBase::CreateDetectionSession(const FGuid& ExecutionId, int32 EventIndex,
-	const FHodgeHitDetectionRequest& Request)
+uint64 UHodgeCombatComponentBase::CreateDetectionSession(const FGuid& ExecutionId, int32 OccurrenceId,
+                                                         const FHodgeHitDetectionRequest& Request)
 {
-	if (!IsValid(GetOwner()) || !GetOwner()->HasAuthority() || !ExecutionId.IsValid() || EventIndex < 0 ||
+	if (!IsValid(GetOwner()) || !GetOwner()->HasAuthority() || !ExecutionId.IsValid() || OccurrenceId < 0 ||
 		!Request.Profile) { return 0; }
 	for (const auto& Pair : Sessions)
 	{
-		if (Pair.Value.ExecutionId == ExecutionId && Pair.Value.EventIndex == EventIndex) { return Pair.Key; }
+		if (Pair.Value.ExecutionId == ExecutionId && Pair.Value.OccurrenceId == OccurrenceId) { return Pair.Key; }
 	}
 	TArray<FText> Errors;
 	if (!Request.Profile->Validate(Errors) || !Request.Volume.Validate(Errors) ||
 		!FMath::IsFinite(Request.MaxTargetDistance) || Request.MaxTargetDistance <= 0.f)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Invalid detection profile [%s] on [%s]."),
-			*GetNameSafe(Request.Profile), *GetNameSafe(GetOwner()));
+		       *GetNameSafe(Request.Profile), *GetNameSafe(GetOwner()));
 		return 0;
 	}
 	FHodgeHitDetectionSession Session;
 	Session.ExecutionId = ExecutionId;
-	Session.EventIndex = EventIndex;
+	Session.OccurrenceId = OccurrenceId;
 	Session.Request = Request;
 	const bool bComponentSource = Request.TargetPolicy != EHodgeHitTargetPolicy::ConfirmedTarget &&
-		(Request.Volume.GeometryMode == EHodgeHitGeometryMode::ExistingSource || Request.Volume.AnchorKind == EHodgeHitAnchorKind::RegisteredSource);
-	if ((bComponentSource && (!Request.SourceTag.IsValid() || !ResolveSource(Request.SourceTag, Session))) ||
-		(Request.Volume.GeometryMode == EHodgeHitGeometryMode::ConfiguredShape && Request.TargetPolicy != EHodgeHitTargetPolicy::ConfirmedTarget &&
-			!Request.Profile->Strategy->IsChildOf(UHodgeShapeQueryStrategy::StaticClass())) ||
-		!CaptureDetectionGeometry(Session, Session.Previous))
+	(Request.Volume.GeometryMode == EHodgeHitGeometryMode::ExistingSource || Request.Volume.AnchorKind ==
+		EHodgeHitAnchorKind::RegisteredSource);
+	if (bComponentSource)
 	{
-		UE_LOG(LogTemp, Error, TEXT("Cannot resolve unique detection source [%s] or geometry on [%s]."),
-			*Request.SourceTag.ToString(), *GetNameSafe(GetOwner()));
+		if (Request.DirectComponent.IsValid())
+		{
+			Session.SourceComponent = Request.DirectComponent;
+			Session.Source = Request.DirectSource;
+		}
+		else if (!Request.SourceTag.IsValid() || !ResolveSource(Request.SourceTag, Session)) { return 0; }
+	}
+	Session.Strategy = Request.Volume.GeometryMode == EHodgeHitGeometryMode::ConfiguredShape
+		                   ? UHodgeShapeQueryStrategy::StaticClass()
+		                   : (Session.SourceComponent.IsValid() && Session.SourceComponent->IsA<UBoxComponent>()
+			                      ? UHodgeBoxSweepStrategy::StaticClass()
+			                      : UHodgeSocketSweepStrategy::StaticClass());
+	if (!CaptureDetectionGeometry(Session, Session.Previous))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Cannot resolve notification hit geometry on [%s]."), *GetNameSafe(GetOwner()));
 		return 0;
 	}
-	if (Request.Volume.GeometryMode == EHodgeHitGeometryMode::ConfiguredShape && Request.Volume.TransformPolicy == EHodgeHitTransformPolicy::SnapshotOnEventEnter)
+
+	if (Request.Volume.GeometryMode == EHodgeHitGeometryMode::ConfiguredShape && Request.Volume.TransformPolicy ==
+		EHodgeHitTransformPolicy::SnapshotOnEventEnter)
 	{
 		// 存储锚点本身，后续 Capture 仍只施加一次局部变换。
 		Session.FixedAnchor = Request.Volume.LocalTransform.Inverse() * Session.Previous.Transform;
@@ -218,7 +271,8 @@ USceneComponent* UHodgeCombatComponentBase::GetDetectionSourceComponent(uint64 H
 {
 	const FHodgeHitDetectionSession* Session = Sessions.Find(Handle);
 	return Session && Session->ExecutionId == ExecutionId && IsSourceValid(*Session)
-		? Session->SourceComponent.Get() : nullptr;
+		       ? Session->SourceComponent.Get()
+		       : nullptr;
 }
 
 void UHodgeCombatComponentBase::EndDetectionSession(uint64 Handle, const FGuid& ExecutionId)
@@ -242,11 +296,13 @@ void UHodgeCombatComponentBase::EndAllDetectionSessions()
 
 void UHodgeCombatComponentBase::UpdateDetectionAnchor(const FGuid& ExecutionId, FName Key, const FTransform& Transform)
 {
-	if (!GetOwner() || !GetOwner()->HasAuthority() || Transform.ContainsNaN() || !Transform.GetRotation().IsNormalized()) { return; }
+	if (!GetOwner() || !GetOwner()->HasAuthority() || Transform.ContainsNaN() || !Transform.GetRotation().
+		IsNormalized()) { return; }
 	for (auto& Pair : Sessions)
 	{
 		auto& Session = Pair.Value;
-		if (Session.ExecutionId == ExecutionId && Session.Request.Volume.AnchorKind == EHodgeHitAnchorKind::ExecutionTransform &&
+		if (Session.ExecutionId == ExecutionId && Session.Request.Volume.AnchorKind ==
+			EHodgeHitAnchorKind::ExecutionTransform &&
 			Session.Request.Volume.AnchorKey == Key && !Session.bHasFixedAnchor)
 		{
 			Session.Request.RuntimeAnchor = Transform;
@@ -255,7 +311,7 @@ void UHodgeCombatComponentBase::UpdateDetectionAnchor(const FGuid& ExecutionId, 
 }
 
 bool UHodgeCombatComponentBase::SampleDetection(uint64 Handle, const FGuid& ExecutionId,
-	FHodgeHitDetectionBatch& OutBatch)
+                                                FHodgeHitDetectionBatch& OutBatch)
 {
 	OutBatch = FHodgeHitDetectionBatch();
 	FHodgeHitDetectionSession* Live = Sessions.Find(Handle);
@@ -270,7 +326,7 @@ bool UHodgeCombatComponentBase::SampleDetection(uint64 Handle, const FGuid& Exec
 	}
 	const FHodgeHitDetectionSession Snapshot = *Live;
 	FHodgeHitGeometry Current;
-	const UHodgeHitDetectionStrategy* Strategy = Snapshot.Request.Profile->Strategy.GetDefaultObject();
+	const UHodgeHitDetectionStrategy* Strategy = Snapshot.Strategy.GetDefaultObject();
 	if (!CaptureDetectionGeometry(Snapshot, Current))
 	{
 		Sessions.Remove(Handle);
@@ -281,15 +337,18 @@ bool UHodgeCombatComponentBase::SampleDetection(uint64 Handle, const FGuid& Exec
 	if (!Live || Live->ExecutionId != ExecutionId || !IsSourceValid(*Live)) { return false; }
 	Live->Previous = Current;
 	OutBatch.ExecutionId = ExecutionId;
-	OutBatch.EventIndex = Snapshot.EventIndex;
+	OutBatch.OccurrenceId = Snapshot.OccurrenceId;
 	OutBatch.SessionHandle = Handle;
 	OutBatch.SampleSequence = ++Live->SampleSequence;
 	OutBatch.SampleTime = GetWorld()->GetTimeSeconds();
 	OutBatch.SourceComponent = Snapshot.SourceComponent;
 	OutBatch.Weapon = Snapshot.Weapon;
 	OutBatch.SourceOrigin = Current.Transform.GetLocation();
-	OutBatch.ResultKind = Snapshot.Request.TargetPolicy == EHodgeHitTargetPolicy::ConfirmedTarget ? EHodgeHitResultKind::ConfirmedTarget
-		: Snapshot.Request.Profile->QueryMode == EHodgeHitQueryMode::Overlap ? EHodgeHitResultKind::Overlap : EHodgeHitResultKind::Sweep;
+	OutBatch.ResultKind = Snapshot.Request.TargetPolicy == EHodgeHitTargetPolicy::ConfirmedTarget
+		                      ? EHodgeHitResultKind::ConfirmedTarget
+		                      : Snapshot.Request.Profile->QueryMode == EHodgeHitQueryMode::Overlap
+		                      ? EHodgeHitResultKind::Overlap
+		                      : EHodgeHitResultKind::Sweep;
 	FCollisionQueryParams Params(SCENE_QUERY_STAT(HodgeHitDetection), false, GetOwner());
 	Params.bReturnPhysicalMaterial = true;
 	for (const auto& Actor : Snapshot.Request.IgnoredActors)
@@ -298,7 +357,8 @@ bool UHodgeCombatComponentBase::SampleDetection(uint64 Handle, const FGuid& Exec
 	}
 	if (auto* Equipment = GetOwner()->FindComponentByClass<UHodgeEquipmentManagerComponent>())
 	{
-		for (UHodgeEquipmentInstance* Instance : Equipment->GetEquipmentInstancesOfType(UHodgeEquipmentInstance::StaticClass()))
+		for (UHodgeEquipmentInstance* Instance : Equipment->GetEquipmentInstancesOfType(
+			     UHodgeEquipmentInstance::StaticClass()))
 		{
 			Params.AddIgnoredActors(Instance->GetSpawnedActors());
 		}
@@ -310,13 +370,42 @@ bool UHodgeCombatComponentBase::SampleDetection(uint64 Handle, const FGuid& Exec
 		auto* Component = Cast<UPrimitiveComponent>(Target->GetRootComponent());
 		if (Component) { Hits.Add(FHitResult(Target, Component, Target->GetActorLocation(), FVector::ZeroVector)); }
 	}
-	else { Strategy->Detect(GetWorld(), Snapshot.Source, Snapshot.Request.Profile, Snapshot.Previous, Current, Params, Hits); }
-	const FTransform Filter = Snapshot.Request.Profile->FilterFrame == EHodgeHitFilterFrame::DetectionAnchor ? Current.Transform : GetOwner()->GetActorTransform();
+	else if (Snapshot.Request.Profile->QueryMode == EHodgeHitQueryMode::Overlap && Snapshot.Request.Volume.GeometryMode
+		== EHodgeHitGeometryMode::ExistingSource)
+	{
+		const auto* ShapeQuery = GetDefault<UHodgeShapeQueryStrategy>();
+		FHodgeHitGeometry Geometry = Current;
+		Geometry.Shape = Snapshot.SourceComponent.IsValid() && Snapshot.SourceComponent->IsA<UBoxComponent>()
+			                 ? EHodgeHitShape::Box
+			                 : EHodgeHitShape::Sphere;
+		if (Geometry.Shape == EHodgeHitShape::Box)
+		{
+			ShapeQuery->Detect(GetWorld(), Snapshot.Source, Snapshot.Request.Profile, Geometry, Geometry, Params, Hits);
+		}
+		else
+		{
+			for (const FVector& Point : Current.Points)
+			{
+				Geometry.Transform.SetLocation(Point);
+				ShapeQuery->Detect(GetWorld(), Snapshot.Source, Snapshot.Request.Profile, Geometry, Geometry, Params,
+				                   Hits);
+			}
+		}
+	}
+	else
+	{
+		Strategy->Detect(GetWorld(), Snapshot.Source, Snapshot.Request.Profile, Snapshot.Previous, Current, Params,
+		                 Hits);
+	}
+	const FTransform Filter = Snapshot.Request.Profile->FilterFrame == EHodgeHitFilterFrame::DetectionAnchor
+		                          ? Current.Transform
+		                          : GetOwner()->GetActorTransform();
 	for (const FHitResult& Hit : Hits)
 	{
 		AActor* Target = Hit.GetActor();
 		if (!IsValid(Target) || Target == GetOwner()) { continue; }
-		if (Snapshot.Request.TargetPolicy == EHodgeHitTargetPolicy::LockedTargetInVolume && Target != Snapshot.Request.RuntimeTarget) { continue; }
+		if (Snapshot.Request.TargetPolicy == EHodgeHitTargetPolicy::LockedTargetInVolume && Target != Snapshot.Request.
+			RuntimeTarget) { continue; }
 		const FVector Direction = (Target->GetActorLocation() - Filter.GetLocation()).GetSafeNormal2D();
 		if (Snapshot.Request.Profile->HalfAngleDegrees < 180.f && !Direction.IsNearlyZero() &&
 			FVector::DotProduct(Filter.GetRotation().GetForwardVector().GetSafeNormal2D(), Direction) <
@@ -327,7 +416,10 @@ bool UHodgeCombatComponentBase::SampleDetection(uint64 Handle, const FGuid& Exec
 			VisibilityParams.AddIgnoredActor(Target);
 			FHitResult Obstruction;
 			if (GetWorld()->LineTraceSingleByChannel(Obstruction, Filter.GetLocation(), Target->GetActorLocation(),
-				Snapshot.Request.Profile->ObstructionChannel, VisibilityParams)) { continue; }
+			                                         Snapshot.Request.Profile->ObstructionChannel, VisibilityParams))
+			{
+				continue;
+			}
 		}
 		// 保留没有 ASC 的几何命中，交由接收 GA 决定其用途。
 		OutBatch.Hits.Add(Hit);
@@ -340,7 +432,8 @@ bool UHodgeCombatComponentBase::SampleDetection(uint64 Handle, const FGuid& Exec
 UE_DEFINE_GAMEPLAY_TAG_STATIC(TAG_ComboInputRequest, "GameplayEvent.Combo.InputRequest");
 UE_DEFINE_GAMEPLAY_TAG_STATIC(TAG_ComboEventRequest, "GameplayEvent.Combo.EventRequest");
 
-void UHodgeCombatComponentBase::Configure(UHodgeAbilitySystemComponent* InASC, const UHodgeComboDefinition* InDefinition)
+void UHodgeCombatComponentBase::Configure(UHodgeAbilitySystemComponent* InASC,
+                                          const UHodgeComboDefinition* InDefinition)
 {
 	if (bShuttingDown) { return; }
 	if (InASC && InASC->GetAvatarActor() != GetOwner()) { return; }
@@ -362,11 +455,20 @@ void UHodgeCombatComponentBase::Shutdown()
 	if (bShuttingDown) { return; }
 	TGuardValue<bool> Guard(bShuttingDown, true);
 	SetComponentTickEnabled(false);
+	if (ASC)
+	{
+		if (auto* Ability = Cast<UHodgeGameplayAbility_Definition>(ASC->GetAnimatingAbility()))
+		{
+			if (Ability->GetAvatarActorFromActorInfo() == GetOwner()) { Ability->FinishExecution(true, true); }
+		}
+	}
 	ResetSession(true);
 	SetNode(FGameplayTag());
 	if (ASC) { ASC->RemoveLooseGameplayTags(AppliedObserverTags); }
 	AppliedObserverTags.Reset();
 	EndAllDetectionSessions();
+	const TArray<FGuid> Leases = PoseLeases.Array();
+	for (FGuid Lease : Leases) { ReleasePoseLease(Lease); }
 	AuthorizedHandle = {};
 	PendingNode = FGameplayTag();
 	Definition = nullptr;
@@ -442,7 +544,10 @@ bool UHodgeCombatComponentBase::PrepareTransition(const FHodgeComboTransition& E
 {
 	FGameplayAbilitySpec* Spec = ASC->FindAbilitySpecFromHandle(Handle);
 	const auto* AttackDefinition = ASC->FindAbilityDefinition(Handle);
-	if (!AttackDefinition || AttackDefinition->ExecutionRoute != EHodgeAbilityExecutionRoute::ComboCoordinated) { return false; }
+	if (!AttackDefinition || AttackDefinition->ExecutionRoute != EHodgeAbilityExecutionRoute::ComboCoordinated)
+	{
+		return false;
+	}
 	if (!Spec || (Spec->IsActive() && (!CurrentAbility || CurrentAbility->GetCurrentAbilitySpecHandle() != Handle)))
 	{
 		return false;
@@ -478,7 +583,6 @@ bool UHodgeCombatComponentBase::TryTransition(FGameplayTag Trigger, bool bEvent)
 	ExpireComboMemory();
 	const FGameplayTag SourceNode = TransitionSourceNode();
 	const int16 SourceKey = ExecutionKey();
-	if (CurrentAbility) { CurrentAbility->RefreshExecutionClock(); }
 	if (!IsComboReady() || SourceNode != TransitionSourceNode() || SourceKey != ExecutionKey()) { return false; }
 	TGuardValue<bool> Guard(bEvaluating, true);
 	const auto* Edge = SelectTransition(Trigger, bEvent);
@@ -510,21 +614,45 @@ bool UHodgeCombatComponentBase::TryTransition(FGameplayTag Trigger, bool bEvent)
 	return bActivated && CurrentAbility != nullptr;
 }
 
-bool UHodgeCombatComponentBase::PrepareServerActivation(FGameplayAbilitySpecHandle Handle, const FGameplayEventData* Payload)
+float UHodgeCombatComponentBase::GetServerInputBufferSeconds() const
+{
+	return Definition ? FMath::Max(0.01f, Definition->InputBufferSeconds) : 0.f;
+}
+
+bool UHodgeCombatComponentBase::ValidateServerRequestIdentity(const FGameplayEventData* Payload) const
+{
+	// 来源、预测身份与输入类型先核对，不能缓存客户端自行声明的权威玩法消息。
+	return IsComboReady() && !ASC->HasMatchingGameplayTag(TAG_Gameplay_AbilityInputBlocked)
+		&& Payload && Payload->OptionalObject == Definition && Payload->Instigator == ASC->GetAvatarActor()
+		&& Payload->TargetTags.Num() == 1 && Payload->InstigatorTags.Num() == 1
+		&& Payload->TargetTags.HasTagExact(TransitionSourceNode()) && Payload->EventMagnitude == ExecutionKey()
+		&& Payload->EventTag == TAG_ComboInputRequest;
+}
+
+bool UHodgeCombatComponentBase::CanBufferServerActivation(FGameplayAbilitySpecHandle Handle,
+                                                          const FGameplayEventData* Payload) const
+{
+	if (!Handle.IsValid() || !CurrentAbility || !ValidateServerRequestIdentity(Payload)
+		|| !ASC->FindAbilitySpecFromHandle(Handle)) { return false; }
+	const auto* Node = Definition->FindNode(TransitionSourceNode());
+	if (!Node) { return false; }
+	const auto Windows = CurrentAbility->GetExecutionWindows();
+	const auto& Tags = ASC->GetOwnedGameplayTags();
+	for (const auto& Edge : Node->Transitions)
+	{
+		const auto* Target = Definition->FindNode(Edge.TargetComboTag);
+		if (Edge.TriggerInputIntentTag == Payload->InstigatorTags.First() && Target
+			&& ASC->FindDefinitionAbility(Target->AbilityTag) == Handle && Tags.HasAll(Edge.RequiredSourceTags)
+			&& !Tags.HasAny(Edge.BlockedSourceTags) && !Windows.HasAll(Edge.RequiredWindowTags)) { return true; }
+	}
+	return false;
+}
+
+bool UHodgeCombatComponentBase::PrepareServerActivation(FGameplayAbilitySpecHandle Handle,
+                                                        const FGameplayEventData* Payload)
 {
 	ExpireComboMemory();
-	if (!IsComboReady() || ASC->HasMatchingGameplayTag(TAG_Gameplay_AbilityInputBlocked)
-		|| !Payload || Payload->OptionalObject != Definition
-		|| Payload->Instigator != ASC->GetAvatarActor() || Payload->TargetTags.Num() != 1
-		|| Payload->InstigatorTags.Num() != 1 || !Payload->TargetTags.HasTagExact(TransitionSourceNode())
-		|| Payload->EventMagnitude != ExecutionKey()) { return false; }
-	// 时间轴事件由服务器产生，不接受客户端自行声明事件已发生。
-	if (Payload->EventTag != TAG_ComboInputRequest) { return false; }
-	if (CurrentAbility) { CurrentAbility->RefreshExecutionClock(); }
-	if (!IsComboReady() || !Payload->TargetTags.HasTagExact(TransitionSourceNode()) || Payload->EventMagnitude != ExecutionKey())
-	{
-		return false;
-	}
+	if (!ValidateServerRequestIdentity(Payload)) { return false; }
 	TGuardValue<bool> Guard(bEvaluating, true);
 	const auto* Edge = SelectTransition(Payload->InstigatorTags.First(), false);
 	const auto* Target = Edge ? Definition->FindNode(Edge->TargetComboTag) : nullptr;
@@ -533,7 +661,7 @@ bool UHodgeCombatComponentBase::PrepareServerActivation(FGameplayAbilitySpecHand
 }
 
 bool UHodgeCombatComponentBase::PrepareConfirmedActivation(FGameplayAbilitySpecHandle Handle,
-                                                      const FGameplayEventData& Payload)
+                                                           const FGameplayEventData& Payload)
 {
 	if (!IsComboReady() || Payload.OptionalObject != Definition || Payload.Instigator != ASC->GetAvatarActor()
 		|| Payload.EventTag != TAG_ComboEventRequest) { return false; }
@@ -617,7 +745,7 @@ void UHodgeCombatComponentBase::WindowsChanged(UHodgeGameplayAbility_Definition*
 	}
 }
 
-void UHodgeCombatComponentBase::TimelineEvent(UHodgeGameplayAbility_Definition* Ability, FGameplayTag Event)
+void UHodgeCombatComponentBase::ExecutionEvent(UHodgeGameplayAbility_Definition* Ability, FGameplayTag Event)
 {
 	if (!IsComboReady() || CurrentAbility != Ability || !GetOwner()->HasAuthority()) { return; }
 	if (bSwitching || bEvaluating) { QueuedEvents.Add({Ability, ExecutionKey(), Event}); }
@@ -680,13 +808,15 @@ double UHodgeCombatComponentBase::ComboTime() const
 FGameplayTag UHodgeCombatComponentBase::GetRememberedComboTag() const
 {
 	return ComboMemory.Node.IsValid() && (CurrentAbility || ComboMemory.ExpiresAt > ComboTime())
-		? ComboMemory.Node : FGameplayTag();
+		       ? ComboMemory.Node
+		       : FGameplayTag();
 }
 
 float UHodgeCombatComponentBase::GetComboMemoryRemainingTime() const
 {
 	return !CurrentAbility && GetRememberedComboTag().IsValid()
-		? static_cast<float>(FMath::Max(0.0, ComboMemory.ExpiresAt - ComboTime())) : 0.f;
+		       ? static_cast<float>(FMath::Max(0.0, ComboMemory.ExpiresAt - ComboTime()))
+		       : 0.f;
 }
 
 FGameplayTag UHodgeCombatComponentBase::TransitionSourceNode() const
@@ -796,14 +926,28 @@ void UHodgeCombatComponentBase::TickComponent(float Delta, ELevelTick Type, FAct
 	}
 }
 
-void UHodgeCombatComponentBase::ServerMoveCancel_Implementation(AActor* Avatar, FGameplayAbilitySpecHandle Handle, int32 Key)
+void UHodgeCombatComponentBase::ServerMoveCancel_Implementation(AActor* Avatar, FGameplayAbilitySpecHandle Handle,
+                                                                int32 Key)
 {
-	if (IsComboReady() && CurrentAbility && Avatar == GetOwner()
-		&& Handle == CurrentAbility->GetCurrentAbilitySpecHandle() && Key == ExecutionKey())
+	if (!GetWorld())
 	{
-		CurrentAbility->RefreshExecutionClock();
-		if (IsComboReady() && CurrentAbility && Handle == CurrentAbility->GetCurrentAbilitySpecHandle() && Key == ExecutionKey()
-			&& CurrentAbility->GetExecutionWindows().HasTag(Definition->MoveCancelWindowTag)) { EndCurrentExecution(); }
+		ClientMoveCancelResult();
+		return;
+	}
+	TWeakObjectPtr<AActor> WeakAvatar = Avatar;
+	GetWorld()->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateWeakLambda(this,
+		[this, WeakAvatar, Handle, Key]() { ProcessServerMoveCancel(WeakAvatar, Handle, Key); }));
+}
+
+void UHodgeCombatComponentBase::ProcessServerMoveCancel(TWeakObjectPtr<AActor> Avatar,
+                                                        FGameplayAbilitySpecHandle Handle, int32 Key)
+{
+	// RPC 可能早于本帧 NotifyBegin 到达；等动画更新完成后再检查，不能提前授予取消权限。
+	if (Avatar.IsValid() && IsComboReady() && CurrentAbility && Avatar.Get() == GetOwner()
+		&& Handle == CurrentAbility->GetCurrentAbilitySpecHandle() && Key == ExecutionKey()
+		&& CurrentAbility->GetExecutionWindows().HasTag(Definition->MoveCancelWindowTag))
+	{
+		EndCurrentExecution();
 	}
 	ClientMoveCancelResult();
 }
@@ -811,12 +955,11 @@ void UHodgeCombatComponentBase::ServerMoveCancel_Implementation(AActor* Avatar, 
 void UHodgeCombatComponentBase::ClientMoveCancelResult_Implementation() { bMoveRequestPending = false; }
 
 void UHodgeCombatComponentBase::ServerReturnToEntry_Implementation(AActor* Avatar, FGameplayTag SourceNode, int32 Key,
-                                                              FGameplayTag Intent)
+                                                                   FGameplayTag Intent)
 {
 	ExpireComboMemory();
 	if (!IsComboReady() || Avatar != GetOwner() || SourceNode != TransitionSourceNode()
 		|| Key != ExecutionKey() || ASC->HasMatchingGameplayTag(TAG_Gameplay_AbilityInputBlocked)) { return; }
-	if (CurrentAbility) { CurrentAbility->RefreshExecutionClock(); }
 	if (!IsComboReady() || SourceNode != TransitionSourceNode() || Key != ExecutionKey()) { return; }
 	TGuardValue<bool> Guard(bEvaluating, true);
 	const auto* Edge = SelectTransition(Intent, false);

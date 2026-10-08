@@ -250,206 +250,156 @@
   13: ;      此处只登记标签，不代表对应系统已经实现。
   14: ; =============================================================================
   16: [/Script/GameplayTags.GameplayTagsSettings]
-  17: ; 配置检测体与多段独立技能的通用语义标签。
-  18: +GameplayTagList=(Tag="GameplayEvent.Attack.Hit.Pulse",DevComment="One discrete attack hit occurrence")
-  19: +GameplayTagList=(Tag="GameplayEvent.Attack.Hit.Finisher",DevComment="Final attack hit occurrence")
-  20: +GameplayTagList=(Tag="InputTag.Ability.Skill",DevComment="Standalone definition skill input")
-  21: +GameplayTagList=(Tag="Ability.Type.Action.Skill",DevComment="Standalone combat skill")
-  22: ImportTagsFromConfig=True
-  23: WarnOnInvalidTags=True
-  24: ClearInvalidTags=False
-  25: AllowEditorTagUnloading=True
-  26: AllowGameTagUnloading=False
-  27: FastReplication=False
-  28: bDynamicReplication=False
-  29: InvalidTagCharacters="\"\',"
-  30: NumBitsForContainerSize=6
-  31: NetIndexFirstBitSegment=16
-  32: ;+GameplayTagTableList=/Game/ContextEffects/DT_AnimEffectTags.DT_AnimEffectTags
-  33: ;+GameplayTagTableList=/Game/ContextEffects/DT_SurfaceTypes.DT_SurfaceTypes
-  35: ; -----------------------------------------------------------------------------
-  36: ; 工程原有标签（保持原样）
-  37: ; -----------------------------------------------------------------------------
-  38: +GameplayTagList=(Tag="a",DevComment="")
-  39: +GameplayTagList=(Tag="Ability.Attack",DevComment="")
-  40: ; -----------------------------------------------------------------------------
-  41: ; Ability.*
-  42: ; -----------------------------------------------------------------------------
-  43: +GameplayTagList=(Tag="Ability.ActivateFail.CellAlreadyContainsBomb",DevComment="")
-  44: +GameplayTagList=(Tag="Ability.ActivateFail.MagazineFull",DevComment="")
-  45: +GameplayTagList=(Tag="Ability.ActivateFail.NoSpareAmmo",DevComment="")
-  47: ; -----------------------------------------------------------------------------
-  48: ; AnimEffect.*  (来自 DT_AnimEffectTags)
-  49: ; -----------------------------------------------------------------------------
-  50: +GameplayTagList=(Tag="AnimEffect.Footstep.Jog",DevComment="")
-  51: +GameplayTagList=(Tag="AnimEffect.Footstep.Jump",DevComment="")
-  52: +GameplayTagList=(Tag="AnimEffect.Footstep.Land",DevComment="")
-  53: +GameplayTagList=(Tag="AnimEffect.Footstep.Walk",DevComment="")
-  55: ; -----------------------------------------------------------------------------
-  56: ; Event.*  (ShooterCore)
-  57: ; -----------------------------------------------------------------------------
-  58: +GameplayTagList=(Tag="Event.Movement.ADS",DevComment="")
-  59: +GameplayTagList=(Tag="Event.Movement.Dash",DevComment="")
-  60: +GameplayTagList=(Tag="Event.Movement.Melee",DevComment="")
-  61: +GameplayTagList=(Tag="Event.Movement.Reload",DevComment="")
-  62: +GameplayTagList=(Tag="Event.Movement.WeaponFire",DevComment="")
-  64: ; -----------------------------------------------------------------------------
-  65: ; Explorer.*  (ShooterExplorer)
-  66: ; -----------------------------------------------------------------------------
-  67: +GameplayTagList=(Tag="Explorer",DevComment="")
-  68: +GameplayTagList=(Tag="Explorer.Mood.Angry",DevComment="")
-  69: +GameplayTagList=(Tag="Explorer.Mood.Awesome",DevComment="")
-  70: +GameplayTagList=(Tag="Explorer.Mood.Grumpy",DevComment="")
-  71: +GameplayTagList=(Tag="Explorer.Mood.Happy",DevComment="")
-  72: +GameplayTagList=(Tag="Explorer.Mood.None",DevComment="")
-  73: +GameplayTagList=(Tag="Explorer.SmartObject.Activity",DevComment="")
-  74: +GameplayTagList=(Tag="Explorer.SmartObject.Activity.Actions",DevComment="")
-  75: +GameplayTagList=(Tag="Explorer.SmartObject.Activity.Actions.Eat",DevComment="")
-  76: +GameplayTagList=(Tag="Explorer.SmartObject.Activity.Actions.Emote",DevComment="")
-  77: +GameplayTagList=(Tag="Explorer.SmartObject.Activity.Actions.Sit",DevComment="")
-  78: +GameplayTagList=(Tag="Explorer.SmartObject.Activity.Actions.Sleep",DevComment="")
-  79: +GameplayTagList=(Tag="Explorer.SmartObject.Activity.Actions.Sleep.AtNight",DevComment="")
-  80: +GameplayTagList=(Tag="Explorer.SmartObject.Activity.Actions.Sleep.DayTime",DevComment="")
-  81: +GameplayTagList=(Tag="Explorer.SmartObject.Activity.General",DevComment="")
-  82: +GameplayTagList=(Tag="Explorer.SmartObject.Activity.General.Default",DevComment="")
-  83: +GameplayTagList=(Tag="Explorer.SmartObject.Event",DevComment="")
-  84: +GameplayTagList=(Tag="Explorer.SmartObject.Event.Interaction",DevComment="")
-  85: +GameplayTagList=(Tag="Explorer.SmartObject.Event.Interaction.Ended",DevComment="")
-  86: +GameplayTagList=(Tag="Explorer.SmartObject.Event.Interaction.Required",DevComment="")
-  87: +GameplayTagList=(Tag="Explorer.SmartObject.Event.Interaction.Required.ToDisable",DevComment="")
-  88: +GameplayTagList=(Tag="Explorer.SmartObject.Event.Interaction.Required.ToEnable",DevComment="")
-  89: +GameplayTagList=(Tag="Explorer.SmartObject.Event.Interaction.Scripted",DevComment="")
-  90: +GameplayTagList=(Tag="Explorer.SmartObject.Event.Interaction.Scripted.ToDisable",DevComment="")
-  91: +GameplayTagList=(Tag="Explorer.SmartObject.Event.Interaction.Scripted.ToEnable",DevComment="")
-  92: +GameplayTagList=(Tag="Explorer.SmartObject.Event.Interaction.Started",DevComment="")
-  93: +GameplayTagList=(Tag="Explorer.SmartObject.Interact",DevComment="")
-  94: +GameplayTagList=(Tag="Explorer.SmartObject.Interact.NPC",DevComment="")
-  95: +GameplayTagList=(Tag="Explorer.SmartObject.Interact.Player",DevComment="")
-  96: +GameplayTagList=(Tag="Explorer.SmartObject.Slot",DevComment="")
-  97: +GameplayTagList=(Tag="Explorer.SmartObject.Slot.Sync",DevComment="")
-  98: +GameplayTagList=(Tag="Explorer.SmartObject.Slot.Sync.Action",DevComment="")
-  99: +GameplayTagList=(Tag="Explorer.SmartObject.Slot.Sync.Dependent",DevComment="")
- 100: +GameplayTagList=(Tag="Explorer.SmartObject.Slot.Sync.Primary",DevComment="")
- 101: +GameplayTagList=(Tag="Explorer.SmartObject.Slot.Sync.Ready",DevComment="")
- 102: +GameplayTagList=(Tag="Explorer.SmartObject.Slot.Sync.Stop",DevComment="")
- 103: +GameplayTagList=(Tag="Explorer.SmartObject.State",DevComment="")
- 104: +GameplayTagList=(Tag="Explorer.SmartObject.State.Broken",DevComment="")
- 105: +GameplayTagList=(Tag="Explorer.SmartObject.State.Enabled",DevComment="")
- 106: +GameplayTagList=(Tag="Explorer.SmartObject.State.Interaction",DevComment="")
- 107: +GameplayTagList=(Tag="Explorer.SmartObject.State.Interaction.Required",DevComment="")
- 108: +GameplayTagList=(Tag="Explorer.SmartObject.State.Interaction.Required.ToDisable",DevComment="")
- 109: +GameplayTagList=(Tag="Explorer.SmartObject.State.Interaction.Required.ToEnable",DevComment="")
- 111: ; -----------------------------------------------------------------------------
- 112: ; Gameplay.*
- 113: ; -----------------------------------------------------------------------------
- 114: +GameplayTagList=(Tag="Gameplay.Message.ADS",DevComment="Message to UI, Reticle")
- 115: +GameplayTagList=(Tag="Gameplay.Message.Nameplate.Add",DevComment="Register Nameplate Source")
- 116: +GameplayTagList=(Tag="Gameplay.Message.Nameplate.Discover",DevComment="Looking for nameplates")
- 117: +GameplayTagList=(Tag="Gameplay.Message.Nameplate.Remove",DevComment="Unregister Nameplate Source")
- 119: ; -----------------------------------------------------------------------------
- 120: ; GameplayCue.*
- 121: ; -----------------------------------------------------------------------------
- 122: +GameplayTagList=(Tag="GameplayCue.Character.Spawn",DevComment="At spawning of the player in shooter game")
- 123: +GameplayTagList=(Tag="GameplayCue.ShooterGame.Interact.Collect",DevComment="")
- 124: +GameplayTagList=(Tag="GameplayCue.ShooterGame.Interact.WeaponPickup",DevComment="GCN for weapon pick FX attached to pawn")
- 125: +GameplayTagList=(Tag="GameplayCue.ShooterGame.UserMessage.MatchDecided",DevComment="")
- 126: +GameplayTagList=(Tag="GameplayCue.ShooterGame.UserMessage.WaitingForPlayers",DevComment="")
- 127: +GameplayTagList=(Tag="GameplayCue.TopDownArenaGame.PickupAcquired",DevComment="")
- 128: +GameplayTagList=(Tag="GameplayCue.TopDownArenaGame.UserMessage.GameOver",DevComment="")
- 129: +GameplayTagList=(Tag="GameplayCue.TopDownArenaGame.UserMessage.GetReady",DevComment="")
- 130: +GameplayTagList=(Tag="GameplayCue.TopDownArenaGame.UserMessage.WaitingForPlayers",DevComment="")
- 132: ; -----------------------------------------------------------------------------
- 133: ; GameplayEvent.*
- 134: ; -----------------------------------------------------------------------------
- 135: +GameplayTagList=(Tag="GameplayEvent.ReloadDone",DevComment="")
- 137: ; -----------------------------------------------------------------------------
- 138: ; HUD.*
- 139: ; -----------------------------------------------------------------------------
- 140: +GameplayTagList=(Tag="HUD.Slot.EliminationFeed",DevComment="")
- 141: +GameplayTagList=(Tag="HUD.Slot.Equipment",DevComment="")
- 142: +GameplayTagList=(Tag="HUD.Slot.ModeStatus",DevComment="")
- 143: +GameplayTagList=(Tag="HUD.Slot.PerfStats.Graph",DevComment="")
- 144: +GameplayTagList=(Tag="HUD.Slot.PerfStats.Text",DevComment="")
- 145: +GameplayTagList=(Tag="HUD.Slot.Reticle",DevComment="")
- 146: +GameplayTagList=(Tag="HUD.Slot.TeamScore",DevComment="")
- 147: +GameplayTagList=(Tag="HUD.Slot.TopAccolades",DevComment="")
- 149: ; -----------------------------------------------------------------------------
- 150: ; InputTag.*
- 151: ; -----------------------------------------------------------------------------
- 152: +GameplayTagList=(Tag="InputTag.Ability.Emote",DevComment="")
- 153: +GameplayTagList=(Tag="InputTag.Ability.Interact",DevComment="")
- 154: +GameplayTagList=(Tag="InputTag.Ability.Quickslot.CycleBackward",DevComment="")
- 155: +GameplayTagList=(Tag="InputTag.Ability.Quickslot.CycleForward",DevComment="")
- 156: +GameplayTagList=(Tag="InputTag.Ability.Quickslot.SelectSlot",DevComment="Used to directly select one of the quickbar slots. Intended to be accompanied with a 0-based slot index.")
- 157: +GameplayTagList=(Tag="InputTag.Ability.ShowLeaderboard",DevComment="")
- 158: +GameplayTagList=(Tag="InputTag.Ability.ToggleInventory",DevComment="")
- 159: +GameplayTagList=(Tag="InputTag.Ability.ToggleMap",DevComment="")
- 160: +GameplayTagList=(Tag="InputTag.Ability.ToggleMarkerInWorld",DevComment="")
- 162: ; -----------------------------------------------------------------------------
- 163: ; Hodge.*
- 164: ; -----------------------------------------------------------------------------
- 165: +GameplayTagList=(Tag="Hodge.AddNotification.KillFeed",DevComment="SendKillFeedInfo to UI")
- 166: +GameplayTagList=(Tag="Hodge.ShooterGame.Accolade.EliminationChain",DevComment="")
- 167: +GameplayTagList=(Tag="Hodge.ShooterGame.Accolade.EliminationChain.2x",DevComment="")
- 168: +GameplayTagList=(Tag="Hodge.ShooterGame.Accolade.EliminationChain.3x",DevComment="")
- 169: +GameplayTagList=(Tag="Hodge.ShooterGame.Accolade.EliminationChain.4x",DevComment="")
- 170: +GameplayTagList=(Tag="Hodge.ShooterGame.Accolade.EliminationChain.5x",DevComment="")
- 171: +GameplayTagList=(Tag="Hodge.ShooterGame.Accolade.EliminationStreak",DevComment="")
- 172: +GameplayTagList=(Tag="Hodge.ShooterGame.Accolade.EliminationStreak.5",DevComment="")
- 173: +GameplayTagList=(Tag="Hodge.ShooterGame.Accolade.EliminationStreak.10",DevComment="")
- 174: +GameplayTagList=(Tag="Hodge.ShooterGame.Accolade.EliminationStreak.15",DevComment="")
- 175: +GameplayTagList=(Tag="Hodge.ShooterGame.Accolade.EliminationStreak.20",DevComment="")
- 176: +GameplayTagList=(Tag="Hodge.ShooterGame.TDM.TeamScore",DevComment="")
- 177: +GameplayTagList=(Tag="Hodge.ShooterGame.Weapon.MagazineAmmo",DevComment="")
- 178: +GameplayTagList=(Tag="Hodge.ShooterGame.Weapon.MagazineSize",DevComment="")
- 179: +GameplayTagList=(Tag="Hodge.ShooterGame.Weapon.SpareAmmo",DevComment="")
- 181: ; -----------------------------------------------------------------------------
- 182: ; ShooterGame.*
- 183: ; -----------------------------------------------------------------------------
- 184: +GameplayTagList=(Tag="ShooterGame.ControlPoint.Captured.Message",DevComment="Fired when a control point has been captured by a team")
- 185: +GameplayTagList=(Tag="ShooterGame.ControlPoint.TeamScore",DevComment="")
- 186: +GameplayTagList=(Tag="ShooterGame.ExtensionPoint.AbilityBar",DevComment="")
- 187: +GameplayTagList=(Tag="ShooterGame.GamePhase.Playing",DevComment="")
- 188: +GameplayTagList=(Tag="ShooterGame.GamePhase.PostGame",DevComment="")
- 189: +GameplayTagList=(Tag="ShooterGame.GamePhase.Warmup",DevComment="")
- 190: +GameplayTagList=(Tag="ShooterGame.Score.Assists",DevComment="")
- 191: +GameplayTagList=(Tag="ShooterGame.Score.ControlPointCapture",DevComment="")
- 192: +GameplayTagList=(Tag="ShooterGame.Score.Deaths",DevComment="")
- 193: +GameplayTagList=(Tag="ShooterGame.Score.Eliminations",DevComment="")
- 195: ; -----------------------------------------------------------------------------
- 196: ; Subtitle.*  (GameSubtitles)
- 197: ; -----------------------------------------------------------------------------
- 198: +GameplayTagList=(Tag="Subtitle.TextColor.White",DevComment="")
- 199: +GameplayTagList=(Tag="Subtitle.TextColor.Yellow",DevComment="")
- 201: ; -----------------------------------------------------------------------------
- 202: ; SurfaceType.*  (来自 DT_SurfaceTypes)
- 203: ; -----------------------------------------------------------------------------
- 204: +GameplayTagList=(Tag="SurfaceType.Character",DevComment="")
- 205: +GameplayTagList=(Tag="SurfaceType.Concrete",DevComment="")
- 206: +GameplayTagList=(Tag="SurfaceType.Default",DevComment="")
- 207: +GameplayTagList=(Tag="SurfaceType.Glass",DevComment="")
- 209: ; -----------------------------------------------------------------------------
- 210: ; TopDownArena.*
- 211: ; -----------------------------------------------------------------------------
- 212: +GameplayTagList=(Tag="TopDownArena.ExtensionPoint.AbilityBar",DevComment="")
- 213: +GameplayTagList=(Tag="TopDownArena.ExtensionPoint.Players",DevComment="")
- 214: +GameplayTagList=(Tag="TopDownArena.ExtensionPoint.StatsBar",DevComment="")
- 216: ; -----------------------------------------------------------------------------
- 217: ; TODO.*
- 218: ; -----------------------------------------------------------------------------
- 219: +GameplayTagList=(Tag="TODO.GameModeDamageImmunity",DevComment="")
- 221: +GameplayTagList=(Tag="Combo.Entry",DevComment="Definition combo")
- 222: +GameplayTagList=(Tag="InputIntent.Attack.Light",DevComment="Definition combo")
- 223: +GameplayTagList=(Tag="Combo.Light.01",DevComment="Definition combo")
- 224: +GameplayTagList=(Tag="Combo.Light.02",DevComment="Definition combo")
- 225: +GameplayTagList=(Tag="Combo.Light.03",DevComment="Definition combo")
- 226: +GameplayTagList=(Tag="Combo.Light.04",DevComment="Definition combo")
- 227: +GameplayTagList=(Tag="Combo.Light.05",DevComment="Definition combo")
- 228: +GameplayTagList=(Tag="Ability.Attack.Light.01",DevComment="Definition combo")
- 229: +GameplayTagList=(Tag="Ability.Attack.Light.02",DevComment="Definition combo")
- 230: +GameplayTagList=(Tag="Ability.Attack.Light.03",DevComment="Definition combo")
- 231: +GameplayTagList=(Tag="Ability.Attack.Light.04",DevComment="Definition combo")
- 232: +GameplayTagList=(Tag="Ability.Attack.Light.05",DevComment="Definition combo")
+  17: ImportTagsFromConfig=True
+  18: WarnOnInvalidTags=True
+  19: ClearInvalidTags=False
+  20: AllowEditorTagUnloading=True
+  21: AllowGameTagUnloading=False
+  22: FastReplication=False
+  23: bDynamicReplication=False
+  24: InvalidTagCharacters="\"\',"
+  25: NumBitsForContainerSize=6
+  26: NetIndexFirstBitSegment=16
+  27: +GameplayTagList=(Tag="a",DevComment="")
+  28: +GameplayTagList=(Tag="Ability.ActivateFail.CellAlreadyContainsBomb",DevComment="")
+  29: +GameplayTagList=(Tag="Ability.ActivateFail.MagazineFull",DevComment="")
+  30: +GameplayTagList=(Tag="Ability.ActivateFail.NoSpareAmmo",DevComment="")
+  31: +GameplayTagList=(Tag="Ability.Attack",DevComment="")
+  32: +GameplayTagList=(Tag="Ability.Attack.Light.01",DevComment="Definition combo")
+  33: +GameplayTagList=(Tag="Ability.Attack.Light.02",DevComment="Definition combo")
+  34: +GameplayTagList=(Tag="Ability.Attack.Light.03",DevComment="Definition combo")
+  35: +GameplayTagList=(Tag="Ability.Attack.Light.04",DevComment="Definition combo")
+  36: +GameplayTagList=(Tag="Ability.Attack.Light.05",DevComment="Definition combo")
+  37: +GameplayTagList=(Tag="Ability.Type.Action.Skill",DevComment="Standalone combat skill")
+  38: +GameplayTagList=(Tag="AnimEffect.Footstep.Jog",DevComment="")
+  39: +GameplayTagList=(Tag="AnimEffect.Footstep.Jump",DevComment="")
+  40: +GameplayTagList=(Tag="AnimEffect.Footstep.Land",DevComment="")
+  41: +GameplayTagList=(Tag="AnimEffect.Footstep.Walk",DevComment="")
+  42: +GameplayTagList=(Tag="Combat.Source.Body.LeftHand",DevComment="")
+  43: +GameplayTagList=(Tag="Combo.Entry",DevComment="Definition combo")
+  44: +GameplayTagList=(Tag="Combo.Light.01",DevComment="Definition combo")
+  45: +GameplayTagList=(Tag="Combo.Light.02",DevComment="Definition combo")
+  46: +GameplayTagList=(Tag="Combo.Light.03",DevComment="Definition combo")
+  47: +GameplayTagList=(Tag="Combo.Light.04",DevComment="Definition combo")
+  48: +GameplayTagList=(Tag="Combo.Light.05",DevComment="Definition combo")
+  49: +GameplayTagList=(Tag="Event.Movement.ADS",DevComment="")
+  50: +GameplayTagList=(Tag="Event.Movement.Dash",DevComment="")
+  51: +GameplayTagList=(Tag="Event.Movement.Melee",DevComment="")
+  52: +GameplayTagList=(Tag="Event.Movement.Reload",DevComment="")
+  53: +GameplayTagList=(Tag="Event.Movement.WeaponFire",DevComment="")
+  54: +GameplayTagList=(Tag="Explorer",DevComment="")
+  55: +GameplayTagList=(Tag="Explorer.Mood.Angry",DevComment="")
+  56: +GameplayTagList=(Tag="Explorer.Mood.Awesome",DevComment="")
+  57: +GameplayTagList=(Tag="Explorer.Mood.Grumpy",DevComment="")
+  58: +GameplayTagList=(Tag="Explorer.Mood.Happy",DevComment="")
+  59: +GameplayTagList=(Tag="Explorer.Mood.None",DevComment="")
+  60: +GameplayTagList=(Tag="Explorer.SmartObject.Activity",DevComment="")
+  61: +GameplayTagList=(Tag="Explorer.SmartObject.Activity.Actions",DevComment="")
+  62: +GameplayTagList=(Tag="Explorer.SmartObject.Activity.Actions.Eat",DevComment="")
+  63: +GameplayTagList=(Tag="Explorer.SmartObject.Activity.Actions.Emote",DevComment="")
+  64: +GameplayTagList=(Tag="Explorer.SmartObject.Activity.Actions.Sit",DevComment="")
+  65: +GameplayTagList=(Tag="Explorer.SmartObject.Activity.Actions.Sleep",DevComment="")
+  66: +GameplayTagList=(Tag="Explorer.SmartObject.Activity.Actions.Sleep.AtNight",DevComment="")
+  67: +GameplayTagList=(Tag="Explorer.SmartObject.Activity.Actions.Sleep.DayTime",DevComment="")
+  68: +GameplayTagList=(Tag="Explorer.SmartObject.Activity.General",DevComment="")
+  69: +GameplayTagList=(Tag="Explorer.SmartObject.Activity.General.Default",DevComment="")
+  70: +GameplayTagList=(Tag="Explorer.SmartObject.Event",DevComment="")
+  71: +GameplayTagList=(Tag="Explorer.SmartObject.Event.Interaction",DevComment="")
+  72: +GameplayTagList=(Tag="Explorer.SmartObject.Event.Interaction.Ended",DevComment="")
+  73: +GameplayTagList=(Tag="Explorer.SmartObject.Event.Interaction.Required",DevComment="")
+  74: +GameplayTagList=(Tag="Explorer.SmartObject.Event.Interaction.Required.ToDisable",DevComment="")
+  75: +GameplayTagList=(Tag="Explorer.SmartObject.Event.Interaction.Required.ToEnable",DevComment="")
+  76: +GameplayTagList=(Tag="Explorer.SmartObject.Event.Interaction.Scripted",DevComment="")
+  77: +GameplayTagList=(Tag="Explorer.SmartObject.Event.Interaction.Scripted.ToDisable",DevComment="")
+  78: +GameplayTagList=(Tag="Explorer.SmartObject.Event.Interaction.Scripted.ToEnable",DevComment="")
+  79: +GameplayTagList=(Tag="Explorer.SmartObject.Event.Interaction.Started",DevComment="")
+  80: +GameplayTagList=(Tag="Explorer.SmartObject.Interact",DevComment="")
+  81: +GameplayTagList=(Tag="Explorer.SmartObject.Interact.NPC",DevComment="")
+  82: +GameplayTagList=(Tag="Explorer.SmartObject.Interact.Player",DevComment="")
+  83: +GameplayTagList=(Tag="Explorer.SmartObject.Slot",DevComment="")
+  84: +GameplayTagList=(Tag="Explorer.SmartObject.Slot.Sync",DevComment="")
+  85: +GameplayTagList=(Tag="Explorer.SmartObject.Slot.Sync.Action",DevComment="")
+  86: +GameplayTagList=(Tag="Explorer.SmartObject.Slot.Sync.Dependent",DevComment="")
+  87: +GameplayTagList=(Tag="Explorer.SmartObject.Slot.Sync.Primary",DevComment="")
+  88: +GameplayTagList=(Tag="Explorer.SmartObject.Slot.Sync.Ready",DevComment="")
+  89: +GameplayTagList=(Tag="Explorer.SmartObject.Slot.Sync.Stop",DevComment="")
+  90: +GameplayTagList=(Tag="Explorer.SmartObject.State",DevComment="")
+  91: +GameplayTagList=(Tag="Explorer.SmartObject.State.Broken",DevComment="")
+  92: +GameplayTagList=(Tag="Explorer.SmartObject.State.Enabled",DevComment="")
+  93: +GameplayTagList=(Tag="Explorer.SmartObject.State.Interaction",DevComment="")
+  94: +GameplayTagList=(Tag="Explorer.SmartObject.State.Interaction.Required",DevComment="")
+  95: +GameplayTagList=(Tag="Explorer.SmartObject.State.Interaction.Required.ToDisable",DevComment="")
+  96: +GameplayTagList=(Tag="Explorer.SmartObject.State.Interaction.Required.ToEnable",DevComment="")
+  97: +GameplayTagList=(Tag="Gameplay.Message.ADS",DevComment="Message to UI, Reticle")
+  98: +GameplayTagList=(Tag="Gameplay.Message.Nameplate.Add",DevComment="Register Nameplate Source")
+  99: +GameplayTagList=(Tag="Gameplay.Message.Nameplate.Discover",DevComment="Looking for nameplates")
+ 100: +GameplayTagList=(Tag="Gameplay.Message.Nameplate.Remove",DevComment="Unregister Nameplate Source")
+ 101: +GameplayTagList=(Tag="GameplayCue.Character.Spawn",DevComment="At spawning of the player in shooter game")
+ 102: +GameplayTagList=(Tag="GameplayCue.ShooterGame.Interact.Collect",DevComment="")
+ 103: +GameplayTagList=(Tag="GameplayCue.ShooterGame.Interact.WeaponPickup",DevComment="GCN for weapon pick FX attached to pawn")
+ 104: +GameplayTagList=(Tag="GameplayCue.ShooterGame.UserMessage.MatchDecided",DevComment="")
+ 105: +GameplayTagList=(Tag="GameplayCue.ShooterGame.UserMessage.WaitingForPlayers",DevComment="")
+ 106: +GameplayTagList=(Tag="GameplayCue.TopDownArenaGame.PickupAcquired",DevComment="")
+ 107: +GameplayTagList=(Tag="GameplayCue.TopDownArenaGame.UserMessage.GameOver",DevComment="")
+ 108: +GameplayTagList=(Tag="GameplayCue.TopDownArenaGame.UserMessage.GetReady",DevComment="")
+ 109: +GameplayTagList=(Tag="GameplayCue.TopDownArenaGame.UserMessage.WaitingForPlayers",DevComment="")
+ 110: +GameplayTagList=(Tag="GameplayEvent.Attack.Hit.Finisher",DevComment="Final attack hit occurrence")
+ 111: +GameplayTagList=(Tag="GameplayEvent.Attack.Hit.Pulse",DevComment="One discrete attack hit occurrence")
+ 112: +GameplayTagList=(Tag="GameplayEvent.ReloadDone",DevComment="")
+ 113: +GameplayTagList=(Tag="Hodge.AddNotification.KillFeed",DevComment="SendKillFeedInfo to UI")
+ 114: +GameplayTagList=(Tag="Hodge.ShooterGame.Accolade.EliminationChain",DevComment="")
+ 115: +GameplayTagList=(Tag="Hodge.ShooterGame.Accolade.EliminationChain.2x",DevComment="")
+ 116: +GameplayTagList=(Tag="Hodge.ShooterGame.Accolade.EliminationChain.3x",DevComment="")
+ 117: +GameplayTagList=(Tag="Hodge.ShooterGame.Accolade.EliminationChain.4x",DevComment="")
+ 118: +GameplayTagList=(Tag="Hodge.ShooterGame.Accolade.EliminationChain.5x",DevComment="")
+ 119: +GameplayTagList=(Tag="Hodge.ShooterGame.Accolade.EliminationStreak",DevComment="")
+ 120: +GameplayTagList=(Tag="Hodge.ShooterGame.Accolade.EliminationStreak.5",DevComment="")
+ 121: +GameplayTagList=(Tag="Hodge.ShooterGame.Accolade.EliminationStreak.10",DevComment="")
+ 122: +GameplayTagList=(Tag="Hodge.ShooterGame.Accolade.EliminationStreak.15",DevComment="")
+ 123: +GameplayTagList=(Tag="Hodge.ShooterGame.Accolade.EliminationStreak.20",DevComment="")
+ 124: +GameplayTagList=(Tag="Hodge.ShooterGame.TDM.TeamScore",DevComment="")
+ 125: +GameplayTagList=(Tag="Hodge.ShooterGame.Weapon.MagazineAmmo",DevComment="")
+ 126: +GameplayTagList=(Tag="Hodge.ShooterGame.Weapon.MagazineSize",DevComment="")
+ 127: +GameplayTagList=(Tag="Hodge.ShooterGame.Weapon.SpareAmmo",DevComment="")
+ 128: +GameplayTagList=(Tag="HUD.Slot.EliminationFeed",DevComment="")
+ 129: +GameplayTagList=(Tag="HUD.Slot.Equipment",DevComment="")
+ 130: +GameplayTagList=(Tag="HUD.Slot.ModeStatus",DevComment="")
+ 131: +GameplayTagList=(Tag="HUD.Slot.PerfStats.Graph",DevComment="")
+ 132: +GameplayTagList=(Tag="HUD.Slot.PerfStats.Text",DevComment="")
+ 133: +GameplayTagList=(Tag="HUD.Slot.Reticle",DevComment="")
+ 134: +GameplayTagList=(Tag="HUD.Slot.TeamScore",DevComment="")
+ 135: +GameplayTagList=(Tag="HUD.Slot.TopAccolades",DevComment="")
+ 136: +GameplayTagList=(Tag="InputIntent.Attack.Light",DevComment="Definition combo")
+ 137: +GameplayTagList=(Tag="InputTag.Ability.Emote",DevComment="")
+ 138: +GameplayTagList=(Tag="InputTag.Ability.Interact",DevComment="")
+ 139: +GameplayTagList=(Tag="InputTag.Ability.Quickslot.CycleBackward",DevComment="")
+ 140: +GameplayTagList=(Tag="InputTag.Ability.Quickslot.CycleForward",DevComment="")
+ 141: +GameplayTagList=(Tag="InputTag.Ability.Quickslot.SelectSlot",DevComment="Used to directly select one of the quickbar slots. Intended to be accompanied with a 0-based slot index.")
+ 142: +GameplayTagList=(Tag="InputTag.Ability.ShowLeaderboard",DevComment="")
+ 143: +GameplayTagList=(Tag="InputTag.Ability.Skill",DevComment="Standalone definition skill input")
+ 144: +GameplayTagList=(Tag="InputTag.Ability.ToggleInventory",DevComment="")
+ 145: +GameplayTagList=(Tag="InputTag.Ability.ToggleMap",DevComment="")
+ 146: +GameplayTagList=(Tag="InputTag.Ability.ToggleMarkerInWorld",DevComment="")
+ 147: +GameplayTagList=(Tag="ShooterGame.ControlPoint.Captured.Message",DevComment="Fired when a control point has been captured by a team")
+ 148: +GameplayTagList=(Tag="ShooterGame.ControlPoint.TeamScore",DevComment="")
+ 149: +GameplayTagList=(Tag="ShooterGame.ExtensionPoint.AbilityBar",DevComment="")
+ 150: +GameplayTagList=(Tag="ShooterGame.GamePhase.Playing",DevComment="")
+ 151: +GameplayTagList=(Tag="ShooterGame.GamePhase.PostGame",DevComment="")
+ 152: +GameplayTagList=(Tag="ShooterGame.GamePhase.Warmup",DevComment="")
+ 153: +GameplayTagList=(Tag="ShooterGame.Score.Assists",DevComment="")
+ 154: +GameplayTagList=(Tag="ShooterGame.Score.ControlPointCapture",DevComment="")
+ 155: +GameplayTagList=(Tag="ShooterGame.Score.Deaths",DevComment="")
+ 156: +GameplayTagList=(Tag="ShooterGame.Score.Eliminations",DevComment="")
+ 157: +GameplayTagList=(Tag="Subtitle.TextColor.White",DevComment="")
+ 158: +GameplayTagList=(Tag="Subtitle.TextColor.Yellow",DevComment="")
+ 159: +GameplayTagList=(Tag="SurfaceType.Character",DevComment="")
+ 160: +GameplayTagList=(Tag="SurfaceType.Concrete",DevComment="")
+ 161: +GameplayTagList=(Tag="SurfaceType.Default",DevComment="")
+ 162: +GameplayTagList=(Tag="SurfaceType.Glass",DevComment="")
+ 163: +GameplayTagList=(Tag="TODO.GameModeDamageImmunity",DevComment="")
+ 164: +GameplayTagList=(Tag="TopDownArena.ExtensionPoint.AbilityBar",DevComment="")
+ 165: +GameplayTagList=(Tag="TopDownArena.ExtensionPoint.Players",DevComment="")
+ 166: +GameplayTagList=(Tag="TopDownArena.ExtensionPoint.StatsBar",DevComment="")
 ```
 
 ## DefaultInput.ini

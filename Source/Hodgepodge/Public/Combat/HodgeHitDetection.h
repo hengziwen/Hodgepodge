@@ -30,8 +30,6 @@ UENUM(BlueprintType)
 enum class EHodgeHitTargetPolicy : uint8 { AnyInVolume, LockedTargetInVolume, ConfirmedTarget };
 UENUM(BlueprintType)
 enum class EHodgeHitResultKind : uint8 { Sweep, Overlap, ConfirmedTarget };
-UENUM(BlueprintType)
-enum class EHodgeHitGroupScope : uint8 { Execution, TriggerTime };
 
 /** 技能自己的检测体；尺寸不写回角色组件或武器来源。 */
 USTRUCT(BlueprintType)
@@ -132,10 +130,6 @@ class HODGEPODGE_API UHodgeHitDetectionProfile : public UDataAsset
 public:
 	UHodgeHitDetectionProfile();
 
-	// 执行几何查询的策略类；配置形状使用 ShapeQuery，旧来源使用 SocketSweep 或 BoxSweep。
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSubclassOf<UHodgeHitDetectionStrategy> Strategy;
-
 	// 默认只查询 Pawn；项目使用自定义受击通道时在此调整。
 	// 查询的目标碰撞对象类型，不是伤害类型；默认只查询 Pawn。
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -205,6 +199,10 @@ struct HODGEPODGE_API FHodgeHitDetectionRequest
 	// 指定目标离施法者允许的最大距离，单位厘米，确认目标也必须通过此检查。
 	UPROPERTY() float MaxTargetDistance = 2000.f;
 
+	// 本次直接解析的组件，仅供执行入口使用，不需要全局来源注册。
+	UPROPERTY() TWeakObjectPtr<USceneComponent> DirectComponent;
+	UPROPERTY() FHodgeHitSource DirectSource;
+
 	// 本次请求额外忽略的 Actor 弱引用列表，不改变伤害资格规则。
 	UPROPERTY()
 	TArray<TWeakObjectPtr<AActor>> IgnoredActors;
@@ -218,8 +216,8 @@ struct HODGEPODGE_API FHodgeHitDetectionBatch
 
 	// 运行期技能执行身份，每次激活重新生成，用于拒绝旧执行的结果。
 	UPROPERTY(BlueprintReadOnly) FGuid ExecutionId;
-	// 运行期 Timeline 条目下标，同标签的多段攻击靠这个下标区分会话。
-	UPROPERTY(BlueprintReadOnly) int32 EventIndex = INDEX_NONE;
+	// 运行期 通知进入时分配的运行身份，每次进入独立区分会话。
+	UPROPERTY(BlueprintReadOnly) int32 OccurrenceId = INDEX_NONE;
 	// 运行期检测会话句柄，不是资产配置或全局命中组名称。
 	UPROPERTY() uint64 SessionHandle = 0;
 	// 运行期会话内递增的采样序号，用于拒绝重复或过期批次。
@@ -238,75 +236,27 @@ struct HODGEPODGE_API FHodgeHitDetectionBatch
 	UPROPERTY(BlueprintReadOnly) EHodgeHitResultKind ResultKind = EHodgeHitResultKind::Sweep;
 };
 
-/** Window 与 Point 共用的几何、目标和效果配置。 */
+/** 动作默认效果参数与本次命中快照，不包含动画时机或来源绑定。 */
 USTRUCT(BlueprintType)
 struct HODGEPODGE_API FHodgeHitEffectConfig
 {
 	GENERATED_BODY()
-
-	// 注册检测来源的标识；组件路径要求与角色或武器来源精确匹配，纯配置锚点可以不填。
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(Categories="Combat.Source"))
-	FGameplayTag SourceTag;
-
-	// 可复用的查询和过滤策略资产，不保存本次技能的坐标或命中历史。
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TObjectPtr<UHodgeHitDetectionProfile> Profile;
-	// 本技能或本次请求的检测体配置，不会修改角色组件和武器来源的尺寸。
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) FHodgeHitVolumeConfig Volume;
-	// 范围内所有目标、范围内指定目标或确认目标直接结算三种目标选择策略。
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) EHodgeHitTargetPolicy TargetPolicy = EHodgeHitTargetPolicy::AnyInVolume;
-	// 服务器 GA 选择目标时使用的键，必须与 SetHitTarget 的 Key 相同。
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) FName TargetKey;
-	// 指定目标离施法者允许的最大距离，单位厘米，确认目标也必须通过此检查。
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(ClampMin="1", Units="cm")) float MaxTargetDistance = 2000.f;
-	// 已有手持窗口配置时要求它覆盖此段，远程范围可关闭此项但仍保留拔刀表现。
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) bool RequiresWeaponInHand = true;
-
-	// 显式选择项目现有的伤害 GE，常规伤害使用 GameplayEffectParent_Damage_Basic 或其子类。
-	// 显式指定给命中目标的伤害 GE，默认 Melee 路径要求 Instant 且含 HodgeDamageExecution。
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSubclassOf<UGameplayEffect> DamageEffect;
-
-	// 写入伤害 Spec 的倍率，最终值还受 GE 捕获属性修正、来源衰减和目标规则影响。
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(ClampMin="0"))
-	float DamageMultiplier = 1.f;
-
-	// 添加到本次伤害 Spec 的动态资产标签，不是额外的一次伤害或目标筛选器。
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(Categories="GameplayEffect.DamageType"))
-	FGameplayTag DamageType;
-
-	// 0 表示每目标只命中一次；正数允许按世界时间间隔再次命中。
-	// 0 表示当前记录范围内每目标一次，正数允许按世界秒再次命中，不是查询周期。
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(ClampMin="0", Units="s"))
-	float RepeatHitInterval = 0.f;
-
-	// 同次执行中相同组名共享命中记录；留空时每个窗口独立去重。
-	// 非空时共享目标命中记录，留空让每个 Window 或 Point 独立记录。
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FName HitGroup;
-	// TriggerTime 让同时开启的来源共享一段记录，下一段重新获得命中机会。
-	// Execution 共享整次技能，TriggerTime 仅让同组且相同开始时刻的条目共享一段。
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) EHodgeHitGroupScope HitGroupScope = EHodgeHitGroupScope::Execution;
-
-	// 允许命中同队目标，仍不允许自身、同 ASC、无效或已死亡目标。
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	bool bAllowFriendlyFire = false;
-};
-
-USTRUCT(BlueprintType)
-struct HODGEPODGE_API FHodgeHitWindowBinding : public FHodgeHitEffectConfig
-{
-	GENERATED_BODY()
-	// 与 Timeline Window 的状态标签精确匹配，一个绑定可复用多个不重叠窗口。
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(Categories="Status.Attack.HitCheck")) FGameplayTag WindowTag;
-};
-
-USTRUCT(BlueprintType)
-struct HODGEPODGE_API FHodgeHitPointBinding : public FHodgeHitEffectConfig
-{
-	GENERATED_BODY()
-	// 与 Timeline Point 的消息标签精确匹配，一个绑定可复用多个独立时刻。
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(Categories="GameplayEvent")) FGameplayTag PointEventTag;
+	// 显式伤害 GE，默认生命伤害要求 Instant 且包含 HodgeDamageExecution。
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) TSubclassOf<UGameplayEffect> DamageEffect;
+	// 伤害倍率，命中通知的 DamageScale 再乘在此值上。
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(ClampMin="0")) float DamageMultiplier = 1.f;
+	// 写入伤害 Spec 的分类标签，不会增加一笔独立伤害。
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(Categories="GameplayEffect.DamageType")) FGameplayTag DamageType;
+	// 以下字段是通知进入时生成的运行快照，不是 Definition 上的重复配置。
+	UPROPERTY(BlueprintReadOnly) EHodgeHitTargetPolicy TargetPolicy = EHodgeHitTargetPolicy::AnyInVolume;
+	// 0 表示本记录内每目标一次，正数允许按世界秒重复命中。
+	UPROPERTY(BlueprintReadOnly) float RepeatHitInterval = 0.f;
+	// 共享命中记录的显式组名，留空每次通知进入独立去重。
+	UPROPERTY(BlueprintReadOnly) FName HitGroup;
+	// 同组的显式攻击阶段，留空共享整次执行。
+	UPROPERTY(BlueprintReadOnly) FName AttackPhase;
+	// 同队目标的伤害许可，仍不允许自身、失效或已经死亡目标。
+	UPROPERTY(BlueprintReadOnly) bool bAllowFriendlyFire = false;
 };
 
 /** 策略只执行几何查询，目标资格和效果应用由 GA 处理。 */

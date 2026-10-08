@@ -1,3 +1,5 @@
+> 2026-10-07 更新：本文中旧 Timeline／HitWindows 的字段与制作步骤仅保留为历史；当前攻击入口以 [通知配置手册](../Guides/attack-ability-configuration.md) 和 [通知迁移更新](27-update-2026-10-07-anim-notify.md) 为准。
+
 # 当前状态、断点与接通顺序
 
 [返回知识库](README.md) · [本轮更新](26-update-2026-10-06.md)

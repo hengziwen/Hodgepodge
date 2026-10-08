@@ -1,14 +1,15 @@
 # Hodgepodge 本地知识库
 
-> 人工核对：2026-10-06。依据当前源码、uproject、Config、只读资产解析与已保存验收证据。本次只更新文档和参考元数据，没有编译 C++、执行 PIE 或修改资产。
+> 2026-10-07：dev-AN 的攻击时机已改为 Montage 原生通知。迁移前的人工核对保持历史日期，本次实现与实际验证见 [通知迁移更新](27-update-2026-10-07-anim-notify.md)。
 
 ## 从这里开始
 
-项目已接入 Experience/Init State、PlayerState ASC、输入相机、Main 固定移动动画层、统一 CombatComponent、默认剑、旋转锁、连段记忆与武器显隐。最新读取中正式五段已填写 HitWindows；仍需完整验收每段实际刀刃覆盖，不能只凭配置或夹具通过判定全部正式动作完成。
+项目已接入 Experience/Init State、PlayerState ASC、输入相机、Main 固定移动动画层、统一 CombatComponent、默认剑、旋转锁、连段记忆与武器显隐。正式五段已使用命中 Notify／NotifyState，第四段直接读取 Bip001LHand；仍需按美术动作调整覆盖与半径，配置和数值测试不代表逐帧视觉打磨完成。
 
-- [攻击能力配置手册](../Guides/attack-ability-configuration.md)：Definition、Timeline、HitCheck、Profile、连段表、授予与输入的统一字段说明；后续配置问答优先引用相应章节。
+- [攻击能力配置手册](../Guides/attack-ability-configuration.md)：Definition、AnimNotify、HitCheck、Profile、连段表、授予与输入的统一字段说明；后续配置问答优先引用相应章节。
 
-- [最新完整更新](26-update-2026-10-06.md)：当前路径、职责、调参及验证边界。
+- [通知驱动迁移](27-update-2026-10-07-anim-notify.md)：旧系统退役、资源账本、当前作者入口和实际验证。
+- [历史完整更新](26-update-2026-10-06.md)：当前路径、职责、调参及验证边界。
 - [当前接通状态](12-integration-backlog.md)、[验证与未验证](16-validation.md)。
 - [Lyra 迁移现状与检查清单](../Design/lyra-migration-status.md)：查看迁移了一部分的系统及逐项验收。
 - [属性初始化／成长／装备加成](../Design/character-attribute-growth.md)：首版已实现，实际类型、配置及验证见第 13 节；经验/存档后端等扩展仍未实现。

@@ -1,8 +1,12 @@
 # 项目文档
 
+**dev-AN 通知驱动迁移：[彻底弃用自建 Timeline，迁移到动画通知](Design/anim-notify-combat-migration.md)。** 旧文件集中归档，当前配置参阅通知驱动手册；实际验证见迁移报告。
+
+[客户端连段／移动取消窗口修复](Validation/client-combo-window-2026-10-07.md)：首帧服务器授权竞态、现有输入缓存与正式连段客户端回归。
+
 2026-10-06 同步。先看 [项目 README](../README.md)、[本地知识库](KnowledgeBase/README.md)、[当前状态与待办](KnowledgeBase/12-integration-backlog.md)。精确代码与资产见 [参考索引](KnowledgeBase/Reference/README.md)。
 
-**攻击配置统一入口：[攻击能力配置手册](Guides/attack-ability-configuration.md)。** 查询 Definition、Timeline、HitCheck、Profile、连段表、能力授予和输入时，优先引用手册对应章节；设计文档作为背景。
+**攻击配置统一入口：[攻击能力配置手册](Guides/attack-ability-configuration.md)。** 查询 Definition、AnimNotify、HitCheck、Profile、连段表、能力授予和输入时，优先引用手册对应章节；设计文档作为背景。
 
 [Lyra → Hodgepodge 迁移现状与检查清单](Design/lyra-migration-status.md)：九个子系统的当前进度、缺口、建议顺序与后续验收复选框。
 

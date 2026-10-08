@@ -3,14 +3,14 @@
  * @brief 等待"移动取消"条件成立：取消窗口已开放 + 玩家确实有移动意图
  *
  * 职责边界（严格）：
- *   - 观察两个信号：ASC 上的**取消窗口标签**（由 UHodgeAbilityTask_PlayTimeline 按区间授予）
+ *   - 观察两个信号：ASC 上的**取消窗口标签**（由 Hodge 状态通知 按区间授予）
  *     与 UHodgeHeroComponent 的**移动意图**（输入层的原始输入量）；
  *   - 两者同时成立时广播 OnMoveCancel **一次**，然后结束自己。
  * 不负责：停止 Montage、结束 Ability、决定"取消之后做什么"。那些属于调用它的 Ability，
  * 而且必须写成可替换的策略点（第一版是 EndAbility，以后连招会变成"转段"）。
  *
  * 三层职责的分工（这就是它存在的理由）：
- *   Timeline      → 允许不允许移动取消（授权，由资产里的 Window 区间决定）
+ *   动画通知      → 允许不允许移动取消（授权，由资产里的 Window 区间决定）
  *   Input / Hero  → 玩家到底有没有想移动（意图）
  *   Attack Ability→ 满足两个条件后这次攻击应该怎么结束（策略）
  *
@@ -52,7 +52,7 @@ public:
 	/**
 	 * 开始等待移动取消。
 	 *
-	 * @param CancelWindowTag      允许取消的窗口标签（如 Status.Attack.Cancel.Move），由 Timeline 的 Window 授予
+	 * @param CancelWindowTag      允许取消的窗口标签（如 Status.Attack.Cancel.Move），由 动画通知 的 Window 授予
 	 * @param MoveIntentThreshold  判定"有移动意图"的输入量阈值（摇杆死区）
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Ability|Tasks",

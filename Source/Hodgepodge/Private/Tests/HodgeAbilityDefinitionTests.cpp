@@ -3,12 +3,12 @@
 #include "AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h"
 #include "AbilitySystem/HodgeGameplayTags.h"
 #include "Data/HodgeAbilityDefinition.h"
-#include "Data/HodgeAbilityTimeline.h"
 #include "Data/HodgeComboDefinition.h"
 #include "Component/HodgeCombatComponentBase.h"
 #include "Animation/AnimMontage.h"
 #include "Engine/World.h"
 #include "GameFramework/Actor.h"
+#include "Components/SceneComponent.h"
 #include "Misc/AutomationTest.h"
 #if WITH_EDITOR
 #include "Misc/DataValidation.h"
@@ -30,9 +30,9 @@ bool FHodgeDefinitionGrantTest::RunTest(const FString& Parameters)
 	Definition->AbilityClass = UHodgeGameplayAbility_Definition::StaticClass();
 	Definition->ExecutionConfig.Montage = LoadObject<UAnimMontage>(nullptr,
 		TEXT("/Game/Main/Character/Hero/Anim/Montages/AM_Attack01_Montage.AM_Attack01_Montage"));
-	Definition->ExecutionConfig.TimelineTaskConfig.Timeline = NewObject<UHodgeAbilityTimeline>();
-	Definition->ExecutionConfig.TimelineTaskConfig.Timeline->bUseMontageDuration = true;
-	UObject* Source = NewObject<UHodgeAbilityTimeline>(Owner);
+	Definition->ExecutionConfig.Montage = DuplicateObject<UAnimMontage>(Definition->ExecutionConfig.Montage, Definition);
+	Definition->ExecutionConfig.Montage->Notifies.Reset();
+	UObject* Source = NewObject<USceneComponent>(Owner);
 	const auto First = ASC->GiveAbilityDefinition(Definition, 1, Source);
 	TestTrue(TEXT("Valid definition grants a spec"), First.IsValid());
 	if (auto* Spec = ASC->FindAbilitySpecFromHandle(First))
@@ -71,7 +71,7 @@ bool FHodgeComboValidationTest::RunTest(const FString& Parameters)
 	Definition->ComboTable->AddRow(Attack.ComboTag.GetTagName(), Attack);
 	TArray<FText> Errors;
 	TestTrue(TEXT("Minimal graph valid"), Definition->ValidateDefinition(Errors));
-	Entry.Transitions[0].TriggerEventTag = HodgeGameplayTags::GameplayEvent_Attack_Timeline_End;
+	Entry.Transitions[0].TriggerEventTag = HodgeGameplayTags::GameplayEvent_Attack_Completed;
 	Definition->ComboTable->AddRow(Entry.ComboTag.GetTagName(), Entry);
 	Errors.Reset();
 	TestFalse(TEXT("Combined trigger rejected in V1"), Definition->ValidateDefinition(Errors));
@@ -167,6 +167,39 @@ bool FHodgeComboRetentionTest::RunTest(const FString& Parameters)
 	auto* Execution = FHodgeComboTestAccess::Begin(Combo, Source);
 	ASC->AddLooseGameplayTag(Intent);
 	TestNull(TEXT("Resume permission never bypasses an active execution window"), FHodgeComboTestAccess::Select(Combo, Intent));
+	auto* TargetDefinition = NewObject<UHodgeAbilityDefinition>();
+	TargetDefinition->AbilityTag = Target;
+	TargetDefinition->AbilityClass = UHodgeGameplayAbility_Definition::StaticClass();
+	TargetDefinition->ExecutionConfig.Montage = LoadObject<UAnimMontage>(nullptr,
+		TEXT("/Game/Main/Character/Hero/Anim/Montages/AM_Attack01_Montage.AM_Attack01_Montage"));
+	TargetDefinition->ExecutionConfig.Montage = DuplicateObject<UAnimMontage>(TargetDefinition->ExecutionConfig.Montage, TargetDefinition);
+	TargetDefinition->ExecutionConfig.Montage->Notifies.Reset();
+	const auto TargetHandle = ASC->GiveAbilityDefinition(TargetDefinition, 1, Combo);
+	TestTrue(TEXT("Buffer fixture grants a valid target"), TargetHandle.IsValid());
+	FGameplayEventData Request;
+	Request.EventTag = FGameplayTag::RequestGameplayTag(TEXT("GameplayEvent.Combo.InputRequest"));
+	Request.Instigator = Owner;
+	Request.OptionalObject = Definition;
+	Request.TargetTags.AddTag(Source);
+	Request.InstigatorTags.AddTag(Intent);
+	Request.EventMagnitude = FHodgeComboTestAccess::SourceKey(Combo);
+	TestTrue(TEXT("Valid early input may wait for its native window"), Combo->CanBufferServerActivation(TargetHandle, &Request));
+	TestFalse(TEXT("Waiting never grants a closed execution window"), Combo->PrepareServerActivation(TargetHandle, &Request));
+	Request.EventMagnitude += 1;
+	TestFalse(TEXT("Another activation key cannot be buffered"), Combo->CanBufferServerActivation(TargetHandle, &Request));
+	Request.EventMagnitude -= 1;
+	Request.EventTag = HodgeGameplayTags::GameplayEvent_Attack_Completed;
+	TestFalse(TEXT("Client-declared gameplay messages cannot be buffered"), Combo->CanBufferServerActivation(TargetHandle, &Request));
+	Request.EventTag = FGameplayTag::RequestGameplayTag(TEXT("GameplayEvent.Combo.InputRequest"));
+	Request.TargetTags.Reset();
+	Request.TargetTags.AddTag(Target);
+	TestFalse(TEXT("Another source node cannot be buffered"), Combo->CanBufferServerActivation(TargetHandle, &Request));
+	Request.TargetTags.Reset();
+	Request.TargetTags.AddTag(Source);
+	TestFalse(TEXT("An ungranted target cannot be buffered"), Combo->CanBufferServerActivation({}, &Request));
+	ASC->AddLooseGameplayTag(TAG_Gameplay_AbilityInputBlocked);
+	TestFalse(TEXT("Input blocking invalidates pending requests"), Combo->CanBufferServerActivation(TargetHandle, &Request));
+	ASC->RemoveLooseGameplayTag(TAG_Gameplay_AbilityInputBlocked);
 	ASC->AddLooseGameplayTag(HodgeGameplayTags::Status_Attack);
 	Combo->ExecutionEnded(Execution);
 	TestEqual(TEXT("Stopped execution clears the active node"), Combo->GetCurrentComboTag(), Definition->EntryComboTag);
@@ -297,64 +330,4 @@ bool FHodgeComboSessionTest::RunTest(const FString& Parameters)
 	return true;
 }
 
-#if WITH_EDITOR
-IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeMontageDurationTest, "Hodge.Combo.MontageDuration",
-	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
-bool FHodgeMontageDurationTest::RunTest(const FString& Parameters)
-{
-	auto* Timeline = NewObject<UHodgeAbilityTimeline>();
-	Timeline->bUseMontageDuration = true;
-	Timeline->Duration = 0.f;
-	FHodgeTimelineEvent Event;
-	Event.Kind = EHodgeTimelineEventKind::Point;
-	Event.EventID = TEXT("LatePoint");
-	Event.StartTime = 2.f;
-	Event.PointEventTag = HodgeGameplayTags::GameplayEvent_Attack_Test;
-	Timeline->Events.Add(Event);
-	FDataValidationContext AssetContext;
-	TestTrue(TEXT("Montage asset validation ignores stale manual duration"),
-		Timeline->IsDataValid(AssetContext) == EDataValidationResult::Valid);
-	TArray<FText> Errors;
-	TestFalse(TEXT("Montage playback requires an external length"), Timeline->ValidateForPlayback(Errors));
-	Errors.Reset();
-	TestTrue(TEXT("External length accepts reachable events"), Timeline->ValidateForPlayback(Errors, 3.f));
-	Errors.Reset();
-	TestFalse(TEXT("Shorter montage rejects unreachable events"), Timeline->ValidateForPlayback(Errors, 1.f));
-	Timeline->Events[0].EventID = NAME_None;
-	FDataValidationContext InvalidContext;
-	TestTrue(TEXT("Montage asset still checks event structure"),
-		Timeline->IsDataValid(InvalidContext) == EDataValidationResult::Invalid);
-	Timeline->Events[0].EventID = TEXT("LatePoint");
-	Timeline->bUseMontageDuration = false;
-	Timeline->Duration = 1.f;
-	FDataValidationContext ManualContext;
-	TestTrue(TEXT("Standalone assets retain manual upper bound"),
-		Timeline->IsDataValid(ManualContext) == EDataValidationResult::Invalid);
-	Timeline->Duration = 3.f;
-	Errors.Reset();
-	TestTrue(TEXT("Standalone playback retains manual duration"), Timeline->ValidateForPlayback(Errors));
-
-	auto* Definition = NewObject<UHodgeAbilityDefinition>();
-	Definition->AbilityTag = HodgeGameplayTags::Status_Attack;
-	Definition->AbilityClass = UHodgeGameplayAbility_Definition::StaticClass();
-	Definition->ExecutionConfig.Montage = LoadObject<UAnimMontage>(nullptr,
-		TEXT("/Game/Main/Character/Hero/Anim/Montages/AM_Attack01_Montage.AM_Attack01_Montage"));
-	Definition->ExecutionConfig.TimelineTaskConfig.Timeline = Timeline;
-	if (!TestNotNull(TEXT("Test montage loaded"), Definition->ExecutionConfig.Montage.Get())) { return false; }
-	Timeline->Events[0].StartTime = Definition->GetDuration() * .6f;
-	Errors.Reset();
-	TestFalse(TEXT("Definition rejects manual timeline mode"), Definition->ValidateDefinition(Errors));
-	Timeline->bUseMontageDuration = true;
-	Timeline->Duration = 0.f;
-	Errors.Reset();
-	TestTrue(TEXT("Definition derives duration from montage"), Definition->ValidateDefinition(Errors));
-	Definition->ExecutionConfig.PlayRate = 2.f;
-	Errors.Reset();
-	TestTrue(TEXT("Play rate does not rescale source-time event bounds"), Definition->ValidateDefinition(Errors));
-	Timeline->Events[0].StartTime = Definition->GetDuration() + 1.f;
-	Errors.Reset();
-	TestFalse(TEXT("Definition rejects events past montage end"), Definition->ValidateDefinition(Errors));
-	return true;
-}
-#endif
 #endif

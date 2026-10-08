@@ -1,3 +1,5 @@
+> 2026-10-07：本文保留为旧方案／验证历史。dev-AN 已改为 Montage 动画通知，当前配置请看 [攻击能力配置手册](../Guides/attack-ability-configuration.md)，旧文件见 [集中归档](../../Archive/Timeline/README.md)。
+
 # Hodge Ability Definition 编辑器（第一版）
 
 > 2026-10-06 状态同步：已实现的 Editor 工具，现另有动画文本导入/编译辅助；预览仍不模拟 GAS、真实命中、网络或角色位移。 当前项目事实见 [本轮更新](../KnowledgeBase/26-update-2026-10-06.md)。

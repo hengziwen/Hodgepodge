@@ -46,7 +46,7 @@ void UHodgeAbilityTask_WaitMoveCancel::Activate()
 
 	SubscribedASC = ASC;
 
-	// 信号一：取消窗口标签（Timeline 在 Window 进入 / 退出时加减）。
+	// 信号一：取消窗口标签（动画通知 在 Window 进入 / 退出时加减）。
 	// 必须保存句柄并在 OnDestroy 解绑：任务比 ASC 短命，不解绑会留下指向已销毁对象的委托。
 	if (WindowTag.IsValid())
 	{

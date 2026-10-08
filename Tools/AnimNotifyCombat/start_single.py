@@ -1,0 +1,10 @@
+import unreal
+assert not unreal.EditorLevelLibrary.get_pie_worlds(False)
+levels=unreal.get_editor_subsystem(unreal.LevelEditorSubsystem)
+assert levels.load_level('/Game/CodexText/LyraAnimation/Maps/L_PoverLyraLab')
+assert unreal.HodgeAnimationAuthoringLibrary.configure_animation_lab_pie(1,False)
+assert levels.load_level('/Game/ThirdPerson/Maps/ThirdPersonMap')
+performance=unreal.get_default_object(unreal.load_class(None,'/Script/UnrealEd.EditorPerformanceSettings'))
+performance.set_editor_property('bThrottleCPUWhenNotForeground',False)
+levels.editor_request_begin_play()
+print('Requested single-player PIE for actual GAS hit tests')

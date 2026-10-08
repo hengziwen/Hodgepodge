@@ -79,40 +79,40 @@ Experience 注入 Pawn，ASC 就绪后装备默认剑，来源授予句柄精确
 
 源码：[Source/Hodgepodge/Private/Equipment/HodgeWeaponInstance.cpp](../../../Source/Hodgepodge/Private/Equipment/HodgeWeaponInstance.cpp)
 
-项目内直接 include（不是运行调用关系）：[Equipment/HodgeWeaponInstance.h](../../../Source/Hodgepodge/Public/Equipment/HodgeWeaponInstance.h)、[Component/HodgeHealthComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeHealthComponent.h)、[Equipment/HodgeWeaponPresentationActor.h](../../../Source/Hodgepodge/Public/Equipment/HodgeWeaponPresentationActor.h)、[Equipment/HodgeWeaponPresentationProfile.h](../../../Source/Hodgepodge/Public/Equipment/HodgeWeaponPresentationProfile.h)、[Equipment/HodgeEquipmentManagerComponent.h](../../../Source/Hodgepodge/Public/Equipment/HodgeEquipmentManagerComponent.h)
+项目内直接 include（不是运行调用关系）：[Equipment/HodgeWeaponInstance.h](../../../Source/Hodgepodge/Public/Equipment/HodgeWeaponInstance.h)、[Component/HodgeCombatComponentBase.h](../../../Source/Hodgepodge/Public/Component/HodgeCombatComponentBase.h)、[Component/HodgeHealthComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeHealthComponent.h)、[Equipment/HodgeWeaponPresentationActor.h](../../../Source/Hodgepodge/Public/Equipment/HodgeWeaponPresentationActor.h)、[Equipment/HodgeWeaponPresentationProfile.h](../../../Source/Hodgepodge/Public/Equipment/HodgeWeaponPresentationProfile.h)、[Equipment/HodgeEquipmentManagerComponent.h](../../../Source/Hodgepodge/Public/Equipment/HodgeEquipmentManagerComponent.h)
 
 定义候选（多行签名仅展示首行）：
 
-- L42: `UHodgeWeaponInstance::UHodgeWeaponInstance(const FObjectInitializer& ObjectInitializer)`
-- L67: `void UHodgeWeaponInstance::OnEquipped()`
-- L89: `void UHodgeWeaponInstance::OnUnequipped()`
-- L100: `void UHodgeWeaponInstance::UpdateFiringTime()`
-- L113: `float UHodgeWeaponInstance::GetTimeSinceLastInteractedWith() const`
-- L142: `TSubclassOf<UAnimInstance> UHodgeWeaponInstance::PickBestAnimLayer(bool bEquipped,`
-- L153: `const FPlatformUserId UHodgeWeaponInstance::GetOwningUserId() const`
-- L167: `void UHodgeWeaponInstance::ApplyDeviceProperties()`
-- L205: `void UHodgeWeaponInstance::RemoveDeviceProperties()`
-- L228: `void UHodgeWeaponInstance::OnDeathStarted(AActor* OwningActor)`
-- L243: `void UHodgeWeaponInstance::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const`
-- L249: `double UHodgeWeaponInstance::GetPresentationTime() const`
-- L256: `bool UHodgeWeaponInstance::CanDrivePresentation() const`
-- L264: `UHodgeWeaponInstance* UHodgeWeaponInstance::ResolvePresentationWeapon(APawn* Pawn, UObject* SourceObject)`
-- L284: `void UHodgeWeaponInstance::InitializePresentation()`
-- L300: `void UHodgeWeaponInstance::ClearPresentationTimer()`
-- L305: `void UHodgeWeaponInstance::ShutdownPresentation()`
-- L317: `FGuid UHodgeWeaponInstance::AcquireHandUse(FGuid ExecutionId, int32 EventIndex, int32 ActivationKey)`
-- L343: `void UHodgeWeaponInstance::ReleaseHandUse(FGuid Handle)`
-- L350: `void UHodgeWeaponInstance::ReleaseHandUsesForExecution(const FGuid& ExecutionId)`
-- L357: `void UHodgeWeaponInstance::BeginIdlePresentation()`
-- L363: `void UHodgeWeaponInstance::SchedulePresentationPhase(EHodgeWeaponPresentationPhase Phase, float Seconds)`
-- L378: `void UHodgeWeaponInstance::SetPresentationPhase(EHodgeWeaponPresentationPhase Phase, int32 ActivationKey)`
-- L406: `FHodgeWeaponPresentationState UHodgeWeaponInstance::GetPresentationState() const`
-- L412: `void UHodgeWeaponInstance::OnRep_PresentationState()`
-- L426: `void UHodgeWeaponInstance::RejectPredictedHandUse(int32 ActivationKey)`
-- L441: `void UHodgeWeaponInstance::RefreshPresentationActors()`
-- L447: `void UHodgeWeaponInstance::OnSpawnedActorsChanged()`
-- L453: `void UHodgeWeaponInstance::BeginDestroy()`
-- L459: `void UHodgeWeaponInstance::UpdateOwnerPosePolicy()`
+- L43: `UHodgeWeaponInstance::UHodgeWeaponInstance(const FObjectInitializer& ObjectInitializer)`
+- L68: `void UHodgeWeaponInstance::OnEquipped()`
+- L90: `void UHodgeWeaponInstance::OnUnequipped()`
+- L101: `void UHodgeWeaponInstance::UpdateFiringTime()`
+- L114: `float UHodgeWeaponInstance::GetTimeSinceLastInteractedWith() const`
+- L143: `TSubclassOf<UAnimInstance> UHodgeWeaponInstance::PickBestAnimLayer(bool bEquipped,`
+- L154: `const FPlatformUserId UHodgeWeaponInstance::GetOwningUserId() const`
+- L168: `void UHodgeWeaponInstance::ApplyDeviceProperties()`
+- L206: `void UHodgeWeaponInstance::RemoveDeviceProperties()`
+- L229: `void UHodgeWeaponInstance::OnDeathStarted(AActor* OwningActor)`
+- L244: `void UHodgeWeaponInstance::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const`
+- L250: `double UHodgeWeaponInstance::GetPresentationTime() const`
+- L257: `bool UHodgeWeaponInstance::CanDrivePresentation() const`
+- L265: `UHodgeWeaponInstance* UHodgeWeaponInstance::ResolvePresentationWeapon(APawn* Pawn, UObject* SourceObject)`
+- L291: `void UHodgeWeaponInstance::InitializePresentation()`
+- L311: `void UHodgeWeaponInstance::ClearPresentationTimer()`
+- L316: `void UHodgeWeaponInstance::ShutdownPresentation()`
+- L331: `FGuid UHodgeWeaponInstance::AcquireHandUse(FGuid ExecutionId, int32 OccurrenceId, int32 ActivationKey)`
+- L361: `void UHodgeWeaponInstance::ReleaseHandUse(FGuid Handle)`
+- L368: `void UHodgeWeaponInstance::ReleaseHandUsesForExecution(const FGuid& ExecutionId)`
+- L375: `void UHodgeWeaponInstance::BeginIdlePresentation()`
+- L381: `void UHodgeWeaponInstance::SchedulePresentationPhase(EHodgeWeaponPresentationPhase Phase, float Seconds)`
+- L399: `void UHodgeWeaponInstance::SetPresentationPhase(EHodgeWeaponPresentationPhase Phase, int32 ActivationKey)`
+- L443: `FHodgeWeaponPresentationState UHodgeWeaponInstance::GetPresentationState() const`
+- L451: `void UHodgeWeaponInstance::OnRep_PresentationState()`
+- L472: `void UHodgeWeaponInstance::RejectPredictedHandUse(int32 ActivationKey)`
+- L490: `void UHodgeWeaponInstance::RefreshPresentationActors()`
+- L499: `void UHodgeWeaponInstance::OnSpawnedActorsChanged()`
+- L505: `void UHodgeWeaponInstance::BeginDestroy()`
+- L512: `void UHodgeWeaponInstance::UpdateOwnerPosePolicy()`
 
 ## HodgeWeaponPresentationActor.cpp
 
@@ -408,79 +408,79 @@ Experience 注入 Pawn，ASC 就绪后装备默认剑，来源授予句柄精确
   22: class UInputDeviceProperty;
   23: class UHodgeWeaponPresentationProfile;
   24: class USkeletalMeshComponent;
-  34: UCLASS()
-  35: class HODGEPODGE_API UHodgeWeaponInstance : public UHodgeEquipmentInstance
-  36: {
-  37: 	GENERATED_BODY()
-  39: public:
-  41: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Combat", meta=(TitleProperty="SourceTag"))
-  42: 	TArray<FHodgeHitSource> HitSources;
-  44: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Presentation")
-  45: 	TObjectPtr<UHodgeWeaponPresentationProfile> PresentationProfile;
-  46: 	UFUNCTION(BlueprintPure, Category="Hodge|Presentation")
-  47: 	UHodgeWeaponPresentationProfile* GetPresentationProfile() const { return PresentationProfile; }
-  48: 	UFUNCTION(BlueprintCallable, Category="Hodge|Presentation")
-  49: 	FGuid AcquireHandUse(FGuid ExecutionId, int32 EventIndex, int32 ActivationKey = 0);
+  34: class UHodgeCombatComponentBase;
+  36: UCLASS()
+  37: class HODGEPODGE_API UHodgeWeaponInstance : public UHodgeEquipmentInstance
+  38: {
+  39: 	GENERATED_BODY()
+  41: public:
+  43: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Combat", meta=(TitleProperty="SourceTag"))
+  44: 	TArray<FHodgeHitSource> HitSources;
+  46: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Presentation")
+  47: 	TObjectPtr<UHodgeWeaponPresentationProfile> PresentationProfile;
+  48: 	UFUNCTION(BlueprintPure, Category="Hodge|Presentation")
+  49: 	UHodgeWeaponPresentationProfile* GetPresentationProfile() const { return PresentationProfile; }
   50: 	UFUNCTION(BlueprintCallable, Category="Hodge|Presentation")
-  51: 	void ReleaseHandUse(FGuid Handle);
-  52: 	void ReleaseHandUsesForExecution(const FGuid& ExecutionId);
-  53: 	void RejectPredictedHandUse(int32 ActivationKey);
-  54: 	UFUNCTION(BlueprintPure, Category="Hodge|Presentation")
-  55: 	int32 GetHandUseCount() const { return HandRequests.Num(); }
+  51: 	FGuid AcquireHandUse(FGuid ExecutionId, int32 OccurrenceId, int32 ActivationKey = 0);
+  52: 	UFUNCTION(BlueprintCallable, Category="Hodge|Presentation")
+  53: 	void ReleaseHandUse(FGuid Handle);
+  54: 	void ReleaseHandUsesForExecution(const FGuid& ExecutionId);
+  55: 	void RejectPredictedHandUse(int32 ActivationKey);
   56: 	UFUNCTION(BlueprintPure, Category="Hodge|Presentation")
-  57: 	FHodgeWeaponPresentationState GetPresentationState() const;
-  58: 	double GetPresentationTime() const;
-  59: 	void RefreshPresentationActors();
-  60: 	static UHodgeWeaponInstance* ResolvePresentationWeapon(APawn* Pawn, UObject* SourceObject = nullptr);
-  63: 	UHodgeWeaponInstance(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-  64: 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-  69: 	virtual void OnEquipped() override;
-  72: 	virtual void OnUnequipped() override;
-  77: 	UFUNCTION(BlueprintCallable)
-  78: 	void UpdateFiringTime();
-  83: 	UFUNCTION(BlueprintPure)
-  84: 	float GetTimeSinceLastInteractedWith() const;
-  86: protected:
-  87: 	virtual void OnSpawnedActorsChanged() override;
-  88: 	virtual void BeginDestroy() override;
- 104: 	UPROPERTY(EditDefaultsOnly, Instanced, BlueprintReadOnly, Category = "Input Devices")
- 105: 	TArray<TObjectPtr<UInputDeviceProperty>> ApplicableDeviceProperties;
- 110: 	UFUNCTION(BlueprintCallable, BlueprintPure=false, Category=Animation)
- 111: 	TSubclassOf<UAnimInstance> PickBestAnimLayer(bool bEquipped, const FGameplayTagContainer& CosmeticTags) const;
- 116: 	UFUNCTION(BlueprintCallable)
- 117: 	const FPlatformUserId GetOwningUserId() const;
- 122: 	UFUNCTION()
- 123: 	void OnDeathStarted(AActor* OwningActor);
- 133: 	void ApplyDeviceProperties();
- 138: 	void RemoveDeviceProperties();
- 140: private:
- 141: 	friend struct FHodgeWeaponPresentationTestAccess;
- 142: 	struct FHandRequest { FGuid ExecutionId; int32 EventIndex = INDEX_NONE; int32 ActivationKey = 0; };
- 143: 	TMap<FGuid, FHandRequest> HandRequests;
- 144: 	FTimerHandle PresentationTimer;
- 145: 	bool bPresentationEquipped = false;
- 146: 	bool bPresentationDisabled = false;
- 147: 	bool bPredictedPresentation = false;
- 148: 	FHodgeWeaponPresentationState LocalPresentation;
- 149: 	UPROPERTY(ReplicatedUsing=OnRep_PresentationState)
- 150: 	FHodgeWeaponPresentationState ReplicatedPresentation;
- 151: 	UFUNCTION() void OnRep_PresentationState();
- 152: 	void InitializePresentation();
- 153: 	void ShutdownPresentation();
- 154: 	void SetPresentationPhase(EHodgeWeaponPresentationPhase Phase, int32 ActivationKey);
- 155: 	void SchedulePresentationPhase(EHodgeWeaponPresentationPhase Phase, float Seconds);
- 156: 	void BeginIdlePresentation();
- 157: 	bool CanDrivePresentation() const;
- 158: 	void ClearPresentationTimer();
- 159: 	void UpdateOwnerPosePolicy();
- 160: 	TWeakObjectPtr<USkeletalMeshComponent> PoseMesh;
- 161: 	uint8 SavedPosePolicy = 0;
- 162: 	bool bPosePolicyOverridden = false;
- 166: 	UPROPERTY(Transient)
- 167: 	TSet<FInputDevicePropertyHandle> DevicePropertyHandles;
- 170: 	double TimeLastEquipped = 0.0;
- 173: 	double TimeLastFired = 0.0;
- 174: };
+  57: 	int32 GetHandUseCount() const { return HandRequests.Num(); }
+  58: 	UFUNCTION(BlueprintPure, Category="Hodge|Presentation")
+  59: 	FHodgeWeaponPresentationState GetPresentationState() const;
+  60: 	double GetPresentationTime() const;
+  61: 	void RefreshPresentationActors();
+  62: 	static UHodgeWeaponInstance* ResolvePresentationWeapon(APawn* Pawn, UObject* SourceObject = nullptr);
+  65: 	UHodgeWeaponInstance(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+  66: 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+  71: 	virtual void OnEquipped() override;
+  74: 	virtual void OnUnequipped() override;
+  79: 	UFUNCTION(BlueprintCallable)
+  80: 	void UpdateFiringTime();
+  85: 	UFUNCTION(BlueprintPure)
+  86: 	float GetTimeSinceLastInteractedWith() const;
+  88: protected:
+  89: 	virtual void OnSpawnedActorsChanged() override;
+  90: 	virtual void BeginDestroy() override;
+ 106: 	UPROPERTY(EditDefaultsOnly, Instanced, BlueprintReadOnly, Category = "Input Devices")
+ 107: 	TArray<TObjectPtr<UInputDeviceProperty>> ApplicableDeviceProperties;
+ 112: 	UFUNCTION(BlueprintCallable, BlueprintPure=false, Category=Animation)
+ 113: 	TSubclassOf<UAnimInstance> PickBestAnimLayer(bool bEquipped, const FGameplayTagContainer& CosmeticTags) const;
+ 118: 	UFUNCTION(BlueprintCallable)
+ 119: 	const FPlatformUserId GetOwningUserId() const;
+ 124: 	UFUNCTION()
+ 125: 	void OnDeathStarted(AActor* OwningActor);
+ 135: 	void ApplyDeviceProperties();
+ 140: 	void RemoveDeviceProperties();
+ 142: private:
+ 143: 	friend struct FHodgeWeaponPresentationTestAccess;
+ 144: 	struct FHandRequest { FGuid ExecutionId; int32 OccurrenceId = INDEX_NONE; int32 ActivationKey = 0; };
+ 145: 	TMap<FGuid, FHandRequest> HandRequests;
+ 146: 	FTimerHandle PresentationTimer;
+ 147: 	bool bPresentationEquipped = false;
+ 148: 	bool bPresentationDisabled = false;
+ 149: 	bool bPredictedPresentation = false;
+ 150: 	FHodgeWeaponPresentationState LocalPresentation;
+ 151: 	UPROPERTY(ReplicatedUsing=OnRep_PresentationState)
+ 152: 	FHodgeWeaponPresentationState ReplicatedPresentation;
+ 153: 	UFUNCTION() void OnRep_PresentationState();
+ 154: 	void InitializePresentation();
+ 155: 	void ShutdownPresentation();
+ 156: 	void SetPresentationPhase(EHodgeWeaponPresentationPhase Phase, int32 ActivationKey);
+ 157: 	void SchedulePresentationPhase(EHodgeWeaponPresentationPhase Phase, float Seconds);
+ 158: 	void BeginIdlePresentation();
+ 159: 	bool CanDrivePresentation() const;
+ 160: 	void ClearPresentationTimer();
+ 161: 	FGuid CombatPoseLease;
+ 162: 	TWeakObjectPtr<UHodgeCombatComponentBase> PoseCombat;
+ 163: 	void UpdateOwnerPosePolicy();
+ 167: 	UPROPERTY(Transient)
+ 168: 	TSet<FInputDevicePropertyHandle> DevicePropertyHandles;
+ 171: 	double TimeLastEquipped = 0.0;
+ 174: 	double TimeLastFired = 0.0;
+ 175: };
 ```
 
 ## HodgeWeaponPresentationActor.h

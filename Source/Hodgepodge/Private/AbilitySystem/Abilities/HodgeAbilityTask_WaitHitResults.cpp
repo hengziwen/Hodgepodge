@@ -1,6 +1,5 @@
 #include "AbilitySystem/Abilities/HodgeAbilityTask_WaitHitResults.h"
 #include "AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h"
-#include "AbilitySystem/Abilities/HodgeAbilityTask_PlayTimeline.h"
 #include "AbilitySystem/HodgeGameplayTags.h"
 #include "AbilitySystemComponent.h"
 #include "Component/HodgeCombatComponentBase.h"
@@ -21,12 +20,11 @@ FString FHodgeHitResultsTickFunction::DiagnosticMessage()
 
 UHodgeAbilityTask_WaitHitResults* UHodgeAbilityTask_WaitHitResults::WaitHitResults(
 	UHodgeGameplayAbility_Definition* OwningAbility, UHodgeCombatComponentBase* Combat,
-	UHodgeAbilityTask_PlayTimeline* Timeline, const FGuid& InExecutionId)
+	const FGuid& InExecutionId)
 {
 	auto* Task = NewAbilityTask<UHodgeAbilityTask_WaitHitResults>(OwningAbility);
 	Task->ExecutionAbility = OwningAbility;
 	Task->CombatComponent = Combat;
-	Task->TimelineTask = Timeline;
 	Task->ExecutionId = InExecutionId;
 	Task->Avatar = OwningAbility->GetAvatarActorFromActorInfo();
 	return Task;
@@ -38,10 +36,9 @@ bool UHodgeAbilityTask_WaitHitResults::IsRunningForExecution(const FGuid& InExec
 	return !bStopped && !IsFinished() && ExecutionId.IsValid() && ExecutionId == InExecutionId &&
 		ExecutionAbility.IsValid() && ExecutionAbility->IsActive() && !ExecutionAbility->IsExecutionEnding() &&
 		ExecutionAbility->GetExecutionId() == ExecutionId && Avatar.IsValid() && Avatar->HasAuthority() &&
-		CombatComponent.IsValid() && CombatComponent->IsRegistered() && CombatComponent->GetOwner() == Avatar.Get() && ASC &&
+		CombatComponent.IsValid() && CombatComponent->CanExecuteAbilities() && CombatComponent->GetOwner() == Avatar.Get() && ASC &&
 		ASC->IsOwnerActorAuthoritative() && ASC->GetAvatarActor() == Avatar.Get() &&
-		!ASC->HasMatchingGameplayTag(HodgeGameplayTags::Status_Death) && TimelineTask.IsValid() &&
-		!TimelineTask->IsTimelineStopped();
+		!ASC->HasMatchingGameplayTag(HodgeGameplayTags::Status_Death);
 }
 
 void UHodgeAbilityTask_WaitHitResults::Activate()
@@ -63,10 +60,10 @@ void UHodgeAbilityTask_WaitHitResults::Activate()
 	UpdateTickState();
 }
 
-uint64 UHodgeAbilityTask_WaitHitResults::CreateWindow(int32 EventIndex, const FHodgeHitDetectionRequest& Request)
+uint64 UHodgeAbilityTask_WaitHitResults::CreateWindow(int32 OccurrenceId, const FHodgeHitDetectionRequest& Request)
 {
-	if (!IsRunningForExecution(ExecutionId) || Windows.Contains(EventIndex)) { return 0; }
-	const uint64 Handle = CombatComponent->CreateDetectionSession(ExecutionId, EventIndex, Request);
+	if (!IsRunningForExecution(ExecutionId) || Windows.Contains(OccurrenceId)) { return 0; }
+	const uint64 Handle = CombatComponent->CreateDetectionSession(ExecutionId, OccurrenceId, Request);
 	if (Handle == 0) { return 0; }
 	if (USceneComponent* Source = CombatComponent->GetDetectionSourceComponent(Handle, ExecutionId))
 	{
@@ -76,22 +73,22 @@ uint64 UHodgeAbilityTask_WaitHitResults::CreateWindow(int32 EventIndex, const FH
 	FWindow Window;
 	Window.Handle = Handle;
 	Window.bOnce = Request.Profile && Request.Profile->SampleMode == EHodgeHitSampleMode::OnceOnEnter;
-	Windows.Add(EventIndex, Window);
+	Windows.Add(OccurrenceId, Window);
 	UpdateTickState();
 	return Handle;
 }
 
 bool UHodgeAbilityTask_WaitHitResults::IsBatchCurrent(const FHodgeHitDetectionBatch& Batch) const
 {
-	const FWindow* Window = Windows.Find(Batch.EventIndex);
+	const FWindow* Window = Windows.Find(Batch.OccurrenceId);
 	return !IsPaused() && IsRunningForExecution(Batch.ExecutionId) && Window && Window->Handle == Batch.SessionHandle &&
 		CombatComponent->IsDetectionSessionValid(Batch.SessionHandle, Batch.ExecutionId);
 }
 
-void UHodgeAbilityTask_WaitHitResults::SampleWindow(int32 EventIndex)
+void UHodgeAbilityTask_WaitHitResults::SampleWindow(int32 OccurrenceId)
 {
 	if (bSampling || IsPaused() || !IsRunningForExecution(ExecutionId)) { return; }
-	FWindow* Window = Windows.Find(EventIndex);
+	FWindow* Window = Windows.Find(OccurrenceId);
 	if (!Window || (Window->bOnce && Window->bSampled)) { return; }
 	Window->bSampled = true;
 	const uint64 Handle = Window->Handle;
@@ -99,26 +96,25 @@ void UHodgeAbilityTask_WaitHitResults::SampleWindow(int32 EventIndex)
 	FHodgeHitDetectionBatch Batch;
 	if (!CombatComponent->SampleDetection(Handle, ExecutionId, Batch))
 	{
+		UE_LOG(LogTemp, Verbose, TEXT("[HodgeNotify] Sample failed %d"), OccurrenceId);
 		CombatComponent->EndDetectionSession(Handle, ExecutionId);
-		Windows.Remove(EventIndex);
+		Windows.Remove(OccurrenceId);
 		UpdateTickState();
 		return;
 	}
+	UE_LOG(LogTemp, Verbose, TEXT("[HodgeNotify] Sample %d Hits=%d Current=%d Broadcast=%d"), OccurrenceId, Batch.Hits.Num(), IsBatchCurrent(Batch), ShouldBroadcastAbilityTaskDelegates());
 	if (IsBatchCurrent(Batch) && ShouldBroadcastAbilityTaskDelegates()) { OnHitResults.Broadcast(Batch); }
 	UpdateTickState();
 }
 
-void UHodgeAbilityTask_WaitHitResults::CloseWindow(int32 EventIndex, bool bSampleFinal)
+void UHodgeAbilityTask_WaitHitResults::CloseWindow(int32 OccurrenceId, bool bSampleFinal)
 {
-	FWindow* Window = Windows.Find(EventIndex);
+	FWindow* Window = Windows.Find(OccurrenceId);
 	if (!Window || Window->bClosing) { return; }
-	Window->bClosing = true;
+	if (bSampleFinal) { Window->bClosing = true; UpdateTickState(); return; }
 	const uint64 Handle = Window->Handle;
-	const FGuid ClosingExecution = ExecutionId;
-	if (bSampleFinal) { SampleWindow(EventIndex); }
-	// 末次结果可能结束 Task，返回后只按原身份关闭旧会话。
-	if (CombatComponent.IsValid()) { CombatComponent->EndDetectionSession(Handle, ClosingExecution); }
-	Windows.Remove(EventIndex);
+	if (CombatComponent.IsValid()) { CombatComponent->EndDetectionSession(Handle, ExecutionId); }
+	Windows.Remove(OccurrenceId);
 	UpdateTickState();
 }
 
@@ -128,28 +124,32 @@ void UHodgeAbilityTask_WaitHitResults::TickDetection()
 	TGuardValue<bool> Guard(bTickingDetection, true);
 	const FGuid TickExecution = ExecutionId;
 	if (!IsRunningForExecution(TickExecution)) { EndTask(); return; }
-	ExecutionAbility->RefreshExecutionClock();
 	if (!IsRunningForExecution(TickExecution)) { if (!IsFinished()) { EndTask(); } return; }
 	TArray<int32> Indices;
 	Windows.GetKeys(Indices);
-	for (int32 EventIndex : Indices)
+	for (int32 OccurrenceId : Indices)
 	{
 		if (!IsRunningForExecution(TickExecution)) { break; }
-		const FWindow* Window = Windows.Find(EventIndex);
-		if (!Window || Window->bClosing) { continue; }
-		if (Window->bOnce && Window->bSampled) { continue; }
-		if (TimelineTask->IsWindowActive(EventIndex)) { SampleWindow(EventIndex); }
-		else if (!CombatComponent->ResetDetectionHistory(Window->Handle, TickExecution))
+		const FWindow* Window = Windows.Find(OccurrenceId);
+		if (!Window) { continue; }
+		const bool bClosing = Window->bClosing;
+		// 首次采样发生在骨骼更新后，短区间同帧 Begin/End 也保留一次有效查询。
+		if (!Window->bSampled) { CombatComponent->ResetDetectionHistory(Window->Handle, TickExecution); }
+		SampleWindow(OccurrenceId);
+		if (bClosing && IsRunningForExecution(TickExecution))
 		{
-			CloseWindow(EventIndex, false);
+			Window = Windows.Find(OccurrenceId);
+			if (Window) { CombatComponent->EndDetectionSession(Window->Handle, TickExecution); Windows.Remove(OccurrenceId); }
 		}
+
 	}
+	UpdateTickState();
 }
 
 void UHodgeAbilityTask_WaitHitResults::UpdateTickState()
 {
 	bool bNeedsTick = false;
-	for (const auto& Pair : Windows) { bNeedsTick |= !Pair.Value.bOnce || !Pair.Value.bSampled; }
+	for (const auto& Pair : Windows) { bNeedsTick |= Pair.Value.bClosing || !Pair.Value.bOnce || !Pair.Value.bSampled; }
 	DetectionTick.SetTickFunctionEnable(!bStopped && !IsPaused() && bNeedsTick);
 }
 
@@ -166,10 +166,10 @@ void UHodgeAbilityTask_WaitHitResults::Resume()
 	// Task 暂停期间可能移动来源，恢复前丢弃旧轨迹，避免补扫暂停路径。
 	TArray<int32> Indices;
 	Windows.GetKeys(Indices);
-	for (int32 EventIndex : Indices)
+	for (int32 OccurrenceId : Indices)
 	{
-		const FWindow* Window = Windows.Find(EventIndex);
-		if (Window && !CombatComponent->ResetDetectionHistory(Window->Handle, ExecutionId)) { CloseWindow(EventIndex, false); }
+		const FWindow* Window = Windows.Find(OccurrenceId);
+		if (Window && !CombatComponent->ResetDetectionHistory(Window->Handle, ExecutionId)) { CloseWindow(OccurrenceId, false); }
 	}
 	UpdateTickState();
 }

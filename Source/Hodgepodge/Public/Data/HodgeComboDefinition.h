@@ -16,7 +16,7 @@ struct FHodgeComboTransition
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) FGameplayTag TriggerEventTag;
 	// 跳转的目标节点标签，必须在 ComboTable 中存在对应行。
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) FGameplayTag TargetComboTag;
-	// 动作仍运行时要求本次 Timeline 同时开启的窗口，不能用其他技能的同名状态冒充。
+	// 动作仍运行时要求本次 GA 同时开启的窗口，不能用其他技能的同名状态冒充。
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) FGameplayTagContainer RequiredWindowTags;
 	// 动作已结束且连段记忆有效时，可不依赖旧动作的窗口继续此跳转。
 	// 允许在旧动作结束且连段记忆有效时由输入继续，仅用于非入口节点的输入跳转。
@@ -68,7 +68,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ClampMin="0.01")) float InputBufferSeconds = 0.3f;
 	// 动作结束后保留可续接节点的世界秒数，0 表示不保留，只有可恢复的输入边才能续接。
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ClampMin="0")) float ComboRetentionSeconds = 1.f;
-	// 允许移动取消当前连段动作的窗口标签，需由本次 Timeline 提供。
+	// 允许移动取消当前连段动作的窗口标签，需由本次 GA 提供。
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) FGameplayTag MoveCancelWindowTag;
 	// 触发移动取消要求的输入强度阈值，不是移动速度或厘米距离。
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ClampMin="0")) float MoveIntentThreshold = 0.1f;

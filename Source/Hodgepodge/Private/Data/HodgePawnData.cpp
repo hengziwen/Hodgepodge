@@ -7,7 +7,7 @@
 #if WITH_EDITOR
 #include "Data/HodgeAbilityDefinition.h"
 #include "Data/HodgeAbilitySet.h"
-#include "Data/HodgeAbilityTimeline.h"
+#include "Animation/HodgeCombatAnimNotifies.h"
 #include "Data/HodgeComboDefinition.h"
 #include "AbilitySystem/HodgeGameplayTags.h"
 #include "Misc/DataValidation.h"
@@ -44,7 +44,11 @@ EDataValidationResult UHodgePawnData::IsDataValid(FDataValidationContext& Contex
 		if (!Set) { continue; }
 		for (const auto& Entry : Set->GetGrantedDefinitions())
 		{
-			if (!Entry.Definition) { Errors.Add(FText::FromString(TEXT("AbilitySet has an empty Definition entry"))); continue; }
+			if (!Entry.Definition)
+			{
+				Errors.Add(FText::FromString(TEXT("AbilitySet has an empty Definition entry")));
+				continue;
+			}
 			Entry.Definition->ValidateDefinition(Errors);
 			Definitions.FindOrAdd(Entry.Definition->AbilityTag).Add(Entry.Definition);
 		}
@@ -58,36 +62,53 @@ EDataValidationResult UHodgePawnData::IsDataValid(FDataValidationContext& Contex
 			const auto* Found = Definitions.Find(Node.AbilityTag);
 			if (!Found || Found->Num() != 1)
 			{
-				Errors.Add(FText::FromString(Pair.Key.ToString() + TEXT(": AbilityTag must resolve to exactly one granted Definition")));
+				Errors.Add(FText::FromString(
+					Pair.Key.ToString() + TEXT(": AbilityTag must resolve to exactly one granted Definition")));
 				continue;
 			}
-			const auto* Timeline = (*Found)[0]->ExecutionConfig.TimelineTaskConfig.Timeline.Get();
+			const auto* Montage = (*Found)[0]->ExecutionConfig.Montage.Get();
 			if ((*Found)[0]->ExecutionRoute != EHodgeAbilityExecutionRoute::ComboCoordinated)
 			{
-				Errors.Add(FText::FromString(Pair.Key.ToString() + TEXT(": Standalone definitions cannot be combo nodes")));
+				Errors.Add(FText::FromString(
+					Pair.Key.ToString() + TEXT(": Standalone definitions cannot be combo nodes")));
 				continue;
 			}
-			if (!Timeline) { continue; }
+			if (!Montage) { continue; }
 			FGameplayTagContainer Windows;
 			FGameplayTagContainer Events;
-			Events.AddTag(HodgeGameplayTags::GameplayEvent_Attack_Timeline_End);
-			for (const auto& Event : Timeline->Events)
+			Events.AddTag(HodgeGameplayTags::GameplayEvent_Attack_Completed);
+			Events.AddTag(HodgeGameplayTags::GameplayEvent_Attack_Interrupted);
+			for (const auto& Event : Montage->Notifies)
 			{
-				if (Event.Kind == EHodgeTimelineEventKind::Window) { Windows.AddTag(Event.WindowTag); }
-				else if (Event.NetPolicy != EHodgeTimelineEventNetPolicy::LocallyControlledOnly) { Events.AddTag(Event.PointEventTag); }
+				if (const auto* Notify = Cast<UHodgeAnimNotifyState_GameplayTag>(Event.NotifyStateClass))
+				{
+					Windows.AddTag(Notify->StateTag);
+				}
+				if (const auto* Notify = Cast<UHodgeAnimNotify_GameplayEvent>(Event.Notify))
+				{
+					Events.AddTag(Notify->EventTag);
+				}
 			}
 			for (int32 Index = 0; Index < Node.Transitions.Num(); ++Index)
 			{
 				const auto& Edge = Node.Transitions[Index];
 				const FString Prefix = FString::Printf(TEXT("%s.Transitions[%d]: "), *Pair.Key.ToString(), Index);
 				if (!Windows.HasAll(Edge.RequiredWindowTags))
-				{ Errors.Add(FText::FromString(Prefix + TEXT("RequiredWindowTags are not provided by this execution"))); }
+				{
+					Errors.Add(
+						FText::FromString(Prefix + TEXT("RequiredWindowTags are not provided by this execution")));
+				}
 				if (Edge.TriggerEventTag.IsValid() && !Events.HasTagExact(Edge.TriggerEventTag))
-				{ Errors.Add(FText::FromString(Prefix + TEXT("TriggerEventTag requires an authority Timeline point or natural-end event"))); }
+				{
+					Errors.Add(FText::FromString(
+						Prefix + TEXT("TriggerEventTag requires a Montage gameplay-event notify or completion event")));
+				}
 			}
 		}
 	}
 	for (const auto& Error : Errors) { Context.AddError(Error); }
-	return Errors.IsEmpty() && Parent != EDataValidationResult::Invalid ? EDataValidationResult::Valid : EDataValidationResult::Invalid;
+	return Errors.IsEmpty() && Parent != EDataValidationResult::Invalid
+		       ? EDataValidationResult::Valid
+		       : EDataValidationResult::Invalid;
 }
 #endif

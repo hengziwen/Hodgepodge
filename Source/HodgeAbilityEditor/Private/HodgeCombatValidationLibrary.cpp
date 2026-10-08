@@ -3,6 +3,11 @@
 #include "Abilities/GameplayAbility.h"
 #include "Engine/World.h"
 #include "TimerManager.h"
+#include "Animation/AnimMontage.h"
+#include "AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h"
+#include "Component/HodgeCombatComponentBase.h"
+#include "Editor.h"
+#include "Settings/LevelEditorPlaySettings.h"
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeCombatValidationLibrary)
 
 bool UHodgeCombatValidationLibrary::QueueAbilityAction(UHodgeAbilitySystemComponent* ASC, FGameplayAbilitySpecHandle Handle, bool bCancel)
@@ -29,5 +34,127 @@ bool UHodgeCombatValidationLibrary::QueueAbilityAction(UHodgeAbilitySystemCompon
 				*WeakASC->GetWorld()->GetName(), WeakASC->IsOwnerActorAuthoritative(), bActivated);
 		}
 	}));
+	return true;
+}
+
+namespace
+{
+	bool AddAuthoringNotify(UAnimMontage* Montage, UObject* Notify, float Start, float End)
+	{
+		if (!Montage || !Notify || Start < 0.f || Start >= Montage->GetPlayLength() || End > Montage->GetPlayLength() || End < Start) { return false; }
+		Montage->Modify();
+		FAnimNotifyEvent Event;
+		Event.Notify = Cast<UAnimNotify>(Notify);
+		Event.NotifyStateClass = Cast<UAnimNotifyState>(Notify);
+		if (Event.NotifyStateClass && End <= Start) { return false; }
+		Event.Guid = FGuid::NewGuid();
+		Event.NotifyName = Notify->GetFName();
+		Event.TrackIndex = Montage->AnimNotifyTracks.Num();
+		Event.TriggerWeightThreshold = 0.f;
+		Event.bTriggerOnDedicatedServer = true;
+		Event.Link(Montage, Start);
+		Event.TriggerTimeOffset = GetTriggerTimeOffsetForType(Montage->CalculateOffsetForNotify(Start));
+		if (Event.NotifyStateClass)
+		{
+			Event.SetDuration(End - Start);
+			Event.EndLink.Link(Montage, End);
+			Event.EndTriggerTimeOffset = GetTriggerTimeOffsetForType(Montage->CalculateOffsetForNotify(End));
+		}
+		FAnimNotifyTrack Track;
+		Track.TrackName = Notify->GetFName();
+		Montage->AnimNotifyTracks.Add(Track);
+		if (Event.Notify) { Event.Notify->OnAnimNotifyCreatedInEditor(Event); }
+		if (Event.NotifyStateClass) { Event.NotifyStateClass->OnAnimNotifyCreatedInEditor(Event); }
+		Montage->Notifies.Add(Event);
+		Montage->RefreshCacheData();
+		Montage->MarkPackageDirty();
+		return true;
+	}
+}
+
+bool UHodgeCombatValidationLibrary::AddHitNotify(UAnimMontage* Montage, float Start, float End, const FHodgeAnimHitConfig& Config, bool bSingle)
+{
+	if (!Montage) { return false; }
+	if (bSingle)
+	{
+		auto* Notify = NewObject<UHodgeAnimNotify_Hit>(Montage, NAME_None, RF_Transactional);
+		Notify->Hit = Config;
+		return AddAuthoringNotify(Montage, Notify, Start, Start);
+	}
+	auto* Notify = NewObject<UHodgeAnimNotifyState_HitCheck>(Montage, NAME_None, RF_Transactional);
+	Notify->Hit = Config;
+	return AddAuthoringNotify(Montage, Notify, Start, End);
+}
+
+bool UHodgeCombatValidationLibrary::AddStateNotify(UAnimMontage* Montage, float Start, float End, FGameplayTag Tag)
+{
+	if (!Montage || !Tag.IsValid()) { return false; }
+	auto* Notify = NewObject<UHodgeAnimNotifyState_GameplayTag>(Montage, NAME_None, RF_Transactional);
+	Notify->StateTag = Tag;
+	return AddAuthoringNotify(Montage, Notify, Start, End);
+}
+
+bool UHodgeCombatValidationLibrary::AddWeaponHandNotify(UAnimMontage* Montage, float Start, float End)
+{
+	if (!Montage) { return false; }
+	return AddAuthoringNotify(Montage, NewObject<UHodgeAnimNotifyState_WeaponHand>(Montage, NAME_None, RF_Transactional), Start, End);
+}
+
+FGameplayTagContainer UHodgeCombatValidationLibrary::InspectAbilityWindows(UHodgeGameplayAbility_Definition* Ability)
+{
+	return Ability ? Ability->GetExecutionWindows() : FGameplayTagContainer();
+}
+int32 UHodgeCombatValidationLibrary::InspectHitSessions(AActor* Avatar)
+{
+	const auto* Combat = UHodgeCombatComponentBase::FindCombatComponent(Avatar);
+	return Combat ? Combat->GetDetectionSessionCount() : 0;
+}
+int32 UHodgeCombatValidationLibrary::InspectPoseLeases(AActor* Avatar)
+{
+	const auto* Combat = UHodgeCombatComponentBase::FindCombatComponent(Avatar);
+	return Combat ? Combat->GetPoseLeaseCount() : 0;
+}
+
+bool UHodgeCombatValidationLibrary::ConfigureValidationPIE(int32 Players, bool bDedicated)
+{
+	if (!GEditor || GEditor->PlayWorld || Players < 1 || Players > 2) { return false; }
+	auto* Settings = GetMutableDefault<ULevelEditorPlaySettings>();
+	Settings->SetPlayNumberOfClients(Players);
+	Settings->SetRunUnderOneProcess(true);
+	Settings->SetPlayNetMode(bDedicated ? PIE_Client : (Players > 1 ? PIE_ListenServer : PIE_Standalone));
+	return true;
+}
+
+bool UHodgeCombatValidationLibrary::ConfigureValidationSections(UAnimMontage* Montage)
+{
+	if (!Montage || !Montage->GetPathName().StartsWith(TEXT("/Game/CodexText/AnimNotifyCombat/")) || Montage->GetPlayLength() <= .5f) { return false; }
+	Montage->Modify();
+	Montage->CompositeSections.Reset();
+	FCompositeSection First;
+	First.SectionName = TEXT("Default");
+	First.NextSectionName = TEXT("SecondHalf");
+	First.Link(Montage, 0.f);
+	FCompositeSection Second;
+	Second.SectionName = TEXT("SecondHalf");
+	Second.Link(Montage, .5f);
+	Montage->CompositeSections.Add(First);
+	Montage->CompositeSections.Add(Second);
+	Montage->MarkPackageDirty();
+	return true;
+}
+
+bool UHodgeCombatValidationLibrary::NormalizeCombatNotifies(UAnimMontage* Montage)
+{
+	if (!Montage) { return false; }
+	Montage->Modify();
+	for (FAnimNotifyEvent& Event : Montage->Notifies)
+	{
+		UAnimNotify* Point = Event.Notify.Get();
+		UAnimNotifyState* State = Event.NotifyStateClass.Get();
+		if (Point && (Point->IsA<UHodgeAnimNotify_Hit>() || Point->IsA<UHodgeAnimNotify_GameplayEvent>())) { Point->OnAnimNotifyCreatedInEditor(Event); }
+		if (State && (State->IsA<UHodgeAnimNotifyState_HitCheck>() || State->IsA<UHodgeAnimNotifyState_GameplayTag>() || State->IsA<UHodgeAnimNotifyState_WeaponHand>())) { State->OnAnimNotifyCreatedInEditor(Event); }
+	}
+	Montage->RefreshCacheData();
+	Montage->MarkPackageDirty();
 	return true;
 }

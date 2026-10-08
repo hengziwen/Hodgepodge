@@ -5,6 +5,9 @@
 #include "Data/HodgeAbilityDefinition.h"
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimMontage.h"
+#include "Animation/AnimNotifies/AnimNotifyState.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "Animation/HodgeCombatAnimNotifies.h"
 #include "Equipment/HodgeWeaponInstance.h"
 #include "GameFramework/Pawn.h"
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeGameplayAbility_Definition)
@@ -57,9 +60,7 @@ bool UHodgeGameplayAbility_Definition::CanActivateAbility(FGameplayAbilitySpecHa
 		                    ? UHodgeCombatComponentBase::FindCombatComponent(Info->AvatarActor.Get())
 		                    : nullptr;
 	const auto* Definition = ASC ? ASC->FindAbilityDefinition(Handle) : nullptr;
-	if (Definition && Definition->WeaponUseWindowTag.IsValid()
-		&& !UHodgeWeaponInstance::ResolvePresentationWeapon(Cast<APawn>(Info->AvatarActor.Get()))) { return false; }
-	return ASC && Definition && Combat && Combat->IsRegistered() && Combat->GetOwner() == Info->AvatarActor.Get()
+	return ASC && Definition && Combat && Combat->CanExecuteAbilities() && Combat->GetOwner() == Info->AvatarActor.Get()
 		&& !ASC->HasMatchingGameplayTag(HodgeGameplayTags::Status_Death)
 		&& (Definition->ExecutionRoute == EHodgeAbilityExecutionRoute::Standalone || Combat->IsAuthorized(Handle))
 		&& Super::CanActivateAbility(Handle, Info, SourceTags, TargetTags, RelevantTags);
@@ -71,8 +72,12 @@ void UHodgeGameplayAbility_Definition::ActivateAbility(FGameplayAbilitySpecHandl
                                                        const FGameplayEventData* Payload)
 {
 	bEnding = false;
+	bLifecycleEventSent = false;
 	PresentationWeapon.Reset();
-	WeaponUseHandles.Reset();
+	NotifyResources.Reset();
+	StateCounts.Reset();
+	NextOccurrence = 0;
+	MontageInstanceId = INDEX_NONE;
 	ExecutionId = FGuid::NewGuid();
 	const auto* Definition = GetDefinition();
 	TArray<FText> Errors;
@@ -85,16 +90,6 @@ void UHodgeGameplayAbility_Definition::ActivateAbility(FGameplayAbilitySpecHandl
 	}
 	// 连段继续使用协调器授权；独立技能按 GA 配置响应远端结束。
 	CurrentActivationInfo.bCanBeEndedByOtherInstance = Definition->ExecutionRoute == EHodgeAbilityExecutionRoute::Standalone && bServerRespectsRemoteAbilityCancellation;
-	if (Definition->WeaponUseWindowTag.IsValid())
-	{
-		PresentationWeapon = UHodgeWeaponInstance::ResolvePresentationWeapon(Cast<APawn>(Info->AvatarActor.Get()), GetCurrentSourceObject());
-		if (!PresentationWeapon.IsValid())
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Weapon presentation requires one equipped configured weapon: %s"), *GetPathName());
-			FinishExecution(true, true);
-			return;
-		}
-	}
 	if (!CommitAbility(Handle, Info, ActivationInfo))
 	{
 		FinishExecution(true, true);
@@ -102,6 +97,10 @@ void UHodgeGameplayAbility_Definition::ActivateAbility(FGameplayAbilitySpecHandl
 	}
 	auto* ASC = CastChecked<UHodgeAbilitySystemComponent>(Info->AbilitySystemComponent.Get());
 	const auto& Config = Definition->ExecutionConfig;
+	ExecutionCombat = UHodgeCombatComponentBase::FindCombatComponent(Info->AvatarActor.Get());
+	if (ExecutionCombat.IsValid()) { PoseLease = ExecutionCombat->AcquirePoseLease(); }
+	OnExecutionReady();
+	if (!IsActive() || bEnding) { return; }
 	if (ASC->PlayMontage(this, ActivationInfo, Config.Montage, Config.PlayRate) <= 0.f)
 	{
 		FinishExecution(true, true);
@@ -114,24 +113,11 @@ void UHodgeGameplayAbility_Definition::ActivateAbility(FGameplayAbilitySpecHandl
 		FinishExecution(true, true);
 		return;
 	}
-	TimelineTask = UHodgeAbilityTask_PlayTimeline::PlayMontageTimeline(this, Config.TimelineTaskConfig.Timeline,
-	                                                                   Anim, Config.Montage, Instance->GetInstanceID());
-	TimelineTask->OnFinished.AddUObject(this, &ThisClass::OnTimelineFinished);
-	TimelineTask->OnWindowsChanged.AddUObject(this, &ThisClass::OnWindowsChanged);
-	TimelineTask->OnPoint.AddUObject(this, &ThisClass::OnPoint);
-	TimelineTask->OnIndexedPoint.AddUObject(this, &ThisClass::HandleExecutionPoint);
-	TimelineTask->OnWindowEntered.AddUObject(this, &ThisClass::HandleExecutionWindowEntered);
-	TimelineTask->OnWindowExited.AddUObject(this, &ThisClass::HandleExecutionWindowExited);
-	OnExecutionReady();
-	if (!IsActive() || bEnding || !TimelineTask) { return; }
-	if (auto* Combat = IsComboCoordinated() ? UHodgeCombatComponentBase::FindCombatComponent(Info->AvatarActor.Get()) : nullptr)
-	{
-		Combat->ExecutionStarted(this);
-	}
-	if (IsActive() && TimelineTask)
-	{
-		TimelineTask->ReadyForActivation();
-	}
+	MontageInstanceId = Instance->GetInstanceID();
+	Instance->OnMontageBlendingOutStarted.BindUObject(this, &ThisClass::OnMontageBlendingOut, ExecutionId, MontageInstanceId);
+	Instance->OnMontageEnded.BindUObject(this, &ThisClass::OnMontageEnded, ExecutionId, MontageInstanceId);
+	if (IsComboCoordinated() && ExecutionCombat.IsValid()) { ExecutionCombat->ExecutionStarted(this); }
+
 }
 
 void UHodgeGameplayAbility_Definition::FinishExecution(bool bCancelled, bool bReplicate)
@@ -151,25 +137,40 @@ void UHodgeGameplayAbility_Definition::EndAbility(FGameplayAbilitySpecHandle Han
 	{
 		return;
 	}
+	const FGuid RequestedExecution = ExecutionId;
+	if (!bLifecycleEventSent)
+	{
+		bLifecycleEventSent = true;
+		SendExecutionEvent(bCancelled ? HodgeGameplayTags::GameplayEvent_Attack_Interrupted : HodgeGameplayTags::GameplayEvent_Attack_Completed);
+		if (ExecutionId != RequestedExecution || !IsActive()) { return; }
+	}
 	TGuardValue<bool> Guard(bEnding, true);
 	// 先失效旧身份，清理期间的回调不能消费上一段结果。
 	const FGuid EndingExecutionId = ExecutionId;
+	const int32 EndingMontageId = MontageInstanceId;
 	ExecutionId.Invalidate();
 	OnExecutionEnding(EndingExecutionId);
-	if (PresentationWeapon.IsValid()) { PresentationWeapon->ReleaseHandUsesForExecution(EndingExecutionId); }
-	WeaponUseHandles.Reset();
-	PresentationWeapon.Reset();
-	if (TimelineTask)
+	MontageInstanceId = INDEX_NONE;
+	if (UAnimInstance* Anim = Info ? Info->GetAnimInstance() : nullptr)
 	{
-		TimelineTask->OnWindowEntered.RemoveAll(this);
-		TimelineTask->OnWindowExited.RemoveAll(this);
-		TimelineTask->OnFinished.RemoveAll(this);
-		TimelineTask->OnWindowsChanged.RemoveAll(this);
-		TimelineTask->OnPoint.RemoveAll(this);
-		TimelineTask->OnIndexedPoint.RemoveAll(this);
-		TimelineTask->StopTimeline(EHodgeTimelineStopReason::AbilityCancelled);
-		TimelineTask = nullptr;
+		if (FAnimMontageInstance* Instance = Anim->GetMontageInstanceForID(EndingMontageId))
+		{
+			if (Instance->OnMontageBlendingOutStarted.IsBoundToObject(this)) { Instance->OnMontageBlendingOutStarted.Unbind(); }
+			if (Instance->OnMontageEnded.IsBoundToObject(this)) { Instance->OnMontageEnded.Unbind(); }
+		}
 	}
+	if (PresentationWeapon.IsValid()) { PresentationWeapon->ReleaseHandUsesForExecution(EndingExecutionId); }
+	NotifyResources.Reset();
+	PresentationWeapon.Reset();
+	const TMap<FGameplayTag, int32> EndingCounts = MoveTemp(StateCounts);
+	StateCounts.Reset();
+	if (auto* ASC = GetAbilitySystemComponentFromActorInfo())
+	{
+		for (const auto& Pair : EndingCounts) { ASC->RemoveLooseGameplayTag(Pair.Key, Pair.Value); }
+	}
+	if (ExecutionCombat.IsValid()) { ExecutionCombat->ReleasePoseLease(PoseLease); }
+	PoseLease.Invalidate();
+	ExecutionCombat.Reset();
 	if (auto* ASC = Cast<UHodgeAbilitySystemComponent>(Info->AbilitySystemComponent.Get()))
 	{
 		ASC->StopDefinitionMontage(this, !bCancelled);
@@ -181,79 +182,115 @@ void UHodgeGameplayAbility_Definition::EndAbility(FGameplayAbilitySpecHandle Han
 
 FGameplayTagContainer UHodgeGameplayAbility_Definition::GetExecutionWindows() const
 {
-	return TimelineTask ? TimelineTask->GetActiveWindowTags() : FGameplayTagContainer();
+	FGameplayTagContainer Tags;
+	for (const auto& Pair : StateCounts) { if (Pair.Value > 0) { Tags.AddTag(Pair.Key); } }
+	return Tags;
 }
 
-void UHodgeGameplayAbility_Definition::RefreshExecutionClock()
+bool UHodgeGameplayAbility_Definition::AcceptsNotify(const FBranchingPointNotifyPayload& Payload) const
 {
-	if (TimelineTask)
+	return IsActive() && !bEnding && ExecutionId.IsValid() && CurrentActorInfo &&
+		Payload.SkelMeshComponent == CurrentActorInfo->SkeletalMeshComponent.Get() &&
+		Payload.SkelMeshComponent && Payload.SkelMeshComponent->GetOwner() == GetAvatarActorFromActorInfo() &&
+		Payload.MontageInstanceID == MontageInstanceId && Payload.SequenceAsset == GetDefinition()->ExecutionConfig.Montage;
+}
+
+int32 UHodgeGameplayAbility_Definition::AllocateNotifyOccurrence()
+{
+	return NextOccurrence < MAX_int32 ? ++NextOccurrence : INDEX_NONE;
+}
+
+int32 UHodgeGameplayAbility_Definition::BeginNotifyResource(const FBranchingPointNotifyPayload& Payload)
+{
+	if (!AcceptsNotify(Payload) || !Payload.NotifyEvent || NotifyResources.Contains(Payload.NotifyEvent->NotifyStateClass.Get())) { return INDEX_NONE; }
+	FNotifyResource Resource;
+	Resource.OccurrenceId = AllocateNotifyOccurrence();
+	NotifyResources.Add(Payload.NotifyEvent->NotifyStateClass.Get(), Resource);
+	return Resource.OccurrenceId;
+}
+
+void UHodgeGameplayAbility_Definition::EndNotifyResource(const FBranchingPointNotifyPayload& Payload)
+{
+	if (!AcceptsNotify(Payload)) { return; }
+	FNotifyResource Resource;
+	if (!NotifyResources.RemoveAndCopyValue(Payload.NotifyEvent->NotifyStateClass.Get(), Resource)) { return; }
+	const FGuid Execution = ExecutionId;
+	OnNotifyResourceEnded(Resource.OccurrenceId);
+	if (Execution != ExecutionId) { return; }
+	if (Resource.WeaponHandle.IsValid() && PresentationWeapon.IsValid()) { PresentationWeapon->ReleaseHandUse(Resource.WeaponHandle); }
+	if (Resource.Tag.IsValid())
 	{
-		TimelineTask->RefreshMontageClock();
+		int32* Count = StateCounts.Find(Resource.Tag);
+		if (Count && --*Count == 0) { StateCounts.Remove(Resource.Tag); }
+		if (auto* ASC = GetAbilitySystemComponentFromActorInfo()) { ASC->RemoveLooseGameplayTag(Resource.Tag); }
+		if (Execution == ExecutionId) { NotifyWindowsChanged(); }
 	}
 }
 
-void UHodgeGameplayAbility_Definition::OnTimelineFinished(EHodgeTimelineStopReason Reason)
+void UHodgeGameplayAbility_Definition::AcquireNotifyTag(int32 OccurrenceId, FGameplayTag Tag)
 {
-	const auto* FinishedTask = TimelineTask.Get();
-	if (Reason == EHodgeTimelineStopReason::NaturalEnd)
+	if (!Tag.IsValid()) { return; }
+	for (auto& Pair : NotifyResources)
 	{
-		OnPoint(HodgeGameplayTags::GameplayEvent_Attack_Timeline_End);
-	}
-	if (TimelineTask == FinishedTask)
-	{
-		FinishExecution(Reason != EHodgeTimelineStopReason::NaturalEnd, true);
-	}
-}
-
-void UHodgeGameplayAbility_Definition::OnWindowsChanged()
-{
-	if (auto* Combat = IsComboCoordinated() ? UHodgeCombatComponentBase::FindCombatComponent(GetAvatarActorFromActorInfo()) : nullptr)
-	{
-		Combat->WindowsChanged(this);
+		if (Pair.Value.OccurrenceId != OccurrenceId || Pair.Value.Tag.IsValid()) { continue; }
+		Pair.Value.Tag = Tag;
+		++StateCounts.FindOrAdd(Tag);
+		const FGuid Execution = ExecutionId;
+		if (auto* ASC = GetAbilitySystemComponentFromActorInfo()) { ASC->AddLooseGameplayTag(Tag); }
+		if (Execution == ExecutionId) { NotifyWindowsChanged(); }
+		return;
 	}
 }
 
-void UHodgeGameplayAbility_Definition::OnPoint(FGameplayTag Tag)
+void UHodgeGameplayAbility_Definition::AcquireNotifyWeapon(int32 OccurrenceId)
 {
-	if (auto* Combat = IsComboCoordinated() ? UHodgeCombatComponentBase::FindCombatComponent(GetAvatarActorFromActorInfo()) : nullptr)
+	for (auto& Pair : NotifyResources)
 	{
-		Combat->TimelineEvent(this, Tag);
+		if (Pair.Value.OccurrenceId != OccurrenceId || Pair.Value.WeaponHandle.IsValid()) { continue; }
+		if (!PresentationWeapon.IsValid()) { PresentationWeapon = UHodgeWeaponInstance::ResolvePresentationWeapon(Cast<APawn>(GetAvatarActorFromActorInfo()), GetCurrentSourceObject()); }
+		if (PresentationWeapon.IsValid())
+		{
+			const auto Key = CurrentActivationInfo.GetActivationPredictionKey();
+			Pair.Value.WeaponHandle = PresentationWeapon->AcquireHandUse(ExecutionId, OccurrenceId, Key.IsServerInitiatedKey() ? -Key.Current : Key.Current);
+		}
+		return;
 	}
 }
 
-void UHodgeGameplayAbility_Definition::HandleExecutionPoint(int32 EventIndex, FGameplayTag Tag)
+void UHodgeGameplayAbility_Definition::NotifyWindowsChanged()
 {
-	if (IsActive() && !bEnding && ExecutionId.IsValid()) { OnExecutionPoint(EventIndex, Tag); }
+	if (auto* Combat = IsComboCoordinated() ? UHodgeCombatComponentBase::FindCombatComponent(GetAvatarActorFromActorInfo()) : nullptr) { Combat->WindowsChanged(this); }
 }
 
-void UHodgeGameplayAbility_Definition::HandleExecutionWindowEntered(int32 EventIndex, FGameplayTag WindowTag)
+void UHodgeGameplayAbility_Definition::SendExecutionEvent(FGameplayTag Tag)
 {
-	const auto* Definition = GetDefinition();
-	if (Definition && WindowTag == Definition->WeaponUseWindowTag && PresentationWeapon.IsValid())
-	{
-		const auto Key = CurrentActivationInfo.GetActivationPredictionKey();
-		const int32 Id = Key.IsServerInitiatedKey() ? -Key.Current : Key.Current;
-		WeaponUseHandles.Add(EventIndex, PresentationWeapon->AcquireHandUse(ExecutionId, EventIndex, Id));
-	}
-	OnExecutionWindowEntered(EventIndex, WindowTag);
+	if (!Tag.IsValid() || !IsActive() || bEnding) { return; }
+	const FGuid Execution = ExecutionId;
+	FGameplayEventData Data;
+	Data.EventTag = Tag;
+	Data.Instigator = GetAvatarActorFromActorInfo();
+	if (auto* ASC = GetAbilitySystemComponentFromActorInfo()) { ASC->HandleGameplayEvent(Tag, &Data); }
+	if (Execution != ExecutionId) { return; }
+	if (auto* Combat = IsComboCoordinated() ? UHodgeCombatComponentBase::FindCombatComponent(GetAvatarActorFromActorInfo()) : nullptr) { Combat->ExecutionEvent(this, Tag); }
 }
 
-void UHodgeGameplayAbility_Definition::HandleExecutionWindowExited(int32 EventIndex, bool bSampleFinal)
+void UHodgeGameplayAbility_Definition::OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted, FGuid Execution, int32 InstanceId)
 {
-	// 先结束几何采样，释放表现时不再有该窗口的命中会话。
-	OnExecutionWindowExited(EventIndex, bSampleFinal);
-	if (FGuid* Handle = WeaponUseHandles.Find(EventIndex))
-	{
-		if (PresentationWeapon.IsValid()) { PresentationWeapon->ReleaseHandUse(*Handle); }
-		WeaponUseHandles.Remove(EventIndex);
-	}
+	if (ExecutionId != Execution || MontageInstanceId != InstanceId || bEnding) { return; }
+	bLifecycleEventSent = true;
+	SendExecutionEvent(bInterrupted ? HodgeGameplayTags::GameplayEvent_Attack_Interrupted : HodgeGameplayTags::GameplayEvent_Attack_Completed);
+	if (ExecutionId == Execution) { FinishExecution(bInterrupted, true); }
 }
 
-void UHodgeGameplayAbility_Definition::ValidateExecutionConfiguration(
-	const UHodgeAbilityDefinition& Definition, TArray<FText>& Errors) const
+void UHodgeGameplayAbility_Definition::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted, FGuid Execution, int32 InstanceId)
 {
-	if (!Definition.HitWindows.IsEmpty() || !Definition.HitPoints.IsEmpty())
-	{
-		Errors.Add(FText::FromString(TEXT("HitWindows require a melee ability or a subclass implementing hit-window behavior; migrate AbilityClass to HodgeGameplayAbility_Melee.")));
-	}
+	if (ExecutionId == Execution && MontageInstanceId == InstanceId && !bEnding) { OnMontageBlendingOut(Montage, bInterrupted, Execution, InstanceId); }
+}
+
+void UHodgeGameplayAbility_Definition::ValidateExecutionConfiguration(const UHodgeAbilityDefinition& Definition, TArray<FText>& Errors) const
+{
+	if (!Definition.ExecutionConfig.Montage) { return; }
+	if (Definition.ExecutionConfig.Montage->Notifies.ContainsByPredicate([](const FAnimNotifyEvent& Event)
+	{ return (Event.Notify && Event.Notify->IsA<UHodgeAnimNotify_Hit>()) || (Event.NotifyStateClass && Event.NotifyStateClass->IsA<UHodgeAnimNotifyState_HitCheck>()); }))
+	{ Errors.Add(FText::FromString(TEXT("Hit notifications require HodgeGameplayAbility_Melee or a subclass implementing their contract."))); }
 }

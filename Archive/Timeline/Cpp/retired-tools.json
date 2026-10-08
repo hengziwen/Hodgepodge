@@ -1,0 +1,52 @@
+[
+  {
+    "original": "Tools/BasicAttack/create_assets.py",
+    "archive": "Archive/Timeline/Cpp/Tools/BasicAttack/create_assets.py",
+    "sha256": "47553ca1994e7804215e57871f5d007d40107a330d19d5a987f10e1932fb31ad"
+  },
+  {
+    "original": "Tools/BasicAttack/create_definition_assets.py",
+    "archive": "Archive/Timeline/Cpp/Tools/BasicAttack/create_definition_assets.py",
+    "sha256": "11e634323548766b01a8f4b96fec87c8e14ba2881004857ae2dbee5e39c451b2"
+  },
+  {
+    "original": "Tools/BasicAttack/prepare_definition_event_test.py",
+    "archive": "Archive/Timeline/Cpp/Tools/BasicAttack/prepare_definition_event_test.py",
+    "sha256": "bc6774be521771cbf5e14746378d8c87386e1118abe408394b36f86c7fe442d4"
+  },
+  {
+    "original": "Tools/BasicAttack/prepare_definition_pie.py",
+    "archive": "Archive/Timeline/Cpp/Tools/BasicAttack/prepare_definition_pie.py",
+    "sha256": "3d80840ef432da2936f261898fc8e378f1f836ebde31a3f71d54781879025273"
+  },
+  {
+    "original": "Tools/BasicAttack/README.md",
+    "archive": "Archive/Timeline/Cpp/Tools/BasicAttack/README.md",
+    "sha256": "e599219d7529f6d0c41efa6188b7d2243af1a97cb4875b9066bb811eabdce084"
+  },
+  {
+    "original": "Tools/Combat/configure_melee_fixture_experience.py",
+    "archive": "Archive/Timeline/Cpp/Tools/Combat/configure_melee_fixture_experience.py",
+    "sha256": "798934e7a1fcea891a5632fa0be04b3ee0ce76c8e17c8d221bb8a6f76944fc5e"
+  },
+  {
+    "original": "Tools/Combat/create_melee_fixtures.py",
+    "archive": "Archive/Timeline/Cpp/Tools/Combat/create_melee_fixtures.py",
+    "sha256": "9ac85cf603e95420c7561621e309625048e19c4abfe15d0278bba5adefc79144"
+  },
+  {
+    "original": "Tools/TimelineTests/verify_pie.py",
+    "archive": "Archive/Timeline/Cpp/Tools/TimelineTests/verify_pie.py",
+    "sha256": "6944f1b1b7fe2b7ee1290d97e437a5d41c7eb50ce3e18b1160229265f2dcee60"
+  },
+  {
+    "original": "Tools/BasicAttack/migrate_timeline_montage_duration.py",
+    "archive": "Archive/Timeline/Cpp/Tools/BasicAttack/migrate_timeline_montage_duration.py",
+    "sha256": "a12772b086ca9f8d8f0989da08259a9528a0741a2828b4219192e661a84d8954"
+  },
+  {
+    "original": "Tools/BasicAttack/verify_pie.py",
+    "archive": "Archive/Timeline/Cpp/Tools/BasicAttack/verify_pie.py",
+    "sha256": "04ddf24837551162f4d9416941651c63a45bfd07895c2635cfc47caab79531a9"
+  }
+]

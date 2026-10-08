@@ -31,6 +31,8 @@ class USkeletalMeshComponent;
  * 表示一件已经生成并装备到 Pawn 身上的运行时武器实例。
  * 在通用装备实例基础上扩展武器交互时间、动画层选择和输入设备效果管理。
  */
+class UHodgeCombatComponentBase;
+
 UCLASS()
 class HODGEPODGE_API UHodgeWeaponInstance : public UHodgeEquipmentInstance
 {
@@ -46,7 +48,7 @@ public:
 	UFUNCTION(BlueprintPure, Category="Hodge|Presentation")
 	UHodgeWeaponPresentationProfile* GetPresentationProfile() const { return PresentationProfile; }
 	UFUNCTION(BlueprintCallable, Category="Hodge|Presentation")
-	FGuid AcquireHandUse(FGuid ExecutionId, int32 EventIndex, int32 ActivationKey = 0);
+	FGuid AcquireHandUse(FGuid ExecutionId, int32 OccurrenceId, int32 ActivationKey = 0);
 	UFUNCTION(BlueprintCallable, Category="Hodge|Presentation")
 	void ReleaseHandUse(FGuid Handle);
 	void ReleaseHandUsesForExecution(const FGuid& ExecutionId);
@@ -139,7 +141,7 @@ protected:
 
 private:
 	friend struct FHodgeWeaponPresentationTestAccess;
-	struct FHandRequest { FGuid ExecutionId; int32 EventIndex = INDEX_NONE; int32 ActivationKey = 0; };
+	struct FHandRequest { FGuid ExecutionId; int32 OccurrenceId = INDEX_NONE; int32 ActivationKey = 0; };
 	TMap<FGuid, FHandRequest> HandRequests;
 	FTimerHandle PresentationTimer;
 	bool bPresentationEquipped = false;
@@ -156,10 +158,9 @@ private:
 	void BeginIdlePresentation();
 	bool CanDrivePresentation() const;
 	void ClearPresentationTimer();
+	FGuid CombatPoseLease;
+	TWeakObjectPtr<UHodgeCombatComponentBase> PoseCombat;
 	void UpdateOwnerPosePolicy();
-	TWeakObjectPtr<USkeletalMeshComponent> PoseMesh;
-	uint8 SavedPosePolicy = 0;
-	bool bPosePolicyOverridden = false;
 	/** Set of device properties activated by this weapon. Populated by ApplyDeviceProperties */
 
 	// 保存当前武器实际激活的设备属性句柄，作为后续清理这些效果的运行时记录。
