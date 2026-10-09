@@ -1,12 +1,15 @@
 // 111 屎山代码来袭
 
 #include "Component/HodgeCharacterMovementComponent.h"
+#include "Combat/HodgeHitReactionTypes.h"
 
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemGlobals.h"
 #include "Components/CapsuleComponent.h"
 #include "Character/HodgeCombatCharacter.h"
 #include "Component/HodgeCharacterRotationComponent.h"
+#include "Component/HodgeCombatComponentBase.h"
+#include "AbilitySystem/HodgeGameplayTags.h"
 #include "GameFramework/Character.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeCharacterMovementComponent)
@@ -37,17 +40,21 @@ namespace HodgeRotationPrediction
 	{
 	public:
 		FHodgeCharacterRotationState RotationState;
+		bool bReactionControlled = false;
 
 		virtual void Clear() override
 		{
 			Super::Clear();
 			RotationState = {};
+			bReactionControlled = false;
 		}
 
 		virtual void SetMoveFor(ACharacter* Character, float InDeltaTime, const FVector& NewAcceleration,
 			FNetworkPredictionData_Client_Character& ClientData) override
 		{
 			Super::SetMoveFor(Character, InDeltaTime, NewAcceleration, ClientData);
+			const auto* ASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(Character);
+			bReactionControlled = ASC && ASC->HasMatchingGameplayTag(HodgeHitReactionTags::Controlled);
 			if (const UHodgeCharacterRotationComponent* Rotation = FindRotation(Character))
 			{
 				RotationState = Rotation->GetResolvedState();
@@ -57,7 +64,7 @@ namespace HodgeRotationPrediction
 		virtual bool CanCombineWith(const FSavedMovePtr& NewMove, ACharacter* Character, float MaxDelta) const override
 		{
 			const FSavedMove* Other = static_cast<const FSavedMove*>(NewMove.Get());
-			if (!Other || RotationState.bYawLocked != Other->RotationState.bYawLocked
+			if (!Other || bReactionControlled != Other->bReactionControlled || RotationState.bYawLocked != Other->RotationState.bYawLocked
 				|| RotationState.bRecoveringFacing != Other->RotationState.bRecoveringFacing
 				|| (RotationState.bYawLocked && FMath::Abs(FMath::FindDeltaAngleDegrees(
 					RotationState.LockedYaw, Other->RotationState.LockedYaw)) > KINDA_SMALL_NUMBER))
@@ -70,6 +77,8 @@ namespace HodgeRotationPrediction
 		virtual void PrepMoveFor(ACharacter* Character) override
 		{
 			Super::PrepMoveFor(Character);
+			if (auto* Movement = Cast<UHodgeCharacterMovementComponent>(Character->GetCharacterMovement()))
+			{ Movement->SetHitReactionMoveReplay(bReactionControlled); }
 			if (UHodgeCharacterRotationComponent* Rotation = FindRotation(Character))
 			{
 				Rotation->SetMoveReplayState(RotationState);
@@ -304,6 +313,7 @@ FNetworkPredictionData_Client* UHodgeCharacterMovementComponent::GetPredictionDa
 bool UHodgeCharacterMovementComponent::ClientUpdatePositionAfterServerUpdate()
 {
 	const bool bResult = Super::ClientUpdatePositionAfterServerUpdate();
+	bHasReactionReplay = false;
 	if (UHodgeCharacterRotationComponent* Rotation = HodgeRotationPrediction::FindRotation(CharacterOwner))
 	{
 		Rotation->ClearMoveReplayState();
@@ -334,4 +344,28 @@ float UHodgeCharacterMovementComponent::GetMaxSpeed() const
 
 	// 没有禁止移动时使用 CharacterMovementComponent 默认最大速度
 	return Super::GetMaxSpeed();
+}
+
+FVector UHodgeCharacterMovementComponent::ConstrainInputAcceleration(const FVector& InputAcceleration) const
+{
+	if (IsHitReactionControlled()) { return FVector::ZeroVector; }
+	const auto* ASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(GetOwner());
+	const auto* Combat = UHodgeCombatComponentBase::FindCombatComponent(GetOwner());
+	if (ASC && ASC->HasMatchingGameplayTag(HodgeGameplayTags::Status_Attack) && (!Combat || !Combat->IsMoveCancelPredicted()))
+	{ return FVector::ZeroVector; }
+	return Super::ConstrainInputAcceleration(InputAcceleration);
+}
+
+bool UHodgeCharacterMovementComponent::IsHitReactionControlled() const
+{
+	if (CharacterOwner && CharacterOwner->bClientUpdating && bHasReactionReplay) { return bReactionReplayControlled; }
+	const auto* ASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(GetOwner());
+	return ASC && ASC->HasMatchingGameplayTag(HodgeHitReactionTags::Controlled);
+}
+
+bool UHodgeCharacterMovementComponent::ApplyRequestedMove(float DeltaTime, float MaxAccel, float MaxSpeed, float Friction,
+	float BrakingDeceleration, FVector& OutAcceleration, float& OutRequestedSpeed)
+{
+	if (IsHitReactionControlled()) { OutAcceleration = FVector::ZeroVector; OutRequestedSpeed = 0.f; return false; }
+	return Super::ApplyRequestedMove(DeltaTime, MaxAccel, MaxSpeed, Friction, BrakingDeceleration, OutAcceleration, OutRequestedSpeed);
 }

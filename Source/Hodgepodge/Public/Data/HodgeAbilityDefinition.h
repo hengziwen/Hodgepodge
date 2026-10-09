@@ -54,6 +54,8 @@ class HODGEPODGE_API UHodgeAbilityDefinition : public UPrimaryDataAsset
 public:
 	// 此 Definition 的技能身份；连段节点通过这个标签查找已授予的技能。
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) FGameplayTag AbilityTag;
+	// 只声明本动作的体状态，不作为输出攻击判定。
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Combat", meta=(Categories="State.Combat.Body")) FGameplayTag ExecutionBodyTag;
 	// 执行此配置的 GA 类型；命中通知使用 Melee 子类，当前要求逐角色实例和本地预测。
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) TSubclassOf<UHodgeGameplayAbility> AbilityClass;
 	// 本次动作的蒙太奇、播放倍率、混合设置。

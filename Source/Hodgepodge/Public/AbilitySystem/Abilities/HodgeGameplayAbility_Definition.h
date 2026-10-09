@@ -20,6 +20,8 @@ public:
 	const UHodgeAbilityDefinition* GetDefinition() const;
 	FGameplayTagContainer GetExecutionWindows() const;
 	void FinishExecution(bool bCancelled, bool bReplicate);
+	bool BeginPredictedMoveCancel();
+	void ResolvePredictedMoveCancel(bool bEnd, float ServerPosition, float ServerTime, float ServerPlayRate);
 	bool AcceptsNotify(const FBranchingPointNotifyPayload& Payload) const;
 	int32 AllocateNotifyOccurrence();
 	int32 BeginNotifyResource(const FBranchingPointNotifyPayload& Payload);
@@ -68,8 +70,10 @@ private:
 	int32 NextOccurrence = 0;
 	int32 MontageInstanceId = INDEX_NONE;
 	FGuid PoseLease;
+	FGameplayTag ExecutionBodyTag;
 	UPROPERTY(Transient) TWeakObjectPtr<UHodgeCombatComponentBase> ExecutionCombat;
 	UPROPERTY(Transient) TWeakObjectPtr<UHodgeWeaponInstance> PresentationWeapon;
 	bool bEnding = false;
 	bool bLifecycleEventSent = false;
+	bool bPredictedMoveCancel = false;
 };

@@ -2,6 +2,7 @@
 
 // HeroComponent 本体定义。
 #include "Component/HodgeHeroComponent.h"
+#include "Component/HodgeCombatComponentBase.h"
 
 // GameFramework 组件委托相关定义。
 #include "Components/GameFrameworkComponentDelegates.h"
@@ -44,6 +45,7 @@
 
 // 项目原生 GameplayTag 定义。
 #include "AbilitySystem/HodgeGameplayTags.h"
+#include "Combat/HodgeHitReactionTypes.h"
 
 // GameFrameworkComponentManager：负责 InitState 和扩展事件。
 #include "Components/GameFrameworkComponentManager.h"
@@ -830,7 +832,9 @@ void UHodgeHeroComponent::Input_Move(const FInputActionValue& InputActionValue)
 	{
 		if (const UHodgeAbilitySystemComponent* ASC = Extension->GetHodgeAbilitySystemComponent())
 		{
-			if (ASC->HasMatchingGameplayTag(HodgeGameplayTags::Status_Attack)) { return; }
+			const auto* Combat = UHodgeCombatComponentBase::FindCombatComponent(GetPawn<APawn>());
+			if ((ASC->HasMatchingGameplayTag(HodgeGameplayTags::Status_Attack) && (!Combat || !Combat->IsMoveCancelPredicted())) ||
+				ASC->HasMatchingGameplayTag(HodgeHitReactionTags::Controlled)) { return; }
 		}
 	}
 

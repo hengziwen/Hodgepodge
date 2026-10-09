@@ -4,6 +4,7 @@
 #include "Engine/DataAsset.h"
 #include "Engine/EngineTypes.h"
 #include "GameplayTagContainer.h"
+#include "Combat/HodgeHitReactionTypes.h"
 #include "HodgeHitDetection.generated.h"
 
 class UGameplayEffect;
@@ -241,6 +242,7 @@ USTRUCT(BlueprintType)
 struct HODGEPODGE_API FHodgeHitEffectConfig
 {
 	GENERATED_BODY()
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Reaction") FHodgeHitReactionConfig Reaction;
 	// 显式伤害 GE，默认生命伤害要求 Instant 且包含 HodgeDamageExecution。
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) TSubclassOf<UGameplayEffect> DamageEffect;
 	// 伤害倍率，命中通知的 DamageScale 再乘在此值上。

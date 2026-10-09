@@ -61,6 +61,7 @@ public:
 	bool CanExecuteAbilities() const { return IsRegistered() && !bShuttingDown; }
 	const UHodgeComboDefinition* GetComboDefinition() const { return Definition; }
 	bool InputPressed(FGameplayTag InputTag);
+	bool IsMoveCancelPredicted() const;
 	void ClearInput();
 	void ExecutionStarted(UHodgeGameplayAbility_Definition* Ability);
 	void ExecutionEnded(UHodgeGameplayAbility_Definition* Ability);
@@ -142,13 +143,14 @@ private:
 	void SetNode(FGameplayTag Node);
 	int16 ExecutionKey() const;
 	UFUNCTION(Server, Reliable)
-	void ServerMoveCancel(AActor* Avatar, FGameplayAbilitySpecHandle Handle, int32 Key);
+	void ServerMoveCancel(AActor* Avatar, FGameplayAbilitySpecHandle Handle, int32 Key, FVector2D Intent);
 	UFUNCTION(Server, Reliable)
 	void ServerReturnToEntry(AActor* Avatar, FGameplayTag SourceNode, int32 Key, FGameplayTag Intent);
 	UFUNCTION(Client, Reliable)
-	void ClientMoveCancelResult();
+	void ClientMoveCancelResult(AActor* Avatar, FGameplayAbilitySpecHandle Handle, int32 Key, bool bEnd,
+		float ServerPosition, float ServerTime, float ServerPlayRate);
 	bool ValidateServerRequestIdentity(const FGameplayEventData* Payload) const;
-	void ProcessServerMoveCancel(TWeakObjectPtr<AActor> Avatar, FGameplayAbilitySpecHandle Handle, int32 Key);
+	void ProcessServerMoveCancel(TWeakObjectPtr<AActor> Avatar, FGameplayAbilitySpecHandle Handle, int32 Key, FVector2D Intent);
 	UFUNCTION(Server, Reliable)
 	void ServerSynchronizeComboMemory();
 	UFUNCTION(Client, Reliable)
@@ -180,6 +182,11 @@ private:
 	bool bTransitionStarted = false;
 	bool bMemoryCorrectionPending = false;
 	bool bMoveRequestPending = false;
+	UPROPERTY(Transient) TWeakObjectPtr<UHodgeGameplayAbility_Definition> PredictedMoveCancelAbility;
+	FGameplayAbilitySpecHandle PendingMoveHandle;
+	int32 PendingMoveKey = 0;
+	FGameplayAbilitySpecHandle RejectedMoveHandle;
+	int32 RejectedMoveKey = 0;
 	bool bEvaluating = false;
 	bool bShuttingDown = false;
 

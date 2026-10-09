@@ -8,6 +8,7 @@
 #include "HodgeCombatCharacter.generated.h"
 
 class UHodgeHealthComponent;
+class UHodgeHitReactionComponent;
 class UHodgeCharacterRotationComponent;
 class UHodgeEquipmentInstance;
 class UHodgeEquipmentManagerComponent;
@@ -137,6 +138,8 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Hodge|Character")
 	UHodgeCharacterRotationComponent* GetCharacterRotationComponent() const { return RotationComponent; }
+	UFUNCTION(BlueprintPure, Category="Hodge|Character")
+	UHodgeHitReactionComponent* GetHitReactionComponent() const { return HitReactionComponent; }
 	void TryInitializeAttributesAndEquipment();
 
 	virtual void FaceRotation(FRotator NewControlRotation, float DeltaTime = 0.f) override;
@@ -269,6 +272,8 @@ protected:
 	virtual bool CanJumpInternal_Implementation() const;
 
 private:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hodge|Character", meta=(AllowPrivateAccess="true"))
+	TObjectPtr<UHodgeHitReactionComponent> HitReactionComponent;
 	// 仅服务器记录默认武器，客户端通过装备组件接收复制。
 	UPROPERTY(Transient)
 	TObjectPtr<UHodgeEquipmentInstance> DefaultWeaponInstance;

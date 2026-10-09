@@ -6,6 +6,8 @@
 
 // GameplayEffect 执行阶段相关数据结构，例如 FGameplayEffectModCallbackData。
 #include "GameplayEffectExtension.h"
+#include "AbilitySystem/HodgeGameplayEffectContext.h"
+#include "Component/HodgeHitReactionComponent.h"
 
 // 项目自定义 AbilitySystemComponent。
 #include "AbilitySystem/HodgeAbilitySystemComponent.h"
@@ -15,6 +17,7 @@
 
 // 属性网络复制所需宏与类型。
 #include "Net/UnrealNetwork.h"
+#include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeHealthSet)
 
 
 // 定义普通伤害 GameplayTag。
@@ -28,6 +31,19 @@ UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_DamageSelfDestruct, "Gameplay.Damage.SelfDes
 
 // 定义掉出世界相关伤害 GameplayTag。
 UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_FellOutOfWorld, "Gameplay.Damage.FellOutOfWorld");
+
+namespace
+{
+    void RecordHitDamage(const FGameplayEffectModCallbackData& Data, bool bAccepted, float Damage)
+    {
+        if (Data.EvaluatedData.Attribute != UHodgeHealthSet::GetDamageAttribute()) { return; }
+        const auto* Context = FHodgeGameplayEffectContext::ExtractEffectContext(Data.EffectSpec.GetContext());
+        AActor* Avatar = Data.Target.GetAvatarActor();
+        if (!Context || !Context->HitSettlementId.IsValid() || !Avatar) { return; }
+        if (auto* Reaction = Avatar->FindComponentByClass<UHodgeHitReactionComponent>())
+        { Reaction->RecordDamage(Context->HitSettlementId, bAccepted, Damage); }
+    }
+}
 
 // 初始化生命属性集默认值。
 UHodgeHealthSet::UHodgeHealthSet()
@@ -118,6 +134,7 @@ bool UHodgeHealthSet::PreGameplayEffectExecute(FGameplayEffectModCallbackData& D
 	// 先执行父类检查，如果父类拒绝本次修改，则直接终止。
 	if (!Super::PreGameplayEffectExecute(Data))
 	{
+		RecordHitDamage(Data, false, 0.f);
 		return false;
 	}
 
@@ -138,6 +155,7 @@ bool UHodgeHealthSet::PreGameplayEffectExecute(FGameplayEffectModCallbackData& D
 				// Do not take away any health.
 				// 将最终伤害量清零。
 				Data.EvaluatedData.Magnitude = 0.0f;
+				RecordHitDamage(Data, false, 0.f);
 
 				// 返回 false，阻止本次 GameplayEffect 对该 Attribute 的执行。
 				return false;
@@ -153,6 +171,7 @@ bool UHodgeHealthSet::PreGameplayEffectExecute(FGameplayEffectModCallbackData& D
 				// Do not take away any health.
 				// 将最终伤害量清零。
 				Data.EvaluatedData.Magnitude = 0.0f;
+				RecordHitDamage(Data, false, 0.f);
 
 				// 阻止本次伤害继续执行。
 				return false;
@@ -240,6 +259,7 @@ void UHodgeHealthSet::PostGameplayEffectExecute(const FGameplayEffectModCallback
 		// Convert into -Health and then clamp
 		// 将 Damage Meta Attribute 真正转换为 Health 减少，并限制在 MinimumHealth ~ MaxHealth 范围。
 		SetHealth(FMath::Clamp(GetHealth() - GetDamage(), MinimumHealth, GetResourceClampMax()));
+		RecordHitDamage(Data, true, FMath::Max(OldHealthForEffect - GetHealth(), 0.f));
 
 		// Damage 只是一次性 Meta Attribute，消费完成后立即清零，避免污染下一次伤害计算。
 		SetDamage(0.0f);

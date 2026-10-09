@@ -9,6 +9,7 @@
 #include "Abilities/GameplayAbilityTargetTypes.h"
 #include "Combat/HodgeDamageRules.h"
 #include "Component/HodgeCombatComponentBase.h"
+#include "Component/HodgeHitReactionComponent.h"
 #include "Data/HodgeAbilityDefinition.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/Character.h"
@@ -154,6 +155,7 @@ bool UHodgeGameplayAbility_Melee::BeginNotifyHit(int32 OccurrenceId, const FHodg
 	if (!Config.Validate(Errors)) { return false; }
 	const auto* Definition = GetDefinition();
 	FHodgeHitEffectConfig Effect = Config.bUseDefaultDamage && Definition ? Definition->DefaultHitConfig : Config.Damage;
+	Effect.Reaction = Config.bUseDefaultReaction && Definition ? Definition->DefaultHitConfig.Reaction : Config.ReactionOverride;
 	Effect.DamageMultiplier *= Config.DamageScale;
 	Effect.RepeatHitInterval = Config.RepeatHitInterval;
 	Effect.HitGroup = Config.HitGroup;
@@ -333,8 +335,29 @@ void UHodgeGameplayAbility_Melee::ProcessMeleeHitResults_Implementation(const FH
 		// 先占用机会再进入 GAS，免疫或回调重入也不会重复处理本次接触。
 		Snapshot.History->RecordHit(TargetASC, Batch.SampleTime);
 		BatchTargets.Add(TWeakObjectPtr<UAbilitySystemComponent>(TargetASC));
-		ApplyMeleeHitEffects(Batch, Hit, Snapshot.Binding, TargetASC, Spec);
+		SubmitMeleeHitEffects(Batch, Hit, Snapshot.Binding, TargetASC, Spec);
 	}
+}
+
+void UHodgeGameplayAbility_Melee::SubmitMeleeHitEffects(const FHodgeHitDetectionBatch& Batch,
+    const FHitResult& Hit, const FHodgeHitEffectConfig& Binding, UAbilitySystemComponent* TargetASC,
+    const FGameplayEffectSpecHandle& Spec)
+{
+    if (!IsMeleeBatchCurrent(Batch) || !IsValid(TargetASC) || !Spec.IsValid()) { return; }
+    TWeakObjectPtr<AActor> Avatar = TargetASC->GetAvatarActor();
+    TWeakObjectPtr<UHodgeHitReactionComponent> Reaction = Avatar.IsValid() ? Avatar->FindComponentByClass<UHodgeHitReactionComponent>() : nullptr;
+    const FGuid Id = Reaction.IsValid() ? Reaction->BeginHit(Binding.Reaction, GetAvatarActorFromActorInfo(), Batch.SourceOrigin) : FGuid();
+    const FGameplayEffectContextHandle SettlementContext = Spec.Data->GetContext();
+    auto* Context = FHodgeGameplayEffectContext::ExtractEffectContext(SettlementContext);
+    const FGuid PreviousId = Context ? Context->HitSettlementId : FGuid();
+    if (Context) { Context->HitSettlementId = Id; }
+    ApplyMeleeHitEffects(Batch, Hit, Binding, TargetASC, Spec);
+    if (Context) { Context->HitSettlementId = PreviousId; }
+    if (Reaction.IsValid() && Id.IsValid())
+    {
+        const FHodgeHitReactionResult Result = Reaction->FinishHit(Id);
+        if (Avatar.IsValid() && IsMeleeBatchCurrent(Batch)) { OnMeleeReactionResolved(Avatar.Get(), Result); }
+    }
 }
 
 void UHodgeGameplayAbility_Melee::ApplyMeleeHitEffects_Implementation(const FHodgeHitDetectionBatch& Batch,

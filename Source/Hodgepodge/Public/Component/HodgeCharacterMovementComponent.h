@@ -76,6 +76,10 @@ public:
 
 	// 获取角色当前移动状态下允许使用的最大速度。
 	virtual float GetMaxSpeed() const override;
+	virtual FVector ConstrainInputAcceleration(const FVector& InputAcceleration) const override;
+	virtual bool ApplyRequestedMove(float DeltaTime, float MaxAccel, float MaxSpeed, float Friction,
+		float BrakingDeceleration, FVector& OutAcceleration, float& OutRequestedSpeed) override;
+	void SetHitReactionMoveReplay(bool bControlled) { bHasReactionReplay = true; bReactionReplayControlled = bControlled; }
 
 	virtual void PhysicsRotation(float DeltaTime) override;
 	virtual FNetworkPredictionData_Client* GetPredictionData_Client() const override;
@@ -101,4 +105,7 @@ protected:
 	bool bHasReplicatedAcceleration = false;
 
 	bool bApplyingRotationCorrection = false;
+	bool bHasReactionReplay = false;
+	bool bReactionReplayControlled = false;
+	bool IsHitReactionControlled() const;
 };

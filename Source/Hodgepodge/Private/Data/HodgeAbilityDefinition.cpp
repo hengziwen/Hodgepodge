@@ -52,6 +52,9 @@ bool UHodgeAbilityDefinition::ValidateDefinition(TArray<FText>& Errors) const
 			Error(TEXT("Definition abilities require InstancedPerActor and LocalPredicted"));
 		}
 	}
+	DefaultHitConfig.Reaction.Validate(Errors);
+	if (ExecutionBodyTag.IsValid() && HodgeHitReaction::BodyRank(ExecutionBodyTag) == 0)
+	{ Error(TEXT("ExecutionBodyTag must be an exact State.Combat.Body leaf tag.")); }
 	const auto& C = ExecutionConfig;
 	if (!C.Montage) { Error(TEXT("Montage is required")); }
 	if (!FMath::IsFinite(C.PlayRate) || C.PlayRate <= 0.f)

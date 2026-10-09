@@ -15,6 +15,7 @@ class UHodgeAbilitySet;
 class UHodgeComboDefinition;
 class UHodgeEquipmentDefinition;
 class UHodgeCharacterStatProfile;
+class UHodgeHitReactionProfile;
 
 // CameraMode：定义 Pawn 默认使用的相机模式。
 class UHodgeCameraMode;
@@ -55,6 +56,9 @@ public:
 	// 角色初始属性和等级成长配置，攻击需要其初始化完成后才能激活。
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Attributes")
 	TObjectPtr<UHodgeCharacterStatProfile> StatProfile;
+	// 目标自身的受击动作、恢复规则和支持的 Impact。
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Combat")
+	TObjectPtr<UHodgeHitReactionProfile> HitReactionProfile;
 
 	// Ability sets to grant to this pawn's ability system.
 	// 需要授予给这个 Pawn 的 ASC 的 AbilitySet 集合。

@@ -8,6 +8,8 @@
 class UAnimBlueprint;
 class UBlueprint;
 class USkeleton;
+class UAnimMontage;
+class UAnimationAsset;
 class APawn;
 
 /** 为 CodexText 中的动画副本提供编辑器文本导入、引用修正和编译诊断。 */
@@ -48,4 +50,23 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Hodge|Editor|Animation")
 	static TArray<FName> GetSkeletonBoneNames(USkeleton* Skeleton);
+
+	/** 在 Main 主角图中接入全身动作后的上身加法受击，不保存资产。 */
+	UFUNCTION(BlueprintCallable, Category = "Hodge|Editor|Animation")
+	static bool ConfigureHeroHitReactionGraph(UAnimBlueprint* Blueprint);
+
+	UFUNCTION(BlueprintCallable, Category = "Hodge|Editor|Animation")
+	static bool SetSkeletonSlotGroup(USkeleton* Skeleton, FName Slot, FName Group);
+
+	UFUNCTION(BlueprintPure, Category = "Hodge|Editor|Animation")
+	static FName GetSkeletonSlotGroup(USkeleton* Skeleton, FName Slot);
+
+	UFUNCTION(BlueprintCallable, Category = "Hodge|Editor|Animation")
+	static bool SetHeroReactionMontageSlot(UAnimMontage* Montage, FName Slot);
+
+	UFUNCTION(BlueprintCallable, Category = "Hodge|Editor|Animation")
+	static bool SetHeroReactionSkeleton(UAnimationAsset* Asset, USkeleton* Skeleton);
+
+	UFUNCTION(BlueprintCallable, Category = "Hodge|Editor|Animation")
+	static bool ConfigureHeroHitStunDuration(UAnimMontage* Montage, float Duration);
 };

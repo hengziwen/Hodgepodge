@@ -34,6 +34,7 @@ FHodgeAnimHitConfig::FHodgeAnimHitConfig()
 bool FHodgeAnimHitConfig::Validate(TArray<FText>& Errors) const
 {
 	const int32 Before = Errors.Num();
+	if (!bUseDefaultReaction) { ReactionOverride.Validate(Errors); }
 	auto Error = [&Errors](const TCHAR* Message) { Errors.Add(FText::FromString(Message)); };
 	if (Source == EHodgeAnimHitSource::CharacterMeshSocket && BoneOrSocket.IsNone())
 	{

@@ -84,5 +84,6 @@ private:
 	FHodgeCharacterRotationState ReplayState;
 	FDelegateHandle RotationTagHandle;
 	FDelegateHandle MovementStoppedTagHandle;
+	FDelegateHandle HitReactionTagHandle;
 	bool bHasReplayState = false;
 };

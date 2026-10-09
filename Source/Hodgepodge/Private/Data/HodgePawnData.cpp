@@ -3,6 +3,7 @@
 
 #include "Data/HodgePawnData.h"
 #include "Data/HodgeCharacterStatProfile.h"
+#include "Data/HodgeHitReactionProfile.h"
 
 #if WITH_EDITOR
 #include "Data/HodgeAbilityDefinition.h"
@@ -34,6 +35,13 @@ EDataValidationResult UHodgePawnData::IsDataValid(FDataValidationContext& Contex
 		StatProfile->Validate(Errors);
 		for (const auto& Error : Errors) { Context.AddError(Error); }
 		if (!Errors.IsEmpty()) { return EDataValidationResult::Invalid; }
+	}
+	if (HitReactionProfile)
+	{
+		TArray<FText> ReactionErrors;
+		HitReactionProfile->Validate(ReactionErrors);
+		for (const auto& Error : ReactionErrors) { Context.AddError(Error); }
+		if (!ReactionErrors.IsEmpty()) { return EDataValidationResult::Invalid; }
 	}
 	if (!ComboDefinition) { return Parent; }
 	TArray<FText> Errors;

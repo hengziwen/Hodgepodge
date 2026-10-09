@@ -16,6 +16,7 @@
 #include "Component/HodgeCharacterMovementComponent.h"
 #include "Component/HodgeCharacterRotationComponent.h"
 #include "Component/HodgeHealthComponent.h"
+#include "Component/HodgeHitReactionComponent.h"
 #include "Component/HodgeCombatComponentBase.h"
 #include "Component/HodgePawnExtensionComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -120,6 +121,7 @@ AHodgeCombatCharacter::AHodgeCombatCharacter(const FObjectInitializer& ObjectIni
 	//Pawn 扩展组件，负责连接 Pawn 与 AbilitySystem 等系统
 	PawnExtComponent = CreateDefaultSubobject<UHodgePawnExtensionComponent>(TEXT("PawnExtensionComponent"));
 	RotationComponent = CreateDefaultSubobject<UHodgeCharacterRotationComponent>(TEXT("CharacterRotationComponent"));
+	HitReactionComponent = CreateDefaultSubobject<UHodgeHitReactionComponent>(TEXT("HitReactionComponent"));
 
 	//Pawn 的 AbilitySystem 初始化完成后注册回调
 	PawnExtComponent->OnAbilitySystemInitialized_RegisterAndCall(
@@ -199,6 +201,7 @@ void AHodgeCombatCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	}
 	RotationComponent->UninitializeFromAbilitySystem();
 	// 判定组件由 Experience 按需添加，卸载体验后组件可能已不存在。
+	HitReactionComponent->UninitializeFromAbilitySystem();
 	if (auto* Combat = FindComponentByClass<UHodgeCombatComponentBase>())
 	{
 		Combat->Shutdown();
@@ -337,6 +340,7 @@ void AHodgeCombatCharacter::OnAbilitySystemInitialized()
 	UHodgeAbilitySystemComponent* HodgeASC = GetHodgeAbilitySystemComponent();
 	check(HodgeASC);
 	RotationComponent->InitializeWithAbilitySystem(HodgeASC);
+	HitReactionComponent->InitializeWithAbilitySystem(HodgeASC);
 
 	// 使用 ASC 初始化生命值组件
 	HealthComponent->InitializeWithAbilitySystem(HodgeASC);
@@ -354,6 +358,7 @@ void AHodgeCombatCharacter::OnAbilitySystemUninitialized()
     {
         if (auto* PS = Cast<AHodgePlayerState>(ASC->GetOwnerActor())) { PS->GetAttributeCoordinator()->DetachAvatar(this); }
     }
+	HitReactionComponent->UninitializeFromAbilitySystem();
 	RotationComponent->UninitializeFromAbilitySystem();
 	if (auto* Combat = FindComponentByClass<UHodgeCombatComponentBase>()) { Combat->Shutdown(); }
 	UninitializeDefaultEquipment();

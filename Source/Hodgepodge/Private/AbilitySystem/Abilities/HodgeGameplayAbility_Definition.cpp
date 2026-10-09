@@ -10,6 +10,7 @@
 #include "Animation/HodgeCombatAnimNotifies.h"
 #include "Equipment/HodgeWeaponInstance.h"
 #include "GameFramework/Pawn.h"
+#include "GameFramework/GameStateBase.h"
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeGameplayAbility_Definition)
 
 UHodgeGameplayAbility_Definition::UHodgeGameplayAbility_Definition(const FObjectInitializer& Initializer)
@@ -73,6 +74,7 @@ void UHodgeGameplayAbility_Definition::ActivateAbility(FGameplayAbilitySpecHandl
 {
 	bEnding = false;
 	bLifecycleEventSent = false;
+	bPredictedMoveCancel = false;
 	PresentationWeapon.Reset();
 	NotifyResources.Reset();
 	StateCounts.Reset();
@@ -96,6 +98,9 @@ void UHodgeGameplayAbility_Definition::ActivateAbility(FGameplayAbilitySpecHandl
 		return;
 	}
 	auto* ASC = CastChecked<UHodgeAbilitySystemComponent>(Info->AbilitySystemComponent.Get());
+	ExecutionBodyTag = Definition->ExecutionBodyTag;
+	if (ExecutionBodyTag.IsValid()) { ASC->AddLooseGameplayTag(ExecutionBodyTag); }
+	if (!IsActive() || bEnding) { return; }
 	const auto& Config = Definition->ExecutionConfig;
 	ExecutionCombat = UHodgeCombatComponentBase::FindCombatComponent(Info->AvatarActor.Get());
 	if (ExecutionCombat.IsValid()) { PoseLease = ExecutionCombat->AcquirePoseLease(); }
@@ -128,6 +133,47 @@ void UHodgeGameplayAbility_Definition::FinishExecution(bool bCancelled, bool bRe
 	}
 }
 
+bool UHodgeGameplayAbility_Definition::BeginPredictedMoveCancel()
+{
+	if (!IsActive() || bEnding || bPredictedMoveCancel || !CanBeCanceled() || !CurrentActorInfo ||
+		CurrentActorInfo->IsNetAuthority() || !CurrentActorInfo->IsLocallyControlled()) { return false; }
+	auto* ASC = Cast<UHodgeAbilitySystemComponent>(GetAbilitySystemComponentFromActorInfo());
+	if (!ASC || ASC->GetAnimatingAbility() != this || !GetDefinition()) { return false; }
+	// 先预测姿势退出，保留执行身份等待服务器接受或恢复。
+	bPredictedMoveCancel = true;
+	ASC->StopDefinitionMontage(this, false);
+	return IsActive() && bPredictedMoveCancel;
+}
+
+void UHodgeGameplayAbility_Definition::ResolvePredictedMoveCancel(bool bEnd, float ServerPosition, float ServerTime, float ServerPlayRate)
+{
+	if (!bPredictedMoveCancel || !IsActive() || !CurrentActorInfo) { return; }
+	if (bEnd) { FinishExecution(true, false); return; }
+	const auto* Definition = GetDefinition();
+	auto* ASC = Cast<UHodgeAbilitySystemComponent>(GetAbilitySystemComponentFromActorInfo());
+	UAnimInstance* Anim = CurrentActorInfo->GetAnimInstance();
+	if (!Definition || !ASC || !Anim || ASC->GetAnimatingAbility() != this ||
+		!FMath::IsFinite(ServerPosition) || !FMath::IsFinite(ServerTime) || !FMath::IsFinite(ServerPlayRate) || ServerPlayRate < 0.f)
+	{ FinishExecution(true, false); return; }
+	if (FAnimMontageInstance* Previous = Anim->GetMontageInstanceForID(MontageInstanceId))
+	{
+		Previous->OnMontageBlendingOutStarted.Unbind();
+		Previous->OnMontageEnded.Unbind();
+	}
+	const auto* State = GetWorld()->GetGameState();
+	const float Now = State ? State->GetServerWorldTimeSeconds() : GetWorld()->GetTimeSeconds();
+	const float Position = FMath::Clamp(ServerPosition + FMath::Max(0.f, Now - ServerTime) * ServerPlayRate,
+		0.f, FMath::Max(0.f, Definition->ExecutionConfig.Montage->GetPlayLength() - .01f));
+	if (ASC->PlayMontage(this, CurrentActivationInfo, Definition->ExecutionConfig.Montage, ServerPlayRate, NAME_None, Position) <= 0.f)
+	{ FinishExecution(true, false); return; }
+	FAnimMontageInstance* Instance = Anim->GetActiveInstanceForMontage(Definition->ExecutionConfig.Montage);
+	if (!Instance) { FinishExecution(true, false); return; }
+	MontageInstanceId = Instance->GetInstanceID();
+	Instance->OnMontageBlendingOutStarted.BindUObject(this, &ThisClass::OnMontageBlendingOut, ExecutionId, MontageInstanceId);
+	Instance->OnMontageEnded.BindUObject(this, &ThisClass::OnMontageEnded, ExecutionId, MontageInstanceId);
+	bPredictedMoveCancel = false;
+}
+
 void UHodgeGameplayAbility_Definition::EndAbility(FGameplayAbilitySpecHandle Handle,
                                                   const FGameplayAbilityActorInfo* Info,
                                                   FGameplayAbilityActivationInfo ActivationInfo, bool bReplicate,
@@ -145,6 +191,7 @@ void UHodgeGameplayAbility_Definition::EndAbility(FGameplayAbilitySpecHandle Han
 		if (ExecutionId != RequestedExecution || !IsActive()) { return; }
 	}
 	TGuardValue<bool> Guard(bEnding, true);
+	bPredictedMoveCancel = false;
 	// 先失效旧身份，清理期间的回调不能消费上一段结果。
 	const FGuid EndingExecutionId = ExecutionId;
 	const int32 EndingMontageId = MontageInstanceId;
@@ -167,7 +214,9 @@ void UHodgeGameplayAbility_Definition::EndAbility(FGameplayAbilitySpecHandle Han
 	if (auto* ASC = GetAbilitySystemComponentFromActorInfo())
 	{
 		for (const auto& Pair : EndingCounts) { ASC->RemoveLooseGameplayTag(Pair.Key, Pair.Value); }
+		if (ExecutionBodyTag.IsValid()) { ASC->RemoveLooseGameplayTag(ExecutionBodyTag); }
 	}
+	ExecutionBodyTag = FGameplayTag();
 	if (ExecutionCombat.IsValid()) { ExecutionCombat->ReleasePoseLease(PoseLease); }
 	PoseLease.Invalidate();
 	ExecutionCombat.Reset();
@@ -177,6 +226,12 @@ void UHodgeGameplayAbility_Definition::EndAbility(FGameplayAbilitySpecHandle Han
 		ASC->ClearAnimatingAbility(this);
 	}
 	if (auto* Combat = IsComboCoordinated() ? UHodgeCombatComponentBase::FindCombatComponent(Info->AvatarActor.Get()) : nullptr) { Combat->ExecutionEnded(this); }
+	// GAS 的 EndAbility 只复制正常结束，取消需要明确的取消消息。
+	if (bCancelled && bReplicate && Info && Info->AbilitySystemComponent.IsValid())
+	{
+		Info->AbilitySystemComponent->ReplicateEndOrCancelAbility(Handle, ActivationInfo, this, true);
+		bReplicate = false;
+	}
 	Super::EndAbility(Handle, Info, ActivationInfo, bReplicate, bCancelled);
 }
 
@@ -276,7 +331,7 @@ void UHodgeGameplayAbility_Definition::SendExecutionEvent(FGameplayTag Tag)
 
 void UHodgeGameplayAbility_Definition::OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted, FGuid Execution, int32 InstanceId)
 {
-	if (ExecutionId != Execution || MontageInstanceId != InstanceId || bEnding) { return; }
+	if (ExecutionId != Execution || MontageInstanceId != InstanceId || bEnding || bPredictedMoveCancel) { return; }
 	bLifecycleEventSent = true;
 	SendExecutionEvent(bInterrupted ? HodgeGameplayTags::GameplayEvent_Attack_Interrupted : HodgeGameplayTags::GameplayEvent_Attack_Completed);
 	if (ExecutionId == Execution) { FinishExecution(bInterrupted, true); }

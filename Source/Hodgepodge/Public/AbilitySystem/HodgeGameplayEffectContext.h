@@ -78,6 +78,8 @@ public:
 	// 用于标识同一发弹药中的多个子弹，默认 -1 表示未设置。
 	UPROPERTY()
 	int32 CartridgeID = -1;
+	// 仅用于服务器同步结算匹配，不参与网络序列化。
+	UPROPERTY() FGuid HitSettlementId;
 
 protected:
 	// Ability Source 对象的弱引用；该对象需要实现 IHodgeAbilitySourceInterface。

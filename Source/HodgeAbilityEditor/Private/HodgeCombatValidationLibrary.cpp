@@ -4,10 +4,15 @@
 #include "Engine/World.h"
 #include "TimerManager.h"
 #include "Animation/AnimMontage.h"
+#include "Animation/AnimInstance.h"
+#include "GameFramework/Character.h"
 #include "AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h"
 #include "Component/HodgeCombatComponentBase.h"
 #include "Editor.h"
 #include "Settings/LevelEditorPlaySettings.h"
+#include "Character/HodgeEnemyCharacter.h"
+#include "Engine/StaticMeshActor.h"
+#include "Animation/Skeleton.h"
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeCombatValidationLibrary)
 
 bool UHodgeCombatValidationLibrary::QueueAbilityAction(UHodgeAbilitySystemComponent* ASC, FGameplayAbilitySpecHandle Handle, bool bCancel)
@@ -115,6 +120,30 @@ int32 UHodgeCombatValidationLibrary::InspectPoseLeases(AActor* Avatar)
 	return Combat ? Combat->GetPoseLeaseCount() : 0;
 }
 
+FHodgeMontageValidationState UHodgeCombatValidationLibrary::InspectMontageState(AActor* Avatar, UAnimMontage* Montage)
+{
+	FHodgeMontageValidationState Result;
+	const auto* Character = Cast<ACharacter>(Avatar);
+	UAnimInstance* Anim = Character && Character->GetMesh() ? Character->GetMesh()->GetAnimInstance() : nullptr;
+	if (!Anim) { return Result; }
+	const int32 Machine = Anim->GetStateMachineIndex(TEXT("LocomotionSM"));
+	if (Machine != INDEX_NONE) { Result.LocomotionState = Anim->GetCurrentStateName(Machine); }
+	for (int32 Index = Anim->MontageInstances.Num() - 1; Index >= 0; --Index)
+	{
+		const FAnimMontageInstance* Instance = Anim->MontageInstances[Index];
+		if (!Instance || Instance->Montage != Montage) { continue; }
+		Result.InstanceId = Instance->GetInstanceID();
+		Result.Position = Instance->GetPosition();
+		Result.Weight = Instance->GetWeight();
+		Result.DesiredWeight = Instance->GetDesiredWeight();
+		Result.BlendTime = Instance->GetBlendTime();
+		Result.bPlaying = Instance->IsPlaying();
+		Result.bStopped = Instance->IsStopped();
+		break;
+	}
+	return Result;
+}
+
 bool UHodgeCombatValidationLibrary::ConfigureValidationPIE(int32 Players, bool bDedicated)
 {
 	if (!GEditor || GEditor->PlayWorld || Players < 1 || Players > 2) { return false; }
@@ -157,4 +186,29 @@ bool UHodgeCombatValidationLibrary::NormalizeCombatNotifies(UAnimMontage* Montag
 	Montage->RefreshCacheData();
 	Montage->MarkPackageDirty();
 	return true;
+}
+
+bool UHodgeCombatValidationLibrary::ConfigureHitReactionValidationMontage(UAnimMontage* Montage, FName SlotName)
+{
+	if (!Montage || SlotName.IsNone() || !Montage->GetPathName().StartsWith(TEXT("/Game/CodexText/HitReactionValidation/"))) { return false; }
+	Montage->Modify();
+	Montage->Notifies.Reset();
+	for (auto& Track : Montage->SlotAnimTracks) { Track.SlotName = SlotName; }
+	Montage->RefreshCacheData();
+	Montage->MarkPackageDirty();
+	return true;
+}
+
+AActor* UHodgeCombatValidationLibrary::SpawnHitReactionValidationActor(UObject* WorldContextObject, TSubclassOf<AActor> ActorClass, FVector Location)
+{
+	UWorld* World = GEngine ? GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::ReturnNull) : nullptr;
+	if (!World || World->WorldType != EWorldType::PIE || World->GetNetMode() == NM_Client || !ActorClass || Location.ContainsNaN()) { return nullptr; }
+	const bool bFixtureEnemy = ActorClass->IsChildOf(AHodgeEnemyCharacter::StaticClass()) &&
+		ActorClass->GetPathName().StartsWith(TEXT("/Game/CodexText/HitReactionValidation/"));
+	if (!bFixtureEnemy && ActorClass != AStaticMeshActor::StaticClass()) { return nullptr; }
+	FActorSpawnParameters Parameters;
+	Parameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	AActor* Actor = World->SpawnActor<AActor>(ActorClass, Location, FRotator::ZeroRotator, Parameters);
+	if (Actor) { Actor->SetReplicates(true); }
+	return Actor;
 }

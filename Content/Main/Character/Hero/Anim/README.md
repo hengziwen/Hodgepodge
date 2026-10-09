@@ -15,6 +15,8 @@
 
 常态角色旋转保持验收设置：UseControllerRotationYaw=True、OrientRotationToMovement=False、UseControllerDesiredRotation=False、RotationRate.Yaw=720、MaxWalkSpeed=420。尚未实现冲刺 GA。
 
+2026-10-08 受击接入：`HitReactions/DA_Hero_HitReaction` 保存六类目标动作与恢复配置，强动作使用原 FullBody。AdditiveHitReact 调整到全身动作之后，独立 HodgeHitFeedback Group，上身 Bip001Spine 分支按 0.35 权重混合。轻反馈源序列为项目自有的 Local Space Additive 副本，不修改原 Wuwa 动画。配置和实际验证见[主角受击接入](../../../../../Docs/Validation/hero-hit-reaction-setup-2026-10-08.md)。
+
 Start 仍无入口，Idle/Stop 开始移动直接进入 Cycle。Stop、连续镜头转身及 FullBody 攻击时抑制腿部 IK 的修正保留；EnablePivot=False，保留 Pivot 资源和图供后续冲刺使用。
 
 迁移时按用户授权清理了原 Main 的旧 `ABP_Pover_Base`，新迁入主图最初命名 `ABP_Pover_Lyra`，随后用户将它改名为当前 `ABP_Pover_Base`；同时清理旧 Layer、根目录旧枚举/结构体和旧 Pover BlendSpace。正式角色使用上述主图和固定层。实验地图及测试角色继续位于 `/Game/CodexText/LyraAnimation/Maps`、`Test`，它们也引用已迁入 Main 的资源。

@@ -17,6 +17,7 @@ UHodgeGameplayAbility_Death::UHodgeGameplayAbility_Death(const FObjectInitialize
 	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::ServerInitiated;
 
 	bAutoStartDeath = true;
+	bAllowWhileHitReacting = true;
 
 	if (HasAnyFlags(RF_ClassDefaultObject))
 	{

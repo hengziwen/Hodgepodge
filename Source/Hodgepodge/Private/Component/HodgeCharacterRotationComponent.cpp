@@ -1,4 +1,5 @@
 #include "Component/HodgeCharacterRotationComponent.h"
+#include "Combat/HodgeHitReactionTypes.h"
 
 #include "AbilitySystem/HodgeAbilitySystemComponent.h"
 #include "AbilitySystem/HodgeGameplayTags.h"
@@ -29,6 +30,8 @@ void UHodgeCharacterRotationComponent::InitializeWithAbilitySystem(UHodgeAbility
 		EGameplayTagEventType::NewOrRemoved).AddUObject(this, &ThisClass::HandleConstraintTagChanged);
 	MovementStoppedTagHandle = InASC->RegisterGameplayTagEvent(TAG_Gameplay_MovementStopped,
 		EGameplayTagEventType::NewOrRemoved).AddUObject(this, &ThisClass::HandleConstraintTagChanged);
+	HitReactionTagHandle = InASC->RegisterGameplayTagEvent(HodgeHitReactionTags::Controlled,
+		EGameplayTagEventType::NewOrRemoved).AddUObject(this, &ThisClass::HandleConstraintTagChanged);
 	RefreshLocalState();
 }
 
@@ -46,9 +49,15 @@ void UHodgeCharacterRotationComponent::UninitializeFromAbilitySystem()
 			ASC->UnregisterGameplayTagEvent(MovementStoppedTagHandle, TAG_Gameplay_MovementStopped,
 				EGameplayTagEventType::NewOrRemoved);
 		}
+		if (HitReactionTagHandle.IsValid())
+		{
+			ASC->UnregisterGameplayTagEvent(HitReactionTagHandle, HodgeHitReactionTags::Controlled,
+				EGameplayTagEventType::NewOrRemoved);
+		}
 	}
 	RotationTagHandle.Reset();
 	MovementStoppedTagHandle.Reset();
+	HitReactionTagHandle.Reset();
 	AbilitySystemComponent.Reset();
 	LocalState = {};
 	ClearMoveReplayState();
@@ -66,7 +75,7 @@ void UHodgeCharacterRotationComponent::RefreshLocalState()
 	const UHodgeAbilitySystemComponent* ASC = AbilitySystemComponent.Get();
 	if (!Pawn || (!Pawn->HasAuthority() && !Pawn->IsLocallyControlled()) || !ASC || ASC->GetAvatarActor() != Pawn) { return; }
 	const bool bNewLock = ASC->HasMatchingGameplayTag(HodgeGameplayTags::Status_Rotation_Locked)
-		|| ASC->HasMatchingGameplayTag(TAG_Gameplay_MovementStopped);
+		|| ASC->HasMatchingGameplayTag(TAG_Gameplay_MovementStopped) || ASC->HasMatchingGameplayTag(HodgeHitReactionTags::Controlled);
 	if (bNewLock == LocalState.bYawLocked) { return; }
 	LocalState.bYawLocked = bNewLock;
 	LocalState.bRecoveringFacing = !bNewLock;

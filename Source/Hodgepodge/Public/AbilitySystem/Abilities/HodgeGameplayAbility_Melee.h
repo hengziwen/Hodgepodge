@@ -71,6 +71,11 @@ protected:
 	UFUNCTION(BlueprintNativeEvent, Category="Hodge|Melee")
 	void ApplyMeleeHitEffects(const FHodgeHitDetectionBatch& Batch, const FHitResult& Hit,
 		const FHodgeHitEffectConfig& Binding, UAbilitySystemComponent* TargetASC, const FGameplayEffectSpecHandle& Spec);
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category="Hodge|Melee")
+	void SubmitMeleeHitEffects(const FHodgeHitDetectionBatch& Batch, const FHitResult& Hit,
+		const FHodgeHitEffectConfig& Binding, UAbilitySystemComponent* TargetASC, const FGameplayEffectSpecHandle& Spec);
+	UFUNCTION(BlueprintImplementableEvent, Category="Hodge|Melee")
+	void OnMeleeReactionResolved(AActor* Target, const FHodgeHitReactionResult& Result);
 	virtual void ApplyMeleeHitEffects_Implementation(const FHodgeHitDetectionBatch& Batch, const FHitResult& Hit,
 		const FHodgeHitEffectConfig& Binding, UAbilitySystemComponent* TargetASC, const FGameplayEffectSpecHandle& Spec);
 

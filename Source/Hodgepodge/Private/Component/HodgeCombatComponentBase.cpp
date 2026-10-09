@@ -19,6 +19,8 @@
 #include "Data/HodgePawnData.h"
 
 #include "TimerManager.h"
+#include "Animation/AnimInstance.h"
+#include "Animation/AnimMontage.h"
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeCombatComponentBase)
 
 namespace
@@ -475,6 +477,11 @@ void UHodgeCombatComponentBase::Shutdown()
 	ASC = nullptr;
 	CurrentComboTag = FGameplayTag();
 	bMoveRequestPending = false;
+	PredictedMoveCancelAbility.Reset();
+	PendingMoveHandle = {};
+	PendingMoveKey = 0;
+	RejectedMoveHandle = {};
+	RejectedMoveKey = 0;
 	bSwitching = false;
 	bMemoryCorrectionPending = false;
 	PreviousComboMemory = {};
@@ -502,6 +509,7 @@ bool UHodgeCombatComponentBase::InputPressed(FGameplayTag InputTag)
 		}
 		BufferedInput = Binding.IntentTag;
 		InputExpiresAt = GetWorld()->GetTimeSeconds() + Definition->InputBufferSeconds;
+		if (bMoveRequestPending) { return true; }
 		TryTransition(BufferedInput, false);
 		return true;
 	}
@@ -531,6 +539,13 @@ const FHodgeComboTransition* UHodgeCombatComponentBase::SelectTransition(FGamepl
 bool UHodgeCombatComponentBase::IsAuthorized(FGameplayAbilitySpecHandle Handle) const
 {
 	return IsComboReady() && Handle.IsValid() && AuthorizedHandle == Handle;
+}
+
+bool UHodgeCombatComponentBase::IsMoveCancelPredicted() const
+{
+	return bMoveRequestPending && PredictedMoveCancelAbility.IsValid() && CurrentAbility == PredictedMoveCancelAbility.Get()
+		&& CurrentAbility->IsActive() && CurrentAbility->GetCurrentAbilitySpecHandle() == PendingMoveHandle
+		&& ExecutionKey() == PendingMoveKey;
 }
 
 int16 UHodgeCombatComponentBase::ExecutionKey() const
@@ -738,7 +753,7 @@ void UHodgeCombatComponentBase::ExecutionEnded(UHodgeGameplayAbility_Definition*
 
 void UHodgeCombatComponentBase::WindowsChanged(UHodgeGameplayAbility_Definition* Ability)
 {
-	if (!IsComboReady() || CurrentAbility != Ability || !ASC->AbilityActorInfo->IsLocallyControlled()) { return; }
+	if (!IsComboReady() || CurrentAbility != Ability || bMoveRequestPending || !ASC->AbilityActorInfo->IsLocallyControlled()) { return; }
 	if (BufferedInput.IsValid() && GetWorld()->GetTimeSeconds() < InputExpiresAt)
 	{
 		TryTransition(BufferedInput, false);
@@ -914,45 +929,77 @@ void UHodgeCombatComponentBase::TickComponent(float Delta, ELevelTick Type, FAct
 		return;
 	}
 	if (GetWorld()->GetTimeSeconds() >= InputExpiresAt) { ClearInput(); }
+	if (bMoveRequestPending) { return; }
 	if (BufferedInput.IsValid() && TryTransition(BufferedInput, false)) { return; }
-	if (!CurrentAbility || bSwitching || bMoveRequestPending) { return; }
+	if (!CurrentAbility || bSwitching) { return; }
 	const auto* Avatar = ASC->GetAvatarActor();
 	const auto* Hero = Avatar ? Avatar->FindComponentByClass<UHodgeHeroComponent>() : nullptr;
-	if (Hero && Hero->HasMoveIntent(Definition->MoveIntentThreshold)
+	if (!Hero || !Hero->HasMoveIntent(Definition->MoveIntentThreshold))
+	{ RejectedMoveHandle = {}; RejectedMoveKey = 0; return; }
+	if (RejectedMoveHandle == CurrentAbility->GetCurrentAbilitySpecHandle() && RejectedMoveKey == ExecutionKey()) { return; }
+	if (Hero && Hero->HasMoveIntent(Definition->MoveIntentThreshold) && CurrentAbility->CanBeCanceled()
 		&& CurrentAbility->GetExecutionWindows().HasTag(Definition->MoveCancelWindowTag))
 	{
 		bMoveRequestPending = true;
-		ServerMoveCancel(ASC->GetAvatarActor(), CurrentAbility->GetCurrentAbilitySpecHandle(), ExecutionKey());
+		PendingMoveHandle = CurrentAbility->GetCurrentAbilitySpecHandle();
+		PendingMoveKey = ExecutionKey();
+		if (CurrentAbility->BeginPredictedMoveCancel()) { PredictedMoveCancelAbility = CurrentAbility; }
+		ServerMoveCancel(ASC->GetAvatarActor(), PendingMoveHandle, PendingMoveKey, Hero->GetMoveIntent());
 	}
 }
 
 void UHodgeCombatComponentBase::ServerMoveCancel_Implementation(AActor* Avatar, FGameplayAbilitySpecHandle Handle,
-                                                                int32 Key)
+                                                                int32 Key, FVector2D Intent)
 {
 	if (!GetWorld())
 	{
-		ClientMoveCancelResult();
+		ClientMoveCancelResult(Avatar, Handle, Key, true, 0.f, 0.f, 0.f);
 		return;
 	}
 	TWeakObjectPtr<AActor> WeakAvatar = Avatar;
 	GetWorld()->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateWeakLambda(this,
-		[this, WeakAvatar, Handle, Key]() { ProcessServerMoveCancel(WeakAvatar, Handle, Key); }));
+		[this, WeakAvatar, Handle, Key, Intent]() { ProcessServerMoveCancel(WeakAvatar, Handle, Key, Intent); }));
 }
 
 void UHodgeCombatComponentBase::ProcessServerMoveCancel(TWeakObjectPtr<AActor> Avatar,
-                                                        FGameplayAbilitySpecHandle Handle, int32 Key)
+                                                        FGameplayAbilitySpecHandle Handle, int32 Key, FVector2D Intent)
 {
 	// RPC 可能早于本帧 NotifyBegin 到达；等动画更新完成后再检查，不能提前授予取消权限。
-	if (Avatar.IsValid() && IsComboReady() && CurrentAbility && Avatar.Get() == GetOwner()
-		&& Handle == CurrentAbility->GetCurrentAbilitySpecHandle() && Key == ExecutionKey()
+	const bool bSameExecution = Avatar.IsValid() && IsComboReady() && CurrentAbility && Avatar.Get() == GetOwner()
+		&& Handle == CurrentAbility->GetCurrentAbilitySpecHandle() && Key == ExecutionKey();
+	if (bSameExecution && !Intent.ContainsNaN() && Intent.SizeSquared() <= 2.01f
+		&& Intent.SizeSquared() >= FMath::Square(Definition->MoveIntentThreshold) && CurrentAbility->CanBeCanceled()
+		&& !ASC->HasMatchingGameplayTag(TAG_Gameplay_AbilityInputBlocked)
 		&& CurrentAbility->GetExecutionWindows().HasTag(Definition->MoveCancelWindowTag))
 	{
 		EndCurrentExecution();
 	}
-	ClientMoveCancelResult();
+	const bool bStillExecuting = bSameExecution && CurrentAbility &&
+		CurrentAbility->GetCurrentAbilitySpecHandle() == Handle && ExecutionKey() == Key;
+	UAnimInstance* Anim = bStillExecuting && ASC->AbilityActorInfo.IsValid() ? ASC->AbilityActorInfo->GetAnimInstance() : nullptr;
+	UAnimMontage* Montage = bStillExecuting ? CurrentAbility->GetDefinition()->ExecutionConfig.Montage.Get() : nullptr;
+	ClientMoveCancelResult(Avatar.Get(), Handle, Key, !bStillExecuting,
+		Anim && Montage ? Anim->Montage_GetPosition(Montage) : 0.f, ComboTime(),
+		Anim && Montage ? Anim->Montage_GetPlayRate(Montage) : 0.f);
 }
 
-void UHodgeCombatComponentBase::ClientMoveCancelResult_Implementation() { bMoveRequestPending = false; }
+void UHodgeCombatComponentBase::ClientMoveCancelResult_Implementation(AActor* Avatar, FGameplayAbilitySpecHandle Handle,
+	int32 Key, bool bEnd, float ServerPosition, float ServerTime, float ServerPlayRate)
+{
+	if (!bMoveRequestPending || Avatar != GetOwner() || Handle != PendingMoveHandle || Key != PendingMoveKey) { return; }
+	const TWeakObjectPtr<UHodgeGameplayAbility_Definition> Predicted = PredictedMoveCancelAbility;
+	const FGameplayTag Input = BufferedInput;
+	const double Expires = InputExpiresAt;
+	if (!bEnd) { RejectedMoveHandle = Handle; RejectedMoveKey = Key; }
+	bMoveRequestPending = false;
+	PredictedMoveCancelAbility.Reset();
+	PendingMoveHandle = {};
+	PendingMoveKey = 0;
+	if (Predicted.IsValid() && Predicted->IsActive() && CurrentAbility == Predicted.Get() && ExecutionKey() == Key)
+	{ Predicted->ResolvePredictedMoveCancel(bEnd, ServerPosition, ServerTime, ServerPlayRate); }
+	if (IsComboReady() && Input.IsValid() && GetWorld()->GetTimeSeconds() < Expires)
+	{ BufferedInput = Input; InputExpiresAt = Expires; }
+}
 
 void UHodgeCombatComponentBase::ServerReturnToEntry_Implementation(AActor* Avatar, FGameplayTag SourceNode, int32 Key,
                                                                    FGameplayTag Intent)

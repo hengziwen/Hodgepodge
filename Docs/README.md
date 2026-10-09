@@ -21,9 +21,18 @@
 - [Timeline](Design/ability-timeline-stage1.md)、[Definition/连段](Design/ability-definition-combo-graph.md)、[技能编辑器](Design/ability-definition-editor.md)。
 - [统一检测与 Melee GE](Design/melee-detection-ga-effects.md)、[命中窗口](Design/combat-hit-windows.md)、[装备基础](Design/equipment-weapon-system.md)。
 - [旋转约束](Design/character-rotation-policy.md)、[连段记忆与末段重开](Design/combo-retention.md)、[武器显现/插槽回背](Design/weapon-presentation.md)。
+- [受击核心设计](Design/hit-reaction-system.md)、[受击配置手册](Guides/hit-reaction-configuration.md)：四级 Body／独立判定、Impact、目标动画与恢复、敌人 PawnData 初始化已接入；[核心验证](Validation/hit-reaction-2026-10-08.md)、[真实 PIE／联机补测](Validation/hit-reaction-pie-network-2026-10-08.md)。
+- [Main 主角受击接入](Validation/hero-hit-reaction-setup-2026-10-08.md)：正式 AnimBP／独立轻反馈 Group／Profile／GA 授予，以及两个客户端模式的真实播放和骨骼混合验证。
+- [受击退出与联机动作审查](Validation/animation-network-review-2026-10-09.md)：取消复制语义、移动取消预测／拒绝恢复、网络模拟残留、受击素材时长及前后实测时序。
 - [正式动画说明](../Content/Main/Character/Hero/Anim/README.md)、[Lyra 动画研究过程](Design/lyra-animation-inspection-20261004.md)。
 
 Design 并非全是未实现草案：各篇开头区分当前实现、历史设计和后续目标；历史示例不覆盖当前事实。
+
+## 战斗后续设计（尚未实施）
+
+- [近战索敌与攻击吸附](Design/melee-attack-assist.md)：软索敌、手动锁定、起手转向、有限接近、真实命中边界、预测与空中追击衔接。
+
+攻击吸附仍为设计草案，相关接口尚未创建；受击核心的当前字段见受击配置手册，削韧仍只预留数值。
 
 ## UI 迁移与学习
 

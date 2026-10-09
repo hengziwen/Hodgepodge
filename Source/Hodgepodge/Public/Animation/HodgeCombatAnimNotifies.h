@@ -48,6 +48,9 @@ struct HODGEPODGE_API FHodgeAnimHitConfig
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, AdvancedDisplay, meta=(ClampMin="1")) float MaxAnchorDistance = 5000.f;
 	// 开启时继承 Definition 默认 GE、倍率与伤害类型，仍应用本通知的倍率。
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) bool bUseDefaultDamage = true;
+	// 反应覆盖独立于伤害覆盖，终结刀无需复制伤害配置。
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Reaction") bool bUseDefaultReaction = true;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Reaction", meta=(EditCondition="!bUseDefaultReaction", EditConditionHides)) FHodgeHitReactionConfig ReactionOverride;
 	// 关闭默认伤害时使用的显式效果参数。
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(EditCondition="!bUseDefaultDamage", EditConditionHides)) FHodgeHitEffectConfig Damage;
 	// 乘在默认或显式伤害倍率上，允许同一技能的终结段单独调整。

@@ -13,6 +13,7 @@
 #include "AbilitySystem/HodgeGameplayEffectContext.h"
 #include "AbilitySystem/HodgeGameplayTags.h"
 #include "AbilitySystem/Abilities/HodgeAbilityCost.h"
+#include "Combat/HodgeHitReactionTypes.h"
 #include "Camera/HodgeCameraMode.h"
 #include "Character/HodgeCombatCharacter.h"
 #include "Component/HodgeHeroComponent.h"
@@ -196,6 +197,10 @@ bool UHodgeGameplayAbility::CanActivateAbility(const FGameplayAbilitySpecHandle 
 	{
 		return false;
 	}
+
+	if (!bAllowWhileHitReacting && ActivationPolicy != EHodgeAbilityActivationPolicy::OnSpawn &&
+		ActorInfo->AbilitySystemComponent->HasMatchingGameplayTag(HodgeHitReactionTags::Controlled))
+	{ return false; }
 
     if (bRequiresInitializedAttributes && ActorInfo->AvatarActor.IsValid() && ActorInfo->AvatarActor->IsA<AHodgeHeroCharacter>())
     {

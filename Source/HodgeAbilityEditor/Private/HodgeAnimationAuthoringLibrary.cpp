@@ -2,7 +2,14 @@
 
 #include "Animation/AnimBlueprint.h"
 #include "Animation/AnimBlueprintGeneratedClass.h"
+#include "Animation/AnimMontage.h"
 #include "Animation/Skeleton.h"
+#include "AnimGraphNode_ApplyAdditive.h"
+#include "AnimGraphNode_IdentityPose.h"
+#include "AnimGraphNode_LayeredBoneBlend.h"
+#include "AnimGraphNode_SaveCachedPose.h"
+#include "AnimGraphNode_Slot.h"
+#include "AnimGraphNode_UseCachedPose.h"
 #include "AnimBlueprintExtension.h"
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "EdGraph/EdGraph.h"
@@ -23,6 +30,7 @@
 #include "Misc/Paths.h"
 #include "Serialization/ArchiveReplaceObjectRef.h"
 #include "Settings/LevelEditorPlaySettings.h"
+#include "ScopedTransaction.h"
 #include "UObject/Package.h"
 #include "UObject/UObjectHash.h"
 #include "UObject/UnrealType.h"
@@ -31,6 +39,19 @@
 
 namespace HodgeAnimationAuthoring
 {
+	template<typename T>
+	T* FindOrAddPoseNode(UEdGraph* Graph, FName Name, int32 X, int32 Y)
+	{
+		if (T* Existing = FindObject<T>(Graph, *Name.ToString())) { return Existing; }
+		T* Node = NewObject<T>(Graph, Name, RF_Transactional);
+		Graph->AddNode(Node, false, false);
+		Node->CreateNewGuid();
+		Node->NodePosX = X; Node->NodePosY = Y;
+		Node->PostPlacedNewNode();
+		Node->AllocateDefaultPins();
+		return Node;
+	}
+
 	bool IsWorkAsset(const UObject* Object)
 	{
 		return Object && (Object->GetOutermost()->GetName().StartsWith(TEXT("/Game/CodexText/LyraAnimation/"))
@@ -228,6 +249,118 @@ TArray<FName> UHodgeAnimationAuthoringLibrary::GetSkeletonBoneNames(USkeleton* S
 		for (const FMeshBoneInfo& Bone : Skeleton->GetReferenceSkeleton().GetRefBoneInfo()) { Names.Add(Bone.Name); }
 	}
 	return Names;
+}
+
+bool UHodgeAnimationAuthoringLibrary::SetSkeletonSlotGroup(USkeleton* Skeleton, FName Slot, FName Group)
+{
+	if (!Skeleton || !Skeleton->GetPathName().StartsWith(TEXT("/Game/Main/Character/Hero/Anim/")) || Slot.IsNone() || Group.IsNone()) { return false; }
+	Skeleton->Modify();
+	Skeleton->RegisterSlotNode(Slot);
+	Skeleton->SetSlotGroupName(Slot, Group);
+	Skeleton->MarkPackageDirty();
+	return Skeleton->GetSlotGroupName(Slot) == Group;
+}
+
+FName UHodgeAnimationAuthoringLibrary::GetSkeletonSlotGroup(USkeleton* Skeleton, FName Slot)
+{
+	return Skeleton ? Skeleton->GetSlotGroupName(Slot) : NAME_None;
+}
+
+bool UHodgeAnimationAuthoringLibrary::SetHeroReactionMontageSlot(UAnimMontage* Montage, FName Slot)
+{
+	if (!Montage || !Montage->GetPathName().StartsWith(TEXT("/Game/Main/Character/Hero/Anim/HitReactions/")) || Slot.IsNone()) { return false; }
+	Montage->Modify();
+	for (auto& Track : Montage->SlotAnimTracks) { Track.SlotName = Slot; }
+	Montage->RefreshCacheData();
+	Montage->MarkPackageDirty();
+	return !Montage->SlotAnimTracks.IsEmpty();
+}
+
+bool UHodgeAnimationAuthoringLibrary::SetHeroReactionSkeleton(UAnimationAsset* Asset, USkeleton* Skeleton)
+{
+	if (!Asset || !Asset->GetPathName().StartsWith(TEXT("/Game/Main/Character/Hero/Anim/HitReactions/")) ||
+		!Skeleton || Skeleton->GetPathName() != TEXT("/Game/Main/Character/Hero/Anim/Model/SK_Pover_LyraLab.SK_Pover_LyraLab")) { return false; }
+	if (Asset->GetSkeleton() == Skeleton) { return true; }
+	Asset->Modify();
+	return Asset->ReplaceSkeleton(Skeleton, false);
+}
+
+bool UHodgeAnimationAuthoringLibrary::ConfigureHeroHitStunDuration(UAnimMontage* Montage, float Duration)
+{
+	if (!Montage || Montage->GetPathName() != TEXT("/Game/Main/Character/Hero/Anim/HitReactions/AM_Hero_HitStun.AM_Hero_HitStun") ||
+		!FMath::IsFinite(Duration) || Duration <= .18f || Montage->SlotAnimTracks.Num() != 1 ||
+		Montage->SlotAnimTracks[0].AnimTrack.AnimSegments.Num() != 1) { return false; }
+	FAnimSegment& Segment = Montage->SlotAnimTracks[0].AnimTrack.AnimSegments[0];
+	if (!Segment.GetAnimReference() || Segment.AnimStartTime + Duration * Segment.AnimPlayRate > Segment.GetAnimReference()->GetPlayLength()) { return false; }
+	Montage->Modify();
+	Segment.AnimEndTime = Segment.AnimStartTime + Duration * Segment.AnimPlayRate;
+	Segment.LoopingCount = 1;
+	Montage->SetCompositeLength(Duration);
+	Montage->BlendOut.SetBlendTime(.18f);
+	Montage->RefreshCacheData();
+	Montage->MarkPackageDirty();
+	return true;
+}
+
+bool UHodgeAnimationAuthoringLibrary::ConfigureHeroHitReactionGraph(UAnimBlueprint* Blueprint)
+{
+	if (!Blueprint || Blueprint->GetPathName() != TEXT("/Game/Main/Character/Hero/Anim/ABP_Pover_Base.ABP_Pover_Base") ||
+		!Blueprint->TargetSkeleton || Blueprint->TargetSkeleton->GetReferenceSkeleton().FindBoneIndex(TEXT("Bip001Spine")) == INDEX_NONE ||
+		!GEditor || GEditor->PlayWorld) { return false; }
+	UEdGraph* Graph = FindObject<UEdGraph>(Blueprint, TEXT("AnimGraph"));
+	if (!Graph) { return false; }
+	auto* Slot = FindObject<UAnimGraphNode_Slot>(Graph, TEXT("AnimGraphNode_Slot_1"));
+	UEdGraphNode* Aiming = FindObject<UEdGraphNode>(Graph, TEXT("AnimGraphNode_LinkedAnimLayer_0"));
+	UEdGraphNode* OriginalAdditive = FindObject<UEdGraphNode>(Graph, TEXT("AnimGraphNode_ApplyAdditive_0"));
+	UEdGraphNode* RotateRoot = FindObject<UEdGraphNode>(Graph, TEXT("AnimGraphNode_RotateRootBone_0"));
+	UEdGraphNode* Controls = FindObject<UEdGraphNode>(Graph, TEXT("AnimGraphNode_LinkedAnimLayer_3"));
+	if (!Slot || Slot->Node.SlotName != TEXT("AdditiveHitReact") || !Aiming || !OriginalAdditive || !RotateRoot || !Controls ||
+		!Aiming->FindPin(TEXT("Pose")) || !OriginalAdditive->FindPin(TEXT("Base")) ||
+		!RotateRoot->FindPin(TEXT("Pose")) || !Controls->FindPin(TEXT("InPose"))) { return false; }
+	const FScopedTransaction Transaction(NSLOCTEXT("HodgeAnimation", "HitReactionGraph", "Configure hero hit reaction graph"));
+	Blueprint->Modify(); Graph->Modify();
+	for (UEdGraphNode* Node : {static_cast<UEdGraphNode*>(Slot), Aiming, OriginalAdditive, RotateRoot, Controls}) { Node->Modify(); }
+	using namespace HodgeAnimationAuthoring;
+	auto* Cache = FindOrAddPoseNode<UAnimGraphNode_SaveCachedPose>(Graph, TEXT("HodgeHitReactionBase"), 1260, 280);
+	Cache->CacheName = TEXT("HodgeHitReactionBase");
+	auto* Base = FindOrAddPoseNode<UAnimGraphNode_UseCachedPose>(Graph, TEXT("HodgeHitReactionBaseUse"), 1510, 160);
+	auto* AdditiveBase = FindOrAddPoseNode<UAnimGraphNode_UseCachedPose>(Graph, TEXT("HodgeHitReactionAdditiveBaseUse"), 1510, 430);
+	Base->SaveCachedPoseNode = Cache; AdditiveBase->SaveCachedPoseNode = Cache;
+	auto* Identity = FindOrAddPoseNode<UAnimGraphNode_IdentityPose>(Graph, TEXT("HodgeHitReactionIdentity"), 1280, 730);
+	auto* Apply = FindOrAddPoseNode<UAnimGraphNode_ApplyAdditive>(Graph, TEXT("HodgeHitReactionApplyAdditive"), 1850, 430);
+	Apply->Node.Alpha = 1.f;
+	auto* Blend = FindOrAddPoseNode<UAnimGraphNode_LayeredBoneBlend>(Graph, TEXT("HodgeHitReactionUpperBodyBlend"), 2120, 190);
+	Blend->Node.BlendMode = ELayeredBoneBlendMode::BranchFilter;
+	Blend->Node.BlendPoses.SetNum(1); Blend->Node.BlendWeights.SetNum(1); Blend->Node.LayerSetup.SetNum(1);
+	Blend->Node.BlendWeights[0] = .35f;
+	Blend->Node.LayerSetup[0].BranchFilters.Reset();
+	FBranchFilter Filter; Filter.BoneName = TEXT("Bip001Spine"); Filter.BlendDepth = 1;
+	Blend->Node.LayerSetup[0].BranchFilters.Add(Filter);
+	Blend->Node.bMeshSpaceRotationBlend = true;
+	Blend->Node.CurveBlendOption = ECurveBlendOption::UseBasePose;
+	Blend->ReconstructNode();
+	Slot->NodePosX = 1510; Slot->NodePosY = 700;
+	Slot->Node.bAlwaysUpdateSourcePose = true;
+	const UEdGraphSchema* Schema = Graph->GetSchema();
+	Schema->BreakPinLinks(*OriginalAdditive->FindPin(TEXT("Base")), true);
+	Schema->BreakPinLinks(*Controls->FindPin(TEXT("InPose")), true);
+	Schema->BreakPinLinks(*Slot->FindPin(TEXT("Source")), true);
+	Schema->BreakPinLinks(*Slot->FindPin(TEXT("Pose")), true);
+	auto Connect = [Schema](UEdGraphNode* From, const TCHAR* Output, UEdGraphNode* To, const TCHAR* Input)
+	{
+		UEdGraphPin* A = From->FindPin(Output); UEdGraphPin* B = To->FindPin(Input);
+		return A && B && (A->LinkedTo.Contains(B) || Schema->TryCreateConnection(A, B));
+	};
+	const bool bLinked = Connect(Aiming, TEXT("Pose"), OriginalAdditive, TEXT("Base")) &&
+		Connect(RotateRoot, TEXT("Pose"), Cache, TEXT("Pose")) &&
+		Connect(Identity, TEXT("Pose"), Slot, TEXT("Source")) &&
+		Connect(AdditiveBase, TEXT("Pose"), Apply, TEXT("Base")) &&
+		Connect(Slot, TEXT("Pose"), Apply, TEXT("Additive")) &&
+		Connect(Base, TEXT("Pose"), Blend, TEXT("BasePose")) &&
+		Connect(Apply, TEXT("Pose"), Blend, TEXT("BlendPoses_0")) &&
+		Connect(Blend, TEXT("Pose"), Controls, TEXT("InPose"));
+	FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(Blueprint);
+	return bLinked && SetSkeletonSlotGroup(Blueprint->TargetSkeleton, TEXT("AdditiveHitReact"), TEXT("HodgeHitFeedback"));
 }
 
 bool UHodgeAnimationAuthoringLibrary::ConfigureAnimationLabPIE(int32 PlayerCount, bool bListenServer)

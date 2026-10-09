@@ -36,7 +36,13 @@
 
 `DefaultHitConfig.DamageType`：写入伤害 Spec 的动态资产标签，用于效果分类，不会增加一次独立伤害。
 
+实际写入在 `HodgeGameplayAbility_Melee::MakeMeleeHitSpec` 的 `AddDynamicAssetTag`。UE 同时把它放入 Spec 的 CapturedSourceTags；`HodgeDamageExecution` 将源／目标标签提供给属性条件求值和来源衰减接口。当前项目没有按 Melee／Pistol 等 DamageType 分支计算专属伤害或选择受击动作的逻辑，HealthSet 也不按这些类型决定控制。它不替代 Reaction.AttackJudgementTag，也不配置 Impact。
+
 旧 `TimelineTaskConfig`、`HitWindows`、`HitPoints`、`WeaponUseWindowTag` 不再是作者入口；不需要另建数据资产同步通知标签和时间。
+
+`ExecutionBodyTag`：该动作自身的四级体状态，按 GA 执行添加／释放，不作为输出攻击判定。`DefaultHitConfig.Reaction` 配输出判定、Impacts 和预留削韧；命中通知用独立的 `bUseDefaultReaction`／`ReactionOverride` 继承或覆盖。目标动画、能力授予和恢复参数见[受击配置手册](hit-reaction-configuration.md)。空 Reaction 保持原伤害行为。
+
+2026-10-09 移动取消在拥有者真实窗口中预测姿势退出与移动，服务器仍校验执行身份和窗口。拒绝时恢复原动作；同一持续输入被拒绝后需要松开重按或新执行，避免重复预测。取消结束发送 GAS 取消消息，正常结束发送结束消息，保证 StopBlendOut／NaturalBlendOut 的两端语义一致。详细原因与时序见[网络动画审查](../Validation/animation-network-review-2026-10-09.md)。
 
 ## 3. 持续命中／单次命中的 Hit 字段
 
