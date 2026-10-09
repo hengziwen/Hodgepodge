@@ -2,6 +2,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "GameplayAbilitySpecHandle.h"
 #include "Animation/HodgeCombatAnimNotifies.h"
+#include "Combat/HodgeCharacterFacingTypes.h"
 #include "HodgeCombatValidationLibrary.generated.h"
 
 class UHodgeAbilitySystemComponent;
@@ -31,6 +32,14 @@ class HODGEABILITYEDITOR_API UHodgeCombatValidationLibrary : public UBlueprintFu
 public:
 	UFUNCTION(BlueprintCallable, Category="Hodge|Editor|Validation")
 	static bool QueueAbilityAction(UHodgeAbilitySystemComponent* ASC, FGameplayAbilitySpecHandle Handle, bool bCancel = false);
+	UFUNCTION(BlueprintCallable, Category="Hodge|Editor|Validation")
+	static bool QueueFacingMode(AActor* Avatar, EHodgeCharacterFacingDriver Driver, bool bRelease = false);
+	UFUNCTION(BlueprintCallable, Category="Hodge|Editor|Validation")
+	static bool QueueActionFacing(AActor* Avatar, FVector Direction, bool bRelease = false, bool bInstant = false);
+	UFUNCTION(BlueprintPure, Category="Hodge|Editor|Validation")
+	static TArray<FName> InspectFacingSequences(AActor* Avatar);
+	UFUNCTION(BlueprintCallable, Category="Hodge|Editor|Validation")
+	static bool SetFacingValidationControllerPermission(AActor* Avatar, bool bAllow);
 	UFUNCTION(BlueprintCallable, Category="Hodge|Editor|Validation")
 	static bool AddHitNotify(UAnimMontage* Montage, float Start, float End, const FHodgeAnimHitConfig& Config, bool bSingle = false);
 	UFUNCTION(BlueprintCallable, Category="Hodge|Editor|Validation")

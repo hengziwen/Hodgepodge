@@ -22,6 +22,11 @@
 #include "GameFramework/Pawn.h"
 #include "K2Node_FunctionEntry.h"
 #include "K2Node_FunctionResult.h"
+#include "K2Node_CallFunction.h"
+#include "K2Node_Select.h"
+#include "K2Node_VariableGet.h"
+#include "Animation/HodgeAnimInstance.h"
+#include "AnimGraphNode_Base.h"
 #include "Kismet2/BlueprintEditorUtils.h"
 #include "Kismet2/KismetEditorUtilities.h"
 #include "KismetCompiler.h"
@@ -361,6 +366,89 @@ bool UHodgeAnimationAuthoringLibrary::ConfigureHeroHitReactionGraph(UAnimBluepri
 		Connect(Blend, TEXT("Pose"), Controls, TEXT("InPose"));
 	FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(Blueprint);
 	return bLinked && SetSkeletonSlotGroup(Blueprint->TargetSkeleton, TEXT("AdditiveHitReact"), TEXT("HodgeHitFeedback"));
+}
+
+FString UHodgeAnimationAuthoringLibrary::ConfigureHeroFacingModes(UAnimBlueprint* MainBlueprint, UAnimBlueprint* LayerBlueprint)
+{
+	if (!MainBlueprint || !LayerBlueprint || !GEditor || GEditor->PlayWorld ||
+		MainBlueprint->GetPathName() != TEXT("/Game/Main/Character/Hero/Anim/ABP_Pover_Base.ABP_Pover_Base") ||
+		LayerBlueprint->GetPathName() != TEXT("/Game/Main/Character/Hero/Anim/Layer/ABP_Pover_LocomotionBase.ABP_Pover_LocomotionBase"))
+	{ return TEXT("ERROR: unexpected asset or PIE is active"); }
+	const FScopedTransaction Transaction(NSLOCTEXT("HodgeAnimation", "FacingModes", "Isolate free and strafe locomotion"));
+	MainBlueprint->Modify(); LayerBlueprint->Modify();
+	int32 DirectionEntries = 0; int32 WarpingEntries = 0;
+	TArray<UEdGraph*> Graphs; LayerBlueprint->GetAllGraphs(Graphs);
+	auto AddMainProperty = [LayerBlueprint](UEdGraph* Graph, FName Property) -> UEdGraphPin*
+	{
+		using namespace HodgeAnimationAuthoring;
+		auto* MainCall = FindOrAddPoseNode<UK2Node_CallFunction>(Graph, TEXT("HodgeFacingMainAnim"), -1000, -300);
+		UFunction* Function = LayerBlueprint->GeneratedClass ? LayerBlueprint->GeneratedClass->FindFunctionByName(TEXT("GetMainAnimBPThreadSafe")) : nullptr;
+		if (!Function) { return nullptr; }
+		MainCall->SetFromFunction(Function); MainCall->ReconstructNode();
+		auto* Get = FindOrAddPoseNode<UK2Node_VariableGet>(Graph, FName(TEXT("HodgeFacing_") + Property.ToString()), -800, -300);
+		Get->VariableReference.SetExternalMember(Property, UHodgeAnimInstance::StaticClass()); Get->ReconstructNode();
+		UEdGraphPin* Object = MainCall->FindPin(TEXT("ReturnValue")); UEdGraphPin* Self = Get->FindPin(UEdGraphSchema_K2::PN_Self);
+		if (!Object || !Self || (!Object->LinkedTo.Contains(Self) && !Graph->GetSchema()->TryCreateConnection(Object, Self))) { return nullptr; }
+		return Get->FindPin(Property);
+	};
+	for (UEdGraph* Graph : Graphs)
+	{
+		const auto OriginalNodes = Graph->Nodes;
+		for (UEdGraphNode* Node : OriginalNodes)
+		{
+			if (auto* Select = Cast<UK2Node_Select>(Node); Select && Select->GetEnum() &&
+				Select->GetEnum()->GetName() == TEXT("AnimEnum_CardinalDirection") &&
+				(Graph->GetFName() == TEXT("UpdateCycleAnim") || Graph->GetFName() == TEXT("SetUpStopAnim") || Graph->GetFName() == TEXT("SetUpStartAnim")))
+			{
+				++DirectionEntries;
+				const FName NewName(TEXT("HodgeFacingDirection_") + Node->GetName());
+				if (FindObject<UK2Node_Select>(Graph, *NewName.ToString())) { continue; }
+				UEdGraphPin* Mode = AddMainProperty(Graph, TEXT("bUseStrafeLocomotion"));
+				if (!Mode) { return TEXT("ERROR: cannot bind main facing snapshot"); }
+				Node->Modify(); Graph->Modify();
+				UEdGraphPin* Index = Select->GetIndexPin(); const auto Sources = Index->LinkedTo;
+				auto* Branch = HodgeAnimationAuthoring::FindOrAddPoseNode<UK2Node_Select>(Graph, NewName, Node->NodePosX - 250, Node->NodePosY - 80);
+				if (!HodgeAnimationAuthoring::ImportProperty(Branch, TEXT("IndexPinType"), TEXT("(PinCategory=\"bool\",PinSubCategory=\"\")")))
+				{ return TEXT("ERROR: cannot initialize mode selector"); }
+				Branch->ReconstructNode();
+				TArray<UEdGraphPin*> Options; Branch->GetOptionPins(Options);
+				if (Options.Num() != 2) { return TEXT("ERROR: mode selector has unexpected pins"); }
+				FEdGraphPinType ValueType = Index->PinType;
+				ValueType.PinSubCategory = NAME_None; ValueType.PinSubCategoryObject = Select->GetEnum();
+				for (UEdGraphPin* Pin : Options) { Pin->PinType = ValueType; }
+				Branch->GetReturnValuePin()->PinType = ValueType;
+				Options[0]->DefaultValue = Select->GetEnum()->GetNameStringByIndex(0);
+				Graph->GetSchema()->BreakPinLinks(*Index, true);
+				for (UEdGraphPin* Source : Sources)
+				{ if (!Graph->GetSchema()->TryCreateConnection(Source, Options[1])) { return TEXT("ERROR: cannot preserve strafe direction"); } }
+				const auto ModeResponse = Graph->GetSchema()->CanCreateConnection(Mode, Branch->GetIndexPin());
+				if (!Graph->GetSchema()->TryCreateConnection(Mode, Branch->GetIndexPin()))
+				{ return TEXT("ERROR: mode selector: ") + ModeResponse.Message.ToString(); }
+				const auto DirectionResponse = Graph->GetSchema()->CanCreateConnection(Branch->GetReturnValuePin(), Index);
+				if (!Graph->GetSchema()->TryCreateConnection(Branch->GetReturnValuePin(), Index))
+				{ return TEXT("ERROR: direction selector: ") + DirectionResponse.Message.ToString(); }
+				Branch->NodeComment = TEXT("Free: Forward; ReservedStrafe: original actor / visual relative direction");
+			}
+			if (Node->GetClass()->GetName().Contains(TEXT("OrientationWarping")))
+			{
+				auto* AnimNode = Cast<UAnimGraphNode_Base>(Node);
+				if (!AnimNode) { return TEXT("ERROR: unexpected warping node"); }
+				AnimNode->Modify();
+				for (int32 Index = 0; Index < AnimNode->ShowPinForProperties.Num(); ++Index)
+				{ if (AnimNode->ShowPinForProperties[Index].PropertyName == TEXT("Alpha")) { AnimNode->SetPinVisibility(true, Index); break; } }
+				UEdGraphPin* Alpha = Node->FindPin(TEXT("Alpha"));
+				UEdGraphPin* Weight = AddMainProperty(Graph, TEXT("StrafeLocomotionWeight"));
+				if (!Alpha || !Weight) { return TEXT("ERROR: cannot bind warping mode weight"); }
+				Graph->GetSchema()->BreakPinLinks(*Alpha, true);
+				if (!Graph->GetSchema()->TryCreateConnection(Weight, Alpha)) { return TEXT("ERROR: cannot connect warping mode weight"); }
+				++WarpingEntries;
+			}
+		}
+	}
+	if (DirectionEntries < 6 || WarpingEntries < 1) { return TEXT("ERROR: required locomotion graphs missing"); }
+	FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(MainBlueprint);
+	FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(LayerBlueprint);
+	return FString::Printf(TEXT("OK DirectionEntries=%d WarpingEntries=%d"), DirectionEntries, WarpingEntries);
 }
 
 bool UHodgeAnimationAuthoringLibrary::ConfigureAnimationLabPIE(int32 PlayerCount, bool bListenServer)

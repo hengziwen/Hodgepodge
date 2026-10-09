@@ -25,11 +25,13 @@
 - [Main 主角受击接入](Validation/hero-hit-reaction-setup-2026-10-08.md)：正式 AnimBP／独立轻反馈 Group／Profile／GA 授予，以及两个客户端模式的真实播放和骨骼混合验证。
 - [受击退出与联机动作审查](Validation/animation-network-review-2026-10-09.md)：取消复制语义、移动取消预测／拒绝恢复、网络模拟残留、受击素材时长及前后实测时序。
 - [正式动画说明](../Content/Main/Character/Hero/Anim/README.md)、[Lyra 动画研究过程](Design/lyra-animation-inspection-20261004.md)。
+- [旋转模式与动画隔离](Design/character-facing-modes.md)、[接口指南](Guides/character-facing-configuration.md)、[实现与测试报告](Validation/character-facing-implementation-2026-10-10.md)：Free／预留八向分支、动作覆盖、输入快照、预测与实际覆盖率；不含完整锁定目标／CameraMode。
 
 Design 并非全是未实现草案：各篇开头区分当前实现、历史设计和后续目标；历史示例不覆盖当前事实。
 
 ## 战斗后续设计（尚未实施）
 
+- [Dash 与 Sprint 设计](Design/dash-sprint-system.md)：无冷却、共享体力、按下短冲刺／长按奔跑衔接、完美闪避、移动／旋转／动画策略、接口与联机验收。
 - [近战索敌与攻击吸附](Design/melee-attack-assist.md)：软索敌、手动锁定、起手转向、有限接近、真实命中边界、预测与空中追击衔接。
 
 攻击吸附仍为设计草案，相关接口尚未创建；受击核心的当前字段见受击配置手册，削韧仍只预留数值。

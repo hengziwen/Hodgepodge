@@ -54,6 +54,9 @@ public:
 	/** 在 Main 主角图中接入全身动作后的上身加法受击，不保存资产。 */
 	UFUNCTION(BlueprintCallable, Category = "Hodge|Editor|Animation")
 	static bool ConfigureHeroHitReactionGraph(UAnimBlueprint* Blueprint);
+	/** 隔离方向资源入口，保留原八向分支并添加 Free 选择。 */
+	UFUNCTION(BlueprintCallable, Category="Hodge|Editor|Animation")
+	static FString ConfigureHeroFacingModes(UAnimBlueprint* MainBlueprint, UAnimBlueprint* LayerBlueprint);
 
 	UFUNCTION(BlueprintCallable, Category = "Hodge|Editor|Animation")
 	static bool SetSkeletonSlotGroup(USkeleton* Skeleton, FName Slot, FName Group);

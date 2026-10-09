@@ -2,6 +2,7 @@
 
 // HeroComponent 本体定义。
 #include "Component/HodgeHeroComponent.h"
+#include "Component/HodgeCharacterRotationComponent.h"
 #include "Component/HodgeCombatComponentBase.h"
 
 // GameFramework 组件委托相关定义。
@@ -869,7 +870,7 @@ void UHodgeHeroComponent::Input_Move(const FInputActionValue& InputActionValue)
 		const FVector2D Value = InputActionValue.Get<FVector2D>();
 
 		// 只使用 ControlRotation 的 Yaw，忽略 Pitch 和 Roll。
-		const FRotator MovementRotation(0.0f, Controller->GetControlRotation().Yaw, 0.0f);
+		const FRotator MovementRotation(0.0f, MoveIntentSnapshot.ControllerYawAtSample, 0.0f);
 
 		// 存在左右输入时处理横向移动。
 		if (Value.X != 0.0f)
@@ -911,7 +912,13 @@ bool UHodgeHeroComponent::HasMoveIntent(float Threshold) const
 // 记录移动意图并按需广播变化。
 void UHodgeHeroComponent::SetMoveIntent(const FVector2D& NewValue)
 {
-	CurrentMoveInput = NewValue;
+	CurrentMoveInput = NewValue.ContainsNaN() ? FVector2D::ZeroVector : NewValue;
+	const APawn* Pawn = GetPawn<APawn>();
+	const auto* Rotation = Pawn ? Pawn->FindComponentByClass<UHodgeCharacterRotationComponent>() : nullptr;
+	const float Yaw = Pawn && Pawn->Controller ? Pawn->Controller->GetControlRotation().Yaw : 0.f;
+	MoveIntentSnapshot = HodgeFacing::MakeMoveIntent(CurrentMoveInput, Yaw,
+		GetWorld() ? GetWorld()->GetTimeSeconds() : 0., Rotation ? Rotation->GetAvatarGeneration() : 0);
+	if (!Pawn || !Pawn->Controller) { MoveIntentSnapshot.DesiredDirectionWorld = FVector::ZeroVector; }
 	RefreshMoveIntent();
 }
 

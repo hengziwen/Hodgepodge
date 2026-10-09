@@ -7,6 +7,7 @@
 #include "Component/HodgeCharacterMovementComponent.h"
 #include "Component/HodgeCharacterRotationComponent.h"
 #include "Engine/World.h"
+#include "GameFramework/PlayerController.h"
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeCharacterRotationConstraintsTest, "Hodge.Rotation.ConstraintsAndReplay",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
@@ -33,6 +34,9 @@ bool FHodgeCharacterRotationConstraintsTest::RunTest(const FString& Parameters)
 	UHodgeCharacterRotationComponent* Rotation = Character->GetCharacterRotationComponent();
 	Rotation->InitializeWithAbilitySystem(ASC);
 	Rotation->InitializeWithAbilitySystem(ASC);
+	APlayerController* Controller = World->SpawnActor<APlayerController>();
+	Controller->Possess(Character);
+	Rotation->AcquireBaseFacingMode(EHodgeCharacterFacingDriver::Controller, Character);
 	ASC->AddLooseGameplayTag(HodgeGameplayTags::Status_Rotation_Locked);
 	ASC->AddLooseGameplayTag(HodgeGameplayTags::Status_Rotation_Locked);
 	TestTrue(TEXT("Two window owners lock yaw"), Rotation->IsYawLocked());

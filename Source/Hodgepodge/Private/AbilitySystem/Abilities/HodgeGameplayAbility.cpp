@@ -17,6 +17,7 @@
 #include "Camera/HodgeCameraMode.h"
 #include "Character/HodgeCombatCharacter.h"
 #include "Component/HodgeHeroComponent.h"
+#include "Component/HodgeCharacterRotationComponent.h"
 #include "Interface/HodgeAbilitySourceInterface.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeGameplayAbility)
@@ -306,6 +307,11 @@ void UHodgeGameplayAbility::EndAbility(const FGameplayAbilitySpecHandle Handle,
 {
 	// Ability 结束时清除它设置的 CameraMode。
 	ClearCameraMode();
+	if (ActorInfo && ActorInfo->AvatarActor.IsValid())
+	{
+		if (auto* Rotation = ActorInfo->AvatarActor->FindComponentByClass<UHodgeCharacterRotationComponent>())
+		{ Rotation->ReleaseRequestsForSource(this); }
+	}
 
 	// 执行 UGameplayAbility 的原始结束逻辑。
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);

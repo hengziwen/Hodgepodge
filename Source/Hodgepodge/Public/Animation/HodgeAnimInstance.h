@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameplayEffectTypes.h"
 #include "Animation/AnimInstance.h"
+#include "Combat/HodgeCharacterFacingTypes.h"
 #include "HodgeAnimInstance.generated.h"
 
 /**
@@ -52,4 +53,15 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Character State Data")
 	float LocomotionRootYawScale = 1.f;
+
+	UPROPERTY(BlueprintReadOnly, Category="Character State Data")
+	FHodgeFacingPresentationSnapshot FacingPresentation;
+	UPROPERTY(BlueprintReadOnly, Category="Character State Data")
+	bool bUseStrafeLocomotion = false;
+	UPROPERTY(BlueprintReadOnly, Category="Character State Data")
+	float StrafeLocomotionWeight = 0.f;
+	UPROPERTY(BlueprintReadOnly, Category="Character State Data")
+	bool bAllowLocomotionPivot = false;
+	UPROPERTY(EditDefaultsOnly, Category="Character State Data", meta=(ClampMin="0", Units="s"))
+	float FacingModeBlendTime = .12f;
 };

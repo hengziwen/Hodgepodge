@@ -4,6 +4,8 @@
 
 日期：2026-10-05。适用 UE 5.5.4 与单一 Hodgepodge Runtime 模块。本文件先记录设计，再随实际实现和验证更新状态；规划不代表已经完成。
 
+2026-10-09 后续模式设计见[角色旋转与移动动画模式调整](character-facing-modes.md)：Free 默认、八向保留隔离、动作临时覆盖与恢复；核心已实施，见[接口指南](../Guides/character-facing-configuration.md)和[本轮验证](../Validation/character-facing-implementation-2026-10-10.md)。本文继续保留既有旋转约束和历史验收；下文 ControllerYaw／Timeline 基线是当时记录，不代表当前正式主角配置，也不要求恢复已归档的自建 Timeline。
+
 ## 问题与基线
 
 正式 BP_Hero_Pover 使用 `/Game/Main/Character/Hero/Anim/ABP_Pover_Base`，UseControllerRotationYaw=True，OrientRotationToMovement=False，UseControllerDesiredRotation=False。HeroComponent 的视角输入继续更新 Controller Rotation，Actor 经 FaceRotation 跟随它。FullBody 蒙太奇只覆盖姿势，不会禁止这个物理旋转。

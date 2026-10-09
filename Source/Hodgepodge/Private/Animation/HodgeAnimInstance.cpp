@@ -69,11 +69,18 @@ void UHodgeAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		                                                   ? CombatCharacter->GetCharacterRotationComponent()
 		                                                   : nullptr;
 	const float FullBodyWeight = FMath::Clamp(GetSlotMontageLocalWeight(FName(TEXT("FullBody"))), 0.f, 1.f);
+	FacingPresentation = Rotation ? Rotation->GetFacingPresentationSnapshot() : FHodgeFacingPresentationSnapshot();
+	bUseStrafeLocomotion = FacingPresentation.Style == EHodgeLocomotionStyle::ReservedStrafe;
+	const float TargetWeight = bUseStrafeLocomotion ? 1.f : 0.f;
+	StrafeLocomotionWeight = FacingModeBlendTime > 0.f ? FMath::FInterpConstantTo(StrafeLocomotionWeight,
+		TargetWeight, FMath::Max(0.f, DeltaSeconds), 1.f / FacingModeBlendTime) : TargetWeight;
 	bSuppressLocomotionYaw = FullBodyWeight > KINDA_SMALL_NUMBER
-		|| (Rotation && (Rotation->IsYawLocked() || Rotation->IsRecoveringFacing()));
-	LocomotionRootYawScale = 1.f - FullBodyWeight;
+		|| !bUseStrafeLocomotion || FacingPresentation.bYawLocked || FacingPresentation.bRecoveringFacing;
+	LocomotionRootYawScale = (1.f - FullBodyWeight) * StrafeLocomotionWeight;
+	bAllowLocomotionPivot = !bUseStrafeLocomotion && !FacingPresentation.bYawLocked &&
+		!FacingPresentation.bRecoveringFacing && FullBodyWeight <= KINDA_SMALL_NUMBER;
 	if (!bSuppressLocomotionYaw) { bResetLocomotionYaw = false; }
-	else if (FullBodyWeight >= 1.f - KINDA_SMALL_NUMBER) { bResetLocomotionYaw = true; }
+	else { bResetLocomotionYaw = FullBodyWeight >= 1.f - KINDA_SMALL_NUMBER || LocomotionRootYawScale <= KINDA_SMALL_NUMBER; }
 
 	// 获取当前动画实例所属的 HodgeCharacter
 	const AHodgeCharacterBase* Character = Cast<AHodgeCharacterBase>(GetOwningActor());

@@ -1,4 +1,10 @@
 #include "HodgeCombatValidationLibrary.h"
+#include "Component/HodgeCharacterRotationComponent.h"
+#include "AbilitySystemGlobals.h"
+#include "Animation/AnimClassInterface.h"
+#include "Animation/AnimNode_SequencePlayer.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "UObject/UnrealType.h"
 #include "AbilitySystem/HodgeAbilitySystemComponent.h"
 #include "Abilities/GameplayAbility.h"
 #include "Engine/World.h"
@@ -14,6 +20,70 @@
 #include "Engine/StaticMeshActor.h"
 #include "Animation/Skeleton.h"
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeCombatValidationLibrary)
+
+TArray<FName> UHodgeCombatValidationLibrary::InspectFacingSequences(AActor* Avatar)
+{
+	TArray<FName> Result;
+	const auto* Character = Cast<ACharacter>(Avatar);
+	if (!Character || !Character->GetMesh()) { return Result; }
+	const USkeletalMeshComponent* Mesh = Character->GetMesh();
+	TArray<UAnimInstance*> Instances = Mesh->GetLinkedAnimInstances();
+	Instances.Add(Character->GetMesh()->GetAnimInstance());
+	for (UAnimInstance* Instance : Instances)
+	{
+		const IAnimClassInterface* Class = Instance ? IAnimClassInterface::GetFromClass(Instance->GetClass()) : nullptr;
+		if (!Class) { continue; }
+		for (FStructProperty* Property : Class->GetAnimNodeProperties())
+		{
+			if (!Property || !Property->Struct->IsChildOf(FAnimNode_SequencePlayerBase::StaticStruct())) { continue; }
+			const auto* Node = Property->ContainerPtrToValuePtr<FAnimNode_SequencePlayerBase>(Instance);
+			if (Node && Node->GetCachedBlendWeight() > .05f && Node->GetSequence()) { Result.AddUnique(Node->GetSequence()->GetFName()); }
+		}
+	}
+	return Result;
+}
+
+bool UHodgeCombatValidationLibrary::SetFacingValidationControllerPermission(AActor* Avatar, bool bAllow)
+{
+	if (!Avatar || !Avatar->HasAuthority() || !Avatar->GetWorld() || Avatar->GetWorld()->WorldType != EWorldType::PIE) { return false; }
+	auto* Rotation = Avatar->FindComponentByClass<UHodgeCharacterRotationComponent>();
+	auto* Property = FindFProperty<FBoolProperty>(UHodgeCharacterRotationComponent::StaticClass(), TEXT("bAllowControllerFacingRequests"));
+	if (!Rotation || !Property) { return false; }
+	Property->SetPropertyValue_InContainer(Rotation, bAllow);
+	return true;
+}
+
+bool UHodgeCombatValidationLibrary::QueueFacingMode(AActor* Avatar, EHodgeCharacterFacingDriver Driver, bool bRelease)
+{
+	if (!Avatar || !Avatar->GetWorld() || !Avatar->FindComponentByClass<UHodgeCharacterRotationComponent>()) { return false; }
+	const TWeakObjectPtr<AActor> WeakAvatar = Avatar;
+	Avatar->GetWorld()->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateLambda([WeakAvatar, Driver, bRelease]()
+	{
+		if (!WeakAvatar.IsValid()) { return; }
+		auto* Rotation = WeakAvatar->FindComponentByClass<UHodgeCharacterRotationComponent>();
+		if (!Rotation) { return; }
+		if (bRelease) { Rotation->ReleaseRequestsForSource(WeakAvatar.Get()); }
+		else { Rotation->AcquireBaseFacingMode(Driver, WeakAvatar.Get()); }
+	}));
+	return true;
+}
+
+bool UHodgeCombatValidationLibrary::QueueActionFacing(AActor* Avatar, FVector Direction, bool bRelease, bool bInstant)
+{
+	if (!Avatar || !Avatar->GetWorld()) { return false; }
+	const TWeakObjectPtr<AActor> WeakAvatar = Avatar;
+	Avatar->GetWorld()->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateLambda([WeakAvatar, Direction, bRelease, bInstant]()
+	{
+		if (!WeakAvatar.IsValid()) { return; }
+		auto* Rotation = WeakAvatar->FindComponentByClass<UHodgeCharacterRotationComponent>();
+		auto* ASC = Cast<UHodgeAbilitySystemComponent>(UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(WeakAvatar.Get()));
+		auto* Ability = ASC ? Cast<UHodgeGameplayAbility_Definition>(ASC->GetAnimatingAbility()) : nullptr;
+		if (!Rotation || !Ability) { return; }
+		if (bRelease) { Rotation->ReleaseRequestsForSource(Ability); }
+		else { Rotation->RequestActionFacing(Direction, Ability, Ability->GetExecutionId(), bInstant); }
+	}));
+	return true;
+}
 
 bool UHodgeCombatValidationLibrary::QueueAbilityAction(UHodgeAbilitySystemComponent* ASC, FGameplayAbilitySpecHandle Handle, bool bCancel)
 {

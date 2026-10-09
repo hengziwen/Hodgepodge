@@ -13,6 +13,7 @@
 
 // GAS AbilitySpecHandle，用于唯一标识某个 GameplayAbilitySpec。
 #include "GameplayAbilitySpecHandle.h"
+#include "Combat/HodgeCharacterFacingTypes.h"
 
 #include "HodgeHeroComponent.generated.h"
 
@@ -120,6 +121,10 @@ public:
 	// 最近的二维移动输入原始值（X = 左右，Y = 前后；未做阈值判断），供需要方向或大小的消费方使用。
 	UFUNCTION(BlueprintPure, Category = "Hodge|Hero|Input")
 	FVector2D GetMoveIntent() const { return CurrentMoveInput; }
+	UFUNCTION(BlueprintPure, Category="Hodge|Hero|Input")
+	FHodgeMoveIntentSnapshot GetMoveIntentSnapshot() const { return MoveIntentSnapshot; }
+	UFUNCTION(BlueprintPure, Category="Hodge|Hero|Input")
+	FVector GetWorldMoveIntent() const { return MoveIntentSnapshot.DesiredDirectionWorld; }
 
 	// 移动意图变化事件：只在 false ↔ true 翻转时广播。
 	UPROPERTY(BlueprintAssignable, Category = "Hodge|Hero|Input")
@@ -226,6 +231,7 @@ protected:
 	 * 它同时供 HasMoveIntent / GetMoveIntent 与 OnMoveIntentChanged 使用。
 	 */
 	FVector2D CurrentMoveInput = FVector2D::ZeroVector;
+	FHodgeMoveIntentSnapshot MoveIntentSnapshot;
 
 	// 上一次广播出去的移动意图，用于"只在翻转时广播"。
 	bool bLastMoveIntent = false;

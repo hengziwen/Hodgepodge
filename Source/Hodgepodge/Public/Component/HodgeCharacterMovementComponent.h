@@ -4,6 +4,7 @@
 
 #include "GameFramework/CharacterMovementComponent.h"
 #include "NativeGameplayTags.h"
+#include "GameFramework/CharacterMovementReplication.h"
 
 #include "HodgeCharacterMovementComponent.generated.h"
 
@@ -82,8 +83,12 @@ public:
 	void SetHitReactionMoveReplay(bool bControlled) { bHasReactionReplay = true; bReactionReplayControlled = bControlled; }
 
 	virtual void PhysicsRotation(float DeltaTime) override;
+	virtual void ServerMove_PerformMovement(const FCharacterNetworkMoveData& MoveData) override;
 	virtual FNetworkPredictionData_Client* GetPredictionData_Client() const override;
 	virtual bool ClientUpdatePositionAfterServerUpdate() override;
+#if WITH_DEV_AUTOMATION_TESTS
+	FCharacterNetworkMoveDataContainer& GetFacingMoveDataForTests() { return *FacingMoveData; }
+#endif
 	virtual void SmoothCorrection(const FVector& OldLocation, const FQuat& OldRotation,
 		const FVector& NewLocation, const FQuat& NewRotation) override;
 
@@ -108,4 +113,5 @@ protected:
 	bool bHasReactionReplay = false;
 	bool bReactionReplayControlled = false;
 	bool IsHitReactionControlled() const;
+	TUniquePtr<FCharacterNetworkMoveDataContainer> FacingMoveData;
 };

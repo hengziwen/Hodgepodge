@@ -64,7 +64,9 @@ namespace HodgeRotationPrediction
 		virtual bool CanCombineWith(const FSavedMovePtr& NewMove, ACharacter* Character, float MaxDelta) const override
 		{
 			const FSavedMove* Other = static_cast<const FSavedMove*>(NewMove.Get());
-			if (!Other || bReactionControlled != Other->bReactionControlled || RotationState.bYawLocked != Other->RotationState.bYawLocked
+			if (!Other || RotationState.Driver != Other->RotationState.Driver || RotationState.Style != Other->RotationState.Style
+				|| RotationState.RequestSequence != Other->RotationState.RequestSequence || RotationState.ActionRequestId != Other->RotationState.ActionRequestId
+				|| bReactionControlled != Other->bReactionControlled || RotationState.bYawLocked != Other->RotationState.bYawLocked
 				|| RotationState.bRecoveringFacing != Other->RotationState.bRecoveringFacing
 				|| (RotationState.bYawLocked && FMath::Abs(FMath::FindDeltaAngleDegrees(
 					RotationState.LockedYaw, Other->RotationState.LockedYaw)) > KINDA_SMALL_NUMBER))
@@ -97,12 +99,36 @@ namespace HodgeRotationPrediction
 
 		virtual FSavedMovePtr AllocateNewMove() override { return FSavedMovePtr(new FSavedMove()); }
 	};
+
+	struct FMoveData final : FCharacterNetworkMoveData
+	{
+		uint32 FacingSequence = 0;
+		virtual void ClientFillNetworkMoveData(const FSavedMove_Character& Move, ENetworkMoveType Type) override
+		{
+			FCharacterNetworkMoveData::ClientFillNetworkMoveData(Move, Type);
+			FacingSequence = static_cast<const FSavedMove&>(Move).RotationState.RequestSequence;
+		}
+		virtual bool Serialize(UCharacterMovementComponent& Movement, FArchive& Ar, UPackageMap* Map, ENetworkMoveType Type) override
+		{
+			const bool bValid = FCharacterNetworkMoveData::Serialize(Movement, Ar, Map, Type);
+			Ar.SerializeIntPacked(FacingSequence);
+			return bValid && !Ar.IsError();
+		}
+	};
+
+	struct FMoveDataContainer final : FCharacterNetworkMoveDataContainer
+	{
+		FMoveData Moves[3];
+		FMoveDataContainer() { NewMoveData = &Moves[0]; PendingMoveData = &Moves[1]; OldMoveData = &Moves[2]; }
+	};
 }
 
 
 UHodgeCharacterMovementComponent::UHodgeCharacterMovementComponent(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+	FacingMoveData = MakeUnique<HodgeRotationPrediction::FMoveDataContainer>();
+	SetNetworkMoveDataContainer(*FacingMoveData);
 }
 
 // 模拟角色移动，存在服务端同步加速度时需要保护复制过来的加速度不被父类逻辑覆盖
@@ -262,7 +288,18 @@ FRotator UHodgeCharacterMovementComponent::GetDeltaRotation(float DeltaTime) con
 void UHodgeCharacterMovementComponent::PhysicsRotation(float DeltaTime)
 {
 	UHodgeCharacterRotationComponent* Rotation = HodgeRotationPrediction::FindRotation(CharacterOwner);
+	if (Rotation && Rotation->IsFacingSystemReady()) { Rotation->ApplyResolvedMode(); }
 	if (Rotation && Rotation->IsYawLocked() && CharacterOwner->GetLocalRole() != ROLE_SimulatedProxy) { return; }
+	if (Rotation && Rotation->IsFacingSystemReady() && CharacterOwner->GetLocalRole() != ROLE_SimulatedProxy &&
+		Rotation->GetResolvedState().Driver == EHodgeCharacterFacingDriver::ActionDirection)
+	{
+		const float TargetYaw = Rotation->GetResolvedState().ActionYaw;
+		FRotator Facing = CharacterOwner->GetActorRotation();
+		Facing.Yaw = FMath::FixedTurn(Facing.Yaw, TargetYaw, FMath::Abs(GetDeltaRotation(DeltaTime).Yaw));
+		MoveUpdatedComponent(FVector::ZeroVector, Facing, false);
+		Rotation->NotifyFacingApplied(TargetYaw);
+		return;
+	}
 	FRotator DesiredRotation = CharacterOwner ? CharacterOwner->GetActorRotation() : FRotator::ZeroRotator;
 	if (Rotation && Rotation->IsRecoveringFacing() && CharacterOwner)
 	{
@@ -281,6 +318,16 @@ void UHodgeCharacterMovementComponent::PhysicsRotation(float DeltaTime)
 	{
 		Rotation->NotifyFacingApplied(DesiredRotation.Yaw);
 	}
+}
+
+void UHodgeCharacterMovementComponent::ServerMove_PerformMovement(const FCharacterNetworkMoveData& MoveData)
+{
+	UHodgeCharacterRotationComponent* Rotation = HodgeRotationPrediction::FindRotation(CharacterOwner);
+	const bool bServerOverride = CharacterOwner && CharacterOwner->HasAuthority() && Rotation;
+	if (bServerOverride)
+	{ Rotation->BeginServerMove(static_cast<const HodgeRotationPrediction::FMoveData&>(MoveData).FacingSequence); }
+	Super::ServerMove_PerformMovement(MoveData);
+	if (bServerOverride) { Rotation->EndServerMove(); }
 }
 
 bool UHodgeCharacterMovementComponent::MoveUpdatedComponentImpl(const FVector& Delta, const FQuat& NewRotation,

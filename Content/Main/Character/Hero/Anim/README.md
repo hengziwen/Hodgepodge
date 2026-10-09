@@ -1,5 +1,7 @@
 # Pover 动画系统
 
+2026-10-10 旋转模式更新：正式主角以 Free 为默认；固定层的原方向图保留为 ReservedStrafe，9 个方向资源入口按模式选择、4 个 OrientationWarping 消费模式权重。主图／固定层已编译保存，Pivot 仍禁用。下文较早的 ControllerYaw=True 基线保留历史；当前接口与验证见[旋转配置指南](../../../../../Docs/Guides/character-facing-configuration.md)及[实现报告](../../../../../Docs/Validation/character-facing-implementation-2026-10-10.md)。完整锁定目标服务和锁定 CameraMode 未实现。
+
 > 2026-10-06 状态同步：正式主图现为 ABP_Pover_Base；固定层/FullBody/Stop 保留，Start 无入口、Pivot 禁用。角色旋转锁按 Timeline，武器可见 Mesh 在 WeaponOnBack 插槽停靠，检测 Mesh 留手部。下文迁移验收为历史过程，当前路径已同步。 当前项目事实见 [本轮更新](../../../../../Docs/KnowledgeBase/26-update-2026-10-06.md)。
 
 2026-10-05 将已验收的 CodexText 动画系统迁入本目录。正式角色 `/Game/Main/Character/Hero/BP_Hero_Pover` 已切换到下列资源，现有 Experience、PawnData、PlayerState ASC、输入及默认剑初始化继续使用原调用链。
