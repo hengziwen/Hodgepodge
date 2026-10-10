@@ -27,11 +27,15 @@
 - [正式动画说明](../Content/Main/Character/Hero/Anim/README.md)、[Lyra 动画研究过程](Design/lyra-animation-inspection-20261004.md)。
 - [旋转模式与动画隔离](Design/character-facing-modes.md)、[接口指南](Guides/character-facing-configuration.md)、[实现与测试报告](Validation/character-facing-implementation-2026-10-10.md)：Free／预留八向分支、动作覆盖、输入快照、预测与实际覆盖率；不含完整锁定目标／CameraMode。
 
+- [Dash 与 Sprint 设计](Design/dash-sprint-system.md)、[配置指南](Guides/dash-sprint-configuration.md)：v1.4 加入[根运动 Pivot 滑步修复](Validation/pivot-foot-slide-2026-10-10.md)，并保留之前将位移与动画时长分开，配置后摇取消／长按衔接与 Pivot 倍率，暂时移除体力系统；[本轮验证](Validation/dash-sprint-timing-2026-10-10.md)包括 31 项原生、40 项真实 PIE 场景及本轮可测行覆盖率。此前 v1.2 的结果仅见[历史实施报告](Validation/dash-sprint-implementation-2026-10-10.md)。
+- [Dash 标签映射中断配置](Guides/dash-interrupt-configuration.md)：当前玩家映射、攻击分类、强制取消授权和 Death 豁免；Dash 不再依赖旧攻击后摇窗口。[本轮验证](Validation/dash-interrupt-2026-10-10.md)包含 34 项原生与 69 项单人／双客户端运行场景。
+- [Dash 过渡修复](Validation/dash-transitions-2026-10-10.md)：v1.6 保持脚部贴地、对齐位移与衔接开放、恢复 RMS 交接与重放速度策略，并提前检查 Pivot 起手。
+- [动画同步与 Pivot 恢复](Validation/animation-sync-pivot-2026-10-10.md)：v1.7 独立标记同步、恢复点混出、尾段再次掉头，以及预测动作朝向的迟到快照处理。
+
 Design 并非全是未实现草案：各篇开头区分当前实现、历史设计和后续目标；历史示例不覆盖当前事实。
 
 ## 战斗后续设计（尚未实施）
 
-- [Dash 与 Sprint 设计](Design/dash-sprint-system.md)：无冷却、共享体力、按下短冲刺／长按奔跑衔接、完美闪避、移动／旋转／动画策略、接口与联机验收。
 - [近战索敌与攻击吸附](Design/melee-attack-assist.md)：软索敌、手动锁定、起手转向、有限接近、真实命中边界、预测与空中追击衔接。
 
 攻击吸附仍为设计草案，相关接口尚未创建；受击核心的当前字段见受击配置手册，削韧仍只预留数值。

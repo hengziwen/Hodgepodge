@@ -1,0 +1,2322 @@
+{
+  "date": "2026-10-10",
+  "engine": "5.5.4",
+  "native": {
+    "succeeded": 25,
+    "succeededWithWarnings": 9,
+    "failed": 0,
+    "notRun": 0
+  },
+  "pie_reports": {
+    "single-0ms.json": {
+      "passed": 10,
+      "cases": [
+        {
+          "case": "forward_tap",
+          "passed": true,
+          "final": {
+            "case": "forward_tap",
+            "t": 3.9834477975964546,
+            "owner": {
+              "position": [
+                1290.15391767025,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Idle"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Idle",
+              "pivot": []
+            },
+            "server": {
+              "position": [
+                1290.15391767025,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Idle"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Idle",
+              "pivot": []
+            }
+          }
+        },
+        {
+          "case": "backward_tap",
+          "passed": true,
+          "final": {
+            "case": "backward_tap",
+            "t": 3.9834205992519855,
+            "owner": {
+              "position": [
+                719.9980825185776,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Idle"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Idle",
+              "pivot": []
+            },
+            "server": {
+              "position": [
+                719.9980825185776,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Idle"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Idle",
+              "pivot": []
+            }
+          }
+        },
+        {
+          "case": "side_tap",
+          "passed": true,
+          "final": {
+            "case": "side_tap",
+            "t": 3.9835666976869106,
+            "owner": {
+              "position": [
+                1000.0,
+                1280.0021588802338
+              ],
+              "yaw": 89.99999999999999,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Idle"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Idle",
+              "pivot": []
+            },
+            "server": {
+              "position": [
+                1000.0,
+                1280.0021588802338
+              ],
+              "yaw": 89.99999999999999,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Idle"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Idle",
+              "pivot": []
+            }
+          }
+        },
+        {
+          "case": "held_sprint",
+          "passed": true,
+          "final": {
+            "case": "held_sprint",
+            "t": 3.99619659781456,
+            "owner": {
+              "position": [
+                2859.7741678215684,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            },
+            "server": {
+              "position": [
+                2859.7741678215684,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            }
+          }
+        },
+        {
+          "case": "release_sprint",
+          "passed": true,
+          "final": {
+            "case": "release_sprint",
+            "t": 4.009551599621773,
+            "owner": {
+              "position": [
+                2592.891778966422,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            },
+            "server": {
+              "position": [
+                2592.891778966422,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            }
+          }
+        },
+        {
+          "case": "stop_sprint",
+          "passed": true,
+          "final": {
+            "case": "stop_sprint",
+            "t": 3.983382299542427,
+            "owner": {
+              "position": [
+                1469.7584611096468,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Hero_Sprint_F",
+                "A_Pover_Idle"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Idle",
+              "pivot": []
+            },
+            "server": {
+              "position": [
+                1469.7584611096468,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Hero_Sprint_F",
+                "A_Pover_Idle"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Idle",
+              "pivot": []
+            }
+          }
+        },
+        {
+          "case": "move_cancel",
+          "passed": true,
+          "final": {
+            "case": "move_cancel",
+            "t": 3.9867668002843857,
+            "owner": {
+              "position": [
+                2549.3534711976467,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            },
+            "server": {
+              "position": [
+                2549.3534711976467,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            }
+          }
+        },
+        {
+          "case": "delayed_hold",
+          "passed": true,
+          "final": {
+            "case": "delayed_hold",
+            "t": 3.9834605008363724,
+            "owner": {
+              "position": [
+                2859.774441018806,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            },
+            "server": {
+              "position": [
+                2859.774441018806,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            }
+          }
+        },
+        {
+          "case": "delayed_handoff",
+          "passed": true,
+          "final": {
+            "case": "delayed_handoff",
+            "t": 3.9989534988999367,
+            "owner": {
+              "position": [
+                2859.7745190649644,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            },
+            "server": {
+              "position": [
+                2859.7745190649644,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            }
+          }
+        },
+        {
+          "case": "pivot_turn",
+          "passed": true,
+          "final": {
+            "case": "pivot_turn",
+            "t": 3.9839110001921654,
+            "owner": {
+              "position": [
+                808.0394121469108,
+                1052.2130828310114
+              ],
+              "yaw": 180.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            },
+            "server": {
+              "position": [
+                808.0394121469108,
+                1052.2130828310114
+              ],
+              "yaw": 180.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            }
+          }
+        }
+      ]
+    },
+    "network-0ms.json": {
+      "passed": 10,
+      "cases": [
+        {
+          "case": "forward_tap",
+          "passed": true,
+          "final": {
+            "case": "forward_tap",
+            "t": 4.015530698001385,
+            "owner": {
+              "position": [
+                1286.2014770507812,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Idle"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Idle",
+              "pivot": []
+            },
+            "server": {
+              "position": [
+                1286.2014770507812,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Idle"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Idle",
+              "pivot": []
+            },
+            "observer": {
+              "position": [
+                1286.2,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Idle"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Idle",
+              "pivot": []
+            }
+          }
+        },
+        {
+          "case": "backward_tap",
+          "passed": true,
+          "final": {
+            "case": "backward_tap",
+            "t": 4.002978082746267,
+            "owner": {
+              "position": [
+                706.314954161644,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Idle"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Idle",
+              "pivot": []
+            },
+            "server": {
+              "position": [
+                706.3156127929688,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Idle"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Idle",
+              "pivot": []
+            },
+            "observer": {
+              "position": [
+                706.32,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Idle"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Idle",
+              "pivot": []
+            }
+          }
+        },
+        {
+          "case": "side_tap",
+          "passed": true,
+          "final": {
+            "case": "side_tap",
+            "t": 4.027732916176319,
+            "owner": {
+              "position": [
+                1000.0,
+                1304.3070316314697
+              ],
+              "yaw": 89.99999999999999,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Idle"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Idle",
+              "pivot": []
+            },
+            "server": {
+              "position": [
+                1000.0,
+                1304.3075561523438
+              ],
+              "yaw": 89.99999999999999,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Idle"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Idle",
+              "pivot": []
+            },
+            "observer": {
+              "position": [
+                1000.0,
+                1304.31
+              ],
+              "yaw": 89.99999999999999,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Idle"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Idle",
+              "pivot": []
+            }
+          }
+        },
+        {
+          "case": "held_sprint",
+          "passed": true,
+          "final": {
+            "case": "held_sprint",
+            "t": 4.016119699925184,
+            "owner": {
+              "position": [
+                2859.7743665794833,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            },
+            "server": {
+              "position": [
+                2859.774358361634,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            },
+            "observer": {
+              "position": [
+                2859.77,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            }
+          }
+        },
+        {
+          "case": "release_sprint",
+          "passed": true,
+          "final": {
+            "case": "release_sprint",
+            "t": 3.992136601358652,
+            "owner": {
+              "position": [
+                2587.2692046633024,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            },
+            "server": {
+              "position": [
+                2587.266447735851,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            },
+            "observer": {
+              "position": [
+                2587.27,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            }
+          }
+        },
+        {
+          "case": "stop_sprint",
+          "passed": true,
+          "final": {
+            "case": "stop_sprint",
+            "t": 3.9851526990532875,
+            "owner": {
+              "position": [
+                1470.8372130568014,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Idle"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Idle",
+              "pivot": []
+            },
+            "server": {
+              "position": [
+                1470.8378984011174,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Idle"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Idle",
+              "pivot": []
+            },
+            "observer": {
+              "position": [
+                1470.84,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Idle"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Idle",
+              "pivot": []
+            }
+          }
+        },
+        {
+          "case": "move_cancel",
+          "passed": true,
+          "final": {
+            "case": "move_cancel",
+            "t": 4.005681600421667,
+            "owner": {
+              "position": [
+                2552.4598025789437,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            },
+            "server": {
+              "position": [
+                2552.455716293273,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            },
+            "observer": {
+              "position": [
+                2552.46,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            }
+          }
+        },
+        {
+          "case": "delayed_hold",
+          "passed": true,
+          "final": {
+            "case": "delayed_hold",
+            "t": 4.031390447169542,
+            "owner": {
+              "position": [
+                2859.709390379016,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            },
+            "server": {
+              "position": [
+                2859.7087666964576,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            },
+            "observer": {
+              "position": [
+                2859.71,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            }
+          }
+        },
+        {
+          "case": "delayed_handoff",
+          "passed": true,
+          "final": {
+            "case": "delayed_handoff",
+            "t": 3.9997606948018074,
+            "owner": {
+              "position": [
+                2859.7748740109196,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            },
+            "server": {
+              "position": [
+                2859.7748551597747,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            },
+            "observer": {
+              "position": [
+                2859.77,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            }
+          }
+        },
+        {
+          "case": "pivot_turn",
+          "passed": true,
+          "final": {
+            "case": "pivot_turn",
+            "t": 3.9861980006098747,
+            "owner": {
+              "position": [
+                813.9692482364118,
+                1054.066168469935
+              ],
+              "yaw": 180.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            },
+            "server": {
+              "position": [
+                813.9607240572109,
+                1054.0661684892418
+              ],
+              "yaw": 180.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            },
+            "observer": {
+              "position": [
+                813.96,
+                1054.07
+              ],
+              "yaw": 180.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            }
+          }
+        }
+      ]
+    },
+    "network-100ms.json": {
+      "passed": 10,
+      "cases": [
+        {
+          "case": "forward_tap",
+          "passed": true,
+          "final": {
+            "case": "forward_tap",
+            "t": 4.000845100730658,
+            "owner": {
+              "position": [
+                1283.5968017578125,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Idle"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Idle",
+              "pivot": []
+            },
+            "server": {
+              "position": [
+                1283.5968017578125,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Idle"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Idle",
+              "pivot": []
+            },
+            "observer": {
+              "position": [
+                1283.6000000000001,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Idle"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Idle",
+              "pivot": []
+            }
+          }
+        },
+        {
+          "case": "backward_tap",
+          "passed": true,
+          "final": {
+            "case": "backward_tap",
+            "t": 3.9835540987551212,
+            "owner": {
+              "position": [
+                708.447265625,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Idle"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Idle",
+              "pivot": []
+            },
+            "server": {
+              "position": [
+                708.447265625,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Idle"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Idle",
+              "pivot": []
+            },
+            "observer": {
+              "position": [
+                708.45,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Idle"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Idle",
+              "pivot": []
+            }
+          }
+        },
+        {
+          "case": "side_tap",
+          "passed": true,
+          "final": {
+            "case": "side_tap",
+            "t": 4.037098083645105,
+            "owner": {
+              "position": [
+                1000.0,
+                1318.023681640625
+              ],
+              "yaw": 89.99999999999999,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Idle"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Idle",
+              "pivot": []
+            },
+            "server": {
+              "position": [
+                1000.0,
+                1318.023681640625
+              ],
+              "yaw": 89.99999999999999,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Idle"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Idle",
+              "pivot": []
+            },
+            "observer": {
+              "position": [
+                1000.0,
+                1318.02
+              ],
+              "yaw": 89.99999999999999,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Idle"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Idle",
+              "pivot": []
+            }
+          }
+        },
+        {
+          "case": "held_sprint",
+          "passed": true,
+          "final": {
+            "case": "held_sprint",
+            "t": 3.995327703654766,
+            "owner": {
+              "position": [
+                2859.7745108674253,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            },
+            "server": {
+              "position": [
+                2859.7745108674253,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            },
+            "observer": {
+              "position": [
+                2859.77,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            }
+          }
+        },
+        {
+          "case": "release_sprint",
+          "passed": true,
+          "final": {
+            "case": "release_sprint",
+            "t": 4.009086202830076,
+            "owner": {
+              "position": [
+                2598.890358230107,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            },
+            "server": {
+              "position": [
+                2598.890358230107,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            },
+            "observer": {
+              "position": [
+                2598.89,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            }
+          }
+        },
+        {
+          "case": "stop_sprint",
+          "passed": true,
+          "final": {
+            "case": "stop_sprint",
+            "t": 3.994939099997282,
+            "owner": {
+              "position": [
+                1421.5304984936008,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Idle"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Idle",
+              "pivot": []
+            },
+            "server": {
+              "position": [
+                1421.5304984936008,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Idle"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Idle",
+              "pivot": []
+            },
+            "observer": {
+              "position": [
+                1421.53,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Idle"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Idle",
+              "pivot": []
+            }
+          }
+        },
+        {
+          "case": "move_cancel",
+          "passed": true,
+          "final": {
+            "case": "move_cancel",
+            "t": 4.019055597484112,
+            "owner": {
+              "position": [
+                2499.736294176857,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            },
+            "server": {
+              "position": [
+                2499.736294176857,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            },
+            "observer": {
+              "position": [
+                2501.3019283616545,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                27.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F",
+                "A_Pover_Idle"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            }
+          }
+        },
+        {
+          "case": "delayed_hold",
+          "passed": true,
+          "final": {
+            "case": "delayed_hold",
+            "t": 4.011653818190098,
+            "owner": {
+              "position": [
+                2859.774296201813,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            },
+            "server": {
+              "position": [
+                2859.774296201813,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            },
+            "observer": {
+              "position": [
+                2859.77,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            }
+          }
+        },
+        {
+          "case": "delayed_handoff",
+          "passed": true,
+          "final": {
+            "case": "delayed_handoff",
+            "t": 4.015075698494911,
+            "owner": {
+              "position": [
+                2412.8339458761975,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            },
+            "server": {
+              "position": [
+                2412.8339458761975,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            },
+            "observer": {
+              "position": [
+                2412.83,
+                1000.0
+              ],
+              "yaw": 0.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            }
+          }
+        },
+        {
+          "case": "pivot_turn",
+          "passed": true,
+          "final": {
+            "case": "pivot_turn",
+            "t": 4.001989599317312,
+            "owner": {
+              "position": [
+                809.2809201362032,
+                1052.5053834847781
+              ],
+              "yaw": 180.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            },
+            "server": {
+              "position": [
+                809.2809201362032,
+                1052.5053834847781
+              ],
+              "yaw": 180.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            },
+            "observer": {
+              "position": [
+                809.28,
+                1052.51
+              ],
+              "yaw": 180.0,
+              "velocity": [
+                0.0,
+                0.0
+              ],
+              "sprinting": false,
+              "driver": "<HodgeCharacterFacingDriver.MOVEMENT: 0>",
+              "sequences": [
+                "A_Pover_Jog_F"
+              ],
+              "session": "<HodgeSprintInputState.IDLE: 0>",
+              "dash_committed": false,
+              "dash_variant": null,
+              "montage_position": 0.0,
+              "locomotion": "Stop",
+              "pivot": []
+            }
+          }
+        }
+      ]
+    },
+    "single-combat-0ms.json": {
+      "passed": 3,
+      "cases": [
+        {
+          "case": "attack_cancel_early",
+          "passed": true
+        },
+        {
+          "case": "attack_cancel_allowed",
+          "passed": true
+        },
+        {
+          "case": "sprint_attack_exit",
+          "passed": true
+        }
+      ]
+    },
+    "combat-0ms.json": {
+      "passed": 3,
+      "cases": [
+        {
+          "case": "attack_cancel_early",
+          "passed": true
+        },
+        {
+          "case": "attack_cancel_allowed",
+          "passed": true
+        },
+        {
+          "case": "sprint_attack_exit",
+          "passed": true
+        }
+      ]
+    },
+    "combat-100ms.json": {
+      "passed": 3,
+      "cases": [
+        {
+          "case": "attack_cancel_early",
+          "passed": true
+        },
+        {
+          "case": "attack_cancel_allowed",
+          "passed": true
+        },
+        {
+          "case": "sprint_attack_exit",
+          "passed": true
+        }
+      ]
+    },
+    "single-0ms-interrupt.json": {
+      "passed": 10,
+      "cases": [
+        {
+          "case": "early_attack_1",
+          "passed": true,
+          "outside_old_window": true
+        },
+        {
+          "case": "early_attack_2",
+          "passed": true,
+          "outside_old_window": true
+        },
+        {
+          "case": "early_attack_3",
+          "passed": true,
+          "outside_old_window": true
+        },
+        {
+          "case": "early_attack_4",
+          "passed": true,
+          "outside_old_window": true
+        },
+        {
+          "case": "early_attack_5",
+          "passed": true,
+          "outside_old_window": true
+        },
+        {
+          "case": "late_attack",
+          "passed": true,
+          "outside_old_window": false
+        },
+        {
+          "case": "death_state",
+          "passed": true,
+          "outside_old_window": false
+        },
+        {
+          "case": "death_dying",
+          "passed": true,
+          "outside_old_window": false
+        },
+        {
+          "case": "death_dead",
+          "passed": true,
+          "outside_old_window": false
+        },
+        {
+          "case": "death_ability",
+          "passed": true,
+          "outside_old_window": false
+        }
+      ]
+    },
+    "network-0ms-interrupt.json": {
+      "passed": 10,
+      "cases": [
+        {
+          "case": "early_attack_1",
+          "passed": true,
+          "outside_old_window": true
+        },
+        {
+          "case": "early_attack_2",
+          "passed": true,
+          "outside_old_window": true
+        },
+        {
+          "case": "early_attack_3",
+          "passed": true,
+          "outside_old_window": true
+        },
+        {
+          "case": "early_attack_4",
+          "passed": true,
+          "outside_old_window": true
+        },
+        {
+          "case": "early_attack_5",
+          "passed": true,
+          "outside_old_window": true
+        },
+        {
+          "case": "late_attack",
+          "passed": true,
+          "outside_old_window": false
+        },
+        {
+          "case": "death_state",
+          "passed": true,
+          "outside_old_window": false
+        },
+        {
+          "case": "death_dying",
+          "passed": true,
+          "outside_old_window": false
+        },
+        {
+          "case": "death_dead",
+          "passed": true,
+          "outside_old_window": false
+        },
+        {
+          "case": "death_ability",
+          "passed": true,
+          "outside_old_window": false
+        }
+      ]
+    },
+    "network-100ms-interrupt.json": {
+      "passed": 10,
+      "cases": [
+        {
+          "case": "early_attack_1",
+          "passed": true,
+          "outside_old_window": true,
+          "prediction_before_death_received": false
+        },
+        {
+          "case": "early_attack_2",
+          "passed": true,
+          "outside_old_window": true,
+          "prediction_before_death_received": false
+        },
+        {
+          "case": "early_attack_3",
+          "passed": true,
+          "outside_old_window": true,
+          "prediction_before_death_received": false
+        },
+        {
+          "case": "early_attack_4",
+          "passed": true,
+          "outside_old_window": true,
+          "prediction_before_death_received": false
+        },
+        {
+          "case": "early_attack_5",
+          "passed": true,
+          "outside_old_window": true,
+          "prediction_before_death_received": false
+        },
+        {
+          "case": "late_attack",
+          "passed": true,
+          "outside_old_window": false,
+          "prediction_before_death_received": false
+        },
+        {
+          "case": "death_state",
+          "passed": true,
+          "outside_old_window": false,
+          "prediction_before_death_received": false
+        },
+        {
+          "case": "death_dying",
+          "passed": true,
+          "outside_old_window": false,
+          "prediction_before_death_received": false
+        },
+        {
+          "case": "death_dead",
+          "passed": true,
+          "outside_old_window": false,
+          "prediction_before_death_received": false
+        },
+        {
+          "case": "death_ability",
+          "passed": true,
+          "outside_old_window": false,
+          "prediction_before_death_received": false
+        }
+      ]
+    }
+  },
+  "pie_passed": 69,
+  "asset_checks": {
+    "checks": [
+      {
+        "ability": "/Game/Main/Character/Hero/Ability/BasicAttack/GA_Attack_1.GA_Attack_1",
+        "tags": "(GameplayTags=((TagName=\"Ability.Attack\"),(TagName=\"Ability.Attack.Light.01\"),(TagName=\"Ability.Type.Action.Melee\")))",
+        "cancelled_by_dash": true
+      },
+      {
+        "ability": "/Game/Main/Character/Hero/Ability/BasicAttack/GA_Attack_2.GA_Attack_2",
+        "tags": "(GameplayTags=((TagName=\"Ability.Attack\"),(TagName=\"Ability.Attack.Light.02\"),(TagName=\"Ability.Type.Action.Melee\")))",
+        "cancelled_by_dash": true
+      },
+      {
+        "ability": "/Game/Main/Character/Hero/Ability/BasicAttack/GA_Attack_3.GA_Attack_3",
+        "tags": "(GameplayTags=((TagName=\"Ability.Attack\"),(TagName=\"Ability.Attack.Light.03\"),(TagName=\"Ability.Type.Action.Melee\")))",
+        "cancelled_by_dash": true
+      },
+      {
+        "ability": "/Game/Main/Character/Hero/Ability/BasicAttack/GA_Attack_4.GA_Attack_4",
+        "tags": "(GameplayTags=((TagName=\"Ability.Attack\"),(TagName=\"Ability.Attack.Light.04\"),(TagName=\"Ability.Type.Action.Melee\")))",
+        "cancelled_by_dash": true
+      },
+      {
+        "ability": "/Game/Main/Character/Hero/Ability/BasicAttack/GA_Attack_5.GA_Attack_5",
+        "tags": "(GameplayTags=((TagName=\"Ability.Attack\"),(TagName=\"Ability.Attack.Light.05\"),(TagName=\"Ability.Type.Action.Melee\")))",
+        "cancelled_by_dash": true
+      }
+    ],
+    "death_protected": true,
+    "utility_untargeted": true
+  },
+  "preserved_existing_main_assets": [
+    "Content/Main/Character/Hero/Ability/GA_Hero_Dash.uasset",
+    "Content/Main/Character/Hero/Ability/GA_Hero_Sprint.uasset",
+    "Content/Main/Character/Hero/Ability/Sprint/DA_Hero_SprintAbility.uasset",
+    "Content/Main/Character/Hero/Anim/Movement/AM_Hero_Dash_B.uasset",
+    "Content/Main/Character/Hero/Anim/Movement/AM_Hero_Dash_F.uasset",
+    "Content/Main/Character/Hero/Anim/Movement/AM_Hero_Sprint_Pivot.uasset",
+    "Content/Main/Character/Hero/Anim/Movement/A_Hero_Dash_B.uasset",
+    "Content/Main/Character/Hero/Anim/Movement/A_Hero_Dash_F.uasset",
+    "Content/Main/Character/Hero/Anim/Movement/A_Hero_Sprint_F.uasset",
+    "Content/Main/Character/Hero/Anim/Movement/A_Hero_Sprint_Pivot_RootMotion.uasset",
+    "Content/Main/Character/Hero/Anim/Movement/A_Hero_Sprint_Turn.uasset",
+    "Content/Main/GameplayCues/Movement/GCN_Hero_Dash.uasset",
+    "Content/Main/GameplayCues/Movement/GCN_Hero_PerfectDodge.uasset",
+    "Content/Main/GameplayCues/Movement/GCN_Hero_Sprint.uasset",
+    "Content/Main/Character/Hero/Ability/BasicAttack/GE_MeleeDamage_Instant.uasset",
+    "Content/Main/Character/Hero/Anim/ABP_Pover_Base.uasset",
+    "Content/Main/Character/Hero/Anim/Layer/ABP_Pover_LocomotionBase.uasset",
+    "Content/Main/Character/Hero/Anim/Montages/AM_Attack01_Montage.uasset",
+    "Content/Main/Character/Hero/Anim/Montages/AM_Attack02_Montage.uasset",
+    "Content/Main/Character/Hero/Anim/Montages/AM_Attack03_Montage.uasset",
+    "Content/Main/Character/Hero/Anim/Montages/AM_Attack04_Montage.uasset",
+    "Content/Main/Character/Hero/Anim/Montages/AM_Attack05_Montage.uasset",
+    "Content/Main/Character/Hero/BP_Hero_Pover.uasset",
+    "Content/Main/Data/AbilitySet/DA_Pover.uasset",
+    "Content/Main/Input/DA_HodgeInputConfig.uasset",
+    "Content/Main/Input/InputAction/IA_Sprint.uasset"
+  ],
+  "coverage": {
+    "instrumented": false,
+    "scope": "Native assertions and PIE scenario validation; no code/Blueprint percentage collected"
+  },
+  "not_verified": [
+    "Cook/package",
+    "separate-process networking",
+    "packet loss and latency above 100ms",
+    "branch and Blueprint coverage"
+  ]
+}

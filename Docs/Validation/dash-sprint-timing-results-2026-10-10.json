@@ -1,0 +1,208 @@
+{
+  "version": "1.3",
+  "native": {
+    "succeeded": 22,
+    "succeededWithWarnings": 9,
+    "failed": 0,
+    "notRun": 0
+  },
+  "e2e": {
+    "single-0ms": {
+      "passed": 10,
+      "samples": 1195,
+      "details": {
+        "sprint_start_seconds": {
+          "held_sprint": 0.55,
+          "delayed_hold": 0.8833,
+          "delayed_handoff": 0.929
+        },
+        "owner_pivot": {
+          "frames": 43,
+          "last_sample_time": 2.7167,
+          "last_animation_time": 1.4667
+        }
+      }
+    },
+    "network-0ms": {
+      "passed": 10,
+      "samples": 1199,
+      "details": {
+        "sprint_start_seconds": {
+          "held_sprint": 0.5501,
+          "delayed_hold": 0.8837,
+          "delayed_handoff": 0.9172
+        },
+        "owner_pivot": {
+          "frames": 43,
+          "last_sample_time": 2.7173,
+          "last_animation_time": 1.4671
+        },
+        "server_pivot": {
+          "frames": 44,
+          "last_sample_time": 2.7506,
+          "last_animation_time": 1.4841
+        },
+        "observer_pivot": {
+          "frames": 44,
+          "last_sample_time": 2.7506,
+          "last_animation_time": 1.4838
+        }
+      }
+    },
+    "network-100ms": {
+      "passed": 10,
+      "samples": 1200,
+      "details": {
+        "sprint_start_seconds": {
+          "held_sprint": 0.5502,
+          "delayed_hold": 0.8836,
+          "delayed_handoff": 0.9168
+        },
+        "owner_pivot": {
+          "frames": 42,
+          "last_sample_time": 2.715,
+          "last_animation_time": 1.4644
+        },
+        "server_pivot": {
+          "frames": 51,
+          "last_sample_time": 3.1488,
+          "last_animation_time": 1.4808
+        },
+        "observer_pivot": {
+          "frames": 42,
+          "last_sample_time": 2.9488,
+          "last_animation_time": 1.4649
+        }
+      }
+    },
+    "combat-0ms": {
+      "passed": 3,
+      "samples": 236,
+      "details": {}
+    },
+    "combat-100ms": {
+      "passed": 3,
+      "samples": 234,
+      "details": {}
+    },
+    "hit-exit-0ms": {
+      "passed": 2,
+      "samples": 149,
+      "details": {}
+    },
+    "hit-exit-100ms": {
+      "passed": 2,
+      "samples": 150,
+      "details": {}
+    }
+  },
+  "e2e_total": 40,
+  "coverage": {
+    "tool": "OpenCppCoverage 0.9.9.0",
+    "scope": "Runtime added/modified PDB measurable lines relative to task baseline; native plus single-player E2E",
+    "covered": 92,
+    "measurable": 102,
+    "percent": 90.2,
+    "branch_coverage": null,
+    "blueprint_coverage_percent": null,
+    "files": [
+      {
+        "file": "source/hodgepodge/private/abilitysystem/abilities/hodgegameplayability_dash.cpp",
+        "covered": 20,
+        "measurable": 22,
+        "uncovered": [
+          136,
+          137
+        ]
+      },
+      {
+        "file": "source/hodgepodge/private/abilitysystem/abilities/hodgegameplayability_movementaction.cpp",
+        "covered": 0,
+        "measurable": 1,
+        "uncovered": [
+          142
+        ]
+      },
+      {
+        "file": "source/hodgepodge/private/abilitysystem/abilities/hodgegameplayability_sprint.cpp",
+        "covered": 7,
+        "measurable": 10,
+        "uncovered": [
+          28,
+          34,
+          74
+        ]
+      },
+      {
+        "file": "source/hodgepodge/private/animation/hodgeaniminstance.cpp",
+        "covered": 32,
+        "measurable": 34,
+        "uncovered": [
+          134,
+          135
+        ]
+      },
+      {
+        "file": "source/hodgepodge/private/component/hodgecharactermovementcomponent.cpp",
+        "covered": 1,
+        "measurable": 1,
+        "uncovered": []
+      },
+      {
+        "file": "source/hodgepodge/private/component/hodgelocomotionpolicycomponent.cpp",
+        "covered": 7,
+        "measurable": 8,
+        "uncovered": [
+          132
+        ]
+      },
+      {
+        "file": "source/hodgepodge/private/data/hodgecharacterstatprofile.cpp",
+        "covered": 1,
+        "measurable": 1,
+        "uncovered": []
+      },
+      {
+        "file": "source/hodgepodge/private/data/hodgesprintabilityprofile.cpp",
+        "covered": 10,
+        "measurable": 11,
+        "uncovered": [
+          29
+        ]
+      },
+      {
+        "file": "source/hodgepodge/public/abilitysystem/abilities/hodgegameplayability_dash.h",
+        "covered": 1,
+        "measurable": 1,
+        "uncovered": []
+      },
+      {
+        "file": "source/hodgepodge/public/abilitysystem/abilities/hodgegameplayability_movementaction.h",
+        "covered": 2,
+        "measurable": 2,
+        "uncovered": []
+      },
+      {
+        "file": "source/hodgepodge/public/animation/hodgeaniminstance.h",
+        "covered": 3,
+        "measurable": 3,
+        "uncovered": []
+      },
+      {
+        "file": "source/hodgepodge/public/data/hodgesprintabilityprofile.h",
+        "covered": 8,
+        "measurable": 8,
+        "uncovered": []
+      }
+    ]
+  },
+  "user_assets_preserved": [
+    "Content/Main/Character/Hero/Ability/BasicAttack/GE_MeleeDamage_Instant.uasset",
+    "Content/Main/Character/Hero/BP_Hero_Pover.uasset",
+    "Content/Main/Character/Hero/Anim/Montages/AM_Attack01_Montage.uasset",
+    "Content/Main/Character/Hero/Anim/Montages/AM_Attack02_Montage.uasset",
+    "Content/Main/Character/Hero/Anim/Montages/AM_Attack03_Montage.uasset",
+    "Content/Main/Character/Hero/Anim/Montages/AM_Attack04_Montage.uasset",
+    "Content/Main/Character/Hero/Anim/Montages/AM_Attack05_Montage.uasset"
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "native": {
+    "succeeded": 23,
+    "succeededWithWarnings": 9,
+    "failed": 0,
+    "notRun": 0
+  },
+  "e2e": {
+    "single-0ms": {
+      "passed": 10,
+      "samples": 1200
+    },
+    "contacts-0ms": {
+      "passed": 4,
+      "samples": 480
+    },
+    "visual-0ms": {
+      "passed": 1,
+      "samples": 107
+    },
+    "network-0ms": {
+      "passed": 10,
+      "samples": 1200
+    },
+    "network-100ms": {
+      "passed": 10,
+      "samples": 1201
+    },
+    "pivot-hit-exit-100ms": {
+      "passed": 2,
+      "samples": 210
+    }
+  },
+  "e2e_total": 37,
+  "contact_proxy": {
+    "method": "ankle XY velocity for sampled animation time .18 to 1.2, height < local minimum + 5cm, vertical speed < 40cm/s; not a shoe-sole lock measurement",
+    "results": {
+      "baseline_pivot": [
+        {
+          "foot": 0,
+          "contact_samples": 19,
+          "min_z": 9.937423706054673,
+          "mean_speed": 580.9915794217803,
+          "median_speed": 634.2401339895939
+        },
+        {
+          "foot": 1,
+          "contact_samples": 12,
+          "min_z": 9.895637825131423,
+          "mean_speed": 567.4131902458603,
+          "median_speed": 708.7831361241196
+        }
+      ],
+      "root_pivot": [
+        {
+          "foot": 0,
+          "contact_samples": 21,
+          "min_z": 13.739518955039603,
+          "mean_speed": 77.25704437669057,
+          "median_speed": 59.77031409145478
+        },
+        {
+          "foot": 1,
+          "contact_samples": 5,
+          "min_z": 12.762372068855528,
+          "mean_speed": 44.61923837664859,
+          "median_speed": 46.75663974784515
+        }
+      ]
+    },
+    "reduction_percent_left_right": [
+      86.7,
+      92.14
+    ]
+  },
+  "preserved_assets_count": 23,
+  "configuration": {
+    "sequence": "/Game/Main/Character/Hero/Anim/Movement/A_Hero_Sprint_Pivot_RootMotion.A_Hero_Sprint_Pivot_RootMotion",
+    "montage": "/Game/Main/Character/Hero/Anim/Movement/AM_Hero_Sprint_Pivot.AM_Hero_Sprint_Pivot",
+    "length": 1.600000023841858,
+    "cycle_reference_speed": 599.070218383402,
+    "cycle_reference_source": "in-place stance foot velocity estimate",
+    "diagnostic": "ERRORS=0 WARNINGS=0\nResult  was visible but ignored\nResult  was visible but ignored\nResult  was visible but ignored\nResult  was visible but ignored\nResult  was visible but ignored\nResult  was visible but ignored\nResult  was visible but ignored\nResult  was visible but ignored\nResult  was visible but ignored\nResult  was visible but ignored\nResult  was visible but ignored\nResult  was visible but ignored\nResult  was visible but ignored\nResult  was visible but ignored\n"
+  }
+}

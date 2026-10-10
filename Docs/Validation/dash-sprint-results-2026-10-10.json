@@ -1,0 +1,388 @@
+{
+  "native": {
+    "succeeded": 21,
+    "succeededWithWarnings": 9,
+    "failed": 0,
+    "notRun": 0
+  },
+  "e2e": {
+    "single-0ms": {
+      "passed": 7,
+      "samples": 561
+    },
+    "network-0ms": {
+      "passed": 7,
+      "samples": 566
+    },
+    "network-100ms": {
+      "passed": 7,
+      "samples": 567
+    },
+    "combat-0ms": {
+      "passed": 3,
+      "samples": 234
+    },
+    "combat-100ms": {
+      "passed": 3,
+      "samples": 234
+    },
+    "hit-exit-0ms": {
+      "passed": 2,
+      "samples": 150
+    },
+    "hit-exit-100ms": {
+      "passed": 2,
+      "samples": 150
+    }
+  },
+  "coverage": {
+    "tool": "OpenCppCoverage 0.9.9.0",
+    "scope": "Runtime changed MSVC/PDB measurable lines; native suite plus single-player E2E",
+    "branch_coverage": null,
+    "blueprint_coverage_percent": null,
+    "runtime_changed_lines": {
+      "covered": 608,
+      "measurable": 736,
+      "percent": 82.61
+    },
+    "files": [
+      {
+        "file": "e:/project/git/hodgepodge/source/hodgepodge/private/abilitysystem/abilities/hodgegameplayability_melee.cpp",
+        "covered": 0,
+        "measurable": 2,
+        "uncovered": [
+          349,
+          352
+        ]
+      },
+      {
+        "file": "e:/project/git/hodgepodge/source/hodgepodge/private/abilitysystem/attributeset/hodgehealthset.cpp",
+        "covered": 2,
+        "measurable": 2,
+        "uncovered": []
+      },
+      {
+        "file": "e:/project/git/hodgepodge/source/hodgepodge/private/abilitysystem/stats/hodgeattributecoordinator.cpp",
+        "covered": 10,
+        "measurable": 13,
+        "uncovered": [
+          148,
+          150,
+          151
+        ]
+      },
+      {
+        "file": "e:/project/git/hodgepodge/source/hodgepodge/private/animation/hodgeaniminstance.cpp",
+        "covered": 8,
+        "measurable": 8,
+        "uncovered": []
+      },
+      {
+        "file": "e:/project/git/hodgepodge/source/hodgepodge/private/character/hodgecombatcharacter.cpp",
+        "covered": 8,
+        "measurable": 8,
+        "uncovered": []
+      },
+      {
+        "file": "e:/project/git/hodgepodge/source/hodgepodge/private/component/hodgecharactermovementcomponent.cpp",
+        "covered": 29,
+        "measurable": 34,
+        "uncovered": [
+          51,
+          337,
+          338,
+          344,
+          379
+        ]
+      },
+      {
+        "file": "e:/project/git/hodgepodge/source/hodgepodge/private/component/hodgecharacterrotationcomponent.cpp",
+        "covered": 6,
+        "measurable": 8,
+        "uncovered": [
+          480,
+          490
+        ]
+      },
+      {
+        "file": "e:/project/git/hodgepodge/source/hodgepodge/private/component/hodgeherocomponent.cpp",
+        "covered": 56,
+        "measurable": 58,
+        "uncovered": [
+          1135,
+          1152
+        ]
+      },
+      {
+        "file": "e:/project/git/hodgepodge/source/hodgepodge/private/core/playstate/hodgeplayerstate.cpp",
+        "covered": 1,
+        "measurable": 1,
+        "uncovered": []
+      },
+      {
+        "file": "e:/project/git/hodgepodge/source/hodgepodge/private/data/hodgecharacterstatprofile.cpp",
+        "covered": 2,
+        "measurable": 2,
+        "uncovered": []
+      },
+      {
+        "file": "e:/project/git/hodgepodge/source/hodgepodge/public/abilitysystem/stats/hodgeattributecoordinator.h",
+        "covered": 0,
+        "measurable": 1,
+        "uncovered": [
+          58
+        ]
+      },
+      {
+        "file": "e:/project/git/hodgepodge/source/hodgepodge/public/animation/hodgeaniminstance.h",
+        "covered": 1,
+        "measurable": 1,
+        "uncovered": []
+      },
+      {
+        "file": "e:/project/git/hodgepodge/source/hodgepodge/public/component/hodgeherocomponent.h",
+        "covered": 0,
+        "measurable": 1,
+        "uncovered": [
+          123
+        ]
+      },
+      {
+        "file": "e:/project/git/hodgepodge/source/hodgepodge/public/data/hodgecharacterstatprofile.h",
+        "covered": 2,
+        "measurable": 2,
+        "uncovered": []
+      },
+      {
+        "file": "e:/project/git/hodgepodge/source/hodgepodge/public/input/hodgeinputcomponent.h",
+        "covered": 3,
+        "measurable": 3,
+        "uncovered": []
+      },
+      {
+        "file": "e:/project/git/hodgepodge/source/hodgepodge/private/abilitysystem/abilities/hodgegameplayability_dash.cpp",
+        "covered": 80,
+        "measurable": 93,
+        "uncovered": [
+          39,
+          48,
+          55,
+          56,
+          62,
+          63,
+          65,
+          67,
+          68,
+          72,
+          99,
+          103,
+          128
+        ]
+      },
+      {
+        "file": "e:/project/git/hodgepodge/source/hodgepodge/private/abilitysystem/abilities/hodgegameplayability_movementaction.cpp",
+        "covered": 88,
+        "measurable": 99,
+        "uncovered": [
+          27,
+          28,
+          29,
+          30,
+          31,
+          73,
+          78,
+          85,
+          104,
+          115,
+          130
+        ]
+      },
+      {
+        "file": "e:/project/git/hodgepodge/source/hodgepodge/private/abilitysystem/abilities/hodgegameplayability_sprint.cpp",
+        "covered": 41,
+        "measurable": 53,
+        "uncovered": [
+          22,
+          23,
+          25,
+          26,
+          28,
+          52,
+          57,
+          67,
+          68,
+          70,
+          71,
+          73
+        ]
+      },
+      {
+        "file": "e:/project/git/hodgepodge/source/hodgepodge/private/abilitysystem/attributeset/hodgestaminaset.cpp",
+        "covered": 16,
+        "measurable": 23,
+        "uncovered": [
+          9,
+          10,
+          11,
+          12,
+          13,
+          27,
+          28
+        ]
+      },
+      {
+        "file": "e:/project/git/hodgepodge/source/hodgepodge/private/abilitysystem/gameplaycues/hodgegameplaycue_movement.cpp",
+        "covered": 9,
+        "measurable": 16,
+        "uncovered": [
+          8,
+          10,
+          29,
+          30,
+          31,
+          32,
+          33
+        ]
+      },
+      {
+        "file": "e:/project/git/hodgepodge/source/hodgepodge/private/combat/hodgemovementactiontypes.cpp",
+        "covered": 32,
+        "measurable": 32,
+        "uncovered": []
+      },
+      {
+        "file": "e:/project/git/hodgepodge/source/hodgepodge/private/component/hodgedefensecomponent.cpp",
+        "covered": 13,
+        "measurable": 48,
+        "uncovered": [
+          12,
+          13,
+          14,
+          15,
+          16,
+          34,
+          35,
+          36,
+          38,
+          39,
+          41,
+          42,
+          43,
+          44,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          53,
+          54,
+          55,
+          56,
+          58,
+          59,
+          60,
+          61,
+          62,
+          63,
+          64,
+          65,
+          66,
+          67,
+          69
+        ]
+      },
+      {
+        "file": "e:/project/git/hodgepodge/source/hodgepodge/private/component/hodgelocomotionpolicycomponent.cpp",
+        "covered": 133,
+        "measurable": 145,
+        "uncovered": [
+          123,
+          130,
+          150,
+          151,
+          152,
+          168,
+          180,
+          181,
+          182,
+          183,
+          184,
+          186
+        ]
+      },
+      {
+        "file": "e:/project/git/hodgepodge/source/hodgepodge/private/data/hodgesprintabilityprofile.cpp",
+        "covered": 17,
+        "measurable": 26,
+        "uncovered": [
+          20,
+          22,
+          27,
+          30,
+          35,
+          36,
+          37,
+          38,
+          39
+        ]
+      },
+      {
+        "file": "e:/project/git/hodgepodge/source/hodgepodge/public/abilitysystem/abilities/hodgegameplayability_dash.h",
+        "covered": 2,
+        "measurable": 3,
+        "uncovered": [
+          14
+        ]
+      },
+      {
+        "file": "e:/project/git/hodgepodge/source/hodgepodge/public/abilitysystem/abilities/hodgegameplayability_movementaction.h",
+        "covered": 9,
+        "measurable": 14,
+        "uncovered": [
+          35,
+          36,
+          37,
+          49,
+          50
+        ]
+      },
+      {
+        "file": "e:/project/git/hodgepodge/source/hodgepodge/public/abilitysystem/abilities/hodgegameplayability_sprint.h",
+        "covered": 3,
+        "measurable": 3,
+        "uncovered": []
+      },
+      {
+        "file": "e:/project/git/hodgepodge/source/hodgepodge/public/abilitysystem/attributeset/hodgestaminaset.h",
+        "covered": 4,
+        "measurable": 4,
+        "uncovered": []
+      },
+      {
+        "file": "e:/project/git/hodgepodge/source/hodgepodge/public/abilitysystem/gameplaycues/hodgegameplaycue_movement.h",
+        "covered": 1,
+        "measurable": 1,
+        "uncovered": []
+      },
+      {
+        "file": "e:/project/git/hodgepodge/source/hodgepodge/public/component/hodgedefensecomponent.h",
+        "covered": 1,
+        "measurable": 1,
+        "uncovered": []
+      },
+      {
+        "file": "e:/project/git/hodgepodge/source/hodgepodge/public/component/hodgelocomotionpolicycomponent.h",
+        "covered": 8,
+        "measurable": 8,
+        "uncovered": []
+      },
+      {
+        "file": "e:/project/git/hodgepodge/source/hodgepodge/public/data/hodgesprintabilityprofile.h",
+        "covered": 23,
+        "measurable": 23,
+        "uncovered": []
+      }
+    ]
+  }
+}

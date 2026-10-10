@@ -1,0 +1,203 @@
+{
+  "date": "2026-10-10",
+  "engine": "5.5.4",
+  "native_passed": 35,
+  "pie_passed": 60,
+  "native_succeeded_with_warnings": 9,
+  "native_failed": 0,
+  "native_report": "Saved/DashTransitions/Native8/index.json",
+  "builds": {
+    "editor": {
+      "exit_code": 0,
+      "log": "Saved/DashTransitions/EditorBuild11.log"
+    },
+    "game": {
+      "exit_code": 0,
+      "log": "Saved/DashTransitions/GameBuild7.log"
+    }
+  },
+  "reports": {
+    "fixed-single-0ms.json": {
+      "passed": 7,
+      "cases": [
+        "idle_tap",
+        "tap_move",
+        "held_move",
+        "late_tap_move",
+        "late_held_move",
+        "held_sprint",
+        "backward_idle_tap"
+      ]
+    },
+    "fixed-network-0ms.json": {
+      "passed": 7,
+      "cases": [
+        "idle_tap",
+        "tap_move",
+        "held_move",
+        "late_tap_move",
+        "late_held_move",
+        "held_sprint",
+        "backward_idle_tap"
+      ]
+    },
+    "fixed-network-100ms.json": {
+      "passed": 7,
+      "cases": [
+        "idle_tap",
+        "tap_move",
+        "held_move",
+        "late_tap_move",
+        "late_held_move",
+        "held_sprint",
+        "backward_idle_tap"
+      ]
+    },
+    "single-0ms.json": {
+      "passed": 10,
+      "cases": [
+        "forward_tap",
+        "backward_tap",
+        "side_tap",
+        "held_sprint",
+        "release_sprint",
+        "stop_sprint",
+        "move_cancel",
+        "delayed_hold",
+        "delayed_handoff",
+        "pivot_turn"
+      ]
+    },
+    "network-0ms.json": {
+      "passed": 10,
+      "cases": [
+        "forward_tap",
+        "backward_tap",
+        "side_tap",
+        "held_sprint",
+        "release_sprint",
+        "stop_sprint",
+        "move_cancel",
+        "delayed_hold",
+        "delayed_handoff",
+        "pivot_turn"
+      ]
+    },
+    "network-100ms.json": {
+      "passed": 10,
+      "cases": [
+        "forward_tap",
+        "backward_tap",
+        "side_tap",
+        "held_sprint",
+        "release_sprint",
+        "stop_sprint",
+        "move_cancel",
+        "delayed_hold",
+        "delayed_handoff",
+        "pivot_turn"
+      ]
+    },
+    "single-combat-0ms.json": {
+      "passed": 3,
+      "cases": [
+        "attack_cancel_early",
+        "attack_cancel_allowed",
+        "sprint_attack_exit"
+      ]
+    },
+    "combat-0ms.json": {
+      "passed": 3,
+      "cases": [
+        "attack_cancel_early",
+        "attack_cancel_allowed",
+        "sprint_attack_exit"
+      ]
+    },
+    "combat-100ms.json": {
+      "passed": 3,
+      "cases": [
+        "attack_cancel_early",
+        "attack_cancel_allowed",
+        "sprint_attack_exit"
+      ]
+    }
+  },
+  "baseline_pelvis_drop_cm": 4.125575410330299,
+  "metrics": {
+    "fixed-single-0ms.json": {
+      "owner": {
+        "dash_tail_to_idle_pelvis_delta_cm": -0.10033078273187357,
+        "minimum_handoff_speed_cm_s": 720.0
+      }
+    },
+    "fixed-network-0ms.json": {
+      "owner": {
+        "dash_tail_to_idle_pelvis_delta_cm": -0.07722474304391369,
+        "minimum_handoff_speed_cm_s": 720.0
+      }
+    },
+    "fixed-network-100ms.json": {
+      "owner": {
+        "dash_tail_to_idle_pelvis_delta_cm": -0.1202244296799222,
+        "minimum_handoff_speed_cm_s": 720.0
+      }
+    }
+  },
+  "final_editor_state": {
+    "editor_pid": 18888,
+    "pie_worlds": [],
+    "dirty_packages": [],
+    "saved_profile": {
+      "Duration": 0.3499999940395355,
+      "MoveCancelOpenTime": 0.3499999940395355,
+      "HandoffOpenTime": 0.3499999940395355,
+      "NoMoveIntentGrace": 0.07999999821186066,
+      "BlockedExitDelay": 0.4000000059604645
+    }
+  },
+  "preserved_main_assets": [
+    "Content/Main/Character/Hero/Ability/GA_Hero_Dash.uasset",
+    "Content/Main/Character/Hero/Ability/GA_Hero_Sprint.uasset",
+    "Content/Main/Character/Hero/Anim/Movement/AM_Hero_Dash_B.uasset",
+    "Content/Main/Character/Hero/Anim/Movement/AM_Hero_Dash_F.uasset",
+    "Content/Main/Character/Hero/Anim/Movement/AM_Hero_Sprint_Pivot.uasset",
+    "Content/Main/Character/Hero/Anim/Movement/A_Hero_Dash_B.uasset",
+    "Content/Main/Character/Hero/Anim/Movement/A_Hero_Dash_F.uasset",
+    "Content/Main/Character/Hero/Anim/Movement/A_Hero_Sprint_F.uasset",
+    "Content/Main/Character/Hero/Anim/Movement/A_Hero_Sprint_Pivot_RootMotion.uasset",
+    "Content/Main/Character/Hero/Anim/Movement/A_Hero_Sprint_Turn.uasset",
+    "Content/Main/Data/TagRelationship/DA_Hero_TagRelationshipMapping.uasset",
+    "Content/Main/GameplayCues/Movement/GCN_Hero_Dash.uasset",
+    "Content/Main/GameplayCues/Movement/GCN_Hero_PerfectDodge.uasset",
+    "Content/Main/GameplayCues/Movement/GCN_Hero_Sprint.uasset",
+    "Content/Main/Character/Hero/Ability/BasicAttack/GA_Attack_1.uasset",
+    "Content/Main/Character/Hero/Ability/BasicAttack/GA_Attack_2.uasset",
+    "Content/Main/Character/Hero/Ability/BasicAttack/GA_Attack_3.uasset",
+    "Content/Main/Character/Hero/Ability/BasicAttack/GA_Attack_4.uasset",
+    "Content/Main/Character/Hero/Ability/BasicAttack/GA_Attack_5.uasset",
+    "Content/Main/Character/Hero/Ability/BasicAttack/GE_MeleeDamage_Instant.uasset",
+    "Content/Main/Character/Hero/Anim/ABP_Pover_Base.uasset",
+    "Content/Main/Character/Hero/Anim/Montages/AM_Attack01_Montage.uasset",
+    "Content/Main/Character/Hero/Anim/Montages/AM_Attack02_Montage.uasset",
+    "Content/Main/Character/Hero/Anim/Montages/AM_Attack03_Montage.uasset",
+    "Content/Main/Character/Hero/Anim/Montages/AM_Attack04_Montage.uasset",
+    "Content/Main/Character/Hero/Anim/Montages/AM_Attack05_Montage.uasset",
+    "Content/Main/Character/Hero/BP_Hero_Pover.uasset",
+    "Content/Main/Data/AbilitySet/DA_Pover.uasset",
+    "Content/Main/Data/PawnData/DA_Dafult_PawnData.uasset",
+    "Content/Main/Input/DA_HodgeInputConfig.uasset",
+    "Content/Main/Input/InputAction/IA_Sprint.uasset"
+  ],
+  "expected_asset_changes": [
+    "Content/Main/Character/Hero/Ability/Sprint/DA_Hero_SprintAbility.uasset",
+    "Content/Main/Character/Hero/Anim/Layer/ABP_Pover_LocomotionBase.uasset"
+  ],
+  "not_verified": [
+    "Cook/package",
+    "separate-process networking",
+    "packet loss and delay above 100ms",
+    "instrumented code/Blueprint coverage",
+    "all terrain and camera angles"
+  ]
+}

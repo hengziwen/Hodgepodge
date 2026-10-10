@@ -1,0 +1,261 @@
+{
+  "date": "2026-10-10",
+  "engine": "5.5.4",
+  "native_passed": 36,
+  "native_with_warnings": 10,
+  "pie_passed": 78,
+  "reports": {
+    "sync-single-0ms.json": {
+      "passed": 6,
+      "cases": [
+        "dash_stride",
+        "pivot_exit",
+        "pivot_tail_reversal",
+        "pivot_early_reversal",
+        "pivot_release",
+        "pivot_attack"
+      ]
+    },
+    "single-0ms.json": {
+      "passed": 10,
+      "cases": [
+        "forward_tap",
+        "backward_tap",
+        "side_tap",
+        "held_sprint",
+        "release_sprint",
+        "stop_sprint",
+        "move_cancel",
+        "delayed_hold",
+        "delayed_handoff",
+        "pivot_turn"
+      ]
+    },
+    "fixed-single-0ms.json": {
+      "passed": 7,
+      "cases": [
+        "idle_tap",
+        "tap_move",
+        "held_move",
+        "late_tap_move",
+        "late_held_move",
+        "held_sprint",
+        "backward_idle_tap"
+      ]
+    },
+    "single-combat-0ms.json": {
+      "passed": 3,
+      "cases": [
+        "attack_cancel_early",
+        "attack_cancel_allowed",
+        "sprint_attack_exit"
+      ]
+    },
+    "sync-network-0ms.json": {
+      "passed": 6,
+      "cases": [
+        "dash_stride",
+        "pivot_exit",
+        "pivot_tail_reversal",
+        "pivot_early_reversal",
+        "pivot_release",
+        "pivot_attack"
+      ]
+    },
+    "network-0ms.json": {
+      "passed": 10,
+      "cases": [
+        "forward_tap",
+        "backward_tap",
+        "side_tap",
+        "held_sprint",
+        "release_sprint",
+        "stop_sprint",
+        "move_cancel",
+        "delayed_hold",
+        "delayed_handoff",
+        "pivot_turn"
+      ]
+    },
+    "fixed-network-0ms.json": {
+      "passed": 7,
+      "cases": [
+        "idle_tap",
+        "tap_move",
+        "held_move",
+        "late_tap_move",
+        "late_held_move",
+        "held_sprint",
+        "backward_idle_tap"
+      ]
+    },
+    "combat-0ms.json": {
+      "passed": 3,
+      "cases": [
+        "attack_cancel_early",
+        "attack_cancel_allowed",
+        "sprint_attack_exit"
+      ]
+    },
+    "sync-network-100ms.json": {
+      "passed": 6,
+      "cases": [
+        "dash_stride",
+        "pivot_exit",
+        "pivot_tail_reversal",
+        "pivot_early_reversal",
+        "pivot_release",
+        "pivot_attack"
+      ]
+    },
+    "network-100ms.json": {
+      "passed": 10,
+      "cases": [
+        "forward_tap",
+        "backward_tap",
+        "side_tap",
+        "held_sprint",
+        "release_sprint",
+        "stop_sprint",
+        "move_cancel",
+        "delayed_hold",
+        "delayed_handoff",
+        "pivot_turn"
+      ]
+    },
+    "fixed-network-100ms.json": {
+      "passed": 7,
+      "cases": [
+        "idle_tap",
+        "tap_move",
+        "held_move",
+        "late_tap_move",
+        "late_held_move",
+        "held_sprint",
+        "backward_idle_tap"
+      ]
+    },
+    "combat-100ms.json": {
+      "passed": 3,
+      "cases": [
+        "attack_cancel_early",
+        "attack_cancel_allowed",
+        "sprint_attack_exit"
+      ]
+    }
+  },
+  "metrics": {
+    "sync-single-0ms.json": {
+      "maximum_recovery_foot_speed_cm_s": 737.7762412101054,
+      "second_pivot": {
+        "owner": {
+          "delay_from_first_start_s": 1.0001051984727383,
+          "instance_count": 2
+        },
+        "server": {
+          "delay_from_first_start_s": 1.0001051984727383,
+          "instance_count": 2
+        }
+      }
+    },
+    "sync-network-0ms.json": {
+      "maximum_recovery_foot_speed_cm_s": 754.5023041981698,
+      "second_pivot": {
+        "owner": {
+          "delay_from_first_start_s": 1.00207182392478,
+          "instance_count": 2
+        },
+        "server": {
+          "delay_from_first_start_s": 1.0179302021861076,
+          "instance_count": 2
+        }
+      }
+    },
+    "sync-network-100ms.json": {
+      "maximum_recovery_foot_speed_cm_s": 727.0373865108345,
+      "second_pivot": {
+        "owner": {
+          "delay_from_first_start_s": 1.0088960565626621,
+          "instance_count": 2
+        },
+        "server": {
+          "delay_from_first_start_s": 1.0311368443071842,
+          "instance_count": 2
+        }
+      }
+    }
+  },
+  "builds": {
+    "editor": {
+      "exit_code": 0,
+      "log": "Saved/AnimationSync/EditorBuild9.log"
+    },
+    "game": {
+      "exit_code": 0,
+      "log": "Saved/AnimationSync/GameBuild3.log"
+    }
+  },
+  "blueprint_diagnostic": "ERRORS=0 WARNINGS=0\nResult  was visible but ignored\nResult  was visible but ignored\nResult  was visible but ignored\nPose  was visible but ignored\n足部放置  - 节点仍为实验性\n",
+  "changed_main_assets": [
+    "Content/Main/Character/Hero/Ability/Sprint/DA_Hero_SprintAbility.uasset",
+    "Content/Main/Character/Hero/Anim/Layer/ABP_Pover_LocomotionBase.uasset",
+    "Content/Main/Character/Hero/Anim/Movement/AM_Hero_Dash_B.uasset",
+    "Content/Main/Character/Hero/Anim/Movement/AM_Hero_Dash_F.uasset",
+    "Content/Main/Character/Hero/Anim/Movement/AM_Hero_Sprint_Pivot.uasset",
+    "Content/Main/Character/Hero/Anim/Movement/A_Hero_Dash_B.uasset",
+    "Content/Main/Character/Hero/Anim/Movement/A_Hero_Dash_F.uasset",
+    "Content/Main/Character/Hero/Anim/Movement/A_Hero_Sprint_F.uasset",
+    "Content/Main/Character/Hero/Anim/Movement/A_Hero_Sprint_Pivot_RootMotion.uasset"
+  ],
+  "preserved_main_assets": [
+    "Content/Main/Character/Hero/Ability/BasicAttack/GA_Attack_1.uasset",
+    "Content/Main/Character/Hero/Ability/BasicAttack/GA_Attack_2.uasset",
+    "Content/Main/Character/Hero/Ability/BasicAttack/GA_Attack_3.uasset",
+    "Content/Main/Character/Hero/Ability/BasicAttack/GA_Attack_4.uasset",
+    "Content/Main/Character/Hero/Ability/BasicAttack/GA_Attack_5.uasset",
+    "Content/Main/Character/Hero/Ability/BasicAttack/GE_MeleeDamage_Instant.uasset",
+    "Content/Main/Character/Hero/Ability/GA_Hero_Dash.uasset",
+    "Content/Main/Character/Hero/Ability/GA_Hero_Sprint.uasset",
+    "Content/Main/Character/Hero/Anim/ABP_Pover_Base.uasset",
+    "Content/Main/Character/Hero/Anim/Montages/AM_Attack01_Montage.uasset",
+    "Content/Main/Character/Hero/Anim/Montages/AM_Attack02_Montage.uasset",
+    "Content/Main/Character/Hero/Anim/Montages/AM_Attack03_Montage.uasset",
+    "Content/Main/Character/Hero/Anim/Montages/AM_Attack04_Montage.uasset",
+    "Content/Main/Character/Hero/Anim/Montages/AM_Attack05_Montage.uasset",
+    "Content/Main/Character/Hero/Anim/Movement/A_Hero_Sprint_Turn.uasset",
+    "Content/Main/Character/Hero/BP_Hero_Pover.uasset",
+    "Content/Main/Data/AbilitySet/DA_Pover.uasset",
+    "Content/Main/Data/PawnData/DA_Dafult_PawnData.uasset",
+    "Content/Main/Data/TagRelationship/DA_Hero_TagRelationshipMapping.uasset",
+    "Content/Main/GameplayCues/Movement/GCN_Hero_Dash.uasset",
+    "Content/Main/GameplayCues/Movement/GCN_Hero_PerfectDodge.uasset",
+    "Content/Main/GameplayCues/Movement/GCN_Hero_Sprint.uasset",
+    "Content/Main/Input/DA_HodgeInputConfig.uasset",
+    "Content/Main/Input/InputAction/IA_Sprint.uasset"
+  ],
+  "final_editor_state": {
+    "editor_pid": 27792,
+    "pie_worlds": [],
+    "dirty_packages": [],
+    "profile": {
+      "Duration": 0.3499999940395355,
+      "MoveCancelOpenTime": 0.3499999940395355,
+      "HandoffOpenTime": 0.3499999940395355,
+      "PivotRecoveryEndTime": 0.8999999761581421,
+      "SprintTurnBlendOutTime": 0.1599999964237213,
+      "NoMoveIntentGrace": 0.07999999821186066,
+      "BlockedExitDelay": 0.4000000059604645
+    },
+    "restored_cvars": {
+      "Slate.bAllowThrottling": 1,
+      "t.IdleWhenNotForeground": 0
+    }
+  },
+  "not_verified": [
+    "Cook/package",
+    "separate-process networking",
+    "packet loss and delay above 100ms",
+    "full-terrain visual review",
+    "instrumented code and Blueprint coverage"
+  ]
+}
