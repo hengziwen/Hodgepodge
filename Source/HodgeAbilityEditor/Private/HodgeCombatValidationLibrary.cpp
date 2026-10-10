@@ -3,6 +3,7 @@
 #include "AbilitySystemGlobals.h"
 #include "Animation/AnimClassInterface.h"
 #include "Animation/AnimNode_SequencePlayer.h"
+#include "AnimNodes/AnimNode_SequenceEvaluator.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "UObject/UnrealType.h"
 #include "AbilitySystem/HodgeAbilitySystemComponent.h"
@@ -21,6 +22,20 @@
 #include "Animation/Skeleton.h"
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeCombatValidationLibrary)
 
+bool UHodgeCombatValidationLibrary::QueueGameplayEvent(UHodgeAbilitySystemComponent* ASC, FGameplayTag EventTag)
+{
+	if (!ASC || !ASC->GetWorld() || ASC->GetWorld()->WorldType != EWorldType::PIE || !EventTag.IsValid()) { return false; }
+	const TWeakObjectPtr<UHodgeAbilitySystemComponent> WeakASC = ASC;
+	ASC->GetWorld()->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateLambda([WeakASC, EventTag]()
+	{
+		if (!WeakASC.IsValid()) { return; }
+		FGameplayEventData Event; Event.EventTag = EventTag;
+		Event.Instigator = Event.Target = WeakASC->GetAvatarActor();
+		WeakASC->HandleGameplayEvent(EventTag, &Event);
+	}));
+	return true;
+}
+
 TArray<FName> UHodgeCombatValidationLibrary::InspectFacingSequences(AActor* Avatar)
 {
 	TArray<FName> Result;
@@ -38,6 +53,56 @@ TArray<FName> UHodgeCombatValidationLibrary::InspectFacingSequences(AActor* Avat
 			if (!Property || !Property->Struct->IsChildOf(FAnimNode_SequencePlayerBase::StaticStruct())) { continue; }
 			const auto* Node = Property->ContainerPtrToValuePtr<FAnimNode_SequencePlayerBase>(Instance);
 			if (Node && Node->GetCachedBlendWeight() > .05f && Node->GetSequence()) { Result.AddUnique(Node->GetSequence()->GetFName()); }
+		}
+	}
+	return Result;
+}
+
+TArray<FHodgePivotValidationState> UHodgeCombatValidationLibrary::InspectPivotTimes(AActor* Avatar)
+{
+	TArray<FHodgePivotValidationState> Result;
+	const auto* Character = Cast<ACharacter>(Avatar);
+	if (!Character || !Character->GetMesh()) { return Result; }
+	const USkeletalMeshComponent* Mesh = Character->GetMesh();
+	TArray<UAnimInstance*> Instances = Mesh->GetLinkedAnimInstances();
+	Instances.Add(Character->GetMesh()->GetAnimInstance());
+	for (auto* Instance : Instances)
+	{
+		const auto* Class = Instance ? IAnimClassInterface::GetFromClass(Instance->GetClass()) : nullptr;
+		if (!Class) { continue; }
+		for (FStructProperty* Property : Class->GetAnimNodeProperties())
+		{
+			if (!Property || !Property->Struct->IsChildOf(FAnimNode_SequenceEvaluatorBase::StaticStruct())) { continue; }
+			const auto* Node = Property->ContainerPtrToValuePtr<FAnimNode_SequenceEvaluatorBase>(Instance);
+			if (!Node || !Node->GetSequence() || Node->GetCachedBlendWeight() <= .05f) { continue; }
+			FHodgePivotValidationState& Row = Result.AddDefaulted_GetRef();
+			Row.Sequence = Node->GetSequence()->GetFName(); Row.Time = Node->GetExplicitTime(); Row.Weight = Node->GetCachedBlendWeight();
+		}
+	}
+	return Result;
+}
+
+TArray<FHodgeSyncValidationState> UHodgeCombatValidationLibrary::InspectLocomotionSync(AActor* Avatar)
+{
+	TArray<FHodgeSyncValidationState> Result;
+	const auto* Character = Cast<ACharacter>(Avatar);
+	if (!Character || !Character->GetMesh()) { return Result; }
+	const USkeletalMeshComponent* Mesh = Character->GetMesh();
+	TArray<UAnimInstance*> Instances = Mesh->GetLinkedAnimInstances();
+	Instances.Add(Character->GetMesh()->GetAnimInstance());
+	for (const auto* Instance : Instances)
+	{
+		if (!Instance) { continue; }
+		for (const auto& Pair : Instance->GetSyncGroupMapRead())
+		{
+			for (int32 Index = 0; Index < Pair.Value.ActivePlayers.Num(); ++Index)
+			{
+				const auto& Tick = Pair.Value.ActivePlayers[Index];
+				if (!Tick.SourceAsset || Tick.EffectiveBlendWeight <= .01f) { continue; }
+				auto& Row = Result.AddDefaulted_GetRef(); Row.Group = Pair.Key; Row.Sequence = Tick.SourceAsset->GetFName();
+				Row.Time = Tick.TimeAccumulator ? *Tick.TimeAccumulator : 0.f; Row.Weight = Tick.EffectiveBlendWeight;
+				Row.bLeader = Index == Pair.Value.GroupLeaderIndex; Row.bMarkerSync = Pair.Value.bCanUseMarkerSync;
+			}
 		}
 	}
 	return Result;

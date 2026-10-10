@@ -7,7 +7,7 @@ public class HodgeAbilityEditor : ModuleRules
         PrivateDependencyModuleNames.AddRange(new string[] {
             "Core", "CoreUObject", "Engine", "Hodgepodge", "GameplayTags", "GameplayAbilities",
             "UnrealEd", "AssetTools", "AssetRegistry", "PropertyEditor", "Slate", "SlateCore",
-            "InputCore", "EditorFramework", "AdvancedPreviewScene", "AnimGraph", "ToolMenus",
+            "InputCore", "EditorFramework", "AdvancedPreviewScene", "AnimGraph", "AnimGraphRuntime", "ToolMenus",
             "BlueprintGraph", "KismetCompiler", "UMG", "UMGEditor", "CommonUI", "CommonInput", "Json", "ApplicationCore", "GameFeatures"
         });
     }

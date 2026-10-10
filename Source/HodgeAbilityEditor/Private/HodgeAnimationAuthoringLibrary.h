@@ -57,6 +57,19 @@ public:
 	/** 隔离方向资源入口，保留原八向分支并添加 Free 选择。 */
 	UFUNCTION(BlueprintCallable, Category="Hodge|Editor|Animation")
 	static FString ConfigureHeroFacingModes(UAnimBlueprint* MainBlueprint, UAnimBlueprint* LayerBlueprint);
+	/** 在既有层的资源入口接入 Sprint，保留八向图和常规动画。 */
+	UFUNCTION(BlueprintCallable, Category="Hodge|Editor|Animation")
+	static FString ConfigureHeroSprintAnimations(UAnimBlueprint* MainBlueprint, UAnimBlueprint* LayerBlueprint);
+	UFUNCTION(BlueprintCallable, Category="Hodge|Editor|Animation")
+	static FString ConfigureHeroSprintPivotTiming(UAnimBlueprint* MainBlueprint, UAnimBlueprint* LayerBlueprint);
+	/** 替换腿部 IK 的全身权重门控，Dash 继续使用脚部贴地。 */
+	UFUNCTION(BlueprintCallable, Category="Hodge|Editor|Animation")
+	static FString ConfigureHeroDashFootIK(UAnimBlueprint* LayerBlueprint);
+	/** Sprint 循环接入独立同步组，普通移动继续使用既有 Locomotion。 */
+	UFUNCTION(BlueprintCallable, Category="Hodge|Editor|Animation")
+	static FString ConfigureHeroSprintSync(UAnimBlueprint* LayerBlueprint);
+	UFUNCTION(BlueprintCallable, Category="Hodge|Editor|Animation")
+	static bool ConfigureHeroMovementMontageSync(UAnimMontage* Montage);
 
 	UFUNCTION(BlueprintCallable, Category = "Hodge|Editor|Animation")
 	static bool SetSkeletonSlotGroup(USkeleton* Skeleton, FName Slot, FName Group);

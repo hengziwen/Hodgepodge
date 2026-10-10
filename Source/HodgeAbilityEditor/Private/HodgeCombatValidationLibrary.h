@@ -24,6 +24,27 @@ struct FHodgeMontageValidationState
 	UPROPERTY(BlueprintReadOnly) FName LocomotionState;
 };
 
+USTRUCT(BlueprintType)
+struct FHodgePivotValidationState
+{
+	GENERATED_BODY()
+	UPROPERTY(BlueprintReadOnly) FName Sequence;
+	UPROPERTY(BlueprintReadOnly) float Time = 0.f;
+	UPROPERTY(BlueprintReadOnly) float Weight = 0.f;
+};
+
+USTRUCT(BlueprintType)
+struct FHodgeSyncValidationState
+{
+	GENERATED_BODY()
+	UPROPERTY(BlueprintReadOnly) FName Group;
+	UPROPERTY(BlueprintReadOnly) FName Sequence;
+	UPROPERTY(BlueprintReadOnly) float Time = 0.f;
+	UPROPERTY(BlueprintReadOnly) float Weight = 0.f;
+	UPROPERTY(BlueprintReadOnly) bool bLeader = false;
+	UPROPERTY(BlueprintReadOnly) bool bMarkerSync = false;
+};
+
 /** PIE 验证入口：延迟到原生世界 Tick，避免编辑器脚本保护改变 RPC 调用空间。 */
 UCLASS()
 class HODGEABILITYEDITOR_API UHodgeCombatValidationLibrary : public UBlueprintFunctionLibrary
@@ -33,11 +54,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Hodge|Editor|Validation")
 	static bool QueueAbilityAction(UHodgeAbilitySystemComponent* ASC, FGameplayAbilitySpecHandle Handle, bool bCancel = false);
 	UFUNCTION(BlueprintCallable, Category="Hodge|Editor|Validation")
+	static bool QueueGameplayEvent(UHodgeAbilitySystemComponent* ASC, FGameplayTag EventTag);
+	UFUNCTION(BlueprintCallable, Category="Hodge|Editor|Validation")
 	static bool QueueFacingMode(AActor* Avatar, EHodgeCharacterFacingDriver Driver, bool bRelease = false);
 	UFUNCTION(BlueprintCallable, Category="Hodge|Editor|Validation")
 	static bool QueueActionFacing(AActor* Avatar, FVector Direction, bool bRelease = false, bool bInstant = false);
 	UFUNCTION(BlueprintPure, Category="Hodge|Editor|Validation")
 	static TArray<FName> InspectFacingSequences(AActor* Avatar);
+	UFUNCTION(BlueprintPure, Category="Hodge|Editor|Validation")
+	static TArray<FHodgePivotValidationState> InspectPivotTimes(AActor* Avatar);
+	UFUNCTION(BlueprintPure, Category="Hodge|Editor|Validation")
+	static TArray<FHodgeSyncValidationState> InspectLocomotionSync(AActor* Avatar);
 	UFUNCTION(BlueprintCallable, Category="Hodge|Editor|Validation")
 	static bool SetFacingValidationControllerPermission(AActor* Avatar, bool bAllow);
 	UFUNCTION(BlueprintCallable, Category="Hodge|Editor|Validation")

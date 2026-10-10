@@ -24,9 +24,13 @@
 #include "K2Node_FunctionResult.h"
 #include "K2Node_CallFunction.h"
 #include "K2Node_Select.h"
+#include "K2Node_IfThenElse.h"
 #include "K2Node_VariableGet.h"
 #include "Animation/HodgeAnimInstance.h"
 #include "AnimGraphNode_Base.h"
+#include "AnimGraphNode_BlendListByBool.h"
+#include "AnimGraphNode_TransitionResult.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Kismet2/BlueprintEditorUtils.h"
 #include "Kismet2/KismetEditorUtilities.h"
 #include "KismetCompiler.h"
@@ -273,7 +277,8 @@ FName UHodgeAnimationAuthoringLibrary::GetSkeletonSlotGroup(USkeleton* Skeleton,
 
 bool UHodgeAnimationAuthoringLibrary::SetHeroReactionMontageSlot(UAnimMontage* Montage, FName Slot)
 {
-	if (!Montage || !Montage->GetPathName().StartsWith(TEXT("/Game/Main/Character/Hero/Anim/HitReactions/")) || Slot.IsNone()) { return false; }
+	if (!Montage || (!Montage->GetPathName().StartsWith(TEXT("/Game/Main/Character/Hero/Anim/HitReactions/")) &&
+		!Montage->GetPathName().StartsWith(TEXT("/Game/Main/Character/Hero/Anim/Movement/"))) || Slot.IsNone()) { return false; }
 	Montage->Modify();
 	for (auto& Track : Montage->SlotAnimTracks) { Track.SlotName = Slot; }
 	Montage->RefreshCacheData();
@@ -283,7 +288,8 @@ bool UHodgeAnimationAuthoringLibrary::SetHeroReactionMontageSlot(UAnimMontage* M
 
 bool UHodgeAnimationAuthoringLibrary::SetHeroReactionSkeleton(UAnimationAsset* Asset, USkeleton* Skeleton)
 {
-	if (!Asset || !Asset->GetPathName().StartsWith(TEXT("/Game/Main/Character/Hero/Anim/HitReactions/")) ||
+	if (!Asset || (!Asset->GetPathName().StartsWith(TEXT("/Game/Main/Character/Hero/Anim/HitReactions/")) &&
+		!Asset->GetPathName().StartsWith(TEXT("/Game/Main/Character/Hero/Anim/Movement/"))) ||
 		!Skeleton || Skeleton->GetPathName() != TEXT("/Game/Main/Character/Hero/Anim/Model/SK_Pover_LyraLab.SK_Pover_LyraLab")) { return false; }
 	if (Asset->GetSkeleton() == Skeleton) { return true; }
 	Asset->Modify();
@@ -368,6 +374,80 @@ bool UHodgeAnimationAuthoringLibrary::ConfigureHeroHitReactionGraph(UAnimBluepri
 	return bLinked && SetSkeletonSlotGroup(Blueprint->TargetSkeleton, TEXT("AdditiveHitReact"), TEXT("HodgeHitFeedback"));
 }
 
+FString UHodgeAnimationAuthoringLibrary::ConfigureHeroDashFootIK(UAnimBlueprint* LayerBlueprint)
+{
+	if (!LayerBlueprint || !GEditor || GEditor->PlayWorld ||
+		LayerBlueprint->GetPathName() != TEXT("/Game/Main/Character/Hero/Anim/Layer/ABP_Pover_LocomotionBase.ABP_Pover_LocomotionBase"))
+	{ return TEXT("ERROR: unexpected layer or PIE active"); }
+	UEdGraph* Graph = FindObject<UEdGraph>(LayerBlueprint, TEXT("FullBody_SkeletalControls"));
+	auto* Main = Graph ? FindObject<UK2Node_CallFunction>(Graph, TEXT("K2Node_CallFunction_0")) : nullptr;
+	auto* LegIK = Graph ? FindObject<UEdGraphNode>(Graph, TEXT("AnimGraphNode_LegIK_0")) : nullptr;
+	auto* Placement = Graph ? FindObject<UK2Node_CallFunction>(Graph, TEXT("K2Node_CallFunction_7")) : nullptr;
+	if (!Main || !LegIK || !Placement || !Main->FindPin(TEXT("ReturnValue")) || !LegIK->FindPin(TEXT("Alpha")) || !Placement->FindPin(TEXT("A")))
+	{ return TEXT("ERROR: original IK graph anchors missing"); }
+	const FScopedTransaction Transaction(NSLOCTEXT("HodgeAnimation", "DashFootIK", "Keep Dash foot placement continuous"));
+	LayerBlueprint->Modify(); Graph->Modify(); LegIK->Modify(); Placement->Modify();
+	auto* Get = HodgeAnimationAuthoring::FindOrAddPoseNode<UK2Node_VariableGet>(Graph, TEXT("HodgeDashFootIKAlpha"), 200, -350);
+	Get->VariableReference.SetExternalMember(TEXT("LocomotionFootIKAlpha"), UHodgeAnimInstance::StaticClass()); Get->ReconstructNode();
+	auto* Self = Get->FindPin(UEdGraphSchema_K2::PN_Self); auto* Value = Get->FindPin(TEXT("LocomotionFootIKAlpha"));
+	if (!Self || !Value || !Graph->GetSchema()->TryCreateConnection(Main->FindPin(TEXT("ReturnValue")), Self))
+	{ return TEXT("ERROR: cannot bind main IK snapshot"); }
+	for (UEdGraphPin* Target : {LegIK->FindPin(TEXT("Alpha")), Placement->FindPin(TEXT("A"))})
+	{
+		Graph->GetSchema()->BreakPinLinks(*Target, true);
+		if (!Graph->GetSchema()->TryCreateConnection(Value, Target)) { return TEXT("ERROR: cannot bind IK alpha"); }
+	}
+	FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(LayerBlueprint);
+	return TEXT("OK DashFootIK=continuous OtherFullBody=weighted");
+}
+
+bool UHodgeAnimationAuthoringLibrary::ConfigureHeroMovementMontageSync(UAnimMontage* Montage)
+{
+	if (!Montage || !GEditor || GEditor->PlayWorld || !Montage->GetPathName().StartsWith(TEXT("/Game/Main/Character/Hero/Anim/Movement/"))) { return false; }
+	Montage->Modify(); Montage->SyncGroup = TEXT("HodgeSprint"); Montage->SyncSlotIndex = 0;
+	Montage->PostEditChange(); Montage->MarkPackageDirty();
+	return Montage->MarkerData.AuthoredSyncMarkers.Num() >= 2;
+}
+
+FString UHodgeAnimationAuthoringLibrary::ConfigureHeroSprintSync(UAnimBlueprint* LayerBlueprint)
+{
+	if (!LayerBlueprint || !GEditor || GEditor->PlayWorld || LayerBlueprint->GetPathName() !=
+		TEXT("/Game/Main/Character/Hero/Anim/Layer/ABP_Pover_LocomotionBase.ABP_Pover_LocomotionBase")) { return TEXT("ERROR: unexpected layer or PIE"); }
+	UEdGraph* Graph = FindObject<UEdGraph>(LayerBlueprint, TEXT("FullBody_CycleState"));
+	if (!Graph) { return TEXT("ERROR: linked cycle graph missing"); }
+	if (FindObject<UEdGraphNode>(Graph, TEXT("HodgeSprintCycleBlend"))) { return TEXT("OK dedicated Sprint cycle already configured"); }
+	UAnimGraphNode_Base* Original = nullptr;
+	for (UEdGraphNode* Node : Graph->Nodes)
+	{ if (Node->GetClass()->GetName().Contains(TEXT("SequencePlayer"))) { Original = Cast<UAnimGraphNode_Base>(Node); break; } }
+	auto* OriginalPose = Original ? Original->FindPin(TEXT("Pose")) : nullptr;
+	if (!OriginalPose || OriginalPose->LinkedTo.IsEmpty()) { return TEXT("ERROR: cycle pose output missing"); }
+	const FScopedTransaction Transaction(NSLOCTEXT("HodgeAnimation", "SprintSync", "Synchronize Sprint foot phase"));
+	LayerBlueprint->Modify(); Graph->Modify(); Original->Modify();
+	const auto Destinations = OriginalPose->LinkedTo;
+	auto* Sprint = CastChecked<UAnimGraphNode_Base>(StaticDuplicateObject(Original, Graph, TEXT("HodgeSprintCyclePlayer")));
+	Graph->AddNode(Sprint, false, false); Sprint->CreateNewGuid(); Sprint->NodePosY += 350;
+	for (UEdGraphPin* Pin : Sprint->Pins) { Pin->LinkedTo.Reset(); }
+	if (!HodgeAnimationAuthoring::ImportProperty(Sprint, TEXT("Node.GroupName"), UHodgeAnimInstance::ResolveCycleSyncGroup(true).ToString()) ||
+		!HodgeAnimationAuthoring::ImportProperty(Sprint, TEXT("Node.GroupRole"), TEXT("CanBeLeader")) ||
+		!HodgeAnimationAuthoring::ImportProperty(Sprint, TEXT("Node.Method"), TEXT("SyncGroup"))) { return TEXT("ERROR: Sprint sync properties missing"); }
+	Sprint->ReconstructNode();
+	auto* Blend = HodgeAnimationAuthoring::FindOrAddPoseNode<UAnimGraphNode_BlendListByBool>(Graph, TEXT("HodgeSprintCycleBlend"), Original->NodePosX + 350, Original->NodePosY);
+	HodgeAnimationAuthoring::ImportProperty(Blend, TEXT("Node.BlendTime"), TEXT("(0.12,0.16)")); Blend->ReconstructNode();
+	auto* Main = HodgeAnimationAuthoring::FindOrAddPoseNode<UK2Node_CallFunction>(Graph, TEXT("HodgeSyncMain"), -1100, -650);
+	Main->SetFromFunction(LayerBlueprint->GeneratedClass->FindFunctionByName(TEXT("GetMainAnimBPThreadSafe"))); Main->ReconstructNode();
+	auto* Mode = HodgeAnimationAuthoring::FindOrAddPoseNode<UK2Node_VariableGet>(Graph, TEXT("HodgeCycleSyncSprint"), -800, -650);
+	Mode->VariableReference.SetExternalMember(TEXT("bSprinting"), UHodgeAnimInstance::StaticClass()); Mode->ReconstructNode();
+	const auto* Schema = Graph->GetSchema(); Schema->BreakPinLinks(*OriginalPose, true);
+	if (!Schema->TryCreateConnection(OriginalPose, Blend->FindPin(TEXT("BlendPose_1"))) ||
+		!Schema->TryCreateConnection(Sprint->FindPin(TEXT("Pose")), Blend->FindPin(TEXT("BlendPose_0"))) ||
+		!Schema->TryCreateConnection(Main->GetReturnValuePin(), Mode->FindPin(UEdGraphSchema_K2::PN_Self)) ||
+		!Schema->TryCreateConnection(Mode->FindPin(TEXT("bSprinting")), Blend->FindPin(TEXT("bActiveValue")))) { return TEXT("ERROR: Sprint pose blend wiring failed"); }
+	for (auto* Destination : Destinations)
+	{ if (!Schema->TryCreateConnection(Blend->FindPin(TEXT("Pose")), Destination)) { return TEXT("ERROR: cycle blend output failed"); } }
+	FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(LayerBlueprint);
+	return TEXT("OK DedicatedSprintGroup=HodgeSprint OriginalLocomotion=preserved");
+}
+
 FString UHodgeAnimationAuthoringLibrary::ConfigureHeroFacingModes(UAnimBlueprint* MainBlueprint, UAnimBlueprint* LayerBlueprint)
 {
 	if (!MainBlueprint || !LayerBlueprint || !GEditor || GEditor->PlayWorld ||
@@ -449,6 +529,149 @@ FString UHodgeAnimationAuthoringLibrary::ConfigureHeroFacingModes(UAnimBlueprint
 	FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(MainBlueprint);
 	FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(LayerBlueprint);
 	return FString::Printf(TEXT("OK DirectionEntries=%d WarpingEntries=%d"), DirectionEntries, WarpingEntries);
+}
+
+FString UHodgeAnimationAuthoringLibrary::ConfigureHeroSprintAnimations(UAnimBlueprint* MainBlueprint, UAnimBlueprint* LayerBlueprint)
+{
+	if (!MainBlueprint || !LayerBlueprint || !GEditor || GEditor->PlayWorld ||
+		MainBlueprint->GetPathName() != TEXT("/Game/Main/Character/Hero/Anim/ABP_Pover_Base.ABP_Pover_Base") ||
+		LayerBlueprint->GetPathName() != TEXT("/Game/Main/Character/Hero/Anim/Layer/ABP_Pover_LocomotionBase.ABP_Pover_LocomotionBase"))
+	{ return TEXT("ERROR: unexpected asset or PIE active"); }
+	MainBlueprint->Modify(); LayerBlueprint->Modify();
+	auto ReadMain = [LayerBlueprint](UEdGraph* Graph, FName Property) -> UEdGraphPin*
+	{
+		using namespace HodgeAnimationAuthoring;
+		auto* Call = FindOrAddPoseNode<UK2Node_CallFunction>(Graph, TEXT("HodgeSprintMainAnim"), -1200, -500);
+		UFunction* Function = LayerBlueprint->GeneratedClass ? LayerBlueprint->GeneratedClass->FindFunctionByName(TEXT("GetMainAnimBPThreadSafe")) : nullptr;
+		if (!Function) { return nullptr; }
+		Call->SetFromFunction(Function); Call->ReconstructNode();
+		auto* Get = FindOrAddPoseNode<UK2Node_VariableGet>(Graph, FName(TEXT("HodgeSprint_") + Property.ToString()), -1000, -500);
+		Get->VariableReference.SetExternalMember(Property, UHodgeAnimInstance::StaticClass()); Get->ReconstructNode();
+		auto* Object = Call->FindPin(TEXT("ReturnValue")); auto* Self = Get->FindPin(UEdGraphSchema_K2::PN_Self);
+		if (!Object || !Self || (!Object->LinkedTo.Contains(Self) && !Graph->GetSchema()->TryCreateConnection(Object, Self))) { return nullptr; }
+		return Get->FindPin(Property);
+	};
+	int32 Cycles = 0, Pivots = 0, Gates = 0;
+	TArray<UEdGraph*> Graphs; LayerBlueprint->GetAllGraphs(Graphs);
+	for (auto* Graph : Graphs)
+	{
+		const auto Nodes = Graph->Nodes;
+		for (UEdGraphNode* Node : Nodes)
+		{
+			auto* Select = Cast<UK2Node_Select>(Node);
+			if (!Select || !Select->GetEnum() || Select->GetEnum()->GetName() != TEXT("AnimEnum_CardinalDirection")) { continue; }
+			const bool bCycle = Graph->GetFName() == TEXT("UpdateCycleAnim");
+			const bool bPivot = Graph->GetName().Contains(TEXT("Pivot"));
+			if (!bCycle && !bPivot) { continue; }
+			if (bCycle) { ++Cycles; } else { ++Pivots; }
+			const FName Name(TEXT("HodgeSprintSequence_") + Node->GetName());
+			if (FindObject<UK2Node_Select>(Graph, *Name.ToString())) { continue; }
+			auto* Mode = ReadMain(Graph, TEXT("bSprinting"));
+			auto* Sequence = ReadMain(Graph, bCycle ? TEXT("SprintCycle") : TEXT("SprintTurn"));
+			if (!Mode || !Sequence) { return TEXT("ERROR: sprint snapshot binding failed"); }
+			auto* Original = Select->GetReturnValuePin(); const auto Destinations = Original->LinkedTo;
+			auto* Branch = HodgeAnimationAuthoring::FindOrAddPoseNode<UK2Node_Select>(Graph, Name, Node->NodePosX + 250, Node->NodePosY);
+			HodgeAnimationAuthoring::ImportProperty(Branch, TEXT("IndexPinType"), TEXT("(PinCategory=\"bool\",PinSubCategory=\"\")")); Branch->ReconstructNode();
+			TArray<UEdGraphPin*> Options; Branch->GetOptionPins(Options);
+			if (Options.Num() != 2) { return TEXT("ERROR: sprint resource selector invalid"); }
+			for (auto* Pin : Options) { Pin->PinType = Original->PinType; }
+			Branch->GetReturnValuePin()->PinType = Original->PinType;
+			const auto* Schema = Graph->GetSchema(); Schema->BreakPinLinks(*Original, true);
+			if (!Schema->TryCreateConnection(Original, Options[0]) || !Schema->TryCreateConnection(Sequence, Options[1]) ||
+				!Schema->TryCreateConnection(Mode, Branch->GetIndexPin())) { return TEXT("ERROR: sprint resource selector connection failed"); }
+			for (auto* Destination : Destinations)
+			{ if (!Schema->TryCreateConnection(Branch->GetReturnValuePin(), Destination)) { return TEXT("ERROR: sprint output connection failed"); } }
+		}
+	}
+	Graphs.Reset(); MainBlueprint->GetAllGraphs(Graphs);
+	for (auto* Graph : Graphs)
+	{
+		for (UEdGraphNode* Node : Graph->Nodes)
+		{
+			auto* Get = Cast<UK2Node_VariableGet>(Node);
+			if (!Get || Get->VariableReference.GetMemberName() != TEXT("EnablePivot")) { continue; }
+			auto* Original = Get->FindPin(TEXT("EnablePivot"));
+			if (!Original) { return TEXT("ERROR: Pivot gate output missing"); }
+			const auto Destinations = Original->LinkedTo; Graph->GetSchema()->BreakPinLinks(*Original, true);
+			Get->Modify(); Get->VariableReference.SetSelfMember(TEXT("bSprintPivotAllowed"), FGuid()); Get->ReconstructNode();
+			auto* Output = Get->FindPin(TEXT("bSprintPivotAllowed"));
+			if (!Output) { return TEXT("ERROR: Sprint Pivot output missing"); }
+			for (auto* Destination : Destinations)
+			{ if (!Graph->GetSchema()->TryCreateConnection(Output, Destination)) { return TEXT("ERROR: Sprint Pivot gate connection failed"); } }
+			++Gates;
+		}
+	}
+	FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(MainBlueprint); FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(LayerBlueprint);
+	return FString::Printf(TEXT("OK Cycles=%d Pivots=%d Gates=%d"), Cycles, Pivots, Gates);
+}
+
+FString UHodgeAnimationAuthoringLibrary::ConfigureHeroSprintPivotTiming(UAnimBlueprint* MainBlueprint, UAnimBlueprint* LayerBlueprint)
+{
+	if (!MainBlueprint || MainBlueprint->GetPathName() != TEXT("/Game/Main/Character/Hero/Anim/ABP_Pover_Base.ABP_Pover_Base") ||
+		!LayerBlueprint || !GEditor || GEditor->PlayWorld || LayerBlueprint->GetPathName() !=
+		TEXT("/Game/Main/Character/Hero/Anim/Layer/ABP_Pover_LocomotionBase.ABP_Pover_LocomotionBase")) { return TEXT("ERROR: unexpected layer or PIE"); }
+	LayerBlueprint->Modify();
+	TArray<UEdGraph*> Graphs; LayerBlueprint->GetAllGraphs(Graphs);
+	int32 Evaluators = 0;
+	for (auto* Graph : Graphs)
+	{
+		for (UEdGraphNode* Node : Graph->Nodes)
+		{
+			if (!Node->GetClass()->GetName().Contains(TEXT("SequenceEvaluator")) || (Graph->GetFName() != TEXT("PivotA") && Graph->GetFName() != TEXT("PivotB"))) { continue; }
+			HodgeAnimationAuthoring::ImportProperty(Node, TEXT("Node.GroupName"), TEXT("None"));
+			HodgeAnimationAuthoring::ImportProperty(Node, TEXT("Node.Method"), TEXT("DoNotSync"));
+			HodgeAnimationAuthoring::ImportProperty(Node, TEXT("Node.BecomeRelevantFunction.FunctionName"), TEXT("SetUpPivotAnim"));
+			++Evaluators;
+		}
+		const bool bCycle = Graph->GetFName() == TEXT("UpdateCycleAnim");
+		const FName AdvanceName = bCycle ? TEXT("HodgeAdvanceSprintCycle") : TEXT("HodgeAdvanceSprintPivot");
+		if ((!bCycle && Graph->GetFName() != TEXT("UpdatePivotAnim")) || FindObject<UK2Node_CallFunction>(Graph, *AdvanceName.ToString())) { continue; }
+		UK2Node_FunctionEntry* Entry = nullptr;
+		for (UEdGraphNode* Node : Graph->Nodes) { if (auto* Candidate = Cast<UK2Node_FunctionEntry>(Node)) { Entry = Candidate; break; } }
+		if (!Entry) { return TEXT("ERROR: Pivot update entry missing"); }
+		const auto* Schema = Graph->GetSchema();
+		auto* Exec = Entry->FindPin(UEdGraphSchema_K2::PN_Then);
+		auto* Context = Entry->FindPin(TEXT("Context")); auto* Ref = Entry->FindPin(TEXT("Node"));
+		if (!Exec || !Context || !Ref) { return TEXT("ERROR: Pivot callback inputs missing"); }
+		const auto OldExec = Exec->LinkedTo;
+		auto* Main = HodgeAnimationAuthoring::FindOrAddPoseNode<UK2Node_CallFunction>(Graph, TEXT("HodgePivotMainAnim"), -1800, -400);
+		Main->SetFromFunction(LayerBlueprint->GeneratedClass->FindFunctionByName(TEXT("GetMainAnimBPThreadSafe"))); Main->ReconstructNode();
+		auto* Advance = HodgeAnimationAuthoring::FindOrAddPoseNode<UK2Node_CallFunction>(Graph, AdvanceName, -1600, -400);
+		Advance->SetFromFunction(UHodgeAnimInstance::StaticClass()->FindFunctionByName(bCycle ? TEXT("UpdateSprintCycle") : TEXT("UpdateSprintPivot"))); Advance->ReconstructNode();
+		auto* Branch = HodgeAnimationAuthoring::FindOrAddPoseNode<UK2Node_IfThenElse>(Graph, TEXT("HodgePivotTimingBranch"), -1300, -400);
+		Schema->BreakPinLinks(*Exec, true);
+		if (!Schema->TryCreateConnection(Exec, Advance->GetExecPin()) ||
+			!Schema->TryCreateConnection(Main->GetReturnValuePin(), Advance->FindPin(UEdGraphSchema_K2::PN_Self)) ||
+			!Schema->TryCreateConnection(Context, Advance->FindPin(TEXT("Context"))) || !Schema->TryCreateConnection(Ref, Advance->FindPin(TEXT("Node"))) ||
+			!Schema->TryCreateConnection(Advance->GetThenPin(), Branch->GetExecPin()) ||
+			!Schema->TryCreateConnection(Advance->GetReturnValuePin(), Branch->GetConditionPin())) { return TEXT("ERROR: Pivot timing connection failed"); }
+		for (auto* Destination : OldExec) { if (!Schema->TryCreateConnection(Branch->GetElsePin(), Destination)) { return TEXT("ERROR: legacy Pivot restoration failed"); } }
+		// True 路径结束本次更新，False 保留原八向距离匹配。
+	}
+	MainBlueprint->Modify(); Graphs.Reset(); MainBlueprint->GetAllGraphs(Graphs);
+	int32 Exits = 0;
+	for (auto* Graph : Graphs)
+	{
+		// 此已有出口通往 Cycle，保留 LinkedLayerChanged 并补上单一 Turn 的时间出口。
+		if (!Graph->GetPathName().Contains(TEXT("LocomotionSM.AnimStateTransitionNode_19.Transition"))) { continue; }
+		if (FindObject<UK2Node_CallFunction>(Graph, TEXT("HodgeSprintPivotExit"))) { ++Exits; continue; }
+		UAnimGraphNode_TransitionResult* Result = nullptr;
+		for (UEdGraphNode* Node : Graph->Nodes) { if (auto* Candidate = Cast<UAnimGraphNode_TransitionResult>(Node)) { Result = Candidate; break; } }
+		auto* Output = Result ? Result->FindPin(TEXT("bCanEnterTransition")) : nullptr;
+		if (!Output || Output->LinkedTo.Num() != 1) { return TEXT("ERROR: Pivot Cycle exit missing"); }
+		auto* Original = Output->LinkedTo[0]; const auto* Schema = Graph->GetSchema();
+		auto* Exit = HodgeAnimationAuthoring::FindOrAddPoseNode<UK2Node_CallFunction>(Graph, TEXT("HodgeSprintPivotExit"), -600, 200);
+		Exit->SetFromFunction(UHodgeAnimInstance::StaticClass()->FindFunctionByName(TEXT("ShouldExitSprintPivot"))); Exit->ReconstructNode();
+		auto* Or = HodgeAnimationAuthoring::FindOrAddPoseNode<UK2Node_CallFunction>(Graph, TEXT("HodgeSprintPivotExitOr"), -300, 200);
+		Or->SetFromFunction(UKismetMathLibrary::StaticClass()->FindFunctionByName(TEXT("BooleanOR"))); Or->ReconstructNode();
+		Schema->BreakPinLinks(*Output, true);
+		if (!Schema->TryCreateConnection(Original, Or->FindPin(TEXT("A"))) || !Schema->TryCreateConnection(Exit->GetReturnValuePin(), Or->FindPin(TEXT("B"))) ||
+			!Schema->TryCreateConnection(Or->GetReturnValuePin(), Output)) { return TEXT("ERROR: Pivot Cycle timing exit connection failed"); }
+		++Exits;
+	}
+	if (Exits != 1) { return TEXT("ERROR: expected one Pivot Cycle timing exit"); }
+	FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(MainBlueprint); FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(LayerBlueprint);
+	return FString::Printf(TEXT("OK PivotEvaluators=%d TimingExits=%d"), Evaluators, Exits);
 }
 
 bool UHodgeAnimationAuthoringLibrary::ConfigureAnimationLabPIE(int32 PlayerCount, bool bListenServer)
