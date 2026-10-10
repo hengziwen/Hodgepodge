@@ -15,13 +15,13 @@ class UObject;
  * 一个 AbilityTag 可以定义它会阻止、取消哪些 Ability，
  * 以及拥有该 Tag 的 Ability 在激活时额外需要或禁止哪些 Tag。
  */
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FHodgeAbilityTagRelationship
 {
 	GENERATED_BODY()
 
 	// 当前关系所针对的 Ability Tag；一个 Ability 可以同时拥有多个这样的 Tag。
-	UPROPERTY(EditAnywhere, Category = Ability, meta = (Categories = "Gameplay.Action"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Ability, meta = (Categories = "Ability"))
 	FGameplayTag AbilityTag;
 
 	// 拥有当前 AbilityTag 的 Ability 激活时，会阻止拥有这些 Tag 的其他 Ability。
@@ -31,6 +31,12 @@ struct FHodgeAbilityTagRelationship
 	// 拥有当前 AbilityTag 的 Ability 激活时，会取消拥有这些 Tag 的其他 Ability。
 	UPROPERTY(EditAnywhere, Category = Ability)
 	FGameplayTagContainer AbilityTagsToCancel;
+	/** 取消豁免优先于所有命中的规则；Death 另有不可移除的保护。 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Ability)
+	FGameplayTagContainer AbilityTagsToCancelExceptions;
+	/** 映射授权后，中断非死亡技能的不可取消阶段。 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Ability)
+	bool bForceCancel = false;
 
 	// 拥有当前 AbilityTag 的 Ability 会隐式获得这些 Activation Required Tags。
 	UPROPERTY(EditAnywhere, Category = Ability)
@@ -48,8 +54,8 @@ struct FHodgeAbilityTagRelationship
  * 用于配置不同 Ability 之间的阻止、取消以及激活条件关系。
  * 通过 DataAsset 可以在编辑器中集中配置整套 Ability Tag 规则。
  */
-UCLASS()
-class UHodgeAbilityTagRelationshipMapping : public UDataAsset
+UCLASS(BlueprintType)
+class HODGEPODGE_API UHodgeAbilityTagRelationshipMapping : public UDataAsset
 {
 	GENERATED_BODY()
 
@@ -59,6 +65,13 @@ private:
 	TArray<FHodgeAbilityTagRelationship> AbilityTagRelationships;
 
 public:
+	friend struct FHodgeRelationshipTestAccess;
+	UFUNCTION(BlueprintPure, Category="Hodge|Ability Relationships")
+	static bool IsCancellationProtected(const FGameplayTagContainer& TargetTags);
+	void GetAbilityCancelExceptions(const FGameplayTagContainer& SourceTags, FGameplayTagContainer& OutExceptions) const;
+	UFUNCTION(BlueprintPure, Category="Hodge|Ability Relationships")
+	bool IsAbilityCancelledByTags(const FGameplayTagContainer& SourceTags, const FGameplayTagContainer& TargetTags) const;
+	bool IsForcedCancellation(const FGameplayTagContainer& SourceTags, const FGameplayTagContainer& TargetTags) const;
 	// 根据一组 Ability Tags，计算这些 Ability 会阻止和取消哪些其他 Ability。
 	void GetAbilityTagsToBlockAndCancel(const FGameplayTagContainer& AbilityTags, FGameplayTagContainer* OutTagsToBlock,
 	                                    FGameplayTagContainer* OutTagsToCancel) const;

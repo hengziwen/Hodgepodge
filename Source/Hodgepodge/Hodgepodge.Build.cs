@@ -32,13 +32,13 @@ public class Hodgepodge : ModuleRules
 			"CommonUI",
 			"CommonInput",
 			"Slate",
+			"Niagara",
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[]
 		{
 			"EnhancedInput",
 			"PhysicsCore",
-			"Niagara",
 			"SignificanceManager",
 			// IPlatformInputDeviceMapper 定义在 ApplicationCore（GenericPlatformInputDeviceMapper.h）。
 			"ApplicationCore"

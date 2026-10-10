@@ -5,6 +5,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "NativeGameplayTags.h"
 #include "GameFramework/CharacterMovementReplication.h"
+#include "Combat/HodgeMovementActionTypes.h"
 
 #include "HodgeCharacterMovementComponent.generated.h"
 
@@ -59,6 +60,7 @@ public:
 
 	// 模拟角色移动，用于处理角色移动状态和网络移动模拟。
 	virtual void SimulateMovement(float DeltaTime) override;
+	virtual void PerformMovement(float DeltaTime) override;
 
 	// 判断角色当前是否允许尝试跳跃。
 	virtual bool CanAttemptJump() const override;
@@ -77,6 +79,8 @@ public:
 
 	// 获取角色当前移动状态下允许使用的最大速度。
 	virtual float GetMaxSpeed() const override;
+	virtual float GetMaxAcceleration() const override;
+	virtual float GetMaxBrakingDeceleration() const override;
 	virtual FVector ConstrainInputAcceleration(const FVector& InputAcceleration) const override;
 	virtual bool ApplyRequestedMove(float DeltaTime, float MaxAccel, float MaxSpeed, float Friction,
 		float BrakingDeceleration, FVector& OutAcceleration, float& OutRequestedSpeed) override;
@@ -86,6 +90,10 @@ public:
 	virtual void ServerMove_PerformMovement(const FCharacterNetworkMoveData& MoveData) override;
 	virtual FNetworkPredictionData_Client* GetPredictionData_Client() const override;
 	virtual bool ClientUpdatePositionAfterServerUpdate() override;
+	virtual void ClientHandleMoveResponse(const FCharacterMoveResponseDataContainer& MoveResponse) override;
+	virtual void ClientAdjustPosition_Implementation(float TimeStamp, FVector NewLoc, FVector NewVel,
+		UPrimitiveComponent* NewBase, FName NewBaseBoneName, bool bHasBase, bool bBaseRelativePosition,
+		uint8 ServerMovementMode, TOptional<FRotator> OptionalRotation = TOptional<FRotator>()) override;
 #if WITH_DEV_AUTOMATION_TESTS
 	FCharacterNetworkMoveDataContainer& GetFacingMoveDataForTests() { return *FacingMoveData; }
 #endif
@@ -112,6 +120,7 @@ protected:
 	bool bApplyingRotationCorrection = false;
 	bool bHasReactionReplay = false;
 	bool bReactionReplayControlled = false;
+	TOptional<FVector> DashCorrectionVelocity;
 	bool IsHitReactionControlled() const;
 	TUniquePtr<FCharacterNetworkMoveDataContainer> FacingMoveData;
 };

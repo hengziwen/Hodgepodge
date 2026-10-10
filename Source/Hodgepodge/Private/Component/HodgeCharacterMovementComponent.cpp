@@ -8,6 +8,11 @@
 #include "Components/CapsuleComponent.h"
 #include "Character/HodgeCombatCharacter.h"
 #include "Component/HodgeCharacterRotationComponent.h"
+#include "Component/HodgeLocomotionPolicyComponent.h"
+#include "Data/HodgeSprintAbilityProfile.h"
+#include "Animation/AnimInstance.h"
+#include "Animation/AnimMontage.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "Component/HodgeCombatComponentBase.h"
 #include "AbilitySystem/HodgeGameplayTags.h"
 #include "GameFramework/Character.h"
@@ -40,12 +45,14 @@ namespace HodgeRotationPrediction
 	{
 	public:
 		FHodgeCharacterRotationState RotationState;
+		FHodgeLocomotionState LocomotionState;
 		bool bReactionControlled = false;
 
 		virtual void Clear() override
 		{
 			Super::Clear();
 			RotationState = {};
+			LocomotionState = {};
 			bReactionControlled = false;
 		}
 
@@ -53,6 +60,7 @@ namespace HodgeRotationPrediction
 			FNetworkPredictionData_Client_Character& ClientData) override
 		{
 			Super::SetMoveFor(Character, InDeltaTime, NewAcceleration, ClientData);
+			if (const auto* Policy = Character->FindComponentByClass<UHodgeLocomotionPolicyComponent>()) { LocomotionState = Policy->GetResolvedPolicy(); }
 			const auto* ASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(Character);
 			bReactionControlled = ASC && ASC->HasMatchingGameplayTag(HodgeHitReactionTags::Controlled);
 			if (const UHodgeCharacterRotationComponent* Rotation = FindRotation(Character))
@@ -65,6 +73,8 @@ namespace HodgeRotationPrediction
 		{
 			const FSavedMove* Other = static_cast<const FSavedMove*>(NewMove.Get());
 			if (!Other || RotationState.Driver != Other->RotationState.Driver || RotationState.Style != Other->RotationState.Style
+				|| LocomotionState.ActivationKey != Other->LocomotionState.ActivationKey || LocomotionState.Version != Other->LocomotionState.Version
+				|| LocomotionState.bSprinting != Other->LocomotionState.bSprinting
 				|| RotationState.RequestSequence != Other->RotationState.RequestSequence || RotationState.ActionRequestId != Other->RotationState.ActionRequestId
 				|| bReactionControlled != Other->bReactionControlled || RotationState.bYawLocked != Other->RotationState.bYawLocked
 				|| RotationState.bRecoveringFacing != Other->RotationState.bRecoveringFacing
@@ -79,6 +89,7 @@ namespace HodgeRotationPrediction
 		virtual void PrepMoveFor(ACharacter* Character) override
 		{
 			Super::PrepMoveFor(Character);
+			if (auto* Policy = Character->FindComponentByClass<UHodgeLocomotionPolicyComponent>()) { Policy->SetMoveReplayState(LocomotionState); }
 			if (auto* Movement = Cast<UHodgeCharacterMovementComponent>(Character->GetCharacterMovement()))
 			{ Movement->SetHitReactionMoveReplay(bReactionControlled); }
 			if (UHodgeCharacterRotationComponent* Rotation = FindRotation(Character))
@@ -103,15 +114,18 @@ namespace HodgeRotationPrediction
 	struct FMoveData final : FCharacterNetworkMoveData
 	{
 		uint32 FacingSequence = 0;
+		int32 SprintActivationKey = 0;
 		virtual void ClientFillNetworkMoveData(const FSavedMove_Character& Move, ENetworkMoveType Type) override
 		{
 			FCharacterNetworkMoveData::ClientFillNetworkMoveData(Move, Type);
 			FacingSequence = static_cast<const FSavedMove&>(Move).RotationState.RequestSequence;
+			SprintActivationKey = static_cast<const FSavedMove&>(Move).LocomotionState.bSprinting ? static_cast<const FSavedMove&>(Move).LocomotionState.ActivationKey : 0;
 		}
 		virtual bool Serialize(UCharacterMovementComponent& Movement, FArchive& Ar, UPackageMap* Map, ENetworkMoveType Type) override
 		{
 			const bool bValid = FCharacterNetworkMoveData::Serialize(Movement, Ar, Map, Type);
 			Ar.SerializeIntPacked(FacingSequence);
+			Ar << SprintActivationKey;
 			return bValid && !Ar.IsError();
 		}
 	};
@@ -132,6 +146,59 @@ UHodgeCharacterMovementComponent::UHodgeCharacterMovementComponent(const FObject
 }
 
 // 模拟角色移动，存在服务端同步加速度时需要保护复制过来的加速度不被父类逻辑覆盖
+void UHodgeCharacterMovementComponent::PerformMovement(float DeltaTime)
+{
+	const auto* Policy = CharacterOwner ? CharacterOwner->FindComponentByClass<UHodgeLocomotionPolicyComponent>() : nullptr;
+	const auto* ASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(CharacterOwner);
+	const bool bStopped = IsHitReactionControlled() || (ASC && (ASC->HasMatchingGameplayTag(HodgeGameplayTags::Status_Death) ||
+		ASC->HasMatchingGameplayTag(TAG_Gameplay_MovementStopped)));
+	if (Policy && !bStopped)
+	{
+		// 保存帧可能带回交接前的 RMS，按来源恢复成功退出策略再执行引擎清理。
+		for (const auto& Source : CurrentRootMotion.RootMotionSources)
+		{
+			float MaximumSpeed = 0.f;
+			if (Source && Policy->GetDashExitVelocity(Source->InstanceName, MaximumSpeed))
+			{ Source->FinishVelocityParams.Mode = ERootMotionFinishVelocityMode::ClampVelocity; Source->FinishVelocityParams.ClampVelocity = MaximumSpeed; }
+		}
+	}
+	Super::PerformMovement(DeltaTime);
+}
+
+void UHodgeCharacterMovementComponent::ClientHandleMoveResponse(const FCharacterMoveResponseDataContainer& MoveResponse)
+{
+	TOptional<FVector> CorrectionVelocity;
+	const auto* Policy = CharacterOwner ? CharacterOwner->FindComponentByClass<UHodgeLocomotionPolicyComponent>() : nullptr;
+	const auto* ASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(CharacterOwner);
+	const bool bStopped = IsHitReactionControlled() || (ASC && (ASC->HasMatchingGameplayTag(HodgeGameplayTags::Status_Death) ||
+		ASC->HasMatchingGameplayTag(TAG_Gameplay_MovementStopped)));
+	if (Policy && !bStopped && MoveResponse.IsCorrection() && MoveResponse.bRootMotionSourceCorrection &&
+		!MoveResponse.bRootMotionMontageCorrection && !MoveResponse.ClientAdjustment.bBaseRelativeVelocity &&
+		!MoveResponse.ClientAdjustment.NewVel.ContainsNaN())
+	{
+		if (const auto* Sources = MoveResponse.GetRootMotionSourceGroup(*this))
+		{
+			for (const auto& Source : Sources->RootMotionSources)
+			{
+				float MaximumSpeed = 0.f;
+				if (Source && Policy->GetDashExitVelocity(Source->InstanceName, MaximumSpeed))
+				{ CorrectionVelocity = FVector(MoveResponse.ClientAdjustment.NewVel); break; }
+			}
+		}
+	}
+	TGuardValue<TOptional<FVector>> CorrectionGuard(DashCorrectionVelocity, CorrectionVelocity);
+	Super::ClientHandleMoveResponse(MoveResponse);
+}
+
+void UHodgeCharacterMovementComponent::ClientAdjustPosition_Implementation(float TimeStamp, FVector NewLoc, FVector NewVel,
+	UPrimitiveComponent* NewBase, FName NewBaseBoneName, bool bHasBase, bool bBaseRelativePosition,
+	uint8 ServerMovementMode, TOptional<FRotator> OptionalRotation)
+{
+	// Packed 包已有完整权威速度；成功退出的 Dash 不走旧 RMS 入口的平面归零。
+	Super::ClientAdjustPosition_Implementation(TimeStamp, NewLoc, DashCorrectionVelocity.Get(NewVel), NewBase,
+		NewBaseBoneName, bHasBase, bBaseRelativePosition, ServerMovementMode, OptionalRotation);
+}
+
 void UHodgeCharacterMovementComponent::SimulateMovement(float DeltaTime)
 {
 	if (bHasReplicatedAcceleration)
@@ -278,6 +345,8 @@ FRotator UHodgeCharacterMovementComponent::GetDeltaRotation(float DeltaTime) con
 
 	// 没有禁止移动时使用 CharacterMovementComponent 默认的旋转计算
 	FRotator Delta = Super::GetDeltaRotation(DeltaTime);
+	const auto* Policy = CharacterOwner ? CharacterOwner->FindComponentByClass<UHodgeLocomotionPolicyComponent>() : nullptr;
+	if (Policy && Policy->GetResolvedPolicy().bSprinting) { Delta.Yaw = Policy->GetResolvedPolicy().TurnRate * FMath::Max(0.f, DeltaTime); }
 	if (Rotation && bApplyLocalConstraint && Rotation->IsRecoveringFacing())
 	{
 		Delta.Yaw = FMath::Min(FMath::Abs(Delta.Yaw), Rotation->GetRecoveryTurnRate() * FMath::Max(0.f, DeltaTime));
@@ -290,6 +359,12 @@ void UHodgeCharacterMovementComponent::PhysicsRotation(float DeltaTime)
 	UHodgeCharacterRotationComponent* Rotation = HodgeRotationPrediction::FindRotation(CharacterOwner);
 	if (Rotation && Rotation->IsFacingSystemReady()) { Rotation->ApplyResolvedMode(); }
 	if (Rotation && Rotation->IsYawLocked() && CharacterOwner->GetLocalRole() != ROLE_SimulatedProxy) { return; }
+	// 根运动蒙太奇提供唯一旋转增量，动作朝向请求不能逐帧把 Yaw 改回起点。
+	const auto* Policy = CharacterOwner ? CharacterOwner->FindComponentByClass<UHodgeLocomotionPolicyComponent>() : nullptr;
+	const auto* Profile = Policy ? Policy->GetProfile() : nullptr;
+	const auto* Anim = CharacterOwner && CharacterOwner->GetMesh() ? CharacterOwner->GetMesh()->GetAnimInstance() : nullptr;
+	const auto* RootMontage = Anim ? Anim->GetRootMotionMontageInstance() : nullptr;
+	if (HasAnimRootMotion() && RootMontage && Profile && RootMontage->Montage == Profile->SprintPivotMontage) { return; }
 	if (Rotation && Rotation->IsFacingSystemReady() && CharacterOwner->GetLocalRole() != ROLE_SimulatedProxy &&
 		Rotation->GetResolvedState().Driver == EHodgeCharacterFacingDriver::ActionDirection)
 	{
@@ -322,11 +397,14 @@ void UHodgeCharacterMovementComponent::PhysicsRotation(float DeltaTime)
 
 void UHodgeCharacterMovementComponent::ServerMove_PerformMovement(const FCharacterNetworkMoveData& MoveData)
 {
+	UHodgeLocomotionPolicyComponent* Policy = CharacterOwner ? CharacterOwner->FindComponentByClass<UHodgeLocomotionPolicyComponent>() : nullptr;
+	if (Policy) { Policy->BeginServerMove(static_cast<const HodgeRotationPrediction::FMoveData&>(MoveData).SprintActivationKey); }
 	UHodgeCharacterRotationComponent* Rotation = HodgeRotationPrediction::FindRotation(CharacterOwner);
 	const bool bServerOverride = CharacterOwner && CharacterOwner->HasAuthority() && Rotation;
 	if (bServerOverride)
 	{ Rotation->BeginServerMove(static_cast<const HodgeRotationPrediction::FMoveData&>(MoveData).FacingSequence); }
 	Super::ServerMove_PerformMovement(MoveData);
+	if (Policy) { Policy->EndServerMove(); }
 	if (bServerOverride) { Rotation->EndServerMove(); }
 }
 
@@ -361,6 +439,7 @@ bool UHodgeCharacterMovementComponent::ClientUpdatePositionAfterServerUpdate()
 {
 	const bool bResult = Super::ClientUpdatePositionAfterServerUpdate();
 	bHasReactionReplay = false;
+	if (auto* Policy = CharacterOwner ? CharacterOwner->FindComponentByClass<UHodgeLocomotionPolicyComponent>() : nullptr) { Policy->ClearMoveReplayState(); }
 	if (UHodgeCharacterRotationComponent* Rotation = HodgeRotationPrediction::FindRotation(CharacterOwner))
 	{
 		Rotation->ClearMoveReplayState();
@@ -390,13 +469,28 @@ float UHodgeCharacterMovementComponent::GetMaxSpeed() const
 	}
 
 	// 没有禁止移动时使用 CharacterMovementComponent 默认最大速度
-	return Super::GetMaxSpeed();
+	const auto* Policy = CharacterOwner ? CharacterOwner->FindComponentByClass<UHodgeLocomotionPolicyComponent>() : nullptr;
+	const FHodgeLocomotionState State = Policy ? Policy->GetResolvedPolicy() : FHodgeLocomotionState();
+	return State.bSprinting ? State.MaxSpeed : Super::GetMaxSpeed() * State.SpeedScale;
 }
 
+float UHodgeCharacterMovementComponent::GetMaxAcceleration() const
+{
+	const auto* Policy = CharacterOwner ? CharacterOwner->FindComponentByClass<UHodgeLocomotionPolicyComponent>() : nullptr;
+	const auto State = Policy ? Policy->GetResolvedPolicy() : FHodgeLocomotionState();
+	return State.bSprinting ? State.Acceleration : Super::GetMaxAcceleration();
+}
+float UHodgeCharacterMovementComponent::GetMaxBrakingDeceleration() const
+{
+	const auto* Policy = CharacterOwner ? CharacterOwner->FindComponentByClass<UHodgeLocomotionPolicyComponent>() : nullptr;
+	const auto State = Policy ? Policy->GetResolvedPolicy() : FHodgeLocomotionState();
+	return State.bSprinting ? State.Braking : Super::GetMaxBrakingDeceleration();
+}
 FVector UHodgeCharacterMovementComponent::ConstrainInputAcceleration(const FVector& InputAcceleration) const
 {
 	if (IsHitReactionControlled()) { return FVector::ZeroVector; }
 	const auto* ASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(GetOwner());
+	if (ASC && (ASC->HasMatchingGameplayTag(HodgeMovementTags::DashPreparing) || ASC->HasMatchingGameplayTag(HodgeMovementTags::Dashing))) { return FVector::ZeroVector; }
 	const auto* Combat = UHodgeCombatComponentBase::FindCombatComponent(GetOwner());
 	if (ASC && ASC->HasMatchingGameplayTag(HodgeGameplayTags::Status_Attack) && (!Combat || !Combat->IsMoveCancelPredicted()))
 	{ return FVector::ZeroVector; }

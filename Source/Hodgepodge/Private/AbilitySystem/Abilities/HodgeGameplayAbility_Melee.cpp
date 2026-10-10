@@ -1,4 +1,5 @@
 #include "AbilitySystem/Abilities/HodgeGameplayAbility_Melee.h"
+#include "Component/HodgeDefenseComponent.h"
 #include "AbilitySystem/Abilities/HodgeAbilityTask_WaitHitResults.h"
 #include "AbilitySystem/AttributeSet/HodgeCombatSet.h"
 #include "AbilitySystem/Executions/HodgeDamageExecution.h"
@@ -17,6 +18,11 @@
 #include "Equipment/HodgeWeaponInstance.h"
 #include "Engine/World.h"
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeGameplayAbility_Melee)
+
+UHodgeGameplayAbility_Melee::UHodgeGameplayAbility_Melee()
+{
+	FGameplayTagContainer Tags = GetAssetTags(); Tags.AddTag(HodgeGameplayTags::Ability_Type_Action_Melee); SetAssetTags(Tags);
+}
 
 bool FHodgeMeleeHitHistory::CanHit(UAbilitySystemComponent* Target, double Time, float RepeatInterval) const
 {
@@ -345,6 +351,11 @@ void UHodgeGameplayAbility_Melee::SubmitMeleeHitEffects(const FHodgeHitDetection
 {
     if (!IsMeleeBatchCurrent(Batch) || !IsValid(TargetASC) || !Spec.IsValid()) { return; }
     TWeakObjectPtr<AActor> Avatar = TargetASC->GetAvatarActor();
+    if (auto* Defense = Avatar.IsValid() ? Avatar->FindComponentByClass<UHodgeDefenseComponent>() : nullptr)
+    {
+        if (Defense->ResolveIncomingHit(GetAvatarActorFromActorInfo(), Batch.ExecutionId, Batch.OccurrenceId,
+            Binding.bCanBeDodged, Binding.bCanTriggerPerfectDodge) != EHodgeIncomingHitOutcome::Allowed) { return; }
+    }
     TWeakObjectPtr<UHodgeHitReactionComponent> Reaction = Avatar.IsValid() ? Avatar->FindComponentByClass<UHodgeHitReactionComponent>() : nullptr;
     const FGuid Id = Reaction.IsValid() ? Reaction->BeginHit(Binding.Reaction, GetAvatarActorFromActorInfo(), Batch.SourceOrigin) : FGuid();
     const FGameplayEffectContextHandle SettlementContext = Spec.Data->GetContext();

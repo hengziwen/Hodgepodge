@@ -14,6 +14,7 @@
 // GAS AbilitySpecHandle，用于唯一标识某个 GameplayAbilitySpec。
 #include "GameplayAbilitySpecHandle.h"
 #include "Combat/HodgeCharacterFacingTypes.h"
+#include "Combat/HodgeMovementActionTypes.h"
 
 #include "HodgeHeroComponent.generated.h"
 
@@ -117,6 +118,13 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Hodge|Hero|Input")
 	bool HasMoveIntent(float Threshold = 0.1f) const;
 	void ResetGameplayInput();
+	UFUNCTION(BlueprintCallable, Category="Hodge|Movement") void BeginSprintInput();
+	UFUNCTION(BlueprintCallable, Category="Hodge|Movement") void EndSprintInput();
+	UFUNCTION(BlueprintPure, Category="Hodge|Movement") FHodgeSprintInputSession GetSprintInputSession() const { return SprintInputSession; }
+	void NotifyDashCommitted(int32 SessionId);
+	void NotifySprintCommitted(int32 SessionId);
+	void NotifyMovementActionEnded(int32 SessionId, bool bHandedOff);
+	void RequestSprintHandoff(int32 SessionId, float HoldThreshold);
 
 	// 最近的二维移动输入原始值（X = 左右，Y = 前后；未做阈值判断），供需要方向或大小的消费方使用。
 	UFUNCTION(BlueprintPure, Category = "Hodge|Hero|Input")
@@ -232,6 +240,7 @@ protected:
 	 */
 	FVector2D CurrentMoveInput = FVector2D::ZeroVector;
 	FHodgeMoveIntentSnapshot MoveIntentSnapshot;
+	FHodgeSprintInputSession SprintInputSession;
 
 	// 上一次广播出去的移动意图，用于"只在翻转时广播"。
 	bool bLastMoveIntent = false;

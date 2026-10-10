@@ -260,6 +260,8 @@ void UHodgeHealthSet::PostGameplayEffectExecute(const FGameplayEffectModCallback
 		// 将 Damage Meta Attribute 真正转换为 Health 减少，并限制在 MinimumHealth ~ MaxHealth 范围。
 		SetHealth(FMath::Clamp(GetHealth() - GetDamage(), MinimumHealth, GetResourceClampMax()));
 		RecordHitDamage(Data, true, FMath::Max(OldHealthForEffect - GetHealth(), 0.f));
+		const float Accepted = FMath::Max(OldHealthForEffect - GetHealth(), 0.f);
+		if (Accepted > 0.f) { OnDamageAccepted.Broadcast(Instigator, Causer, &Data.EffectSpec, Accepted, OldHealthForEffect, GetHealth()); }
 
 		// Damage 只是一次性 Meta Attribute，消费完成后立即清零，避免污染下一次伤害计算。
 		SetDamage(0.0f);

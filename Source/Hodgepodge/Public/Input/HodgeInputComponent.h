@@ -159,13 +159,17 @@ void UHodgeInputComponent::BindAbilityActions(const UHodgeInputConfig* InputConf
 		{
 			if (PressedFunc)
 			{
-				BindHandles.Add(BindAction(Action.InputAction, ETriggerEvent::Triggered, Object, PressedFunc,
+				const bool bMovementAction = Action.InputTag == FGameplayTag::RequestGameplayTag(TEXT("InputTag.Ability.Dash")) ||
+					Action.InputTag == FGameplayTag::RequestGameplayTag(TEXT("InputTag.Sprint"));
+				BindHandles.Add(BindAction(Action.InputAction, bMovementAction ? ETriggerEvent::Started : ETriggerEvent::Triggered, Object, PressedFunc,
 				                           Action.InputTag).GetHandle());
 			}
 
 			if (ReleasedFunc)
 			{
 				BindHandles.Add(BindAction(Action.InputAction, ETriggerEvent::Completed, Object, ReleasedFunc,
+				                           Action.InputTag).GetHandle());
+				BindHandles.Add(BindAction(Action.InputAction, ETriggerEvent::Canceled, Object, ReleasedFunc,
 				                           Action.InputTag).GetHandle());
 			}
 		}

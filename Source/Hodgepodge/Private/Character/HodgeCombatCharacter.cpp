@@ -15,6 +15,8 @@
 #include "Camera/HodgeCameraComponent.h"
 #include "Component/HodgeCharacterMovementComponent.h"
 #include "Component/HodgeCharacterRotationComponent.h"
+#include "Component/HodgeLocomotionPolicyComponent.h"
+#include "Component/HodgeDefenseComponent.h"
 #include "Component/HodgeHealthComponent.h"
 #include "Component/HodgeHitReactionComponent.h"
 #include "Component/HodgeCombatComponentBase.h"
@@ -121,6 +123,8 @@ AHodgeCombatCharacter::AHodgeCombatCharacter(const FObjectInitializer& ObjectIni
 	//Pawn 扩展组件，负责连接 Pawn 与 AbilitySystem 等系统
 	PawnExtComponent = CreateDefaultSubobject<UHodgePawnExtensionComponent>(TEXT("PawnExtensionComponent"));
 	RotationComponent = CreateDefaultSubobject<UHodgeCharacterRotationComponent>(TEXT("CharacterRotationComponent"));
+	LocomotionPolicyComponent = CreateDefaultSubobject<UHodgeLocomotionPolicyComponent>(TEXT("LocomotionPolicyComponent"));
+	DefenseComponent = CreateDefaultSubobject<UHodgeDefenseComponent>(TEXT("DefenseComponent"));
 	HitReactionComponent = CreateDefaultSubobject<UHodgeHitReactionComponent>(TEXT("HitReactionComponent"));
 
 	//Pawn 的 AbilitySystem 初始化完成后注册回调
@@ -195,6 +199,8 @@ void AHodgeCombatCharacter::BeginPlay()
 // Actor 结束游戏
 void AHodgeCombatCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	LocomotionPolicyComponent->UninitializeFromAbilitySystem();
+	DefenseComponent->UninitializeFromAbilitySystem();
 	if (auto* ASC = GetHodgeAbilitySystemComponent())
 	{
 		if (auto* PS = Cast<AHodgePlayerState>(ASC->GetOwnerActor())) { PS->GetAttributeCoordinator()->DetachAvatar(this); }
@@ -340,6 +346,8 @@ void AHodgeCombatCharacter::OnAbilitySystemInitialized()
 	UHodgeAbilitySystemComponent* HodgeASC = GetHodgeAbilitySystemComponent();
 	check(HodgeASC);
 	RotationComponent->InitializeWithAbilitySystem(HodgeASC);
+	LocomotionPolicyComponent->InitializeWithAbilitySystem(HodgeASC);
+	DefenseComponent->InitializeWithAbilitySystem(HodgeASC);
 	HitReactionComponent->InitializeWithAbilitySystem(HodgeASC);
 
 	// 使用 ASC 初始化生命值组件
@@ -359,6 +367,8 @@ void AHodgeCombatCharacter::OnAbilitySystemUninitialized()
         if (auto* PS = Cast<AHodgePlayerState>(ASC->GetOwnerActor())) { PS->GetAttributeCoordinator()->DetachAvatar(this); }
     }
 	HitReactionComponent->UninitializeFromAbilitySystem();
+	LocomotionPolicyComponent->UninitializeFromAbilitySystem();
+	DefenseComponent->UninitializeFromAbilitySystem();
 	RotationComponent->UninitializeFromAbilitySystem();
 	if (auto* Combat = FindComponentByClass<UHodgeCombatComponentBase>()) { Combat->Shutdown(); }
 	UninitializeDefaultEquipment();

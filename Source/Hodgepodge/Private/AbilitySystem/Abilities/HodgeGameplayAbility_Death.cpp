@@ -18,6 +18,7 @@ UHodgeGameplayAbility_Death::UHodgeGameplayAbility_Death(const FObjectInitialize
 
 	bAutoStartDeath = true;
 	bAllowWhileHitReacting = true;
+	FGameplayTagContainer Tags = GetAssetTags(); Tags.AddTag(HodgeGameplayTags::Ability_Type_StatusChange_Death); SetAssetTags(Tags);
 
 	if (HasAnyFlags(RF_ClassDefaultObject))
 	{

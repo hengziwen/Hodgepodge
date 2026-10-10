@@ -3,6 +3,8 @@
 #include "Misc/AutomationTest.h"
 #include "AbilitySystem/HodgeAbilitySystemComponent.h"
 #include "AbilitySystem/HodgeGameplayTags.h"
+#include "HodgeRelationshipTestAbility.h"
+#include "AbilitySystem/Abilities/HodgeGameplayAbility_Dash.h"
 #include "Animation/HodgeAnimInstance.h"
 #include "Character/HodgeCombatCharacter.h"
 #include "Combat/HodgeCharacterFacingTypes.h"
@@ -16,6 +18,15 @@
 #include "Serialization/MemoryWriter.h"
 #include "UObject/UnrealType.h"
 #include <limits>
+
+struct FHodgeFacingLifecycleTestAccess
+{
+	static bool Check(UHodgeCharacterRotationComponent* Rotation, FGameplayAbilitySpecHandle Handle, int32 Key)
+	{
+		Rotation->ReplicatedState.ActionAbilityHandle = Handle; Rotation->ReplicatedState.ActionPredictionKey = Key;
+		return Rotation->IsAuthorityActionCurrent();
+	}
+};
 
 namespace HodgeFacingTests
 {
@@ -45,6 +56,28 @@ namespace HodgeFacingTests
 	};
 	bool BoolProperty(UObject* Object, FName Name)
 	{ return FindFProperty<FBoolProperty>(Object->GetClass(), Name)->GetPropertyValue_InContainer(Object); }
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeFacingAuthorityActionTest, "Hodge.Facing.AuthorityActionLifecycle", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FHodgeFacingAuthorityActionTest::RunTest(const FString& Parameters)
+{
+	HodgeFacingTests::FFixture F;
+	const auto Dash = F.ASC->GiveAbility(FGameplayAbilitySpec(UHodgeGameplayAbility_Dash::StaticClass(), 1));
+	TestFalse(TEXT("Ended or inactive predicted Dash cannot restore authority action facing"), FHodgeFacingLifecycleTestAccess::Check(F.Rotation, Dash, 1));
+	const auto Handle = F.ASC->GiveAbility(FGameplayAbilitySpec(UHodgeFacingPredictionTestAbility::StaticClass(), 1));
+	TestTrue(TEXT("Prediction lifecycle fixture activates"), F.ASC->TryActivateAbility(Handle));
+	const auto* Spec = F.ASC->FindAbilitySpecFromHandle(Handle);
+	const auto* Instance = Spec ? Spec->GetPrimaryInstance() : nullptr;
+	if (!Instance) { AddError(TEXT("Prediction fixture instance missing")); return false; }
+	const int32 Key = Instance->GetCurrentActivationInfo().GetActivationPredictionKey().Current;
+	TestTrue(TEXT("Live matching predicted action remains authoritative"), FHodgeFacingLifecycleTestAccess::Check(F.Rotation, Handle, Key));
+	TestFalse(TEXT("Previous activation cannot overwrite a newer one"), FHodgeFacingLifecycleTestAccess::Check(F.Rotation, Handle, Key + 1));
+	F.ASC->CancelAbilityHandle(Handle);
+	TestFalse(TEXT("Late matching packet after local end is rejected"), FHodgeFacingLifecycleTestAccess::Check(F.Rotation, Handle, Key));
+	const auto ServerOnly = F.ASC->GiveAbility(FGameplayAbilitySpec(UHodgeRelationshipTestAbility::StaticClass(), 1));
+	TestTrue(TEXT("Server-only actions retain their authority path"), FHodgeFacingLifecycleTestAccess::Check(F.Rotation, ServerOnly, 0));
+	TestTrue(TEXT("Component action sources retain their authority path"), FHodgeFacingLifecycleTestAccess::Check(F.Rotation, {}, 0));
+	return true;
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeFacingInputTest, "Hodge.Facing.InputSnapshots", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
@@ -153,6 +186,28 @@ bool FHodgeFacingLifecycleTest::RunTest(const FString& Parameters)
 	F.Rotation->ReleaseRequestsForSource(F.Character);
 	F.ASC->InitAbilityActorInfo(F.Character, nullptr); F.Step();
 	TestFalse(TEXT("Lost avatar unbinds"), F.Rotation->IsFacingSystemReady());
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeFacingActivationPairTest, "Hodge.Facing.ActivationPair", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FHodgeFacingActivationPairTest::RunTest(const FString& Parameters)
+{
+	HodgeFacingTests::FFixture F;
+	const FGuid Execution = FGuid::NewGuid();
+	const auto Authority = F.Rotation->RequestActionFacing(FVector::ForwardVector, F.Character, Execution);
+	const auto Prediction = F.Rotation->RequestActionFacing(FVector::ForwardVector, F.Character, Execution);
+	F.Step();
+	TestTrue(TEXT("Paired activation confirms both handles"), F.Rotation->IsActionFacingApplied(Authority) && F.Rotation->IsActionFacingApplied(Prediction));
+	const auto NewExecution = F.Rotation->RequestActionFacing(FVector::ForwardVector, F.Character, FGuid::NewGuid()); F.Step();
+	TestFalse(TEXT("Different execution cannot confirm the previous action"), F.Rotation->IsActionFacingApplied(Authority));
+	F.Rotation->ReleaseFacingRequest(NewExecution); F.Step();
+	auto* OtherSource = NewObject<USkeletalMeshComponent>(F.Character); OtherSource->RegisterComponent();
+	const auto Other = F.Rotation->RequestActionFacing(FVector::ForwardVector, OtherSource, Execution); F.Step();
+	TestFalse(TEXT("Another source cannot authorize the previous action"), F.Rotation->IsActionFacingApplied(Authority));
+	F.Rotation->ReleaseFacingRequest(Other); F.Rotation->ReleaseFacingRequest(Prediction); F.Step();
+	TestTrue(TEXT("Releasing prediction preserves own authority request"), F.Rotation->IsActionFacingApplied(Authority));
+	F.Rotation->ReleaseFacingRequest(Authority);
+	TestFalse(TEXT("Released action cannot remain applied"), F.Rotation->IsActionFacingApplied(Authority));
 	return true;
 }
 

@@ -29,6 +29,8 @@ struct FHodgeCharacterRotationState
 	UPROPERTY(BlueprintReadOnly) EHodgeLocomotionStyle Style = EHodgeLocomotionStyle::FreeDirectional;
 	UPROPERTY(BlueprintReadOnly) float ActionYaw = 0.f;
 	UPROPERTY(BlueprintReadOnly) FGuid ActionRequestId;
+	UPROPERTY() FGameplayAbilitySpecHandle ActionAbilityHandle;
+	UPROPERTY() int32 ActionPredictionKey = 0;
 	UPROPERTY(BlueprintReadOnly) int32 StateVersion = 0;
 	UPROPERTY() uint32 RequestSequence = 0;
 };
@@ -61,6 +63,9 @@ public:
 	void ReleaseRequestsForSource(const UObject* Source);
 	UFUNCTION(BlueprintPure, Category="Hodge|Rotation")
 	EHodgeFacingRequestStatus GetFacingRequestStatus(FHodgeFacingRequestHandle Handle) const;
+	/** 同一 GAS 激活的权威与预测记录可以共同确认相同动作朝向。 */
+	UFUNCTION(BlueprintPure, Category="Hodge|Rotation")
+	bool IsActionFacingApplied(FHodgeFacingRequestHandle Handle) const;
 	UFUNCTION(BlueprintPure, Category="Hodge|Rotation")
 	FHodgeFacingPresentationSnapshot GetFacingPresentationSnapshot() const;
 	UFUNCTION(BlueprintPure, Category="Hodge|Rotation")
@@ -103,6 +108,9 @@ protected:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
+#if WITH_DEV_AUTOMATION_TESTS
+	friend struct FHodgeFacingLifecycleTestAccess;
+#endif
 	void HandleConstraintTagChanged(FGameplayTag Tag, int32 NewCount);
 	void RefreshLocalState();
 	void PublishAuthorityState();
@@ -113,6 +121,7 @@ private:
 	void SendRequest(const FGuid& Id, bool bRelease);
 	void SetRequestStatus(const FGuid& Id, EHodgeFacingRequestStatus Status);
 	bool HasPendingPrediction() const;
+	bool IsAuthorityActionCurrent() const;
 
 	UFUNCTION(Server, Reliable)
 	void ServerFacingRequest(AActor* Avatar, uint32 Sequence, FGuid Id, bool bRelease, EHodgeCharacterFacingDriver Driver,

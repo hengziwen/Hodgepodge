@@ -242,6 +242,8 @@ USTRUCT(BlueprintType)
 struct HODGEPODGE_API FHodgeHitEffectConfig
 {
 	GENERATED_BODY()
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Defense") bool bCanBeDodged = true;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Defense") bool bCanTriggerPerfectDodge = true;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Reaction") FHodgeHitReactionConfig Reaction;
 	// 显式伤害 GE，默认生命伤害要求 Instant 且包含 HodgeDamageExecution。
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) TSubclassOf<UGameplayEffect> DamageEffect;

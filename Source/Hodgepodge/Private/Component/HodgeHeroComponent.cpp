@@ -1,8 +1,12 @@
-﻿// Copyright Epic Games, Inc. All Rights Reserved.
+// Copyright Epic Games, Inc. All Rights Reserved.
 
 // HeroComponent 本体定义。
 #include "Component/HodgeHeroComponent.h"
 #include "Component/HodgeCharacterRotationComponent.h"
+#include "Component/HodgeLocomotionPolicyComponent.h"
+#include "EnhancedPlayerInput.h"
+#include "AbilitySystem/Abilities/HodgeGameplayAbility_Dash.h"
+#include "AbilitySystem/Abilities/HodgeGameplayAbility_Sprint.h"
 #include "Component/HodgeCombatComponentBase.h"
 
 // GameFramework 组件委托相关定义。
@@ -392,6 +396,7 @@ void UHodgeHeroComponent::BeginPlay()
 // HeroComponent 生命周期结束时调用。
 void UHodgeHeroComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	EndSprintInput();
 	// 解绑所有通过 AddAdditionalInputConfig 动态追加的输入，避免 Pawn 更换、热重载或
 	// GameFeature 未走正常停用路径时残留绑定句柄。
 	if (const APawn* Pawn = GetPawn<APawn>())
@@ -769,6 +774,8 @@ bool UHodgeHeroComponent::IsReadyToBindInputs() const
 // Ability 类型输入按下时调用。
 void UHodgeHeroComponent::Input_AbilityInputTagPressed(FGameplayTag InputTag)
 {
+	if (InputTag == HodgeGameplayTags::InputTag_Ability_Dash || InputTag == HodgeGameplayTags::InputTag_Sprint)
+	{ BeginSprintInput(); return; }
 	if (!UHodgeUIManagerSubsystem::AllowsGameplayInput(GetController<APlayerController>())) { return; }
 	// [HODGE-DBG] 临时诊断：确认 Ability 输入是否真的触发并转发给 ASC（定位后删除）。
 	UE_LOG(LogTemp, Warning, TEXT("[HODGE-DBG] Hero input CALLBACK AbilityPressed %s"), *InputTag.ToString());
@@ -793,6 +800,8 @@ void UHodgeHeroComponent::Input_AbilityInputTagPressed(FGameplayTag InputTag)
 // Ability 类型输入松开时调用。
 void UHodgeHeroComponent::Input_AbilityInputTagReleased(FGameplayTag InputTag)
 {
+	if (InputTag == HodgeGameplayTags::InputTag_Ability_Dash || InputTag == HodgeGameplayTags::InputTag_Sprint)
+	{ EndSprintInput(); return; }
 	// [HODGE-DBG] 临时诊断：确认 Ability 输入是否真的触发并转发给 ASC（定位后删除）。
 	UE_LOG(LogTemp, Warning, TEXT("[HODGE-DBG] Hero input CALLBACK AbilityReleased %s"), *InputTag.ToString());
 
@@ -831,11 +840,17 @@ void UHodgeHeroComponent::Input_Move(const FInputActionValue& InputActionValue)
 	if (const UHodgePawnExtensionComponent* Extension = UHodgePawnExtensionComponent::FindPawnExtensionComponent(
 		GetPawn<APawn>()))
 	{
-		if (const UHodgeAbilitySystemComponent* ASC = Extension->GetHodgeAbilitySystemComponent())
+		if (UHodgeAbilitySystemComponent* ASC = Extension->GetHodgeAbilitySystemComponent())
 		{
 			const auto* Combat = UHodgeCombatComponentBase::FindCombatComponent(GetPawn<APawn>());
 			if ((ASC->HasMatchingGameplayTag(HodgeGameplayTags::Status_Attack) && (!Combat || !Combat->IsMoveCancelPredicted())) ||
 				ASC->HasMatchingGameplayTag(HodgeHitReactionTags::Controlled)) { return; }
+			FScopedAbilityListLock AbilityLock(*ASC);
+			for (const FGameplayAbilitySpec& Spec : ASC->GetActivatableAbilities())
+			{
+				if (auto* Sprint = Cast<UHodgeGameplayAbility_Sprint>(Spec.GetPrimaryInstance()); Sprint && Sprint->IsActive())
+				{ Sprint->ProcessMovementIntent(MoveIntentSnapshot.DesiredDirectionWorld); }
+			}
 		}
 	}
 
@@ -1123,6 +1138,74 @@ void UHodgeHeroComponent::ClearAbilityCameraMode(const FGameplayAbilitySpecHandl
 
 void UHodgeHeroComponent::ResetGameplayInput()
 {
+	EndSprintInput();
 	SetMoveIntent(FVector2D::ZeroVector);
 	if (auto* Pawn = GetPawn<APawn>()) { Pawn->ConsumeMovementInputVector(); }
+}
+
+void UHodgeHeroComponent::BeginSprintInput()
+{
+	APawn* Pawn = GetPawn<APawn>();
+	if (!Pawn || !Pawn->IsLocallyControlled() || !UHodgeUIManagerSubsystem::AllowsGameplayInput(GetController<APlayerController>())) { return; }
+	auto* Rotation = Pawn->FindComponentByClass<UHodgeCharacterRotationComponent>();
+	auto* Policy = Pawn->FindComponentByClass<UHodgeLocomotionPolicyComponent>();
+	const auto* Extension = UHodgePawnExtensionComponent::FindPawnExtensionComponent(Pawn);
+	auto* ASC = Extension ? Extension->GetHodgeAbilitySystemComponent() : nullptr;
+	if (!ASC || !Rotation || !Policy || !SprintInputSession.Begin(GetWorld()->GetTimeSeconds(), Rotation->GetAvatarGeneration())) { return; }
+	const auto* Data = Extension->GetPawnData<UHodgePawnData>();
+	const auto* Controller = GetController<APlayerController>();
+	const auto* PlayerInput = Controller ? Cast<UEnhancedPlayerInput>(Controller->PlayerInput) : nullptr;
+	const UInputAction* MoveAction = Data && Data->InputConfig ? Data->InputConfig->FindNativeInputActionForTag(HodgeGameplayTags::InputTag_Move, false) : nullptr;
+	if (PlayerInput && MoveAction) { SetMoveIntent(PlayerInput->GetActionValue(MoveAction).Get<FVector2D>()); }
+	Policy->SetSprintInput(SprintInputSession.SessionId, true);
+	FGameplayAbilitySpecHandle Handle;
+	for (const FGameplayAbilitySpec& Spec : ASC->GetActivatableAbilities())
+	{ if (Spec.Ability && Spec.Ability->IsA<UHodgeGameplayAbility_Dash>()) { Handle = Spec.Handle; break; } }
+	if (!Handle.IsValid() || !ASC->TryActivateAbility(Handle)) { SprintInputSession.Consume(); }
+}
+
+void UHodgeHeroComponent::EndSprintInput()
+{
+	const int32 Id = SprintInputSession.SessionId;
+	SprintInputSession.Release();
+	APawn* Pawn = GetPawn<APawn>();
+	if (!Pawn || Id <= 0) { return; }
+	if (auto* Policy = Pawn->FindComponentByClass<UHodgeLocomotionPolicyComponent>()) { Policy->SetSprintInput(Id, false); }
+	const auto* Extension = UHodgePawnExtensionComponent::FindPawnExtensionComponent(Pawn);
+	auto* ASC = Extension ? Extension->GetHodgeAbilitySystemComponent() : nullptr;
+	if (!ASC) { return; }
+	for (const FGameplayAbilitySpec& Spec : ASC->GetActivatableAbilities())
+	{
+		if (Spec.Ability && Spec.Ability->IsA<UHodgeGameplayAbility_Sprint>() && Spec.IsActive())
+		{ ASC->CancelAbilityHandle(Spec.Handle); }
+	}
+}
+
+void UHodgeHeroComponent::NotifyDashCommitted(int32 Id)
+{
+	if (Id == SprintInputSession.SessionId && SprintInputSession.bHeld)
+	{ SprintInputSession.State = EHodgeSprintInputState::DashActive; }
+}
+void UHodgeHeroComponent::NotifySprintCommitted(int32 Id)
+{
+	if (Id == SprintInputSession.SessionId && SprintInputSession.bHeld)
+	{ SprintInputSession.State = EHodgeSprintInputState::SprintActive; }
+}
+void UHodgeHeroComponent::NotifyMovementActionEnded(int32 Id, bool bHandedOff)
+{
+	if (Id == SprintInputSession.SessionId && !bHandedOff) { SprintInputSession.Consume(); }
+}
+void UHodgeHeroComponent::RequestSprintHandoff(int32 Id, float HoldThreshold)
+{
+	if (Id != SprintInputSession.SessionId || !SprintInputSession.Qualifies(GetWorld()->GetTimeSeconds(), HoldThreshold))
+	{ SprintInputSession.Consume(); return; }
+	const auto* Extension = UHodgePawnExtensionComponent::FindPawnExtensionComponent(GetOwner());
+	auto* ASC = Extension ? Extension->GetHodgeAbilitySystemComponent() : nullptr;
+	FGameplayAbilitySpecHandle Handle;
+	if (ASC)
+	{
+		for (const FGameplayAbilitySpec& Spec : ASC->GetActivatableAbilities())
+		{ if (Spec.Ability && Spec.Ability->IsA<UHodgeGameplayAbility_Sprint>()) { Handle = Spec.Handle; break; } }
+	}
+	if (!ASC || !Handle.IsValid() || !ASC->TryActivateAbility(Handle)) { SprintInputSession.Consume(); }
 }

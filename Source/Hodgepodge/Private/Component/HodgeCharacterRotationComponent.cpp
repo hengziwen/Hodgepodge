@@ -1,4 +1,5 @@
 #include "Component/HodgeCharacterRotationComponent.h"
+#include "AbilitySystem/Abilities/HodgeGameplayAbility_MovementAction.h"
 #include "Combat/HodgeHitReactionTypes.h"
 
 #include "AbilitySystem/HodgeAbilitySystemComponent.h"
@@ -249,6 +250,20 @@ bool UHodgeCharacterRotationComponent::HasPendingPrediction() const
 	return GetOwner() && !GetOwner()->HasAuthority() && LocalRequestSequence > AcknowledgedSequence;
 }
 
+bool UHodgeCharacterRotationComponent::IsAuthorityActionCurrent() const
+{
+	if (!ReplicatedState.ActionAbilityHandle.IsValid() || !AbilitySystemComponent.IsValid()) { return true; }
+	const auto* Spec = AbilitySystemComponent->FindAbilitySpecFromHandle(ReplicatedState.ActionAbilityHandle);
+	if (!Spec || !Spec->Ability || Spec->Ability->GetNetExecutionPolicy() != EGameplayAbilityNetExecutionPolicy::LocalPredicted) { return true; }
+	// 预测动作本地结束后，迟到的服务器租约不能恢复它的动作朝向。
+	for (const UGameplayAbility* Instance : Spec->GetAbilityInstances())
+	{
+		if (Instance && Instance->IsActive() && Instance->GetAvatarActorFromActorInfo() == GetOwner() &&
+			Instance->GetCurrentActivationInfo().GetActivationPredictionKey().Current == ReplicatedState.ActionPredictionKey) { return true; }
+	}
+	return false;
+}
+
 FHodgeFacingRequestHandle UHodgeCharacterRotationComponent::AcquireBaseFacingMode(EHodgeCharacterFacingDriver Driver, UObject* Source)
 {
 	if (!HodgeFacing::IsBaseDriver(Driver) || !IsValidSource(Source, false)) { return {}; }
@@ -323,6 +338,17 @@ EHodgeFacingRequestStatus UHodgeCharacterRotationComponent::GetFacingRequestStat
 	return EHodgeFacingRequestStatus::Invalid;
 }
 
+bool UHodgeCharacterRotationComponent::IsActionFacingApplied(FHodgeFacingRequestHandle Handle) const
+{
+	if (!Handle.IsValid() || Handle.AvatarGeneration != AvatarGeneration || IsYawLocked()) { return false; }
+	const FRequest* Requested = Requests.Find(Handle.Id);
+	const FRequest* Selected = Requests.Find(GetResolvedState().ActionRequestId);
+	return Requested && Selected && Requested->Driver == EHodgeCharacterFacingDriver::ActionDirection &&
+		Selected->Status == EHodgeFacingRequestStatus::Applied && Selected->Source == Requested->Source &&
+		Selected->ExecutionId == Requested->ExecutionId &&
+		FMath::Abs(FMath::FindDeltaAngleDegrees(Selected->Yaw, Requested->Yaw)) < .1f;
+}
+
 void UHodgeCharacterRotationComponent::SetRequestStatus(const FGuid& Id, EHodgeFacingRequestStatus Status)
 {
 	FRequest* Request = Requests.Find(Id);
@@ -351,16 +377,21 @@ void UHodgeCharacterRotationComponent::ResolveRequests()
 	LocalState.Driver = Action ? Action->Driver : LocalState.BaseDriver;
 	LocalState.ActionRequestId = Action ? ActionId : FGuid();
 	LocalState.ActionYaw = Action ? Action->Yaw : 0.f;
-	if (!Action && bAuthorityFallback && ReplicatedState.Driver == EHodgeCharacterFacingDriver::ActionDirection)
+	const auto* ActionAbility = Action ? Cast<UGameplayAbility>(Action->Source.Get()) : nullptr;
+	LocalState.ActionAbilityHandle = ActionAbility ? ActionAbility->GetCurrentAbilitySpecHandle() : FGameplayAbilitySpecHandle();
+	LocalState.ActionPredictionKey = ActionAbility ? ActionAbility->GetCurrentActivationInfo().GetActivationPredictionKey().Current : 0;
+	if (!Action && bAuthorityFallback && ReplicatedState.Driver == EHodgeCharacterFacingDriver::ActionDirection && IsAuthorityActionCurrent())
 	{
 		LocalState.Driver = ReplicatedState.Driver;
 		LocalState.ActionRequestId = ReplicatedState.ActionRequestId; LocalState.ActionYaw = ReplicatedState.ActionYaw;
+		LocalState.ActionAbilityHandle = ReplicatedState.ActionAbilityHandle; LocalState.ActionPredictionKey = ReplicatedState.ActionPredictionKey;
 	}
 	LocalState.Style = LocalState.BaseDriver == EHodgeCharacterFacingDriver::Controller ?
 		EHodgeLocomotionStyle::ReservedStrafe : EHodgeLocomotionStyle::FreeDirectional;
 	LocalState.RequestSequence = Pawn->HasAuthority() ? LastServerRequestSequence : LocalRequestSequence;
 	const bool bChanged = Previous.BaseDriver != LocalState.BaseDriver || Previous.Driver != LocalState.Driver ||
 		Previous.Style != LocalState.Style || Previous.ActionRequestId != LocalState.ActionRequestId ||
+		Previous.ActionAbilityHandle != LocalState.ActionAbilityHandle || Previous.ActionPredictionKey != LocalState.ActionPredictionKey ||
 		Previous.RequestSequence != LocalState.RequestSequence;
 	if (bChanged)
 	{
@@ -465,6 +496,7 @@ void UHodgeCharacterRotationComponent::ServerFacingRequest_Implementation(AActor
 				Source = Ability && Ability->IsActive() && Ability->GetCurrentActivationInfo().GetActivationPredictionKey().Current == PredictionKey ? Ability : nullptr;
 			}
 			const auto* Definition = Cast<UHodgeGameplayAbility_Definition>(Source);
+			const auto* Movement = Cast<UHodgeGameplayAbility_MovementAction>(Source);
 			const bool bAction = Driver == EHodgeCharacterFacingDriver::ActionDirection;
 			const bool bLegalDriver = HodgeFacing::IsBaseDriver(Driver) || (bAction && AbilityHandle.IsValid() && ExecutionId.IsValid() && !IsYawLocked());
 			if (Source && bLegalDriver && IsValidSource(Source, bAction) &&
@@ -474,7 +506,8 @@ void UHodgeCharacterRotationComponent::ServerFacingRequest_Implementation(AActor
 				FRequest& Request = Requests.Add(Id); Request.Source = Source; Request.Driver = Driver;
 				Request.Yaw = FRotator::NormalizeAxis(Yaw); Request.Order = ++NextRequestOrder;
 				// Definition 的本地 GUID 不跨端共享，服务器用已验证 Spec / PredictionKey 映射自己的执行。
-				Request.ExecutionId = Definition && bAction ? Definition->GetExecutionId() : ExecutionId;
+				Request.ExecutionId = Definition && bAction ? Definition->GetExecutionId() :
+					Movement && bAction ? Movement->GetMovementExecutionId() : ExecutionId;
 				Request.bRemoteClient = true; Request.bInstant = bInstant;
 				Request.Status = bAction ? EHodgeFacingRequestStatus::Pending : EHodgeFacingRequestStatus::Applied;
 				bAccepted = true;

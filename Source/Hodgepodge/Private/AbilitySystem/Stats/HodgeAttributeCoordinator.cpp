@@ -76,7 +76,8 @@ bool UHodgeAttributeCoordinator::ApplyCharacterBase(int32 Level)
 	if (!Spec.IsValid()) { return false; }
 	Spec.Data->SetSetByCallerMagnitude(HodgeGameplayTags::SetByCaller_Stat_MaxHealth, Health);
 	Spec.Data->SetSetByCallerMagnitude(HodgeGameplayTags::SetByCaller_Stat_BaseDamage, Damage);
-	return AbilitySystem->ApplyGameplayEffectSpecToSelf(*Spec.Data.Get()).WasSuccessfullyApplied();
+	const bool bApplied = AbilitySystem->ApplyGameplayEffectSpecToSelf(*Spec.Data.Get()).WasSuccessfullyApplied();
+	return bApplied;
 }
 
 bool UHodgeAttributeCoordinator::PrepareAvatar(APawn* Avatar, const UHodgePawnData* Data)

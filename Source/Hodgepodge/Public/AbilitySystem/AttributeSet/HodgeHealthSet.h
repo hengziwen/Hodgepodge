@@ -55,6 +55,7 @@ class HODGEPODGE_API UHodgeHealthSet : public UHodgeAttributeSet
 	GENERATED_BODY()
 
 public:
+	mutable FHodgeAttributeEvent OnDamageAccepted;
 	// 构造生命属性集，并初始化各项生命相关 Attribute 的默认值。
 	UHodgeHealthSet();
 

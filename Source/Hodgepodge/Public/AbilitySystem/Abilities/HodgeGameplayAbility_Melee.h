@@ -40,6 +40,7 @@ class HODGEPODGE_API UHodgeGameplayAbility_Melee : public UHodgeGameplayAbility_
 {
 	GENERATED_BODY()
 public:
+	UHodgeGameplayAbility_Melee();
 	virtual void ValidateExecutionConfiguration(const UHodgeAbilityDefinition& Definition, TArray<FText>& Errors) const override;
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category="Hodge|Combat")
 	bool SetHitAnchor(FName Key, const FTransform& WorldTransform);

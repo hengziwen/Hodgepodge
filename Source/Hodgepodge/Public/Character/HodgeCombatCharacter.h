@@ -10,6 +10,8 @@
 class UHodgeHealthComponent;
 class UHodgeHitReactionComponent;
 class UHodgeCharacterRotationComponent;
+class UHodgeLocomotionPolicyComponent;
+class UHodgeDefenseComponent;
 class UHodgeEquipmentInstance;
 class UHodgeEquipmentManagerComponent;
 class UHodgePawnExtensionComponent;
@@ -295,6 +297,8 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hodge|Character", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UHodgeCharacterRotationComponent> RotationComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true")) TObjectPtr<UHodgeLocomotionPolicyComponent> LocomotionPolicyComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true")) TObjectPtr<UHodgeDefenseComponent> DefenseComponent;
 
 	// 角色使用的 Camera Component
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hodge|Character", Meta = (AllowPrivateAccess = "true"))

@@ -19,6 +19,7 @@ class UHodgeHitReactionProfile;
 
 // CameraMode：定义 Pawn 默认使用的相机模式。
 class UHodgeCameraMode;
+class UHodgeSprintAbilityProfile;
 
 // InputConfig：定义 InputAction 与 GameplayTag 等输入配置。
 class UHodgeInputConfig;
@@ -59,6 +60,8 @@ public:
 	// 目标自身的受击动作、恢复规则和支持的 Impact。
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Combat")
 	TObjectPtr<UHodgeHitReactionProfile> HitReactionProfile;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Movement")
+	TObjectPtr<UHodgeSprintAbilityProfile> SprintAbilityProfile;
 
 	// Ability sets to grant to this pawn's ability system.
 	// 需要授予给这个 Pawn 的 ASC 的 AbilitySet 集合。
