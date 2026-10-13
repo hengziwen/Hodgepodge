@@ -1,0 +1,1264 @@
+{
+  "date": "2026-10-13",
+  "engine": "5.5.4",
+  "design_version": "lock-on v0.4",
+  "builds": {
+    "editor": {
+      "exit_code": 0,
+      "log": "Saved/LockOnCamera/editor-build.log",
+      "sha256": "45c6878680d2e7b4f45ddde58b260a493b3fdeb5fae2c614c08b32a5547746fd"
+    },
+    "game": {
+      "exit_code": 0,
+      "log": "Saved/LockOnCamera/game-build.log",
+      "sha256": "f30172820b31d61e23b106814c360bddeaea0abc65cae5d8b00bd2070d6f201d"
+    }
+  },
+  "automation": {
+    "passed": 31,
+    "total": 31,
+    "tests": [
+      {
+        "name": "Hodge.Facing.ActionsAndConstraints",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Facing.ActivationPair",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Facing.AnimationSnapshot",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Facing.AuthorityActionLifecycle",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Facing.InputSnapshots",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Facing.LifecycleAndExceptions",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Facing.ModesAndPriority",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Facing.ReplayAndNetworkData",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.LockOn.AuthorityIdentityAndVersions",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.LockOn.CameraModePriorityAndContinuity",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.LockOn.ControlAndMotionLifecycle",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.LockOn.DeathClearsAndDoesNotReacquire",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.LockOn.GASShortCommand",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.LockOn.MouseGesture",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.LockOn.PredictionReconciliation",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.LockOn.ProfileValidation",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.LockOn.RangeGraceAndInvalidTarget",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.LockOn.SoftCameraManualAndAssist",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.LockOn.TargetDataEarlyAndRetired",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Movement.DashDirections",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Movement.DashFootIKContinuity",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Movement.DefenseWindows",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Movement.InputSessions",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Movement.PolicyAndAuthorization",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Movement.RootMotionPivot",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Movement.TargetDataSerialization",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Movement.TimingAndPivot",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Rotation.ConstraintsAndReplay",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.UI.ClosedRootAndInvalidRequests",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.UI.DataSourceInactive",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.UI.ManagerScope",
+        "state": "Success"
+      }
+    ],
+    "sha256": "4f0fafde7419e7cc824552921168fe25c78bf68c8e949f35db79569d8bea9f99"
+  },
+  "pie": {
+    "camera/single": {
+      "checks": [
+        {
+          "check": "CAM-01_正式Hero使用项目CameraMode组件",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "CAM-01_自由状态选择PawnData默认模式",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "CAM-08_获取混合期间不削弱本帧鼠标位移",
+          "passed": true,
+          "detail": 6.0
+        },
+        {
+          "check": "CAM-02_锁定选择进入真实CameraMode栈",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "CAM-02_获取不瞬间跳到角色朝向",
+          "passed": true,
+          "detail": 6.0
+        },
+        {
+          "check": "CAM-03_锁定后鼠标能越过旧八度限制",
+          "passed": true,
+          "detail": 12.0
+        },
+        {
+          "check": "CAM-03_小幅输入不切换目标",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "CAM-03_停手宽限内不强拉回",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "CAM-03_自由环绕累计转角超过240度",
+          "passed": true,
+          "detail": 318.64941596984863
+        },
+        {
+          "check": "CAM-03_慢速环绕不误触甩动切换",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "CAM-04_角色朝向不随镜头环绕抢写",
+          "passed": true,
+          "detail": -0.147491455078125
+        },
+        {
+          "check": "CAM-03_环绕后停手仍保留手动视角",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "CAM-05_停手后柔和恢复构图",
+          "passed": true,
+          "detail": [
+            66.64941596984863,
+            20.92426496371627
+          ]
+        },
+        {
+          "check": "CAM-05_自动修正没有大角度跳变",
+          "passed": true,
+          "detail": 2.000028133392334
+        },
+        {
+          "check": "CAM-08_技能混合期间不削弱本帧鼠标位移",
+          "passed": true,
+          "detail": 6.0
+        },
+        {
+          "check": "CAM-06_临时技能镜头实际成为栈顶",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "CAM-06_临时模式能接管鼠标输入",
+          "passed": true,
+          "detail": 25.0
+        },
+        {
+          "check": "CAM-06_临时镜头期间锁定目标保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "CAM-06_结束覆盖返回锁定CameraMode",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "CAM-06_返回时继承实际取景",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "CAM-06_返回混合没有突然跳变",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "CAM-07_解除恢复默认模式",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "CAM-07_解除没有跳回敌人方位",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "CAM-07_自由视角鼠标仍能工作",
+          "passed": true,
+          "detail": 10.0
+        }
+      ],
+      "passed": true,
+      "raw_path": "Saved/LockOnCamera/single-camera-e2e.json",
+      "sha256": "e65243f8d2e9c7f9c87d0f77dc6d92f8d7c29cddea43aae2363eea76d2a6af0e"
+    },
+    "lock/single": {
+      "checks": [
+        {
+          "check": "LOCK-07_各端初始化就绪",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_中键获取中心敌人并复制",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_普通锁定侧移风格",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_松开中键仍保留目标",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-05_原生标记实例已进入HUD",
+          "passed": true,
+          "detail": 1
+        },
+        {
+          "check": "LOCK-01_轻微鼠标移动不切换",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_向右甩动切换并复制",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_向左甩动切回",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_点按Dash期间自由风格",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_Dash结束锁定目标保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_Dash结束恢复侧移",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_长按衔接Sprint",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_Sprint保留锁定",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_Sprint保持自由风格",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_松开Sprint恢复侧移",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_中键解除各端确认",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_解除恢复自由风格",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_再次获取",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-07_真实死亡GA清除各端目标",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-02_死亡没有自动换到邻居",
+          "passed": true,
+          "detail": null
+        }
+      ],
+      "passed": true,
+      "raw_path": "Saved/LockOnCamera/single-e2e.json",
+      "sha256": "7b53389983d1c28981f32227a3d90a691bb41d7504597847d283f0d859bf73ae"
+    },
+    "camera/listen": {
+      "checks": [
+        {
+          "check": "CAM-01_正式Hero使用项目CameraMode组件",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "CAM-01_自由状态选择PawnData默认模式",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "CAM-08_获取混合期间不削弱本帧鼠标位移",
+          "passed": true,
+          "detail": 6.0
+        },
+        {
+          "check": "CAM-02_锁定选择进入真实CameraMode栈",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "CAM-02_获取不瞬间跳到角色朝向",
+          "passed": true,
+          "detail": 6.0
+        },
+        {
+          "check": "CAM-03_锁定后鼠标能越过旧八度限制",
+          "passed": true,
+          "detail": 12.0
+        },
+        {
+          "check": "CAM-03_小幅输入不切换目标",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "CAM-03_停手宽限内不强拉回",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "CAM-03_自由环绕累计转角超过240度",
+          "passed": true,
+          "detail": 318.635576069355
+        },
+        {
+          "check": "CAM-03_慢速环绕不误触甩动切换",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "CAM-04_角色朝向不随镜头环绕抢写",
+          "passed": true,
+          "detail": -0.14849853515625
+        },
+        {
+          "check": "CAM-03_环绕后停手仍保留手动视角",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "CAM-05_停手后柔和恢复构图",
+          "passed": true,
+          "detail": [
+            66.63557606935501,
+            20.921945489943027
+          ]
+        },
+        {
+          "check": "CAM-05_自动修正没有大角度跳变",
+          "passed": true,
+          "detail": 2.000028133392334
+        },
+        {
+          "check": "CAM-08_技能混合期间不削弱本帧鼠标位移",
+          "passed": true,
+          "detail": 6.0
+        },
+        {
+          "check": "CAM-06_临时技能镜头实际成为栈顶",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "CAM-06_临时模式能接管鼠标输入",
+          "passed": true,
+          "detail": 25.0
+        },
+        {
+          "check": "CAM-06_临时镜头期间锁定目标保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "CAM-06_结束覆盖返回锁定CameraMode",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "CAM-06_返回时继承实际取景",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "CAM-06_返回混合没有突然跳变",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "CAM-07_解除恢复默认模式",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "CAM-07_解除没有跳回敌人方位",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "CAM-07_自由视角鼠标仍能工作",
+          "passed": true,
+          "detail": 10.0
+        }
+      ],
+      "passed": true,
+      "raw_path": "Saved/LockOnCamera/listen-camera-e2e.json",
+      "sha256": "eabea22d6dd8ed8076de65ffb6aa8fc57799b7815b9efe4543c10ad73c2433e0"
+    },
+    "lock/listen": {
+      "checks": [
+        {
+          "check": "LOCK-07_各端初始化就绪",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_中键获取中心敌人并复制",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_普通锁定侧移风格",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_松开中键仍保留目标",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-05_原生标记实例已进入HUD",
+          "passed": true,
+          "detail": 1
+        },
+        {
+          "check": "LOCK-01_轻微鼠标移动不切换",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_向右甩动切换并复制",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_向左甩动切回",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_点按Dash期间自由风格",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_Dash结束锁定目标保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_Dash结束恢复侧移",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_长按衔接Sprint",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_Sprint保留锁定",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_Sprint保持自由风格",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_松开Sprint恢复侧移",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_中键解除各端确认",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_解除恢复自由风格",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_再次获取",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-07_真实死亡GA清除各端目标",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-02_死亡没有自动换到邻居",
+          "passed": true,
+          "detail": null
+        }
+      ],
+      "passed": true,
+      "raw_path": "Saved/LockOnCamera/listen-e2e.json",
+      "sha256": "d2f12aad7fcb1f2bc09f128d69b37c993059ebc231ec57028c967eb6c6a57650"
+    },
+    "camera/dedicated": {
+      "checks": [
+        {
+          "check": "CAM-01_正式Hero使用项目CameraMode组件",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "CAM-01_自由状态选择PawnData默认模式",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "CAM-08_获取混合期间不削弱本帧鼠标位移",
+          "passed": true,
+          "detail": 6.0
+        },
+        {
+          "check": "CAM-02_锁定选择进入真实CameraMode栈",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "CAM-02_获取不瞬间跳到角色朝向",
+          "passed": true,
+          "detail": 6.0
+        },
+        {
+          "check": "CAM-03_锁定后鼠标能越过旧八度限制",
+          "passed": true,
+          "detail": 12.0
+        },
+        {
+          "check": "CAM-03_小幅输入不切换目标",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "CAM-03_停手宽限内不强拉回",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "CAM-03_自由环绕累计转角超过240度",
+          "passed": true,
+          "detail": 318.63691210746765
+        },
+        {
+          "check": "CAM-03_慢速环绕不误触甩动切换",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "CAM-04_角色朝向不随镜头环绕抢写",
+          "passed": true,
+          "detail": -0.14645385742187497
+        },
+        {
+          "check": "CAM-03_环绕后停手仍保留手动视角",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "CAM-05_停手后柔和恢复构图",
+          "passed": true,
+          "detail": [
+            66.63691210746765,
+            20.919210955500603
+          ]
+        },
+        {
+          "check": "CAM-05_自动修正没有大角度跳变",
+          "passed": true,
+          "detail": 2.000028133392334
+        },
+        {
+          "check": "CAM-08_技能混合期间不削弱本帧鼠标位移",
+          "passed": true,
+          "detail": 6.0
+        },
+        {
+          "check": "CAM-06_临时技能镜头实际成为栈顶",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "CAM-06_临时模式能接管鼠标输入",
+          "passed": true,
+          "detail": 25.0
+        },
+        {
+          "check": "CAM-06_临时镜头期间锁定目标保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "CAM-06_结束覆盖返回锁定CameraMode",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "CAM-06_返回时继承实际取景",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "CAM-06_返回混合没有突然跳变",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "CAM-07_解除恢复默认模式",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "CAM-07_解除没有跳回敌人方位",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "CAM-07_自由视角鼠标仍能工作",
+          "passed": true,
+          "detail": 10.0
+        }
+      ],
+      "passed": true,
+      "raw_path": "Saved/LockOnCamera/dedicated-camera-e2e.json",
+      "sha256": "bae516b84fe220747622ca57abd4203cb7c03060d9ab0adfdd112806a208caea"
+    },
+    "lock/dedicated": {
+      "checks": [
+        {
+          "check": "LOCK-07_各端初始化就绪",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_中键获取中心敌人并复制",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_普通锁定侧移风格",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_松开中键仍保留目标",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-05_原生标记实例已进入HUD",
+          "passed": true,
+          "detail": 1
+        },
+        {
+          "check": "LOCK-01_轻微鼠标移动不切换",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_向右甩动切换并复制",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_向左甩动切回",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_点按Dash期间自由风格",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_Dash结束锁定目标保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_Dash结束恢复侧移",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_长按衔接Sprint",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_Sprint保留锁定",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_Sprint保持自由风格",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_松开Sprint恢复侧移",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_中键解除各端确认",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_解除恢复自由风格",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_再次获取",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-07_真实死亡GA清除各端目标",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-02_死亡没有自动换到邻居",
+          "passed": true,
+          "detail": null
+        }
+      ],
+      "passed": true,
+      "raw_path": "Saved/LockOnCamera/dedicated-e2e.json",
+      "sha256": "04b31894c25d6fbb762c43fe4cffceb562757b283f19a3ffea898bc03da9216e"
+    },
+    "camera/listen-lag": {
+      "checks": [
+        {
+          "check": "CAM-01_正式Hero使用项目CameraMode组件",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "CAM-01_自由状态选择PawnData默认模式",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "CAM-08_获取混合期间不削弱本帧鼠标位移",
+          "passed": true,
+          "detail": 6.0
+        },
+        {
+          "check": "CAM-02_锁定选择进入真实CameraMode栈",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "CAM-02_获取不瞬间跳到角色朝向",
+          "passed": true,
+          "detail": 6.0
+        },
+        {
+          "check": "CAM-03_锁定后鼠标能越过旧八度限制",
+          "passed": true,
+          "detail": 12.0
+        },
+        {
+          "check": "CAM-03_小幅输入不切换目标",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "CAM-03_停手宽限内不强拉回",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "CAM-03_自由环绕累计转角超过240度",
+          "passed": true,
+          "detail": 318.64066392183304
+        },
+        {
+          "check": "CAM-03_慢速环绕不误触甩动切换",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "CAM-04_角色朝向不随镜头环绕抢写",
+          "passed": true,
+          "detail": -0.14849853515625
+        },
+        {
+          "check": "CAM-03_环绕后停手仍保留手动视角",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "CAM-05_停手后柔和恢复构图",
+          "passed": true,
+          "detail": [
+            66.64066392183304,
+            20.92225268110633
+          ]
+        },
+        {
+          "check": "CAM-05_自动修正没有大角度跳变",
+          "passed": true,
+          "detail": 2.000028133392334
+        },
+        {
+          "check": "CAM-08_技能混合期间不削弱本帧鼠标位移",
+          "passed": true,
+          "detail": 6.0
+        },
+        {
+          "check": "CAM-06_临时技能镜头实际成为栈顶",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "CAM-06_临时模式能接管鼠标输入",
+          "passed": true,
+          "detail": 25.0
+        },
+        {
+          "check": "CAM-06_临时镜头期间锁定目标保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "CAM-06_结束覆盖返回锁定CameraMode",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "CAM-06_返回时继承实际取景",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "CAM-06_返回混合没有突然跳变",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "CAM-07_解除恢复默认模式",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "CAM-07_解除没有跳回敌人方位",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "CAM-07_自由视角鼠标仍能工作",
+          "passed": true,
+          "detail": 10.0
+        }
+      ],
+      "passed": true,
+      "raw_path": "Saved/LockOnCamera/listen-lag-camera-e2e.json",
+      "sha256": "2ec24e6351ce44ba55f6629b3b5e72d7a03d1a8b54347b25b7e5620757fa74ce"
+    },
+    "lock/listen-lag": {
+      "checks": [
+        {
+          "check": "LOCK-07_各端初始化就绪",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_中键获取中心敌人并复制",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_普通锁定侧移风格",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_松开中键仍保留目标",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-05_原生标记实例已进入HUD",
+          "passed": true,
+          "detail": 1
+        },
+        {
+          "check": "LOCK-01_轻微鼠标移动不切换",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_向右甩动切换并复制",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_向左甩动切回",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_点按Dash期间自由风格",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_Dash结束锁定目标保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_Dash结束恢复侧移",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_长按衔接Sprint",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_Sprint保留锁定",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_Sprint保持自由风格",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_松开Sprint恢复侧移",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_中键解除各端确认",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_解除恢复自由风格",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_再次获取",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-07_真实死亡GA清除各端目标",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-02_死亡没有自动换到邻居",
+          "passed": true,
+          "detail": null
+        }
+      ],
+      "passed": true,
+      "raw_path": "Saved/LockOnCamera/listen-lag-e2e.json",
+      "sha256": "66ebff42c5b80f2388c8aa3bbbaccd053f10f70f6312ab59f7d255f3ccb3afbf"
+    }
+  },
+  "asset_checks": {
+    "passed": true,
+    "checks": [
+      {
+        "check": "LOCK-03_PawnData引用正式Profile",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "check": "LOCK-03_AbilitySet授予唯一",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "check": "LOCK-03_原生命令GA等级与输入",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "check": "LOCK-01_输入动作Boolean",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "check": "LOCK-01_唯一中键映射",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "check": "LOCK-01_唯一输入标签入口",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "check": "LOCK-05_HUD投影层存在",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "check": "LOCK-05_标记类有效",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "check": "LOCK-01_胸口锚点_BP_Enemy_Guardian",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "check": "LOCK-01_胸口锚点_BP_Enemy_GuardianEquipped",
+        "passed": true,
+        "detail": null
+      }
+    ]
+  },
+  "config": {
+    "asset": "/Game/Main/Character/Hero/Targeting/DA_HeroLockOn",
+    "settings": {
+      "bEnableSoftCameraAssist": true,
+      "bEnableMouseFlickSwitch": true,
+      "CameraManualHold": 0.75,
+      "CameraYawDeadZone": 20.0,
+      "CameraPitchDeadZone": 12.0,
+      "CameraRecenterSharpness": 3.0,
+      "CameraYawSpeed": 120.0,
+      "CameraPitchSpeed": 60.0
+    }
+  },
+  "blueprints": [
+    {
+      "asset": "/Game/Main/Character/Hero/BP_Hero_Pover",
+      "status": "Compile executed; protected Blueprint.Status not queried"
+    },
+    {
+      "asset": "/Game/Main/Camera/CM_ThirdPerson",
+      "status": "Compile executed; protected Blueprint.Status not queried"
+    }
+  ],
+  "editor_restored": {
+    "map": "/Game/Main/Maps/L_EnemyAIValidation",
+    "dirty_maps": [],
+    "dirty_content": [],
+    "pie": 0,
+    "performance": {
+      "throttle": false,
+      "slate": 1,
+      "idle": 0
+    },
+    "play_settings": "single standalone baseline; original PIE settings were not recorded"
+  },
+  "source_changed": [
+    "Source/Hodgepodge/Private/Camera/HodgeCameraComponent.cpp",
+    "Source/Hodgepodge/Public/Camera/HodgeCameraComponent.h",
+    "Source/Hodgepodge/Private/Camera/HodgeCameraMode.cpp",
+    "Source/Hodgepodge/Public/Camera/HodgeCameraMode.h",
+    "Source/Hodgepodge/Private/Camera/HodgeCameraMode_LockOn.cpp",
+    "Source/Hodgepodge/Public/Camera/HodgeCameraMode_LockOn.h",
+    "Source/Hodgepodge/Private/Component/HodgeLockOnComponent.cpp",
+    "Source/Hodgepodge/Public/Component/HodgeLockOnComponent.h",
+    "Source/Hodgepodge/Private/Data/HodgeLockOnProfile.cpp",
+    "Source/Hodgepodge/Public/Data/HodgeLockOnProfile.h",
+    "Source/Hodgepodge/Private/Targeting/HodgeLockOnTypes.cpp",
+    "Source/Hodgepodge/Public/Targeting/HodgeLockOnTypes.h",
+    "Source/Hodgepodge/Private/Component/HodgeHeroComponent.cpp",
+    "Source/Hodgepodge/Private/Character/HodgeHeroCharacter.cpp",
+    "Source/Hodgepodge/Public/Character/HodgeHeroCharacter.h",
+    "Source/Hodgepodge/Private/Core/PlayerController/HodgePlayerController.cpp",
+    "Source/Hodgepodge/Public/Core/PlayerController/HodgePlayerController.h",
+    "Source/Hodgepodge/Private/Tests/HodgeLockOnTests.cpp",
+    "Source/Hodgepodge/Public/Component/HodgeHeroComponent.h",
+    "Source/HodgeAbilityEditor/Private/HodgeUIAuthoringLibrary.cpp",
+    "Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility.cpp"
+  ],
+  "source_added": [
+    "Source/Hodgepodge/Private/Tests/HodgeLockOnTestTypes.h",
+    "Source/Hodgepodge/Private/Tests/HodgeLockOnTestTypes.cpp"
+  ],
+  "source_sha256": {
+    "Source/Hodgepodge/Private/Camera/HodgeCameraComponent.cpp": "e9b135230f5093dec5192208ae63fd5816a9043446a23e9dd507d175fbd5c242",
+    "Source/Hodgepodge/Public/Camera/HodgeCameraComponent.h": "59fb5f533e3b18c81261e94edbd8e5f783014c9b9731f2823c56f4e76319f53b",
+    "Source/Hodgepodge/Private/Camera/HodgeCameraMode.cpp": "b014aa77d3bbbb1fac82d2b19a3a26ad37839c134473292994759834a4658826",
+    "Source/Hodgepodge/Public/Camera/HodgeCameraMode.h": "82f847d799a6e17d9c0e6122e7303f5bf9a2deaf5aa1aa4488d952f0d06d7ff3",
+    "Source/Hodgepodge/Private/Camera/HodgeCameraMode_LockOn.cpp": "60b04fddf5e2ca8832afa093c2db13fe4d63693082abafe949c95eb22a6f7a1f",
+    "Source/Hodgepodge/Public/Camera/HodgeCameraMode_LockOn.h": "0f1e292e8007348f30df1138a0565e48960bd4f73cf5c6fddf7836b39a1c2fbd",
+    "Source/Hodgepodge/Private/Component/HodgeLockOnComponent.cpp": "c8b860e758090cb082a811261c1086a0df7341d3d6d2edf7378414c31956ed1c",
+    "Source/Hodgepodge/Public/Component/HodgeLockOnComponent.h": "de1fb9855bfb39f09a8ba447d342a0ad8abcbc2cc35f0c6667b50e989ddbdc59",
+    "Source/Hodgepodge/Private/Data/HodgeLockOnProfile.cpp": "9f64ce02c56491e31b02b279a0fd5e769f95256c1d1253a90731f548b08704cb",
+    "Source/Hodgepodge/Public/Data/HodgeLockOnProfile.h": "ac89e2a9441f4a8ff32b39231b8b91b94843a24494d3312fc9bed602321464c7",
+    "Source/Hodgepodge/Private/Targeting/HodgeLockOnTypes.cpp": "3e39b16cd8c76d08fc183760a18981e27833045d5819a97a99531a96ab7d938b",
+    "Source/Hodgepodge/Public/Targeting/HodgeLockOnTypes.h": "e1ae2d243f0129f0777117844a47d25de6e7a1e8a62b359980ffb0d79b0057fd",
+    "Source/Hodgepodge/Private/Component/HodgeHeroComponent.cpp": "80d61bbd45f4985e6a149412f8419f38eea5fa4dc9e8c36ee2a99789fefe4aa1",
+    "Source/Hodgepodge/Private/Character/HodgeHeroCharacter.cpp": "8e180009de38440af4f5c51d3d646a30eb295d4ac016ed3f0d4d7d9a782e3848",
+    "Source/Hodgepodge/Public/Character/HodgeHeroCharacter.h": "93b779a413c548d93ac491243fbad97b2fdca6304ea87ac49165f8878e22c198",
+    "Source/Hodgepodge/Private/Core/PlayerController/HodgePlayerController.cpp": "05b0877ae826baccaa0377ca20eedfa440e70e12c4f082428b91c70e1e5066d1",
+    "Source/Hodgepodge/Public/Core/PlayerController/HodgePlayerController.h": "e39ae294209aa27e454f45155716824ded247dce748f7f3c8c7bd08e8f96222e",
+    "Source/Hodgepodge/Private/Tests/HodgeLockOnTests.cpp": "3020d767976cac04460e689ac4468a9cf02c0a2154a689ab91f01843778148af",
+    "Source/Hodgepodge/Public/Component/HodgeHeroComponent.h": "1e5f222036a102b11515c07a76d7e91f79d5e270bc00eb322157afe078c3afe8",
+    "Source/HodgeAbilityEditor/Private/HodgeUIAuthoringLibrary.cpp": "df45c39d440ce58f5ebfbc8a50b2a93edc6f73f615ae18fc50d0a501e670007a",
+    "Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility.cpp": "19aa9621b806f59f4b5af28d473f79d36f820d0b83824de82c7252f30c2dab57",
+    "Source/Hodgepodge/Private/Tests/HodgeLockOnTestTypes.h": "1e4be46a0d822e3d7b871b264b5148da224a497fa9620242406fe2863da9e67a",
+    "Source/Hodgepodge/Private/Tests/HodgeLockOnTestTypes.cpp": "81168752eae981840f91c10182d3c358aebfb6af50eccf4e07095c4cb186eba8"
+  },
+  "asset_sha256": {
+    "Content/Main/Character/Hero/Targeting/DA_HeroLockOn.uasset": "746349495683423564f78b9fbb9072baeb786e2fd0a80aa1e43b174e59502d49",
+    "Content/Main/Character/Hero/BP_Hero_Pover.uasset": "5827ceaefd2b3c376894b5632032fa0790ebbe1f191a49a091114fe417b5dc4c",
+    "Content/Main/Camera/CM_ThirdPerson.uasset": "d545176bc22d0e5b8d75d6df70c5ce95b8f7dd375139e18b75515a5e5a42d94e"
+  },
+  "coverage": {
+    "line_percent": null,
+    "branch_percent": null,
+    "note": "没有插桩，只提供实际需求断言与结果。"
+  },
+  "limits": [
+    "InputKey/EnhancedInput 注入不是物理鼠标、DPI 或主观手感验收",
+    "CameraOverride 验证真实 Hero 相机接口，不是一份完整正式演出 GA",
+    "未验证全部狭窄地形、高差、群体构图、Boss多点、换Pawn、热卸载、丢包或打包",
+    "专服PIE不是独立ServerTarget"
+  ],
+  "fixed_failures": [
+    "过渡中输入被混合权重削弱",
+    "旧输入在临时镜头返回时重复应用风险",
+    "回归夹具在退出混合期间强设控制角度导致选错目标",
+    "单元夹具实例化Abstract基类",
+    "测试直接调用非导出的GAS句柄生成方法",
+    "Python无法读取受保护Blueprint.Status"
+  ]
+}

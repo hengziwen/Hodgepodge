@@ -1,0 +1,809 @@
+{
+  "date": "2026-10-12",
+  "engine": "UE 5.5.4",
+  "design": "Docs/Design/lock-on-system.md v0.3",
+  "builds": {
+    "HodgepodgeEditor Win64 Development": {
+      "exit_code": 0,
+      "log": "Saved/LockOn/editor-build.log",
+      "log_sha256": "1e5adb0d7c1674c14cb7710110e6276d6f878e44a814861fb0e608f4ded8f1e9"
+    },
+    "Hodgepodge Win64 Development": {
+      "exit_code": 0,
+      "log": "Saved/LockOn/game-build.log",
+      "log_sha256": "8f0063f2d131e55ff42b1ddbc0a429595bee72610a94af89729aa667c0d53d5c"
+    }
+  },
+  "automation": {
+    "count": 29,
+    "passed": 29,
+    "tests": [
+      {
+        "name": "Hodge.Facing.ActionsAndConstraints",
+        "state": "Success",
+        "warnings": 1,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Facing.ActivationPair",
+        "state": "Success",
+        "warnings": 1,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Facing.AnimationSnapshot",
+        "state": "Success",
+        "warnings": 1,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Facing.AuthorityActionLifecycle",
+        "state": "Success",
+        "warnings": 1,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Facing.InputSnapshots",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Facing.LifecycleAndExceptions",
+        "state": "Success",
+        "warnings": 1,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Facing.ModesAndPriority",
+        "state": "Success",
+        "warnings": 1,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Facing.ReplayAndNetworkData",
+        "state": "Success",
+        "warnings": 1,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.LockOn.AuthorityIdentityAndVersions",
+        "state": "Success",
+        "warnings": 5,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.LockOn.ControlAndMotionLifecycle",
+        "state": "Success",
+        "warnings": 5,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.LockOn.DeathClearsAndDoesNotReacquire",
+        "state": "Success",
+        "warnings": 5,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.LockOn.GASShortCommand",
+        "state": "Success",
+        "warnings": 5,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.LockOn.MouseGesture",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.LockOn.PredictionReconciliation",
+        "state": "Success",
+        "warnings": 5,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.LockOn.ProfileValidation",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.LockOn.RangeGraceAndInvalidTarget",
+        "state": "Success",
+        "warnings": 5,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.LockOn.TargetDataEarlyAndRetired",
+        "state": "Success",
+        "warnings": 5,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Movement.DashDirections",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Movement.DashFootIKContinuity",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Movement.DefenseWindows",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Movement.InputSessions",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Movement.PolicyAndAuthorization",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Movement.RootMotionPivot",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Movement.TargetDataSerialization",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Movement.TimingAndPivot",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Rotation.ConstraintsAndReplay",
+        "state": "Success",
+        "warnings": 1,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.UI.ClosedRootAndInvalidRequests",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.UI.DataSourceInactive",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.UI.ManagerScope",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      }
+    ],
+    "raw_path": "Saved/LockOn/Regression/index.json",
+    "raw_sha256": "03da4cf1a061f8f539c113c1603173a32183e4beef538b6d17d5febcbd245b25"
+  },
+  "asset_validation": {
+    "passed": true,
+    "checks": [
+      {
+        "check": "LOCK-03_PawnData引用正式Profile",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "check": "LOCK-03_AbilitySet授予唯一",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "check": "LOCK-03_原生命令GA等级与输入",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "check": "LOCK-01_输入动作Boolean",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "check": "LOCK-01_唯一中键映射",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "check": "LOCK-01_唯一输入标签入口",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "check": "LOCK-05_HUD投影层存在",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "check": "LOCK-05_标记类有效",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "check": "LOCK-01_胸口锚点_BP_Enemy_Guardian",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "check": "LOCK-01_胸口锚点_BP_Enemy_GuardianEquipped",
+        "passed": true,
+        "detail": null
+      }
+    ]
+  },
+  "pie": {
+    "single": {
+      "passed": true,
+      "checks": [
+        {
+          "check": "LOCK-07_各端初始化就绪",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_中键获取中心敌人并复制",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_普通锁定侧移风格",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_松开中键仍保留目标",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-05_原生标记实例已进入HUD",
+          "passed": true,
+          "detail": 1
+        },
+        {
+          "check": "LOCK-01_轻微鼠标移动不切换",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_向右甩动切换并复制",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_向左甩动切回",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_点按Dash期间自由风格",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_Dash结束锁定目标保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_Dash结束恢复侧移",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_长按衔接Sprint",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_Sprint保留锁定",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_Sprint保持自由风格",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_松开Sprint恢复侧移",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_中键解除各端确认",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_解除恢复自由风格",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_再次获取",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-07_真实死亡GA清除各端目标",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-02_死亡没有自动换到邻居",
+          "passed": true,
+          "detail": null
+        }
+      ],
+      "error": null,
+      "raw_sha256": "edc89b004450cd0fccb97df7392ef01703ffd2387ad6bb871d0b56fbe01c7969",
+      "raw_path": "Saved/LockOn/single-e2e.json",
+      "mtime_local": "2026-10-12T23:48:09.281204",
+      "network": "single"
+    },
+    "listen": {
+      "passed": true,
+      "checks": [
+        {
+          "check": "LOCK-07_各端初始化就绪",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_中键获取中心敌人并复制",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_普通锁定侧移风格",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_松开中键仍保留目标",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-05_原生标记实例已进入HUD",
+          "passed": true,
+          "detail": 1
+        },
+        {
+          "check": "LOCK-01_轻微鼠标移动不切换",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_向右甩动切换并复制",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_向左甩动切回",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_点按Dash期间自由风格",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_Dash结束锁定目标保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_Dash结束恢复侧移",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_长按衔接Sprint",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_Sprint保留锁定",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_Sprint保持自由风格",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_松开Sprint恢复侧移",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_中键解除各端确认",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_解除恢复自由风格",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_再次获取",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-07_真实死亡GA清除各端目标",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-02_死亡没有自动换到邻居",
+          "passed": true,
+          "detail": null
+        }
+      ],
+      "error": null,
+      "raw_sha256": "129c043ac18bba22c1e9404e620116d17b61f43fb3c7c677ed2abd5eb7b4be63",
+      "raw_path": "Saved/LockOn/listen-e2e.json",
+      "mtime_local": "2026-10-12T23:23:37.882510",
+      "network": "listen"
+    },
+    "dedicated": {
+      "passed": true,
+      "checks": [
+        {
+          "check": "LOCK-07_各端初始化就绪",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_中键获取中心敌人并复制",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_普通锁定侧移风格",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_松开中键仍保留目标",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-05_原生标记实例已进入HUD",
+          "passed": true,
+          "detail": 1
+        },
+        {
+          "check": "LOCK-01_轻微鼠标移动不切换",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_向右甩动切换并复制",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_向左甩动切回",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_点按Dash期间自由风格",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_Dash结束锁定目标保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_Dash结束恢复侧移",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_长按衔接Sprint",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_Sprint保留锁定",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_Sprint保持自由风格",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_松开Sprint恢复侧移",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_中键解除各端确认",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_解除恢复自由风格",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_再次获取",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-07_真实死亡GA清除各端目标",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-02_死亡没有自动换到邻居",
+          "passed": true,
+          "detail": null
+        }
+      ],
+      "error": null,
+      "raw_sha256": "050fc7d63f0a3a06cba19e12a0b5891761c90188498a72ba34f99e447dd25c12",
+      "raw_path": "Saved/LockOn/dedicated-e2e.json",
+      "mtime_local": "2026-10-12T23:25:36.995474",
+      "network": "dedicated"
+    },
+    "listen-lag": {
+      "passed": true,
+      "checks": [
+        {
+          "check": "LOCK-07_各端初始化就绪",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_中键获取中心敌人并复制",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_普通锁定侧移风格",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_松开中键仍保留目标",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-05_原生标记实例已进入HUD",
+          "passed": true,
+          "detail": 1
+        },
+        {
+          "check": "LOCK-01_轻微鼠标移动不切换",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_向右甩动切换并复制",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_向左甩动切回",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_点按Dash期间自由风格",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_Dash结束锁定目标保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_Dash结束恢复侧移",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_长按衔接Sprint",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_Sprint保留锁定",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_Sprint保持自由风格",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_松开Sprint恢复侧移",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_中键解除各端确认",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-04_解除恢复自由风格",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-01_再次获取",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-07_真实死亡GA清除各端目标",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "LOCK-02_死亡没有自动换到邻居",
+          "passed": true,
+          "detail": null
+        }
+      ],
+      "error": null,
+      "raw_sha256": "3763d6a48f178562513dc4323df0ead9d01a1a57a672c51e0536c8e87561309a",
+      "raw_path": "Saved/LockOn/listen-lag-e2e.json",
+      "mtime_local": "2026-10-12T23:31:41.728009",
+      "network": "Net PktLag=100 per PIE driver"
+    }
+  },
+  "editor_restored": {
+    "map": "/Game/CodexText/L_MainMenu",
+    "dirty_maps": [],
+    "dirty_content": [],
+    "pie": 0,
+    "performance": {
+      "throttle": false,
+      "slate": 1,
+      "idle": 0
+    },
+    "play_settings": "single standalone baseline; original PIE settings were not recorded"
+  },
+  "source_delta": {
+    "changed": [
+      "Source/HodgeAbilityEditor/Private/HodgeUIAuthoringLibrary.cpp",
+      "Source/HodgeAbilityEditor/Private/HodgeUIAuthoringLibrary.h",
+      "Source/Hodgepodge/Private/AbilitySystem/HodgeAbilitySystemComponent.cpp",
+      "Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility_Dash.cpp",
+      "Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.cpp",
+      "Source/Hodgepodge/Private/Camera/HodgeCameraComponent.cpp",
+      "Source/Hodgepodge/Private/Camera/HodgeCameraMode_ThirdPerson.cpp",
+      "Source/Hodgepodge/Private/Character/HodgeEnemyCharacter.cpp",
+      "Source/Hodgepodge/Private/Character/HodgeHeroCharacter.cpp",
+      "Source/Hodgepodge/Private/Component/HodgeCharacterMovementComponent.cpp",
+      "Source/Hodgepodge/Private/Component/HodgeCharacterRotationComponent.cpp",
+      "Source/Hodgepodge/Private/Component/HodgeHeroComponent.cpp",
+      "Source/Hodgepodge/Private/Core/PlayerController/HodgePlayerController.cpp",
+      "Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h",
+      "Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Dash.h",
+      "Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h",
+      "Source/Hodgepodge/Public/Camera/HodgeCameraMode_ThirdPerson.h",
+      "Source/Hodgepodge/Public/Character/HodgeEnemyCharacter.h",
+      "Source/Hodgepodge/Public/Character/HodgeHeroCharacter.h",
+      "Source/Hodgepodge/Public/Component/HodgeCharacterRotationComponent.h",
+      "Source/Hodgepodge/Public/Core/PlayerController/HodgePlayerController.h",
+      "Source/Hodgepodge/Public/Data/HodgePawnData.h",
+      "Source/Hodgepodge/Public/Input/HodgeInputComponent.h",
+      "Source/Hodgepodge/Public/UI/IndicatorSystem/IndicatorLayer.h"
+    ],
+    "added": [
+      "Source/Hodgepodge/Private/AbilitySystem/HodgeLockOnStateEffect.cpp",
+      "Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility_LockOn.cpp",
+      "Source/Hodgepodge/Private/Camera/HodgeCameraMode_LockOn.cpp",
+      "Source/Hodgepodge/Private/Component/HodgeLockOnComponent.cpp",
+      "Source/Hodgepodge/Private/Data/HodgeLockOnProfile.cpp",
+      "Source/Hodgepodge/Private/Targeting/HodgeLockOnTypes.cpp",
+      "Source/Hodgepodge/Private/Tests/HodgeLockOnTests.cpp",
+      "Source/Hodgepodge/Private/UI/Targeting/HodgeLockOnIndicatorWidget.cpp",
+      "Source/Hodgepodge/Public/AbilitySystem/HodgeLockOnStateEffect.h",
+      "Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_LockOn.h",
+      "Source/Hodgepodge/Public/Camera/HodgeCameraMode_LockOn.h",
+      "Source/Hodgepodge/Public/Component/HodgeLockOnComponent.h",
+      "Source/Hodgepodge/Public/Data/HodgeLockOnProfile.h",
+      "Source/Hodgepodge/Public/Interface/HodgeLockOnTargetInterface.h",
+      "Source/Hodgepodge/Public/Targeting/HodgeLockOnTypes.h",
+      "Source/Hodgepodge/Public/UI/Targeting/HodgeLockOnIndicatorWidget.h"
+    ]
+  },
+  "source_sha256": {
+    "Source/HodgeAbilityEditor/Private/HodgeUIAuthoringLibrary.cpp": "3f79dbe01d940cc064ff4050de611dbfdc036b63c2ab520e5214d4d8cebadce5",
+    "Source/HodgeAbilityEditor/Private/HodgeUIAuthoringLibrary.h": "25eeb88a1936620825cc2dacbfcf40f61876a5666967fb04a420c22a651fe20b",
+    "Source/Hodgepodge/Private/AbilitySystem/HodgeAbilitySystemComponent.cpp": "9399f9ed55cab7cd8bff215f4abc7ddb4bf1919eded780d506b9ed607e4ad671",
+    "Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility_Dash.cpp": "c2e1464d2baa36e90b0288491a31e5c737aa99757ebc0b853d1be78fd012cedd",
+    "Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.cpp": "6c90c169d4015389471650cc184d57ccad2ef56d17688bb9aa981efda565eff7",
+    "Source/Hodgepodge/Private/Camera/HodgeCameraComponent.cpp": "1aab08ed59119e7c337528dcd38f6ffbe09b9629992f083ccd99d8e4751568ab",
+    "Source/Hodgepodge/Private/Camera/HodgeCameraMode_ThirdPerson.cpp": "63a702da4d4753e32f1feada1b1a4a52411f65f1a4ccab563f7e3a06b8874c3e",
+    "Source/Hodgepodge/Private/Character/HodgeEnemyCharacter.cpp": "e9837802495eba9b90d31d3dc2a21fe25d88a4fbb8aa5e5d4cd98a62a81a6590",
+    "Source/Hodgepodge/Private/Character/HodgeHeroCharacter.cpp": "bf1c10df29fa1976094952c8e5e70aed342bf2d5b9d7f2f8872e275dd92f7669",
+    "Source/Hodgepodge/Private/Component/HodgeCharacterMovementComponent.cpp": "3c8fdc6bf571630351581b44b5e7d78572607c697793aa7fbd7c61d711d16e44",
+    "Source/Hodgepodge/Private/Component/HodgeCharacterRotationComponent.cpp": "1ec58c21592f8b69a1c1c84bf2b97b1273703d08dfc8ec3b071c9243ddaf5589",
+    "Source/Hodgepodge/Private/Component/HodgeHeroComponent.cpp": "e2b3aba0001fdd645bc4a043c1388c0662fee8d0bff27db3b2f6b2feaed25a02",
+    "Source/Hodgepodge/Private/Core/PlayerController/HodgePlayerController.cpp": "4266454f3a5c2aab81ecd9917d4da63f9eb8168788fb06fe35616f7094868fd1",
+    "Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h": "fc2dd963b12e7349ae3d8fbb438957dc8b7a2cf059d9d604a009dccc6d2e9251",
+    "Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Dash.h": "01a4a7c4f637bd3865a0b1a5652e6525cfa66687a71c5ad766e38b73ea038a33",
+    "Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h": "e1cd39478cb74af1128b9f8cf5b736f3dfd28600d36471aba3ac9dffbd589d6a",
+    "Source/Hodgepodge/Public/Camera/HodgeCameraMode_ThirdPerson.h": "7d2242c52274f1592da27a96a2e2fb122cea5855533bce96cef4969708a8dcca",
+    "Source/Hodgepodge/Public/Character/HodgeEnemyCharacter.h": "451ee915a08ee223bfa9465c4b7f91b652bcac431b6b41945d8c28a01a9d59ac",
+    "Source/Hodgepodge/Public/Character/HodgeHeroCharacter.h": "33560353edc1377e65c1c015f9cb3f5e16bc1948f047a99b5715fa126747baab",
+    "Source/Hodgepodge/Public/Component/HodgeCharacterRotationComponent.h": "7514a447ed1f55e13f6620b6953033fd15c07a4fab85da43d65584938c0bcac8",
+    "Source/Hodgepodge/Public/Core/PlayerController/HodgePlayerController.h": "d5f6c2f13280d9f4d0bacf00015204661ebc356eef7edd79e6b8b08cd69d3abd",
+    "Source/Hodgepodge/Public/Data/HodgePawnData.h": "7a04d78a64e81960660a4118410b735eaad6347551ab7aeeeb7620ff9f9bf1b4",
+    "Source/Hodgepodge/Public/Input/HodgeInputComponent.h": "84b2e98fe0067ebd9f955dbcf5807f4de9a2db28ab4308f1ac26a8af99fee4bb",
+    "Source/Hodgepodge/Public/UI/IndicatorSystem/IndicatorLayer.h": "ed3aab8ee7c8ec32525602ee464ac8ca7f32b92a86f79e1a97b2326d7a19271e",
+    "Source/Hodgepodge/Private/AbilitySystem/HodgeLockOnStateEffect.cpp": "4cf7a31305822922ec9bd1997a32694f9e88ce622d53b7c0d8aba535dde5dda0",
+    "Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility_LockOn.cpp": "a7f05eb2fe2602ed8e4d7aaaa47733ee7c26dc617cf4c67323dbc02cd32f214b",
+    "Source/Hodgepodge/Private/Camera/HodgeCameraMode_LockOn.cpp": "14bfbd9fd6a46c96395fea23daf91d3d5cc94d9fe7f112ffba0c9dfce9e45e62",
+    "Source/Hodgepodge/Private/Component/HodgeLockOnComponent.cpp": "f816b137e2b50634cf894472fb8d7a1ea9284dcea71e649a2ab524f4445941f1",
+    "Source/Hodgepodge/Private/Data/HodgeLockOnProfile.cpp": "d10efd172c6bb41c0b3251b0f71153fadf8cdd282551ef62ce8930f951fe0a28",
+    "Source/Hodgepodge/Private/Targeting/HodgeLockOnTypes.cpp": "f9dd89c163a3fb49a9cc48c6094a915c95692c5c58984a8f75c8dc765dc094f9",
+    "Source/Hodgepodge/Private/Tests/HodgeLockOnTests.cpp": "eba2d765f7c8a4166ecfeaad46d53a617c8a4603929e7990c8d911d33c22de98",
+    "Source/Hodgepodge/Private/UI/Targeting/HodgeLockOnIndicatorWidget.cpp": "e1b50117da1d773a2f37837595a238ecd5dfca3658316cd6db6d27ed0911f931",
+    "Source/Hodgepodge/Public/AbilitySystem/HodgeLockOnStateEffect.h": "4dd4efc968bb4b85909034fc1e6bcb736f6b263ebbb643fd2f73070dadc29674",
+    "Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_LockOn.h": "0571acb5ac410f7fb4abe2c8e677baa8930bb6c658e1d6266c758fb2fabefdf6",
+    "Source/Hodgepodge/Public/Camera/HodgeCameraMode_LockOn.h": "a0efd78fcf3cd775402293ff1b71363f2256cb4bb6c99902f60ad408a5b2648f",
+    "Source/Hodgepodge/Public/Component/HodgeLockOnComponent.h": "b9a51f900626c6d97a9fa71987c040b3aac8d76a7ba38540de2566af481d13e7",
+    "Source/Hodgepodge/Public/Data/HodgeLockOnProfile.h": "bc7a0914854709941c4aa22ccc5999473d8a068c3568a18090a3044e5854d7a5",
+    "Source/Hodgepodge/Public/Interface/HodgeLockOnTargetInterface.h": "fdacc38de1271d2c506b4a986541811b601a529ee9b3ccb2bc173a17752f2db4",
+    "Source/Hodgepodge/Public/Targeting/HodgeLockOnTypes.h": "72a6dd7b414c7405e3a45137b76e274ef6507201591b0462fca515901410c3c4",
+    "Source/Hodgepodge/Public/UI/Targeting/HodgeLockOnIndicatorWidget.h": "d12f6d11d27291b406f2a42c1f8364e903918412943f750894634d012968bd2e"
+  },
+  "coverage": {
+    "line_percent": null,
+    "branch_percent": null,
+    "reason": "本轮未执行覆盖率插桩；只报告需求到测试的追溯和实际检查数量。"
+  },
+  "not_verified": [
+    "物理鼠标按键、DPI、主观镜头手感与全八向动作组合",
+    "复杂遮挡恢复与临时技能镜头端到端组合",
+    "真实攻击快照切换与锁定范围外不吸附专项场景",
+    "真实换 Pawn、热卸载、丢包及目标引用晚到联机场景",
+    "独立进程、独立 Server Target、Cook 与打包",
+    "规模性能与长期内存测试"
+  ]
+}

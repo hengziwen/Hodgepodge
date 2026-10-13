@@ -1,0 +1,1274 @@
+{
+  "date": "2026-10-13",
+  "engine": "5.5.4",
+  "configuration": {
+    "widget": "/Game/Main/UI/Targeting/WBP_HeroLockOnIndicator",
+    "class": "/Game/Main/UI/Targeting/WBP_HeroLockOnIndicator.WBP_HeroLockOnIndicator_C",
+    "lock_profile": "/Game/Main/Character/Hero/Targeting/DA_HeroLockOn",
+    "dash_profile": "/Game/Main/Character/Hero/Ability/Sprint/DA_Hero_SprintAbility",
+    "instant_facing": true
+  },
+  "native_tests": {
+    "total": 33,
+    "passed": 33,
+    "names": [
+      "Hodge.Facing.ActionsAndConstraints",
+      "Hodge.Facing.ActivationPair",
+      "Hodge.Facing.AnimationSnapshot",
+      "Hodge.Facing.AuthorityActionLifecycle",
+      "Hodge.Facing.DashInstantStart",
+      "Hodge.Facing.InputSnapshots",
+      "Hodge.Facing.LifecycleAndExceptions",
+      "Hodge.Facing.ModesAndPriority",
+      "Hodge.Facing.ReplayAndNetworkData",
+      "Hodge.LockOn.AuthorityIdentityAndVersions",
+      "Hodge.LockOn.CameraModePriorityAndContinuity",
+      "Hodge.LockOn.ControlAndMotionLifecycle",
+      "Hodge.LockOn.DeathClearsAndDoesNotReacquire",
+      "Hodge.LockOn.GASShortCommand",
+      "Hodge.LockOn.MouseGesture",
+      "Hodge.LockOn.PredictionReconciliation",
+      "Hodge.LockOn.ProfileValidation",
+      "Hodge.LockOn.RangeGraceAndInvalidTarget",
+      "Hodge.LockOn.SoftCameraManualAndAssist",
+      "Hodge.LockOn.TargetDataEarlyAndRetired",
+      "Hodge.Movement.DashDirections",
+      "Hodge.Movement.DashFootIKContinuity",
+      "Hodge.Movement.DefenseWindows",
+      "Hodge.Movement.InputSessions",
+      "Hodge.Movement.PolicyAndAuthorization",
+      "Hodge.Movement.RootMotionPivot",
+      "Hodge.Movement.TargetDataSerialization",
+      "Hodge.Movement.TimingAndPivot",
+      "Hodge.Rotation.ConstraintsAndReplay",
+      "Hodge.UI.ClosedRootAndInvalidRequests",
+      "Hodge.UI.DataSourceInactive",
+      "Hodge.UI.LockOnIndicatorDesigner",
+      "Hodge.UI.ManagerScope"
+    ]
+  },
+  "directions": {
+    "single": {
+      "checks": [
+        {
+          "check": "DASH-01_方向0动画即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-02_方向0位移即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-03_方向0F_B语义保留",
+          "passed": true,
+          "detail": [
+            "F",
+            "F"
+          ]
+        },
+        {
+          "check": "DASH-04_方向0各端锁定保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "DASH-01_方向45动画即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-02_方向45位移即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-03_方向45F_B语义保留",
+          "passed": true,
+          "detail": [
+            "F",
+            "F"
+          ]
+        },
+        {
+          "check": "DASH-04_方向45各端锁定保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "DASH-01_方向90动画即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-02_方向90位移即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-03_方向90F_B语义保留",
+          "passed": true,
+          "detail": [
+            "F",
+            "F"
+          ]
+        },
+        {
+          "check": "DASH-04_方向90各端锁定保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "DASH-01_方向130动画即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-02_方向130位移即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-03_方向130F_B语义保留",
+          "passed": true,
+          "detail": [
+            "F",
+            "F"
+          ]
+        },
+        {
+          "check": "DASH-04_方向130各端锁定保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "DASH-01_方向135动画即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-02_方向135位移即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-03_方向135F_B语义保留",
+          "passed": true,
+          "detail": [
+            "B",
+            "B"
+          ]
+        },
+        {
+          "check": "DASH-04_方向135各端锁定保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "DASH-01_方向180动画即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-02_方向180位移即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-03_方向180F_B语义保留",
+          "passed": true,
+          "detail": [
+            "B",
+            "B"
+          ]
+        },
+        {
+          "check": "DASH-04_方向180各端锁定保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "DASH-01_方向-135动画即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-02_方向-135位移即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-03_方向-135F_B语义保留",
+          "passed": true,
+          "detail": [
+            "B",
+            "B"
+          ]
+        },
+        {
+          "check": "DASH-04_方向-135各端锁定保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "DASH-01_方向-90动画即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-02_方向-90位移即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-03_方向-90F_B语义保留",
+          "passed": true,
+          "detail": [
+            "F",
+            "F"
+          ]
+        },
+        {
+          "check": "DASH-04_方向-90各端锁定保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "DASH-01_方向-45动画即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-02_方向-45位移即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-03_方向-45F_B语义保留",
+          "passed": true,
+          "detail": [
+            "F",
+            "F"
+          ]
+        },
+        {
+          "check": "DASH-04_方向-45各端锁定保留",
+          "passed": true,
+          "detail": null
+        }
+      ],
+      "timings": [
+        {
+          "angle": 0,
+          "animation_delay": 0.0,
+          "movement_delay": 0.0,
+          "variant": "F"
+        },
+        {
+          "angle": 45,
+          "animation_delay": 0.0,
+          "movement_delay": 0.0,
+          "variant": "F"
+        },
+        {
+          "angle": 90,
+          "animation_delay": 0.0,
+          "movement_delay": 0.0,
+          "variant": "F"
+        },
+        {
+          "angle": 130,
+          "animation_delay": 0.0,
+          "movement_delay": 0.0,
+          "variant": "F"
+        },
+        {
+          "angle": 135,
+          "animation_delay": 0.0,
+          "movement_delay": 0.0,
+          "variant": "B"
+        },
+        {
+          "angle": 180,
+          "animation_delay": 0.0,
+          "movement_delay": 0.0,
+          "variant": "B"
+        },
+        {
+          "angle": -135,
+          "animation_delay": 0.0,
+          "movement_delay": 0.0,
+          "variant": "B"
+        },
+        {
+          "angle": -90,
+          "animation_delay": 0.0,
+          "movement_delay": 0.0,
+          "variant": "F"
+        },
+        {
+          "angle": -45,
+          "animation_delay": 0.0,
+          "movement_delay": 0.0,
+          "variant": "F"
+        }
+      ],
+      "raw_sha256": "910c49f7211fd3888ec9db205a2cdd385ee2dddc32b9f4c03422b08203a4b652"
+    },
+    "listen": {
+      "checks": [
+        {
+          "check": "DASH-01_方向0动画即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-02_方向0位移即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-03_方向0F_B语义保留",
+          "passed": true,
+          "detail": [
+            "F",
+            "F"
+          ]
+        },
+        {
+          "check": "DASH-04_方向0各端锁定保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "DASH-01_方向45动画即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-02_方向45位移即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-03_方向45F_B语义保留",
+          "passed": true,
+          "detail": [
+            "F",
+            "F"
+          ]
+        },
+        {
+          "check": "DASH-04_方向45各端锁定保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "DASH-01_方向90动画即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-02_方向90位移即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-03_方向90F_B语义保留",
+          "passed": true,
+          "detail": [
+            "F",
+            "F"
+          ]
+        },
+        {
+          "check": "DASH-04_方向90各端锁定保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "DASH-01_方向130动画即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-02_方向130位移即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-03_方向130F_B语义保留",
+          "passed": true,
+          "detail": [
+            "F",
+            "F"
+          ]
+        },
+        {
+          "check": "DASH-04_方向130各端锁定保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "DASH-01_方向135动画即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-02_方向135位移即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-03_方向135F_B语义保留",
+          "passed": true,
+          "detail": [
+            "B",
+            "B"
+          ]
+        },
+        {
+          "check": "DASH-04_方向135各端锁定保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "DASH-01_方向180动画即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-02_方向180位移即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-03_方向180F_B语义保留",
+          "passed": true,
+          "detail": [
+            "B",
+            "B"
+          ]
+        },
+        {
+          "check": "DASH-04_方向180各端锁定保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "DASH-01_方向-135动画即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-02_方向-135位移即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-03_方向-135F_B语义保留",
+          "passed": true,
+          "detail": [
+            "B",
+            "B"
+          ]
+        },
+        {
+          "check": "DASH-04_方向-135各端锁定保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "DASH-01_方向-90动画即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-02_方向-90位移即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-03_方向-90F_B语义保留",
+          "passed": true,
+          "detail": [
+            "F",
+            "F"
+          ]
+        },
+        {
+          "check": "DASH-04_方向-90各端锁定保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "DASH-01_方向-45动画即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-02_方向-45位移即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-03_方向-45F_B语义保留",
+          "passed": true,
+          "detail": [
+            "F",
+            "F"
+          ]
+        },
+        {
+          "check": "DASH-04_方向-45各端锁定保留",
+          "passed": true,
+          "detail": null
+        }
+      ],
+      "timings": [
+        {
+          "angle": 0,
+          "animation_delay": 0.0,
+          "movement_delay": 0.0,
+          "variant": "F"
+        },
+        {
+          "angle": 45,
+          "animation_delay": 0.0,
+          "movement_delay": 0.0,
+          "variant": "F"
+        },
+        {
+          "angle": 90,
+          "animation_delay": 0.0,
+          "movement_delay": 0.0,
+          "variant": "F"
+        },
+        {
+          "angle": 130,
+          "animation_delay": 0.0,
+          "movement_delay": 0.0,
+          "variant": "F"
+        },
+        {
+          "angle": 135,
+          "animation_delay": 0.0,
+          "movement_delay": 0.0,
+          "variant": "B"
+        },
+        {
+          "angle": 180,
+          "animation_delay": 0.0,
+          "movement_delay": 0.0,
+          "variant": "B"
+        },
+        {
+          "angle": -135,
+          "animation_delay": 0.0,
+          "movement_delay": 0.0,
+          "variant": "B"
+        },
+        {
+          "angle": -90,
+          "animation_delay": 0.0,
+          "movement_delay": 0.0,
+          "variant": "F"
+        },
+        {
+          "angle": -45,
+          "animation_delay": 0.0,
+          "movement_delay": 0.0,
+          "variant": "F"
+        }
+      ],
+      "raw_sha256": "0c9bdaab6f55b904b345e1dcf9921bb6bbbb0e02f1b05f64696ffff6f8b43da4"
+    },
+    "dedicated": {
+      "checks": [
+        {
+          "check": "DASH-01_方向0动画即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-02_方向0位移即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-03_方向0F_B语义保留",
+          "passed": true,
+          "detail": [
+            "F",
+            "F"
+          ]
+        },
+        {
+          "check": "DASH-04_方向0各端锁定保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "DASH-01_方向45动画即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-02_方向45位移即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-03_方向45F_B语义保留",
+          "passed": true,
+          "detail": [
+            "F",
+            "F"
+          ]
+        },
+        {
+          "check": "DASH-04_方向45各端锁定保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "DASH-01_方向90动画即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-02_方向90位移即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-03_方向90F_B语义保留",
+          "passed": true,
+          "detail": [
+            "F",
+            "F"
+          ]
+        },
+        {
+          "check": "DASH-04_方向90各端锁定保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "DASH-01_方向130动画即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-02_方向130位移即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-03_方向130F_B语义保留",
+          "passed": true,
+          "detail": [
+            "F",
+            "F"
+          ]
+        },
+        {
+          "check": "DASH-04_方向130各端锁定保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "DASH-01_方向135动画即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-02_方向135位移即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-03_方向135F_B语义保留",
+          "passed": true,
+          "detail": [
+            "B",
+            "B"
+          ]
+        },
+        {
+          "check": "DASH-04_方向135各端锁定保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "DASH-01_方向180动画即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-02_方向180位移即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-03_方向180F_B语义保留",
+          "passed": true,
+          "detail": [
+            "B",
+            "B"
+          ]
+        },
+        {
+          "check": "DASH-04_方向180各端锁定保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "DASH-01_方向-135动画即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-02_方向-135位移即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-03_方向-135F_B语义保留",
+          "passed": true,
+          "detail": [
+            "B",
+            "B"
+          ]
+        },
+        {
+          "check": "DASH-04_方向-135各端锁定保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "DASH-01_方向-90动画即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-02_方向-90位移即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-03_方向-90F_B语义保留",
+          "passed": true,
+          "detail": [
+            "F",
+            "F"
+          ]
+        },
+        {
+          "check": "DASH-04_方向-90各端锁定保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "DASH-01_方向-45动画即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-02_方向-45位移即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-03_方向-45F_B语义保留",
+          "passed": true,
+          "detail": [
+            "F",
+            "F"
+          ]
+        },
+        {
+          "check": "DASH-04_方向-45各端锁定保留",
+          "passed": true,
+          "detail": null
+        }
+      ],
+      "timings": [
+        {
+          "angle": 0,
+          "animation_delay": 0.0,
+          "movement_delay": 0.0,
+          "variant": "F"
+        },
+        {
+          "angle": 45,
+          "animation_delay": 0.0,
+          "movement_delay": 0.0,
+          "variant": "F"
+        },
+        {
+          "angle": 90,
+          "animation_delay": 0.0,
+          "movement_delay": 0.0,
+          "variant": "F"
+        },
+        {
+          "angle": 130,
+          "animation_delay": 0.0,
+          "movement_delay": 0.0,
+          "variant": "F"
+        },
+        {
+          "angle": 135,
+          "animation_delay": 0.0,
+          "movement_delay": 0.0,
+          "variant": "B"
+        },
+        {
+          "angle": 180,
+          "animation_delay": 0.0,
+          "movement_delay": 0.0,
+          "variant": "B"
+        },
+        {
+          "angle": -135,
+          "animation_delay": 0.0,
+          "movement_delay": 0.0,
+          "variant": "B"
+        },
+        {
+          "angle": -90,
+          "animation_delay": 0.0,
+          "movement_delay": 0.0,
+          "variant": "F"
+        },
+        {
+          "angle": -45,
+          "animation_delay": 0.0,
+          "movement_delay": 0.0,
+          "variant": "F"
+        }
+      ],
+      "raw_sha256": "d3b3ce7aec36ccafb79fb4f653983628a2b426acdc1b37b466c7525185f9b70b"
+    },
+    "listen-lag": {
+      "checks": [
+        {
+          "check": "DASH-01_方向0动画即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-02_方向0位移即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-03_方向0F_B语义保留",
+          "passed": true,
+          "detail": [
+            "F",
+            "F"
+          ]
+        },
+        {
+          "check": "DASH-04_方向0各端锁定保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "DASH-01_方向45动画即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-02_方向45位移即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-03_方向45F_B语义保留",
+          "passed": true,
+          "detail": [
+            "F",
+            "F"
+          ]
+        },
+        {
+          "check": "DASH-04_方向45各端锁定保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "DASH-01_方向90动画即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-02_方向90位移即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-03_方向90F_B语义保留",
+          "passed": true,
+          "detail": [
+            "F",
+            "F"
+          ]
+        },
+        {
+          "check": "DASH-04_方向90各端锁定保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "DASH-01_方向130动画即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-02_方向130位移即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-03_方向130F_B语义保留",
+          "passed": true,
+          "detail": [
+            "F",
+            "F"
+          ]
+        },
+        {
+          "check": "DASH-04_方向130各端锁定保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "DASH-01_方向135动画即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-02_方向135位移即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-03_方向135F_B语义保留",
+          "passed": true,
+          "detail": [
+            "B",
+            "B"
+          ]
+        },
+        {
+          "check": "DASH-04_方向135各端锁定保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "DASH-01_方向180动画即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-02_方向180位移即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-03_方向180F_B语义保留",
+          "passed": true,
+          "detail": [
+            "B",
+            "B"
+          ]
+        },
+        {
+          "check": "DASH-04_方向180各端锁定保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "DASH-01_方向-135动画即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-02_方向-135位移即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-03_方向-135F_B语义保留",
+          "passed": true,
+          "detail": [
+            "B",
+            "B"
+          ]
+        },
+        {
+          "check": "DASH-04_方向-135各端锁定保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "DASH-01_方向-90动画即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-02_方向-90位移即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-03_方向-90F_B语义保留",
+          "passed": true,
+          "detail": [
+            "F",
+            "F"
+          ]
+        },
+        {
+          "check": "DASH-04_方向-90各端锁定保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "DASH-01_方向-45动画即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-02_方向-45位移即时开始",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "check": "DASH-03_方向-45F_B语义保留",
+          "passed": true,
+          "detail": [
+            "F",
+            "F"
+          ]
+        },
+        {
+          "check": "DASH-04_方向-45各端锁定保留",
+          "passed": true,
+          "detail": null
+        }
+      ],
+      "timings": [
+        {
+          "angle": 0,
+          "animation_delay": 0.0,
+          "movement_delay": 0.0,
+          "variant": "F"
+        },
+        {
+          "angle": 45,
+          "animation_delay": 0.0,
+          "movement_delay": 0.0,
+          "variant": "F"
+        },
+        {
+          "angle": 90,
+          "animation_delay": 0.0,
+          "movement_delay": 0.0,
+          "variant": "F"
+        },
+        {
+          "angle": 130,
+          "animation_delay": 0.0,
+          "movement_delay": 0.0,
+          "variant": "F"
+        },
+        {
+          "angle": 135,
+          "animation_delay": 0.0,
+          "movement_delay": 0.0,
+          "variant": "B"
+        },
+        {
+          "angle": 180,
+          "animation_delay": 0.0,
+          "movement_delay": 0.0,
+          "variant": "B"
+        },
+        {
+          "angle": -135,
+          "animation_delay": 0.0,
+          "movement_delay": 0.0,
+          "variant": "B"
+        },
+        {
+          "angle": -90,
+          "animation_delay": 0.0,
+          "movement_delay": 0.0,
+          "variant": "F"
+        },
+        {
+          "angle": -45,
+          "animation_delay": 0.0,
+          "movement_delay": 0.0,
+          "variant": "F"
+        }
+      ],
+      "raw_sha256": "b3bbfe9c807a17e977f1161089c437f287845d1ebbedf394ca03c4fb7b19ffe9"
+    }
+  },
+  "single_regression": {
+    "passed": true,
+    "checks": [
+      {
+        "check": "LOCK-07_各端初始化就绪",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "check": "LOCK-01_中键获取中心敌人并复制",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "check": "LOCK-04_普通锁定侧移风格",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "check": "LOCK-01_松开中键仍保留目标",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "check": "LOCK-05_原生标记实例已进入HUD",
+        "passed": true,
+        "detail": 1
+      },
+      {
+        "check": "LOCK-01_轻微鼠标移动不切换",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "check": "LOCK-01_向右甩动切换并复制",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "check": "LOCK-01_向左甩动切回",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "check": "LOCK-04_点按Dash期间自由风格",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "check": "LOCK-04_Dash结束锁定目标保留",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "check": "LOCK-04_Dash结束恢复侧移",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "check": "LOCK-04_长按衔接Sprint",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "check": "LOCK-04_Sprint保留锁定",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "check": "LOCK-04_Sprint保持自由风格",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "check": "LOCK-04_松开Sprint恢复侧移",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "check": "LOCK-01_中键解除各端确认",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "check": "LOCK-04_解除恢复自由风格",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "check": "LOCK-01_再次获取",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "check": "LOCK-07_真实死亡GA清除各端目标",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "check": "LOCK-02_死亡没有自动换到邻居",
+        "passed": true,
+        "detail": null
+      }
+    ]
+  },
+  "runtime_ui": {
+    "passed": true,
+    "class": "/Game/Main/UI/Targeting/WBP_HeroLockOnIndicator.WBP_HeroLockOnIndicator_C",
+    "runtime_desired_size": [
+      64.0,
+      64.0
+    ]
+  },
+  "restored": {
+    "map": "/Game/Main/Maps/L_EnemyAIValidation",
+    "dirty_maps": [],
+    "dirty_content": [],
+    "pie": 0,
+    "performance": {
+      "throttle": false,
+      "slate": 1,
+      "idle": 0
+    },
+    "play_settings": "single standalone baseline; original PIE settings were not recorded"
+  },
+  "builds": {
+    "editor": {
+      "exit": 0,
+      "log_sha256": "f2d5d11b9bb28baea6a035043cd2356c8a1287ee43bf8642ef0243fbd9615c5d"
+    },
+    "game": {
+      "exit": 0,
+      "log_sha256": "8d9050cde2c79700224b4feb43b7c6d48b93c5e5311a42c9841ecd202c8713cc"
+    }
+  },
+  "source_sha256": {
+    "Source/Hodgepodge/Public/Data/HodgeSprintAbilityProfile.h": "8ee07f176b361138fbb636c83a7427f9d55cfd5a98ffe5f5e5818c85fa00e576",
+    "Source/Hodgepodge/Private/UI/Targeting/HodgeLockOnIndicatorWidget.cpp": "2bfb9c0723c46613f93da1881653d51d777c545f7ef57296b66df1db36473125",
+    "Source/Hodgepodge/Private/UI/IndicatorSystem/SActorCanvas.cpp": "d3723feedaa4c2b3e81149074e52df430c65c1fe814e6c9c4d79991297b9af70",
+    "Source/HodgeAbilityEditor/Private/HodgeUIAuthoringLibrary.h": "a2ec0a0174c163c6244b10babf26b0ea680ba81df34695bbc3e49c427e714d63",
+    "Source/HodgeAbilityEditor/Private/HodgeUIAuthoringLibrary.cpp": "e7b3a527f9fb63dc68193fbd99a59511e69abd463793c632ac0131b5290ad2b4",
+    "Source/Hodgepodge/Private/Tests/HodgeCharacterFacingTests.cpp": "2efd0ebf5e8c45bf618126692bf6cdc9b110265f01eea6746313e16118cc9487",
+    "Source/Hodgepodge/Private/Tests/HodgeLockOnIndicatorTests.cpp": "0af71dd4b4439fb56e6a50db317abdae1c3ea9e67b05ac9786174b6a5f1e90ab"
+  },
+  "limits": [
+    "时序为游戏帧观察，不是硬件零延迟",
+    "专服PIE不等于独立ServerTarget",
+    "未插桩覆盖率",
+    "KillZ/自毁异常根因未在本任务修复"
+  ]
+}
