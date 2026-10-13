@@ -1,3 +1,6 @@
+/** @file HodgeHitReactionTestAbility.h
+ * @brief 声明受击测试专用能力相关的类型、接口与现有处理流程。
+ */
 #pragma once
 #include "AbilitySystem/Abilities/HodgeGameplayAbility_Jump.h"
 #include "HodgeHitReactionTestAbility.generated.h"

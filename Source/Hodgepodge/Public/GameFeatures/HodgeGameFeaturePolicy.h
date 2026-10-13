@@ -1,3 +1,6 @@
+/** @file HodgeGameFeaturePolicy.h
+ * @brief 声明GameFeature加载策略相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
@@ -28,35 +31,59 @@ class UHodgeGameFeaturePolicy : public UDefaultGameFeaturesProjectPolicies
 
 public:
     // 获取 Hodge 项目的 GameFeature Policy 单例。
+    /** 获取当前记录。
+     * @return 的当前值或引用。
+     */
     HODGEPODGE_API static UHodgeGameFeaturePolicy& Get();
 
     // 构造函数。
+    /** 构造GameFeature加载策略并初始化其默认状态。
+     * @param ObjectInitializer UE构造对象时传入的初始化器。
+     */
     UHodgeGameFeaturePolicy(const FObjectInitializer& ObjectInitializer);
 
     //~UGameFeaturesProjectPolicies interface
 
     // 初始化 GameFeatureManager，在游戏启动阶段调用。
     // 可以在这里注册 GameFeature 状态监听器等初始化逻辑。
+    /** 初始化游戏功能扩展管理器。 */
     virtual void InitGameFeatureManager() override;
 
     // 关闭 GameFeatureManager，在程序退出或系统关闭时调用。
+    /** 解除当前GameFeature管理入口持有的观察者。 */
     virtual void ShutdownGameFeatureManager() override;
 
     // 获取某个 GameFeature 在加载时需要预加载的 Primary Asset。
     // 可以用来提前加载 Feature 运行所需要的资源。
+    /** 获取Preload资产列表关联游戏功能扩展。
+     * @param GameFeatureToLoad 游戏功能扩展目标加载，由调用方传入。
+     * @param bIncludeLoadedAssets 是否Include已加载Assets的控制标记。
+     * @return Preload资产列表关联游戏功能扩展的当前值或引用。
+     */
     virtual TArray<FPrimaryAssetId> GetPreloadAssetListForGameFeature(
         const UGameFeatureData* GameFeatureToLoad,
         bool bIncludeLoadedAssets = false
     ) const override;
 
     // 判断指定 GameFeature 插件是否允许被当前项目加载。
+    /** 判断插件允许。
+     * @param PluginURL 插件URL，由调用方传入。
+     * @return true表示满足该查询条件，false表示不满足。
+     */
     virtual bool IsPluginAllowed(const FString& PluginURL) const override;
 
     // 获取 GameFeature 预加载资源所使用的 Asset Bundle 状态。
+    /** 获取Preload资源包状态关联游戏功能扩展。
+     * @return Preload资源包状态关联游戏功能扩展的当前值或引用。
+     */
     virtual const TArray<FName> GetPreloadBundleStateForGameFeature() const override;
 
     // 获取 GameFeature 的加载模式。
     // 可以控制客户端和服务器是否加载该 GameFeature 的数据。
+    /** 获取游戏功能扩展加载Mode。
+     * @param bLoadClientData 是否加载客户端数据的控制标记。
+     * @param bLoadServerData 是否加载服务器数据的控制标记。
+     */
     virtual void GetGameFeatureLoadingMode(
         bool& bLoadClientData,
         bool& bLoadServerData
@@ -86,6 +113,10 @@ class UHodgeGameFeature_HotfixManager
 public:
 
     // 当 GameFeature 开始加载时调用。
+    /** 处理游戏功能扩展加载。
+     * @param GameFeatureData 游戏功能扩展数据，由调用方传入。
+     * @param PluginURL 插件URL，由调用方传入。
+     */
     virtual void OnGameFeatureLoading(
         const UGameFeatureData* GameFeatureData,
         const FString& PluginURL
@@ -105,6 +136,11 @@ class UHodgeGameFeature_AddGameplayCuePaths
 public:
 
     // GameFeature 注册时调用，可以在这里添加该 Feature 提供的 GameplayCue 路径。
+    /** 处理游戏功能扩展Registering。
+     * @param GameFeatureData 游戏功能扩展数据，由调用方传入。
+     * @param PluginName 插件名称，由调用方传入。
+     * @param PluginURL 插件URL，由调用方传入。
+     */
     virtual void OnGameFeatureRegistering(
         const UGameFeatureData* GameFeatureData,
         const FString& PluginName,
@@ -112,6 +148,11 @@ public:
     ) override;
 
     // GameFeature 注销时调用，可以在这里移除之前注册的 GameplayCue 路径。
+    /** 处理游戏功能扩展Unregistering。
+     * @param GameFeatureData 游戏功能扩展数据，由调用方传入。
+     * @param PluginName 插件名称，由调用方传入。
+     * @param PluginURL 插件URL，由调用方传入。
+     */
     virtual void OnGameFeatureUnregistering(
         const UGameFeatureData* GameFeatureData,
         const FString& PluginName,

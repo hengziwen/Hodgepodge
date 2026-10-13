@@ -1,4 +1,7 @@
-﻿
+﻿/** @file HodgeAttributeSet.h
+ * @brief 声明属性集基类相关的类型、接口与现有处理流程。
+ */
+
  // * @file HodgeAttributeSet.h
  // * @brief UHodgeAttributeSet 类的头文件
  // *
@@ -118,11 +121,18 @@ class HODGEPODGE_API UHodgeAttributeSet : public UAttributeSet
 
 public:
 	// 构造函数。
+	/** 构造属性集基类并初始化其默认状态。 */
 	UHodgeAttributeSet();
 
 	// 返回当前 AttributeSet 所属 ASC 对应的 World。
+	/** 获取世界。
+	 * @return 世界的当前值或引用。
+	 */
 	virtual UWorld* GetWorld() const override;
 
 	// 获取当前 AttributeSet 所属的项目自定义 HodgeAbilitySystemComponent。
+	/** 获取能力系统组件。
+	 * @return 能力系统组件的当前值或引用。
+	 */
 	UHodgeAbilitySystemComponent* GetHodgeAbilitySystemComponent() const;
 };

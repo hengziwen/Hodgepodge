@@ -1,3 +1,6 @@
+/** @file GameFeatureAction_WorldActionBase.cpp
+ * @brief 实现GameFeature世界动作基类相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "GameFeatures/GameFeatureAction_WorldActionBase.h"
@@ -7,6 +10,7 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(GameFeatureAction_WorldActionBase)
 
+/** 处理游戏功能扩展Activating。 */
 void UGameFeatureAction_WorldActionBase::OnGameFeatureActivating(FGameFeatureActivatingContext& Context)
 {
     // 注册 GameInstance 启动委托：之后每当新的 GameInstance 启动时，都会调用 HandleGameInstanceStart。
@@ -28,6 +32,7 @@ void UGameFeatureAction_WorldActionBase::OnGameFeatureActivating(FGameFeatureAct
     }
 }
 
+/** 处理游戏功能扩展Deactivating。 */
 void UGameFeatureAction_WorldActionBase::OnGameFeatureDeactivating(FGameFeatureDeactivatingContext& Context)
 {
     // 找到当前 GameFeature 激活时注册的 GameInstance 启动委托。
@@ -41,6 +46,7 @@ void UGameFeatureAction_WorldActionBase::OnGameFeatureDeactivating(FGameFeatureD
     }
 }
 
+/** 处理游戏Instance起始。 */
 void UGameFeatureAction_WorldActionBase::HandleGameInstanceStart(
     UGameInstance* GameInstance,
     FGameFeatureStateChangeContext ChangeContext)

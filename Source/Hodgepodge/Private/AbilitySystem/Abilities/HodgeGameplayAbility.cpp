@@ -1,3 +1,6 @@
+/** @file HodgeGameplayAbility.cpp
+ * @brief 实现GameplayAbility相关的类型、接口与现有处理流程。
+ */
 // 111屎山代码来袭
 
 
@@ -38,6 +41,7 @@ UE_DEFINE_GAMEPLAY_TAG(TAG_ABILITY_SIMPLE_FAILURE_MESSAGE, "Ability.UserFacingSi
 // Ability 激活失败时，用于发送失败动画消息的 GameplayTag。
 UE_DEFINE_GAMEPLAY_TAG(TAG_ABILITY_PLAY_MONTAGE_FAILURE_MESSAGE, "Ability.PlayMontageOnActivateFail.Message");
 
+/** 构造GameplayAbility并初始化其默认状态。 */
 UHodgeGameplayAbility::UHodgeGameplayAbility(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -127,6 +131,7 @@ AHodgeCombatCharacter* UHodgeGameplayAbility::GetHodgeCharacterFromActorInfo() c
 	return (CurrentActorInfo ? Cast<AHodgeCombatCharacter>(CurrentActorInfo->AvatarActor.Get()) : nullptr);
 }
 
+/** 获取玩家角色组件来源Actor对象信息。 */
 UHodgeHeroComponent* UHodgeGameplayAbility::GetHeroComponentFromActorInfo() const
 {
 	// ActorInfo 有效时，从 AvatarActor 字段获取HodgeHeroComponent組件。
@@ -203,6 +208,7 @@ bool UHodgeGameplayAbility::CanActivateAbility(const FGameplayAbilitySpecHandle 
 		ActorInfo->AbilitySystemComponent->HasMatchingGameplayTag(HodgeHitReactionTags::Controlled))
 	{ return false; }
 
+    // 先检查对象与上下文，避免在依赖失效后继续处理。
     if (bRequiresInitializedAttributes && ActorInfo->AvatarActor.IsValid() && ActorInfo->AvatarActor->IsA<AHodgeHeroCharacter>())
     {
         const auto* PS = Cast<AHodgePlayerState>(ActorInfo->OwnerActor.Get());
@@ -307,6 +313,7 @@ void UHodgeGameplayAbility::EndAbility(const FGameplayAbilitySpecHandle Handle,
 {
 	// Ability 结束时清除它设置的 CameraMode。
 	ClearCameraMode();
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (ActorInfo && ActorInfo->AvatarActor.IsValid())
 	{
 		if (auto* Rotation = ActorInfo->AvatarActor->FindComponentByClass<UHodgeCharacterRotationComponent>())
@@ -804,7 +811,7 @@ void UHodgeGameplayAbility::SetCameraMode(TSubclassOf<UHodgeCameraMode> CameraMo
 	// 当前 Ability 必须已经实例化，因为 CameraMode 属于 Ability 的运行时状态。
 	ENSURE_ABILITY_IS_INSTANTIATED_OR_RETURN(SetCameraMode,);
 
-	//当前 CameraMode 系统暂时被注释掉，预留给 HeroComponent 统一管理。
+	// 通过 HeroComponent 申请本 GA 的临时 CameraMode，结束时按 Spec 归属撤销。
 	if (UHodgeHeroComponent* HeroComponent = GetHeroComponentFromActorInfo())
 	{
 		HeroComponent->SetAbilityCameraMode(CameraMode, CurrentSpecHandle);

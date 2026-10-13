@@ -1,3 +1,6 @@
+/** @file HodgeGameplayCueManager.cpp
+ * @brief 实现GameplayCue管理器相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "AbilitySystem/HodgeGameplayCueManager.h"

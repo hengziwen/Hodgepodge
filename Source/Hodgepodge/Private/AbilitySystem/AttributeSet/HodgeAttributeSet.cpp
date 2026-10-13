@@ -1,4 +1,7 @@
-﻿/**
+﻿/** @file HodgeAttributeSet.cpp
+ * @brief 实现属性集基类相关的类型、接口与现有处理流程。
+ */
+/**
  * @file (文件): (文件): Hodge属性集.cpp
  * @brief (简介): (简介): UHodge属性集 类的实现
  *

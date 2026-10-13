@@ -1,3 +1,6 @@
+/** @file HodgeHitReactionComponent.cpp
+ * @brief 实现受击状态组件相关的类型、接口与现有处理流程。
+ */
 #include "Component/HodgeHitReactionComponent.h"
 #include "AbilitySystem/Abilities/HodgeGameplayAbility_HitReaction.h"
 #include "AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h"
@@ -20,6 +23,7 @@
 #include "Net/UnrealNetwork.h"
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeHitReactionComponent)
 
+/** 构造受击状态组件并初始化其默认状态。 */
 UHodgeHitReactionComponent::UHodgeHitReactionComponent(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -28,11 +32,13 @@ UHodgeHitReactionComponent::UHodgeHitReactionComponent(const FObjectInitializer&
 	PrimaryComponentTick.TickGroup = TG_PostPhysics;
 }
 
+/** 判断已绑定。 */
 bool UHodgeHitReactionComponent::IsBound() const
 {
 	return ASC.IsValid() && ASC->GetAvatarActor() == GetOwner() && IsRegistered();
 }
 
+/** 初始化关联能力System。 */
 void UHodgeHitReactionComponent::InitializeWithAbilitySystem(UHodgeAbilitySystemComponent* InASC)
 {
 	if (!InASC || InASC->GetAvatarActor() != GetOwner()) { return; }
@@ -42,13 +48,16 @@ void UHodgeHitReactionComponent::InitializeWithAbilitySystem(UHodgeAbilitySystem
 	SetComponentTickEnabled(true);
 }
 
+/** 解除初始化来源能力System。 */
 void UHodgeHitReactionComponent::UninitializeFromAbilitySystem()
 {
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (ActiveAbility.IsValid()) { ActiveAbility->FinishReaction(true); }
 	SetControl(false);
 	ActiveAbility.Reset();
 	ASC.Reset();
 	PendingHits.Reset();
+	// 按服务器权限区分本次处理分支。
 	if (GetOwner() && GetOwner()->HasAuthority())
 	{
 		State.Phase = EHodgeHitReactionPhase::None;
@@ -58,8 +67,10 @@ void UHodgeHitReactionComponent::UninitializeFromAbilitySystem()
 	SetComponentTickEnabled(false);
 }
 
+/** 刷新Configuration。 */
 void UHodgeHitReactionComponent::RefreshConfiguration()
 {
+	// 按服务器权限区分本次处理分支。
 	if (!GetOwner() || !GetOwner()->HasAuthority()) { return; }
 	const auto* Extension = UHodgePawnExtensionComponent::FindPawnExtensionComponent(GetOwner());
 	const auto* PawnData = Extension ? Extension->GetPawnData<UHodgePawnData>() : nullptr;
@@ -72,8 +83,10 @@ void UHodgeHitReactionComponent::RefreshConfiguration()
 	}
 }
 
+/** 开始命中。 */
 FGuid UHodgeHitReactionComponent::BeginHit(const FHodgeHitReactionConfig& Request, AActor* Source, FVector SourceOrigin)
 {
+	// 按服务器权限区分本次处理分支。
 	if (!GetOwner()->HasAuthority() || !IsBound() || !Request.IsConfigured() || SourceOrigin.ContainsNaN()) { return {}; }
 	FPendingHit Hit;
 	Hit.Request = Request;
@@ -86,8 +99,10 @@ FGuid UHodgeHitReactionComponent::BeginHit(const FHodgeHitReactionConfig& Reques
 	return Id;
 }
 
+/** 记录本次采样观察到的伤害结果。 */
 void UHodgeHitReactionComponent::RecordDamage(const FGuid& HitId, bool bAccepted, float ActualDamage)
 {
+	// 按服务器权限区分本次处理分支。
 	if (!GetOwner()->HasAuthority() || !IsBound()) { return; }
 	if (FPendingHit* Hit = PendingHits.Find(HitId); Hit && Hit->Avatar.Get() == ASC->GetAvatarActor())
 	{
@@ -97,11 +112,13 @@ void UHodgeHitReactionComponent::RecordDamage(const FGuid& HitId, bool bAccepted
 	}
 }
 
+/** 结束命中。 */
 FHodgeHitReactionResult UHodgeHitReactionComponent::FinishHit(const FGuid& HitId)
 {
 	FHodgeHitReactionResult Result;
 	Result.HitId = HitId;
 	FPendingHit Hit;
+	// 按服务器权限区分本次处理分支。
 	if (!GetOwner()->HasAuthority() || !PendingHits.RemoveAndCopyValue(HitId, Hit) || !IsBound() || Hit.Avatar.Get() != GetOwner()) { return Result; }
 	Result.AttackJudgementTag = Hit.Request.AttackJudgementTag;
 	Result.TargetBodyTag = Hit.BodyTag;
@@ -144,10 +161,12 @@ FHodgeHitReactionResult UHodgeHitReactionComponent::FinishHit(const FGuid& HitId
 		MulticastLightFeedback(Direction);
 	}
 	LastResult = Result;
+	// 向当前监听者发布状态变化，调用方继续负责后续处理。
 	OnReactionResolved.Broadcast(Result);
 	return Result;
 }
 
+/** 构建Plan。 */
 bool UHodgeHitReactionComponent::BuildPlan(const FPendingHit& Hit, FHodgeHitReactionState& Plan, TArray<EHodgeImpactType>& Applied) const
 {
 	TArray<FText> Errors;
@@ -206,6 +225,7 @@ bool UHodgeHitReactionComponent::BuildPlan(const FPendingHit& Hit, FHodgeHitReac
 	Plan.AirLoopMontage = Presentation->AirLoopMontage;
 	Plan.LandingMontage = Presentation->LandingMontage;
 	Plan.GetUpMontage = Presentation->GetUpMontage;
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (Plan.Montage && (!ASC.IsValid() || !ASC->AbilityActorInfo->GetAnimInstance())) { return false; }
 	if (bAir && Plan.Type == EHodgeImpactType::Knockdown)
 	{
@@ -235,9 +255,11 @@ bool UHodgeHitReactionComponent::BuildPlan(const FPendingHit& Hit, FHodgeHitReac
 	return Plan.EndsAt > Now;
 }
 
+/** 提交Plan。 */
 bool UHodgeHitReactionComponent::SubmitPlan(FHodgeHitReactionState Plan, EHodgeHitReactionOutcome& Failure)
 {
 	Failure = EHodgeHitReactionOutcome::NotReady;
+	// 按服务器权限区分本次处理分支。
 	if (!IsBound() || !GetOwner()->HasAuthority()) { return false; }
 	if (bSubmitting || bCompleting) { Failure = EHodgeHitReactionOutcome::Busy; return false; }
 	TGuardValue<bool> Guard(bSubmitting, true);
@@ -262,6 +284,7 @@ bool UHodgeHitReactionComponent::SubmitPlan(FHodgeHitReactionState Plan, EHodgeH
 			}
 		}
 	}
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (!ReactionHandle.IsValid()) { return false; }
 	SetControl(true);
 	for (const auto& WeakAbility : ToCancel)
@@ -287,8 +310,10 @@ bool UHodgeHitReactionComponent::SubmitPlan(FHodgeHitReactionState Plan, EHodgeH
 	return true;
 }
 
+/** 设置控制。 */
 void UHodgeHitReactionComponent::SetControl(bool bControlled)
 {
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (!ASC.IsValid()) { bOwnsControl = false; return; }
 	if (bControlled == bOwnsControl) { return; }
 	if (bControlled) { ASC->AddLooseGameplayTag(HodgeHitReactionTags::Controlled); }
@@ -296,14 +321,17 @@ void UHodgeHitReactionComponent::SetControl(bool bControlled)
 	bOwnsControl = bControlled;
 }
 
+/** 发布本轮已经提交的状态快照。 */
 void UHodgeHitReactionComponent::PublishState()
 {
 	GetOwner()->ForceNetUpdate();
 	OnRep_State();
 }
 
+/** 收到状态复制后更新本地状态。 */
 void UHodgeHitReactionComponent::OnRep_State()
 {
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (IsBound())
 	{
 		SetControl(State.IsActive());
@@ -314,28 +342,36 @@ void UHodgeHitReactionComponent::OnRep_State()
 		}
 	}
 	SetComponentTickEnabled(State.IsActive() || !Profile);
+	// 向当前监听者发布状态变化，调用方继续负责后续处理。
 	OnReactionStateChanged.Broadcast(State);
 }
 
+/** 收到配置复制后更新本地状态。 */
 void UHodgeHitReactionComponent::OnRep_Profile() { OnRep_State(); }
 
+/** 接入当前来源授予的技能记录。 */
 void UHodgeHitReactionComponent::AttachAbility(UHodgeGameplayAbility_HitReaction* Ability)
 {
 	ActiveAbility = Ability;
 	SetComponentTickEnabled(true);
 }
 
+/** 解除当前来源对应的能力关联。 */
 void UHodgeHitReactionComponent::DetachAbility(UHodgeGameplayAbility_HitReaction* Ability)
 {
 	if (ActiveAbility.Get() != Ability) { return; }
 	ActiveAbility.Reset();
+	// 按服务器权限区分本次处理分支。
 	if (GetOwner()->HasAuthority()) { CompletePlan(State.Sequence); }
 }
 
+/** 完成Plan。 */
 void UHodgeHitReactionComponent::CompletePlan(int32 Sequence)
 {
+	// 按服务器权限区分本次处理分支。
 	if (!GetOwner()->HasAuthority() || State.Sequence != Sequence || !State.IsActive()) { return; }
 	TGuardValue<bool> Guard(bCompleting, true);
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (ActiveAbility.IsValid() && ActiveAbility->IsActive()) { ActiveAbility->FinishReaction(); return; }
 	State.Phase = EHodgeHitReactionPhase::None;
 	State.Montage = nullptr;
@@ -343,11 +379,14 @@ void UHodgeHitReactionComponent::CompletePlan(int32 Sequence)
 	PublishState();
 }
 
+/** 检查是否允许cel受击。 */
 void UHodgeHitReactionComponent::CancelReaction()
 {
+	// 按服务器权限区分本次处理分支。
 	if (GetOwner() && GetOwner()->HasAuthority()) { CompletePlan(State.Sequence); }
 }
 
+/** 切换当前状态流程的执行阶段。 */
 void UHodgeHitReactionComponent::ChangePhase(EHodgeHitReactionPhase Phase, UAnimMontage* Montage, float Duration)
 {
 	State.Phase = Phase;
@@ -357,16 +396,20 @@ void UHodgeHitReactionComponent::ChangePhase(EHodgeHitReactionPhase Phase, UAnim
 	PublishState();
 }
 
+/** 请求获取Up。 */
 bool UHodgeHitReactionComponent::RequestGetUp()
 {
+	// 按服务器权限区分本次处理分支。
 	if (!GetOwner()->HasAuthority() || State.Phase != EHodgeHitReactionPhase::Downed || !Profile) { return false; }
 	if (State.GetUpMontage) { ChangePhase(EHodgeHitReactionPhase::GettingUp, State.GetUpMontage, State.GetUpMontage->GetPlayLength()); }
 	else { CompletePlan(State.Sequence); }
 	return true;
 }
 
+/** 更新Plan。 */
 void UHodgeHitReactionComponent::TickPlan()
 {
+	// 根据当前生命周期状态决定是否继续执行。
 	if (!IsBound() || !Profile || !State.IsActive()) { return; }
 	const auto* Health = ASC->GetSet<UHodgeHealthSet>();
 	const float Now = GetServerTime();
@@ -406,19 +449,25 @@ void UHodgeHitReactionComponent::TickPlan()
 	}
 }
 
+/** 获取服务器时间。 */
 float UHodgeHitReactionComponent::GetServerTime() const
 {
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (const auto* GameState = GetWorld() ? GetWorld()->GetGameState() : nullptr) { return GameState->GetServerWorldTimeSeconds(); }
 	return GetWorld() ? GetWorld()->GetTimeSeconds() : 0.f;
 }
 
+/** 更新组件。 */
 void UHodgeHitReactionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (!IsBound()) { if (ASC.IsValid()) { UninitializeFromAbilitySystem(); } return; }
 	if (!Profile) { RefreshConfiguration(); }
+	// 按服务器权限区分本次处理分支。
 	if (GetOwner()->HasAuthority()) { TickPlan(); }
 	else if (ActiveAbility.IsValid() && State.IsActive()) { ActiveAbility->Synchronize(State); }
+	// 根据当前生命周期状态决定是否继续执行。
 	if (State.IsActive() && State.Montage)
 	{
 		if (const auto* Character = Cast<ACharacter>(GetOwner()))
@@ -432,6 +481,7 @@ void UHodgeHitReactionComponent::TickComponent(float DeltaTime, ELevelTick TickT
 	}
 }
 
+/** 把轻受击表现通知到网络观察者。 */
 void UHodgeHitReactionComponent::MulticastLightFeedback_Implementation(FVector Direction)
 {
 	if (Profile && Profile->LightFeedbackMontage && !Profile->LightFeedbackMontage->HasRootMotion())
@@ -444,9 +494,11 @@ void UHodgeHitReactionComponent::MulticastLightFeedback_Implementation(FVector D
 			{ Anim->Montage_Play(Profile->LightFeedbackMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, false); }
 		}
 	}
+	// 向当前监听者发布状态变化，调用方继续负责后续处理。
 	OnLightFeedback.Broadcast(Direction);
 }
 
+/** 登记本类型需要网络复制的属性及复制条件。 */
 void UHodgeHitReactionComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
@@ -454,6 +506,7 @@ void UHodgeHitReactionComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProp
 	DOREPLIFETIME(UHodgeHitReactionComponent, State);
 }
 
+/** 离开世界运行阶段并解除本对象持有的监听或资源。 */
 void UHodgeHitReactionComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	UninitializeFromAbilitySystem();

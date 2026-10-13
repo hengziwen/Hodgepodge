@@ -1,4 +1,7 @@
-﻿// 111屎山代码来袭
+﻿/** @file HodgeHealthSet.cpp
+ * @brief 实现生命属性集相关的类型、接口与现有处理流程。
+ */
+// 111屎山代码来袭
 
 
 // UHodgeHealthSet 类定义。
@@ -306,6 +309,7 @@ void UHodgeHealthSet::PostGameplayEffectExecute(const FGameplayEffectModCallback
 		bReachedZeroDuringRebuild |= GetHealth() <= 0.f;
 	}
 	const bool bResourceExecution = Data.EvaluatedData.Attribute == GetHealthAttribute() || Data.EvaluatedData.Attribute == GetDamageAttribute() || Data.EvaluatedData.Attribute == GetHealingAttribute();
+	// 向当前监听者发布状态变化，调用方继续负责后续处理。
 	if ((AttributeRebuildDepth == 0 || bResourceExecution) && GetHealth() != OldHealthForEffect)
 	{
 		// 广播生命值变化，并携带伤害来源、GE、修改前 Health 和修改后 Health。
@@ -380,6 +384,7 @@ void UHodgeHealthSet::PostAttributeChange(const FGameplayAttribute& Attribute, f
 	}
 }
 
+/** 开始属性重建。 */
 void UHodgeHealthSet::BeginAttributeRebuild()
 {
 	if (AttributeRebuildDepth++ == 0)
@@ -390,6 +395,7 @@ void UHodgeHealthSet::BeginAttributeRebuild()
 	}
 }
 
+/** 结束属性重建。 */
 float UHodgeHealthSet::EndAttributeRebuild(bool& bReachedZero)
 {
 	check(AttributeRebuildDepth > 0);
@@ -398,14 +404,18 @@ float UHodgeHealthSet::EndAttributeRebuild(bool& bReachedZero)
 	return AttributeRebuildResourceDelta;
 }
 
+/** 获取资源约束最大。 */
 float UHodgeHealthSet::GetResourceClampMax() const
 {
 	return AttributeRebuildDepth > 0 ? AttributeRebuildClampMax : GetMaxHealth();
 }
 
+/** 设置生命值关联属性提交。 */
 bool UHodgeHealthSet::SetHealthForAttributeCommit(float NewHealth)
 {
+	// 后续GAS操作使用的能力系统组件。
 	auto* ASC = GetHodgeAbilitySystemComponent();
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (!ASC || !ASC->IsOwnerActorAuthoritative() || !FMath::IsFinite(NewHealth) || AttributeRebuildDepth != 0) { return false; }
 	const float OldHealth = GetHealth();
 	ASC->SetNumericAttributeBase(GetHealthAttribute(), FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));

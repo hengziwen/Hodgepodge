@@ -1,3 +1,6 @@
+/** @file HodgeDefenseComponent.cpp
+ * @brief 实现防御窗口组件相关的类型、接口与现有处理流程。
+ */
 #include "Component/HodgeDefenseComponent.h"
 #include "AbilitySystem/HodgeAbilitySystemComponent.h"
 #include "AbilitySystem/AttributeSet/HodgeHealthSet.h"
@@ -8,15 +11,19 @@
 #include "TimerManager.h"
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeDefenseComponent)
 
+/** 初始化关联能力System。 */
 void UHodgeDefenseComponent::InitializeWithAbilitySystem(UHodgeAbilitySystemComponent* InASC)
 {
 	if (ASC == InASC && InASC && InASC->GetAvatarActor() == GetOwner()) { return; }
 	UninitializeFromAbilitySystem();
 	if (InASC && InASC->GetAvatarActor() == GetOwner()) { ASC = InASC; }
 }
+/** 解除初始化来源能力System。 */
 void UHodgeDefenseComponent::UninitializeFromAbilitySystem() { Windows.Reset(); ASC.Reset(); }
+/** 注册闪避窗口。 */
 FGuid UHodgeDefenseComponent::RegisterDodgeWindow(UGameplayAbility* Source, FGuid Execution, const UHodgeSprintAbilityProfile* Profile, double StartTime)
 {
+	// 按服务器权限区分本次处理分支。
 	if (!GetOwner()->HasAuthority() || !ASC.IsValid() || ASC->GetAvatarActor() != GetOwner() || !Source ||
 		!Source->IsActive() || Source->GetAvatarActorFromActorInfo() != GetOwner() || !Execution.IsValid() ||
 		!Profile || !FMath::IsFinite(StartTime)) { return {}; }
@@ -24,18 +31,23 @@ FGuid UHodgeDefenseComponent::RegisterDodgeWindow(UGameplayAbility* Source, FGui
 	Window.Source = Source; Window.Profile = Profile; Window.Execution = Execution; Window.StartTime = StartTime;
 	return Handle;
 }
+/** 注销闪避窗口。 */
 void UHodgeDefenseComponent::UnregisterDodgeWindow(FGuid Handle) { Windows.Remove(Handle); }
+/** 计算窗口。 */
 EHodgeIncomingHitOutcome UHodgeDefenseComponent::EvaluateWindow(const UHodgeSprintAbilityProfile& Profile, double Age, bool bRewarded, bool bCanBeDodged, bool bPerfectEligible)
 {
 	if (!bCanBeDodged || !FMath::IsFinite(Age) || Age < Profile.InvulnerabilityStart || Age >= Profile.InvulnerabilityEnd) { return EHodgeIncomingHitOutcome::Allowed; }
 	return !bRewarded && bPerfectEligible && Age >= Profile.PerfectStart && Age < Profile.PerfectEnd ? EHodgeIncomingHitOutcome::PerfectDodge : EHodgeIncomingHitOutcome::Dodged;
 }
+/** 在伤害和Impact提交前判定当前防御窗口。 */
 EHodgeIncomingHitOutcome UHodgeDefenseComponent::ResolveIncomingHit(AActor* Source, FGuid AttackExecution, int32 HitIndex, bool bCanBeDodged, bool bCanTriggerPerfect)
 {
+	// 按服务器权限区分本次处理分支。
 	if (!GetOwner()->HasAuthority() || !ASC.IsValid() || ASC->GetAvatarActor() != GetOwner() || !bCanBeDodged) { return EHodgeIncomingHitOutcome::Allowed; }
 	if (ASC->HasMatchingGameplayTag(TAG_Gameplay_DamageImmunity) || ASC->HasMatchingGameplayTag(HodgeGameplayTags::Cheat_GodMode))
 	{ return EHodgeIncomingHitOutcome::Allowed; }
 	const double Time = GetWorld()->GetTimeSeconds();
+	// 将构造的效果规格提交给GAS执行属性更新。
 	for (auto It = Windows.CreateIterator(); It; ++It)
 	{
 		FWindow& Window = It.Value(); const UHodgeSprintAbilityProfile* Profile = Window.Profile.Get();
@@ -67,4 +79,5 @@ EHodgeIncomingHitOutcome UHodgeDefenseComponent::ResolveIncomingHit(AActor* Sour
 	}
 	return EHodgeIncomingHitOutcome::Allowed;
 }
+/** 离开世界运行阶段并解除本对象持有的监听或资源。 */
 void UHodgeDefenseComponent::EndPlay(EEndPlayReason::Type Reason) { UninitializeFromAbilitySystem(); Super::EndPlay(Reason); }

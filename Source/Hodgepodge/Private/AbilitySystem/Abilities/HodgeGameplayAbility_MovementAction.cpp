@@ -1,3 +1,6 @@
+/** @file HodgeGameplayAbility_MovementAction.cpp
+ * @brief 实现玩法能力移动动作相关的类型、接口与现有处理流程。
+ */
 #include "AbilitySystem/Abilities/HodgeGameplayAbility_MovementAction.h"
 #include "AbilitySystem/HodgeAbilitySystemComponent.h"
 #include "AbilitySystem/HodgeGameplayTags.h"
@@ -11,10 +14,12 @@
 #include "TimerManager.h"
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeGameplayAbility_MovementAction)
 
+/** 按既有协议读写网络载荷及对象引用。 */
 bool FHodgeMovementActionTargetData::NetSerialize(FArchive& Ar, UPackageMap* Map, bool& bSuccess)
 {
 	Ar << Input << ControlYaw << ActorYawAtStart << SessionId; bSuccess = !Ar.IsError(); return bSuccess;
 }
+/** 构造玩法能力移动动作并初始化其默认状态。 */
 UHodgeGameplayAbility_MovementAction::UHodgeGameplayAbility_MovementAction()
 {
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
@@ -22,17 +27,20 @@ UHodgeGameplayAbility_MovementAction::UHodgeGameplayAbility_MovementAction()
 	ActivationGroup = EHodgeAbilityActivationGroup::Independent; bServerRespectsRemoteAbilityCancellation = true;
 	bRequiresInitializedAttributes = true;
 }
+/** 解析配置。 */
 const UHodgeSprintAbilityProfile* UHodgeGameplayAbility_MovementAction::ResolveProfile(const FGameplayAbilityActorInfo* Info) const
 {
 	if (Profile) { return Profile; }
 	const auto* Component = Info && Info->AvatarActor.IsValid() ? Info->AvatarActor->FindComponentByClass<UHodgeLocomotionPolicyComponent>() : nullptr;
 	return Component ? Component->GetProfile() : nullptr;
 }
+/** 检查技能激活所需的上下文、标签与现有GAS限制。 */
 bool UHodgeGameplayAbility_MovementAction::CanActivateAbility(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* Info,
 	const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* RelevantTags) const
 {
 	const auto* Config = ResolveProfile(Info); TArray<FText> Errors;
 	const auto* Character = Info ? Cast<ACharacter>(Info->AvatarActor.Get()) : nullptr;
+	// 后续GAS操作使用的能力系统组件。
 	const auto* ASC = Info ? Cast<UHodgeAbilitySystemComponent>(Info->AbilitySystemComponent.Get()) : nullptr;
 	return Character && !Character->bIsCrouched && Character->GetCharacterMovement()->IsMovingOnGround() && Config && Config->Validate(Errors) &&
 		ASC && !ASC->HasMatchingGameplayTag(HodgeGameplayTags::Status_Death) &&
@@ -41,6 +49,7 @@ bool UHodgeGameplayAbility_MovementAction::CanActivateAbility(FGameplayAbilitySp
 		!ASC->HasMatchingGameplayTag(TAG_Gameplay_MovementStopped) &&
 		Super::CanActivateAbility(Handle, Info, SourceTags, TargetTags, RelevantTags);
 }
+/** 启动本次技能，按现有配置提交消耗并建立执行资源。 */
 void UHodgeGameplayAbility_MovementAction::ActivateAbility(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* Info,
 	FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* Event)
 {
@@ -49,10 +58,13 @@ void UHodgeGameplayAbility_MovementAction::ActivateAbility(FGameplayAbilitySpecH
 	ExecutionProfile = ResolveProfile(Info); PreparingAt = GetWorld()->GetTimeSeconds();
 	Policy = Info->AvatarActor->FindComponentByClass<UHodgeLocomotionPolicyComponent>();
 	Rotation = Info->AvatarActor->FindComponentByClass<UHodgeCharacterRotationComponent>();
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (!ExecutionProfile || !Policy.IsValid() || !Rotation.IsValid() || !Rotation->IsFacingSystemReady()) { Finish(); return; }
 	if (GetAssetTags().HasTag(HodgeGameplayTags::Ability_Type_Action_Dash)) { SetMovementTag(HodgeMovementTags::DashPreparing, true); }
+	// 后续GAS操作使用的能力系统组件。
 	auto* ASC = Info->AbilitySystemComponent.Get(); const FPredictionKey Key = ActivationInfo.GetActivationPredictionKey();
 	const FGameplayTag Constraints[] = {HodgeGameplayTags::Status_Death, HodgeHitReactionTags::Controlled, TAG_Gameplay_MovementStopped};
+	// 按当前对象生命周期建立状态监听。
 	for (int32 Index = 0; Index < 3; ++Index)
 	{ ConstraintHandles[Index] = ASC->RegisterGameplayTagEvent(Constraints[Index]).AddUObject(this, &ThisClass::OnConstraintChanged); }
 	DataHandle = ASC->AbilityTargetDataSetDelegate(Handle, Key).AddUObject(this, &ThisClass::OnTargetData);
@@ -72,8 +84,10 @@ void UHodgeGameplayAbility_MovementAction::ActivateAbility(FGameplayAbilitySpecH
 	}
 	else { ASC->CallReplicatedTargetDataDelegatesIfSet(Handle, Key); }
 }
+/** 处理目标数据。 */
 void UHodgeGameplayAbility_MovementAction::OnTargetData(const FGameplayAbilityTargetDataHandle& Data, FGameplayTag Tag)
 {
+	// 根据当前生命周期状态决定是否继续执行。
 	if (!IsActive()) { return; }
 	if (bReceivedData)
 	{
@@ -95,24 +109,30 @@ void UHodgeGameplayAbility_MovementAction::OnTargetData(const FGameplayAbilityTa
 	const auto Intent = HodgeFacing::MakeMoveIntent(Input, Yaw, GetWorld()->GetTimeSeconds(), Rotation->GetAvatarGeneration());
 	BeginMovement(Intent);
 }
+/** 判断移动有效。 */
 bool UHodgeGameplayAbility_MovementAction::IsMovementValid() const
 {
 	const auto* Character = Cast<ACharacter>(GetAvatarActorFromActorInfo());
+	// 后续GAS操作使用的能力系统组件。
 	const auto* ASC = GetAbilitySystemComponentFromActorInfo();
 	return Character && !Character->bIsCrouched && ASC && ASC->GetAvatarActor() == Character && Policy.IsValid() && Rotation.IsValid() &&
 		Rotation->IsFacingSystemReady() && Character->GetCharacterMovement()->IsMovingOnGround() &&
 		!ASC->HasMatchingGameplayTag(HodgeGameplayTags::Status_Death) && !ASC->HasMatchingGameplayTag(HodgeHitReactionTags::Controlled) &&
 		!ASC->HasMatchingGameplayTag(TAG_Gameplay_MovementStopped);
 }
+/** 更新移动。 */
 void UHodgeGameplayAbility_MovementAction::TickMovement()
 {
+	// 根据当前生命周期状态决定是否继续执行。
 	if (!IsActive()) { return; }
 	FScopedPredictionWindow Prediction(GetAbilitySystemComponentFromActorInfo(), IsLocallyControlled());
 	if (!IsMovementValid() || (!bReceivedData && GetWorld()->GetTimeSeconds() - PreparingAt > 2.)) { Finish(); return; }
 	if (bReceivedData) { UpdateMovement(GetWorld()->GetDeltaSeconds()); }
 }
+/** 设置移动标签。 */
 void UHodgeGameplayAbility_MovementAction::SetMovementTag(FGameplayTag Tag, bool bAdd)
 {
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (auto* ASC = GetAbilitySystemComponentFromActorInfo())
 	{
 		if (bAdd)
@@ -123,23 +143,31 @@ void UHodgeGameplayAbility_MovementAction::SetMovementTag(FGameplayTag Tag, bool
 		else if (MovementTag.IsValid()) { ASC->RemoveLooseGameplayTag(MovementTag); MovementTag = {}; }
 	}
 }
+/** 按当前移动动作配置开始GameplayCue表现。 */
 void UHodgeGameplayAbility_MovementAction::StartCue(FGameplayTag Tag)
 {
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (ActiveCue.IsValid()) { return; }
 	ActiveCue = Tag; FGameplayCueParameters Parameters; Parameters.Location = GetAvatarActorFromActorInfo()->GetActorLocation();
 	GetAbilitySystemComponentFromActorInfo()->AddGameplayCue(Tag, Parameters);
 }
+/** 结束当前动作拥有的GameplayCue表现。 */
 void UHodgeGameplayAbility_MovementAction::StopCue()
 {
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (ActiveCue.IsValid()) { GetAbilitySystemComponentFromActorInfo()->RemoveGameplayCue(ActiveCue); ActiveCue = {}; }
 }
+/** 结束当前任务阶段并完成其收尾。 */
 void UHodgeGameplayAbility_MovementAction::Finish(bool bCancelled)
 { if (IsActive()) { EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, bCancelled); } }
+/** 处理约束变化。 */
 void UHodgeGameplayAbility_MovementAction::OnConstraintChanged(FGameplayTag Tag, int32 Count) { if (Count > 0) { Finish(); } }
+/** 结束本次技能并释放其拥有的资源，再交还GAS生命周期。 */
 void UHodgeGameplayAbility_MovementAction::EndAbility(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* Info,
 	FGameplayAbilityActivationInfo ActivationInfo, bool bReplicate, bool bCancelled)
 {
 	if (GetWorld()) { GetWorld()->GetTimerManager().ClearTimer(TickHandle); }
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (Info && Info->AbilitySystemComponent.IsValid())
 	{
 		const FGameplayTag Constraints[] = {HodgeGameplayTags::Status_Death, HodgeHitReactionTags::Controlled, TAG_Gameplay_MovementStopped};

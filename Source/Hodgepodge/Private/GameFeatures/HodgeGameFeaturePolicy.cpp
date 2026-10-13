@@ -1,3 +1,6 @@
+/** @file HodgeGameFeaturePolicy.cpp
+ * @brief 实现GameFeature加载策略相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "GameFeatures/HodgeGameFeaturePolicy.h"

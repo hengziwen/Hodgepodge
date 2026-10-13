@@ -1,3 +1,6 @@
+/** @file HodgeGroundedAuthoring.cpp
+ * @brief 实现地面动画图制作辅助相关的类型、接口与现有处理流程。
+ */
 #include "CodexText/HodgeGroundedLocomotion.h"
 #if WITH_EDITOR
 #include "Animation/AnimBlueprint.h"
@@ -29,16 +32,30 @@
 
 namespace HodgeGroundedGraph
 {
+    /** 创建当前图中的指定节点。
+     * @param Graph 图，由调用方传入。
+     * @param X X，由调用方传入。
+     * @param Y Y，由调用方传入。
+     * @return 本次计算、查询或创建得到的T。
+     */
     template<class T> T* Node(UEdGraph* Graph, int32 X, int32 Y)
     {
         FGraphNodeCreator<T> C(*Graph); auto* N=C.CreateNode(); N->NodePosX=X; N->NodePosY=Y; C.Finalize(); return N;
     }
+    /** 取得当前计算或图节点的输出。
+     * @param Node 节点，由调用方传入。
+     * @return 本次计算、查询或创建得到的Ed图Pin。
+     */
     UEdGraphPin* Output(UEdGraphNode* Node)
     {
         for (auto* P:Node->Pins) if(P->Direction==EGPD_Output) return P;
         return nullptr;
     }
 
+    /** 准备serveKnee方向。
+     * @param IK IK，由调用方传入。
+     * @param Side Side，由调用方传入。
+     */
     void PreserveKneeDirection(FAnimNode_TwoBoneIK& IK, int32 Side)
     {
         IK.JointTargetLocationSpace = BCS_BoneSpace;
@@ -48,6 +65,7 @@ namespace HodgeGroundedGraph
 }
 #endif
 
+/** 按当前地面动画配置接入腿部IK修正。 */
 bool UHodgeGroundedAuthoring::RepairGroundedLegIK(UObject* Blueprint)
 {
 #if WITH_EDITOR
@@ -98,6 +116,7 @@ bool UHodgeGroundedAuthoring::RepairGroundedLegIK(UObject* Blueprint)
 #endif
 }
 
+/** 按现有地面状态规则整理动画图转换。 */
 bool UHodgeGroundedAuthoring::RefineGroundedTransitions(UObject* Blueprint)
 {
 #if WITH_EDITOR
@@ -161,6 +180,7 @@ bool UHodgeGroundedAuthoring::RefineGroundedTransitions(UObject* Blueprint)
 #endif
 }
 
+/** 添加Stride层。 */
 bool UHodgeGroundedAuthoring::AddStrideLayer(UObject* Blueprint)
 {
 #if WITH_EDITOR
@@ -220,6 +240,7 @@ bool UHodgeGroundedAuthoring::AddStrideLayer(UObject* Blueprint)
 #endif
 }
 
+/** 添加Terrain层。 */
 bool UHodgeGroundedAuthoring::AddTerrainLayer(UObject* Blueprint)
 {
 #if WITH_EDITOR
@@ -282,6 +303,7 @@ bool UHodgeGroundedAuthoring::AddTerrainLayer(UObject* Blueprint)
 #endif
 }
 
+/** 添加战斗层。 */
 bool UHodgeGroundedAuthoring::AddCombatLayer(UObject* Blueprint, UObject* Overlay)
 {
 #if WITH_EDITOR
@@ -338,6 +360,7 @@ bool UHodgeGroundedAuthoring::AddCombatLayer(UObject* Blueprint, UObject* Overla
 #endif
 }
 
+/** 添加地面移动层。 */
 bool UHodgeGroundedAuthoring::AddGroundedLayer(UObject* Blueprint, const TArray<UObject*>& Actions, UObject* Idle, UObject* Fall, UObject* PreviewMesh)
 {
 #if WITH_EDITOR

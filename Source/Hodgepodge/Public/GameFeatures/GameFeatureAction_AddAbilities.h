@@ -1,3 +1,6 @@
+/** @file GameFeatureAction_AddAbilities.h
+ * @brief 声明GameFeature能力注入动作相关的类型、接口与现有处理流程。
+ */
 
 // Copyright Epic Games, Inc. All Rights Reserved.
 
@@ -111,15 +114,25 @@ class UGameFeatureAction_AddAbilities final : public UGameFeatureAction_WorldAct
 public:
 	//~ Begin UGameFeatureAction interface
 	// GameFeature 激活时开始向目标 Actor 添加能力。
+	/** 处理游戏功能扩展Activating。
+	 * @param Context 本次操作的上下文。
+	 */
 	virtual void OnGameFeatureActivating(FGameFeatureActivatingContext& Context) override;
 
 	// GameFeature 停用时撤销之前添加的能力。
+	/** 处理游戏功能扩展Deactivating。
+	 * @param Context 本次操作的上下文。
+	 */
 	virtual void OnGameFeatureDeactivating(FGameFeatureDeactivatingContext& Context) override;
 	//~ End UGameFeatureAction interface
 
 	//~ Begin UObject interface
 #if WITH_EDITOR
 	// 编辑器下验证当前 Ability 配置是否有效。
+	/** 在编辑器校验当前配置并收集诊断。
+	 * @param Context 本次操作的上下文。
+	 * @return 当前配置的校验结果。
+	 */
 	virtual EDataValidationResult IsDataValid(class FDataValidationContext& Context) const override;
 #endif
 	//~ End UObject interface
@@ -157,23 +170,51 @@ private:
 
 	//~ Begin UGameFeatureAction_WorldActionBase interface
 	// 将当前 GameFeature Action 添加到指定 World。
+	/** 添加目标世界。
+	 * @param WorldContext 世界上下文，由调用方传入。
+	 * @param ChangeContext 变更上下文，由调用方传入。
+	 */
 	virtual void AddToWorld(const FWorldContext& WorldContext, const FGameFeatureStateChangeContext& ChangeContext) override;
 	//~ End UGameFeatureAction_WorldActionBase interface
 
 	// 清理当前 GameFeature 激活过程中添加的所有能力和组件。
+	/** 恢复本对象的初始状态。
+	 * @param ActiveData 活动数据，由调用方传入。
+	 */
 	void Reset(FPerContextData& ActiveData);
 
 	// 处理指定 Actor 的 GameFrameworkComponentManager 扩展事件。
+	/** 消费GameFramework扩展事件并配对管理注入内容。
+	 * @param Actor 本次操作关联的Actor。
+	 * @param EventName 事件名称，由调用方传入。
+	 * @param EntryIndex 条目索引，由调用方传入。
+	 * @param ChangeContext 变更上下文，由调用方传入。
+	 */
 	void HandleActorExtension(AActor* Actor, FName EventName, int32 EntryIndex, FGameFeatureStateChangeContext ChangeContext);
 
 	// 根据配置向指定 Actor 添加 GameplayAbility、AttributeSet 和 AbilitySet。
+	/** 添加Actor对象Abilities。
+	 * @param Actor 本次操作关联的Actor。
+	 * @param AbilitiesEntry Abilities条目，由调用方传入。
+	 * @param ActiveData 活动数据，由调用方传入。
+	 */
 	void AddActorAbilities(AActor* Actor, const FGameFeatureAbilitiesEntry& AbilitiesEntry, FPerContextData& ActiveData);
 
 	// 移除指定 Actor 上由当前 GameFeature 添加的所有能力。
+	/** 移除Actor对象Abilities。
+	 * @param Actor 本次操作关联的Actor。
+	 * @param ActiveData 活动数据，由调用方传入。
+	 */
 	void RemoveActorAbilities(AActor* Actor, FPerContextData& ActiveData);
 
 	// 根据指定配置查找或创建 Actor 上需要的组件。
 	template<class ComponentType>
+	/** 查找Or添加组件关联Actor对象。
+	 * @param Actor 本次操作关联的Actor。
+	 * @param AbilitiesEntry Abilities条目，由调用方传入。
+	 * @param ActiveData 活动数据，由调用方传入。
+	 * @return Or添加组件关联Actor对象的当前值或引用。
+	 */
 	ComponentType* FindOrAddComponentForActor(AActor* Actor, const FGameFeatureAbilitiesEntry& AbilitiesEntry, FPerContextData& ActiveData)
 	{
 		//@TODO: Just find, no add?
@@ -182,5 +223,12 @@ private:
 	}
 
 	// 根据组件类型查找 Actor 上已有的组件，必要时负责创建组件。
+	/** 查找Or添加组件关联Actor对象。
+	 * @param ComponentType 组件类型，由调用方传入。
+	 * @param Actor 本次操作关联的Actor。
+	 * @param AbilitiesEntry Abilities条目，由调用方传入。
+	 * @param ActiveData 活动数据，由调用方传入。
+	 * @return Or添加组件关联Actor对象的当前值或引用。
+	 */
 	UActorComponent* FindOrAddComponentForActor(UClass* ComponentType, AActor* Actor, const FGameFeatureAbilitiesEntry& AbilitiesEntry, FPerContextData& ActiveData);
 };

@@ -1,3 +1,6 @@
+/** @file HodgeInputUserSettings.h
+ * @brief 声明玩家输入设置相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 // 防止头文件被重复包含。
@@ -27,6 +30,7 @@ class HODGEPODGE_API UHodgeInputUserSettings : public UEnhancedInputUserSettings
 public:
 	//~ Begin UEnhancedInputUserSettings interface
 	// 应用当前输入用户设置，使修改后的配置正式生效。
+	/** 应用设置。 */
 	virtual void ApplySettings() override;
 	//~ End UEnhancedInputUserSettings interface
 
@@ -63,6 +67,9 @@ class HODGEPODGE_API UHodgePlayerMappableKeySettings : public UPlayerMappableKey
 public:
 	/** Returns the tooltip that should be displayed on the settings screen for this key */
 	// 获取该按键在输入设置界面中显示的提示文本。
+	/** 获取Tooltip文字。
+	 * @return Tooltip文字的当前值或引用。
+	 */
 	const FText& GetTooltipText() const;
 
 protected:

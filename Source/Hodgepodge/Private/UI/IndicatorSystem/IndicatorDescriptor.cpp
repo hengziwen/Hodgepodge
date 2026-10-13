@@ -1,3 +1,6 @@
+/** @file IndicatorDescriptor.cpp
+ * @brief 实现Actor指示器描述数据相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 // UIndicatorDescriptor 与 FIndicatorProjection 定义。

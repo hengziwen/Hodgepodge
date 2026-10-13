@@ -1,3 +1,6 @@
+/** @file HodgeAimSensitivityData.cpp
+ * @brief 实现瞄准灵敏度配置相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 // 引入项目自定义的瞄准灵敏度数据资产。

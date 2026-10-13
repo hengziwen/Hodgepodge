@@ -1,3 +1,6 @@
+/** @file HodgeAimSensitivityData.h
+ * @brief 声明瞄准灵敏度配置相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 // 防止头文件被重复包含。
@@ -20,6 +23,7 @@ class UObject;
 UCLASS(BlueprintType, Const,
 	Meta = (DisplayName = "Hodge Aim Sensitivity Data", ShortTooltip =
 		"Data asset used to define a map of Gamepad Sensitivty to a float value."))
+/** 封装瞄准灵敏度配置的状态与操作接口。 */
 class HODGEPODGE_API UHodgeAimSensitivityData : public UPrimaryDataAsset
 {
 	// 开启 UE 反射、序列化和 Primary Asset 支持。
@@ -27,6 +31,9 @@ class HODGEPODGE_API UHodgeAimSensitivityData : public UPrimaryDataAsset
 
 public:
 	// 构造瞄准灵敏度数据资产。
+	/** 构造瞄准灵敏度配置并初始化其默认状态。
+	 * @param ObjectInitializer UE构造对象时传入的初始化器。
+	 */
 	UHodgeAimSensitivityData(const FObjectInitializer& ObjectInitializer);
 
 	// // 将手柄灵敏度枚举转换为实际使用的浮点倍率。

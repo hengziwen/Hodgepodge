@@ -1,3 +1,6 @@
+/** @file HodgeActionWidget.cpp
+ * @brief 实现输入动作提示控件相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "UI/Foundation/HodgeActionWidget.h"
@@ -7,6 +10,7 @@
 #include "Engine/LocalPlayer.h"
 #include "EnhancedInputSubsystems.h"
 
+/** 获取Icon。 */
 FSlateBrush UHodgeActionWidget::GetIcon() const
 {
 	// If there is an Enhanced Input action associated with this widget, then search for any
@@ -32,6 +36,7 @@ FSlateBrush UHodgeActionWidget::GetIcon() const
 	return Super::GetIcon();
 }
 
+/** 获取Enhanced输入Subsystem。 */
 UEnhancedInputLocalPlayerSubsystem* UHodgeActionWidget::GetEnhancedInputSubsystem() const
 {
 	const UWidget* BoundWidget = DisplayedBindingHandle.GetBoundWidget();

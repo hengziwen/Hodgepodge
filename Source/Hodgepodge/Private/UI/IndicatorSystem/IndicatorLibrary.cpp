@@ -1,3 +1,6 @@
+/** @file IndicatorLibrary.cpp
+ * @brief 实现指示器投影函数库相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 // Indicator 系统的蓝图工具函数库定义。

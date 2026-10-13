@@ -1,4 +1,7 @@
-﻿#pragma once
+﻿/** @file HodgePlayerStateBase.h
+ * @brief 声明玩家状态基类相关的类型、接口与现有处理流程。
+ */
+#pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerState.h"
@@ -17,15 +20,21 @@ public:
 	//~ Begin AActor interface
 
 	// Actor 组件初始化前调用，可用于初始化 PlayerState 的组件和基础状态。
+	/** 在组件初始化前接入本对象所需的框架入口。 */
 	virtual void PreInitializeComponents() override;
 
 	// PlayerState 开始游戏时调用，可用于执行初始化逻辑。
+	/** 进入世界运行阶段并接入本对象的生命周期依赖。 */
 	virtual void BeginPlay() override;
 
 	// PlayerState 即将销毁时调用，用于清理运行时资源和解除绑定。
+	/** 离开世界运行阶段并解除本对象持有的监听或资源。
+	 * @param EndPlayReason 结束PlayReason，由调用方传入。
+	 */
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	// 重置 PlayerState 的运行时状态，例如玩家重新开始游戏时恢复默认状态。
+	/** 恢复本对象的初始状态。 */
 	virtual void Reset() override;
 
 	//~ End AActor interface
@@ -34,6 +43,9 @@ protected:
 	//~ Begin APlayerState interface
 
 	// 地图切换或玩家状态迁移时，将当前 PlayerState 的数据复制到新的 PlayerState。
+	/** 按当前类型的生命周期迁移需要保留的属性。
+	 * @param PlayerState 玩家持有的持久状态与ASC入口。
+	 */
 	virtual void CopyProperties(APlayerState* PlayerState);
 
 	//~ End APlayerState interface

@@ -1,9 +1,13 @@
+/** @file HodgeComboDefinition.cpp
+ * @brief 实现连段图配置相关的类型、接口与现有处理流程。
+ */
 #include "Data/HodgeComboDefinition.h"
 #if WITH_EDITOR
 #include "Misc/DataValidation.h"
 #endif
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeComboDefinition)
 
+/** 查找节点。 */
 const FHodgeComboRow* UHodgeComboDefinition::FindNode(FGameplayTag Tag) const
 {
 	return ComboTable && ComboTable->GetRowStruct() == FHodgeComboRow::StaticStruct()
@@ -11,6 +15,7 @@ const FHodgeComboRow* UHodgeComboDefinition::FindNode(FGameplayTag Tag) const
 		       : nullptr;
 }
 
+/** 检查定义配置及其引用资源是否满足执行契约。 */
 bool UHodgeComboDefinition::ValidateDefinition(TArray<FText>& Errors) const
 {
 	const int32 Before = Errors.Num();
@@ -20,6 +25,7 @@ bool UHodgeComboDefinition::ValidateDefinition(TArray<FText>& Errors) const
 		Error(TEXT("ComboTable must use HodgeComboRow"));
 		return false;
 	}
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (!EntryComboTag.IsValid() || !FindNode(EntryComboTag))
 	{
 		Error(TEXT("Missing EntryComboTag row"));
@@ -90,6 +96,7 @@ bool UHodgeComboDefinition::ValidateDefinition(TArray<FText>& Errors) const
 	return Before == Errors.Num();
 }
 #if WITH_EDITOR
+/** 在编辑器校验当前配置并收集诊断。 */
 EDataValidationResult UHodgeComboDefinition::IsDataValid(FDataValidationContext& Context) const
 {
 	const auto Parent = Super::IsDataValid(Context);

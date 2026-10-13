@@ -1,3 +1,6 @@
+/** @file HodgeHealthComponent.cpp
+ * @brief 实现生命与死亡组件相关的类型、接口与现有处理流程。
+ */
 // 111屎山代码来袭
 
 
@@ -132,8 +135,10 @@ void UHodgeHealthComponent::InitializeWithAbilitySystem(UHodgeAbilitySystemCompo
 	OnMaxHealthChanged.Broadcast(this, HealthSet->GetMaxHealth(), HealthSet->GetMaxHealth(), nullptr);
 }
 
+/** 重置关联生成。 */
 void UHodgeHealthComponent::ResetForSpawn()
 {
+	// 按服务器权限区分本次处理分支。
 	if (!GetOwner()->HasAuthority() || !AbilitySystemComponent || AbilitySystemComponent->GetAvatarActor() != GetOwner()) { return; }
 	DeathState = EHodgeDeathState::NotDead;
 	ClearGameplayTags();

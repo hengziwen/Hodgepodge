@@ -1,3 +1,6 @@
+/** @file HodgeCombatSet.h
+ * @brief 声明战斗属性集相关的类型、接口与现有处理流程。
+ */
 // 111屎山代码来袭
 
 #pragma once
@@ -32,6 +35,7 @@ class UHodgeCombatSet : public UHodgeAttributeSet
 
 public:
 	// 构造战斗属性集，并初始化战斗相关 Attribute 的默认值。
+	/** 构造战斗属性集并初始化其默认状态。 */
 	UHodgeCombatSet();
 
 	// 生成 BaseDamage 对应的 GAS Attribute 访问函数。
@@ -42,10 +46,16 @@ public:
 
 protected:
 	// BaseDamage 从服务器复制到客户端后触发，用于通知 GAS 属性系统完成网络同步。
+	/** 收到基础伤害复制后更新本地状态。
+	 * @param OldValue 旧值，由调用方传入。
+	 */
 	UFUNCTION()
 	void OnRep_BaseDamage(const FGameplayAttributeData& OldValue);
 
 	// BaseHeal 从服务器复制到客户端后触发，用于通知 GAS 属性系统完成网络同步。
+	/** 收到基础治疗复制后更新本地状态。
+	 * @param OldValue 旧值，由调用方传入。
+	 */
 	UFUNCTION()
 	void OnRep_BaseHeal(const FGameplayAttributeData& OldValue);
 
@@ -54,11 +64,13 @@ private:
 	// 基础伤害值，通常作为伤害 ExecutionCalculation 计算最终伤害时的基础输入。
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_BaseDamage, Category = "Hodge|Combat",
 		Meta = (AllowPrivateAccess = true))
+	// 基础伤害的数据或对象引用。
 	FGameplayAttributeData BaseDamage;
 
 	// The base amount of healing to apply in the heal execution.
 	// 基础治疗值，通常作为治疗 ExecutionCalculation 计算最终治疗量时的基础输入。
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_BaseHeal, Category = "Hodge|Combat",
 		Meta = (AllowPrivateAccess = true))
+	// 基础治疗的数据或对象引用。
 	FGameplayAttributeData BaseHeal;
 };

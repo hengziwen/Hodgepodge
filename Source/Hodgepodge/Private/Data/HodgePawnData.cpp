@@ -1,3 +1,6 @@
+/** @file HodgePawnData.cpp
+ * @brief 实现Pawn能力/输入/相机配置相关的类型、接口与现有处理流程。
+ */
 // 111屎山代码来袭
 
 
@@ -16,6 +19,7 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgePawnData)
 
+/** 构造Pawn能力/输入/相机配置并初始化其默认状态。 */
 UHodgePawnData::UHodgePawnData(const FObjectInitializer& ObjectInitializer)
 {
 	PawnClass = nullptr;
@@ -26,6 +30,7 @@ UHodgePawnData::UHodgePawnData(const FObjectInitializer& ObjectInitializer)
 // 编辑器资产校验
 
 #if WITH_EDITOR
+/** 在编辑器校验当前配置并收集诊断。 */
 EDataValidationResult UHodgePawnData::IsDataValid(FDataValidationContext& Context) const
 {
 	const auto Parent = Super::IsDataValid(Context);

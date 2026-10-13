@@ -1,3 +1,6 @@
+/** @file HodgeEquipmentDefinition.cpp
+ * @brief 实现装备静态定义相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "Equipment/HodgeEquipmentDefinition.h"

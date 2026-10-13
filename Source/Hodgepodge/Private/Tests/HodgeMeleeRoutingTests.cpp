@@ -1,3 +1,6 @@
+/** @file HodgeMeleeRoutingTests.cpp
+ * @brief 实现Melee路由自动化测试相关的类型、接口与现有处理流程。
+ */
 #if WITH_DEV_AUTOMATION_TESTS
 
 #include "AbilitySystem/Abilities/HodgeAbilityTask_WaitHitResults.h"
@@ -16,6 +19,15 @@
 // 不增加测试反射类，直接验证真实 Task 的幂等释放接口。
 struct FHodgeMeleeTestAccess
 {
+	/** 按当前配置建立对应的图或表现对象。
+	 * @param Ability 能力，由调用方传入。
+	 * @param ASC 后续GAS操作使用的能力系统组件。
+	 * @param Handle 对应操作或能力的句柄。
+	 * @param Batch Batch，由调用方传入。
+	 * @param Hit 命中，由调用方传入。
+	 * @param Binding 绑定，由调用方传入。
+	 * @return 本次操作的句柄，调用方应按现有接口检查有效性。
+	 */
 	static FGameplayEffectSpecHandle Build(UHodgeGameplayAbility_Melee* Ability, UAbilitySystemComponent* ASC,
 		FGameplayAbilitySpecHandle Handle, const FHodgeHitDetectionBatch& Batch, const FHitResult& Hit,
 		const FHodgeHitEffectConfig& Binding)
@@ -24,6 +36,11 @@ struct FHodgeMeleeTestAccess
 		return Ability->BuildMeleeHitSpec(Batch, Hit, Binding);
 	}
 
+	/** 释放当前对象持有的资源或句柄。
+	 * @param Task 任务，由调用方传入。
+	 * @param Combat 统一战斗组件。
+	 * @param Execution 执行，由调用方传入。
+	 */
 	static void Release(UHodgeAbilityTask_WaitHitResults* Task, UHodgeCombatComponentBase* Combat, const FGuid& Execution)
 	{
 		Task->CombatComponent = Combat;
@@ -34,14 +51,21 @@ struct FHodgeMeleeTestAccess
 
 namespace
 {
+	/** 保存Melee检测世界的数据和接口契约。 */
 	struct FMeleeDetectionWorld
 	{
+		// 本次操作所在的世界。
 		UWorld* World = nullptr;
+		// 当前操作关联的所属对象。
 		AActor* Owner = nullptr;
+		// 本次操作的目标。
 		AActor* Target = nullptr;
+		// 统一战斗组件。
 		UHodgeCombatComponentBase* Combat = nullptr;
+		// 请求的数据或对象引用。
 		FHodgeHitDetectionRequest Request;
 
+		/** 构造Melee检测世界并初始化其默认状态。 */
 		FMeleeDetectionWorld()
 		{
 			const UWorld::InitializationValues Values = UWorld::InitializationValues()
@@ -53,6 +77,7 @@ namespace
 			Root->RegisterComponent();
 			Combat = NewObject<UHodgeCombatComponentBase>(Owner);
 			Combat->RegisterComponent();
+			// 本次操作的来源。
 			FHodgeHitSource Source;
 			Source.SourceTag = HodgeGameplayTags::Combat_Source_Body_Origin;
 			Source.LocalOffset = FVector(100.f, 0.f, 0.f);
@@ -72,6 +97,7 @@ namespace
 			Target->SetActorLocation(FVector(100.f, 0.f, 0.f));
 		}
 
+		/** 销毁该对象，执行当前类型的析构收尾。 */
 		~FMeleeDetectionWorld() { World->DestroyWorld(false); }
 	};
 }
@@ -79,6 +105,7 @@ namespace
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeDetectionRoutingTest, "Hodge.Combat.DetectionRouting",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeDetectionRoutingTest::RunTest(const FString& Parameters)
 {
 	FMeleeDetectionWorld Context;
@@ -109,8 +136,10 @@ bool FHodgeDetectionRoutingTest::RunTest(const FString& Parameters)
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeMeleeHitHistoryTest, "Hodge.Combat.MeleeHitHistory",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeMeleeHitHistoryTest::RunTest(const FString& Parameters)
 {
+	// 本次操作的目标。
 	auto* Target = NewObject<UAbilitySystemComponent>();
 	auto* Other = NewObject<UAbilitySystemComponent>();
 	TSharedPtr<FHodgeMeleeHitHistory> First = MakeShared<FHodgeMeleeHitHistory>();
@@ -132,9 +161,11 @@ bool FHodgeMeleeHitHistoryTest::RunTest(const FString& Parameters)
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeMeleeSpecContextTest, "Hodge.Combat.MeleeSpecContext",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeMeleeSpecContextTest::RunTest(const FString& Parameters)
 {
 	FMeleeDetectionWorld Context;
+	// 后续GAS操作使用的能力系统组件。
 	auto* ASC = NewObject<UAbilitySystemComponent>(Context.Owner);
 	ASC->RegisterComponent();
 	ASC->InitAbilityActorInfo(Context.Owner, Context.Owner);
@@ -167,6 +198,7 @@ bool FHodgeMeleeSpecContextTest::RunTest(const FString& Parameters)
 	Binding.DamageEffect = UGameplayEffect::StaticClass();
 	const FGameplayEffectSpecHandle First = FHodgeMeleeTestAccess::Build(Ability, ASC, Handle, Batch, FirstHit, Binding);
 	const FGameplayEffectSpecHandle Second = FHodgeMeleeTestAccess::Build(Ability, ASC, Handle, Batch, SecondHit, Binding);
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (!TestTrue(TEXT("Both hits build an independent spec"), First.IsValid() && Second.IsValid())) { return false; }
 	TestEqual(TEXT("Granted SetByCaller survives GA construction"), First.Data->GetSetByCallerMagnitude(HodgeGameplayTags::SetByCaller_Damage), 23.f);
 	TestEqual(TEXT("Window multiplier overrides its own parameter"), First.Data->GetSetByCallerMagnitude(HodgeGameplayTags::SetByCaller_DamageMultiplier), 1.5f);

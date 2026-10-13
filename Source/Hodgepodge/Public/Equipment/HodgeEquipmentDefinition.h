@@ -1,3 +1,6 @@
+/** @file HodgeEquipmentDefinition.h
+ * @brief 声明装备静态定义相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
@@ -22,6 +25,7 @@ struct FHodgeEquipmentActorToSpawn
 	GENERATED_BODY()
 
 	// 默认构造函数。
+	/** 构造装备Actor对象目标生成并初始化其默认状态。 */
 	FHodgeEquipmentActorToSpawn()
 	{
 	}
@@ -55,6 +59,9 @@ class UHodgeEquipmentDefinition : public UObject
 
 public:
 	// 构造装备定义对象。
+	/** 构造装备静态定义并初始化其默认状态。
+	 * @param ObjectInitializer UE构造对象时传入的初始化器。
+	 */
 	UHodgeEquipmentDefinition(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 	// Class to spawn
@@ -68,6 +75,7 @@ public:
 	// 装备时需要授予给 Pawn AbilitySystemComponent 的 AbilitySet 列表。
 	UPROPERTY(EditDefaultsOnly, Category=Equipment)
 	TArray<TObjectPtr<const UHodgeAbilitySet>> AbilitySetsToGrant;
+	// 属性曲线与初始化效果配置。
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Attributes")
 	TObjectPtr<UHodgeEquipmentStatProfile> StatProfile;
 

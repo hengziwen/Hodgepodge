@@ -1,3 +1,6 @@
+/** @file HodgeAbilitySystemGlobals.cpp
+ * @brief 实现GAS全局入口相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 // 项目自定义 AbilitySystemGlobals 类定义。

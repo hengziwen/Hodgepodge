@@ -1,3 +1,6 @@
+/** @file HodgePenetrationAvoidanceFeeler.h
+ * @brief 声明相机防穿透探针数据相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
@@ -40,6 +43,7 @@ struct FHodgePenetrationAvoidanceFeeler
 
 
 	// 使用默认值初始化探针配置
+	/** 构造相机防穿透探针数据并初始化其默认状态。 */
 	FHodgePenetrationAvoidanceFeeler()
 	   : AdjustmentRot(ForceInit)
 	   , WorldWeight(0)
@@ -51,6 +55,14 @@ struct FHodgePenetrationAvoidanceFeeler
 	}
 
 	// 使用指定参数初始化探针配置
+	/** 构造相机防穿透探针数据并初始化其默认状态。
+	 * @param InAdjustmentRot AdjustmentRot，由调用方传入。
+	 * @param InWorldWeight 世界Weight，由调用方传入。
+	 * @param InPawnWeight Pawn角色Weight，由调用方传入。
+	 * @param InExtent Extent，由调用方传入。
+	 * @param InTraceInterval 检测Interval，由调用方传入。
+	 * @param InFramesUntilNextTrace FramesUntil下次检测，由调用方传入。
+	 */
 	FHodgePenetrationAvoidanceFeeler(const FRotator& InAdjustmentRot,
 							const float& InWorldWeight,
 							const float& InPawnWeight,

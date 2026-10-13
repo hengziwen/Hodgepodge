@@ -1,3 +1,6 @@
+/** @file HodgeSurvivor.cpp
+ * @brief 实现生存玩法实验角色与模式相关的类型、接口与现有处理流程。
+ */
 #include "CodexText/HodgeSurvivor.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -19,6 +22,7 @@
 #include "UObject/ConstructorHelpers.h"
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeSurvivor)
 
+/** 构造Survivor玩家角色并初始化其默认状态。 */
 AHodgeSurvivorHero::AHodgeSurvivorHero()
 {
     PrimaryActorTick.bCanEverTick = true;
@@ -46,10 +50,12 @@ AHodgeSurvivorHero::AHodgeSurvivorHero()
     GetCharacterMovement()->BrakingDecelerationWalking = 2400;
 }
 
+/** 将角色输入组件绑定到既有动作与标签配置。 */
 void AHodgeSurvivorHero::SetupPlayerInputComponent(UInputComponent* Input)
 {
     Super::SetupPlayerInputComponent(Input);
     auto* Enhanced = Cast<UEnhancedInputComponent>(Input);
+    // 玩家控制器对象。
     auto* PC = Cast<APlayerController>(Controller);
     if (!Enhanced || !PC || !PC->GetLocalPlayer()) return;
     Mapping = NewObject<UInputMappingContext>(this);
@@ -67,16 +73,19 @@ void AHodgeSurvivorHero::SetupPlayerInputComponent(UInputComponent* Input)
     Input->BindKey(EKeys::SpaceBar, IE_Pressed, this, &ThisClass::Dash);
 }
 
+/** 沿当前朝向推进实验对象的前向操作。 */
 void AHodgeSurvivorHero::Forward(const FInputActionValue& Value)
 {
     auto* Mode = GetWorld()->GetAuthGameMode<AHodgeSurvivorMode>();
     if (Mode && Mode->State == EHodgeSurvivorState::Playing) AddMovementInput(FVector::ForwardVector, Value.Get<float>());
 }
+/** 沿当前朝向推进实验对象的右向操作。 */
 void AHodgeSurvivorHero::Right(const FInputActionValue& Value)
 {
     auto* Mode = GetWorld()->GetAuthGameMode<AHodgeSurvivorMode>();
     if (Mode && Mode->State == EHodgeSurvivorState::Playing) AddMovementInput(FVector::RightVector, Value.Get<float>());
 }
+/** 推进当前实验角色的冲刺入口。 */
 void AHodgeSurvivorHero::Dash()
 {
     auto* Mode = GetWorld()->GetAuthGameMode<AHodgeSurvivorMode>();
@@ -86,6 +95,7 @@ void AHodgeSurvivorHero::Dash()
     LaunchCharacter(Direction*1500, true, false);
     DashCooldown = 3; Invulnerability = .45f;
 }
+/** 推进当前对象的随帧更新。 */
 void AHodgeSurvivorHero::Tick(float Dt)
 {
     Super::Tick(Dt);
@@ -103,6 +113,7 @@ void AHodgeSurvivorHero::Tick(float Dt)
     const FVector Clamped(FMath::Clamp(P.X,-2450.f,2450.f), FMath::Clamp(P.Y,-2450.f,2450.f), P.Z);
     if (!P.Equals(Clamped)) SetActorLocation(Clamped);
 }
+/** 离开世界运行阶段并解除本对象持有的监听或资源。 */
 void AHodgeSurvivorHero::EndPlay(const EEndPlayReason::Type Reason)
 {
     if (auto* PC = Cast<APlayerController>(Controller))
@@ -111,6 +122,7 @@ void AHodgeSurvivorHero::EndPlay(const EEndPlayReason::Type Reason)
     Super::EndPlay(Reason);
 }
 
+/** 构造SurvivorMode并初始化其默认状态。 */
 AHodgeSurvivorMode::AHodgeSurvivorMode()
 {
     PrimaryActorTick.bCanEverTick = true;
@@ -121,10 +133,12 @@ AHodgeSurvivorMode::AHodgeSurvivorMode()
     static ConstructorHelpers::FObjectFinder<UAnimationAsset> Walk(TEXT("/Game/Characters/Mannequins/Animations/Manny/MM_Walk_InPlace"));
     Sphere = Shape.Object; EnemyMesh = Mesh.Object; EnemyRun = Walk.Object;
 }
+/** 开始Play。 */
 void AHodgeSurvivorMode::StartPlay()
 {
     Super::StartPlay();
     Hero = Cast<AHodgeSurvivorHero>(UGameplayStatics::GetPlayerCharacter(this,0));
+    // 玩家控制器对象。
     APlayerController* PC = UGameplayStatics::GetPlayerController(this,0);
     if (PC && InterfaceClass)
     {
@@ -134,9 +148,11 @@ void AHodgeSurvivorMode::StartPlay()
     SetRunState(EHodgeSurvivorState::Playing);
     for (int32 I=0; I<4; ++I) SpawnEnemy();
 }
+/** 构造形状。 */
 AActor* AHodgeSurvivorMode::MakeShape(FVector Location, FVector Scale, UMaterialInterface* Material, float Life)
 {
     auto* Actor = GetWorld()->SpawnActor<AStaticMeshActor>(Location, FRotator::ZeroRotator);
+    // 先检查对象与上下文，避免在依赖失效后继续处理。
     if (!Actor) return nullptr;
     auto* Mesh = Actor->GetStaticMeshComponent();
     Mesh->SetMobility(EComponentMobility::Movable);
@@ -148,6 +164,7 @@ AActor* AHodgeSurvivorMode::MakeShape(FVector Location, FVector Scale, UMaterial
     if (Life>0) Actor->SetLifeSpan(Life);
     return Actor;
 }
+/** 生成敌人。 */
 void AHodgeSurvivorMode::SpawnEnemy(bool Elite)
 {
     if (!Hero || Enemies.Num()>=85 || State!=EHodgeSurvivorState::Playing) return;
@@ -169,8 +186,10 @@ void AHodgeSurvivorMode::SpawnEnemy(bool Elite)
     Entry.Speed=(Elite?115.f:145.f)+Elapsed*.45f+FMath::FRandRange(-15.f,20.f); Entry.bElite=Elite;
     Enemies.Add(Entry);
 }
+/** 向当前测试敌人提交验证用命中。 */
 void AHodgeSurvivorMode::HitEnemy(int32 Index, float Amount)
 {
+    // 先检查对象与上下文，避免在依赖失效后继续处理。
     if (!Enemies.IsValidIndex(Index)) return;
     auto& Enemy = Enemies[Index];
     Enemy.Health-=Amount;
@@ -185,6 +204,7 @@ void AHodgeSurvivorMode::HitEnemy(int32 Index, float Amount)
     }
     ++Kills; Enemy.Actor->Destroy(); Enemies.RemoveAtSwap(Index);
 }
+/** 向当前测试玩家提交验证用伤害。 */
 void AHodgeSurvivorMode::DamageHero(float Amount)
 {
     if (State!=EHodgeSurvivorState::Playing || Amount<=0 || !Hero || Hero->Invulnerability>0 || HurtClock>0) return;
@@ -192,6 +212,7 @@ void AHodgeSurvivorMode::DamageHero(float Amount)
     MakeShape(Hero->GetActorLocation(),FVector(1.3f,1.3f,.06f),EliteMaterial,.15f);
     if (Health<=0) SetRunState(EHodgeSurvivorState::Defeat);
 }
+/** 授予Experience配置。 */
 void AHodgeSurvivorMode::GrantExperience(int32 Amount)
 {
     if (Amount<0 || State!=EHodgeSurvivorState::Playing) return;
@@ -204,13 +225,16 @@ void AHodgeSurvivorMode::GrantExperience(int32 Amount)
     Choices.SetNum(3);
     SetRunState(EHodgeSurvivorState::Upgrade);
 }
+/** 获取Upgrade文字。 */
 FString AHodgeSurvivorMode::GetUpgradeText(int32 Slot) const
 {
     static const TCHAR* Labels[]={TEXT("过载弹芯  ·  伤害 +35%"),TEXT("疾速扳机  ·  攻速 +20%"),TEXT("轻盈步伐  ·  移速 +12%"),TEXT("生命强化  ·  上限 +25 / 回复 40"),TEXT("磁力回收  ·  拾取范围 +100"),TEXT("电磁脉冲  ·  解锁 / 强化范围攻击")};
     return Choices.IsValidIndex(Slot)?Labels[Choices[Slot]]:TEXT("");
 }
+/** 按当前实验配置选择升级项。 */
 void AHodgeSurvivorMode::ChooseUpgrade(int32 Slot)
 {
+    // 先检查对象与上下文，避免在依赖失效后继续处理。
     if (State!=EHodgeSurvivorState::Upgrade || !Choices.IsValidIndex(Slot) || !Hero) return;
     switch (Choices[Slot])
     {
@@ -223,6 +247,7 @@ void AHodgeSurvivorMode::ChooseUpgrade(int32 Slot)
     }
     Choices.Reset(); SetRunState(EHodgeSurvivorState::Playing); GrantExperience(0);
 }
+/** 设置奔跑状态。 */
 void AHodgeSurvivorMode::SetRunState(EHodgeSurvivorState NewState)
 {
     State=NewState;
@@ -243,23 +268,28 @@ void AHodgeSurvivorMode::SetRunState(EHodgeSurvivorState NewState)
     }
     if (auto* UI=Cast<UHodgeSurvivorHUD>(Interface)) UI->Refresh(this);
 }
+/** 切换当前实验场景的暂停状态。 */
 void AHodgeSurvivorMode::TogglePause()
 {
     if (State==EHodgeSurvivorState::Playing) SetRunState(EHodgeSurvivorState::Paused);
     else if (State==EHodgeSurvivorState::Paused) SetRunState(EHodgeSurvivorState::Playing);
 }
+/** 重置实验玩法的当前运行阶段。 */
 void AHodgeSurvivorMode::RestartRun()
 {
     UGameplayStatics::OpenLevel(this,TEXT("/Game/CodexText/Survivor/L_Survivor"));
 }
+/** 退出当前实验运行并返回菜单状态。 */
 void AHodgeSurvivorMode::ReturnToMenu()
 {
     UGameplayStatics::OpenLevel(this,TEXT("/Game/CodexText/L_MainMenu"));
 }
+/** 推进当前对象的随帧更新。 */
 void AHodgeSurvivorMode::Tick(float Dt)
 {
     Super::Tick(Dt);
     if (!Hero) return;
+    // 玩家控制器对象。
     auto* PC=UGameplayStatics::GetPlayerController(this,0);
     if (PC && PC->WasInputKeyJustPressed(EKeys::P)) TogglePause();
     if (PC && State==EHodgeSurvivorState::Upgrade)
@@ -293,6 +323,7 @@ void AHodgeSurvivorMode::Tick(float Dt)
         if (Distance<(Enemy.bElite?115:80)) DamageHero(Enemy.bElite?22:11);
     }
     if (State!=EHodgeSurvivorState::Playing) return;
+    // 先检查对象与上下文，避免在依赖失效后继续处理。
     if (AttackClock<=0)
     {
         int32 Target=INDEX_NONE; float Best=950*950;
@@ -339,6 +370,7 @@ void AHodgeSurvivorMode::Tick(float Dt)
         if (auto* UI=Cast<UHodgeSurvivorHUD>(Interface)) UI->Refresh(this);
     }
 }
+/** 离开世界运行阶段并解除本对象持有的监听或资源。 */
 void AHodgeSurvivorMode::EndPlay(const EEndPlayReason::Type Reason)
 {
     if (Interface) Interface->RemoveFromParent();

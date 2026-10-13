@@ -1,3 +1,6 @@
+/** @file HodgeHUD.h
+ * @brief 声明HUD界面相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
@@ -50,6 +53,9 @@ class HODGEPODGE_API AHodgeHUD : public AHUD
 public:
 	// 构造函数。
 	// 使用 FObjectInitializer 完成 AHUD 基础对象初始化。
+	/** 构造HUD界面并初始化其默认状态。
+	 * @param ObjectInitializer UE构造对象时传入的初始化器。
+	 */
 	AHodgeHUD(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 protected:
@@ -57,6 +63,7 @@ protected:
 
 	// UObject / Actor 组件预初始化阶段。
 	// 在 BeginPlay 之前调用，可用于完成 HUD Actor 进入游戏前的初始化工作。
+	/** 在组件初始化前接入本对象所需的框架入口。 */
 	virtual void PreInitializeComponents() override;
 
 	//~End of UObject interface
@@ -64,10 +71,14 @@ protected:
 	//~AActor interface
 
 	// HUD Actor 正式进入游戏时调用。
+	/** 进入世界运行阶段并接入本对象的生命周期依赖。 */
 	virtual void BeginPlay() override;
 
 	// HUD Actor 离开游戏或所属 World 销毁时调用。
 	// EndPlayReason 表示 Destroy、LevelTransition、EndPlayInEditor 等具体结束原因。
+	/** 离开世界运行阶段并解除本对象持有的监听或资源。
+	 * @param EndPlayReason 结束PlayReason，由调用方传入。
+	 */
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	//~End of AActor interface
@@ -78,6 +89,9 @@ protected:
 	//
 	// AHUD 的 Debug 系统可以利用这个 Actor 列表，
 	// 配合 ShowDebug 等机制显示指定 Actor 的调试信息。
+	/** 获取调试Actor对象列表。
+	 * @param InOutList 输出列表，由调用方传入。
+	 */
 	virtual void GetDebugActorList(TArray<AActor*>& InOutList) override;
 
 	//~End of AHUD interface

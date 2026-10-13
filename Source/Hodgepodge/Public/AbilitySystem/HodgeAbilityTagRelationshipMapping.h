@@ -1,3 +1,6 @@
+/** @file HodgeAbilityTagRelationshipMapping.h
+ * @brief 声明技能标签关系映射相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
@@ -66,21 +69,54 @@ private:
 
 public:
 	friend struct FHodgeRelationshipTestAccess;
+	/** 判断CancellationProtected。
+	 * @param TargetTags 目标标签，用于对应标签查询或匹配。
+	 * @return true表示满足该查询条件，false表示不满足。
+	 */
 	UFUNCTION(BlueprintPure, Category="Hodge|Ability Relationships")
 	static bool IsCancellationProtected(const FGameplayTagContainer& TargetTags);
+	/** 获取能力取消Exceptions。
+	 * @param SourceTags 来源标签，用于对应标签查询或匹配。
+	 * @param OutExceptions Exceptions，用于对应标签查询或匹配。
+	 */
 	void GetAbilityCancelExceptions(const FGameplayTagContainer& SourceTags, FGameplayTagContainer& OutExceptions) const;
+	/** 判断能力已取消By标签。
+	 * @param SourceTags 来源标签，用于对应标签查询或匹配。
+	 * @param TargetTags 目标标签，用于对应标签查询或匹配。
+	 * @return true表示满足该查询条件，false表示不满足。
+	 */
 	UFUNCTION(BlueprintPure, Category="Hodge|Ability Relationships")
 	bool IsAbilityCancelledByTags(const FGameplayTagContainer& SourceTags, const FGameplayTagContainer& TargetTags) const;
+	/** 判断ForcedCancellation。
+	 * @param SourceTags 来源标签，用于对应标签查询或匹配。
+	 * @param TargetTags 目标标签，用于对应标签查询或匹配。
+	 * @return true表示满足该查询条件，false表示不满足。
+	 */
 	bool IsForcedCancellation(const FGameplayTagContainer& SourceTags, const FGameplayTagContainer& TargetTags) const;
 	// 根据一组 Ability Tags，计算这些 Ability 会阻止和取消哪些其他 Ability。
+	/** 获取能力标签目标BlockAnd取消。
+	 * @param AbilityTags 能力标签，用于对应标签查询或匹配。
+	 * @param OutTagsToBlock 标签目标Block，用于对应标签查询或匹配。
+	 * @param OutTagsToCancel 标签目标取消，用于对应标签查询或匹配。
+	 */
 	void GetAbilityTagsToBlockAndCancel(const FGameplayTagContainer& AbilityTags, FGameplayTagContainer* OutTagsToBlock,
 	                                    FGameplayTagContainer* OutTagsToCancel) const;
 
 	// 根据一组 Ability Tags，补充这些 Ability 激活时需要满足和禁止的 Tag。
+	/** 获取RequiredAnd阻塞Activation标签。
+	 * @param AbilityTags 能力标签，用于对应标签查询或匹配。
+	 * @param OutActivationRequired ActivationRequired，用于对应标签查询或匹配。
+	 * @param OutActivationBlocked Activation阻塞，用于对应标签查询或匹配。
+	 */
 	void GetRequiredAndBlockedActivationTags(const FGameplayTagContainer& AbilityTags,
 	                                         FGameplayTagContainer* OutActivationRequired,
 	                                         FGameplayTagContainer* OutActivationBlocked) const;
 
 	// 判断指定的 ActionTag 是否会取消拥有给定 Ability Tags 的 Ability。
+	/** 判断能力已取消By标签。
+	 * @param AbilityTags 能力标签，用于对应标签查询或匹配。
+	 * @param ActionTag 动作标签，用于对应标签查询或匹配。
+	 * @return true表示满足该查询条件，false表示不满足。
+	 */
 	bool IsAbilityCancelledByTag(const FGameplayTagContainer& AbilityTags, const FGameplayTag& ActionTag) const;
 };

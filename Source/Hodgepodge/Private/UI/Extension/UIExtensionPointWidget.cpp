@@ -1,3 +1,6 @@
+/** @file UIExtensionPointWidget.cpp
+ * @brief 实现UI扩展插槽控件相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "UI/Extension/UIExtensionPointWidget.h"
@@ -41,8 +44,10 @@ UUIExtensionPointWidget::UUIExtensionPointWidget(const FObjectInitializer& Objec
 {
 }
 
+/** 设置扩展Point标签。 */
 void UUIExtensionPointWidget::SetExtensionPointTag(FGameplayTag Tag)
 {
+    // 先检查对象与上下文，避免在依赖失效后继续处理。
     if (!GetCachedWidget().IsValid()) { ExtensionPointTag = Tag; }
 }
 
@@ -131,6 +136,7 @@ TSharedRef<SWidget> UUIExtensionPointWidget::RebuildWidget()
 // 重置当前 ExtensionPointWidget 的运行时状态。
 void UUIExtensionPointWidget::ResetExtensionPoint()
 {
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (BoundLocalPlayer.IsValid()) { BoundLocalPlayer->OnPlayerStateSet.Remove(PlayerStateDelegate); }
 	BoundLocalPlayer.Reset();
 	PlayerStateDelegate.Reset();

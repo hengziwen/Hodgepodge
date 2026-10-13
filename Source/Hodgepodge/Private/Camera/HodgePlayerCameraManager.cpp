@@ -1,3 +1,6 @@
+/** @file HodgePlayerCameraManager.cpp
+ * @brief 实现玩家相机管理器相关的类型、接口与现有处理流程。
+ */
 // 111屎山代码来袭
 
 
@@ -14,6 +17,7 @@ class FDebugDisplayInfo;
 // UI 相机组件使用的默认对象名称。
 static FName UICameraComponentName(TEXT("UICamera"));
 
+/** 构造玩家相机管理器并初始化其默认状态。 */
 AHodgePlayerCameraManager::AHodgePlayerCameraManager(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -30,12 +34,14 @@ AHodgePlayerCameraManager::AHodgePlayerCameraManager(const FObjectInitializer& O
 	UICamera = CreateDefaultSubobject<UHodgeUICameraManagerComponent>(UICameraComponentName);
 }
 
+/** 获取界面相机组件。 */
 UHodgeUICameraManagerComponent* AHodgePlayerCameraManager::GetUICameraComponent() const
 {
 	// 返回 UI 相机管理组件。
 	return UICamera;
 }
 
+/** 更新视图目标。 */
 void AHodgePlayerCameraManager::UpdateViewTarget(FTViewTarget& OutVT, float DeltaTime)
 {
 	// 如果 UI 相机当前需要更新 ViewTarget，则让 UI 相机获得更高优先级。
@@ -55,6 +61,7 @@ void AHodgePlayerCameraManager::UpdateViewTarget(FTViewTarget& OutVT, float Delt
 	Super::UpdateViewTarget(OutVT, DeltaTime);
 }
 
+/** 输出当前对象的调试状态。 */
 void AHodgePlayerCameraManager::DisplayDebug(UCanvas* Canvas, const FDebugDisplayInfo& DebugDisplay, float& YL,
                                              float& YPos)
 {

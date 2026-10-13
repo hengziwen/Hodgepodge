@@ -1,3 +1,6 @@
+/** @file HodgeActivatableWidget.cpp
+ * @brief 实现CommonUI输入配置控件相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 // UHodgeActivatableWidget 类定义。

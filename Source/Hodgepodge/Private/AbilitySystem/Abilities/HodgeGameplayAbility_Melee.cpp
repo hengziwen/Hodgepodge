@@ -1,3 +1,6 @@
+/** @file HodgeGameplayAbility_Melee.cpp
+ * @brief 实现玩法能力Melee相关的类型、接口与现有处理流程。
+ */
 #include "AbilitySystem/Abilities/HodgeGameplayAbility_Melee.h"
 #include "Component/HodgeDefenseComponent.h"
 #include "AbilitySystem/Abilities/HodgeAbilityTask_WaitHitResults.h"
@@ -19,23 +22,28 @@
 #include "Engine/World.h"
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeGameplayAbility_Melee)
 
+/** 构造玩法能力Melee并初始化其默认状态。 */
 UHodgeGameplayAbility_Melee::UHodgeGameplayAbility_Melee()
 {
 	FGameplayTagContainer Tags = GetAssetTags(); Tags.AddTag(HodgeGameplayTags::Ability_Type_Action_Melee); SetAssetTags(Tags);
 }
 
+/** 根据目标资格与当前检测会话判断是否允许命中。 */
 bool FHodgeMeleeHitHistory::CanHit(UAbilitySystemComponent* Target, double Time, float RepeatInterval) const
 {
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (!IsValid(Target) || !FMath::IsFinite(Time) || !FMath::IsFinite(RepeatInterval) || RepeatInterval < 0.f) { return false; }
 	const double* LastHit = LastHitTimes.Find(TWeakObjectPtr<UAbilitySystemComponent>(Target));
 	return !LastHit || (RepeatInterval > 0.f && Time - *LastHit >= RepeatInterval);
 }
 
+/** 记录本次检测会话已命中的目标以供去重。 */
 void FHodgeMeleeHitHistory::RecordHit(UAbilitySystemComponent* Target, double Time)
 {
 	LastHitTimes.Add(TWeakObjectPtr<UAbilitySystemComponent>(Target), Time);
 }
 
+/** 校验执行Configuration。 */
 void UHodgeGameplayAbility_Melee::ValidateExecutionConfiguration(
 	const UHodgeAbilityDefinition& Definition, TArray<FText>& Errors) const
 {
@@ -51,6 +59,7 @@ void UHodgeGameplayAbility_Melee::ValidateExecutionConfiguration(
 		}
 	};
 	if (Definition.DefaultHitConfig.DamageEffect) { ValidateEffect(Definition.DefaultHitConfig); }
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (Definition.ExecutionConfig.Montage)
 	{
 		for (const FAnimNotifyEvent& Event : Definition.ExecutionConfig.Montage->Notifies)
@@ -80,10 +89,13 @@ void UHodgeGameplayAbility_Melee::ValidateExecutionConfiguration(
 
 }
 
+/** 建立当前服务器命中执行所需的配置与身份。 */
 bool UHodgeGameplayAbility_Melee::PrepareHitExecutionContext_Implementation() { return true; }
 
+/** 设置命中锚点。 */
 bool UHodgeGameplayAbility_Melee::SetHitAnchor(FName Key, const FTransform& WorldTransform)
 {
+	// 按服务器权限区分本次处理分支。
 	if (!IsActive() || IsExecutionEnding() || !GetExecutionId().IsValid() || !CurrentActorInfo || !CurrentActorInfo->IsNetAuthority() ||
 		Key.IsNone() || WorldTransform.ContainsNaN() || !WorldTransform.GetRotation().IsNormalized() ||
 		!WorldTransform.GetScale3D().Equals(FVector::OneVector)) { return false; }
@@ -95,8 +107,10 @@ bool UHodgeGameplayAbility_Melee::SetHitAnchor(FName Key, const FTransform& Worl
 	return true;
 }
 
+/** 设置命中目标。 */
 bool UHodgeGameplayAbility_Melee::SetHitTarget(FName Key, AActor* Target)
 {
+	// 按服务器权限区分本次处理分支。
 	if (!IsActive() || IsExecutionEnding() || !GetExecutionId().IsValid() || !CurrentActorInfo || !CurrentActorInfo->IsNetAuthority() ||
 		Key.IsNone() || !FHodgeDamageRules::CanDamage(GetAvatarActorFromActorInfo(), Target, true) ||
 		Target->GetWorld() != GetWorld()) { return false; }
@@ -104,8 +118,10 @@ bool UHodgeGameplayAbility_Melee::SetHitTarget(FName Key, AActor* Target)
 	return true;
 }
 
+/** 重置命中几何历史。 */
 void UHodgeGameplayAbility_Melee::ResetHitGeometryHistory()
 {
+	// 按服务器权限区分本次处理分支。
 	if (!IsActive() || IsExecutionEnding() || !CurrentActorInfo || !CurrentActorInfo->IsNetAuthority()) { return; }
 	if (auto* Combat = UHodgeCombatComponentBase::FindCombatComponent(GetAvatarActorFromActorInfo()))
 	{
@@ -113,6 +129,7 @@ void UHodgeGameplayAbility_Melee::ResetHitGeometryHistory()
 	}
 }
 
+/** 处理执行就绪。 */
 void UHodgeGameplayAbility_Melee::OnExecutionReady()
 {
 	Super::OnExecutionReady();
@@ -120,11 +137,15 @@ void UHodgeGameplayAbility_Melee::OnExecutionReady()
 	HitGroups.Reset();
 	HitAnchors.Reset();
 	HitTargets.Reset();
+	// 当前操作使用的定义配置。
 	const UHodgeAbilityDefinition* Definition = GetDefinition();
+	// 按服务器权限区分本次处理分支。
 	if (!CurrentActorInfo || !CurrentActorInfo->IsNetAuthority() || !Definition) { return; }
 	if (!PrepareHitExecutionContext()) { FinishExecution(true, true); return; }
+	// 根据当前生命周期状态决定是否继续执行。
 	if (!IsActive() || IsExecutionEnding()) { return; }
 	AActor* Avatar = GetAvatarActorFromActorInfo();
+	// 统一战斗组件。
 	auto* Combat = Avatar ? Avatar->FindComponentByClass<UHodgeCombatComponentBase>() : nullptr;
 	if (!Combat)
 	{
@@ -137,6 +158,7 @@ void UHodgeGameplayAbility_Melee::OnExecutionReady()
 	DetectionTask->ReadyForActivation();
 }
 
+/** 处理执行Ending。 */
 void UHodgeGameplayAbility_Melee::OnExecutionEnding(const FGuid& EndingExecutionId)
 {
 	// 基类已失效执行身份，Task 清理不会再消费旧批次。
@@ -154,11 +176,14 @@ void UHodgeGameplayAbility_Melee::OnExecutionEnding(const FGuid& EndingExecution
 }
 
 
+/** 开始通知命中。 */
 bool UHodgeGameplayAbility_Melee::BeginNotifyHit(int32 OccurrenceId, const FHodgeAnimHitConfig& Config, USkeletalMeshComponent* Mesh, bool bSingle)
 {
+	// 按服务器权限区分本次处理分支。
 	if (OccurrenceId == INDEX_NONE || !CurrentActorInfo || !CurrentActorInfo->IsNetAuthority()) { return false; }
 	TArray<FText> Errors;
 	if (!Config.Validate(Errors)) { return false; }
+	// 当前操作使用的定义配置。
 	const auto* Definition = GetDefinition();
 	FHodgeHitEffectConfig Effect = Config.bUseDefaultDamage && Definition ? Definition->DefaultHitConfig : Config.Damage;
 	Effect.Reaction = Config.bUseDefaultReaction && Definition ? Definition->DefaultHitConfig.Reaction : Config.ReactionOverride;
@@ -220,6 +245,7 @@ bool UHodgeGameplayAbility_Melee::BeginNotifyHit(int32 OccurrenceId, const FHodg
 	return true;
 }
 
+/** 打开命中。 */
 bool UHodgeGameplayAbility_Melee::OpenHit(int32 OccurrenceId, const FHodgeHitEffectConfig& Binding, const FHodgeHitDetectionRequest& Request)
 {
 	if (!DetectionTask || !DetectionTask->IsRunningForExecution(GetExecutionId()) || HitStates.Contains(OccurrenceId)) { return false; }
@@ -243,11 +269,13 @@ bool UHodgeGameplayAbility_Melee::OpenHit(int32 OccurrenceId, const FHodgeHitEff
 	return true;
 }
 
+/** 处理通知资源结束。 */
 void UHodgeGameplayAbility_Melee::OnNotifyResourceEnded(int32 OccurrenceId)
 {
 	if (DetectionTask) { DetectionTask->CloseWindow(OccurrenceId, true); }
 }
 
+/** 判断MeleeBatch当前。 */
 bool UHodgeGameplayAbility_Melee::IsMeleeBatchCurrent(const FHodgeHitDetectionBatch& Batch) const
 {
 	const FHodgeMeleeHitState* State = HitStates.Find(Batch.OccurrenceId);
@@ -255,6 +283,7 @@ bool UHodgeGameplayAbility_Melee::IsMeleeBatchCurrent(const FHodgeHitDetectionBa
 		DetectionTask && DetectionTask->IsBatchCurrent(Batch) && State && State->SessionHandle == Batch.SessionHandle;
 }
 
+/** 处理命中Results。 */
 void UHodgeGameplayAbility_Melee::OnHitResults(const FHodgeHitDetectionBatch& Batch)
 {
 	if (!IsMeleeBatchCurrent(Batch)) { return; }
@@ -265,12 +294,14 @@ void UHodgeGameplayAbility_Melee::OnHitResults(const FHodgeHitDetectionBatch& Ba
 	ProcessMeleeHitResults(Batch);
 }
 
+/** 检查该候选命中是否满足目标与执行约束。 */
 bool UHodgeGameplayAbility_Melee::CanApplyMeleeHit_Implementation(AActor* Target, const FHitResult& Hit,
 	const FHodgeHitEffectConfig& Binding) const
 {
 	return FHodgeDamageRules::CanDamage(GetAvatarActorFromActorInfo(), Target, Binding.bAllowFriendlyFire);
 }
 
+/** 构造Melee命中上下文。 */
 FGameplayEffectContextHandle UHodgeGameplayAbility_Melee::MakeMeleeHitContext(
 	const FHodgeHitDetectionBatch& Batch, const FHitResult& Hit) const
 {
@@ -292,14 +323,18 @@ FGameplayEffectContextHandle UHodgeGameplayAbility_Melee::MakeMeleeHitContext(
 	return Context;
 }
 
+/** 根据本次命中上下文构造实际效果规格。 */
 FGameplayEffectSpecHandle UHodgeGameplayAbility_Melee::BuildMeleeHitSpec(const FHodgeHitDetectionBatch& Batch,
 	const FHitResult& Hit, const FHodgeHitEffectConfig& Binding) const
 {
+	// 后续GAS操作使用的能力系统组件。
 	UAbilitySystemComponent* ASC = GetAbilitySystemComponentFromActorInfo();
+	// 按服务器权限区分本次处理分支。
 	if (!ASC || !CurrentActorInfo || !CurrentActorInfo->IsNetAuthority()) { return {}; }
 	// 使用窗口显式配置的项目伤害 GE，缺少配置时不创建替代效果。
 	if (!Binding.DamageEffect) { return {}; }
 	FGameplayEffectSpecHandle Spec = ASC->MakeOutgoingSpec(Binding.DamageEffect, GetAbilityLevel(), MakeMeleeHitContext(Batch, Hit));
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (!Spec.IsValid()) { return {}; }
 	FGameplayAbilitySpec* AbilitySpec = ASC->FindAbilitySpecFromHandle(CurrentSpecHandle);
 	// 完整 HitResult 先进入 Context，再执行 GA 的标签扩展与授予参数初始化。
@@ -311,6 +346,7 @@ FGameplayEffectSpecHandle UHodgeGameplayAbility_Melee::BuildMeleeHitSpec(const F
 	return Spec;
 }
 
+/** 消费检测得到的命中结果并提交允许的命中效果。 */
 void UHodgeGameplayAbility_Melee::ProcessMeleeHitResults_Implementation(const FHodgeHitDetectionBatch& Batch)
 {
 	if (!IsMeleeBatchCurrent(Batch)) { return; }
@@ -345,10 +381,12 @@ void UHodgeGameplayAbility_Melee::ProcessMeleeHitResults_Implementation(const FH
 	}
 }
 
+/** 提交Melee命中Effects。 */
 void UHodgeGameplayAbility_Melee::SubmitMeleeHitEffects(const FHodgeHitDetectionBatch& Batch,
     const FHitResult& Hit, const FHodgeHitEffectConfig& Binding, UAbilitySystemComponent* TargetASC,
     const FGameplayEffectSpecHandle& Spec)
 {
+    // 先检查对象与上下文，避免在依赖失效后继续处理。
     if (!IsMeleeBatchCurrent(Batch) || !IsValid(TargetASC) || !Spec.IsValid()) { return; }
     TWeakObjectPtr<AActor> Avatar = TargetASC->GetAvatarActor();
     if (auto* Defense = Avatar.IsValid() ? Avatar->FindComponentByClass<UHodgeDefenseComponent>() : nullptr)
@@ -371,10 +409,12 @@ void UHodgeGameplayAbility_Melee::SubmitMeleeHitEffects(const FHodgeHitDetection
     }
 }
 
+/** 按命中配置提交伤害效果与附带反应。 */
 void UHodgeGameplayAbility_Melee::ApplyMeleeHitEffects_Implementation(const FHodgeHitDetectionBatch& Batch,
 	const FHitResult& Hit, const FHodgeHitEffectConfig& Binding, UAbilitySystemComponent* TargetASC,
 	const FGameplayEffectSpecHandle& Spec)
 {
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (!IsMeleeBatchCurrent(Batch) || !IsValid(TargetASC) || !Spec.IsValid()) { return; }
 	UE_LOG(LogTemp, Verbose, TEXT("[HodgeNotify] Apply %d Target=%s"), Batch.OccurrenceId, *GetNameSafe(TargetASC->GetAvatarActor()));
 	// 使用目标 ASC 的 Avatar，Context 中仍保留原碰撞命中信息。
@@ -383,5 +423,6 @@ void UHodgeGameplayAbility_Melee::ApplyMeleeHitEffects_Implementation(const FHod
 	Target->SourceLocation.LiteralTransform = FTransform(Batch.SourceOrigin);
 	Target->TargetActorArray.Add(TargetASC->GetAvatarActor());
 	FGameplayAbilityTargetDataHandle TargetData(Target);
+	// 将构造的效果规格提交给GAS执行属性更新。
 	ApplyGameplayEffectSpecToTarget(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, Spec, TargetData);
 }

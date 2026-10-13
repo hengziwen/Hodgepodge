@@ -1,3 +1,6 @@
+/** @file HodgeDamageExecution.cpp
+ * @brief 实现伤害计算执行器相关的类型、接口与现有处理流程。
+ */
 // 111屎山代码来袭
 
 
@@ -25,6 +28,7 @@ struct FDamageStatics
 	// BaseDamage 的 Attribute 捕获定义。
 	FGameplayEffectAttributeCaptureDefinition BaseDamageDef;
 
+	/** 构造伤害静态计算辅助并初始化其默认状态。 */
 	FDamageStatics()
 	{
 		// 捕获 Source ASC 上 CombatSet 的 BaseDamage 属性。

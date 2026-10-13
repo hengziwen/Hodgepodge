@@ -1,3 +1,6 @@
+/** @file HodgeUIFoundationTests.cpp
+ * @brief 实现界面Foundation自动化测试相关的类型、接口与现有处理流程。
+ */
 #if WITH_DEV_AUTOMATION_TESTS
 #include "Misc/AutomationTest.h"
 #include "UI/Foundation/HodgePrimaryGameLayout.h"
@@ -8,6 +11,7 @@
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeUIClosedRootTest, "Hodge.UI.ClosedRootAndInvalidRequests",
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeUIClosedRootTest::RunTest(const FString& Parameters)
 {
     auto* Root = NewObject<UHodgePrimaryGameLayout>();
@@ -31,6 +35,7 @@ bool FHodgeUIClosedRootTest::RunTest(const FString& Parameters)
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeUINonHodgeInstanceTest, "Hodge.UI.ManagerScope",
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeUINonHodgeInstanceTest::RunTest(const FString& Parameters)
 {
     auto* Instance = NewObject<UGameInstance>();

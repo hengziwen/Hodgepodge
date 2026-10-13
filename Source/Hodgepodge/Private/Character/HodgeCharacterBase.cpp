@@ -1,4 +1,7 @@
-﻿/**
+﻿/** @file HodgeCharacterBase.cpp
+ * @brief 实现角色基类相关的类型、接口与现有处理流程。
+ */
+/**
  * @file HodgeCharacterBase.cpp
  * @brief AHodgeCharacterBase 类的实现
  *

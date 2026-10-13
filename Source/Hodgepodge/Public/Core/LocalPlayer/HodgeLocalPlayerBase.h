@@ -1,4 +1,7 @@
-﻿// **
+﻿/** @file HodgeLocalPlayerBase.h
+ * @brief 声明本地玩家状态入口相关的类型、接口与现有处理流程。
+ */
+// **
 //  * @file HodgeLocalPlayerBase.h
 //  * @brief UHodgeLocalPlayerBase 类的头文件
 //  *
@@ -39,6 +42,7 @@ public:
 	 * 当前为空实现,仅调用父类构造函数。
 	 * bIsPlayerViewEnabled 默认初始化为 true。
 	 */
+	/** 构造本地玩家状态入口并初始化其默认状态。 */
 	UHodgeLocalPlayerBase();
 
 
@@ -51,6 +55,7 @@ public:
 	 */
 	DECLARE_MULTICAST_DELEGATE_TwoParams(FPlayerControllerSetDelegate, UHodgeLocalPlayerBase* LocalPlayer,
 	                                     APlayerController* PlayerController);
+	// 事件玩家控制器设置对应的事件通知。
 	FPlayerControllerSetDelegate OnPlayerControllerSet;
 
 	/**
@@ -62,6 +67,7 @@ public:
 	 */
 	DECLARE_MULTICAST_DELEGATE_TwoParams(FPlayerStateSetDelegate, UHodgeLocalPlayerBase* LocalPlayer,
 	                                     APlayerState* PlayerState);
+	// 事件玩家状态设置对应的事件通知。
 	FPlayerStateSetDelegate OnPlayerStateSet;
 
 	/**
@@ -72,6 +78,7 @@ public:
 	 * - Pawn: 新分配的 Pawn 指针(可能是 ACharacter 或其他 Pawn 子类)
 	 */
 	DECLARE_MULTICAST_DELEGATE_TwoParams(FPlayerPawnSetDelegate, UHodgeLocalPlayerBase* LocalPlayer, APawn* Pawn);
+	// 事件玩家Pawn角色设置对应的事件通知。
 	FPlayerPawnSetDelegate OnPlayerPawnSet;
 
 	/**
@@ -84,6 +91,10 @@ public:
 	 * @param Delegate 要注册的回调函数
 	 * @return FDelegateHandle 用于后续通过 Remove() 取消注册
 	 */
+	/** 立即回调并注册事件玩家控制器设置。
+	 * @param Delegate 委托，由调用方传入。
+	 * @return 本次操作的句柄，调用方应按现有接口检查有效性。
+	 */
 	FDelegateHandle CallAndRegister_OnPlayerControllerSet(FPlayerControllerSetDelegate::FDelegate Delegate);
 
 	/**
@@ -95,6 +106,10 @@ public:
 	 * @param Delegate 要注册的回调函数
 	 * @return FDelegateHandle 用于后续通过 Remove() 取消注册
 	 */
+	/** 立即回调并注册事件玩家状态设置。
+	 * @param Delegate 委托，由调用方传入。
+	 * @return 本次操作的句柄，调用方应按现有接口检查有效性。
+	 */
 	FDelegateHandle CallAndRegister_OnPlayerStateSet(FPlayerStateSetDelegate::FDelegate Delegate);
 
 	/**
@@ -105,6 +120,10 @@ public:
 	 * 
 	 * @param Delegate 要注册的回调函数
 	 * @return FDelegateHandle 用于后续通过 Remove() 取消注册
+	 */
+	/** 立即回调并注册事件玩家Pawn角色设置。
+	 * @param Delegate 委托，由调用方传入。
+	 * @return 本次操作的句柄，调用方应按现有接口检查有效性。
 	 */
 	FDelegateHandle CallAndRegister_OnPlayerPawnSet(FPlayerPawnSetDelegate::FDelegate Delegate);
 
@@ -121,12 +140,21 @@ public:
 	 * @param StereoViewIndex 立体视图索引(用于VR/立体渲染)
 	 * @return true 表示成功获取投影数据,false 表示视图已禁用
 	 */
+	/** 获取投影数据。
+	 * @param Viewport 视口，由调用方传入。
+	 * @param ProjectionData 投影数据，由调用方传入。
+	 * @param StereoViewIndex Stereo视图索引，由调用方传入。
+	 * @return true表示本次检查或操作成功，false表示失败。
+	 */
 	virtual bool GetProjectionData(FViewport* Viewport, FSceneViewProjectionData& ProjectionData,
 	                               int32 StereoViewIndex) const override;
 
 	/**
 	 * @brief 查询玩家视图是否启用
 	 * @return true 表示视图启用,false 表示视图已禁用
+	 */
+	/** 判断玩家视图启用。
+	 * @return true表示满足该查询条件，false表示不满足。
 	 */
 	bool IsPlayerViewEnabled() const { return bIsPlayerViewEnabled; }
 
@@ -137,6 +165,9 @@ public:
 	 * 引擎不会为该玩家生成视口投影,画面将不会渲染该玩家的视点。
 	 * 
 	 * @param bInIsPlayerViewEnabled 是否启用玩家视图
+	 */
+	/** 设置状态判断玩家视图启用。
+	 * @param bInIsPlayerViewEnabled 是否输入状态判断玩家视图启用的控制标记。
 	 */
 	void SetIsPlayerViewEnabled(bool bInIsPlayerViewEnabled) { bIsPlayerViewEnabled = bInIsPlayerViewEnabled; }
 

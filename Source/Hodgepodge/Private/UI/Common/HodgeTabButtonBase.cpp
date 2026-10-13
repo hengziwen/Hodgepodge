@@ -1,3 +1,6 @@
+/** @file HodgeTabButtonBase.cpp
+ * @brief 实现标签页按钮相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "UI/Common/HodgeTabButtonBase.h"
@@ -10,6 +13,7 @@
 class UObject;
 struct FSlateBrush;
 
+/** 设置Icon来源Lazy对象。 */
 void UHodgeTabButtonBase::SetIconFromLazyObject(TSoftObjectPtr<UObject> LazyObject)
 {
 	if (LazyImage_Icon)
@@ -18,6 +22,7 @@ void UHodgeTabButtonBase::SetIconFromLazyObject(TSoftObjectPtr<UObject> LazyObje
 	}
 }
 
+/** 设置Icon画刷。 */
 void UHodgeTabButtonBase::SetIconBrush(const FSlateBrush& Brush)
 {
 	if (LazyImage_Icon)
@@ -26,6 +31,7 @@ void UHodgeTabButtonBase::SetIconBrush(const FSlateBrush& Brush)
 	}
 }
 
+/** 设置Tab标签信息。 */
 void UHodgeTabButtonBase::SetTabLabelInfo_Implementation(const FHodgeTabDescriptor& TabLabelInfo)
 {
 	SetButtonText(TabLabelInfo.TabText);

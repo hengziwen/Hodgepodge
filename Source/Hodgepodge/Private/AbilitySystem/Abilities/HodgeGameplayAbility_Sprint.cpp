@@ -1,3 +1,6 @@
+/** @file HodgeGameplayAbility_Sprint.cpp
+ * @brief 实现玩法能力Sprint奔跑相关的类型、接口与现有处理流程。
+ */
 #include "AbilitySystem/Abilities/HodgeGameplayAbility_Sprint.h"
 #include "AbilitySystem/Abilities/HodgeGameplayAbility_Dash.h"
 #include "AbilitySystem/AttributeSet/HodgeHealthSet.h"
@@ -19,11 +22,14 @@
 static TAutoConsoleVariable<int32> CVarHodgeSprintDebug(TEXT("Hodge.Movement.DebugSprint"), 0,
 	TEXT("Log Sprint lifecycle and input exit conditions."), ECVF_Cheat);
 
+/** 构造玩法能力Sprint奔跑并初始化其默认状态。 */
 UHodgeGameplayAbility_Sprint::UHodgeGameplayAbility_Sprint()
 { FGameplayTagContainer Tags = GetAssetTags(); Tags.AddTag(HodgeMovementTags::SprintAbility); SetAssetTags(Tags); }
 
+/** 按既有协议读写网络载荷及对象引用。 */
 bool FHodgeSprintPivotTargetData::NetSerialize(FArchive& Ar, UPackageMap* Map, bool& bSuccess)
 { Ar << IncomingDirection << DesiredDirection << StartingYaw << SessionId << SequenceId; bSuccess = !Ar.IsError(); return bSuccess; }
+/** 检查当前速度、方向与状态是否满足掉头起手条件。 */
 bool UHodgeGameplayAbility_Sprint::QualifiesPivot(FVector Velocity, FVector Desired, float MinimumSpeed, float Angle)
 {
 	FVector Direction;
@@ -32,16 +38,20 @@ bool UHodgeGameplayAbility_Sprint::QualifiesPivot(FVector Velocity, FVector Desi
 		HodgeFacing::NormalizeDirection(Desired, Direction) &&
 		FVector::DotProduct(Velocity.GetSafeNormal2D(), Direction) <= FMath::Cos(FMath::DegreesToRadians(Angle)) + KINDA_SMALL_NUMBER;
 }
+/** 判断掉头恢复Complete。 */
 bool UHodgeGameplayAbility_Sprint::IsPivotRecoveryComplete(float Position, float EndTime)
 { return FMath::IsFinite(Position) && FMath::IsFinite(EndTime) && EndTime > 0.f && Position >= EndTime; }
+/** 按当前输入与会话处理移动或掉头衔接。 */
 void UHodgeGameplayAbility_Sprint::ProcessMovementIntent(FVector Desired)
 {
+	// 根据当前生命周期状态决定是否继续执行。
 	if (!IsActive() || !bCommitted || !CurrentActorInfo || !CurrentActorInfo->IsLocallyControlled() ||
 		!IsMovementValid() || !Policy->IsSessionHeld(SessionId)) { return; }
 	UpdatePivotRecovery();
 	RequestPivot(GetAvatarActorFromActorInfo()->GetVelocity(), Desired);
 }
 
+/** 请求掉头。 */
 void UHodgeGameplayAbility_Sprint::RequestPivot(FVector Velocity, FVector Desired)
 {
 	if (!ExecutionProfile->bAllowSprintPivot || !ExecutionProfile->SprintPivotMontage || bPivoting ||
@@ -50,10 +60,12 @@ void UHodgeGameplayAbility_Sprint::RequestPivot(FVector Velocity, FVector Desire
 	Payload->DesiredDirection = Desired.GetSafeNormal2D(); Payload->SessionId = SessionId; Payload->SequenceId = PivotSequence + 1;
 	Payload->StartingYaw = GetAvatarActorFromActorInfo()->GetActorRotation().Yaw;
 	FGameplayAbilityTargetDataHandle Data(Payload);
+	// 按服务器权限区分本次处理分支。
 	if (!CurrentActorInfo->IsNetAuthority())
 	{ GetAbilitySystemComponentFromActorInfo()->ServerSetReplicatedTargetData(CurrentSpecHandle, CurrentActivationInfo.GetActivationPredictionKey(), Data, {}, GetAbilitySystemComponentFromActorInfo()->ScopedPredictionKey); }
 	HandleMovementFollowUp(Data);
 }
+/** 处理移动FollowUp。 */
 void UHodgeGameplayAbility_Sprint::HandleMovementFollowUp(const FGameplayAbilityTargetDataHandle& Data)
 {
 	if (!bCommitted || !IsMovementValid() || !Policy->IsSessionHeld(SessionId) || Data.Num() != 1 || !Data.Get(0) ||
@@ -63,6 +75,7 @@ void UHodgeGameplayAbility_Sprint::HandleMovementFollowUp(const FGameplayAbility
 	if (Payload->SessionId != SessionId || Payload->SequenceId != PivotSequence + 1 || Payload->IncomingDirection.ContainsNaN() ||
 		Payload->DesiredDirection.ContainsNaN() || !FMath::IsNearlyEqual(Payload->IncomingDirection.SizeSquared(), 1.f, .01f) ||
 		!FMath::IsNearlyEqual(Payload->DesiredDirection.SizeSquared(), 1.f, .01f)) { return; }
+	// 按服务器权限区分本次处理分支。
 	if (bPivoting)
 	{
 		// 远端请求可在旧动作恢复点前到达；保留同一会话的下一序号，之后重新验证。
@@ -78,6 +91,7 @@ void UHodgeGameplayAbility_Sprint::HandleMovementFollowUp(const FGameplayAbility
 		FVector::DotProduct(Payload->IncomingDirection, Velocity.GetSafeNormal2D()) < .8f) { return; }
 	PivotSequence = Payload->SequenceId; StartPivot(Payload->StartingYaw);
 }
+/** 开始本会话的根运动掉头并接入恢复时机。 */
 void UHodgeGameplayAbility_Sprint::StartPivot(float StartingYaw)
 {
 	const auto* Character = Cast<ACharacter>(GetAvatarActorFromActorInfo());
@@ -99,29 +113,36 @@ void UHodgeGameplayAbility_Sprint::StartPivot(float StartingYaw)
 	if (const auto* Instance = Character->GetMesh()->GetAnimInstance()->GetActiveInstanceForMontage(Montage))
 	{ PivotMontageInstanceId = Instance->GetInstanceID(); }
 }
+/** 释放掉头任务。 */
 void UHodgeGameplayAbility_Sprint::ReleasePivotTask()
 {
 	if (!PivotTask) { return; }
+	// 解除本对象的监听，避免旧生命周期回调继续进入。
 	PivotTask->OnCompleted.RemoveAll(this); PivotTask->OnInterrupted.RemoveAll(this); PivotTask->OnCancelled.RemoveAll(this);
 	PivotTask->EndTask(); PivotTask = nullptr;
 }
+/** 更新掉头恢复。 */
 void UHodgeGameplayAbility_Sprint::UpdatePivotRecovery()
 {
 	if (!bPivoting) { return; }
 	const auto* Character = Cast<ACharacter>(GetAvatarActorFromActorInfo());
+	// 当前网格使用的动画实例。
 	auto* Anim = Character && Character->GetMesh() ? Character->GetMesh()->GetAnimInstance() : nullptr;
 	const auto* Instance = Anim ? Anim->GetMontageInstanceForID(PivotMontageInstanceId) : nullptr;
 	if (Instance && !IsPivotRecoveryComplete(Instance->GetPosition(), ExecutionProfile->PivotRecoveryEndTime)) { return; }
 	bPivoting = false; PivotMontageInstanceId = INDEX_NONE; ReleasePivotTask();
+	// 后续GAS操作使用的能力系统组件。
 	auto* ASC = GetAbilitySystemComponentFromActorInfo();
 	if (Instance && ASC->GetAnimatingAbility() == this && ASC->GetCurrentMontage() == ExecutionProfile->SprintPivotMontage)
 	{ ASC->CurrentMontageStop(ExecutionProfile->SprintTurnBlendOutTime); }
 }
+/** 处理掉头已结束。 */
 void UHodgeGameplayAbility_Sprint::OnPivotFinished()
 {
 	bPivoting = false; PivotMontageInstanceId = INDEX_NONE;
 }
 
+/** 开始移动。 */
 void UHodgeGameplayAbility_Sprint::BeginMovement(const FHodgeMoveIntentSnapshot& Intent)
 {
 	PendingIntent = Intent;
@@ -143,6 +164,7 @@ void UHodgeGameplayAbility_Sprint::BeginMovement(const FHodgeMoveIntentSnapshot&
 		return;
 	}
 	FacingHandle = Rotation->AcquireBaseFacingMode(EHodgeCharacterFacingDriver::Movement, this);
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (!FacingHandle.IsValid()) { Finish(); return; }
 	UHodgeGameplayAbility_Dash* Dash = nullptr;
 	for (const FGameplayAbilitySpec& Spec : GetAbilitySystemComponentFromActorInfo()->GetActivatableAbilities())
@@ -157,6 +179,7 @@ void UHodgeGameplayAbility_Sprint::BeginMovement(const FHodgeMoveIntentSnapshot&
 	bPivoting = bEnding = false; PivotSequence = 0; NextPivotAt = 0.; PivotTask = nullptr;
 	PivotMontageInstanceId = INDEX_NONE; DeferredPivotData.Clear(); DeferredPivotExpiresAt = 0.;
 	SetMovementTag(HodgeMovementTags::Sprinting, true);
+	// 按当前对象生命周期建立状态监听。
 	AuthorityHandle = Policy->OnSprintAuthorityEnded.AddUObject(this, &ThisClass::OnAuthorityEnded);
 	AttackHandle = GetAbilitySystemComponentFromActorInfo()->RegisterGameplayTagEvent(HodgeGameplayTags::Status_Attack).AddUObject(this, &ThisClass::OnAttackStarted);
 	if (const auto* Health = GetAbilitySystemComponentFromActorInfo()->GetSet<UHodgeHealthSet>())
@@ -164,6 +187,7 @@ void UHodgeGameplayAbility_Sprint::BeginMovement(const FHodgeMoveIntentSnapshot&
 	if (auto* Hero = GetHeroComponentFromActorInfo()) { Hero->NotifySprintCommitted(SessionId); }
 	StartCue(HodgeMovementTags::SprintCue);
 }
+/** 更新移动。 */
 void UHodgeGameplayAbility_Sprint::UpdateMovement(float DeltaTime)
 {
 	if (!bCommitted) { BeginMovement(PendingIntent); return; }
@@ -189,17 +213,22 @@ void UHodgeGameplayAbility_Sprint::UpdateMovement(float DeltaTime)
 	else if (BlockedAt == 0.) { BlockedAt = Time; }
 	else if (Time - BlockedAt >= ExecutionProfile->BlockedExitDelay) { Finish(); }
 }
+/** 处理权威结束。 */
 void UHodgeGameplayAbility_Sprint::OnAuthorityEnded()
 {
 	if (CVarHodgeSprintDebug.GetValueOnGameThread()) { UE_LOG(LogTemp, Log, TEXT("[HodgeSprint] Authority policy ended SID=%d"), SessionId); }
 	Finish();
 }
+/** 处理攻击开始。 */
 void UHodgeGameplayAbility_Sprint::OnAttackStarted(FGameplayTag Tag, int32 Count) { if (Count > 0) { Finish(); } }
+/** 处理伤害。 */
 void UHodgeGameplayAbility_Sprint::OnDamage(AActor* Instigator, AActor* Causer, const FGameplayEffectSpec* Spec, float Magnitude, float Old, float New)
 { if (Magnitude > 0.f) { Finish(); } }
+/** 结束本次技能并释放其拥有的资源，再交还GAS生命周期。 */
 void UHodgeGameplayAbility_Sprint::EndAbility(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* Info,
 	FGameplayAbilityActivationInfo ActivationInfo, bool bReplicate, bool bCancelled)
 {
+	// 根据当前生命周期状态决定是否继续执行。
 	if (bEnding) { return; } bEnding = true;
 	if (CVarHodgeSprintDebug.GetValueOnGameThread() && Info)
 	{
@@ -213,6 +242,7 @@ void UHodgeGameplayAbility_Sprint::EndAbility(FGameplayAbilitySpecHandle Handle,
 	}
 	bPivoting = false;
 	DeferredPivotData.Clear(); ReleasePivotTask(); PivotMontageInstanceId = INDEX_NONE;
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (Info && Info->AbilitySystemComponent.IsValid() && ExecutionProfile &&
 		Info->AbilitySystemComponent->GetAnimatingAbility() == this && Info->AbilitySystemComponent->GetCurrentMontage() == ExecutionProfile->SprintPivotMontage)
 	{ Info->AbilitySystemComponent->CurrentMontageStop(ExecutionProfile->SprintTurnBlendOutTime); }

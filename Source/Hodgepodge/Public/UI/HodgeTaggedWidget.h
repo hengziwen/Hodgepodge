@@ -1,3 +1,6 @@
+/** @file HodgeTaggedWidget.h
+ * @brief 声明标签控制的界面控件相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
@@ -33,6 +36,9 @@ class UHodgeTaggedWidget : public UCommonUserWidget
 
 public:
 	// 构造支持 GameplayTag 可见性控制的 Widget。
+	/** 构造标签控制的界面控件并初始化其默认状态。
+	 * @param ObjectInitializer UE构造对象时传入的初始化器。
+	 */
 	UHodgeTaggedWidget(const FObjectInitializer& ObjectInitializer);
 
 	//~UWidget interface
@@ -40,6 +46,9 @@ public:
 	// 设置当前 Widget 希望使用的可见性状态。
 	// 除了记录外部代码希望设置的 Visibility，
 	// 最终显示状态还会受到 HiddenByTags 中 GameplayTag 的影响。
+	/** 设置可见性。
+	 * @param InVisibility 当前操作使用的控件可见性。
+	 */
 	virtual void SetVisibility(ESlateVisibility InVisibility) override;
 
 	//~End of UWidget interface
@@ -48,10 +57,12 @@ public:
 
 	// Widget 构造并进入实际使用状态时调用。
 	// 通常会在这里开始监听玩家身上与 HiddenByTags 相关的 GameplayTag 变化。
+	/** 在控件构建时接入界面数据和生命周期。 */
 	virtual void NativeConstruct() override;
 
 	// Widget 被销毁 / 移出使用状态时调用。
 	// 通常会在这里解除之前注册的 GameplayTag 监听，避免残留无效回调。
+	/** 在控件析构时解除界面监听与临时资源。 */
 	virtual void NativeDestruct() override;
 
 	//~End of UUserWidget interface
@@ -86,5 +97,6 @@ protected:
 private:
 	// 当当前 Widget 所监听的 GameplayTag 状态发生变化时调用。
 	// 根据 HiddenByTags 重新计算并刷新 Widget 的最终 Visibility。
+	/** 处理Watched标签变化。 */
 	void OnWatchedTagsChanged();
 };

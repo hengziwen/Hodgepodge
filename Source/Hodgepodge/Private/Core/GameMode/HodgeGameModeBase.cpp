@@ -1,3 +1,6 @@
+/** @file HodgeGameModeBase.cpp
+ * @brief 实现项目GameMode相关的类型、接口与现有处理流程。
+ */
 // HodgeGameModeBase 的实现文件。
 #include "Core/GameMode/HodgeGameModeBase.h"
 #include "AbilitySystem/Stats/HodgeAttributeCoordinator.h"
@@ -44,6 +47,7 @@ AHodgeGameModeBase::AHodgeGameModeBase(const FObjectInitializer& ObjectInitializ
 	HUDClass = AHodgeHUD::StaticClass();
 }
 
+/** 获取Pawn角色数据关联控制器。 */
 const UHodgePawnData* AHodgeGameModeBase::GetPawnDataForController(const AController* InController) const
 {
 	// 优先从 Controller 对应的 PlayerState 中获取已经设置好的 PawnData。
@@ -85,6 +89,7 @@ const UHodgePawnData* AHodgeGameModeBase::GetPawnDataForController(const AContro
 	return nullptr;
 }
 
+/** 初始化游戏。 */
 void AHodgeGameModeBase::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
 {
 	// 执行父类的游戏初始化流程。
@@ -94,6 +99,7 @@ void AHodgeGameModeBase::InitGame(const FString& MapName, const FString& Options
 	GetWorld()->GetTimerManager().SetTimerForNextTick(this, &ThisClass::HandleMatchAssignmentIfNotExpectingOne);
 }
 
+/** 处理匹配AssignmentIfNotExpectingOne。 */
 void AHodgeGameModeBase::HandleMatchAssignmentIfNotExpectingOne()
 {
 	FPrimaryAssetId ExperienceId;
@@ -191,11 +197,13 @@ void AHodgeGameModeBase::HandleMatchAssignmentIfNotExpectingOne()
 	OnMatchAssignmentGiven(ExperienceId, ExperienceIdSource);
 }
 
+/** 尝试Dedicated服务器Login。 */
 bool AHodgeGameModeBase::TryDedicatedServerLogin()
 {
 	// 获取项目默认地图，用于判断 Dedicated Server 是否正在默认地图上启动。
 	FString DefaultMap = UGameMapsSettings::GetGameDefaultMap();
 
+	// 本次操作所在的世界。
 	UWorld* World = GetWorld();
 	UGameInstance* GameInstance = GetGameInstance();
 
@@ -359,6 +367,7 @@ void AHodgeGameModeBase::OnMatchAssignmentGiven(FPrimaryAssetId ExperienceId, co
 	}
 }
 
+/** 处理Experience配置已加载。 */
 void AHodgeGameModeBase::OnExperienceLoaded(const UHodgeExperienceDefinition* CurrentExperience)
 {
 	// Experience 加载完成后，为已经连接但尚未生成 Pawn 的玩家补充生成 Pawn。
@@ -380,6 +389,7 @@ void AHodgeGameModeBase::OnExperienceLoaded(const UHodgeExperienceDefinition* Cu
 	}
 }
 
+/** 判断Experience配置已加载。 */
 bool AHodgeGameModeBase::IsExperienceLoaded() const
 {
 	// GameState 必须存在，因为 ExperienceManagerComponent 挂载在 GameState 上。
@@ -394,6 +404,7 @@ bool AHodgeGameModeBase::IsExperienceLoaded() const
 	return ExperienceComponent->IsExperienceLoaded();
 }
 
+/** 获取默认Pawn角色类型关联控制器。 */
 UClass* AHodgeGameModeBase::GetDefaultPawnClassForController_Implementation(AController* InController)
 {
 	// 优先根据 Controller 对应的 PawnData 决定 Pawn 类型。
@@ -410,6 +421,7 @@ UClass* AHodgeGameModeBase::GetDefaultPawnClassForController_Implementation(ACon
 	return Super::GetDefaultPawnClassForController_Implementation(InController);
 }
 
+/** 生成默认Pawn角色时刻变换。 */
 APawn* AHodgeGameModeBase::SpawnDefaultPawnAtTransform_Implementation(AController* NewPlayer,
                                                                       const FTransform& SpawnTransform)
 {
@@ -467,12 +479,14 @@ APawn* AHodgeGameModeBase::SpawnDefaultPawnAtTransform_Implementation(AControlle
 	return nullptr;
 }
 
+/** 判断是否应生成时刻起始Spot。 */
 bool AHodgeGameModeBase::ShouldSpawnAtStartSpot(AController* Player)
 {
 	// 不使用 Controller 自带的 StartSpot，出生点由其他生成管理逻辑决定。
 	return false;
 }
 
+/** 处理Starting新玩家。 */
 void AHodgeGameModeBase::HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer)
 {
 	// Experience 加载完成后才允许正式处理新玩家，否则暂时等待 OnExperienceLoaded。
@@ -483,6 +497,7 @@ void AHodgeGameModeBase::HandleStartingNewPlayer_Implementation(APlayerControlle
 	}
 }
 
+/** 为指定控制器选择当前游戏模式允许的出生点。 */
 AActor* AHodgeGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
 {
 	// 可以在这里接入 PlayerSpawningManagerComponent 统一管理玩家出生点，目前暂未启用。
@@ -496,6 +511,7 @@ AActor* AHodgeGameModeBase::ChoosePlayerStart_Implementation(AController* Player
 	return Super::ChoosePlayerStart_Implementation(Player);
 }
 
+/** 结束Restart玩家。 */
 void AHodgeGameModeBase::FinishRestartPlayer(AController* NewPlayer, const FRotator& StartRotation)
 {
 	// 可以在这里交给 PlayerSpawningManagerComponent 完成最终重生逻辑，目前暂未启用。
@@ -509,12 +525,14 @@ void AHodgeGameModeBase::FinishRestartPlayer(AController* NewPlayer, const FRota
 	Super::FinishRestartPlayer(NewPlayer, StartRotation);
 }
 
+/** 检查当前玩家是否允许重新生成角色。 */
 bool AHodgeGameModeBase::PlayerCanRestart_Implementation(APlayerController* Player)
 {
 	// 玩家 Controller 的重生检查统一交给 ControllerCanRestart，同时兼容 Bot。
 	return ControllerCanRestart(Player);
 }
 
+/** 检查当前控制器是否满足重新生成角色的条件。 */
 bool AHodgeGameModeBase::ControllerCanRestart(AController* Controller)
 {
 	// 玩家 Controller 使用 AGameModeBase 原有的重生条件进行检查。
@@ -544,6 +562,7 @@ bool AHodgeGameModeBase::ControllerCanRestart(AController* Controller)
 	return true;
 }
 
+/** 初始化游戏状态。 */
 void AHodgeGameModeBase::InitGameState()
 {
 	// 先执行父类的 GameState 初始化流程。
@@ -559,6 +578,7 @@ void AHodgeGameModeBase::InitGameState()
 		FOnHodgeExperienceLoaded::FDelegate::CreateUObject(this, &ThisClass::OnExperienceLoaded));
 }
 
+/** 按当前游戏模式完成玩家通用初始化。 */
 void AHodgeGameModeBase::GenericPlayerInitialization(AController* NewPlayer)
 {
 	// 执行父类的通用玩家初始化逻辑。
@@ -568,6 +588,7 @@ void AHodgeGameModeBase::GenericPlayerInitialization(AController* NewPlayer)
 	OnGameModePlayerInitialized.Broadcast(this, NewPlayer);
 }
 
+/** 请求玩家Restart下次帧。 */
 void AHodgeGameModeBase::RequestPlayerRestartNextFrame(AController* Controller, bool bForceReset)
 {
 	// 如果要求强制重置，则先放弃当前 Pawn 并重置 Controller。
@@ -589,12 +610,14 @@ void AHodgeGameModeBase::RequestPlayerRestartNextFrame(AController* Controller, 
 	// }
 }
 
+/** 更新玩家起始Spot。 */
 bool AHodgeGameModeBase::UpdatePlayerStartSpot(AController* Player, const FString& Portal, FString& OutErrorMessage)
 {
 	// 此阶段暂不确定最终出生点，等待 PostLogin 等后续流程完成玩家相关数据初始化后再真正生成玩家。
 	return true;
 }
 
+/** 处理当前控制器重新生成角色失败的情况。 */
 void AHodgeGameModeBase::FailedToRestartPlayer(AController* NewPlayer)
 {
 	// 先执行父类的重生失败处理。
@@ -634,6 +657,7 @@ void AHodgeGameModeBase::FailedToRestartPlayer(AController* NewPlayer)
 	}
 }
 
+/** 按游戏模式的既有生成流程重新建立玩家角色。 */
 void AHodgeGameModeBase::RestartPlayer(AController* NewPlayer)
 {
     if (NewPlayer && !NewPlayer->GetPawn())

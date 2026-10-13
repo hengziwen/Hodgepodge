@@ -1,3 +1,6 @@
+/** @file HodgeWeaponPresentationProfile.cpp
+ * @brief 实现武器显隐与手持配置相关的类型、接口与现有处理流程。
+ */
 #include "Equipment/HodgeWeaponPresentationProfile.h"
 #include "Engine/SkeletalMesh.h"
 #if WITH_EDITOR
@@ -5,6 +8,7 @@
 #endif
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeWeaponPresentationProfile)
 
+/** 检查当前配置并收集诊断。 */
 bool UHodgeWeaponPresentationProfile::Validate(TArray<FText>& Errors) const
 {
 	const int32 Before = Errors.Num();
@@ -22,6 +26,7 @@ bool UHodgeWeaponPresentationProfile::Validate(TArray<FText>& Errors) const
 	return Before == Errors.Num();
 }
 #if WITH_EDITOR
+/** 在编辑器校验当前配置并收集诊断。 */
 EDataValidationResult UHodgeWeaponPresentationProfile::IsDataValid(FDataValidationContext& Context) const
 {
 	TArray<FText> Errors;

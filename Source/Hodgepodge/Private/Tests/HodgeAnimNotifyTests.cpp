@@ -1,3 +1,6 @@
+/** @file HodgeAnimNotifyTests.cpp
+ * @brief 实现动画通知自动化测试相关的类型、接口与现有处理流程。
+ */
 #if WITH_DEV_AUTOMATION_TESTS
 #include "Animation/HodgeCombatAnimNotifies.h"
 #include "AbilitySystem/Abilities/HodgeGameplayAbility_Melee.h"
@@ -7,6 +10,7 @@
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeNotifyConfigurationTest, "Hodge.AnimNotify.Configuration",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeNotifyConfigurationTest::RunTest(const FString& Parameters)
 {
 	FHodgeAnimHitConfig Hit;
@@ -27,6 +31,7 @@ bool FHodgeNotifyConfigurationTest::RunTest(const FString& Parameters)
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeNotifyContextTest, "Hodge.AnimNotify.MontageIdentity",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeNotifyContextTest::RunTest(const FString& Parameters)
 {
 	FAnimNotifyEvent Event;

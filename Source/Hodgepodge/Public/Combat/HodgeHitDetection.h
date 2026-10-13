@@ -1,3 +1,6 @@
+/** @file HodgeHitDetection.h
+ * @brief 声明命中检测配置相关的类型、接口与现有处理流程。
+ */
 #pragma once
 
 #include "CoreMinimal.h"
@@ -13,24 +16,33 @@ class UHodgeHitDetectionStrategy;
 class UHodgeWeaponInstance;
 struct FCollisionQueryParams;
 
+/** 定义命中几何Mode的可选状态与配置取值。 */
 UENUM(BlueprintType)
-enum class EHodgeHitGeometryMode : uint8 { ExistingSource, ConfiguredShape };
+enum class EHodgeHitGeometryMode : uint8 { /* Existing来源选项。 */ ExistingSource, /* Configured形状选项。 */ ConfiguredShape };
+/** 定义命中形状的可选状态与配置取值。 */
 UENUM(BlueprintType)
-enum class EHodgeHitShape : uint8 { Sphere, Box, Capsule };
+enum class EHodgeHitShape : uint8 { /* 球体选项。 */ Sphere, /* 盒体选项。 */ Box, /* 胶囊选项。 */ Capsule };
+/** 定义命中锚点Kind的可选状态与配置取值。 */
 UENUM(BlueprintType)
-enum class EHodgeHitAnchorKind : uint8 { AvatarRoot, RegisteredSource, ExecutionTransform, ExecutionTarget };
+enum class EHodgeHitAnchorKind : uint8 { /* 表现角色根节点选项。 */ AvatarRoot, /* Registered来源选项。 */ RegisteredSource, /* 执行变换选项。 */ ExecutionTransform, /* 执行目标选项。 */ ExecutionTarget };
+/** 定义命中变换策略的可选状态与配置取值。 */
 UENUM(BlueprintType)
-enum class EHodgeHitTransformPolicy : uint8 { Follow, SnapshotOnEventEnter };
+enum class EHodgeHitTransformPolicy : uint8 { /* Follow选项。 */ Follow, /* 快照事件事件Enter选项。 */ SnapshotOnEventEnter };
+/** 定义命中查询Mode的可选状态与配置取值。 */
 UENUM(BlueprintType)
-enum class EHodgeHitQueryMode : uint8 { Sweep, Overlap };
+enum class EHodgeHitQueryMode : uint8 { /* 扫掠选项。 */ Sweep, /* 重叠选项。 */ Overlap };
+/** 定义命中采样Mode的可选状态与配置取值。 */
 UENUM(BlueprintType)
-enum class EHodgeHitSampleMode : uint8 { EveryFrame, OnceOnEnter };
+enum class EHodgeHitSampleMode : uint8 { /* Every帧选项。 */ EveryFrame, /* Once事件Enter选项。 */ OnceOnEnter };
+/** 定义命中筛选帧的可选状态与配置取值。 */
 UENUM(BlueprintType)
-enum class EHodgeHitFilterFrame : uint8 { Caster, DetectionAnchor };
+enum class EHodgeHitFilterFrame : uint8 { /* Caster选项。 */ Caster, /* 检测锚点选项。 */ DetectionAnchor };
+/** 定义命中目标策略的可选状态与配置取值。 */
 UENUM(BlueprintType)
-enum class EHodgeHitTargetPolicy : uint8 { AnyInVolume, LockedTargetInVolume, ConfirmedTarget };
+enum class EHodgeHitTargetPolicy : uint8 { /* Any输入Volume选项。 */ AnyInVolume, /* 锁定目标输入Volume选项。 */ LockedTargetInVolume, /* Confirmed目标选项。 */ ConfirmedTarget };
+/** 定义命中结果Kind的可选状态与配置取值。 */
 UENUM(BlueprintType)
-enum class EHodgeHitResultKind : uint8 { Sweep, Overlap, ConfirmedTarget };
+enum class EHodgeHitResultKind : uint8 { /* 扫掠选项。 */ Sweep, /* 重叠选项。 */ Overlap, /* Confirmed目标选项。 */ ConfirmedTarget };
 
 /** 技能自己的检测体；尺寸不写回角色组件或武器来源。 */
 USTRUCT(BlueprintType)
@@ -70,6 +82,10 @@ struct HODGEPODGE_API FHodgeHitVolumeConfig
 	// 限制运行期锚点与施法者的距离，配置本身来自服务器资产。
 	// 配置锚点离施法者允许的最大距离，单位厘米，创建和采样时检查。
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(ClampMin="1", Units="cm")) float MaxAnchorDistance = 5000.f;
+	/** 检查当前配置并收集诊断。
+	 * @param Errors 收集配置或执行失败的诊断。
+	 * @return true表示本次检查或操作成功，false表示失败。
+	 */
 	bool Validate(TArray<FText>& Errors) const;
 };
 
@@ -115,11 +131,17 @@ struct HODGEPODGE_API FHodgeHitSource
 // 每个会话独立保存上一帧几何，策略类默认对象不保存运行状态。
 struct FHodgeHitGeometry
 {
+	// Points的记录集合。
 	TArray<FVector> Points;
+	// 变换的几何或变换数据。
 	FTransform Transform = FTransform::Identity;
+	// 盒体Extent的几何或变换数据。
 	FVector BoxExtent = FVector::ZeroVector;
+	// 形状的枚举配置或当前取值。
 	EHodgeHitShape Shape = EHodgeHitShape::Sphere;
+	// 半径的数值或阈值。
 	float Radius = 0.f;
+	// Half高度的数值或阈值。
 	float HalfHeight = 0.f;
 };
 
@@ -129,6 +151,7 @@ class HODGEPODGE_API UHodgeHitDetectionProfile : public UDataAsset
 {
 	GENERATED_BODY()
 public:
+	/** 构造命中检测配置并初始化其默认状态。 */
 	UHodgeHitDetectionProfile();
 
 	// 默认只查询 Pawn；项目使用自定义受击通道时在此调整。
@@ -168,8 +191,16 @@ public:
 	// 明确用于真实连续冲刺的大位移扫掠；瞬移后应重置几何历史以免扫伤沿途。
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) bool bContinuousMotion = false;
 
+	/** 检查当前配置并收集诊断。
+	 * @param Errors 收集配置或执行失败的诊断。
+	 * @return true表示本次检查或操作成功，false表示失败。
+	 */
 	bool Validate(TArray<FText>& Errors) const;
 #if WITH_EDITOR
+	/** 在编辑器校验当前配置并收集诊断。
+	 * @param Context 本次操作的上下文。
+	 * @return 当前配置的校验结果。
+	 */
 	virtual EDataValidationResult IsDataValid(FDataValidationContext& Context) const override;
 #endif
 };
@@ -202,6 +233,7 @@ struct HODGEPODGE_API FHodgeHitDetectionRequest
 
 	// 本次直接解析的组件，仅供执行入口使用，不需要全局来源注册。
 	UPROPERTY() TWeakObjectPtr<USceneComponent> DirectComponent;
+	// Direct来源的数据或对象引用。
 	UPROPERTY() FHodgeHitSource DirectSource;
 
 	// 本次请求额外忽略的 Actor 弱引用列表，不改变伤害资格规则。
@@ -242,8 +274,11 @@ USTRUCT(BlueprintType)
 struct HODGEPODGE_API FHodgeHitEffectConfig
 {
 	GENERATED_BODY()
+	// 控制是否允许BeDodged的状态标记。
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Defense") bool bCanBeDodged = true;
+	// 控制是否允许Trigger完美闪避闪避的状态标记。
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Defense") bool bCanTriggerPerfectDodge = true;
+	// 受击的数据或对象引用。
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Reaction") FHodgeHitReactionConfig Reaction;
 	// 显式伤害 GE，默认生命伤害要求 Instant 且包含 HodgeDamageExecution。
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) TSubclassOf<UGameplayEffect> DamageEffect;
@@ -269,33 +304,80 @@ class HODGEPODGE_API UHodgeHitDetectionStrategy : public UObject
 {
 	GENERATED_BODY()
 public:
+	/** 采集当前动画或测试世界的状态。
+	 * @param Component 组件，由调用方传入。
+	 * @param Source 本次操作的来源。
+	 * @param OutGeometry 输出几何。
+	 * @return true表示本次检查或操作成功，false表示失败。
+	 */
 	virtual bool Capture(const USceneComponent* Component, const FHodgeHitSource& Source,
 		FHodgeHitGeometry& OutGeometry) const PURE_VIRTUAL(UHodgeHitDetectionStrategy::Capture, return false;);
+	/** 按当前命中配置采集候选结果。
+	 * @param World 本次操作所在的世界。
+	 * @param Source 本次操作的来源。
+	 * @param Profile 当前操作使用的配置对象。
+	 * @param Previous 更新前的状态。
+	 * @param Current 当前，由调用方传入。
+	 * @param Params 参数，由调用方传入。
+	 * @param OutHits 输出Hits。
+	 */
 	virtual void Detect(UWorld* World, const FHodgeHitSource& Source, const UHodgeHitDetectionProfile* Profile,
 		const FHodgeHitGeometry& Previous, const FHodgeHitGeometry& Current,
 		const FCollisionQueryParams& Params, TArray<FHitResult>& OutHits) const
 		PURE_VIRTUAL(UHodgeHitDetectionStrategy::Detect, );
 };
 
+/** 封装插槽扫掠Strategy的状态与操作接口。 */
 UCLASS()
 class HODGEPODGE_API UHodgeSocketSweepStrategy : public UHodgeHitDetectionStrategy
 {
 	GENERATED_BODY()
 public:
+	/** 采集当前动画或测试世界的状态。
+	 * @param Component 组件，由调用方传入。
+	 * @param Source 本次操作的来源。
+	 * @param OutGeometry 输出几何。
+	 * @return true表示本次检查或操作成功，false表示失败。
+	 */
 	virtual bool Capture(const USceneComponent* Component, const FHodgeHitSource& Source,
 		FHodgeHitGeometry& OutGeometry) const override;
+	/** 按当前命中配置采集候选结果。
+	 * @param World 本次操作所在的世界。
+	 * @param Source 本次操作的来源。
+	 * @param Profile 当前操作使用的配置对象。
+	 * @param Previous 更新前的状态。
+	 * @param Current 当前，由调用方传入。
+	 * @param Params 参数，由调用方传入。
+	 * @param OutHits 输出Hits。
+	 */
 	virtual void Detect(UWorld* World, const FHodgeHitSource& Source, const UHodgeHitDetectionProfile* Profile,
 		const FHodgeHitGeometry& Previous, const FHodgeHitGeometry& Current,
 		const FCollisionQueryParams& Params, TArray<FHitResult>& OutHits) const override;
 };
 
+/** 封装盒体扫掠Strategy的状态与操作接口。 */
 UCLASS()
 class HODGEPODGE_API UHodgeBoxSweepStrategy : public UHodgeHitDetectionStrategy
 {
 	GENERATED_BODY()
 public:
+	/** 采集当前动画或测试世界的状态。
+	 * @param Component 组件，由调用方传入。
+	 * @param Source 本次操作的来源。
+	 * @param OutGeometry 输出几何。
+	 * @return true表示本次检查或操作成功，false表示失败。
+	 */
 	virtual bool Capture(const USceneComponent* Component, const FHodgeHitSource& Source,
 		FHodgeHitGeometry& OutGeometry) const override;
+	/** 按当前命中配置采集候选结果。
+	 * @param World 本次操作所在的世界。
+	 * @param Source 本次操作的来源。
+	 * @param Profile 当前操作使用的配置对象。
+	 * @param Previous 更新前的状态。
+	 * @param Current 当前，由调用方传入。
+	 * @param Params 参数，由调用方传入。
+	 * @param OutHits 输出Hits。
+	 */
 	virtual void Detect(UWorld* World, const FHodgeHitSource& Source, const UHodgeHitDetectionProfile* Profile,
 		const FHodgeHitGeometry& Previous, const FHodgeHitGeometry& Current,
 		const FCollisionQueryParams& Params, TArray<FHitResult>& OutHits) const override;
@@ -307,8 +389,23 @@ class HODGEPODGE_API UHodgeShapeQueryStrategy : public UHodgeHitDetectionStrateg
 {
 	GENERATED_BODY()
 public:
+	/** 采集当前动画或测试世界的状态。
+	 * @param Component 组件，由调用方传入。
+	 * @param Source 本次操作的来源。
+	 * @param OutGeometry 输出几何。
+	 * @return true表示本次检查或操作成功，false表示失败。
+	 */
 	virtual bool Capture(const USceneComponent* Component, const FHodgeHitSource& Source,
 		FHodgeHitGeometry& OutGeometry) const override;
+	/** 按当前命中配置采集候选结果。
+	 * @param World 本次操作所在的世界。
+	 * @param Source 本次操作的来源。
+	 * @param Profile 当前操作使用的配置对象。
+	 * @param Previous 更新前的状态。
+	 * @param Current 当前，由调用方传入。
+	 * @param Params 参数，由调用方传入。
+	 * @param OutHits 输出Hits。
+	 */
 	virtual void Detect(UWorld* World, const FHodgeHitSource& Source, const UHodgeHitDetectionProfile* Profile,
 		const FHodgeHitGeometry& Previous, const FHodgeHitGeometry& Current,
 		const FCollisionQueryParams& Params, TArray<FHitResult>& OutHits) const override;

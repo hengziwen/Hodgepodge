@@ -1,3 +1,6 @@
+/** @file GameFeatureAction_AddGameplayCuePath.h
+ * @brief 声明GameFeature Cue目录配置动作相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 // 防止头文件被重复包含。
@@ -26,16 +29,24 @@ class UGameFeatureAction_AddGameplayCuePath final : public UGameFeatureAction
 
 public:
 	// 构造函数。
+	/** 构造游戏功能扩展动作添加玩法GameplayCue路径并初始化其默认状态。 */
 	UGameFeatureAction_AddGameplayCuePath();
 
 	//~UObject interface
 #if WITH_EDITOR
 	// 编辑器下验证 Gameplay Cue 路径配置是否有效。
+	/** 在编辑器校验当前配置并收集诊断。
+	 * @param Context 本次操作的上下文。
+	 * @return 当前配置的校验结果。
+	 */
 	virtual EDataValidationResult IsDataValid(class FDataValidationContext& Context) const override;
 #endif
 	//~End of UObject interface
 
 	// 获取当前 GameFeature 配置的 Gameplay Cue 目录列表。
+	/** 获取DirectoryPaths目标添加。
+	 * @return DirectoryPaths目标添加的当前值或引用。
+	 */
 	const TArray<FDirectoryPath>& GetDirectoryPathsToAdd() const { return DirectoryPathsToAdd; }
 
 private:
@@ -44,5 +55,6 @@ private:
 	// 这些目录路径相对于项目的 Content 目录。
 	UPROPERTY(EditAnywhere, Category = "Game Feature | Gameplay Cues",
 		meta = (RelativeToGameContentDir, LongPackageName))
+	// DirectoryPaths目标添加的记录集合。
 	TArray<FDirectoryPath> DirectoryPathsToAdd;
 };

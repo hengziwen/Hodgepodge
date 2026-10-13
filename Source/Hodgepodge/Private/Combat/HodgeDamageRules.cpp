@@ -1,3 +1,6 @@
+/** @file HodgeDamageRules.cpp
+ * @brief 实现伤害目标过滤规则相关的类型、接口与现有处理流程。
+ */
 #include "Combat/HodgeDamageRules.h"
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemGlobals.h"
@@ -9,6 +12,10 @@
 
 namespace
 {
+	/** 获取队伍。
+	 * @param Actor 本次操作关联的Actor。
+	 * @return 队伍的当前值或引用。
+	 */
 	FGenericTeamId GetTeam(const AActor* Actor)
 	{
 		if (const auto* Agent = Cast<IGenericTeamAgentInterface>(Actor)) { return Agent->GetGenericTeamId(); }
@@ -20,8 +27,10 @@ namespace
 	}
 }
 
+/** 检查是否允许伤害。 */
 bool FHodgeDamageRules::CanDamage(const AActor* Source, const AActor* Target, bool bAllowFriendlyFire)
 {
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (!IsValid(Source) || !IsValid(Target) || Source == Target) { return false; }
 	const UAbilitySystemComponent* SourceASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(Source);
 	const UAbilitySystemComponent* TargetASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(Target);

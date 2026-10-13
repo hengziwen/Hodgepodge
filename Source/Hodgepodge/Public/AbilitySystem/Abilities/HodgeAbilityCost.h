@@ -1,3 +1,6 @@
+/** @file HodgeAbilityCost.h
+ * @brief 声明技能消耗策略相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
@@ -29,6 +32,7 @@ class HODGEPODGE_API UHodgeAbilityCost : public UObject
 
 public:
 	// AbilityCost 作为对象配置存在时使用的默认构造函数。
+	/** 构造技能消耗策略并初始化其默认状态。 */
 	UHodgeAbilityCost()
 	{
 	}
@@ -46,6 +50,13 @@ public:
 	 *
 	 * @return true 表示当前资源足够，可以支付该消耗。
 	 * @return false 表示资源不足，Ability 不应该因为这项 Cost 被激活。
+	 */
+	/** 检查消耗。
+	 * @param Ability 能力，由调用方传入。
+	 * @param Handle 对应操作或能力的句柄。
+	 * @param ActorInfo 本次GAS调用关联的ASC、Owner与Avatar信息。
+	 * @param OptionalRelevantTags OptionalRelevant标签，用于对应标签查询或匹配。
+	 * @return true表示本次检查或操作成功，false表示失败。
 	 */
 	virtual bool CheckCost(const UHodgeGameplayAbility* Ability, const FGameplayAbilitySpecHandle Handle,
 	                       const FGameplayAbilityActorInfo* ActorInfo,
@@ -68,6 +79,12 @@ public:
 	 *
 	 * Ability 和 ActorInfo 进入函数时保证不为空。
 	 */
+	/** 应用消耗。
+	 * @param Ability 能力，由调用方传入。
+	 * @param Handle 对应操作或能力的句柄。
+	 * @param ActorInfo 本次GAS调用关联的ASC、Owner与Avatar信息。
+	 * @param ActivationInfo 本次技能激活与预测信息。
+	 */
 	virtual void ApplyCost(const UHodgeGameplayAbility* Ability, const FGameplayAbilitySpecHandle Handle,
 	                       const FGameplayAbilityActorInfo* ActorInfo,
 	                       const FGameplayAbilityActivationInfo ActivationInfo)
@@ -76,6 +93,9 @@ public:
 	}
 
 	// 返回该 Cost 是否只应该在 Ability 成功命中后才真正扣除。
+	/** 判断是否应Only应用消耗事件命中。
+	 * @return true表示满足该查询条件，false表示不满足。
+	 */
 	bool ShouldOnlyApplyCostOnHit() const { return bOnlyApplyCostOnHit; }
 
 protected:

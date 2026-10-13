@@ -1,3 +1,6 @@
+/** @file HodgeLocomotionLab.cpp
+ * @brief 实现移动动画实验场景相关的类型、接口与现有处理流程。
+ */
 #include "CodexText/HodgeLocomotionLab.h"
 #include "CodexText/HodgeALSLocomotion.h"
 #include "CodexText/HodgeGroundedLocomotion.h"
@@ -24,12 +27,14 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeLocomotionLab)
 
+/** 构造移动表现实验场景组件并初始化其默认状态。 */
 UHodgeLocomotionLabComponent::UHodgeLocomotionLabComponent()
 {
     PrimaryComponentTick.bCanEverTick = true;
     PrimaryComponentTick.TickGroup = TG_PrePhysics;
 }
 
+/** 进入世界运行阶段并接入本对象的生命周期依赖。 */
 void UHodgeLocomotionLabComponent::BeginPlay()
 {
     Super::BeginPlay();
@@ -44,6 +49,7 @@ void UHodgeLocomotionLabComponent::BeginPlay()
     }
 }
 
+/** 设置战斗朝向。 */
 void UHodgeLocomotionLabComponent::SetCombatFacing(bool bEnabled)
 {
     bCombatFacing = bEnabled;
@@ -57,6 +63,7 @@ void UHodgeLocomotionLabComponent::SetCombatFacing(bool bEnabled)
     }
 }
 
+/** 设置行走。 */
 void UHodgeLocomotionLabComponent::SetWalking(bool bEnabled)
 {
     bWalking = bEnabled;
@@ -66,10 +73,12 @@ void UHodgeLocomotionLabComponent::SetWalking(bool bEnabled)
     }
 }
 
+/** 更新组件。 */
 void UHodgeLocomotionLabComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
     ACharacter* Character = Cast<ACharacter>(GetOwner());
+    // 玩家控制器对象。
     APlayerController* PC = Character ? Cast<APlayerController>(Character->GetController()) : nullptr;
     if (!PC || !PC->IsLocalController()) return;
     if (bKeyboardControlsEnabled)
@@ -108,6 +117,7 @@ void UHodgeLocomotionLabComponent::TickComponent(float DeltaTime, ELevelTick Tic
     }
 }
 
+/** 初始化游戏。 */
 void AHodgeLocomotionLabMode::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
 {
     UAssetManager::Get().ScanPathsForPrimaryAssets(FPrimaryAssetType(TEXT("HodgeExperienceDefinition")),
@@ -115,6 +125,7 @@ void AHodgeLocomotionLabMode::InitGame(const FString& MapName, const FString& Op
     Super::InitGame(MapName, Options + TEXT("?Experience=Exp_LocomotionLab"), ErrorMessage);
 }
 
+/** 重映射复制。 */
 bool UHodgeLocomotionLabAuthoring::RemapCopy(UObject* Asset, const TArray<UObject*>& Sources, const TArray<UObject*>& Copies)
 {
 #if WITH_EDITOR
@@ -152,6 +163,7 @@ bool UHodgeLocomotionLabAuthoring::RemapCopy(UObject* Asset, const TArray<UObjec
 #endif
 }
 
+/** 配置地面混合。 */
 bool UHodgeLocomotionLabAuthoring::ConfigureGroundBlend(UObject* Blueprint, UObject* BlendSpace)
 {
 #if WITH_EDITOR

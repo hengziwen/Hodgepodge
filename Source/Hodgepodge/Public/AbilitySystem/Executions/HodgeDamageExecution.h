@@ -1,3 +1,6 @@
+/** @file HodgeDamageExecution.h
+ * @brief 声明伤害计算执行器相关的类型、接口与现有处理流程。
+ */
 // 111屎山代码来袭
 
 #pragma once
@@ -31,12 +34,17 @@ class HODGEPODGE_API UHodgeDamageExecution : public UGameplayEffectExecutionCalc
 public:
 	// 构造伤害 ExecutionCalculation。
 	// 通常在这里注册伤害计算过程中需要捕获的 Source / Target Attribute。
+	/** 构造伤害计算执行器并初始化其默认状态。 */
 	UHodgeDamageExecution();
 
 protected:
 	// GAS 执行当前伤害 GameplayEffect 时调用的核心伤害计算函数。
 	// ExecutionParams 提供 EffectSpec、Source / Target ASC、捕获属性等计算上下文。
 	// OutExecutionOutput 用于输出最终需要应用到目标 Attribute 上的修改结果。
+	/** 执行当前操作。
+	 * @param ExecutionParams 执行参数，由调用方传入。
+	 * @param OutExecutionOutput 输出执行输出。
+	 */
 	virtual void Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams,
 	                                    FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const override;
 };

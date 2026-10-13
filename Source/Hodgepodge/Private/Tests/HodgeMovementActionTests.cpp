@@ -1,3 +1,6 @@
+/** @file HodgeMovementActionTests.cpp
+ * @brief 实现移动动作自动化测试相关的类型、接口与现有处理流程。
+ */
 #if WITH_DEV_AUTOMATION_TESTS
 #include "Misc/AutomationTest.h"
 #include "Combat/HodgeMovementActionTypes.h"
@@ -19,8 +22,13 @@
 #include "UObject/UnrealType.h"
 #include <limits>
 
+/** 保存移动测试Access的数据和接口契约。 */
 struct FHodgeMovementTestAccess
 {
+	/** 配置策略。
+	 * @param Policy 策略，由调用方传入。
+	 * @param Profile 当前操作使用的配置对象。
+	 */
 	static void ConfigurePolicy(UHodgeLocomotionPolicyComponent* Policy, const UHodgeSprintAbilityProfile* Profile)
 	{
 		Policy->SprintProfile = Profile; Policy->State.bSprinting = true; Policy->State.ActivationKey = 17;
@@ -29,6 +37,7 @@ struct FHodgeMovementTestAccess
 };
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeDashDirectionsTest, "Hodge.Movement.DashDirections", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeDashDirectionsTest::RunTest(const FString& Parameters)
 {
 	const auto* Config = GetDefault<UHodgeSprintAbilityProfile>();
@@ -53,6 +62,7 @@ bool FHodgeDashDirectionsTest::RunTest(const FString& Parameters)
 	return true;
 }
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeSprintSessionTest, "Hodge.Movement.InputSessions", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeSprintSessionTest::RunTest(const FString& Parameters)
 {
 	FHodgeSprintInputSession S;
@@ -70,8 +80,10 @@ bool FHodgeSprintSessionTest::RunTest(const FString& Parameters)
 	return true;
 }
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeMovementTargetDataTest, "Hodge.Movement.TargetDataSerialization", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeMovementTargetDataTest::RunTest(const FString& Parameters)
 {
+	// 本次操作的来源。
 	FHodgeMovementActionTargetData Source, Restored; Source.Input = FVector2D(.2f,-.8f); Source.ControlYaw = 123.f; Source.ActorYawAtStart = -57.f; Source.SessionId = 14;
 	TArray<uint8> Bytes; FMemoryWriter Writer(Bytes); bool Success = false; Source.NetSerialize(Writer, nullptr, Success);
 	TestTrue(TEXT("Write successful"), Success); FMemoryReader Reader(Bytes); Restored.NetSerialize(Reader, nullptr, Success);
@@ -83,11 +95,14 @@ bool FHodgeMovementTargetDataTest::RunTest(const FString& Parameters)
 	return true;
 }
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeMovementPolicyTest, "Hodge.Movement.PolicyAndAuthorization", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeMovementPolicyTest::RunTest(const FString& Parameters)
 {
 	const auto Values = UWorld::InitializationValues().AllowAudioPlayback(false).RequiresHitProxies(false).CreatePhysicsScene(true).CreateNavigation(false).CreateAISystem(false).ShouldSimulatePhysics(false);
+	// 本次操作所在的世界。
 	UWorld* World = UWorld::CreateWorld(EWorldType::Game, false, NAME_None, nullptr, true, ERHIFeatureLevel::Num, &Values);
 	auto* Character = World->SpawnActor<AHodgeCombatCharacter>();
+	// 当前操作关联的所属对象。
 	auto* Owner = World->SpawnActor<AActor>();
 	auto* ASC = NewObject<UHodgeAbilitySystemComponent>(Owner); ASC->RegisterComponent(); ASC->InitAbilityActorInfo(Owner, Character);
 	auto* Policy = Character->FindComponentByClass<UHodgeLocomotionPolicyComponent>(); Policy->InitializeWithAbilitySystem(ASC);
@@ -159,6 +174,7 @@ bool FHodgeMovementPolicyTest::RunTest(const FString& Parameters)
 	Policy->UninitializeFromAbilitySystem(); World->DestroyWorld(false); return true;
 }
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeMovementTimingTest, "Hodge.Movement.TimingAndPivot", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeMovementTimingTest::RunTest(const FString& Parameters)
 {
 	auto* P = NewObject<UHodgeSprintAbilityProfile>();
@@ -190,6 +206,7 @@ bool FHodgeMovementTimingTest::RunTest(const FString& Parameters)
 	return true;
 }
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeDashFootIKTest, "Hodge.Movement.DashFootIKContinuity", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeDashFootIKTest::RunTest(const FString& Parameters)
 {
 	using Anim = UHodgeAnimInstance;
@@ -204,6 +221,7 @@ bool FHodgeDashFootIKTest::RunTest(const FString& Parameters)
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeSprintPivotTest, "Hodge.Movement.RootMotionPivot", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeSprintPivotTest::RunTest(const FString& Parameters)
 {
 	using GA = UHodgeGameplayAbility_Sprint;
@@ -232,6 +250,7 @@ bool FHodgeSprintPivotTest::RunTest(const FString& Parameters)
 	return true;
 }
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeMovementDefenseTest, "Hodge.Movement.DefenseWindows", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeMovementDefenseTest::RunTest(const FString& Parameters)
 {
 	const auto* P = GetDefault<UHodgeSprintAbilityProfile>(); using Outcome = EHodgeIncomingHitOutcome;

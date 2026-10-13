@@ -1,3 +1,6 @@
+/** @file HodgeHealExecution.h
+ * @brief 声明治疗计算执行器相关的类型、接口与现有处理流程。
+ */
 // 111屎山代码来袭
 
 #pragma once
@@ -31,12 +34,17 @@ class HODGEPODGE_API UHodgeHealExecution : public UGameplayEffectExecutionCalcul
 public:
 	// 构造治疗 ExecutionCalculation，
 	// 通常在这里注册本次计算需要捕获的 Attribute。
+	/** 构造治疗计算执行器并初始化其默认状态。 */
 	UHodgeHealExecution();
 
 protected:
 	// GAS 执行当前治疗 GameplayEffect 时调用的核心计算函数。
 	// ExecutionParams 提供 Source / Target ASC、EffectSpec、捕获属性等计算上下文。
 	// OutExecutionOutput 用于输出最终需要修改的 Attribute 数值。
+	/** 执行当前操作。
+	 * @param ExecutionParams 执行参数，由调用方传入。
+	 * @param OutExecutionOutput 输出执行输出。
+	 */
 	virtual void Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams,
 	                                    FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const override;
 };

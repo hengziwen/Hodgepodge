@@ -1,3 +1,6 @@
+/** @file HodgeHitReactionProfile.cpp
+ * @brief 实现目标受击动画与恢复配置相关的类型、接口与现有处理流程。
+ */
 #include "Data/HodgeHitReactionProfile.h"
 #include "Animation/AnimMontage.h"
 #if WITH_EDITOR
@@ -5,11 +8,13 @@
 #endif
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeHitReactionProfile)
 
+/** 查找动画。 */
 const FHodgeHitReactionAnimation* UHodgeHitReactionProfile::FindAnimation(EHodgeImpactType Type) const
 {
 	return Animations.FindByPredicate([Type](const auto& Entry) { return Entry.Type == Type; });
 }
 
+/** 检查当前配置并收集诊断。 */
 bool UHodgeHitReactionProfile::Validate(TArray<FText>& Errors) const
 {
 	const int32 Before = Errors.Num();
@@ -45,6 +50,7 @@ bool UHodgeHitReactionProfile::Validate(TArray<FText>& Errors) const
 }
 
 #if WITH_EDITOR
+/** 在编辑器校验当前配置并收集诊断。 */
 EDataValidationResult UHodgeHitReactionProfile::IsDataValid(FDataValidationContext& Context) const
 {
 	const auto Parent = Super::IsDataValid(Context);

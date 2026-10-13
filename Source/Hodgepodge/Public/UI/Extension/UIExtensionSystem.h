@@ -1,3 +1,6 @@
+/** @file UIExtensionSystem.h
+ * @brief 声明UI扩展注册服务相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
@@ -153,6 +156,10 @@ public:
 	// - Data 类型是否属于 AllowedDataClasses
 	//
 	// 通过契约后，当前 ExtensionPoint 才应该收到该 Extension 的通知。
+	/** 判断扩展内容的类型与上下文是否满足插槽契约。
+	 * @param Extension 扩展，由调用方传入。
+	 * @return true表示满足该查询条件，false表示不满足。
+	 */
 	bool DoesExtensionPassContract(const FUIExtension* Extension) const;
 };
 
@@ -171,24 +178,41 @@ struct HODGEPODGE_API FUIExtensionPointHandle
 
 public:
 	// 默认构造一个无效 Handle。
+	/** 构造FUI扩展Point句柄并初始化其默认状态。 */
 	FUIExtensionPointHandle()
 	{
 	}
 
 	// 注销当前 Handle 对应的 ExtensionPoint。
+	/** 撤销该句柄或对象登记的扩展项。 */
 	void Unregister();
 
 	// 内部 ExtensionPoint 数据仍然存在时，Handle 有效。
+	/** 检查当前对象、配置或句柄是否满足其有效性条件。
+	 * @return true表示满足该查询条件，false表示不满足。
+	 */
 	bool IsValid() const { return DataPtr.IsValid(); }
 
 	// 两个 Handle 是否指向同一份内部 ExtensionPoint 数据。
+	/** 比较两个值是否相等。
+	 * @param Other Other，由调用方传入。
+	 * @return true表示本次检查或操作成功，false表示失败。
+	 */
 	bool operator==(const FUIExtensionPointHandle& Other) const { return DataPtr == Other.DataPtr; }
 
 	// 两个 Handle 是否指向不同的内部 ExtensionPoint 数据。
+	/** 比较两个值是否不同。
+	 * @param Other Other，由调用方传入。
+	 * @return true表示本次检查或操作成功，false表示失败。
+	 */
 	bool operator!=(const FUIExtensionPointHandle& Other) const { return !operator==(Other); }
 
 	// 使用内部 SharedPtr 指向对象的地址计算 Hash，
 	// 允许 Handle 用于需要 Hash 的容器。
+	/** 获取类型Hash。
+	 * @param Handle 对应操作或能力的句柄。
+	 * @return 类型Hash的当前值或引用。
+	 */
 	friend uint32 GetTypeHash(const FUIExtensionPointHandle& Handle)
 	{
 		return PointerHash(Handle.DataPtr.Get());
@@ -206,6 +230,10 @@ private:
 	friend UUIExtensionSubsystem;
 
 	// 仅供 UUIExtensionSubsystem 创建有效 Handle。
+	/** 构造FUI扩展Point句柄并初始化其默认状态。
+	 * @param InExtensionSource 扩展来源，由调用方传入。
+	 * @param InDataPtr 数据Ptr，由调用方传入。
+	 */
 	FUIExtensionPointHandle(UUIExtensionSubsystem* InExtensionSource,
 	                        const TSharedPtr<FUIExtensionPoint>& InDataPtr) : ExtensionSource(InExtensionSource),
 	                                                                          DataPtr(InDataPtr)
@@ -215,6 +243,7 @@ private:
 
 // 为 FUIExtensionPointHandle 声明 Unreal Struct 操作特性。
 template <>
+/** 保存TStructOps类型TraitsFUI扩展Point句柄的数据和接口契约。 */
 struct TStructOpsTypeTraits<FUIExtensionPointHandle> : public TStructOpsTypeTraitsBase2<FUIExtensionPointHandle>
 {
 	enum
@@ -242,23 +271,40 @@ struct HODGEPODGE_API FUIExtensionHandle
 
 public:
 	// 默认构造一个无效 Handle。
+	/** 构造FUI扩展句柄并初始化其默认状态。 */
 	FUIExtensionHandle()
 	{
 	}
 
 	// 注销当前 Handle 对应的 Extension。
+	/** 撤销该句柄或对象登记的扩展项。 */
 	void Unregister();
 
 	// 内部 Extension 数据存在时 Handle 有效。
+	/** 检查当前对象、配置或句柄是否满足其有效性条件。
+	 * @return true表示满足该查询条件，false表示不满足。
+	 */
 	bool IsValid() const { return DataPtr.IsValid(); }
 
 	// 两个 Handle 是否指向同一个 Extension。
+	/** 比较两个值是否相等。
+	 * @param Other Other，由调用方传入。
+	 * @return true表示本次检查或操作成功，false表示失败。
+	 */
 	bool operator==(const FUIExtensionHandle& Other) const { return DataPtr == Other.DataPtr; }
 
 	// 两个 Handle 是否指向不同 Extension。
+	/** 比较两个值是否不同。
+	 * @param Other Other，由调用方传入。
+	 * @return true表示本次检查或操作成功，false表示失败。
+	 */
 	bool operator!=(const FUIExtensionHandle& Other) const { return !operator==(Other); }
 
 	// 使用内部 Extension 对象地址生成 Hash。
+	/** 获取类型Hash。
+	 * @param Handle 对应操作或能力的句柄。
+	 * @return 类型Hash的当前值或引用。
+	 */
 	friend FORCEINLINE uint32 GetTypeHash(FUIExtensionHandle Handle)
 	{
 		return PointerHash(Handle.DataPtr.Get());
@@ -275,6 +321,10 @@ private:
 	friend UUIExtensionSubsystem;
 
 	// 仅供 UUIExtensionSubsystem 创建有效 Handle。
+	/** 构造FUI扩展句柄并初始化其默认状态。
+	 * @param InExtensionSource 扩展来源，由调用方传入。
+	 * @param InDataPtr 数据Ptr，由调用方传入。
+	 */
 	FUIExtensionHandle(UUIExtensionSubsystem* InExtensionSource,
 	                   const TSharedPtr<FUIExtension>& InDataPtr) : ExtensionSource(InExtensionSource),
 	                                                                DataPtr(InDataPtr)
@@ -284,6 +334,7 @@ private:
 
 // 为 FUIExtensionHandle 声明 Unreal Struct 操作特性。
 template <>
+/** 保存TStructOps类型TraitsFUI扩展句柄的数据和接口契约。 */
 struct TStructOpsTypeTraits<FUIExtensionHandle> : public TStructOpsTypeTraitsBase2<FUIExtensionHandle>
 {
 	enum
@@ -371,6 +422,13 @@ public:
 	//
 	// ExtensionCallback：
 	// 匹配的 Extension Added / Removed 时触发的回调。
+	/** 注册扩展Point。
+	 * @param ExtensionPointTag 扩展Point标签，用于对应标签查询或匹配。
+	 * @param ExtensionPointTagMatchType 扩展Point标签匹配类型，由调用方传入。
+	 * @param AllowedDataClasses 允许数据Classes，由调用方传入。
+	 * @param ExtensionCallback 扩展回调，由调用方传入。
+	 * @return 本次操作的句柄，调用方应按现有接口检查有效性。
+	 */
 	FUIExtensionPointHandle RegisterExtensionPoint(const FGameplayTag& ExtensionPointTag,
 	                                               EUIExtensionPointMatch ExtensionPointTagMatchType,
 	                                               const TArray<UClass*>& AllowedDataClasses,
@@ -378,6 +436,14 @@ public:
 
 	// 注册一个带 ContextObject 限制的 ExtensionPoint。
 	// 除了 Tag / DataClass 外，还要求 Extension 与指定上下文满足匹配关系。
+	/** 注册扩展Point关联上下文。
+	 * @param ExtensionPointTag 扩展Point标签，用于对应标签查询或匹配。
+	 * @param ContextObject 上下文对象，由调用方传入。
+	 * @param ExtensionPointTagMatchType 扩展Point标签匹配类型，由调用方传入。
+	 * @param AllowedDataClasses 允许数据Classes，由调用方传入。
+	 * @param ExtensionCallback 扩展回调，由调用方传入。
+	 * @return 本次操作的句柄，调用方应按现有接口检查有效性。
+	 */
 	FUIExtensionPointHandle RegisterExtensionPointForContext(const FGameplayTag& ExtensionPointTag,
 	                                                         UObject* ContextObject,
 	                                                         EUIExtensionPointMatch ExtensionPointTagMatchType,
@@ -385,50 +451,98 @@ public:
 	                                                         FExtendExtensionPointDelegate ExtensionCallback);
 
 	// 将一个 UserWidget Class 作为 Extension 注册到指定 ExtensionPointTag。
+	/** 注册扩展As控件。
+	 * @param ExtensionPointTag 扩展Point标签，用于对应标签查询或匹配。
+	 * @param WidgetClass 控件类型，由调用方传入。
+	 * @param Priority 优先级，由调用方传入。
+	 * @return 本次操作的句柄，调用方应按现有接口检查有效性。
+	 */
 	FUIExtensionHandle RegisterExtensionAsWidget(const FGameplayTag& ExtensionPointTag,
 	                                             TSubclassOf<UUserWidget> WidgetClass, int32 Priority);
 
 	// 将一个 UserWidget Class 作为指定 ContextObject 下的 Extension 注册。
+	/** 注册扩展As控件关联上下文。
+	 * @param ExtensionPointTag 扩展Point标签，用于对应标签查询或匹配。
+	 * @param ContextObject 上下文对象，由调用方传入。
+	 * @param WidgetClass 控件类型，由调用方传入。
+	 * @param Priority 优先级，由调用方传入。
+	 * @return 本次操作的句柄，调用方应按现有接口检查有效性。
+	 */
 	FUIExtensionHandle RegisterExtensionAsWidgetForContext(const FGameplayTag& ExtensionPointTag,
 	                                                       UObject* ContextObject, TSubclassOf<UUserWidget> WidgetClass,
 	                                                       int32 Priority);
 
 	// 将任意 UObject Data 作为 Extension 注册。
 	// 具体如何使用 Data，由匹配到的 ExtensionPoint 决定。
+	/** 注册扩展As数据。
+	 * @param ExtensionPointTag 扩展Point标签，用于对应标签查询或匹配。
+	 * @param ContextObject 上下文对象，由调用方传入。
+	 * @param Data 当前操作使用的数据。
+	 * @param Priority 优先级，由调用方传入。
+	 * @return 本次操作的句柄，调用方应按现有接口检查有效性。
+	 */
 	FUIExtensionHandle RegisterExtensionAsData(const FGameplayTag& ExtensionPointTag, UObject* ContextObject,
 	                                           UObject* Data, int32 Priority);
 
 	// 根据 Handle 注销已经注册的 Extension。
+	/** 注销扩展。
+	 * @param ExtensionHandle 扩展句柄，由调用方传入。
+	 */
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "UI Extension")
 	void UnregisterExtension(const FUIExtensionHandle& ExtensionHandle);
 
 	// 根据 Handle 注销已经注册的 ExtensionPoint。
+	/** 注销扩展Point。
+	 * @param ExtensionPointHandle 扩展Point句柄，由调用方传入。
+	 */
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "UI Extension")
 	void UnregisterExtensionPoint(const FUIExtensionPointHandle& ExtensionPointHandle);
 
 	// 向 UE GC 主动报告 Subsystem 内部 FUIExtension 等普通 C++ 结构持有的 UObject 引用。
+	/** 向GC报告本类型持有的UObject引用。
+	 * @param InThis This，由调用方传入。
+	 * @param Collector 收集被持有UObject引用的GC入口。
+	 */
 	static void AddReferencedObjects(UObject* InThis, FReferenceCollector& Collector);
 
 protected:
 	// WorldSubsystem 初始化。
+	/** 初始化ialize。
+	 * @param Collection Collection，由调用方传入。
+	 */
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 
 	// WorldSubsystem 销毁 / World 结束时清理 Extension 与 ExtensionPoint。
+	/** 在子系统退出时清理其登记内容与监听。 */
 	virtual void Deinitialize() override;
 
 	// 新注册一个 ExtensionPoint 时，
 	// 检查系统中已经存在的 Extension，
 	// 将所有满足该 ExtensionPoint 契约的内容通知给它。
+	/** 通知扩展PointOfExtensions。
+	 * @param ExtensionPoint 扩展Point，由调用方传入。
+	 */
 	void NotifyExtensionPointOfExtensions(TSharedPtr<FUIExtensionPoint>& ExtensionPoint);
 
 	// 某个 Extension Added / Removed 时，
 	// 检查所有可能匹配的 ExtensionPoint，
 	// 并向满足契约的 ExtensionPoint 发送通知。
+	/** 通知扩展PointsOf扩展。
+	 * @param Action 动作，由调用方传入。
+	 * @param Extension 扩展，由调用方传入。
+	 */
 	void NotifyExtensionPointsOfExtension(EUIExtensionAction Action, TSharedPtr<FUIExtension>& Extension);
 
 	// RegisterExtensionPoint 的蓝图包装版本。
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category="UI Extension",
 		meta = (DisplayName = "Register Extension Point"))
+	/** 提供蓝图注册扩展Point。
+	 * @param ExtensionPointTag 扩展Point标签，用于对应标签查询或匹配。
+	 * @param ExtensionPointTagMatchType 扩展Point标签匹配类型，由调用方传入。
+	 * @param AllowedDataClasses 允许数据Classes，由调用方传入。
+	 * @param ExtensionCallback 扩展回调，由调用方传入。
+	 * @return 本次操作的句柄，调用方应按现有接口检查有效性。
+	 */
 	FUIExtensionPointHandle K2_RegisterExtensionPoint(FGameplayTag ExtensionPointTag,
 	                                                  EUIExtensionPointMatch ExtensionPointTagMatchType,
 	                                                  const TArray<UClass*>& AllowedDataClasses,
@@ -437,6 +551,12 @@ protected:
 	// RegisterExtensionAsWidget 的蓝图包装版本。
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "UI Extension",
 		meta = (DisplayName = "Register Extension (Widget)"))
+	/** 提供蓝图注册扩展As控件。
+	 * @param ExtensionPointTag 扩展Point标签，用于对应标签查询或匹配。
+	 * @param WidgetClass 控件类型，由调用方传入。
+	 * @param Priority 优先级，由调用方传入。
+	 * @return 本次操作的句柄，调用方应按现有接口检查有效性。
+	 */
 	FUIExtensionHandle K2_RegisterExtensionAsWidget(FGameplayTag ExtensionPointTag,
 	                                                TSubclassOf<UUserWidget> WidgetClass, int32 Priority = -1);
 
@@ -451,6 +571,13 @@ protected:
 	// ContextObject 用来限定这份 Widget Extension 属于哪个玩家 / 上下文。
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "UI Extension",
 		meta = (DisplayName = "Register Extension (Widget For Context)"))
+	/** 提供蓝图注册扩展As控件关联上下文。
+	 * @param ExtensionPointTag 扩展Point标签，用于对应标签查询或匹配。
+	 * @param WidgetClass 控件类型，由调用方传入。
+	 * @param ContextObject 上下文对象，由调用方传入。
+	 * @param Priority 优先级，由调用方传入。
+	 * @return 本次操作的句柄，调用方应按现有接口检查有效性。
+	 */
 	FUIExtensionHandle K2_RegisterExtensionAsWidgetForContext(FGameplayTag ExtensionPointTag,
 	                                                          TSubclassOf<UUserWidget> WidgetClass,
 	                                                          UObject* ContextObject, int32 Priority = -1);
@@ -462,6 +589,12 @@ protected:
 	// 不指定 ContextObject。
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category="UI Extension",
 		meta = (DisplayName = "Register Extension (Data)"))
+	/** 提供蓝图注册扩展As数据。
+	 * @param ExtensionPointTag 扩展Point标签，用于对应标签查询或匹配。
+	 * @param Data 当前操作使用的数据。
+	 * @param Priority 优先级，由调用方传入。
+	 * @return 本次操作的句柄，调用方应按现有接口检查有效性。
+	 */
 	FUIExtensionHandle K2_RegisterExtensionAsData(FGameplayTag ExtensionPointTag, UObject* Data, int32 Priority = -1);
 
 	/**
@@ -470,10 +603,21 @@ protected:
 	// 将任意 UObject 作为带 ContextObject 的 Extension Data 注册。
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category="UI Extension",
 		meta = (DisplayName = "Register Extension (Data For Context)"))
+	/** 提供蓝图注册扩展As数据关联上下文。
+	 * @param ExtensionPointTag 扩展Point标签，用于对应标签查询或匹配。
+	 * @param ContextObject 上下文对象，由调用方传入。
+	 * @param Data 当前操作使用的数据。
+	 * @param Priority 优先级，由调用方传入。
+	 * @return 本次操作的句柄，调用方应按现有接口检查有效性。
+	 */
 	FUIExtensionHandle K2_RegisterExtensionAsDataForContext(FGameplayTag ExtensionPointTag, UObject* ContextObject,
 	                                                        UObject* Data, int32 Priority = -1);
 
 	// 根据内部 FUIExtension 构造一个对外通知使用的 FUIExtensionRequest。
+	/** 创建扩展请求。
+	 * @param Extension 扩展，由调用方传入。
+	 * @return 本次计算、查询或创建得到的FUI扩展请求。
+	 */
 	FUIExtensionRequest CreateExtensionRequest(const TSharedPtr<FUIExtension>& Extension);
 
 private:
@@ -499,15 +643,23 @@ class HODGEPODGE_API UUIExtensionHandleFunctions : public UBlueprintFunctionLibr
 	GENERATED_BODY()
 
 public:
+	/** 构造UUI扩展句柄Functions并初始化其默认状态。 */
 	UUIExtensionHandleFunctions()
 	{
 	}
 
 	// 通过 Handle 注销对应 Extension。
+	/** 撤销该句柄或对象登记的扩展项。
+	 * @param FUIExtensionHandle FUI扩展句柄，由调用方传入。
+	 */
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "UI Extension")
 	static void Unregister(UPARAM(ref) FUIExtensionHandle& Handle);
 
 	// 判断当前 Extension Handle 是否有效。
+	/** 检查当前对象、配置或句柄是否满足其有效性条件。
+	 * @param FUIExtensionHandle FUI扩展句柄，由调用方传入。
+	 * @return true表示满足该查询条件，false表示不满足。
+	 */
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "UI Extension")
 	static bool IsValid(UPARAM(ref) FUIExtensionHandle& Handle);
 };
@@ -520,15 +672,23 @@ class HODGEPODGE_API UUIExtensionPointHandleFunctions : public UBlueprintFunctio
 	GENERATED_BODY()
 
 public:
+	/** 构造UUI扩展Point句柄Functions并初始化其默认状态。 */
 	UUIExtensionPointHandleFunctions()
 	{
 	}
 
 	// 通过 Handle 注销对应 ExtensionPoint。
+	/** 撤销该句柄或对象登记的扩展项。
+	 * @param FUIExtensionPointHandle FUI扩展Point句柄，由调用方传入。
+	 */
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "UI Extension")
 	static void Unregister(UPARAM(ref) FUIExtensionPointHandle& Handle);
 
 	// 判断当前 ExtensionPoint Handle 是否有效。
+	/** 检查当前对象、配置或句柄是否满足其有效性条件。
+	 * @param FUIExtensionPointHandle FUI扩展Point句柄，由调用方传入。
+	 * @return true表示满足该查询条件，false表示不满足。
+	 */
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "UI Extension")
 	static bool IsValid(UPARAM(ref) FUIExtensionPointHandle& Handle);
 };

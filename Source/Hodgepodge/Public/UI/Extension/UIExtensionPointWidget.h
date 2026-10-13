@@ -1,4 +1,7 @@
-﻿// Copyright Epic Games, Inc. All Rights Reserved.
+﻿/** @file UIExtensionPointWidget.h
+ * @brief 声明UI扩展插槽控件相关的类型、接口与现有处理流程。
+ */
+// Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
 
@@ -40,6 +43,9 @@ class HODGEPODGE_API UUIExtensionPointWidget : public UDynamicEntryBoxBase
 
 public:
 	// 在原生树构建阶段配置插槽；运行后的修改应通过重建控件进行。
+	/** 设置扩展Point标签。
+	 * @param Tag 标签，用于对应标签查询或匹配。
+	 */
 	void SetExtensionPointTag(FGameplayTag Tag);
 	// 当 Extension 携带的是普通 Data，而不是直接携带 WidgetClass 时，
 	// 通过这个委托根据 DataItem 决定应该创建哪一种 UUserWidget。
@@ -53,20 +59,32 @@ public:
 	DECLARE_DYNAMIC_DELEGATE_TwoParams(FOnConfigureWidgetForData, UUserWidget*, Widget, UObject*, DataItem);
 
 	// 构造函数。
+	/** 构造UUI扩展Point控件并初始化其默认状态。
+	 * @param ObjectInitializer UE构造对象时传入的初始化器。
+	 */
 	UUIExtensionPointWidget(const FObjectInitializer& ObjectInitializer);
 
 	//~UWidget interface
 
 	// 释放当前 Widget 持有的 Slate 资源。
 	// ExtensionPointWidget 从 UI Tree 中释放时也可以在这里处理对应的注册状态。
+	/** 释放Slate界面Resources。
+	 * @param bReleaseChildren 是否释放子项的控制标记。
+	 */
 	virtual void ReleaseSlateResources(bool bReleaseChildren) override;
 
 	// 重建当前 UMG Widget 对应的底层 Slate Widget。
 	// Widget 真正进入 UI Tree 时会经过这里。
+	/** 根据当前属性创建对应的Slate控件。
+	 * @return 本次计算、查询或创建得到的T共享RefS控件。
+	 */
 	virtual TSharedRef<SWidget> RebuildWidget() override;
 
 #if WITH_EDITOR
 	// 编辑器编译 Widget Blueprint 时检查当前 ExtensionPoint 的默认配置是否合法。
+	/** 校验已编译Defaults。
+	 * @param CompileLog 编译Log，由调用方传入。
+	 */
 	virtual void ValidateCompiledDefaults(IWidgetCompilerLog& CompileLog) const override;
 #endif
 
@@ -77,16 +95,22 @@ private:
 	//
 	// 负责清理已经注册到 UUIExtensionSubsystem 的 ExtensionPoint Handle，
 	// 以及当前由 Extension 创建出来的相关 UI 状态。
+	/** 重置扩展Point。 */
 	void ResetExtensionPoint();
 
 	// 根据当前 ExtensionPointWidget 的配置，
 	// 向 UUIExtensionSubsystem 注册对应的 ExtensionPoint。
+	/** 注册扩展Point。 */
 	void RegisterExtensionPoint();
 
 	// 为指定 LocalPlayer / PlayerState 注册带玩家 Context 的 ExtensionPoint。
 	//
 	// 这样即使多个玩家使用相同 ExtensionPointTag，
 	// 也可以通过 ContextObject 区分具体属于哪个玩家。
+	/** 注册扩展Point关联玩家状态。
+	 * @param LocalPlayer 本地玩家，由调用方传入。
+	 * @param PlayerState 玩家持有的持久状态与ASC入口。
+	 */
 	void RegisterExtensionPointForPlayerState(UHodgeLocalPlayerBase* LocalPlayer, APlayerState* PlayerState);
 
 	// UUIExtensionSubsystem 的 ExtensionPoint 回调。
@@ -98,6 +122,10 @@ private:
 	//
 	// Removed：
 	// 根据 Request.ExtensionHandle 找到之前创建的 Widget，并将其移除。
+	/** 处理添加Or移除扩展。
+	 * @param Action 动作，由调用方传入。
+	 * @param Request 请求，由调用方传入。
+	 */
 	void OnAddOrRemoveExtension(EUIExtensionAction Action, const FUIExtensionRequest& Request);
 
 protected:
@@ -171,7 +199,10 @@ protected:
 	// 可以根据 ExtensionHandle 精确找到并删除对应 Widget。
 	UPROPERTY(Transient)
 	TMap<FUIExtensionHandle, TObjectPtr<UUserWidget>> ExtensionMapping;
+	// 已绑定本地玩家的弱引用，不延长目标对象生命周期。
 	TWeakObjectPtr<UHodgeLocalPlayerBase> BoundLocalPlayer;
+	// 玩家状态委托对应的事件通知。
 	FDelegateHandle PlayerStateDelegate;
+	// 玩家状态Point对应操作的配对句柄。
 	FUIExtensionPointHandle PlayerStatePoint;
 };

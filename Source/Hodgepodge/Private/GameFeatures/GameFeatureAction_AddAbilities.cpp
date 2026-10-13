@@ -1,3 +1,6 @@
+/** @file GameFeatureAction_AddAbilities.cpp
+ * @brief 实现GameFeature能力注入动作相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 // GameFeature：动态给指定 Actor 添加 Ability、AttributeSet、AbilitySet 的实现。

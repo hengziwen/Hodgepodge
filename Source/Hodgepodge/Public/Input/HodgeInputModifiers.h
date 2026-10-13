@@ -1,3 +1,6 @@
+/** @file HodgeInputModifiers.h
+ * @brief 声明输入数值修饰器相关的类型、接口与现有处理流程。
+ */
 
 // Copyright Epic Games, Inc. All Rights Reserved.
 
@@ -65,6 +68,12 @@ public:
 
 protected:
 	// 根据玩家设置中的数值修改当前输入值。
+	/** 根据当前修饰器配置变换原始输入值。
+	 * @param PlayerInput 玩家输入，由调用方传入。
+	 * @param CurrentValue 当前值，由调用方传入。
+	 * @param DeltaTime 本次更新的时间步长，单位秒。
+	 * @return 本次计算、查询或创建得到的输入动作值。
+	 */
 	virtual FInputActionValue ModifyRaw_Implementation(const UEnhancedPlayerInput* PlayerInput,
 	                                                   FInputActionValue CurrentValue, float DeltaTime) override;
 
@@ -113,12 +122,23 @@ public:
 
 protected:
 	// 根据用户设置计算 DeadZone，并修改原始输入值。
+	/** 根据当前修饰器配置变换原始输入值。
+	 * @param PlayerInput 玩家输入，由调用方传入。
+	 * @param CurrentValue 当前值，由调用方传入。
+	 * @param DeltaTime 本次更新的时间步长，单位秒。
+	 * @return 本次计算、查询或创建得到的输入动作值。
+	 */
 	virtual FInputActionValue ModifyRaw_Implementation(const UEnhancedPlayerInput* PlayerInput,
 	                                                   FInputActionValue CurrentValue, float DeltaTime) override;
 
 	// Visualize as black when unmodified. Red when blocked (with differing intensities to indicate axes)
 	// 根据输入是否被 DeadZone 阻挡，为 Enhanced Input 编辑器提供可视化颜色。
 	// Mirrors visualization in https://www.gamasutra.com/blogs/JoshSutphin/20130416/190541/Doing_Thumbstick_Dead_Zones_Right.php.
+	/** 获取Visualization颜色。
+	 * @param SampleValue 采样值，由调用方传入。
+	 * @param FinalValue 最终值，由调用方传入。
+	 * @return Visualization颜色的当前值或引用。
+	 */
 	virtual FLinearColor GetVisualizationColor_Implementation(FInputActionValue SampleValue,
 	                                                          FInputActionValue FinalValue) const override;
 };
@@ -157,6 +177,12 @@ public:
 
 protected:
 	// 根据当前手柄灵敏度设置修改原始输入值。
+	/** 根据当前修饰器配置变换原始输入值。
+	 * @param PlayerInput 玩家输入，由调用方传入。
+	 * @param CurrentValue 当前值，由调用方传入。
+	 * @param DeltaTime 本次更新的时间步长，单位秒。
+	 * @return 本次计算、查询或创建得到的输入动作值。
+	 */
 	virtual FInputActionValue ModifyRaw_Implementation(const UEnhancedPlayerInput* PlayerInput,
 	                                                   FInputActionValue CurrentValue, float DeltaTime) override;
 };
@@ -170,6 +196,12 @@ class UHodgeInputModifierAimInversion : public UInputModifier
 
 protected:
 	// 根据玩家的瞄准反转设置修改原始输入值。
+	/** 根据当前修饰器配置变换原始输入值。
+	 * @param PlayerInput 玩家输入，由调用方传入。
+	 * @param CurrentValue 当前值，由调用方传入。
+	 * @param DeltaTime 本次更新的时间步长，单位秒。
+	 * @return 本次计算、查询或创建得到的输入动作值。
+	 */
 	virtual FInputActionValue ModifyRaw_Implementation(const UEnhancedPlayerInput* PlayerInput,
 	                                                   FInputActionValue CurrentValue, float DeltaTime) override;
 };

@@ -1,3 +1,6 @@
+/** @file GameFeatureAction_AddInputContextMapping.cpp
+ * @brief 实现GameFeature输入上下文动作相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 // 引入 GameFeature 添加输入映射上下文的具体实现。

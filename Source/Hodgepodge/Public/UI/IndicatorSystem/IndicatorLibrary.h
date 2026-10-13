@@ -1,3 +1,6 @@
+/** @file IndicatorLibrary.h
+ * @brief 声明指示器投影函数库相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
@@ -28,12 +31,17 @@ class HODGEPODGE_API UIndicatorLibrary : public UBlueprintFunctionLibrary
 
 public:
 	// 构造 Indicator 蓝图函数库。
+	/** 构造指示器函数库并初始化其默认状态。 */
 	UIndicatorLibrary();
 
 	/**  */
 	// 根据指定 Controller 获取其对应的 UHodgeIndicatorManagerComponent。
 	// 蓝图可以通过这个函数快速取得当前玩家的 Indicator 管理组件，
 	// 然后进一步执行添加、移除或查询 Indicator 等操作。
+	/** 获取Actor指示器管理组件。
+	 * @param Controller 当前角色使用的控制器。
+	 * @return Actor指示器管理组件的当前值或引用。
+	 */
 	UFUNCTION(BlueprintCallable, Category = Indicator)
 	static UHodgeIndicatorManagerComponent* GetIndicatorManagerComponent(AController* Controller);
 };

@@ -1,3 +1,6 @@
+/** @file HodgeGameplayTags.cpp
+ * @brief 实现项目原生GameplayTag相关的类型、接口与现有处理流程。
+ */
 /**
  * @file HodgeGameplayTags.cpp
  * @brief 集中定义所有 Hodge 项目使用的 Native GameplayTag
@@ -354,6 +357,7 @@ namespace HodgeGameplayTags
 	{
 		const UGameplayTagsManager& Manager = UGameplayTagsManager::Get();
 		FGameplayTag Tag = Manager.RequestGameplayTag(FName(*TagString), false);
+		// 先检查对象与上下文，避免在依赖失效后继续处理。
 		if (!Tag.IsValid() && bMatchPartialString)
 		{
 			FGameplayTagContainer AllTags;

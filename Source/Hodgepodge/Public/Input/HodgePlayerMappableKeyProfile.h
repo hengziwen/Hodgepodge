@@ -1,3 +1,6 @@
+/** @file HodgePlayerMappableKeyProfile.h
+ * @brief 声明玩家按键配置相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 // 项目输入系统的可映射按键 Profile。
@@ -18,9 +21,11 @@ class HODGEPODGE_API UHodgePlayerMappableKeyProfile : public UEnhancedPlayerMapp
 protected:
 	//~ Begin UEnhancedPlayerMappableKeyProfile interface
 	// 装备当前按键 Profile，将该 Profile 设置为当前生效的配置。
+	/** 装备配置。 */
 	virtual void EquipProfile() override;
 
 	// 卸载当前按键 Profile，取消该 Profile 的生效状态。
+	/** 卸装配置。 */
 	virtual void UnEquipProfile() override;
 	//~ End UEnhancedPlayerMappableKeyProfile interface
 };

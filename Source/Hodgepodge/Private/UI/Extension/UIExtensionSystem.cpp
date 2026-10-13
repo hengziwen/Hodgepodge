@@ -1,3 +1,6 @@
+/** @file UIExtensionSystem.cpp
+ * @brief 实现UI扩展注册服务相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "UI/Extension/UIExtensionSystem.h"

@@ -1,3 +1,6 @@
+/** @file HodgePlayerControllerBase.cpp
+ * @brief 实现玩家控制器基类相关的类型、接口与现有处理流程。
+ */
 /**
  * @file HodgePlayerControllerBase.cpp
  * @brief AHodgePlayerControllerBase 类的实现
@@ -50,6 +53,7 @@ AHodgePlayerControllerBase::AHodgePlayerControllerBase(const FObjectInitializer&
 void AHodgePlayerControllerBase::ReceivedPlayer()
 {
 	Super::ReceivedPlayer();
+	// 向当前监听者发布状态变化，调用方继续负责后续处理。
 	if (UHodgeLocalPlayerBase* LocalPlayer = Cast<UHodgeLocalPlayerBase>(Player))
 	{
 		LocalPlayer->OnPlayerControllerSet.Broadcast(LocalPlayer, this);
@@ -81,6 +85,7 @@ void AHodgePlayerControllerBase::ReceivedPlayer()
 void AHodgePlayerControllerBase::SetPawn(APawn* InPawn)
 {
 	Super::SetPawn(InPawn);
+	// 向当前监听者发布状态变化，调用方继续负责后续处理。
 	if (UHodgeLocalPlayerBase* LocalPlayer = Cast<UHodgeLocalPlayerBase>(Player))
 	{
 		LocalPlayer->OnPlayerPawnSet.Broadcast(LocalPlayer, InPawn);
@@ -116,6 +121,7 @@ void AHodgePlayerControllerBase::SetPawn(APawn* InPawn)
 void AHodgePlayerControllerBase::OnPossess(class APawn* APawn)
 {
 	Super::OnPossess(APawn);
+	// 向当前监听者发布状态变化，调用方继续负责后续处理。
 	if (UHodgeLocalPlayerBase* LocalPlayer = Cast<UHodgeLocalPlayerBase>(Player))
 	{
 		LocalPlayer->OnPlayerPawnSet.Broadcast(LocalPlayer, APawn);
@@ -147,6 +153,7 @@ void AHodgePlayerControllerBase::OnPossess(class APawn* APawn)
 void AHodgePlayerControllerBase::OnUnPossess()
 {
 	Super::OnUnPossess();
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (UHodgeLocalPlayerBase* LocalPlayer = Cast<UHodgeLocalPlayerBase>(Player))
 	{
 		LocalPlayer->OnPlayerPawnSet.Broadcast(LocalPlayer, nullptr);
@@ -185,6 +192,7 @@ void AHodgePlayerControllerBase::OnUnPossess()
 void AHodgePlayerControllerBase::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
+	// 向当前监听者发布状态变化，调用方继续负责后续处理。
 	if (PlayerState)
 	{
 		if (UHodgeLocalPlayerBase* LocalPlayer = Cast<UHodgeLocalPlayerBase>(Player))

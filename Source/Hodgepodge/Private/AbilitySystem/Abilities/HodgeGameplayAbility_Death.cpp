@@ -1,3 +1,6 @@
+/** @file HodgeGameplayAbility_Death.cpp
+ * @brief 实现玩法能力死亡相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "AbilitySystem/Abilities/HodgeGameplayAbility_Death.h"
@@ -10,6 +13,7 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeGameplayAbility_Death)
 
+/** 构造玩法能力死亡并初始化其默认状态。 */
 UHodgeGameplayAbility_Death::UHodgeGameplayAbility_Death(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -30,6 +34,7 @@ UHodgeGameplayAbility_Death::UHodgeGameplayAbility_Death(const FObjectInitialize
 	}
 }
 
+/** 启动本次技能，按现有配置提交消耗并建立执行资源。 */
 void UHodgeGameplayAbility_Death::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
                                                   const FGameplayAbilityActorInfo* ActorInfo,
                                                   const FGameplayAbilityActivationInfo ActivationInfo,
@@ -64,6 +69,7 @@ void UHodgeGameplayAbility_Death::ActivateAbility(const FGameplayAbilitySpecHand
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 
+/** 结束本次技能并释放其拥有的资源，再交还GAS生命周期。 */
 void UHodgeGameplayAbility_Death::EndAbility(const FGameplayAbilitySpecHandle Handle,
                                              const FGameplayAbilityActorInfo* ActorInfo,
                                              const FGameplayAbilityActivationInfo ActivationInfo,
@@ -78,6 +84,7 @@ void UHodgeGameplayAbility_Death::EndAbility(const FGameplayAbilitySpecHandle Ha
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 
+/** 进入死亡开始阶段并应用既有死亡限制。 */
 void UHodgeGameplayAbility_Death::StartDeath()
 {
 	if (UHodgeHealthComponent* HealthComponent = UHodgeHealthComponent::FindHealthComponent(
@@ -90,6 +97,7 @@ void UHodgeGameplayAbility_Death::StartDeath()
 	}
 }
 
+/** 结束死亡。 */
 void UHodgeGameplayAbility_Death::FinishDeath()
 {
 	if (UHodgeHealthComponent* HealthComponent = UHodgeHealthComponent::FindHealthComponent(

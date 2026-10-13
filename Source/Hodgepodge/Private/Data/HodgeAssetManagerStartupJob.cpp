@@ -1,3 +1,6 @@
+/** @file HodgeAssetManagerStartupJob.cpp
+ * @brief 实现启动资源任务相关的类型、接口与现有处理流程。
+ */
 // 111屎山代码来袭
 
 #include "Data/HodgeAssetManagerStartupJob.h"

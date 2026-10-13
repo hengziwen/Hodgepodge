@@ -1,3 +1,6 @@
+/** @file GameFeatureAction_AddInputBinding.cpp
+ * @brief 实现GameFeature输入绑定动作相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 // 引入当前 GameFeature 输入绑定 Action。

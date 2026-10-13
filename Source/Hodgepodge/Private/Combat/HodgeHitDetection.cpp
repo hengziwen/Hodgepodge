@@ -1,3 +1,6 @@
+/** @file HodgeHitDetection.cpp
+ * @brief 实现命中检测配置相关的类型、接口与现有处理流程。
+ */
 #include "Combat/HodgeHitDetection.h"
 #include "Components/BoxComponent.h"
 #include "CollisionQueryParams.h"
@@ -23,16 +26,26 @@ namespace
 	TAutoConsoleVariable<float> CVarHitDebugDuration(TEXT("Hodge.Combat.DebugDraw.Duration"), 5.f,
 	                                                 TEXT("Lifetime in seconds for each hit detection debug drawing."));
 
+	/** 保存命中调试设置的数据和接口契约。 */
 	struct FHitDebugSettings
 	{
+		// 控制是否启用的状态标记。
 		bool bEnabled = false;
+		// 颜色的数据或对象引用。
 		FColor Color = FColor::White;
+		// 持续时间的数值或阈值。
 		float Duration = 5.f;
 	};
 
+	/** 获取命中调试设置。
+	 * @param World 本次操作所在的世界。
+	 * @param Source 本次操作的来源。
+	 * @return 命中调试设置的当前值或引用。
+	 */
 	FHitDebugSettings GetHitDebugSettings(const UWorld* World, const FHodgeHitSource& Source)
 	{
 		FHitDebugSettings Result;
+		// 先检查对象与上下文，避免在依赖失效后继续处理。
 		if (!World || World->GetNetMode() == NM_DedicatedServer) { return Result; }
 		static const FGameplayTag WeaponTag = FGameplayTag::RequestGameplayTag(TEXT("Combat.Source.Weapon"), false);
 		static const FGameplayTag BodyTag = FGameplayTag::RequestGameplayTag(TEXT("Combat.Source.Body"), false);
@@ -57,6 +70,11 @@ namespace
 		return Result;
 	}
 
+	/** 绘制命中Points。
+	 * @param World 本次操作所在的世界。
+	 * @param Hits Hits，由调用方传入。
+	 * @param Duration 持续时间，由调用方传入。
+	 */
 	void DrawHitPoints(const UWorld* World, const TArray<FHitResult>& Hits, float Duration)
 	{
 		for (const FHitResult& Hit : Hits)
@@ -65,6 +83,14 @@ namespace
 		}
 	}
 
+	/** 绘制球体扫掠。
+	 * @param World 本次操作所在的世界。
+	 * @param Start 起始，由调用方传入。
+	 * @param End 结束，由调用方传入。
+	 * @param Radius 半径，由调用方传入。
+	 * @param Settings 设置，由调用方传入。
+	 * @param Hits Hits，由调用方传入。
+	 */
 	void DrawSphereSweep(const UWorld* World, const FVector& Start, const FVector& End, float Radius,
 	                     const FHitDebugSettings& Settings, const TArray<FHitResult>& Hits)
 	{
@@ -85,6 +111,15 @@ namespace
 		DrawHitPoints(World, Hits, Settings.Duration);
 	}
 
+	/** 绘制盒体扫掠。
+	 * @param World 本次操作所在的世界。
+	 * @param Start 起始，由调用方传入。
+	 * @param End 结束，由调用方传入。
+	 * @param Extent Extent，由调用方传入。
+	 * @param Rotation 朝向组件或旋转数据。
+	 * @param Settings 设置，由调用方传入。
+	 * @param Hits Hits，由调用方传入。
+	 */
 	void DrawBoxSweep(const UWorld* World, const FVector& Start, const FVector& End, const FVector& Extent,
 	                  const FQuat& Rotation, const FHitDebugSettings& Settings, const TArray<FHitResult>& Hits)
 	{
@@ -108,6 +143,10 @@ namespace
 	}
 #endif
 
+	/** 构造对象查询。
+	 * @param Profile 当前操作使用的配置对象。
+	 * @return 本次计算、查询或创建得到的碰撞对象查询参数。
+	 */
 	FCollisionObjectQueryParams MakeObjectQuery(const UHodgeHitDetectionProfile* Profile)
 	{
 		FCollisionObjectQueryParams Result;
@@ -119,6 +158,7 @@ namespace
 	}
 }
 
+/** 检查当前配置并收集诊断。 */
 bool FHodgeHitVolumeConfig::Validate(TArray<FText>& Errors) const
 {
 	const int32 Before = Errors.Num();
@@ -150,11 +190,13 @@ bool FHodgeHitVolumeConfig::Validate(TArray<FText>& Errors) const
 	return Before == Errors.Num();
 }
 
+/** 构造命中检测配置并初始化其默认状态。 */
 UHodgeHitDetectionProfile::UHodgeHitDetectionProfile()
 {
 	ObjectTypes.Add(ECC_Pawn);
 }
 
+/** 检查当前配置并收集诊断。 */
 bool UHodgeHitDetectionProfile::Validate(TArray<FText>& Errors) const
 {
 	const int32 Before = Errors.Num();
@@ -180,6 +222,7 @@ bool UHodgeHitDetectionProfile::Validate(TArray<FText>& Errors) const
 }
 
 #if WITH_EDITOR
+/** 在编辑器校验当前配置并收集诊断。 */
 EDataValidationResult UHodgeHitDetectionProfile::IsDataValid(FDataValidationContext& Context) const
 {
 	const EDataValidationResult Parent = Super::IsDataValid(Context);
@@ -192,9 +235,11 @@ EDataValidationResult UHodgeHitDetectionProfile::IsDataValid(FDataValidationCont
 }
 #endif
 
+/** 采集当前动画或测试世界的状态。 */
 bool UHodgeSocketSweepStrategy::Capture(const USceneComponent* Component, const FHodgeHitSource& Source,
                                         FHodgeHitGeometry& OutGeometry) const
 {
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (!IsValid(Component) || !FMath::IsFinite(Source.Radius) || Source.Radius <= 0.f ||
 		Source.LocalOffset.ContainsNaN() || Source.SegmentSamples < 2 || Source.SegmentSamples > 32)
 	{
@@ -225,6 +270,7 @@ bool UHodgeSocketSweepStrategy::Capture(const USceneComponent* Component, const 
 		!OutGeometry.Points.ContainsByPredicate([](const FVector& Point) { return Point.ContainsNaN(); });
 }
 
+/** 按当前命中配置采集候选结果。 */
 void UHodgeSocketSweepStrategy::Detect(UWorld* World, const FHodgeHitSource& Source,
                                        const UHodgeHitDetectionProfile* Profile, const FHodgeHitGeometry& Previous,
                                        const FHodgeHitGeometry& Current, const FCollisionQueryParams& Params,
@@ -252,10 +298,12 @@ void UHodgeSocketSweepStrategy::Detect(UWorld* World, const FHodgeHitSource& Sou
 	}
 }
 
+/** 采集当前动画或测试世界的状态。 */
 bool UHodgeBoxSweepStrategy::Capture(const USceneComponent* Component, const FHodgeHitSource& Source,
                                      FHodgeHitGeometry& OutGeometry) const
 {
 	const UBoxComponent* Box = Cast<UBoxComponent>(Component);
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (!IsValid(Box)) { return false; }
 	OutGeometry = FHodgeHitGeometry();
 	OutGeometry.Transform = Box->GetComponentTransform();
@@ -264,6 +312,7 @@ bool UHodgeBoxSweepStrategy::Capture(const USceneComponent* Component, const FHo
 		OutGeometry.BoxExtent.GetMin() > 0.f;
 }
 
+/** 按当前命中配置采集候选结果。 */
 void UHodgeBoxSweepStrategy::Detect(UWorld* World, const FHodgeHitSource& Source,
                                     const UHodgeHitDetectionProfile* Profile, const FHodgeHitGeometry& Previous,
                                     const FHodgeHitGeometry& Current, const FCollisionQueryParams& Params,
@@ -295,12 +344,14 @@ void UHodgeBoxSweepStrategy::Detect(UWorld* World, const FHodgeHitSource& Source
 	}
 }
 
+/** 采集当前动画或测试世界的状态。 */
 bool UHodgeShapeQueryStrategy::Capture(const USceneComponent*, const FHodgeHitSource&, FHodgeHitGeometry&) const
 {
 	// 配置形状由会话解析世界坐标，不允许误用场景组件作为形状配置。
 	return false;
 }
 
+/** 按当前命中配置采集候选结果。 */
 void UHodgeShapeQueryStrategy::Detect(UWorld* World, const FHodgeHitSource& Source,
                                       const UHodgeHitDetectionProfile* Profile, const FHodgeHitGeometry& Previous,
                                       const FHodgeHitGeometry& Current,

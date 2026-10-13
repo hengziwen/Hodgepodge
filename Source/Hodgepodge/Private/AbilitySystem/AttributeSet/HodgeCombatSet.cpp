@@ -1,3 +1,6 @@
+/** @file HodgeCombatSet.cpp
+ * @brief 实现战斗属性集相关的类型、接口与现有处理流程。
+ */
 // 111屎山代码来袭
 
 

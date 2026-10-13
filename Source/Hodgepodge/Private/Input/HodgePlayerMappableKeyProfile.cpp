@@ -1,3 +1,6 @@
+/** @file HodgePlayerMappableKeyProfile.cpp
+ * @brief 实现玩家按键配置相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 // 引入项目自定义的玩家可映射按键 Profile。

@@ -1,3 +1,6 @@
+/** @file GameFeatureAction_SplitscreenConfig.cpp
+ * @brief 实现GameFeature分屏配置动作相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "GameFeatures/GameFeatureAction_SplitscreenConfig.h"
@@ -17,6 +20,7 @@
 // 采用“投票”机制：只要还有一个 Feature 投票禁用，就保持禁用状态。
 TMap<FObjectKey, int32> UGameFeatureAction_SplitscreenConfig::GlobalDisableVotes;
 
+/** 处理游戏功能扩展Deactivating。 */
 void UGameFeatureAction_SplitscreenConfig::OnGameFeatureDeactivating(
     FGameFeatureDeactivatingContext& Context)
 {
@@ -73,6 +77,7 @@ void UGameFeatureAction_SplitscreenConfig::OnGameFeatureDeactivating(
     }
 }
 
+/** 添加目标世界。 */
 void UGameFeatureAction_SplitscreenConfig::AddToWorld(
     const FWorldContext& WorldContext,
     const FGameFeatureStateChangeContext& ChangeContext)

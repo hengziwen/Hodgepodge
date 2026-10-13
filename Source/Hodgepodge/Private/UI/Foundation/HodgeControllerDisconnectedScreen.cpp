@@ -1,3 +1,6 @@
+/** @file HodgeControllerDisconnectedScreen.cpp
+ * @brief 实现设备断连页面相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "UI/Foundation/HodgeControllerDisconnectedScreen.h"
@@ -20,6 +23,7 @@
 UE_DEFINE_GAMEPLAY_TAG_STATIC(TAG_Platform_Trait_Input_HasStrictControllerPairing,
                               "Platform.Trait.Input.HasStrictControllerPairing");
 
+/** 构造设备断连页面并初始化其默认状态。 */
 UHodgeControllerDisconnectedScreen::UHodgeControllerDisconnectedScreen(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -27,6 +31,7 @@ UHodgeControllerDisconnectedScreen::UHodgeControllerDisconnectedScreen(const FOb
 	PlatformSupportsUserChangeTags.AddTag(TAG_Platform_Trait_Input_HasStrictControllerPairing);
 }
 
+/** 处理页面进入活动状态的逻辑。 */
 void UHodgeControllerDisconnectedScreen::NativeOnActivated()
 {
 	Super::NativeOnActivated();
@@ -58,9 +63,11 @@ void UHodgeControllerDisconnectedScreen::NativeOnActivated()
 		}
 	}
 
+	// 按当前对象生命周期建立状态监听。
 	Button_ChangeUser->OnClicked().AddUObject(this, &ThisClass::HandleChangeUserClicked);
 }
 
+/** 判断是否应显示变更用户按钮。 */
 bool UHodgeControllerDisconnectedScreen::ShouldDisplayChangeUserButton() const
 {
 	bool bRequiresChangeUserButton = ICommonUIModule::GetSettings().GetPlatformTraits().HasAll(
@@ -76,6 +83,7 @@ bool UHodgeControllerDisconnectedScreen::ShouldDisplayChangeUserButton() const
 	return bRequiresChangeUserButton;
 }
 
+/** 处理变更用户Clicked。 */
 void UHodgeControllerDisconnectedScreen::HandleChangeUserClicked()
 {
 	ensure(ShouldDisplayChangeUserButton());
@@ -94,6 +102,7 @@ void UHodgeControllerDisconnectedScreen::HandleChangeUserClicked()
 		});
 }
 
+/** 处理变更用户已完成。 */
 void UHodgeControllerDisconnectedScreen::HandleChangeUserCompleted(const FPlatformUserSelectionCompleteParams& Params)
 {
 	UE_LOG(LogTemp, Log, TEXT("[%hs] User change complete!"), __func__);

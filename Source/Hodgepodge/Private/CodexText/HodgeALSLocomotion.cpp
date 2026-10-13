@@ -1,3 +1,6 @@
+/** @file HodgeALSLocomotion.cpp
+ * @brief 实现ALS移动对照实验相关的类型、接口与现有处理流程。
+ */
 #include "CodexText/HodgeALSLocomotion.h"
 #include "CodexText/HodgeLocomotionLab.h"
 #include "GameFramework/Character.h"
@@ -25,12 +28,14 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeALSLocomotion)
 
+/** 获取实验场景活动状态。 */
 FName UHodgeALSLocomotion::GetLabActiveState()
 {
     const int32 Index = GetStateMachineIndex(TEXT("ALS_Locomotion"));
     return Index != INDEX_NONE ? GetCurrentStateName(Index) : NAME_None;
 }
 
+/** 在游戏线程采集当前角色的动画表现数据。 */
 void UHodgeALSLocomotion::NativeUpdateAnimation(float Dt)
 {
     Super::NativeUpdateAnimation(Dt);
@@ -104,6 +109,7 @@ void UHodgeALSLocomotion::NativeUpdateAnimation(float Dt)
     bLabRB = Moving && LabDirection == EHodgeALSDirection::RightBackward;
 }
 
+/** 构建移动表现图。 */
 bool UHodgeALSAuthoring::BuildLocomotionGraph(UObject* Blueprint, const TArray<UObject*>& Animations, UObject* Idle, UObject* Fall)
 {
 #if WITH_EDITOR

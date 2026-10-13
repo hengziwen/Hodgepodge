@@ -1,3 +1,6 @@
+/** @file HodgeUICameraManagerComponent.cpp
+ * @brief 实现UI相机协调组件相关的类型、接口与现有处理流程。
+ */
 // 111 屎山代码来袭
 
 #include "Camera/HodgeUICameraManagerComponent.h"
@@ -14,6 +17,7 @@ class FDebugDisplayInfo;
 // 获取 PlayerController 对应的 UI Camera 管理组件
 UHodgeUICameraManagerComponent* UHodgeUICameraManagerComponent::GetComponent(APlayerController* PC)
 {
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (PC != nullptr)
 	{
 		// 获取 PlayerController 当前使用的 CameraManager，并转换为 HodgePlayerCameraManager

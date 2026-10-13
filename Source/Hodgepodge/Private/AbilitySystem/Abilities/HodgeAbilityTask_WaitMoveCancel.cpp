@@ -1,3 +1,6 @@
+/** @file HodgeAbilityTask_WaitMoveCancel.cpp
+ * @brief 实现移动取消等待任务相关的类型、接口与现有处理流程。
+ */
 /**
  * @file HodgeAbilityTask_WaitMoveCancel.cpp
  * @brief UHodgeAbilityTask_WaitMoveCancel 的实现（见头文件里的职责边界）
@@ -11,18 +14,21 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeAbilityTask_WaitMoveCancel)
 
+/** 构造能力任务等待移动取消并初始化其默认状态。 */
 UHodgeAbilityTask_WaitMoveCancel::UHodgeAbilityTask_WaitMoveCancel(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	bTickingTask = true;
 }
 
+/** 更新行为树潜在任务，并推进准备或等待阶段。 */
 void UHodgeAbilityTask_WaitMoveCancel::TickTask(float DeltaTime)
 {
 	Super::TickTask(DeltaTime);
 	Evaluate(TEXT("ThresholdCheck"));
 }
 
+/** 创建等待玩家移动取消意图的AbilityTask。 */
 UHodgeAbilityTask_WaitMoveCancel* UHodgeAbilityTask_WaitMoveCancel::WaitMoveCancel(
 	UGameplayAbility* OwningAbility, FGameplayTag CancelWindowTag, float MoveIntentThreshold)
 {
@@ -32,8 +38,10 @@ UHodgeAbilityTask_WaitMoveCancel* UHodgeAbilityTask_WaitMoveCancel::WaitMoveCanc
 	return MyObj;
 }
 
+/** 开始本对象的执行流程。 */
 void UHodgeAbilityTask_WaitMoveCancel::Activate()
 {
+	// 后续GAS操作使用的能力系统组件。
 	UAbilitySystemComponent* ASC = AbilitySystemComponent.Get();
 
 	// 没有 ASC 就永远判定不了：直接收尾，别留一个活着的空任务。
@@ -67,12 +75,14 @@ void UHodgeAbilityTask_WaitMoveCancel::Activate()
 	Evaluate(TEXT("Activate"));
 }
 
+/** 处理销毁。 */
 void UHodgeAbilityTask_WaitMoveCancel::OnDestroy(bool bInOwnerFinished)
 {
 	// 头等规则：从这里开始，任何仍在调用栈里的 Evaluate 都不许再广播。
 	// 监听者通常会在 OnMoveCancel 回调里同步 EndAbility，本任务会在**广播途中**被销毁。
 	bInOnDestroy = true;
 
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (UAbilitySystemComponent* ASC = SubscribedASC.Get())
 	{
 		if (WindowTagDelegateHandle.IsValid())
@@ -82,6 +92,7 @@ void UHodgeAbilityTask_WaitMoveCancel::OnDestroy(bool bInOwnerFinished)
 	}
 	WindowTagDelegateHandle.Reset();
 
+	// 解除本对象的监听，避免旧生命周期回调继续进入。
 	if (UHodgeHeroComponent* HeroComponent = SubscribedHeroComponent.Get())
 	{
 		HeroComponent->OnMoveIntentChanged.RemoveDynamic(this, &ThisClass::HandleMoveIntentChanged);
@@ -90,6 +101,7 @@ void UHodgeAbilityTask_WaitMoveCancel::OnDestroy(bool bInOwnerFinished)
 	Super::OnDestroy(bInOwnerFinished);
 }
 
+/** 计算当前配置结果。 */
 void UHodgeAbilityTask_WaitMoveCancel::Evaluate(const TCHAR* Source)
 {
 	if (bSucceeded || bInOnDestroy)
@@ -97,6 +109,7 @@ void UHodgeAbilityTask_WaitMoveCancel::Evaluate(const TCHAR* Source)
 		return;
 	}
 
+	// 后续GAS操作使用的能力系统组件。
 	UAbilitySystemComponent* ASC = AbilitySystemComponent.Get();
 
 	// 条件一：取消窗口开着。没开就什么都不做 —— 攻击前半段推杆不能取消，靠的就是这里。
@@ -133,12 +146,14 @@ void UHodgeAbilityTask_WaitMoveCancel::Evaluate(const TCHAR* Source)
 	}
 }
 
+/** 处理移动意图变化。 */
 void UHodgeAbilityTask_WaitMoveCancel::HandleMoveIntentChanged(bool /*bHasMoveIntent*/)
 {
 	// 刻意不看参数：只有变成 true 才可能让条件成立，但无脑重判一次最简单、也最不容易漏。
 	Evaluate(TEXT("MoveIntentChanged"));
 }
 
+/** 处理窗口标签变化。 */
 void UHodgeAbilityTask_WaitMoveCancel::HandleWindowTagChanged(FGameplayTag /*Tag*/, int32 NewCount)
 {
 	// 只在标签被加上时判定：窗口关闭不会让条件成立。

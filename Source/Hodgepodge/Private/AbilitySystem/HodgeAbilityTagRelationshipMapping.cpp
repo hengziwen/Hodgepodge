@@ -1,3 +1,6 @@
+/** @file HodgeAbilityTagRelationshipMapping.cpp
+ * @brief 实现技能标签关系映射相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "AbilitySystem/HodgeAbilityTagRelationshipMapping.h"
@@ -72,16 +75,19 @@ void UHodgeAbilityTagRelationshipMapping::GetRequiredAndBlockedActivationTags(
 bool UHodgeAbilityTagRelationshipMapping::IsAbilityCancelledByTag(const FGameplayTagContainer& TargetTags, const FGameplayTag& ActionTag) const
 { return IsAbilityCancelledByTags(FGameplayTagContainer(ActionTag), TargetTags); }
 
+/** 判断CancellationProtected。 */
 bool UHodgeAbilityTagRelationshipMapping::IsCancellationProtected(const FGameplayTagContainer& TargetTags)
 {
 	return TargetTags.HasTag(HodgeGameplayTags::Ability_Type_StatusChange_Death) || TargetTags.HasTag(HodgeGameplayTags::Status_Death);
 }
+/** 获取能力取消Exceptions。 */
 void UHodgeAbilityTagRelationshipMapping::GetAbilityCancelExceptions(const FGameplayTagContainer& SourceTags, FGameplayTagContainer& OutExceptions) const
 {
 	OutExceptions.AddTag(HodgeGameplayTags::Ability_Type_StatusChange_Death); OutExceptions.AddTag(HodgeGameplayTags::Status_Death);
 	for (const auto& Row : AbilityTagRelationships)
 	{ if (SourceTags.HasTag(Row.AbilityTag)) { OutExceptions.AppendTags(Row.AbilityTagsToCancelExceptions); } }
 }
+/** 判断能力已取消By标签。 */
 bool UHodgeAbilityTagRelationshipMapping::IsAbilityCancelledByTags(const FGameplayTagContainer& SourceTags, const FGameplayTagContainer& TargetTags) const
 {
 	FGameplayTagContainer Exceptions; GetAbilityCancelExceptions(SourceTags, Exceptions);
@@ -89,6 +95,7 @@ bool UHodgeAbilityTagRelationshipMapping::IsAbilityCancelledByTags(const FGamepl
 	FGameplayTagContainer Cancel; GetAbilityTagsToBlockAndCancel(SourceTags, nullptr, &Cancel);
 	return TargetTags.HasAny(Cancel);
 }
+/** 判断ForcedCancellation。 */
 bool UHodgeAbilityTagRelationshipMapping::IsForcedCancellation(const FGameplayTagContainer& SourceTags, const FGameplayTagContainer& TargetTags) const
 {
 	if (!IsAbilityCancelledByTags(SourceTags, TargetTags)) { return false; }

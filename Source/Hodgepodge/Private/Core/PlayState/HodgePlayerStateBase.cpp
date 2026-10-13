@@ -1,4 +1,7 @@
-﻿#include "Core/PlayState/HodgePlayerStateBase.h"
+﻿/** @file HodgePlayerStateBase.cpp
+ * @brief 实现玩家状态基类相关的类型、接口与现有处理流程。
+ */
+#include "Core/PlayState/HodgePlayerStateBase.h"
 
 #include "Components/GameFrameworkComponentManager.h"
 #include "Components/PlayerStateComponent.h"

@@ -1,4 +1,7 @@
-﻿// **
+﻿/** @file HodgeInputConfig.h
+ * @brief 声明输入动作与Tag映射相关的类型、接口与现有处理流程。
+ */
+// **
 //  * @file HodgeInputConfig.h
 //  * @brief UHodgeInputConfig 类及 FHodgeInputAction 结构体的头文件
 //  *
@@ -79,6 +82,9 @@ public:
 	 *
 	 * 调用父类 UDataAsset 构造函数,当前无自定义逻辑。
 	 */
+	/** 构造输入动作与Tag映射并初始化其默认状态。
+	 * @param ObjectInitializer UE构造对象时传入的初始化器。
+	 */
 	UHodgeInputConfig(const FObjectInitializer& ObjectInitializer);
 
 	/**
@@ -90,6 +96,11 @@ public:
 	 * @param InputTag 要查找的 GameplayTag,必须属于 InputTag 分类
 	 * @param bLogNotFound 查找失败时是否输出错误日志,默认为 true
 	 * @return 找到的 UInputAction 指针,未找到则返回 nullptr
+	 */
+	/** 查找原生输入动作关联标签。
+	 * @param InputTag 输入动作对应的GameplayTag。
+	 * @param bLogNotFound 是否LogNotFound的控制标记。
+	 * @return 原生输入动作关联标签的当前值或引用。
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Hodge|Pawn")
 	const UInputAction* FindNativeInputActionForTag(const FGameplayTag& InputTag, bool bLogNotFound = true) const;
@@ -103,6 +114,11 @@ public:
 	 * @param InputTag 要查找的 GameplayTag,必须属于 InputTag 分类
 	 * @param bLogNotFound 查找失败时是否输出错误日志,默认为 true
 	 * @return 找到的 UInputAction 指针,未找到则返回 nullptr
+	 */
+	/** 查找能力输入动作关联标签。
+	 * @param InputTag 输入动作对应的GameplayTag。
+	 * @param bLogNotFound 是否LogNotFound的控制标记。
+	 * @return 能力输入动作关联标签的当前值或引用。
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Hodge|Pawn")
 	const UInputAction* FindAbilityInputActionForTag(const FGameplayTag& InputTag, bool bLogNotFound = true) const;

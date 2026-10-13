@@ -1,3 +1,6 @@
+/** @file HodgeAbilityRelationshipTests.cpp
+ * @brief 实现能力Relationship自动化测试相关的类型、接口与现有处理流程。
+ */
 #if WITH_DEV_AUTOMATION_TESTS
 #include "Misc/AutomationTest.h"
 #include "AbilitySystem/HodgeAbilityTagRelationshipMapping.h"
@@ -6,16 +9,31 @@
 #include "HodgeRelationshipTestAbility.h"
 #include "Engine/World.h"
 
+/** 保存Relationship测试Access的数据和接口契约。 */
 struct FHodgeRelationshipTestAccess
 {
+	/** 设置规则。
+	 * @param Map 序列化使用的对象映射或当前映射表。
+	 * @param Rules 规则，由调用方传入。
+	 */
 	static void SetRules(UHodgeAbilityTagRelationshipMapping* Map, TArray<FHodgeAbilityTagRelationship> Rules)
 	{ Map->AbilityTagRelationships = MoveTemp(Rules); }
+	/** 执行当前操作。
+	 * @param ASC 后续GAS操作使用的能力系统组件。
+	 * @param Source 本次操作的来源。
+	 */
 	static void Execute(UHodgeAbilitySystemComponent* ASC, FGameplayTag Source)
 	{ ASC->ApplyAbilityBlockAndCancelTags(FGameplayTagContainer(Source), nullptr, false, {}, true, {}); }
 };
 namespace HodgeRelationshipTests
 {
+	/** 推进当前实验玩法的攻击流程。
+	 * @return 本次计算、查询或创建得到的玩法标签。
+	 */
 	FGameplayTag Attack() { return FGameplayTag::RequestGameplayTag(TEXT("Ability.Attack")); }
+	/** 构造映射。
+	 * @return 本次计算、查询或创建得到的技能标签关系映射。
+	 */
 	UHodgeAbilityTagRelationshipMapping* MakeMapping()
 	{
 		auto* Map = NewObject<UHodgeAbilityTagRelationshipMapping>();
@@ -25,10 +43,12 @@ namespace HodgeRelationshipTests
 	}
 }
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeRelationshipRuleTest, "Hodge.Relationship.PriorityAndHierarchy", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeRelationshipRuleTest::RunTest(const FString& Parameters)
 {
 	using namespace HodgeRelationshipTests;
 	auto* Map = MakeMapping(); const FGameplayTag Dash = HodgeGameplayTags::Ability_Type_Action_Dash;
+	// 本次操作的目标。
 	FGameplayTagContainer Target(FGameplayTag::RequestGameplayTag(TEXT("Ability.Attack.Light.01")));
 	TestTrue(TEXT("Parent cancel tag matches attack child"), Map->IsAbilityCancelledByTag(Target, Dash));
 	TestTrue(TEXT("Force is authorized by mapping"), Map->IsForcedCancellation(FGameplayTagContainer(Dash), Target));
@@ -48,13 +68,17 @@ bool FHodgeRelationshipRuleTest::RunTest(const FString& Parameters)
 	TestFalse(TEXT("Empty tags cannot cancel"), Map->IsAbilityCancelledByTags({}, {})); return true;
 }
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeRelationshipRuntimeTest, "Hodge.Relationship.ActualCancellation", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeRelationshipRuntimeTest::RunTest(const FString& Parameters)
 {
 	using namespace HodgeRelationshipTests;
 	const auto Values=UWorld::InitializationValues().AllowAudioPlayback(false).RequiresHitProxies(false).CreatePhysicsScene(true).CreateNavigation(false).CreateAISystem(false);
+	// 本次操作所在的世界。
 	auto* World=UWorld::CreateWorld(EWorldType::Game,false,NAME_None,nullptr,true,ERHIFeatureLevel::Num,&Values);
+	// 当前操作关联的所属对象。
 	auto* Owner=World->SpawnActor<AActor>(); auto* ASC=NewObject<UHodgeAbilitySystemComponent>(Owner); ASC->RegisterComponent(); ASC->InitAbilityActorInfo(Owner,Owner);
 	ASC->SetTagRelationshipMapping(MakeMapping());
+	// 通过ASC发起激活，保留GAS自身的条件与消耗校验。
 	auto Grant = [ASC](FGameplayTagContainer Tags)
 	{
 		FGameplayAbilitySpec Spec(UHodgeRelationshipTestAbility::StaticClass(),1); Spec.GetDynamicSpecSourceTags().AppendTags(Tags);

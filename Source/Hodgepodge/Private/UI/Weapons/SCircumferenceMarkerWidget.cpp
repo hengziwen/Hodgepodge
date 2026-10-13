@@ -1,3 +1,6 @@
+/** @file SCircumferenceMarkerWidget.cpp
+ * @brief 实现圆周标记控件相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "UI/Weapons/SCircumferenceMarkerWidget.h"
@@ -10,10 +13,12 @@
 class FPaintArgs;
 class FSlateRect;
 
+/** 构造圆周标记控件并初始化其默认状态。 */
 SCircumferenceMarkerWidget::SCircumferenceMarkerWidget()
 {
 }
 
+/** 根据传入参数建立当前Slate控件。 */
 void SCircumferenceMarkerWidget::Construct(const FArguments& InArgs)
 {
 	MarkerBrush = InArgs._MarkerBrush;
@@ -23,6 +28,7 @@ void SCircumferenceMarkerWidget::Construct(const FArguments& InArgs)
 	ColorAndOpacity = InArgs._ColorAndOpacity;
 }
 
+/** 获取标记渲染变换。 */
 FSlateRenderTransform SCircumferenceMarkerWidget::GetMarkerRenderTransform(
 	const FCircumferenceMarkerEntry& Marker, const float BaseRadius, const float HUDScale) const
 {
@@ -52,6 +58,7 @@ FSlateRenderTransform SCircumferenceMarkerWidget::GetMarkerRenderTransform(
 			                                                        PositionAngleRadians) * HUDScale)));
 }
 
+/** 把当前控件与其子元素提交给Slate绘制。 */
 int32 SCircumferenceMarkerWidget::OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry,
                                           const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements,
                                           int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const
@@ -89,6 +96,7 @@ int32 SCircumferenceMarkerWidget::OnPaint(const FPaintArgs& Args, const FGeometr
 	return LayerId;
 }
 
+/** 计算当前Slate控件期望占用的尺寸。 */
 FVector2D SCircumferenceMarkerWidget::ComputeDesiredSize(float) const
 {
 	check(MarkerBrush);
@@ -97,6 +105,7 @@ FVector2D SCircumferenceMarkerWidget::ComputeDesiredSize(float) const
 	                 (MarkerBrush->ImageSize.Y + SampledRadius) * 2.0f);
 }
 
+/** 设置半径。 */
 void SCircumferenceMarkerWidget::SetRadius(float NewRadius)
 {
 	if (Radius.IsBound() || (Radius.Get() != NewRadius))
@@ -106,6 +115,7 @@ void SCircumferenceMarkerWidget::SetRadius(float NewRadius)
 	}
 }
 
+/** 设置标记列表。 */
 void SCircumferenceMarkerWidget::SetMarkerList(TArray<FCircumferenceMarkerEntry>& NewMarkerList)
 {
 	MarkerList = NewMarkerList;

@@ -1,3 +1,6 @@
+/** @file HodgeAssetManagerStartupJob.h
+ * @brief 声明启动资源任务相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
@@ -107,6 +110,11 @@ struct FHodgeAssetManagerStartupJob
 	 * @param InJobWeight
 	 *     Job 在整个启动流程中的权重
 	 */
+	/** 构造启动资源任务并初始化其默认状态。
+	 * @param InJobName Job名称，由调用方传入。
+	 * @param InJobFunc JobFunc，由调用方传入。
+	 * @param InJobWeight JobWeight，由调用方传入。
+	 */
 	FHodgeAssetManagerStartupJob(
 		const FString& InJobName,
 		const TFunction<
@@ -132,6 +140,9 @@ struct FHodgeAssetManagerStartupJob
 	 * 如果只是同步执行的初始化逻辑，
 	 * 则可能返回 nullptr。
 	 */
+	/** 执行当前登记的启动资源任务。
+	 * @return 本次操作的句柄，调用方应按现有接口检查有效性。
+	 */
 	TSharedPtr<FStreamableHandle> DoJob() const;
 
 	/**
@@ -142,6 +153,9 @@ struct FHodgeAssetManagerStartupJob
 	 * UpdateSubstepProgress(0.25f);
 	 * 表示：
 	 * 当前 Job 完成了 25%。
+	 */
+	/** 更新Substep进度。
+	 * @param NewProgress 新进度，由调用方传入。
 	 */
 	void UpdateSubstepProgress(float NewProgress) const
 	{
@@ -158,6 +172,9 @@ struct FHodgeAssetManagerStartupJob
 	 * 然后通过：
 	 * StreamableHandle->GetProgress()
 	 * 获取当前加载进度。
+	 */
+	/** 更新Substep进度来源异步资源。
+	 * @param StreamableHandle 异步资源句柄，由调用方传入。
 	 */
 	void UpdateSubstepProgressFromStreamable(
 		TSharedRef<FStreamableHandle> StreamableHandle

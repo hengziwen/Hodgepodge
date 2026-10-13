@@ -1,9 +1,13 @@
+/** @file HodgeCharacterBaseStatEffect.cpp
+ * @brief 实现角色基础属性效果相关的类型、接口与现有处理流程。
+ */
 #include "AbilitySystem/Stats/HodgeCharacterBaseStatEffect.h"
 #include "AbilitySystem/HodgeGameplayTags.h"
 #include "AbilitySystem/AttributeSet/HodgeHealthSet.h"
 #include "AbilitySystem/AttributeSet/HodgeCombatSet.h"
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeCharacterBaseStatEffect)
 
+/** 构造角色基础属性效果并初始化其默认状态。 */
 UHodgeCharacterBaseStatEffect::UHodgeCharacterBaseStatEffect()
 {
 	DurationPolicy = EGameplayEffectDurationType::Instant;

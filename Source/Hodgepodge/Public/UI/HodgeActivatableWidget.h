@@ -1,3 +1,6 @@
+/** @file HodgeActivatableWidget.h
+ * @brief 声明CommonUI输入配置控件相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
@@ -41,6 +44,9 @@ class HODGEPODGE_API UHodgeActivatableWidget : public UCommonActivatableWidget
 
 public:
 	// 构造 Hodge ActivatableWidget。
+	/** 构造CommonUI输入配置控件并初始化其默认状态。
+	 * @param ObjectInitializer UE构造对象时传入的初始化器。
+	 */
 	UHodgeActivatableWidget(const FObjectInitializer& ObjectInitializer);
 
 public:
@@ -48,6 +54,9 @@ public:
 
 	// 返回当前 Widget 激活时希望使用的 UI 输入配置。
 	// CommonUI 会根据这个配置调整 Game / Menu 输入模式以及鼠标捕获行为。
+	/** 返回当前页面要求的CommonUI输入模式。
+	 * @return 期望输入配置的当前值或引用。
+	 */
 	virtual TOptional<FUIInputConfig> GetDesiredInputConfig() const override;
 
 	//~End of UCommonActivatableWidget interface
@@ -55,6 +64,10 @@ public:
 #if WITH_EDITOR
 	// 编辑器编译 Widget Blueprint 时执行额外验证。
 	// 可以用于检查当前 WidgetTree 是否满足项目规定的 UI 结构或配置要求。
+	/** 校验已编译控件树。
+	 * @param BlueprintWidgetTree 编辑器制作或查询使用的UMG控件树。
+	 * @param CompileLog 编译Log，由调用方传入。
+	 */
 	virtual void ValidateCompiledWidgetTree(const UWidgetTree& BlueprintWidgetTree,
 	                                        class IWidgetCompilerLog& CompileLog) const override;
 #endif

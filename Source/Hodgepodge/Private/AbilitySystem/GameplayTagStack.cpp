@@ -1,3 +1,6 @@
+/** @file GameplayTagStack.cpp
+ * @brief 实现GameplayTag计数容器相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "AbilitySystem/GameplayTagStack.h"

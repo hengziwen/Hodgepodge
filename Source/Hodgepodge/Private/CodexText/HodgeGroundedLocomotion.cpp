@@ -1,3 +1,6 @@
+/** @file HodgeGroundedLocomotion.cpp
+ * @brief 实现地面移动实验数据相关的类型、接口与现有处理流程。
+ */
 #include "CodexText/HodgeGroundedLocomotion.h"
 #include "CodexText/HodgeLocomotionLab.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -7,10 +10,12 @@
 #include "Curves/CurveFloat.h"
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeGroundedLocomotion)
 
+/** 执行原生初始化动画。 */
 void UHodgeGroundedLocomotion::NativeInitializeAnimation()
 {
     Super::NativeInitializeAnimation();
     if (!OverlayPose) OverlayPose = GetClass()->GetDefaultObject<UHodgeGroundedLocomotion>()->OverlayPose;
+    // 先检查对象与上下文，避免在依赖失效后继续处理。
     if (PoseMesh.IsValid()) PoseMesh->UnregisterOnBoneTransformsFinalizedDelegate(FinalizedPoseHandle);
     PoseMesh = GetSkelMeshComponent();
     FinalizedPoseHandle.Reset();
@@ -26,19 +31,23 @@ void UHodgeGroundedLocomotion::NativeInitializeAnimation()
     for (int32 I=0; I<2; ++I) { bLocked[I]=false; PreviousLockCurve[I]=0.f; }
 }
 
+/** 获取地面移动状态。 */
 FName UHodgeGroundedLocomotion::GetGroundedState()
 {
     const int32 Index = GetStateMachineIndex(TEXT("Grounded"));
     return Index == INDEX_NONE ? NAME_None : GetCurrentStateName(Index);
 }
 
+/** 设置Left手部Grip。 */
 void UHodgeGroundedLocomotion::SetLeftHandGrip(USceneComponent* Component, FName Socket, float Weight)
 {
     HandGripComponent = Component; HandGripSocket = Socket; HandGripWeight = FMath::Clamp(Weight, 0.f, 1.f);
 }
 
+/** 执行原生Uninitialize动画。 */
 void UHodgeGroundedLocomotion::NativeUninitializeAnimation()
 {
+    // 先检查对象与上下文，避免在依赖失效后继续处理。
     if (PoseMesh.IsValid()) PoseMesh->UnregisterOnBoneTransformsFinalizedDelegate(FinalizedPoseHandle);
     FinalizedPoseHandle.Reset();
     PoseMesh.Reset();
@@ -46,6 +55,7 @@ void UHodgeGroundedLocomotion::NativeUninitializeAnimation()
     Super::NativeUninitializeAnimation();
 }
 
+/** 缓存当前脚部最终姿势以供后续表现计算。 */
 void UHodgeGroundedLocomotion::CacheFinalizedFootPose()
 {
     if (auto* Mesh = PoseMesh.Get())
@@ -58,6 +68,7 @@ void UHodgeGroundedLocomotion::CacheFinalizedFootPose()
     }
 }
 
+/** 在游戏线程采集当前角色的动画表现数据。 */
 void UHodgeGroundedLocomotion::NativeUpdateAnimation(float Dt)
 {
     Super::NativeUpdateAnimation(Dt);
@@ -79,6 +90,7 @@ void UHodgeGroundedLocomotion::NativeUpdateAnimation(float Dt)
     }
     if (LabSpeed > 80.f) bLastWalk = Lab && Lab->bWalking;
     if (LabSpeed > 15.f) bHadMovement = true;
+    // 先检查对象与上下文，避免在依赖失效后继续处理。
     if (ActionIndex != INDEX_NONE)
     {
         if (!GroundActions.IsValidIndex(ActionIndex) || !GroundActions[ActionIndex] || GroundActionTime >= GroundActions[ActionIndex]->GetPlayLength())

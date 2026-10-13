@@ -1,4 +1,7 @@
-﻿// **
+﻿/** @file HodgePlayerControllerBase.h
+ * @brief 声明玩家控制器基类相关的类型、接口与现有处理流程。
+ */
+// **
 //  * @file HodgePlayerControllerBase.h
 //  * @brief AHodgePlayerControllerBase 类的头文件
 //  *
@@ -47,6 +50,9 @@ public:
 	 * 当前实现为空,仅调用父类构造函数。
 	 * 可在此处配置默认输入模式、设置输入组件等。
 	 */
+	/** 构造玩家控制器基类并初始化其默认状态。
+	 * @param ObjectInitializer UE构造对象时传入的初始化器。
+	 */
 	AHodgePlayerControllerBase(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 	/**
@@ -62,6 +68,7 @@ public:
 	 * 
 	 * 触发时机: 本地玩家首次被分配到此控制器时(通常在游戏开始时)
 	 */
+	/** 在控制器取得玩家连接后更新本地接入。 */
 	virtual void ReceivedPlayer() override;
 
 	/**
@@ -74,6 +81,9 @@ public:
 	 * 事件广播: OnPlayerPawnSet - 通知订阅者 Pawn 已变更
 	 * 
 	 * @param InPawn 新的 Pawn 指针,可能为 nullptr(表示取消分配)
+	 */
+	/** 设置Pawn角色。
+	 * @param InPawn 当前操作关联的Pawn角色。
 	 */
 	virtual void SetPawn(APawn* InPawn) override;
 
@@ -92,6 +102,9 @@ public:
 	 * 
 	 * @param APawn 被 Possess 的 Pawn 指针
 	 */
+	/** 开始新的控制器Possess周期并接入被控制Pawn。
+	 * @param APawn Pawn角色，由调用方传入。
+	 */
 	virtual void OnPossess(class APawn* APawn) override;
 
 	/**
@@ -106,6 +119,7 @@ public:
 	 * - 输入系统: 解绑角色输入
 	 * - 摄像机系统: 切换到自由视角或其他相机
 	 */
+	/** 结束当前Possess周期并解除旧Pawn依赖。 */
 	virtual void OnUnPossess() override;
 
 protected:
@@ -120,5 +134,6 @@ protected:
 	 * 
 	 * 注意: 此函数只在客户端调用,服务器端 玩家State 直接在 Received玩家 中获取。
 	 */
+	/** 收到PlayerState复制后刷新角色绑定。 */
 	virtual void OnRep_PlayerState() override;
 };

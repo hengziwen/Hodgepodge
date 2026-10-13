@@ -1,3 +1,6 @@
+/** @file HodgeMovementActionTypes.cpp
+ * @brief 实现Dash/Sprint动作数据相关的类型、接口与现有处理流程。
+ */
 #include "Combat/HodgeMovementActionTypes.h"
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeMovementActionTypes)
 
@@ -12,6 +15,7 @@ namespace HodgeMovementTags
 	UE_DEFINE_GAMEPLAY_TAG(PerfectDodgeCue, "GameplayCue.Character.PerfectDodge");
 }
 
+/** 开始本轮处理。 */
 bool FHodgeSprintInputSession::Begin(double Time, int32 Generation)
 {
 	if (bHeld || Generation <= 0 || !FMath::IsFinite(Time)) { return false; }
@@ -20,15 +24,19 @@ bool FHodgeSprintInputSession::Begin(double Time, int32 Generation)
 	return true;
 }
 
+/** 释放当前对象持有的资源或句柄。 */
 void FHodgeSprintInputSession::Release() { bHeld = false; State = EHodgeSprintInputState::Idle; }
+/** 消费当前缓存或事件。 */
 void FHodgeSprintInputSession::Consume() { State = bHeld ? EHodgeSprintInputState::ConsumedUntilRelease : EHodgeSprintInputState::Idle; }
 
+/** 检查当前状态是否满足操作资格。 */
 bool FHodgeSprintInputSession::Qualifies(double Time, float Threshold) const
 {
 	return bHeld && State == EHodgeSprintInputState::DashActive && FMath::IsFinite(Time) &&
 		FMath::IsFinite(Threshold) && Threshold >= 0.f && Time - PressedAt >= Threshold;
 }
 
+/** 按当前约束选择所需候选。 */
 bool FHodgeDashDirections::Select(FVector Desired, FVector ActorForward, bool bEnableBackward, float BackwardHalfAngle, FHodgeDashDirections& Out)
 {
 	Out = {};

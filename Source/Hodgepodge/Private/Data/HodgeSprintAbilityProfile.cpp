@@ -1,9 +1,13 @@
+/** @file HodgeSprintAbilityProfile.cpp
+ * @brief 实现Dash/Sprint参数配置相关的类型、接口与现有处理流程。
+ */
 #include "Data/HodgeSprintAbilityProfile.h"
 #include "Animation/AnimMontage.h"
 #include "Animation/AnimSequence.h"
 #include "Misc/DataValidation.h"
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeSprintAbilityProfile)
 
+/** 检查当前配置并收集诊断。 */
 bool UHodgeSprintAbilityProfile::Validate(TArray<FText>& Errors) const
 {
 	const int32 Before = Errors.Num();
@@ -49,13 +53,17 @@ bool UHodgeSprintAbilityProfile::Validate(TArray<FText>& Errors) const
 	{ Errors.Add(FText::FromString(TEXT("Pivot recovery end must be a finite time inside its montage."))); }
 	return Before == Errors.Num();
 }
+/** 判断Handoff窗口。 */
 bool UHodgeSprintAbilityProfile::IsHandoffWindow(double DashAge) const
 { return FMath::IsFinite(DashAge) && DashAge >= HandoffOpenTime && DashAge <= HandoffCloseTime; }
+/** 判断权威Handoff窗口。 */
 bool UHodgeSprintAbilityProfile::IsAuthorityHandoffWindow(double DashAge) const
 { return FMath::IsFinite(DashAge) && DashAge >= HandoffOpenTime && DashAge <= HandoffCloseTime + HandoffNetworkGrace; }
+/** 检查是否允许移动取消。 */
 bool UHodgeSprintAbilityProfile::CanMoveCancel(double DashAge) const
 { return bAllowMoveCancel && FMath::IsFinite(DashAge) && DashAge >= MoveCancelOpenTime; }
 #if WITH_EDITOR
+/** 在编辑器校验当前配置并收集诊断。 */
 EDataValidationResult UHodgeSprintAbilityProfile::IsDataValid(FDataValidationContext& Context) const
 {
 	TArray<FText> Errors; Validate(Errors);

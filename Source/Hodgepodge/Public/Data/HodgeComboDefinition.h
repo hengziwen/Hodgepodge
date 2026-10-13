@@ -1,3 +1,6 @@
+/** @file HodgeComboDefinition.h
+ * @brief 声明连段图配置相关的类型、接口与现有处理流程。
+ */
 #pragma once
 
 #include "CoreMinimal.h"
@@ -6,6 +9,7 @@
 #include "GameplayTagContainer.h"
 #include "HodgeComboDefinition.generated.h"
 
+/** 保存连段转换的数据和接口契约。 */
 USTRUCT(BlueprintType)
 struct FHodgeComboTransition
 {
@@ -29,6 +33,7 @@ struct FHodgeComboTransition
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) int32 TransitionPriority = 0;
 };
 
+/** 保存连段表行的数据和接口契约。 */
 USTRUCT(BlueprintType)
 struct FHodgeComboRow : public FTableRowBase
 {
@@ -43,6 +48,7 @@ struct FHodgeComboRow : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) TArray<FHodgeComboTransition> Transitions;
 };
 
+/** 保存连段输入绑定的数据和接口契约。 */
 USTRUCT(BlueprintType)
 struct FHodgeComboInputBinding
 {
@@ -53,6 +59,7 @@ struct FHodgeComboInputBinding
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) FGameplayTag IntentTag;
 };
 
+/** 封装连段图配置的状态与操作接口。 */
 UCLASS(BlueprintType, Const)
 class HODGEPODGE_API UHodgeComboDefinition : public UPrimaryDataAsset
 {
@@ -72,9 +79,21 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) FGameplayTag MoveCancelWindowTag;
 	// 触发移动取消要求的输入强度阈值，不是移动速度或厘米距离。
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ClampMin="0")) float MoveIntentThreshold = 0.1f;
+	/** 查找节点。
+	 * @param Tag 标签，用于对应标签查询或匹配。
+	 * @return 节点的当前值或引用。
+	 */
 	const FHodgeComboRow* FindNode(FGameplayTag Tag) const;
+	/** 检查定义配置及其引用资源是否满足执行契约。
+	 * @param Errors 收集配置或执行失败的诊断。
+	 * @return true表示本次检查或操作成功，false表示失败。
+	 */
 	bool ValidateDefinition(TArray<FText>& Errors) const;
 #if WITH_EDITOR
+	/** 在编辑器校验当前配置并收集诊断。
+	 * @param Context 本次操作的上下文。
+	 * @return 当前配置的校验结果。
+	 */
 	virtual EDataValidationResult IsDataValid(FDataValidationContext& Context) const override;
 #endif
 };

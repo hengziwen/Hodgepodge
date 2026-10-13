@@ -1,3 +1,6 @@
+/** @file HodgeAbilityDefinitionTests.cpp
+ * @brief 实现单段技能执行定义自动化测试相关的类型、接口与现有处理流程。
+ */
 #if WITH_DEV_AUTOMATION_TESTS
 #include "AbilitySystem/HodgeAbilitySystemComponent.h"
 #include "AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h"
@@ -16,11 +19,14 @@
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeDefinitionGrantTest, "Hodge.Combo.DefinitionGrant",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeDefinitionGrantTest::RunTest(const FString& Parameters)
 {
 	const auto Values = UWorld::InitializationValues().AllowAudioPlayback(false).CreatePhysicsScene(false)
 		.CreateNavigation(false).CreateAISystem(false);
+	// 本次操作所在的世界。
 	UWorld* World = UWorld::CreateWorld(EWorldType::Game, false, NAME_None, nullptr, true, ERHIFeatureLevel::Num, &Values);
+	// 当前操作关联的所属对象。
 	AActor* Owner = World->SpawnActor<AActor>();
 	auto* ASC = NewObject<UHodgeAbilitySystemComponent>(Owner);
 	ASC->RegisterComponent();
@@ -52,8 +58,10 @@ bool FHodgeDefinitionGrantTest::RunTest(const FString& Parameters)
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeComboValidationTest, "Hodge.Combo.GraphValidation",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeComboValidationTest::RunTest(const FString& Parameters)
 {
+	// 当前操作使用的定义配置。
 	auto* Definition = NewObject<UHodgeComboDefinition>();
 	Definition->ComboTable = NewObject<UDataTable>();
 	Definition->ComboTable->RowStruct = FHodgeComboRow::StaticStruct();
@@ -83,29 +91,64 @@ bool FHodgeComboValidationTest::RunTest(const FString& Parameters)
 	return true;
 }
 
+/** 保存连段测试Access的数据和接口契约。 */
 struct FHodgeComboTestAccess
 {
+	/** 设置节点。
+	 * @param Combo 连段，由调用方传入。
+	 * @param Tag 标签，用于对应标签查询或匹配。
+	 */
 	static void SetNode(UHodgeCombatComponentBase* Combo, FGameplayTag Tag)
 	{
 		Combo->CurrentAbility = NewObject<UHodgeGameplayAbility_Definition>(Combo);
 		Combo->SetNode(Tag);
 	}
+	/** 按当前约束选择所需候选。
+	 * @param Combo 连段，由调用方传入。
+	 * @param Tag 标签，用于对应标签查询或匹配。
+	 * @return 本次计算、查询或创建得到的连段转换。
+	 */
 	static const FHodgeComboTransition* Select(UHodgeCombatComponentBase* Combo, FGameplayTag Tag) { return Combo->SelectTransition(Tag, false); }
+	/** 记录当前实验对象使用的输入状态。
+	 * @param Combo 连段，由调用方传入。
+	 * @return 本次计算、查询或创建得到的玩法标签。
+	 */
 	static FGameplayTag Input(UHodgeCombatComponentBase* Combo) { return Combo->BufferedInput; }
+	/** 开始本轮处理。
+	 * @param Combo 连段，由调用方传入。
+	 * @param Tag 标签，用于对应标签查询或匹配。
+	 * @return 本次计算、查询或创建得到的玩法能力定义。
+	 */
 	static UHodgeGameplayAbility_Definition* Begin(UHodgeCombatComponentBase* Combo, FGameplayTag Tag)
 	{
 		SetNode(Combo, Tag);
 		Combo->ComboMemory = {Tag, 0, 7};
 		return Combo->CurrentAbility;
 	}
+	/** 使当前测试的缓存或会话达到过期条件。
+	 * @param Combo 连段，由调用方传入。
+	 */
 	static void Expire(UHodgeCombatComponentBase* Combo)
 	{
 		Combo->ComboMemory.ExpiresAt = Combo->ComboTime();
 		Combo->ExpireComboMemory();
 	}
+	/** 恢复本对象的初始状态。
+	 * @param Combo 连段，由调用方传入。
+	 */
 	static void Reset(UHodgeCombatComponentBase* Combo) { Combo->ResetSession(false); }
+	/** 结束当前被拒绝的请求或交接。
+	 * @param Combo 连段，由调用方传入。
+	 */
 	static void Reject(UHodgeCombatComponentBase* Combo) { Combo->RejectServerActivation(nullptr); }
+	/** 取得当前来源用于配对资源记录的标识。
+	 * @param Combo 连段，由调用方传入。
+	 * @return 本次计算、查询或创建得到的整数16。
+	 */
 	static int16 SourceKey(UHodgeCombatComponentBase* Combo) { return Combo->ExecutionKey(); }
+	/** 结束未能成功提交的准备激活并清理其状态。
+	 * @param Combo 连段，由调用方传入。
+	 */
 	static void FailPreparedActivation(UHodgeCombatComponentBase* Combo)
 	{
 		Combo->PreviousComboMemory = Combo->ComboMemory;
@@ -114,6 +157,10 @@ struct FHodgeComboTestAccess
 		Combo->bSwitching = true;
 		Combo->CompleteServerActivation();
 	}
+	/** 结束DuringActivation。
+	 * @param Combo 连段，由调用方传入。
+	 * @param Ability 能力，由调用方传入。
+	 */
 	static void FinishDuringActivation(UHodgeCombatComponentBase* Combo, UHodgeGameplayAbility_Definition* Ability)
 	{
 		Combo->bSwitching = true;
@@ -125,11 +172,14 @@ struct FHodgeComboTestAccess
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeComboRetentionTest, "Hodge.Combo.Retention",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeComboRetentionTest::RunTest(const FString& Parameters)
 {
 	const auto Values = UWorld::InitializationValues().AllowAudioPlayback(false).CreatePhysicsScene(false)
 		.CreateNavigation(false).CreateAISystem(false);
+	// 本次操作所在的世界。
 	UWorld* World = UWorld::CreateWorld(EWorldType::Game, false, NAME_None, nullptr, true, ERHIFeatureLevel::Num, &Values);
+	// 当前操作关联的所属对象。
 	AActor* Owner = World->SpawnActor<AActor>();
 	auto* ASC = NewObject<UHodgeAbilitySystemComponent>(Owner);
 	ASC->RegisterComponent();
@@ -244,11 +294,14 @@ bool FHodgeComboRetentionTest::RunTest(const FString& Parameters)
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeComboSessionTest, "Hodge.Combo.SessionRules",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeComboSessionTest::RunTest(const FString& Parameters)
 {
 	const auto Values = UWorld::InitializationValues().AllowAudioPlayback(false).CreatePhysicsScene(false)
 		.CreateNavigation(false).CreateAISystem(false);
+	// 本次操作所在的世界。
 	UWorld* World = UWorld::CreateWorld(EWorldType::Game, false, NAME_None, nullptr, true, ERHIFeatureLevel::Num, &Values);
+	// 当前操作关联的所属对象。
 	AActor* Owner = World->SpawnActor<AActor>();
 	AActor* Avatar = World->SpawnActor<AActor>();
 	auto* ASC = NewObject<UHodgeAbilitySystemComponent>(Owner);

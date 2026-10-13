@@ -1,3 +1,6 @@
+/** @file MaterialProgressBar.cpp
+ * @brief 实现材质驱动进度条相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "UI/Basic/MaterialProgressBar.h"
@@ -8,10 +11,12 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(MaterialProgressBar)
 
+/** 将配置属性同步到现有控件或表现资源。 */
 void UMaterialProgressBar::SynchronizeProperties()
 {
 	Super::SynchronizeProperties();
 
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (Image_Bar)
 	{
 		Image_Bar->SetBrushFromMaterial(bUseStroke ? StrokeMaterial : NoStrokeMaterial);
@@ -77,6 +82,7 @@ void UMaterialProgressBar::SynchronizeProperties()
 }
 
 #if WITH_EDITOR
+/** 在控件重建后同步设计期或运行时表现。 */
 void UMaterialProgressBar::OnWidgetRebuilt()
 {
 	Super::OnWidgetRebuilt();
@@ -136,16 +142,19 @@ void UMaterialProgressBar::OnWidgetRebuilt()
 }
 #endif
 
+/** 在指定UMG动画结束后执行对应的进度显示收尾。 */
 void UMaterialProgressBar::OnAnimationFinished_Implementation(const UWidgetAnimation* Animation)
 {
 	Super::OnAnimationFinished_Implementation(Animation);
 
+	// 向当前监听者发布状态变化，调用方继续负责后续处理。
 	if (BoundAnim_FillBar == Animation)
 	{
 		OnFillAnimationFinished.Broadcast();
 	}
 }
 
+/** 设置进度。 */
 void UMaterialProgressBar::SetProgress(float Progress)
 {
 	if (CachedProgress != Progress)
@@ -154,6 +163,7 @@ void UMaterialProgressBar::SetProgress(float Progress)
 	}
 }
 
+/** 设置起始进度。 */
 void UMaterialProgressBar::SetStartProgress(float StartProgress)
 {
 	if (CachedStartProgress != StartProgress)
@@ -162,6 +172,7 @@ void UMaterialProgressBar::SetStartProgress(float StartProgress)
 	}
 }
 
+/** 设置颜色A。 */
 void UMaterialProgressBar::SetColorA(FLinearColor ColorA)
 {
 	if (CachedColorA != ColorA)
@@ -170,6 +181,7 @@ void UMaterialProgressBar::SetColorA(FLinearColor ColorA)
 	}
 }
 
+/** 设置颜色B。 */
 void UMaterialProgressBar::SetColorB(FLinearColor ColorB)
 {
 	if (CachedColorB != ColorB)
@@ -178,6 +190,7 @@ void UMaterialProgressBar::SetColorB(FLinearColor ColorB)
 	}
 }
 
+/** 设置颜色背景。 */
 void UMaterialProgressBar::SetColorBackground(FLinearColor ColorBackground)
 {
 	if (CachedColorBackground != ColorBackground)
@@ -186,6 +199,7 @@ void UMaterialProgressBar::SetColorBackground(FLinearColor ColorBackground)
 	}
 }
 
+/** 从指定起始进度更新材质进度动画。 */
 void UMaterialProgressBar::AnimateProgressFromStart(float Start, float End, float AnimSpeed)
 {
 	SetStartProgress(Start);
@@ -193,6 +207,7 @@ void UMaterialProgressBar::AnimateProgressFromStart(float Start, float End, floa
 	PlayAnimation(BoundAnim_FillBar, 0.0f, 1, EUMGSequencePlayMode::Forward, AnimSpeed);
 }
 
+/** 从当前显示进度更新材质进度动画。 */
 void UMaterialProgressBar::AnimateProgressFromCurrent(float End, float AnimSpeed)
 {
 	if (UMaterialInstanceDynamic* MID = GetBarDynamicMaterial())
@@ -205,6 +220,7 @@ void UMaterialProgressBar::AnimateProgressFromCurrent(float End, float AnimSpeed
 	}
 }
 
+/** 设置进度内部。 */
 void UMaterialProgressBar::SetProgress_Internal(float Progress)
 {
 	if (UMaterialInstanceDynamic* MID = GetBarDynamicMaterial())
@@ -214,6 +230,7 @@ void UMaterialProgressBar::SetProgress_Internal(float Progress)
 	}
 }
 
+/** 设置起始进度内部。 */
 void UMaterialProgressBar::SetStartProgress_Internal(float StartProgress)
 {
 	if (UMaterialInstanceDynamic* MID = GetBarDynamicMaterial())
@@ -223,6 +240,7 @@ void UMaterialProgressBar::SetStartProgress_Internal(float StartProgress)
 	}
 }
 
+/** 设置颜色A内部。 */
 void UMaterialProgressBar::SetColorA_Internal(FLinearColor ColorA)
 {
 	if (UMaterialInstanceDynamic* MID = GetBarDynamicMaterial())
@@ -232,6 +250,7 @@ void UMaterialProgressBar::SetColorA_Internal(FLinearColor ColorA)
 	}
 }
 
+/** 设置颜色B内部。 */
 void UMaterialProgressBar::SetColorB_Internal(FLinearColor ColorB)
 {
 	if (UMaterialInstanceDynamic* MID = GetBarDynamicMaterial())
@@ -241,6 +260,7 @@ void UMaterialProgressBar::SetColorB_Internal(FLinearColor ColorB)
 	}
 }
 
+/** 设置颜色背景内部。 */
 void UMaterialProgressBar::SetColorBackground_Internal(FLinearColor ColorBackground)
 {
 	if (UMaterialInstanceDynamic* MID = GetBarDynamicMaterial())
@@ -250,6 +270,7 @@ void UMaterialProgressBar::SetColorBackground_Internal(FLinearColor ColorBackgro
 	}
 }
 
+/** 获取条形显示Dynamic材质。 */
 UMaterialInstanceDynamic* UMaterialProgressBar::GetBarDynamicMaterial() const
 {
 	if (!CachedMID)

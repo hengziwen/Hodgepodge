@@ -1,3 +1,6 @@
+/** @file HodgeEquipmentStatProfile.cpp
+ * @brief 实现装备等级属性配置相关的类型、接口与现有处理流程。
+ */
 #include "Data/HodgeEquipmentStatProfile.h"
 #include "AbilitySystem/HodgeGameplayTags.h"
 #include "AbilitySystem/Stats/HodgeEquipmentStatEffect.h"
@@ -8,19 +11,23 @@
 #endif
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeEquipmentStatProfile)
 
+/** 构造装备等级属性配置并初始化其默认状态。 */
 UHodgeEquipmentStatProfile::UHodgeEquipmentStatProfile()
 {
 	AttributeEffect = UHodgeEquipmentStatEffect::StaticClass();
 }
 
+/** 计算当前配置结果。 */
 bool UHodgeEquipmentStatProfile::Evaluate(int32 Level, float& Health, float& Damage) const
 {
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (Level < MinLevel || Level > MaxLevel || !MaxHealthBonus.IsValid() || !BaseDamageBonus.IsValid()) { return false; }
 	Health = MaxHealthBonus.GetValueAtLevel(Level);
 	Damage = BaseDamageBonus.GetValueAtLevel(Level);
 	return FMath::IsFinite(Health) && Health >= 0.f && FMath::IsFinite(Damage) && Damage >= 0.f;
 }
 
+/** 检查当前配置并收集诊断。 */
 bool UHodgeEquipmentStatProfile::Validate(TArray<FText>& Errors) const
 {
 	const int32 Before = Errors.Num();
@@ -49,6 +56,7 @@ bool UHodgeEquipmentStatProfile::Validate(TArray<FText>& Errors) const
 	return Errors.Num() == Before;
 }
 #if WITH_EDITOR
+/** 在编辑器校验当前配置并收集诊断。 */
 EDataValidationResult UHodgeEquipmentStatProfile::IsDataValid(FDataValidationContext& Context) const
 {
 	TArray<FText> Errors;

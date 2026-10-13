@@ -1,3 +1,6 @@
+/** @file GameFeatureAction_AddInputContextMapping.h
+ * @brief 声明GameFeature输入上下文动作相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 // 防止头文件被重复包含。
@@ -64,21 +67,33 @@ class UGameFeatureAction_AddInputContextMapping final : public UGameFeatureActio
 public:
 	//~UGameFeatureAction interface
 	// GameFeature 开始注册时执行。
+	/** 处理游戏功能扩展Registering。 */
 	virtual void OnGameFeatureRegistering() override;
 
 	// GameFeature 开始激活时执行。
+	/** 处理游戏功能扩展Activating。
+	 * @param Context 本次操作的上下文。
+	 */
 	virtual void OnGameFeatureActivating(FGameFeatureActivatingContext& Context) override;
 
 	// GameFeature 开始停用时执行。
+	/** 处理游戏功能扩展Deactivating。
+	 * @param Context 本次操作的上下文。
+	 */
 	virtual void OnGameFeatureDeactivating(FGameFeatureDeactivatingContext& Context) override;
 
 	// GameFeature 注销时执行。
+	/** 处理游戏功能扩展Unregistering。 */
 	virtual void OnGameFeatureUnregistering() override;
 	//~End of UGameFeatureAction interface
 
 	//~UObject interface
 #if WITH_EDITOR
 	// 编辑器中验证当前 GameFeature Action 的配置是否合法。
+	/** 在编辑器校验当前配置并收集诊断。
+	 * @param Context 本次操作的上下文。
+	 * @return 当前配置的校验结果。
+	 */
 	virtual EDataValidationResult IsDataValid(class FDataValidationContext& Context) const override;
 #endif
 	//~End of UObject interface
@@ -108,47 +123,81 @@ private:
 	/** Registers owned Input Mapping Contexts to the Input Registry Subsystem. Also binds onto the start of GameInstances and the adding/removal of Local Players. */
 	// 将当前 Action 拥有的输入映射注册到 Input Registry Subsystem。
 	// 同时监听 GameInstance 启动以及 LocalPlayer 添加/移除事件。
+	/** 注册输入映射Contexts。 */
 	void RegisterInputMappingContexts();
 
 	/** Registers owned Input Mapping Contexts to the Input Registry Subsystem for a specified GameInstance. This also gets called by a GameInstance Start. */
 	// 为指定 GameInstance 注册当前 Action 的输入映射。
 	// GameInstance 启动时也会调用该函数。
+	/** 注册输入上下文Mappings关联游戏Instance。
+	 * @param GameInstance 游戏Instance，由调用方传入。
+	 */
 	void RegisterInputContextMappingsForGameInstance(UGameInstance* GameInstance);
 
 	/** Registers owned Input Mapping Contexts to the Input Registry Subsystem for a specified Local Player. This also gets called when a Local Player is added. */
 	// 为指定 LocalPlayer 注册当前 Action 的输入映射。
 	// LocalPlayer 被添加时也会调用该函数。
+	/** 注册输入映射Contexts关联本地玩家。
+	 * @param LocalPlayer 本地玩家，由调用方传入。
+	 */
 	void RegisterInputMappingContextsForLocalPlayer(ULocalPlayer* LocalPlayer);
 
 	/** Unregisters owned Input Mapping Contexts from the Input Registry Subsystem. Also unbinds from the start of GameInstances and the adding/removal of Local Players. */
 	// 从 Input Registry Subsystem 注销当前 Action 拥有的输入映射。
 	// 同时解除 GameInstance 和 LocalPlayer 相关事件绑定。
+	/** 注销输入映射Contexts。 */
 	void UnregisterInputMappingContexts();
 
 	/** Unregisters owned Input Mapping Contexts from the Input Registry Subsystem for a specified GameInstance. */
 	// 从指定 GameInstance 对应的输入注册系统中注销输入映射。
+	/** 注销输入上下文Mappings关联游戏Instance。
+	 * @param GameInstance 游戏Instance，由调用方传入。
+	 */
 	void UnregisterInputContextMappingsForGameInstance(UGameInstance* GameInstance);
 
 	/** Unregisters owned Input Mapping Contexts from the Input Registry Subsystem for a specified Local Player. This also gets called when a Local Player is removed. */
 	// 从指定 LocalPlayer 对应的输入注册系统中注销输入映射。
 	// LocalPlayer 被移除时也会调用该函数。
+	/** 注销输入映射Contexts关联本地玩家。
+	 * @param LocalPlayer 本地玩家，由调用方传入。
+	 */
 	void UnregisterInputMappingContextsForLocalPlayer(ULocalPlayer* LocalPlayer);
 
 	//~UGameFeatureAction_WorldActionBase interface
 	// GameFeature 被添加到 World 时执行具体的输入映射逻辑。
+	/** 添加目标世界。
+	 * @param WorldContext 世界上下文，由调用方传入。
+	 * @param ChangeContext 变更上下文，由调用方传入。
+	 */
 	virtual void AddToWorld(const FWorldContext& WorldContext,
 	                        const FGameFeatureStateChangeContext& ChangeContext) override;
 	//~End of UGameFeatureAction_WorldActionBase interface
 
 	// 清理指定 GameFeature 激活上下文产生的所有运行时数据。
+	/** 恢复本对象的初始状态。
+	 * @param ActiveData 活动数据，由调用方传入。
+	 */
 	void Reset(FPerContextData& ActiveData);
 
 	// 响应 Controller 对应 Actor 的扩展事件。
+	/** 处理控制器扩展。
+	 * @param Actor 本次操作关联的Actor。
+	 * @param EventName 事件名称，由调用方传入。
+	 * @param ChangeContext 变更上下文，由调用方传入。
+	 */
 	void HandleControllerExtension(AActor* Actor, FName EventName, FGameFeatureStateChangeContext ChangeContext);
 
 	// 为指定 Player 添加当前 GameFeature 的输入映射。
+	/** 添加输入映射关联玩家。
+	 * @param Player 玩家，由调用方传入。
+	 * @param ActiveData 活动数据，由调用方传入。
+	 */
 	void AddInputMappingForPlayer(UPlayer* Player, FPerContextData& ActiveData);
 
 	// 从指定 PlayerController 移除当前 GameFeature 添加的输入映射。
+	/** 移除输入映射。
+	 * @param PlayerController 玩家控制器，由调用方传入。
+	 * @param ActiveData 活动数据，由调用方传入。
+	 */
 	void RemoveInputMapping(APlayerController* PlayerController, FPerContextData& ActiveData);
 };

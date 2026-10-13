@@ -1,3 +1,6 @@
+/** @file ApplyFrontendPerfSettingsAction.cpp
+ * @brief 实现前端性能策略动作相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "UI/Frontend/ApplyFrontendPerfSettingsAction.h"
@@ -20,6 +23,7 @@ struct FGameFeatureDeactivatingContext;
 // unless the developer setting ApplyFrontEndPerformanceOptionsInPIE is enabled
 int32 UApplyFrontendPerfSettingsAction::ApplicationCounter = 0;
 
+/** 处理游戏功能扩展Activating。 */
 void UApplyFrontendPerfSettingsAction::OnGameFeatureActivating(FGameFeatureActivatingContext& Context)
 {
 	ApplicationCounter++;
@@ -29,6 +33,7 @@ void UApplyFrontendPerfSettingsAction::OnGameFeatureActivating(FGameFeatureActiv
 	}
 }
 
+/** 处理游戏功能扩展Deactivating。 */
 void UApplyFrontendPerfSettingsAction::OnGameFeatureDeactivating(FGameFeatureDeactivatingContext& Context)
 {
 	ApplicationCounter--;

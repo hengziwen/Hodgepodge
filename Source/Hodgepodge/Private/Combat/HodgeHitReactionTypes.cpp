@@ -1,3 +1,6 @@
+/** @file HodgeHitReactionTypes.cpp
+ * @brief 实现受击判定与Impact数据相关的类型、接口与现有处理流程。
+ */
 #include "Combat/HodgeHitReactionTypes.h"
 #include "AbilitySystemComponent.h"
 #include "Animation/AnimMontage.h"
@@ -18,6 +21,7 @@ namespace HodgeHitReactionTags
 	UE_DEFINE_GAMEPLAY_TAG(Controlled, "State.Combat.HitReaction.Controlled");
 }
 
+/** 将体状态Tag映射为判定强度。 */
 int32 HodgeHitReaction::BodyRank(FGameplayTag Tag)
 {
 	using namespace HodgeHitReactionTags;
@@ -28,6 +32,7 @@ int32 HodgeHitReaction::BodyRank(FGameplayTag Tag)
 	return 0;
 }
 
+/** 将攻击判定Tag映射为比较用强度。 */
 int32 HodgeHitReaction::JudgementRank(FGameplayTag Tag)
 {
 	using namespace HodgeHitReactionTags;
@@ -38,9 +43,11 @@ int32 HodgeHitReaction::JudgementRank(FGameplayTag Tag)
 	return BodyRank(Tag);
 }
 
+/** 解析体状态。 */
 int32 HodgeHitReaction::ResolveBody(const UAbilitySystemComponent* ASC, FGameplayTag& OutTag)
 {
 	OutTag = FGameplayTag();
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (!ASC) { return 0; }
 	FGameplayTagContainer Tags;
 	ASC->GetOwnedGameplayTags(Tags);
@@ -53,23 +60,27 @@ int32 HodgeHitReaction::ResolveBody(const UAbilitySystemComponent* ASC, FGamepla
 	return Rank;
 }
 
+/** 检查是否允许冲击。 */
 bool HodgeHitReaction::CanImpact(int32 AttackRank, int32 BodyRank)
 {
 	return AttackRank >= 1 && AttackRank <= 4 && BodyRank >= 0 && BodyRank <= 4 && AttackRank >= BodyRank;
 }
 
+/** 检查是否允许Use蒙太奇。 */
 bool HodgeHitReaction::CanUseMontage(const UAnimMontage* Montage, const USkeletalMesh* Mesh)
 {
 	const USkeleton* Skeleton = Montage ? Montage->GetSkeleton() : nullptr;
 	return Skeleton && Mesh && (Skeleton == Mesh->GetSkeleton() || Skeleton->IsCompatibleMesh(Mesh));
 }
 
+/** 判断移动。 */
 bool FHodgeImpactSpec::IsMovement() const
 {
 	return Type == EHodgeImpactType::Knockback || Type == EHodgeImpactType::Launch ||
 		Type == EHodgeImpactType::AirHit || Type == EHodgeImpactType::Slam;
 }
 
+/** 检查当前配置并收集诊断。 */
 bool FHodgeImpactSpec::Validate(TArray<FText>& Errors) const
 {
 	const int32 Before = Errors.Num();
@@ -84,11 +95,13 @@ bool FHodgeImpactSpec::Validate(TArray<FText>& Errors) const
 	return Before == Errors.Num();
 }
 
+/** 判断Configured。 */
 bool FHodgeHitReactionConfig::IsConfigured() const
 {
 	return AttackJudgementTag.IsValid() || !Impacts.IsEmpty() || ReservedPoiseDamage != 0.f;
 }
 
+/** 检查当前配置并收集诊断。 */
 bool FHodgeHitReactionConfig::Validate(TArray<FText>& Errors) const
 {
 	const int32 Before = Errors.Num();

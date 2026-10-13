@@ -1,3 +1,6 @@
+/** @file HodgeGameState.cpp
+ * @brief 实现游戏状态相关的类型、接口与现有处理流程。
+ */
 // 111屎山代码来袭
 
 #include "Core/GameState/HodgeGameState.h"
@@ -22,6 +25,7 @@ class FLifetimeProperty;
 extern ENGINE_API float GAverageFPS;
 
 
+/** 构造游戏状态并初始化其默认状态。 */
 AHodgeGameState::AHodgeGameState(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -47,12 +51,14 @@ AHodgeGameState::AHodgeGameState(const FObjectInitializer& ObjectInitializer)
 	ServerFPS = 0.0f;
 }
 
+/** 在组件初始化前接入本对象所需的框架入口。 */
 void AHodgeGameState::PreInitializeComponents()
 {
 	// 先执行父类初始化，保证 Modular GameState 的组件接收者注册流程正常执行。
 	Super::PreInitializeComponents();
 }
 
+/** 在组件初始化后建立本对象的运行依赖。 */
 void AHodgeGameState::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
@@ -64,24 +70,28 @@ void AHodgeGameState::PostInitializeComponents()
 	AbilitySystemComponent->InitAbilityActorInfo(/*Owner=*/ this, /*Avatar=*/ this);
 }
 
+/** 获取能力系统组件。 */
 UAbilitySystemComponent* AHodgeGameState::GetAbilitySystemComponent() const
 {
 	// 返回 GameState 持有的全局 AbilitySystemComponent。
 	return AbilitySystemComponent;
 }
 
+/** 离开世界运行阶段并解除本对象持有的监听或资源。 */
 void AHodgeGameState::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	// 执行父类的结束运行逻辑。
 	Super::EndPlay(EndPlayReason);
 }
 
+/** 添加玩家持久状态与ASC所有者。 */
 void AHodgeGameState::AddPlayerState(APlayerState* PlayerState)
 {
 	// 将新加入的 PlayerState 交给父类维护 PlayerArray。
 	Super::AddPlayerState(PlayerState);
 }
 
+/** 移除玩家持久状态与ASC所有者。 */
 void AHodgeGameState::RemovePlayerState(APlayerState* PlayerState)
 {
 	// TODO：当前该函数似乎不会正常触发，因为 AGameModeBase 不会像传统 AGameMode 一样调用它。
@@ -89,6 +99,7 @@ void AHodgeGameState::RemovePlayerState(APlayerState* PlayerState)
 	Super::RemovePlayerState(PlayerState);
 }
 
+/** 在无缝旅行阶段交接需要保留的玩家状态。 */
 void AHodgeGameState::SeamlessTravelTransitionCheckpoint(bool bToTransitionMap)
 {
 	// 无缝地图切换过程中清理不再有效的玩家状态，包括 Bot 和不活跃玩家。
@@ -105,6 +116,7 @@ void AHodgeGameState::SeamlessTravelTransitionCheckpoint(bool bToTransitionMap)
 	}
 }
 
+/** 登记本类型需要网络复制的属性及复制条件。 */
 void AHodgeGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	// 先注册父类已有的网络复制属性。
@@ -117,6 +129,7 @@ void AHodgeGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 	DOREPLIFETIME_CONDITION(ThisClass, RecorderPlayerState, COND_ReplayOnly);
 }
 
+/** 推进当前对象的随帧更新。 */
 void AHodgeGameState::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
@@ -150,6 +163,7 @@ float AHodgeGameState::GetServerFPS() const
 	return ServerFPS;
 }
 
+/** 设置Recorder玩家状态。 */
 void AHodgeGameState::SetRecorderPlayerState(APlayerState* NewPlayerState)
 {
 	// RecorderPlayerState 只允许在当前游戏中设置一次。
@@ -169,12 +183,14 @@ void AHodgeGameState::SetRecorderPlayerState(APlayerState* NewPlayerState)
 	}
 }
 
+/** 获取Recorder玩家状态。 */
 APlayerState* AHodgeGameState::GetRecorderPlayerState() const
 {
 	// TODO：如果 RecorderPlayerState 为空，后续可以考虑自动选择一个合适的 PlayerState。
 	return RecorderPlayerState;
 }
 
+/** 收到Recorder玩家状态复制后更新本地状态。 */
 void AHodgeGameState::OnRep_RecorderPlayerState()
 {
 	// RecorderPlayerState 发生变化时通知所有监听者，例如 UI 或回放相关系统。

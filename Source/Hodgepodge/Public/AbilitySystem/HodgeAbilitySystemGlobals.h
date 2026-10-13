@@ -1,3 +1,6 @@
+/** @file HodgeAbilitySystemGlobals.h
+ * @brief 声明GAS全局入口相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
@@ -23,6 +26,9 @@ class UHodgeAbilitySystemGlobals : public UAbilitySystemGlobals
 
 	// 创建 GameplayEffectContext 实例。
 	// 通过重写该函数，可以让 GAS 默认创建项目自定义的 FGameplayEffectContext 派生结构。
+	/** 为本项目创建使用自定义上下文类型的效果数据。
+	 * @return 本次计算、查询或创建得到的玩法效果上下文。
+	 */
 	virtual FGameplayEffectContext* AllocGameplayEffectContext() const override;
 
 	//~End of UAbilitySystemGlobals interface

@@ -1,3 +1,6 @@
+/** @file HodgeTabListWidgetBase.cpp
+ * @brief 实现标签页列表相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "UI/Common/HodgeTabListWidgetBase.h"
@@ -7,11 +10,13 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeTabListWidgetBase)
 
+/** 在控件实例初始化时建立必要的输入或页面绑定。 */
 void UHodgeTabListWidgetBase::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 }
 
+/** 在控件构建时接入界面数据和生命周期。 */
 void UHodgeTabListWidgetBase::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -19,6 +24,7 @@ void UHodgeTabListWidgetBase::NativeConstruct()
 	SetupTabs();
 }
 
+/** 在控件析构时解除界面监听与临时资源。 */
 void UHodgeTabListWidgetBase::NativeDestruct()
 {
 	for (FHodgeTabDescriptor& TabInfo : PreregisteredTabInfoArray)
@@ -33,6 +39,7 @@ void UHodgeTabListWidgetBase::NativeDestruct()
 	Super::NativeDestruct();
 }
 
+/** 获取PreregisteredTab信息。 */
 bool UHodgeTabListWidgetBase::GetPreregisteredTabInfo(const FName TabNameId, FHodgeTabDescriptor& OutTabInfo)
 {
 	const FHodgeTabDescriptor* const FoundTabInfo = PreregisteredTabInfoArray.FindByPredicate(
@@ -50,6 +57,7 @@ bool UHodgeTabListWidgetBase::GetPreregisteredTabInfo(const FName TabNameId, FHo
 	return true;
 }
 
+/** 设置TabHidden状态。 */
 void UHodgeTabListWidgetBase::SetTabHiddenState(FName TabNameId, bool bHidden)
 {
 	for (FHodgeTabDescriptor& TabInfo : PreregisteredTabInfoArray)
@@ -62,6 +70,7 @@ void UHodgeTabListWidgetBase::SetTabHiddenState(FName TabNameId, bool bHidden)
 	}
 }
 
+/** 注册DynamicTab。 */
 bool UHodgeTabListWidgetBase::RegisterDynamicTab(const FHodgeTabDescriptor& TabDescriptor)
 {
 	// If it's hidden we just ignore it.
@@ -75,6 +84,7 @@ bool UHodgeTabListWidgetBase::RegisterDynamicTab(const FHodgeTabDescriptor& TabD
 	return RegisterTab(TabDescriptor.TabId, TabDescriptor.TabButtonType, TabDescriptor.CreatedTabContentWidget);
 }
 
+/** 处理PreLinkedSwitcher变化。 */
 void UHodgeTabListWidgetBase::HandlePreLinkedSwitcherChanged()
 {
 	for (const FHodgeTabDescriptor& TabInfo : PreregisteredTabInfoArray)
@@ -89,8 +99,10 @@ void UHodgeTabListWidgetBase::HandlePreLinkedSwitcherChanged()
 	Super::HandlePreLinkedSwitcherChanged();
 }
 
+/** 处理PostLinkedSwitcher变化。 */
 void UHodgeTabListWidgetBase::HandlePostLinkedSwitcherChanged()
 {
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (!IsDesignTime() && GetCachedWidget().IsValid())
 	{
 		// Don't bother making tabs if we're in the designer or haven't been constructed yet
@@ -100,6 +112,7 @@ void UHodgeTabListWidgetBase::HandlePostLinkedSwitcherChanged()
 	Super::HandlePostLinkedSwitcherChanged();
 }
 
+/** 处理TabCreation。 */
 void UHodgeTabListWidgetBase::HandleTabCreation_Implementation(FName TabId, UCommonButtonBase* TabButton)
 {
 	FHodgeTabDescriptor* TabInfoPtr = nullptr;
@@ -129,6 +142,7 @@ void UHodgeTabListWidgetBase::HandleTabCreation_Implementation(FName TabId, UCom
 	PendingTabLabelInfoMap.Remove(TabId);
 }
 
+/** 判断FirstTab活动。 */
 bool UHodgeTabListWidgetBase::IsFirstTabActive() const
 {
 	if (PreregisteredTabInfoArray.Num() > 0)
@@ -139,6 +153,7 @@ bool UHodgeTabListWidgetBase::IsFirstTabActive() const
 	return false;
 }
 
+/** 判断上次Tab活动。 */
 bool UHodgeTabListWidgetBase::IsLastTabActive() const
 {
 	if (PreregisteredTabInfoArray.Num() > 0)
@@ -149,6 +164,7 @@ bool UHodgeTabListWidgetBase::IsLastTabActive() const
 	return false;
 }
 
+/** 判断Tab可见。 */
 bool UHodgeTabListWidgetBase::IsTabVisible(FName TabId)
 {
 	if (const UCommonButtonBase* Button = GetTabButtonBaseByID(TabId))
@@ -162,6 +178,7 @@ bool UHodgeTabListWidgetBase::IsTabVisible(FName TabId)
 	return false;
 }
 
+/** 获取可见Tab数量。 */
 int32 UHodgeTabListWidgetBase::GetVisibleTabCount()
 {
 	int32 Result = 0;
@@ -177,8 +194,10 @@ int32 UHodgeTabListWidgetBase::GetVisibleTabCount()
 	return Result;
 }
 
+/** 设置upTabs。 */
 void UHodgeTabListWidgetBase::SetupTabs()
 {
+	// 向当前监听者发布状态变化，调用方继续负责后续处理。
 	for (FHodgeTabDescriptor& TabInfo : PreregisteredTabInfoArray)
 	{
 		if (TabInfo.bHidden)

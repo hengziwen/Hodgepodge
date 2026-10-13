@@ -1,3 +1,6 @@
+/** @file SActorCanvas.h
+ * @brief 声明Actor指示器Slate布局容器相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
@@ -71,10 +74,17 @@ public:
 	// Slot 除了保存 Slate Child Widget，
 	// 还缓存该 Indicator 的屏幕位置、深度、优先级、可见性、
 	// 是否位于摄像机前方以及是否被 Clamp 等运行时布局状态。
+	/** 构造槽位并初始化其默认状态。
+	 * @param InIndicator 指示器，由调用方传入。
+	 * @return 本次计算、查询或创建得到的类型F槽位publicT槽位基础F槽位public指示器描述画布槽位F槽位U指示器描述输入指示器T槽位基础F槽位槽位指示器描述指示器输入指示器00屏幕位置F向量2DZero向量0深度00优先级0f指示器b状态判断指示器可见trueb输入FrontOf相机trueb存在判断有效屏幕位置false槽位DirtybDirtytrue约束bWas指示器已约束false约束bWas指示器已约束状态变化falseSlate界面槽位SLATESLOTBEGINARGSF槽位T槽位基础F槽位SLATESLOTENDARGST槽位基础ConstructusingT槽位基础F槽位Construct指示器布尔值获取状态判断指示器可见const返回b状态判断指示器可见指示器void设置状态判断指示器可见布尔值b可见槽位Dirtyifb状态判断指示器可见b可见b状态判断指示器可见b可见bDirtytrueSlate界面控件可见性刷新可见性指示器F向量2D获取屏幕位置const返回屏幕位置指示器void设置屏幕位置F向量2D输入屏幕位置槽位Dirtyif屏幕位置输入屏幕位置屏幕位置输入屏幕位置bDirtytrue指示器double获取深度const返回深度指示器void设置深度double输入深度槽位Dirtyif深度输入深度深度输入深度bDirtytrue指示器整数32获取优先级const返回优先级指示器void设置优先级整数32输入优先级优先级槽位Dirty指示器if优先级输入优先级优先级输入优先级bDirtytrue指示器布尔值获取输入FrontOf相机const返回b输入FrontOf相机void设置输入FrontOf相机布尔值b输入Front槽位Dirtyifb输入FrontOf相机b输入Frontb输入FrontOf相机b输入FrontbDirtytrue控件刷新可见性指示器布尔值存在判断有效屏幕位置const返回b存在判断有效屏幕位置指示器void设置存在判断有效屏幕位置布尔值b有效屏幕位置槽位Dirtyifb存在判断有效屏幕位置b有效屏幕位置b存在判断有效屏幕位置b有效屏幕位置bDirtytrue控件刷新可见性槽位布尔值b状态判断Dirtyconst返回bDirtyDirtyvoid清空Dirty标记bDirtyfalse指示器约束布尔值Was指示器已约束const返回bWas指示器已约束指示器约束void设置Was指示器已约束布尔值bWas已约束const约束约束ifbWas已约束bWas指示器已约束bWas指示器已约束bWas已约束bWas指示器已约束状态变化true约束布尔值Was指示器已约束状态变化const返回bWas指示器已约束状态变化约束void清空指示器已约束状态变化标记bWas指示器已约束状态变化falseprivate指示器Slate界面控件可见性void刷新可见性指示器控件const布尔值b状态判断可见b状态判断指示器可见b存在判断有效屏幕位置自身命中测试Invisible控件命中测试Collapsed获取控件设置可见性b状态判断可见E可见性自身命中测试InvisibleE可见性CollapsedKeptAlivebySActor对象画布添加Referenced对象槽位指示器描述U对象SActor对象画布添加Referenced对象UE垃圾回收U指示器描述指示器指示器F向量2D屏幕位置指示器double深度指示器整数32优先级指示器uint8b状态判断指示器可见1指示器uint8b输入FrontOf相机1指示器uint8b存在判断有效屏幕位置1槽位uint8bDirty1缓存帧deferred值ofwhetherthe指示器wasvisually屏幕已约束上次帧ornotSemihackymutable实现asit状态判断缓存duringaconst绘制operation指示器约束const绘制mutableconstmutableuint8bWas指示器已约束1约束mutableuint8bWas指示器已约束状态变化1SActor对象画布槽位friend类型SActor对象画布。
+	 */
 	class FSlot : public TSlotBase<FSlot>
 	{
 	public:
 		// 为指定 IndicatorDescriptor 创建对应的 Canvas Slot。
+		/** 构造槽位并初始化其默认状态。
+		 * @param InIndicator 指示器，由调用方传入。
+		 */
 		FSlot(UIndicatorDescriptor* InIndicator)
 			: TSlotBase<FSlot>()
 			  // 保存当前 Slot 对应的 IndicatorDescriptor。
@@ -108,9 +118,15 @@ public:
 		using TSlotBase<FSlot>::Construct;
 
 		// 获取当前 Indicator 自身是否期望显示。
+		/** 获取状态判断指示器可见。
+		 * @return true表示本次检查或操作成功，false表示失败。
+		 */
 		bool GetIsIndicatorVisible() const { return bIsIndicatorVisible; }
 
 		// 设置当前 Indicator 自身是否期望显示。
+		/** 设置状态判断指示器可见。
+		 * @param bVisible 是否可见的控制标记。
+		 */
 		void SetIsIndicatorVisible(bool bVisible)
 		{
 			// 只有状态发生变化时才标记 Slot 为 Dirty。
@@ -125,9 +141,15 @@ public:
 		}
 
 		// 获取当前 Indicator 投影后的屏幕坐标。
+		/** 获取屏幕位置。
+		 * @return 屏幕位置的当前值或引用。
+		 */
 		FVector2D GetScreenPosition() const { return ScreenPosition; }
 
 		// 更新当前 Indicator 的屏幕坐标。
+		/** 设置屏幕位置。
+		 * @param InScreenPosition 屏幕位置，由调用方传入。
+		 */
 		void SetScreenPosition(FVector2D InScreenPosition)
 		{
 			// 坐标发生变化时标记 Slot 为 Dirty。
@@ -139,9 +161,15 @@ public:
 		}
 
 		// 获取当前 Indicator 相对于摄像机的深度 / 距离信息。
+		/** 获取深度。
+		 * @return 深度的当前值或引用。
+		 */
 		double GetDepth() const { return Depth; }
 
 		// 更新当前 Indicator 的深度。
+		/** 设置深度。
+		 * @param InDepth 深度，由调用方传入。
+		 */
 		void SetDepth(double InDepth)
 		{
 			// 深度发生变化时标记 Slot 为 Dirty，
@@ -154,9 +182,15 @@ public:
 		}
 
 		// 获取当前 Indicator 的排序优先级。
+		/** 获取优先级。
+		 * @return 优先级的当前值或引用。
+		 */
 		int32 GetPriority() const { return Priority; }
 
 		// 设置当前 Indicator 的排序优先级。
+		/** 设置优先级。
+		 * @param InPriority 优先级，由调用方传入。
+		 */
 		void SetPriority(int32 InPriority)
 		{
 			// Priority 发生变化时标记 Slot 为 Dirty，
@@ -169,9 +203,15 @@ public:
 		}
 
 		// 获取 Indicator 对应目标是否位于摄像机前方。
+		/** 获取输入FrontOf相机。
+		 * @return true表示本次检查或操作成功，false表示失败。
+		 */
 		bool GetInFrontOfCamera() const { return bInFrontOfCamera; }
 
 		// 更新目标是否位于摄像机前方。
+		/** 设置输入FrontOf相机。
+		 * @param bInFront 是否输入Front的控制标记。
+		 */
 		void SetInFrontOfCamera(bool bInFront)
 		{
 			// 状态变化时标记 Slot 为 Dirty。
@@ -186,9 +226,15 @@ public:
 		}
 
 		// 当前 Indicator 是否已经拥有有效的屏幕投影坐标。
+		/** 判断是否存在有效屏幕位置。
+		 * @return true表示满足该查询条件，false表示不满足。
+		 */
 		bool HasValidScreenPosition() const { return bHasValidScreenPosition; }
 
 		// 设置当前 Indicator 是否拥有有效屏幕坐标。
+		/** 设置存在判断有效屏幕位置。
+		 * @param bValidScreenPosition 是否有效屏幕位置的控制标记。
+		 */
 		void SetHasValidScreenPosition(bool bValidScreenPosition)
 		{
 			// 投影有效状态变化时标记 Slot 为 Dirty。
@@ -203,18 +249,28 @@ public:
 		}
 
 		// 当前 Slot 是否存在需要重新处理的状态变化。
+		/** 查询当前缓存是否需要重新更新。
+		 * @return true表示本次检查或操作成功，false表示失败。
+		 */
 		bool bIsDirty() const { return bDirty; }
 
 		// 清除 Dirty 标记，表示当前状态已经处理完成。
+		/** 清空Dirty标记。 */
 		void ClearDirtyFlag()
 		{
 			bDirty = false;
 		}
 
 		// 获取上一帧 Indicator 是否被 Clamp 到屏幕边缘。
+		/** 查询指示器是否已被约束到屏幕边界。
+		 * @return true表示本次检查或操作成功，false表示失败。
+		 */
 		bool WasIndicatorClamped() const { return bWasIndicatorClamped; }
 
 		// 缓存当前 Indicator 是否发生了屏幕边缘 Clamp。
+		/** 设置Was指示器已约束。
+		 * @param bWasClamped 是否Was已约束的控制标记。
+		 */
 		void SetWasIndicatorClamped(bool bWasClamped) const
 		{
 			// Clamp 状态发生变化时，同时记录“Clamp 状态发生变化”。
@@ -226,9 +282,13 @@ public:
 		}
 
 		// 获取本次更新中 Clamp 状态是否发生变化。
+		/** 查询本次更新是否改变了指示器边界约束状态。
+		 * @return true表示本次检查或操作成功，false表示失败。
+		 */
 		bool WasIndicatorClampedStatusChanged() const { return bWasIndicatorClampedStatusChanged; }
 
 		// 清除 Clamp 状态变化标记。
+		/** 清空指示器已约束状态变化标记。 */
 		void ClearIndicatorClampedStatusChangedFlag()
 		{
 			bWasIndicatorClampedStatusChanged = false;
@@ -237,6 +297,7 @@ public:
 	private:
 		// 根据 Indicator 自身显示状态和投影有效性，
 		// 刷新实际 Slate Widget 的 Visibility。
+		/** 刷新可见性。 */
 		void RefreshVisibility()
 		{
 			// Indicator 必须自身允许显示，并且已经拥有有效屏幕坐标，
@@ -319,6 +380,7 @@ public:
 	SLATE_END_ARGS()
 
 	// 构造 SActorCanvas。
+	/** 构造Actor对象画布并初始化其默认状态。 */
 	SActorCanvas()
 	// 普通 Indicator Widget 子节点集合。
 		: CanvasChildren(this)
@@ -336,6 +398,7 @@ public:
 
 	/** 取消所有进行中的指示器控件异步加载，避免句柄在 Canvas 销毁后继续存活。 */
 	// SActorCanvas 析构时负责清理异步加载等运行时资源。
+	/** 销毁该对象，执行当前类型的析构收尾。 */
 	~SActorCanvas();
 
 	// 初始化 SActorCanvas。
@@ -349,6 +412,11 @@ public:
 	//
 	// ActorCanvasArrowBrush：
 	// Indicator 被 Clamp 到屏幕边缘时使用的默认箭头样式。
+	/** 根据传入参数建立当前Slate控件。
+	 * @param InArgs Slate声明式控件构造参数。
+	 * @param InCtx Ctx，由调用方传入。
+	 * @param ActorCanvasArrowBrush Actor对象画布Arrow画刷，由调用方传入。
+	 */
 	void Construct(const FArguments& InArgs, const FLocalPlayerContext& InCtx,
 	               const FSlateBrush* ActorCanvasArrowBrush);
 
@@ -356,19 +424,40 @@ public:
 
 	// 根据当前 Canvas 尺寸、Indicator 屏幕位置、对齐、Clamp 等信息，
 	// 计算并排列所有普通 Indicator 和箭头子 Widget 的最终 Slate Geometry。
+	/** 按当前布局规则排列Slate子控件。
+	 * @param AllottedGeometry Allotted几何，由调用方传入。
+	 * @param ArrangedChildren Arranged子项，由调用方传入。
+	 */
 	virtual void
 	OnArrangeChildren(const FGeometry& AllottedGeometry, FArrangedChildren& ArrangedChildren) const override;
 
 	// Canvas 自身不主动请求固定 DesiredSize，
 	// 实际大小由父级布局决定。
+	/** 计算当前Slate控件期望占用的尺寸。
+	 * float参数；用于保持该接口的调用签名。
+	 * @return 本次计算、查询或创建得到的向量2D。
+	 */
 	virtual FVector2D ComputeDesiredSize(float) const override { return FVector2D::ZeroVector; }
 
 	// 返回当前 Canvas 的所有子节点。
 	// 包括普通 Indicator 和屏幕边缘箭头。
+	/** 返回当前Slate容器的子控件集合。
+	 * @return 子项的当前值或引用。
+	 */
 	virtual FChildren* GetChildren() override { return &AllChildren; }
 
 	// 绘制当前 Canvas 中的 Indicator。
 	// 可以在这里根据深度、优先级、Clamp 状态等决定最终绘制顺序和附加表现。
+	/** 把当前控件与其子元素提交给Slate绘制。
+	 * @param Args Args，由调用方传入。
+	 * @param AllottedGeometry Allotted几何，由调用方传入。
+	 * @param MyCullingRect MyCulling矩形，由调用方传入。
+	 * @param OutDrawElements 输出绘制Elements。
+	 * @param LayerId 层标识，由调用方传入。
+	 * @param InWidgetStyle 控件风格，由调用方传入。
+	 * @param bParentEnabled 是否父项启用的控制标记。
+	 * @return 本次计算、查询或创建得到的整数32。
+	 */
 	virtual int32 OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect,
 	                      FSlateWindowElementList& OutDrawElements, int32 LayerId, const FWidgetStyle& InWidgetStyle,
 	                      bool bParentEnabled) const;
@@ -377,55 +466,102 @@ public:
 
 	// 设置是否严格按照 Indicator 被加入 Canvas 的顺序生成 Draw Element。
 	// 开启后可以控制绘制顺序，但会关闭部分 Slate Batching，从而增加 DrawCall。
+	/** 设置绘制Elements输入顺序。
+	 * @param bInDrawElementsInOrder 是否输入绘制Elements输入顺序的控制标记。
+	 */
 	void SetDrawElementsInOrder(bool bInDrawElementsInOrder) { bDrawElementsInOrder = bInDrawElementsInOrder; }
 
 	// FGCObject 接口：
 	// 返回当前 GC 引用对象的调试名称。
+	/** 获取Referencer名称。
+	 * @return Referencer名称的当前值或引用。
+	 */
 	virtual FString GetReferencerName() const override;
 
 	// FGCObject 接口：
 	// 将 SActorCanvas 持有的 UObject 引用主动报告给 UE GC，
 	// 防止 Slate 中使用的 IndicatorDescriptor 被错误回收。
+	/** 向GC报告本类型持有的UObject引用。
+	 * @param Collector 收集被持有UObject引用的GC入口。
+	 */
 	virtual void AddReferencedObjects(FReferenceCollector& Collector) override;
 
 private:
 	// IndicatorManager 新增 Descriptor 时的事件回调。
+	/** 处理指示器Added。
+	 * @param Indicator 指示器，由调用方传入。
+	 */
 	void OnIndicatorAdded(UIndicatorDescriptor* Indicator);
 
 	// IndicatorManager 移除 Descriptor 时的事件回调。
+	/** 处理指示器Removed。
+	 * @param Indicator 指示器，由调用方传入。
+	 */
 	void OnIndicatorRemoved(UIndicatorDescriptor* Indicator);
 
 	// 为指定 Descriptor 真正创建 / 加载对应 Indicator Widget，
 	// 并将其加入当前 ActorCanvas。
+	/** 添加指示器关联条目。
+	 * @param Indicator 指示器，由调用方传入。
+	 */
 	void AddIndicatorForEntry(UIndicatorDescriptor* Indicator);
 
 	// 从当前 ActorCanvas 中移除指定 Descriptor 对应的 Indicator Widget / Slot。
+	/** 移除指示器关联条目。
+	 * @param Indicator 指示器，由调用方传入。
+	 */
 	void RemoveIndicatorForEntry(UIndicatorDescriptor* Indicator);
 
 	/** 指示器控件类异步加载完成后的回调，由 FStreamableManager 在加载完成时触发。 */
 	// IndicatorWidgetClass 异步加载完成后继续执行 Indicator Widget 创建 / 加入 Canvas 的逻辑。
+	/** 处理指示器类型已加载。
+	 * @param IndicatorPtr 指示器Ptr，由调用方传入。
+	 */
 	void OnIndicatorClassLoaded(TWeakObjectPtr<UIndicatorDescriptor> IndicatorPtr);
 
 	// Slate Panel 添加 FSlot 时使用的作用域 Slot 参数类型。
 	using FScopedWidgetSlotArguments = TPanelChildren<FSlot>::FScopedWidgetSlotArguments;
 
 	// 为指定 Descriptor 在 CanvasChildren 中创建一个新的普通 Indicator Slot。
+	/** 添加Actor对象槽位。
+	 * @param Indicator 指示器，由调用方传入。
+	 * @return 本次计算、查询或创建得到的Scoped控件槽位Arguments。
+	 */
 	FScopedWidgetSlotArguments AddActorSlot(UIndicatorDescriptor* Indicator);
 
 	// 根据 Slate Widget 从 CanvasChildren 中移除对应的 Indicator Slot。
+	/** 移除Actor对象槽位。
+	 * @param SlotWidget 槽位控件，由调用方传入。
+	 * @return 本次计算、查询或创建得到的整数32。
+	 */
 	int32 RemoveActorSlot(const TSharedRef<SWidget>& SlotWidget);
 
 	// 设置当前 Canvas 是否存在需要显示的 Indicator。
 	// 用于控制 ActiveTimer 等更新逻辑是否需要持续运行。
+	/** 设置ShowAnyIndicators。
+	 * @param bIndicators 是否Indicators的控制标记。
+	 */
 	void SetShowAnyIndicators(bool bIndicators);
 
 	// ActiveTimer 更新函数。
 	// 负责持续更新 Indicator 的投影位置、可见性、深度、优先级等运行时状态。
+	/** 更新画布。
+	 * @param InCurrentTime 当前时间，由调用方传入。
+	 * @param InDeltaTime 本次更新的时间步长，单位秒。
+	 * @return 本次处理得到的状态枚举。
+	 */
 	EActiveTimerReturnType UpdateCanvas(double InCurrentTime, float InDeltaTime);
 
 	/** Helper function for calculating the offset */
 	// 根据 Descriptor 的对齐方式、Widget DesiredSize 等信息，
 	// 计算 Indicator 最终布局需要使用的尺寸、位置偏移以及屏幕边缘 Padding。
+	/** 获取偏移And大小。
+	 * @param Indicator 指示器，由调用方传入。
+	 * @param OutSize 输出大小。
+	 * @param OutOffset 输出偏移。
+	 * @param OutPaddingMin 输出内边距最小。
+	 * @param OutPaddingMax 输出内边距最大。
+	 */
 	void GetOffsetAndSize(const UIndicatorDescriptor* Indicator,
 	                      FVector2D& OutSize,
 	                      FVector2D& OutOffset,
@@ -434,6 +570,7 @@ private:
 
 	// 根据当前是否存在 Indicator，
 	// 注册、更新或停止用于驱动 Canvas 的 Slate ActiveTimer。
+	/** 更新活动计时器。 */
 	void UpdateActiveTimer();
 
 private:

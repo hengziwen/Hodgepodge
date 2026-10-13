@@ -1,3 +1,6 @@
+/** @file HodgeListView.cpp
+ * @brief 实现列表控件相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "UI/Common/HodgeListView.h"
@@ -11,6 +14,7 @@
 
 #define LOCTEXT_NAMESPACE "HodgeListView"
 
+/** 构造列表控件并初始化其默认状态。 */
 UHodgeListView::UHodgeListView(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -18,6 +22,7 @@ UHodgeListView::UHodgeListView(const FObjectInitializer& ObjectInitializer)
 
 #if WITH_EDITOR
 
+/** 校验已编译Defaults。 */
 void UHodgeListView::ValidateCompiledDefaults(IWidgetCompilerLog& InCompileLog) const
 {
 	Super::ValidateCompiledDefaults(InCompileLog);
@@ -32,6 +37,7 @@ void UHodgeListView::ValidateCompiledDefaults(IWidgetCompilerLog& InCompileLog) 
 
 #endif
 
+/** 处理Generate条目控件内部。 */
 UUserWidget& UHodgeListView::OnGenerateEntryWidgetInternal(UObject* Item, TSubclassOf<UUserWidget> DesiredEntryClass,
                                                            const TSharedRef<STableViewBase>& OwnerTable)
 {

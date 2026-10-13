@@ -1,3 +1,6 @@
+/** @file HodgeAnimInstance.cpp
+ * @brief 实现角色动画数据实例相关的类型、接口与现有处理流程。
+ */
 // 111 屎山代码来袭
 
 #include "Animation/HodgeAnimInstance.h"
@@ -71,6 +74,7 @@ void UHodgeAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	// 执行 UAnimInstance 默认的动画更新逻辑
 	Super::NativeUpdateAnimation(DeltaSeconds);
 	const AHodgeCombatCharacter* CombatCharacter = Cast<AHodgeCombatCharacter>(GetOwningActor());
+	// 朝向组件或旋转数据。
 	const UHodgeCharacterRotationComponent* Rotation = CombatCharacter
 		                                                   ? CombatCharacter->GetCharacterRotationComponent()
 		                                                   : nullptr;
@@ -134,27 +138,32 @@ void UHodgeAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	GroundDistance = GroundInfo.GroundDistance;
 }
 
+/** 解析脚部IK混合权重。 */
 float UHodgeAnimInstance::ResolveFootIKAlpha(float FullBodyWeight, float DashWeight)
 {
 	if (!FMath::IsFinite(FullBodyWeight) || !FMath::IsFinite(DashWeight)) { return 0.f; }
 	return 1.f - FMath::Clamp(FullBodyWeight - FMath::Clamp(DashWeight, 0.f, FMath::Max(0.f, FullBodyWeight)), 0.f, 1.f);
 }
 
+/** 解析循环同步分组。 */
 FName UHodgeAnimInstance::ResolveCycleSyncGroup(bool bSprint)
 { return bSprint ? FName(TEXT("HodgeSprint")) : FName(TEXT("Locomotion")); }
 
+/** 推进转身动画的播放时间。 */
 float UHodgeAnimInstance::AdvanceTurnTime(float Time, float DeltaTime, float Length, float Rate)
 {
 	if (!FMath::IsFinite(Time) || !FMath::IsFinite(DeltaTime) || !FMath::IsFinite(Length) ||
 		!FMath::IsFinite(Rate) || Length <= 0.f || DeltaTime < 0.f || Rate <= 0.f) { return FMath::Max(0.f, FMath::IsFinite(Time) ? Time : 0.f); }
 	return FMath::Clamp(Time + DeltaTime * Rate, 0.f, Length);
 }
+/** 根据当前速度与动画配置计算循环播放倍率。 */
 float UHodgeAnimInstance::MatchCycleRate(float Speed, float ReferenceSpeed, float BaseRate, float Minimum, float Maximum)
 {
 	if (!FMath::IsFinite(Speed) || !FMath::IsFinite(ReferenceSpeed) || !FMath::IsFinite(BaseRate) || !FMath::IsFinite(Minimum) ||
 		!FMath::IsFinite(Maximum) || Speed < 0.f || ReferenceSpeed <= 0.f || BaseRate <= 0.f || Minimum <= 0.f || Maximum < Minimum) { return 1.f; }
 	return FMath::Clamp(Speed / ReferenceSpeed * BaseRate, Minimum, Maximum);
 }
+/** 更新Sprint奔跑掉头。 */
 bool UHodgeAnimInstance::UpdateSprintPivot(const FAnimUpdateContext& Context, const FAnimNodeReference& Node)
 {
 	if (!bSprinting || !SprintTurn) { return false; }
@@ -171,11 +180,13 @@ bool UHodgeAnimInstance::UpdateSprintPivot(const FAnimUpdateContext& Context, co
 	return true;
 }
 
+/** 判断转向Complete。 */
 bool UHodgeAnimInstance::IsTurnComplete(float Elapsed, float Length, float Rate, float BlendOut)
 {
 	return FMath::IsFinite(Elapsed) && FMath::IsFinite(Length) && FMath::IsFinite(Rate) && FMath::IsFinite(BlendOut) &&
 		Elapsed >= 0.f && Length > 0.f && Rate > 0.f && BlendOut >= 0.f && Elapsed >= FMath::Max(0.f, Length / Rate - BlendOut);
 }
+/** 更新Sprint奔跑循环。 */
 bool UHodgeAnimInstance::UpdateSprintCycle(const FAnimUpdateContext& Context, const FAnimNodeReference& Node)
 {
 	if (!bSprinting || !SprintCycle) { return false; }
@@ -187,6 +198,7 @@ bool UHodgeAnimInstance::UpdateSprintCycle(const FAnimUpdateContext& Context, co
 	USequencePlayerLibrary::SetPlayRate(Player, SprintCyclePlayRate);
 	return true;
 }
+/** 判断是否应退出Sprint奔跑掉头。 */
 bool UHodgeAnimInstance::ShouldExitSprintPivot()
 {
 	if (!bSprintPivotAllowed || !SprintTurn) { return true; }

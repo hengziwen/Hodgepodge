@@ -1,3 +1,6 @@
+/** @file HodgeInputModifiers.cpp
+ * @brief 实现输入数值修饰器相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 // 引入项目自定义的输入 Modifier。

@@ -1,3 +1,6 @@
+/** @file HodgeHitDetectionTests.cpp
+ * @brief 实现命中检测配置自动化测试相关的类型、接口与现有处理流程。
+ */
 #if WITH_DEV_AUTOMATION_TESTS
 
 #include "Combat/HodgeHitDetection.h"
@@ -8,11 +11,13 @@
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeHitGeometryTest, "Hodge.Combat.HitGeometry",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeHitGeometryTest::RunTest(const FString& Parameters)
 {
 	const auto* SocketStrategy = GetDefault<UHodgeSocketSweepStrategy>();
 	const auto* BoxStrategy = GetDefault<UHodgeBoxSweepStrategy>();
 	auto* Component = NewObject<USceneComponent>();
+	// 本次操作的来源。
 	FHodgeHitSource Source;
 	Source.LocalOffset = FVector(100.f, 0.f, 50.f);
 	FHodgeHitGeometry Geometry;
@@ -33,8 +38,10 @@ bool FHodgeHitGeometryTest::RunTest(const FString& Parameters)
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeHitProfileValidationTest, "Hodge.Combat.HitProfileValidation",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeHitProfileValidationTest::RunTest(const FString& Parameters)
 {
+	// 当前操作使用的配置对象。
 	auto* Profile = NewObject<UHodgeHitDetectionProfile>();
 	TArray<FText> Errors;
 	TestTrue(TEXT("Default profile is usable"), Profile->Validate(Errors));

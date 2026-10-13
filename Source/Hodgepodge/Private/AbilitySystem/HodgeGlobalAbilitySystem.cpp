@@ -1,3 +1,6 @@
+/** @file HodgeGlobalAbilitySystem.cpp
+ * @brief 实现全局能力授予服务相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "AbilitySystem/HodgeGlobalAbilitySystem.h"
@@ -113,6 +116,7 @@ void FGlobalAppliedEffectList::RemoveFromAll()
 	Handles.Empty();
 }
 
+/** 构造全局能力授予服务并初始化其默认状态。 */
 UHodgeGlobalAbilitySystem::UHodgeGlobalAbilitySystem()
 {
 }

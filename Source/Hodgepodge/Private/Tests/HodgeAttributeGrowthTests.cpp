@@ -1,3 +1,6 @@
+/** @file HodgeAttributeGrowthTests.cpp
+ * @brief 实现属性Growth自动化测试相关的类型、接口与现有处理流程。
+ */
 #if WITH_DEV_AUTOMATION_TESTS
 #include "Misc/AutomationTest.h"
 #include "Core/PlayState/HodgePlayerState.h"
@@ -18,15 +21,24 @@
 
 namespace HodgeAttributeGrowthTests
 {
+	/** 保存测试场景的数据和接口契约。 */
 	struct FFixture
 	{
+		// 本次操作所在的世界。
 		UWorld* World;
+		// 玩家状态对象。
 		AHodgePlayerState* PS;
+		// 当前操作关联的Pawn角色。
 		AHodgeCombatCharacter* Pawn;
+		// 后续GAS操作使用的能力系统组件。
 		UHodgeAbilitySystemComponent* ASC;
+		// 装备的数据或对象引用。
 		UHodgeEquipmentManagerComponent* Equipment;
+		// 当前操作使用的数据。
 		UHodgePawnData* Data;
+		// Sword的数据或对象引用。
 		TSubclassOf<UHodgeEquipmentDefinition> Sword;
+		/** 构造测试场景并初始化其默认状态。 */
 		FFixture()
 		{
 			const auto Values = UWorld::InitializationValues().AllowAudioPlayback(false).CreatePhysicsScene(false).CreateNavigation(false).CreateAISystem(false);
@@ -34,6 +46,7 @@ namespace HodgeAttributeGrowthTests
 			PS = World->SpawnActor<AHodgePlayerState>();
 			Pawn = World->SpawnActor<AHodgeCombatCharacter>();
 			ASC = PS->GetHodgeAbilitySystemComponent();
+			// 先检查对象与上下文，避免在依赖失效后继续处理。
 			if (!ASC->GetSet<UHodgeHealthSet>()) { ASC->AddAttributeSetSubobject(CastChecked<UHodgeHealthSet>(PS->GetDefaultSubobjectByName(TEXT("HealthSet")))); }
 			if (!ASC->GetSet<UHodgeCombatSet>()) { ASC->AddAttributeSetSubobject(CastChecked<UHodgeCombatSet>(PS->GetDefaultSubobjectByName(TEXT("CombatSet")))); }
 			Equipment = NewObject<UHodgeEquipmentManagerComponent>(Pawn);
@@ -57,6 +70,10 @@ namespace HodgeAttributeGrowthTests
 			Sword = LoadClass<UHodgeEquipmentDefinition>(nullptr, TEXT("/Game/Main/Data/Equipments/BP_Equipment_Sword.BP_Equipment_Sword_C"));
 			ASC->InitAbilityActorInfo(PS, Pawn);
 		}
+		/** 初始化ialize。
+		 * @param bSword 是否Sword的控制标记。
+		 * @return true表示本次检查或操作成功，false表示失败。
+		 */
 		bool Initialize(bool bSword)
 		{
 			Data->DefaultWeaponDefinition = bSword ? Sword : nullptr;
@@ -65,6 +82,7 @@ namespace HodgeAttributeGrowthTests
 			if (bSword && !Equipment->EquipItemWithState(Sword, State.InstanceId, State.Level)) { return false; }
 			return PS->GetAttributeCoordinator()->CompleteAvatarInitialization();
 		}
+		/** 将装备管理逻辑接入当前可用ASC。 */
 		void ConnectEquipmentASC()
 		{
 			Data->DefaultWeaponDefinition = Sword;
@@ -72,6 +90,7 @@ namespace HodgeAttributeGrowthTests
 			Extension->SetPawnData(Data);
 			Extension->InitializeAbilitySystem(ASC, PS);
 		}
+		/** 销毁该对象，执行当前类型的析构收尾。 */
 		~FFixture()
 		{
 			PS->GetAttributeCoordinator()->DetachAvatar(Pawn);
@@ -80,6 +99,10 @@ namespace HodgeAttributeGrowthTests
 		}
 	};
 
+	/** 应用伤害。
+	 * @param ASC 后续GAS操作使用的能力系统组件。
+	 * @param Value 值，由调用方传入。
+	 */
 	void ApplyDamage(UHodgeAbilitySystemComponent* ASC, float Value)
 	{
 		auto* Effect = NewObject<UGameplayEffect>();
@@ -94,8 +117,10 @@ namespace HodgeAttributeGrowthTests
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeStatProfileTest, "Hodge.Attributes.ProfileValidation", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeStatProfileTest::RunTest(const FString& Parameters)
 {
+	// 当前操作使用的配置对象。
 	auto* Profile = NewObject<UHodgeCharacterStatProfile>();
 	TArray<FText> Errors;
 	TestTrue(TEXT("Default character profile contract is valid"), Profile->Validate(Errors));
@@ -114,6 +139,7 @@ bool FHodgeStatProfileTest::RunTest(const FString& Parameters)
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeStatGrowthTest, "Hodge.Attributes.GrowthEquipmentLifecycle", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeStatGrowthTest::RunTest(const FString& Parameters)
 {
 	HodgeAttributeGrowthTests::FFixture F;
@@ -121,6 +147,7 @@ bool FHodgeStatGrowthTest::RunTest(const FString& Parameters)
 	F.ConnectEquipmentASC();
 	if (!TestTrue(TEXT("Bootstrap waits for and includes default sword"), F.Initialize(true))) { return false; }
 	const auto* Health = F.ASC->GetSet<UHodgeHealthSet>();
+	// 统一战斗组件。
 	const auto* Combat = F.ASC->GetSet<UHodgeCombatSet>();
 	TestEqual(TEXT("Spawn maximum contains sword"), Health->GetMaxHealth(), 150.f);
 	TestEqual(TEXT("Spawn fills after sword, not before"), Health->GetHealth(), 150.f);
@@ -150,6 +177,7 @@ bool FHodgeStatGrowthTest::RunTest(const FString& Parameters)
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeStatReentryTest, "Hodge.Attributes.ReentryAndFailure", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeStatReentryTest::RunTest(const FString& Parameters)
 {
 	HodgeAttributeGrowthTests::FFixture F;
@@ -179,6 +207,7 @@ bool FHodgeStatReentryTest::RunTest(const FString& Parameters)
 	return true;
 }
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeStatAvatarTest, "Hodge.Attributes.AvatarAndBootstrapFailure", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeStatAvatarTest::RunTest(const FString& Parameters)
 {
 	HodgeAttributeGrowthTests::FFixture F;

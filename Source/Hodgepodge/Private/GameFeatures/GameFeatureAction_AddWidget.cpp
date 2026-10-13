@@ -1,3 +1,6 @@
+/** @file GameFeatureAction_AddWidget.cpp
+ * @brief 实现GameFeature界面注入动作相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "GameFeatures/GameFeatureAction_AddWidget.h"
@@ -197,11 +200,13 @@ void UGameFeatureAction_AddWidgets::ClearActorContents(FPerActorData& Data)
     auto Layouts = MoveTemp(Data.LayoutsAdded);
     auto Extensions = MoveTemp(Data.ExtensionHandles);
     for (auto& Handle : Extensions) { Handle.Unregister(); }
+    // 先检查对象与上下文，避免在依赖失效后继续处理。
     if (auto* Root = Data.Root.Get())
     { for (const auto& AddedLayout : Layouts) { if (AddedLayout.IsValid()) { Root->Pop(AddedLayout.Get()); } } }
     Data.Root.Reset();
 }
 
+/** 恢复本对象的初始状态。 */
 void UGameFeatureAction_AddWidgets::Reset(FPerContextData& ActiveData)
 {
     auto Records = MoveTemp(ActiveData.ActorData);
@@ -237,6 +242,7 @@ void UGameFeatureAction_AddWidgets::HandleActorExtension(AActor* Actor, FName Ev
 void UGameFeatureAction_AddWidgets::AddWidgets(AActor* Actor, FPerContextData& ActiveData)
 {
     auto* HUD = Cast<AHodgeHUD>(Actor);
+    // 玩家控制器对象。
     auto* PC = HUD ? HUD->GetOwningPlayerController() : nullptr;
     ULocalPlayer* Player = PC ? PC->GetLocalPlayer() : nullptr;
     auto* Instance = Player ? Player->GetGameInstance() : nullptr;
@@ -246,6 +252,7 @@ void UGameFeatureAction_AddWidgets::AddWidgets(AActor* Actor, FPerContextData& A
     Data.Actor = HUD;
     Data.Player = Player;
     Data.Manager = UI;
+    // 先检查对象与上下文，避免在依赖失效后继续处理。
     if (!Data.RootChangedDelegate.IsValid())
     {
         TWeakObjectPtr<AActor> WeakActor = Actor;

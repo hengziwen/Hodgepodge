@@ -1,3 +1,6 @@
+/** @file HodgeIndicatorManagerComponent.h
+ * @brief 声明Actor指示器管理组件相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
@@ -37,20 +40,33 @@ class HODGEPODGE_API UHodgeIndicatorManagerComponent : public UControllerCompone
 
 public:
 	// 构造当前 Controller 对应的 Indicator 管理组件。
+	/** 构造Actor指示器管理组件并初始化其默认状态。
+	 * @param ObjectInitializer UE构造对象时传入的初始化器。
+	 */
 	UHodgeIndicatorManagerComponent(const FObjectInitializer& ObjectInitializer);
 
 	// 从指定 Controller 上获取 UHodgeIndicatorManagerComponent。
 	// 为 IndicatorLibrary 以及其他 C++ 系统提供统一的组件查找入口。
+	/** 获取组件。
+	 * @param Controller 当前角色使用的控制器。
+	 * @return 组件的当前值或引用。
+	 */
 	static UHodgeIndicatorManagerComponent* GetComponent(AController* Controller);
 
 	// 向当前 Controller 的 Indicator 系统注册一个 IndicatorDescriptor。
 	// 注册后，该 Descriptor 会进入 Indicators 数组，
 	// 并可以通过 OnIndicatorAdded 通知 UI 层创建对应的 Indicator 表现。
+	/** 添加指示器。
+	 * @param IndicatorDescriptor Actor指示器描述数据，由调用方传入。
+	 */
 	UFUNCTION(BlueprintCallable, Category = Indicator)
 	void AddIndicator(UIndicatorDescriptor* IndicatorDescriptor);
 
 	// 从当前 Controller 的 Indicator 系统移除一个 IndicatorDescriptor。
 	// 移除后，可以通过 OnIndicatorRemoved 通知 UI 层删除对应的 Indicator 表现。
+	/** 移除指示器。
+	 * @param IndicatorDescriptor Actor指示器描述数据，由调用方传入。
+	 */
 	UFUNCTION(BlueprintCallable, Category = Indicator)
 	void RemoveIndicator(UIndicatorDescriptor* IndicatorDescriptor);
 
@@ -66,6 +82,9 @@ public:
 
 	// 获取当前 Manager 正在管理的所有 IndicatorDescriptor。
 	// 返回只读数组引用，外部可以遍历，但不能直接通过该接口修改内部数组。
+	/** 获取Indicators。
+	 * @return Indicators的当前值或引用。
+	 */
 	const TArray<UIndicatorDescriptor*>& GetIndicators() const { return Indicators; }
 
 private:

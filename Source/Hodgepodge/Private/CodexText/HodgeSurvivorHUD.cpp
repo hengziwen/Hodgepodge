@@ -1,3 +1,6 @@
+/** @file HodgeSurvivorHUD.cpp
+ * @brief 实现生存玩法实验HUD相关的类型、接口与现有处理流程。
+ */
 #include "CodexText/HodgeSurvivor.h"
 #include "Blueprint/WidgetTree.h"
 #include "Components/CanvasPanel.h"
@@ -13,22 +16,35 @@
 
 namespace
 {
+/** 将测试对象放置到指定位置。
+ * @param Canvas 画布，由调用方传入。
+ * @param Widget 控件，由调用方传入。
+ * @param Position 位置，由调用方传入。
+ * @param Size 大小，由调用方传入。
+ */
 void Place(UCanvasPanel* Canvas,UWidget* Widget,FVector2D Position,FVector2D Size)
 {
     auto* Slot=Canvas->AddChildToCanvas(Widget);
     Slot->SetPosition(Position); Slot->SetSize(Size);
 }
+/** 按当前布局约束设置元素的拉伸参数。
+ * @param Canvas 画布，由调用方传入。
+ * @param Widget 控件，由调用方传入。
+ */
 void Stretch(UCanvasPanel* Canvas,UWidget* Widget)
 {
     auto* Slot=Canvas->AddChildToCanvas(Widget);
     Slot->SetAnchors(FAnchors(0,0,1,1)); Slot->SetOffsets(FMargin(0));
 }
 }
+/** 读取或设置当前测试使用的模式。 */
 AHodgeSurvivorMode* UHodgeSurvivorHUD::Mode() const { return GetWorld()?GetWorld()->GetAuthGameMode<AHodgeSurvivorMode>():nullptr; }
+/** 创建或设置当前界面使用的文字内容。 */
 void UHodgeSurvivorHUD::Text(FName Name,const FString& Value)
 {
     if (auto* Label=Cast<UTextBlock>(GetWidgetFromName(Name))) Label->SetText(FText::FromString(Value));
 }
+/** 添加按钮。 */
 UButton* UHodgeSurvivorHUD::AddButton(UVerticalBox* Box,const FString& Label,UTextBlock*& OutLabel)
 {
     auto* Button=WidgetTree->ConstructWidget<UButton>();
@@ -43,6 +59,7 @@ UButton* UHodgeSurvivorHUD::AddButton(UVerticalBox* Box,const FString& Label,UTe
     Box->AddChildToVerticalBox(Button)->SetPadding(FMargin(0,5));
     return Button;
 }
+/** 在控件构建时接入界面数据和生命周期。 */
 void UHodgeSurvivorHUD::NativeConstruct()
 {
     Super::NativeConstruct();
@@ -113,6 +130,7 @@ void UHodgeSurvivorHUD::NativeConstruct()
     MenuButton=AddButton(Box,TEXT("返回主菜单"),Label); MenuButton->OnClicked.AddDynamic(this,&ThisClass::Menu);
     Modal->SetVisibility(ESlateVisibility::Collapsed);
 }
+/** 重新采集当前依赖的数据并更新缓存状态。 */
 void UHodgeSurvivorHUD::Refresh(AHodgeSurvivorMode* M)
 {
     if (!M || !Modal) return;
@@ -152,17 +170,25 @@ void UHodgeSurvivorHUD::Refresh(AHodgeSurvivorMode* M)
     ModalDescription->SetText(FText::FromString(Upgrade?TEXT("敌人已暂停。选择一项强化，继续你的生存之旅。"):
         FString::Printf(TEXT("存活 %02d:%02d  ·  击杀 %d  ·  等级 %d\nWASD 移动，空格冲刺，拾取晶体获得强化。"),int32(M->Elapsed)/60,int32(M->Elapsed)%60,M->Kills,M->Level)));
 }
+/** 在控件析构时解除界面监听与临时资源。 */
 void UHodgeSurvivorHUD::NativeDestruct()
 {
+    // 解除本对象的监听，避免旧生命周期回调继续进入。
     for (UButton* Button:ChoiceButtons) if (Button) Button->OnClicked.RemoveAll(this);
     if (RetryButton) RetryButton->OnClicked.RemoveAll(this);
     if (MenuButton) MenuButton->OnClicked.RemoveAll(this);
     if (PauseButton) PauseButton->OnClicked.RemoveAll(this);
     Super::NativeDestruct();
 }
+/** 选择当前实验玩法的第一个选项。 */
 void UHodgeSurvivorHUD::ChooseOne() { if (auto* M=Mode()) M->ChooseUpgrade(0); }
+/** 选择当前实验玩法的第二个选项。 */
 void UHodgeSurvivorHUD::ChooseTwo() { if (auto* M=Mode()) M->ChooseUpgrade(1); }
+/** 选择当前实验玩法的第三个选项。 */
 void UHodgeSurvivorHUD::ChooseThree() { if (auto* M=Mode()) M->ChooseUpgrade(2); }
+/** 在当前测试中重新尝试未完成的步骤。 */
 void UHodgeSurvivorHUD::Retry() { if (auto* M=Mode()) M->RestartRun(); }
+/** 取得或打开当前实验的菜单页面。 */
 void UHodgeSurvivorHUD::Menu() { if (auto* M=Mode()) M->ReturnToMenu(); }
+/** 暂停本对象当前的采样或更新。 */
 void UHodgeSurvivorHUD::Pause() { if (auto* M=Mode()) M->TogglePause(); }

@@ -1,3 +1,6 @@
+/** @file GameFeatureAction_AddInputBinding.h
+ * @brief 声明GameFeature输入绑定动作相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 // 防止头文件被重复包含。
@@ -44,15 +47,25 @@ class UGameFeatureAction_AddInputBinding final : public UGameFeatureAction_World
 public:
 	//~ Begin UGameFeatureAction interface
 	// GameFeature 激活时执行输入绑定逻辑。
+	/** 处理游戏功能扩展Activating。
+	 * @param Context 本次操作的上下文。
+	 */
 	virtual void OnGameFeatureActivating(FGameFeatureActivatingContext& Context) override;
 
 	// GameFeature 停用时撤销当前 Feature 添加的输入绑定。
+	/** 处理游戏功能扩展Deactivating。
+	 * @param Context 本次操作的上下文。
+	 */
 	virtual void OnGameFeatureDeactivating(FGameFeatureDeactivatingContext& Context) override;
 	//~ End UGameFeatureAction interface
 
 	//~ Begin UObject interface
 #if WITH_EDITOR
 	// 编辑器下验证输入配置是否有效。
+	/** 在编辑器校验当前配置并收集诊断。
+	 * @param Context 本次操作的上下文。
+	 * @return 当前配置的校验结果。
+	 */
 	virtual EDataValidationResult IsDataValid(class FDataValidationContext& Context) const override;
 #endif
 	//~ End UObject interface
@@ -78,19 +91,39 @@ private:
 
 	//~ Begin UGameFeatureAction_WorldActionBase interface
 	// 将当前 GameFeature Action 添加到指定 World。
+	/** 添加目标世界。
+	 * @param WorldContext 世界上下文，由调用方传入。
+	 * @param ChangeContext 变更上下文，由调用方传入。
+	 */
 	virtual void AddToWorld(const FWorldContext& WorldContext,
 	                        const FGameFeatureStateChangeContext& ChangeContext) override;
 	//~ End UGameFeatureAction_WorldActionBase interface
 
 	// 清理一次 GameFeature 激活过程中创建的所有输入绑定和事件监听。
+	/** 恢复本对象的初始状态。
+	 * @param ActiveData 活动数据，由调用方传入。
+	 */
 	void Reset(FPerContextData& ActiveData);
 
 	// 处理 Pawn 的 GameFrameworkComponentManager 扩展事件。
+	/** 处理Pawn角色扩展。
+	 * @param Actor 本次操作关联的Actor。
+	 * @param EventName 事件名称，由调用方传入。
+	 * @param ChangeContext 变更上下文，由调用方传入。
+	 */
 	void HandlePawnExtension(AActor* Actor, FName EventName, FGameFeatureStateChangeContext ChangeContext);
 
 	// 将输入配置中的输入绑定添加到指定 Pawn。
+	/** 添加输入映射关联玩家。
+	 * @param Pawn 当前操作关联的Pawn角色。
+	 * @param ActiveData 活动数据，由调用方传入。
+	 */
 	void AddInputMappingForPlayer(APawn* Pawn, FPerContextData& ActiveData);
 
 	// 移除指定 Pawn 上由当前 GameFeature 添加的输入绑定。
+	/** 移除输入映射。
+	 * @param Pawn 当前操作关联的Pawn角色。
+	 * @param ActiveData 活动数据，由调用方传入。
+	 */
 	void RemoveInputMapping(APawn* Pawn, FPerContextData& ActiveData);
 };

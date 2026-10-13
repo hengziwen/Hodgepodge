@@ -1,3 +1,6 @@
+/** @file HodgeHUD.cpp
+ * @brief 实现HUD界面相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "Core/HUD/HodgeHUD.h"

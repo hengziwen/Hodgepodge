@@ -1,9 +1,17 @@
+/** @file HodgeGameplayTags.h
+ * @brief 声明项目原生GameplayTag相关的类型、接口与现有处理流程。
+ */
 #pragma once
 
 #include "NativeGameplayTags.h"
 
 namespace HodgeGameplayTags
 {
+	/** 查找标签ByString。
+	 * @param TagString 标签String，由调用方传入。
+	 * @param bMatchPartialString 是否匹配PartialString的控制标记。
+	 * @return 标签ByString的当前值或引用。
+	 */
 	HODGEPODGE_API FGameplayTag FindTagByString(const FString& TagString, bool bMatchPartialString = false);
 
 	// =============================================================================

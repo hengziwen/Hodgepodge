@@ -1,3 +1,6 @@
+/** @file GameFeatureAction_SplitscreenConfig.h
+ * @brief 声明GameFeature分屏配置动作相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
@@ -28,6 +31,9 @@ public:
 	//~ Begin UGameFeatureAction interface
 
 	// Game Feature 停用时调用，用于撤销当前 Feature 对分屏设置产生的影响。
+	/** 处理游戏功能扩展Deactivating。
+	 * @param Context 本次操作的上下文。
+	 */
 	virtual void OnGameFeatureDeactivating(FGameFeatureDeactivatingContext& Context) override;
 
 	//~ End UGameFeatureAction interface
@@ -35,6 +41,10 @@ public:
 	//~ Begin UGameFeatureAction_WorldActionBase interface
 
 	// Game Feature 激活后，将分屏配置应用到指定的 World。
+	/** 添加目标世界。
+	 * @param WorldContext 世界上下文，由调用方传入。
+	 * @param ChangeContext 变更上下文，由调用方传入。
+	 */
 	virtual void AddToWorld(const FWorldContext& WorldContext, const FGameFeatureStateChangeContext& ChangeContext) override;
 
 	//~ End UGameFeatureAction_WorldActionBase interface

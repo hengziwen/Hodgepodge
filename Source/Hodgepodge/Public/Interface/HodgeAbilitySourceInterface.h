@@ -1,3 +1,6 @@
+/** @file HodgeAbilitySourceInterface.h
+ * @brief 声明技能来源计算接口相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
@@ -36,6 +39,12 @@ class IHodgeAbilitySourceInterface
 	 *
 	 * @return 根据距离计算得到的倍率，通常会与基础属性值相乘。
 	 */
+	/** 获取距离Attenuation。
+	 * @param Distance 距离，由调用方传入。
+	 * @param SourceTags 来源标签，用于对应标签查询或匹配。
+	 * @param TargetTags 目标标签，用于对应标签查询或匹配。
+	 * @return 距离Attenuation的当前值或引用。
+	 */
 	virtual float GetDistanceAttenuation(float Distance, const FGameplayTagContainer* SourceTags = nullptr,
 	                                     const FGameplayTagContainer* TargetTags = nullptr) const = 0;
 
@@ -47,6 +56,12 @@ class IHodgeAbilitySourceInterface
 	 * @param TargetTags       Target 当前拥有的 GameplayTags。
 	 *
 	 * @return 根据物理材质计算得到的倍率，通常用于调整最终伤害或其他 Ability 效果。
+	 */
+	/** 获取Physical材质Attenuation。
+	 * @param PhysicalMaterial Physical材质，由调用方传入。
+	 * @param SourceTags 来源标签，用于对应标签查询或匹配。
+	 * @param TargetTags 目标标签，用于对应标签查询或匹配。
+	 * @return Physical材质Attenuation的当前值或引用。
 	 */
 	virtual float GetPhysicalMaterialAttenuation(const UPhysicalMaterial* PhysicalMaterial,
 	                                             const FGameplayTagContainer* SourceTags = nullptr,

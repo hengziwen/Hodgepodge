@@ -1,3 +1,6 @@
+/** @file GameFeatureAction_AddGameplayCuePath.cpp
+ * @brief 实现GameFeature Cue目录配置动作相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 // 引入 Gameplay Cue 路径 GameFeature Action。

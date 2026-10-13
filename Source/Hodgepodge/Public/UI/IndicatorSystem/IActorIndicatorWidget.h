@@ -1,3 +1,6 @@
+/** @file IActorIndicatorWidget.h
+ * @brief 声明Actor指示器控件接口相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
@@ -41,6 +44,9 @@ public:
 	//
 	// BlueprintNativeEvent 允许该函数由 C++ 提供默认实现，
 	// 同时也允许蓝图 Widget 重写对应事件。
+	/** 绑定指示器。
+	 * @param Indicator 指示器，由调用方传入。
+	 */
 	UFUNCTION(BlueprintNativeEvent, Category = "Indicator")
 	void BindIndicator(UIndicatorDescriptor* Indicator);
 
@@ -49,6 +55,9 @@ public:
 	// 与 Descriptor / DataObject 相关的事件监听、引用或其他运行时状态。
 	//
 	// BlueprintNativeEvent 允许 C++ 与蓝图共同实现该接口。
+	/** 解绑指示器。
+	 * @param Indicator 指示器，由调用方传入。
+	 */
 	UFUNCTION(BlueprintNativeEvent, Category = "Indicator")
 	void UnbindIndicator(const UIndicatorDescriptor* Indicator);
 };

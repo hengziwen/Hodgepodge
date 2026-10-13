@@ -1,3 +1,6 @@
+/** @file HodgeCharacterBase.h
+ * @brief 声明角色基类相关的类型、接口与现有处理流程。
+ */
 // **
 //  * @file HodgeCharacterBase.h
 //  * @brief AHodgeCharacterBase 类的头文件
@@ -42,6 +45,9 @@ public:
 	 * 接收 FObjectInitializer 并传递给父类 ACharacter,
 	 * 同时用它把默认的 CharacterMovement 子组件替换为 UHodgeCharacterMovementComponent。
 	 */
+	/** 构造角色基类并初始化其默认状态。
+	 * @param ObjectInitializer UE构造对象时传入的初始化器。
+	 */
 	explicit AHodgeCharacterBase(const FObjectInitializer& ObjectInitializer);
 
 	/**
@@ -50,6 +56,7 @@ public:
 	 * 在组件被初始化之前调用,用于设置组件间的引用关系等。
 	 * 当前实现仅调用 Super,预留扩展点供子类使用。
 	 */
+	/** 在组件初始化前接入本对象所需的框架入口。 */
 	virtual void PreInitializeComponents() override;
 
 	/**
@@ -58,6 +65,7 @@ public:
 	 * 所有组件初始化完成后调用,此时可以安全地与其他组件交互。
 	 * 当前实现仅调用 Super,预留扩展点供子类使用。
 	 */
+	/** 进入世界运行阶段并接入本对象的生命周期依赖。 */
 	virtual void BeginPlay() override;
 
 	/**
@@ -67,6 +75,9 @@ public:
 	 * 当前实现仅调用 Super,预留扩展点供子类使用。
 	 *
 	 * 参数: EndPlayReason 结束原因(如关卡切换、Actor(演员)被销毁、游戏结束等)
+	 */
+	/** 离开世界运行阶段并解除本对象持有的监听或资源。
+	 * @param EndPlayReason 结束PlayReason，由调用方传入。
 	 */
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 };

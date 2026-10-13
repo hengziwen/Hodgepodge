@@ -1,3 +1,6 @@
+/** @file HodgeCharacterRotationTests.cpp
+ * @brief 实现角色旋转自动化测试相关的类型、接口与现有处理流程。
+ */
 #if WITH_DEV_AUTOMATION_TESTS
 
 #include "Misc/AutomationTest.h"
@@ -12,11 +15,13 @@
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeCharacterRotationConstraintsTest, "Hodge.Rotation.ConstraintsAndReplay",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeCharacterRotationConstraintsTest::RunTest(const FString& Parameters)
 {
 	const UWorld::InitializationValues Initialization = UWorld::InitializationValues().AllowAudioPlayback(false)
 		.RequiresHitProxies(false).CreatePhysicsScene(true).CreateNavigation(false).CreateAISystem(false)
 		.ShouldSimulatePhysics(false);
+	// 本次操作所在的世界。
 	UWorld* World = UWorld::CreateWorld(EWorldType::Game, false, NAME_None, nullptr, true,
 		ERHIFeatureLevel::Num, &Initialization);
 	if (!TestNotNull(TEXT("Test world"), World)) { return false; }
@@ -28,6 +33,7 @@ bool FHodgeCharacterRotationConstraintsTest::RunTest(const FString& Parameters)
 	}
 	Character->bUseControllerRotationYaw = true;
 	Character->SetActorRotation(FRotator(0.f, 30.f, 0.f));
+	// 后续GAS操作使用的能力系统组件。
 	UHodgeAbilitySystemComponent* ASC = NewObject<UHodgeAbilitySystemComponent>(Character);
 	ASC->RegisterComponent();
 	ASC->InitAbilityActorInfo(Character, Character);

@@ -1,3 +1,6 @@
+/** @file HodgeInputUserSettings.cpp
+ * @brief 实现玩家输入设置相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 // 引入项目自定义的输入用户设置。

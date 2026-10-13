@@ -1,3 +1,6 @@
+/** @file HodgeIndicatorManagerComponent.cpp
+ * @brief 实现Actor指示器管理组件相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 // UHodgeIndicatorManagerComponent 类定义。

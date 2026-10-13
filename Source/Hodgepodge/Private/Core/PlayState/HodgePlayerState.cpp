@@ -1,3 +1,6 @@
+/** @file HodgePlayerState.cpp
+ * @brief 实现玩家持久状态与ASC所有者相关的类型、接口与现有处理流程。
+ */
 // 111屎山代码来袭
 
 
@@ -404,18 +407,22 @@ void AHodgePlayerState::OnRep_MySquadID()
 	// TODO：后续 SquadSubsystem 完成后，在这里通知小队系统当前玩家的小队发生变化。
 }
 
+/** 设置角色等级。 */
 bool AHodgePlayerState::SetCharacterLevel(int32 Level)
 {
 	return HasAuthority() && AttributeCoordinator && AttributeCoordinator->SetCharacterLevel(Level);
 }
 
+/** 恢复角色生命值。 */
 bool AHodgePlayerState::RestoreCharacterHealth(float Health)
 {
 	return HasAuthority() && AttributeCoordinator && AttributeCoordinator->RestoreHealth(Health);
 }
 
+/** 初始化角色成长。 */
 bool AHodgePlayerState::InitializeCharacterProgression(FGuid CharacterId, int32 Level, float SavedHealth)
 {
+	// 按服务器权限区分本次处理分支。
 	if (!HasAuthority() || CharacterProgression.CharacterId.IsValid() || AttributeReadyState.LifeGeneration != 0 || Level < 1 || Level > 1000 || !FMath::IsFinite(SavedHealth) || SavedHealth < -1.f) { return false; }
 	if (SavedHealth >= 0.f && !AttributeCoordinator->SetInitialSavedHealth(SavedHealth)) { return false; }
 	CharacterProgression.CharacterId = CharacterId.IsValid() ? CharacterId : FGuid::NewGuid();
@@ -425,14 +432,17 @@ bool AHodgePlayerState::InitializeCharacterProgression(FGuid CharacterId, int32 
 	return true;
 }
 
+/** 检查属性是否已为指定Avatar完成准备。 */
 bool AHodgePlayerState::AreAttributesReadyFor(const APawn* Avatar) const
 {
 	return Avatar && AttributeReadyState.bReady && AttributeReadyState.Avatar == Avatar
 		&& AbilitySystemComponent && AbilitySystemComponent->GetAvatarActor() == Avatar;
 }
 
+/** 通知属性就绪。 */
 void AHodgePlayerState::NotifyAttributeReadiness()
 {
+	// 向当前监听者发布状态变化，调用方继续负责后续处理。
 	OnAttributeReadinessChanged.Broadcast();
 	if (APawn* Avatar = AttributeReadyState.Avatar)
 	{
@@ -440,6 +450,7 @@ void AHodgePlayerState::NotifyAttributeReadiness()
 	}
 }
 
+/** 收到属性就绪状态复制后更新本地状态。 */
 void AHodgePlayerState::OnRep_AttributeReadyState()
 {
 	NotifyAttributeReadiness();
