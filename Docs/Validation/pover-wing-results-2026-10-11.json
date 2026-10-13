@@ -1,0 +1,348 @@
+{
+  "assets": {
+    "assets": [
+      "/Game/Main/Character/Hero/Wing/ABP_PoverWing.ABP_PoverWing",
+      "/Game/Main/Character/Hero/Wing/DA_PoverWing.DA_PoverWing",
+      "/Game/Main/Character/Hero/Wing/BP_PoverWingComponent.BP_PoverWingComponent"
+    ],
+    "combo_chain": [
+      "Ability.Attack.Light.01",
+      "Ability.Attack.Light.02",
+      "Ability.Attack.Light.03",
+      "Ability.Attack.Light.05",
+      "Ability.Attack.Light.04"
+    ],
+    "finisher": "/Game/Main/Character/Hero/Ability/BasicAttack/DA_Attack_4.DA_Attack_4",
+    "montage": "/Game/Main/Character/Hero/Anim/Montages/AM_Attack04_Montage.AM_Attack04_Montage",
+    "windup_start": 0.3466666042804718,
+    "strike_start": 0.5466666221618652,
+    "strike_peak": 0.716666579246521,
+    "recovery_end": 1.066666603088379,
+    "anim_compile": "ERRORS=0 WARNINGS=0\n",
+    "component_compile": "ERRORS=0 WARNINGS=0\n",
+    "preserved_user_socket": "WingAttach"
+  },
+  "automation": {
+    "succeeded": 2,
+    "succeededWithWarnings": 1,
+    "failed": 0,
+    "tests": [
+      {
+        "name": "Hodge.Wing.AssetContract",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Wing.CancellationAndClock",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Wing.Envelope",
+        "state": "Success"
+      }
+    ]
+  },
+  "e2e": {
+    "single": {
+      "checks": [
+        {
+          "case": "one_wing_component_<NetRole.ROLE_AUTHORITY: 3>",
+          "passed": true
+        },
+        {
+          "case": "wing_registered_<NetRole.ROLE_AUTHORITY: 3>",
+          "passed": true
+        },
+        {
+          "case": "wing_attach_socket_<NetRole.ROLE_AUTHORITY: 3>",
+          "passed": true
+        },
+        {
+          "case": "wing_no_blocking_collision_<NetRole.ROLE_AUTHORITY: 3>",
+          "passed": true
+        },
+        {
+          "case": "independent_wing_anim_<NetRole.ROLE_AUTHORITY: 3>",
+          "passed": true
+        },
+        {
+          "case": "idempotent_initialization_<NetRole.ROLE_AUTHORITY: 3>",
+          "passed": true
+        },
+        {
+          "case": "all_five_combo_nodes",
+          "passed": true
+        },
+        {
+          "case": "server_wing_pose_moves",
+          "passed": true,
+          "peak": 64.9999949715331
+        },
+        {
+          "case": "actual_wing_bones_deform",
+          "passed": true,
+          "positions": 44
+        },
+        {
+          "case": "all_peers_receive_wing_motion",
+          "passed": true,
+          "peers": 1
+        },
+        {
+          "case": "cancel_returns_reference",
+          "passed": true
+        },
+        {
+          "case": "cancel_invalidates_source",
+          "passed": true
+        },
+        {
+          "case": "cancel_returns_all_peers",
+          "passed": true
+        },
+        {
+          "case": "cancel_closes_hit_sessions",
+          "passed": true
+        }
+      ],
+      "sample_count": 687
+    },
+    "listen": {
+      "checks": [
+        {
+          "case": "one_wing_component_<NetRole.ROLE_AUTHORITY: 3>",
+          "passed": true
+        },
+        {
+          "case": "wing_registered_<NetRole.ROLE_AUTHORITY: 3>",
+          "passed": true
+        },
+        {
+          "case": "wing_attach_socket_<NetRole.ROLE_AUTHORITY: 3>",
+          "passed": true
+        },
+        {
+          "case": "wing_no_blocking_collision_<NetRole.ROLE_AUTHORITY: 3>",
+          "passed": true
+        },
+        {
+          "case": "independent_wing_anim_<NetRole.ROLE_AUTHORITY: 3>",
+          "passed": true
+        },
+        {
+          "case": "idempotent_initialization_<NetRole.ROLE_AUTHORITY: 3>",
+          "passed": true
+        },
+        {
+          "case": "one_wing_component_<NetRole.ROLE_AUTONOMOUS_PROXY: 2>",
+          "passed": true
+        },
+        {
+          "case": "wing_registered_<NetRole.ROLE_AUTONOMOUS_PROXY: 2>",
+          "passed": true
+        },
+        {
+          "case": "wing_attach_socket_<NetRole.ROLE_AUTONOMOUS_PROXY: 2>",
+          "passed": true
+        },
+        {
+          "case": "wing_no_blocking_collision_<NetRole.ROLE_AUTONOMOUS_PROXY: 2>",
+          "passed": true
+        },
+        {
+          "case": "independent_wing_anim_<NetRole.ROLE_AUTONOMOUS_PROXY: 2>",
+          "passed": true
+        },
+        {
+          "case": "idempotent_initialization_<NetRole.ROLE_AUTONOMOUS_PROXY: 2>",
+          "passed": true
+        },
+        {
+          "case": "all_five_combo_nodes",
+          "passed": true
+        },
+        {
+          "case": "server_wing_pose_moves",
+          "passed": true,
+          "peak": 64.966263990209
+        },
+        {
+          "case": "actual_wing_bones_deform",
+          "passed": true,
+          "positions": 28
+        },
+        {
+          "case": "all_peers_receive_wing_motion",
+          "passed": true,
+          "peers": 2
+        },
+        {
+          "case": "cancel_returns_reference",
+          "passed": true
+        },
+        {
+          "case": "cancel_invalidates_source",
+          "passed": true
+        },
+        {
+          "case": "cancel_returns_all_peers",
+          "passed": true
+        },
+        {
+          "case": "cancel_closes_hit_sessions",
+          "passed": true
+        }
+      ],
+      "sample_count": 573
+    },
+    "dedicated-pie": {
+      "checks": [
+        {
+          "case": "one_wing_component_<NetRole.ROLE_AUTHORITY: 3>",
+          "passed": true
+        },
+        {
+          "case": "wing_registered_<NetRole.ROLE_AUTHORITY: 3>",
+          "passed": true
+        },
+        {
+          "case": "wing_attach_socket_<NetRole.ROLE_AUTHORITY: 3>",
+          "passed": true
+        },
+        {
+          "case": "wing_no_blocking_collision_<NetRole.ROLE_AUTHORITY: 3>",
+          "passed": true
+        },
+        {
+          "case": "independent_wing_anim_<NetRole.ROLE_AUTHORITY: 3>",
+          "passed": true
+        },
+        {
+          "case": "idempotent_initialization_<NetRole.ROLE_AUTHORITY: 3>",
+          "passed": true
+        },
+        {
+          "case": "one_wing_component_<NetRole.ROLE_AUTONOMOUS_PROXY: 2>",
+          "passed": true
+        },
+        {
+          "case": "wing_registered_<NetRole.ROLE_AUTONOMOUS_PROXY: 2>",
+          "passed": true
+        },
+        {
+          "case": "wing_attach_socket_<NetRole.ROLE_AUTONOMOUS_PROXY: 2>",
+          "passed": true
+        },
+        {
+          "case": "wing_no_blocking_collision_<NetRole.ROLE_AUTONOMOUS_PROXY: 2>",
+          "passed": true
+        },
+        {
+          "case": "independent_wing_anim_<NetRole.ROLE_AUTONOMOUS_PROXY: 2>",
+          "passed": true
+        },
+        {
+          "case": "idempotent_initialization_<NetRole.ROLE_AUTONOMOUS_PROXY: 2>",
+          "passed": true
+        },
+        {
+          "case": "one_wing_component_<NetRole.ROLE_SIMULATED_PROXY: 1>",
+          "passed": true
+        },
+        {
+          "case": "wing_registered_<NetRole.ROLE_SIMULATED_PROXY: 1>",
+          "passed": true
+        },
+        {
+          "case": "wing_attach_socket_<NetRole.ROLE_SIMULATED_PROXY: 1>",
+          "passed": true
+        },
+        {
+          "case": "wing_no_blocking_collision_<NetRole.ROLE_SIMULATED_PROXY: 1>",
+          "passed": true
+        },
+        {
+          "case": "independent_wing_anim_<NetRole.ROLE_SIMULATED_PROXY: 1>",
+          "passed": true
+        },
+        {
+          "case": "idempotent_initialization_<NetRole.ROLE_SIMULATED_PROXY: 1>",
+          "passed": true
+        },
+        {
+          "case": "all_five_combo_nodes",
+          "passed": true
+        },
+        {
+          "case": "server_wing_pose_moves",
+          "passed": true,
+          "peak": 64.85602724831554
+        },
+        {
+          "case": "actual_wing_bones_deform",
+          "passed": true,
+          "positions": 43
+        },
+        {
+          "case": "all_peers_receive_wing_motion",
+          "passed": true,
+          "peers": 3
+        },
+        {
+          "case": "cancel_returns_reference",
+          "passed": true
+        },
+        {
+          "case": "cancel_invalidates_source",
+          "passed": true
+        },
+        {
+          "case": "cancel_returns_all_peers",
+          "passed": true
+        },
+        {
+          "case": "cancel_closes_hit_sessions",
+          "passed": true
+        }
+      ],
+      "sample_count": 621
+    }
+  },
+  "damage": {
+    "checks": [
+      {
+        "case": "paused_montage_holds_wing_clock",
+        "passed": true
+      },
+      {
+        "case": "wing_tip_server_damage",
+        "passed": true,
+        "before": 350.0,
+        "after": 319.0,
+        "tip": [
+          2590.4235354779594,
+          -121.07533388375583,
+          284.9712537675465
+        ]
+      },
+      {
+        "case": "persistent_overlap_not_repeated",
+        "passed": true,
+        "damage_changes": [
+          -31.0
+        ]
+      }
+    ],
+    "sample_count": 229
+  },
+  "client_cancel_rejection": {
+    "passed": true,
+    "case": "client_cannot_end_authority_combo",
+    "server_instance": 69,
+    "server_position": 0.4261016845703125,
+    "server_stopped": false
+  },
+  "builds": {
+    "Editor": 0,
+    "Game": 0
+  }
+}

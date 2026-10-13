@@ -132,3 +132,17 @@ Editor 关闭后按项目约定常规构建 Editor 和 Game；原生测试覆盖
 PIE 已停止，网络延迟恢复 0、后台节流恢复原值，正式地图保留为单人 Standalone。未执行实际伤害、预测拒绝、死亡/重生或相关性重新进入的专项 PIE 回归；既有请求生命周期由本次原生测试覆盖。
 
 本次证据位于 Saved/WeaponBackSocket，不纳入源码。未执行 Cook、打包、独立进程或 Dedicated Server 验证。
+
+## 手持通知结束方式（2026-10-12）
+
+通知 UHodgeAnimNotifyState_WeaponHand 新增 EndBehavior，默认 ReturnToBack，保持未配置的新旧资产行为。FadeAtHand 表示在手部立即开始原有材质淡出，不是瞬间隐藏；时长沿用 PresentationProfile.FadeSeconds，跳过 ReturnGraceSeconds、ReturnSeconds 和 HoverSeconds。无需为每个攻击复制武器材质或创建独立消失 GA。
+
+输入链路为 Notify.Begin → Definition.AcquireNotifyWeapon(OccurrenceId, EndBehavior) → WeaponInstance.AcquireHandUse(ExecutionId, OccurrenceId, ActivationKey, EndBehavior)。FHandRequest 保存本次释放方式与申请序号；正常 Notify.End、GA 自然结束和取消共用句柄释放。通知对象仍只存配置，结束回调不能影响另一个 Pawn 或新的执行。
+
+最后一个请求释放后，ReturnToBack 使用原有 Hand 宽限 → Returning → Hovering → Fading → Hidden；FadeAtHand 使用 Hand → Fading → Hidden。重叠请求存在时保持 Hand；自然释放以最后实际释放的请求决定方式，批量执行清理按申请序号从旧到新处理，避免 TMap 顺序决定结果。非法枚举值拒绝申请；死亡、卸装和预测拒绝沿用原有清理规则。
+
+FHodgeWeaponPresentationState 新增 EndBehavior 并随现有快照复制，Fading 阶段据此选择手部或背部挂接。直接淡出保持 WeaponVisualMesh 附着逻辑手部网格，检测网格不移动；材质从当时可见度降至零。新手持请求取消旧计时器，若接在手部淡出中则从当前透明度显现，不先闪到零。观察者继续按服务器时间戳补算进度，不新增表现 RPC。
+
+配置入口是在正式攻击 Montage 中选中 Hodge 武器手持区间，Details → Weapon → 结束方式。当前项目的普攻通知默认保留回背后延迟淡出，由使用者逐刀选择；测试只临时改变内存中的通知配置，结束后恢复。回背等待由 DA_SwordPresentation 的 HoverSeconds 控制，两种方式的材质淡出均由 FadeSeconds 控制。
+
+验收要求：默认路径保持；直接路径无 Returning/Hovering、淡出期间不挂背部；三槽或实际武器材质参数同步；正常结束与取消一致；重叠、批量清理、旧句柄和旧计时器不影响新攻击；新攻击覆盖中间淡出不闪烁；拥有者与观察者读到相同结束方式。测试结果按本轮运行单独记录，不沿用历史构建或联机结论。

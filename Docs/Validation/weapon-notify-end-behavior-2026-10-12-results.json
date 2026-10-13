@@ -1,0 +1,411 @@
+{
+  "build": {
+    "Editor": {
+      "exit": 0,
+      "log": "Saved/WeaponEndBehavior/EditorBuild.log"
+    },
+    "Game": {
+      "exit": 0,
+      "log": "Saved/WeaponEndBehavior/GameBuild.log"
+    }
+  },
+  "native": [
+    {
+      "name": "Hodge.WeaponPresentation.GeometrySeparation",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.WeaponPresentation.NotifyEndBehavior",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.WeaponPresentation.RequestsAndLifecycle",
+      "state": "Success"
+    }
+  ],
+  "assets": {
+    "passed": true,
+    "checks": [
+      {
+        "asset": "/Game/Main/Character/Hero/Anim/Montages/AM_Attack01_Montage",
+        "property": "EndBehavior",
+        "value": "<HodgeWeaponHandEndBehavior.RETURN_TO_BACK: 0>",
+        "passed": true
+      },
+      {
+        "asset": "/Game/Main/Character/Hero/Anim/Montages/AM_Attack02_Montage",
+        "property": "EndBehavior",
+        "value": "<HodgeWeaponHandEndBehavior.RETURN_TO_BACK: 0>",
+        "passed": true
+      },
+      {
+        "asset": "/Game/Main/Character/Hero/Anim/Montages/AM_Attack03_Montage",
+        "property": "EndBehavior",
+        "value": "<HodgeWeaponHandEndBehavior.RETURN_TO_BACK: 0>",
+        "passed": true
+      },
+      {
+        "asset": "/Game/Main/Character/Hero/Anim/Montages/AM_Attack05_Montage",
+        "property": "EndBehavior",
+        "value": "<HodgeWeaponHandEndBehavior.RETURN_TO_BACK: 0>",
+        "passed": true
+      }
+    ]
+  },
+  "e2e": {
+    "single": {
+      "passed": true,
+      "checks": [
+        {
+          "check": "原有通知默认回背",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "back_各端经历手持",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "默认回背悬浮路径保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "back_最终无手持请求",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "direct_各端经历手持",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "direct_直接方式各端一致",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "direct_跳过回背和悬浮",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "direct_表现端材质渐变",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "direct_最终无手持请求",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "interrupt_各端经历手持",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "interrupt_直接方式各端一致",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "interrupt_跳过回背和悬浮",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "interrupt_表现端材质渐变",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "新攻击覆盖未结束的消隐",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "interrupt_最终无手持请求",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "cancel_各端经历手持",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "cancel_直接方式各端一致",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "cancel_跳过回背和悬浮",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "cancel_表现端材质渐变",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "真实Dash取消执行",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "cancel_最终无手持请求",
+          "passed": true,
+          "detail": null
+        }
+      ],
+      "frames": 711,
+      "evidence": "Saved/WeaponEndBehavior/single-e2e.json"
+    },
+    "listen": {
+      "passed": true,
+      "checks": [
+        {
+          "check": "原有通知默认回背",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "back_各端经历手持",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "默认回背悬浮路径保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "back_最终无手持请求",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "direct_各端经历手持",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "direct_直接方式各端一致",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "direct_跳过回背和悬浮",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "direct_表现端材质渐变",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "direct_最终无手持请求",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "interrupt_各端经历手持",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "interrupt_直接方式各端一致",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "interrupt_跳过回背和悬浮",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "interrupt_表现端材质渐变",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "新攻击覆盖未结束的消隐",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "interrupt_最终无手持请求",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "cancel_各端经历手持",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "cancel_直接方式各端一致",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "cancel_跳过回背和悬浮",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "cancel_表现端材质渐变",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "真实Dash取消执行",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "cancel_最终无手持请求",
+          "passed": true,
+          "detail": null
+        }
+      ],
+      "frames": 712,
+      "evidence": "Saved/WeaponEndBehavior/listen-e2e.json"
+    },
+    "dedicated": {
+      "passed": true,
+      "checks": [
+        {
+          "check": "原有通知默认回背",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "back_各端经历手持",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "默认回背悬浮路径保留",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "back_最终无手持请求",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "direct_各端经历手持",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "direct_直接方式各端一致",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "direct_跳过回背和悬浮",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "direct_表现端材质渐变",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "direct_最终无手持请求",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "interrupt_各端经历手持",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "interrupt_直接方式各端一致",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "interrupt_跳过回背和悬浮",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "interrupt_表现端材质渐变",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "新攻击覆盖未结束的消隐",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "interrupt_最终无手持请求",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "cancel_各端经历手持",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "cancel_直接方式各端一致",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "cancel_跳过回背和悬浮",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "cancel_表现端材质渐变",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "真实Dash取消执行",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "check": "cancel_最终无手持请求",
+          "passed": true,
+          "detail": null
+        }
+      ],
+      "frames": 711,
+      "evidence": "Saved/WeaponEndBehavior/dedicated-e2e.json"
+    }
+  },
+  "source_sha256": {
+    "Source/Hodgepodge/Public/Equipment/HodgeWeaponPresentationTypes.h": "2fc00f918246532805228ab1c75c1ffe02b4904da279901445f8980cfe4da1bb",
+    "Source/Hodgepodge/Public/Animation/HodgeCombatAnimNotifies.h": "e574c4a3bc90745bf5b8baea808521a5c65a7307bb6422d89d84d95a04d458b2",
+    "Source/Hodgepodge/Private/Animation/HodgeCombatAnimNotifies.cpp": "55ba3becd4e2c0402aedb2e33026053d24725ae6e11311f918a8671b0ea99eef",
+    "Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h": "3eda51f61a0cda544eebf8edc74c11a24e677261e67c8617806d8f985de69786",
+    "Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.cpp": "5c450ab35234fe035dd0f49c4fd8970e63857dc097431690cb4841d701029ef1",
+    "Source/Hodgepodge/Public/Equipment/HodgeWeaponInstance.h": "9a40cfb9783e67b489aab0d042d08d3ae2bb1ffe8a52786b3e50959e1d610955",
+    "Source/Hodgepodge/Private/Equipment/HodgeWeaponInstance.cpp": "57cca30a42e6cac67097bef8d59fa9e81f0f0fdd28a244a387de9a0943b808b2",
+    "Source/Hodgepodge/Private/Equipment/HodgeWeaponPresentationActor.cpp": "e9442c41c850c2cf1d7aaabd9b3157d26647867e21619abbe992470b9a2b3447",
+    "Source/Hodgepodge/Private/Tests/HodgeWeaponPresentationTests.cpp": "4b760e9b9f7e0b8a04c84218cb04c84bd79731d846fcec1603da4c27a8f450da"
+  },
+  "not_verified": [
+    "Cook与打包",
+    "独立Server可执行文件",
+    "弱网压力或人工预测拒绝",
+    "死亡重生专项PIE"
+  ],
+  "git_committed": false
+}

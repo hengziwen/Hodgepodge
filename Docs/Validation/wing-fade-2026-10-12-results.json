@@ -1,0 +1,565 @@
+{
+  "requirement": "WING-13",
+  "build": {
+    "editor": {
+      "exit": 0,
+      "log": "Saved/WingFade/EditorBuild-final.log"
+    },
+    "game": {
+      "exit": 0,
+      "log": "Saved/WingFade/GameBuild.log"
+    }
+  },
+  "native": [
+    {
+      "name": "Hodge.Wing.AnimationMapping",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.Wing.AssetContract",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.Wing.AttackPresentationIntegration",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.Wing.CancellationAndClock",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.Wing.Envelope",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.Wing.FadeState",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.Wing.PresentationSession",
+      "state": "Success"
+    }
+  ],
+  "assets": {
+    "passed": true,
+    "checks": [
+      {
+        "requirement": "WING-13",
+        "check": "淡出时长与参数",
+        "passed": true
+      },
+      {
+        "requirement": "WING-13",
+        "check": "覆盖所有三个材质槽",
+        "passed": true
+      },
+      {
+        "requirement": "WING-13",
+        "check": "保留原始引用_0",
+        "passed": true
+      },
+      {
+        "requirement": "WING-13",
+        "check": "独立父材质_0",
+        "passed": true
+      },
+      {
+        "requirement": "WING-13",
+        "check": "可见度参数_0",
+        "passed": true
+      },
+      {
+        "requirement": "WING-13",
+        "check": "默认完整可见_0",
+        "passed": true
+      },
+      {
+        "requirement": "WING-13",
+        "check": "透明度或遮罩输出_0",
+        "passed": true
+      },
+      {
+        "requirement": "WING-13",
+        "check": "混合模式_0",
+        "passed": true
+      },
+      {
+        "requirement": "WING-13",
+        "check": "保留特效强度",
+        "passed": true
+      },
+      {
+        "requirement": "WING-13",
+        "check": "保留原始引用_1",
+        "passed": true
+      },
+      {
+        "requirement": "WING-13",
+        "check": "独立父材质_1",
+        "passed": true
+      },
+      {
+        "requirement": "WING-13",
+        "check": "可见度参数_1",
+        "passed": true
+      },
+      {
+        "requirement": "WING-13",
+        "check": "默认完整可见_1",
+        "passed": true
+      },
+      {
+        "requirement": "WING-13",
+        "check": "透明度或遮罩输出_1",
+        "passed": true
+      },
+      {
+        "requirement": "WING-13",
+        "check": "混合模式_1",
+        "passed": true
+      },
+      {
+        "requirement": "WING-13",
+        "check": "保留贴图_1",
+        "passed": true
+      },
+      {
+        "requirement": "WING-13",
+        "check": "保留原始引用_2",
+        "passed": true
+      },
+      {
+        "requirement": "WING-13",
+        "check": "独立父材质_2",
+        "passed": true
+      },
+      {
+        "requirement": "WING-13",
+        "check": "可见度参数_2",
+        "passed": true
+      },
+      {
+        "requirement": "WING-13",
+        "check": "默认完整可见_2",
+        "passed": true
+      },
+      {
+        "requirement": "WING-13",
+        "check": "透明度或遮罩输出_2",
+        "passed": true
+      },
+      {
+        "requirement": "WING-13",
+        "check": "混合模式_2",
+        "passed": true
+      },
+      {
+        "requirement": "WING-13",
+        "check": "保留贴图_2",
+        "passed": true
+      }
+    ]
+  },
+  "e2e": {
+    "single": {
+      "passed": true,
+      "checks": [
+        {
+          "requirement": "WING-12",
+          "check": "组件唯一_0",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-01",
+          "check": "初始隐藏_0",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-10",
+          "check": "翼自动Tick关闭_0",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-07",
+          "check": "校准骨骼_0",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-07",
+          "check": "校准缩放_0",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-02",
+          "check": "五段连段已执行",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-09",
+          "check": "所有表现端显现",
+          "passed": true,
+          "detail": [
+            0
+          ]
+        },
+        {
+          "requirement": "WING-05",
+          "check": "实际翼骨运动",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-06",
+          "check": "正常收招各端隐藏",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-13",
+          "check": "正常收招各端有材质淡出",
+          "passed": true,
+          "detail": [
+            0
+          ]
+        },
+        {
+          "requirement": "WING-10",
+          "check": "空闲没有额外翼求值",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-06",
+          "check": "Dash 取消主攻击",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-06",
+          "check": "Dash 取消各端隐藏",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-13",
+          "check": "Dash 取消各端有材质淡出",
+          "passed": true,
+          "detail": [
+            0
+          ]
+        },
+        {
+          "requirement": "WING-10",
+          "check": "取消后空闲不求值",
+          "passed": true,
+          "detail": null
+        }
+      ],
+      "samples": 734,
+      "evidence": "Saved/WingFade/single-e2e.json"
+    },
+    "listen": {
+      "passed": true,
+      "checks": [
+        {
+          "requirement": "WING-12",
+          "check": "组件唯一_0",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-01",
+          "check": "初始隐藏_0",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-10",
+          "check": "翼自动Tick关闭_0",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-07",
+          "check": "校准骨骼_0",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-07",
+          "check": "校准缩放_0",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-12",
+          "check": "组件唯一_1",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-01",
+          "check": "初始隐藏_1",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-10",
+          "check": "翼自动Tick关闭_1",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-07",
+          "check": "校准骨骼_1",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-07",
+          "check": "校准缩放_1",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-02",
+          "check": "五段连段已执行",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-09",
+          "check": "所有表现端显现",
+          "passed": true,
+          "detail": [
+            0,
+            1
+          ]
+        },
+        {
+          "requirement": "WING-05",
+          "check": "实际翼骨运动",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-06",
+          "check": "正常收招各端隐藏",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-13",
+          "check": "正常收招各端有材质淡出",
+          "passed": true,
+          "detail": [
+            0,
+            1
+          ]
+        },
+        {
+          "requirement": "WING-10",
+          "check": "空闲没有额外翼求值",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-06",
+          "check": "Dash 取消主攻击",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-06",
+          "check": "Dash 取消各端隐藏",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-13",
+          "check": "Dash 取消各端有材质淡出",
+          "passed": true,
+          "detail": [
+            0,
+            1
+          ]
+        },
+        {
+          "requirement": "WING-10",
+          "check": "取消后空闲不求值",
+          "passed": true,
+          "detail": null
+        }
+      ],
+      "samples": 700,
+      "evidence": "Saved/WingFade/listen-e2e.json"
+    },
+    "dedicated": {
+      "passed": true,
+      "checks": [
+        {
+          "requirement": "WING-12",
+          "check": "组件唯一_0",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-10",
+          "check": "专服没有翼网格",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-12",
+          "check": "组件唯一_1",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-01",
+          "check": "初始隐藏_1",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-10",
+          "check": "翼自动Tick关闭_1",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-07",
+          "check": "校准骨骼_1",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-07",
+          "check": "校准缩放_1",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-12",
+          "check": "组件唯一_2",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-01",
+          "check": "初始隐藏_2",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-10",
+          "check": "翼自动Tick关闭_2",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-07",
+          "check": "校准骨骼_2",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-07",
+          "check": "校准缩放_2",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-02",
+          "check": "五段连段已执行",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-09",
+          "check": "所有表现端显现",
+          "passed": true,
+          "detail": [
+            1,
+            2
+          ]
+        },
+        {
+          "requirement": "WING-05",
+          "check": "实际翼骨运动",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-06",
+          "check": "正常收招各端隐藏",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-13",
+          "check": "正常收招各端有材质淡出",
+          "passed": true,
+          "detail": [
+            1,
+            2
+          ]
+        },
+        {
+          "requirement": "WING-10",
+          "check": "空闲没有额外翼求值",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-06",
+          "check": "Dash 取消主攻击",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-06",
+          "check": "Dash 取消各端隐藏",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "WING-13",
+          "check": "Dash 取消各端有材质淡出",
+          "passed": true,
+          "detail": [
+            1,
+            2
+          ]
+        },
+        {
+          "requirement": "WING-10",
+          "check": "取消后空闲不求值",
+          "passed": true,
+          "detail": null
+        }
+      ],
+      "samples": 743,
+      "evidence": "Saved/WingFade/dedicated-e2e.json"
+    }
+  },
+  "source_sha256": {
+    "Source/Hodgepodge/Public/Animation/HodgeWingProfile.h": "ba9a19b2fc97163442ae3f64cfafee9314dd3aa6ab9698812e2e73de308b7099",
+    "Source/Hodgepodge/Private/Animation/HodgeWingProfile.cpp": "64649f04c56a6bc298069cf284cca825b1993ad5b419ddf5271213ff6bfff0a2",
+    "Source/Hodgepodge/Public/Component/HodgeWingComponent.h": "badc0c33f97de8287edefe697428c467593a12bd792358c8c4e44686f73f69d0",
+    "Source/Hodgepodge/Private/Component/HodgeWingComponent.cpp": "30498fe04b8d5f57c52ae49e211c1f7688dc5fabc2c572a01a97cf7ea6800edb",
+    "Source/Hodgepodge/Private/Tests/HodgeWingAttackPresentationTests.cpp": "bbfc08359c0b28c5661e59b21633623e68cc7a4cd0a8efaed7d800202f557b17"
+  },
+  "not_verified": [
+    "像素级淡出截图对比",
+    "独立专服可执行文件",
+    "Cook与打包",
+    "弱网压力测试"
+  ]
+}
