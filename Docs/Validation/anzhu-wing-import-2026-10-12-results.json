@@ -1,0 +1,4237 @@
+{
+  "assets": [
+    {
+      "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/EDarkNanzhuWingMd10011.EDarkNanzhuWingMd10011",
+      "type": "SkeletalMesh",
+      "source": "EDarkNanzhuWingMd10011/Model/EDarkNanzhuWingMd10011.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/EDarkNanzhuWingMd10011_Skeleton.EDarkNanzhuWingMd10011_Skeleton",
+      "type": "Skeleton",
+      "source": "EDarkNanzhuWingMd10011/Model/EDarkNanzhuWingMd10011.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/MB1ZhenwuguanzheMd601_Weapon1/Model/MB1ZhenwuguanzheMd601_Weapon1.MB1ZhenwuguanzheMd601_Weapon1",
+      "type": "SkeletalMesh",
+      "source": "MB1ZhenwuguanzheMd601_Weapon1/Model/MB1ZhenwuguanzheMd601_Weapon1.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/MB1ZhenwuguanzheMd601_Weapon1/Model/MB1ZhenwuguanzheMd601_Weapon1_Skeleton.MB1ZhenwuguanzheMd601_Weapon1_Skeleton",
+      "type": "Skeleton",
+      "source": "MB1ZhenwuguanzheMd601_Weapon1/Model/MB1ZhenwuguanzheMd601_Weapon1.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/test/EDarkNanzhuWingMd10011.EDarkNanzhuWingMd10011",
+      "type": "SkeletalMesh",
+      "source": "EDarkNanzhuWingMd10011/Model/test/EDarkNanzhuWingMd10011.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/BaseAnim/Attack02.Attack02",
+      "type": "AnimSequence",
+      "source": "BaseAnim/Attack02.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/BaseAnim/B_Attack03.B_Attack03",
+      "type": "AnimSequence",
+      "source": "BaseAnim/B_Attack03.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/BaseAnim/B_Attack04.B_Attack04",
+      "type": "AnimSequence",
+      "source": "BaseAnim/B_Attack04.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/BaseAnim/B_attack04_1.B_attack04_1",
+      "type": "AnimSequence",
+      "source": "BaseAnim/B_attack04_1.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/BaseAnim/B_Attack05.B_Attack05",
+      "type": "AnimSequence",
+      "source": "BaseAnim/B_Attack05.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/BaseAnim/B_Attack06.B_Attack06",
+      "type": "AnimSequence",
+      "source": "BaseAnim/B_Attack06.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/BaseAnim/B_Burst01.B_Burst01",
+      "type": "AnimSequence",
+      "source": "BaseAnim/B_Burst01.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack01.B_Ex_Attack01",
+      "type": "AnimSequence",
+      "source": "BaseAnim/B_Ex_Attack01.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack02.B_Ex_Attack02",
+      "type": "AnimSequence",
+      "source": "BaseAnim/B_Ex_Attack02.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack03.B_Ex_Attack03",
+      "type": "AnimSequence",
+      "source": "BaseAnim/B_Ex_Attack03.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack04.B_Ex_Attack04",
+      "type": "AnimSequence",
+      "source": "BaseAnim/B_Ex_Attack04.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack05.B_Ex_Attack05",
+      "type": "AnimSequence",
+      "source": "BaseAnim/B_Ex_Attack05.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/BaseAnim/B_EX_Attack06.B_EX_Attack06",
+      "type": "AnimSequence",
+      "source": "BaseAnim/B_EX_Attack06.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Skill01_02.B_Ex_Skill01_02",
+      "type": "AnimSequence",
+      "source": "BaseAnim/B_Ex_Skill01_02.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/BaseAnim/B_Skill.B_Skill",
+      "type": "AnimSequence",
+      "source": "BaseAnim/B_Skill.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/BaseAnim/B_Skill01.B_Skill01",
+      "type": "AnimSequence",
+      "source": "BaseAnim/B_Skill01.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/BaseAnim/B_Skill02.B_Skill02",
+      "type": "AnimSequence",
+      "source": "BaseAnim/B_Skill02.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/BaseAnim/B_SkillQte.B_SkillQte",
+      "type": "AnimSequence",
+      "source": "BaseAnim/B_SkillQte.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/BaseAnim/EDarkNanzhuWing_Wing09.EDarkNanzhuWing_Wing09",
+      "type": "AnimSequence",
+      "source": "BaseAnim/EDarkNanzhuWing_Wing09.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/BaseAnim/G_Attack03.G_Attack03",
+      "type": "AnimSequence",
+      "source": "BaseAnim/G_Attack03.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/BaseAnim/G_Attack04.G_Attack04",
+      "type": "AnimSequence",
+      "source": "BaseAnim/G_Attack04.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/BaseAnim/G_Attack04_1.G_Attack04_1",
+      "type": "AnimSequence",
+      "source": "BaseAnim/G_Attack04_1.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/BaseAnim/G_Attack05.G_Attack05",
+      "type": "AnimSequence",
+      "source": "BaseAnim/G_Attack05.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/BaseAnim/G_Burst01.G_Burst01",
+      "type": "AnimSequence",
+      "source": "BaseAnim/G_Burst01.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack01.G_Ex_Attack01",
+      "type": "AnimSequence",
+      "source": "BaseAnim/G_Ex_Attack01.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack02.G_Ex_Attack02",
+      "type": "AnimSequence",
+      "source": "BaseAnim/G_Ex_Attack02.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack03.G_Ex_Attack03",
+      "type": "AnimSequence",
+      "source": "BaseAnim/G_Ex_Attack03.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack04.G_Ex_Attack04",
+      "type": "AnimSequence",
+      "source": "BaseAnim/G_Ex_Attack04.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack05.G_Ex_Attack05",
+      "type": "AnimSequence",
+      "source": "BaseAnim/G_Ex_Attack05.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack06.G_Ex_Attack06",
+      "type": "AnimSequence",
+      "source": "BaseAnim/G_Ex_Attack06.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Skill01_02.G_Ex_Skill01_02",
+      "type": "AnimSequence",
+      "source": "BaseAnim/G_Ex_Skill01_02.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/BaseAnim/G_Skill.G_Skill",
+      "type": "AnimSequence",
+      "source": "BaseAnim/G_Skill.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/BaseAnim/G_Skill01.G_Skill01",
+      "type": "AnimSequence",
+      "source": "BaseAnim/G_Skill01.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/BaseAnim/G_Skill02.G_Skill02",
+      "type": "AnimSequence",
+      "source": "BaseAnim/G_Skill02.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/BaseAnim/G_SkillQte.G_SkillQte",
+      "type": "AnimSequence",
+      "source": "BaseAnim/G_SkillQte.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Move_F.Rib_Move_F",
+      "type": "AnimSequence",
+      "source": "EDarkNanzhuWingMd10011/RibbonAnim/Rib_Move_F.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Run_F.Rib_Run_F",
+      "type": "AnimSequence",
+      "source": "EDarkNanzhuWingMd10011/RibbonAnim/Rib_Run_F.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Sprint_F.Rib_Sprint_F",
+      "type": "AnimSequence",
+      "source": "EDarkNanzhuWingMd10011/RibbonAnim/Rib_Sprint_F.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Sprint_Impulse_F.Rib_Sprint_Impulse_F",
+      "type": "AnimSequence",
+      "source": "EDarkNanzhuWingMd10011/RibbonAnim/Rib_Sprint_Impulse_F.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stand1.Rib_Stand1",
+      "type": "AnimSequence",
+      "source": "EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stand1.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stand1_Change.Rib_Stand1_Change",
+      "type": "AnimSequence",
+      "source": "EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stand1_Change.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Run_L.Rib_Stop_Run_L",
+      "type": "AnimSequence",
+      "source": "EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Run_L.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Run_R.Rib_Stop_Run_R",
+      "type": "AnimSequence",
+      "source": "EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Run_R.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Sprint_L.Rib_Stop_Sprint_L",
+      "type": "AnimSequence",
+      "source": "EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Sprint_L.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Sprint_R.Rib_Stop_Sprint_R",
+      "type": "AnimSequence",
+      "source": "EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Sprint_R.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/MB1ZhenwuguanzheMd601_Weapon1/BaseAnim/Scythe_Ex_Attack03.Scythe_Ex_Attack03",
+      "type": "AnimSequence",
+      "source": "MB1ZhenwuguanzheMd601_Weapon1/BaseAnim/Scythe_Ex_Attack03.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/MB1ZhenwuguanzheMd601_Weapon1/BaseAnim/Scythe_Ex_Attack04.Scythe_Ex_Attack04",
+      "type": "AnimSequence",
+      "source": "MB1ZhenwuguanzheMd601_Weapon1/BaseAnim/Scythe_Ex_Attack04.fbx"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/T_EDarkNanzhuWingMd10011_D.T_EDarkNanzhuWingMd10011_D",
+      "type": "Texture2D",
+      "source": "EDarkNanzhuWingMd10011/Model/T_EDarkNanzhuWingMd10011_D.png"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/test/T_EDarkNanzhuWingMd10011_D.T_EDarkNanzhuWingMd10011_D",
+      "type": "Texture2D",
+      "source": "EDarkNanzhuWingMd10011/Model/test/T_EDarkNanzhuWingMd10011_D.png"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/MB1ZhenwuguanzheMd601_Weapon1/Model/T_MB1ZhenwuguanzheMd00601_Weapon_D.T_MB1ZhenwuguanzheMd00601_Weapon_D",
+      "type": "Texture2D",
+      "source": "MB1ZhenwuguanzheMd601_Weapon1/Model/T_MB1ZhenwuguanzheMd00601_Weapon_D.png"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/MB1ZhenwuguanzheMd601_Weapon1/Model/T_MB1ZhenwuguanzheMd00601_Weapon_N.T_MB1ZhenwuguanzheMd00601_Weapon_N",
+      "type": "Texture2D",
+      "source": "MB1ZhenwuguanzheMd601_Weapon1/Model/T_MB1ZhenwuguanzheMd00601_Weapon_N.png"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/Materials/M_Wing_Surface.M_Wing_Surface",
+      "type": "Material",
+      "source": "Authored UE material"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/Materials/M_Wing_Mask.M_Wing_Mask",
+      "type": "Material",
+      "source": "Authored UE material"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/Materials/M_Wing_Weapon.M_Wing_Weapon",
+      "type": "Material",
+      "source": "Authored UE material"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/Materials/M_Wing_FX.M_Wing_FX",
+      "type": "Material",
+      "source": "Authored UE material"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/Materials/MI_Trans_Anzhu_Wing_80008_CM.MI_Trans_Anzhu_Wing_80008_CM",
+      "type": "MaterialInstanceConstant",
+      "source": "EDarkNanzhuWingMd10011/Model/EDarkNanzhuWingMd10011::MI_Trans_Anzhu_Wing_80008_CM"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/Materials/MI_EDarkNanzhuWingMd1001_Wing.MI_EDarkNanzhuWingMd1001_Wing",
+      "type": "MaterialInstanceConstant",
+      "source": "EDarkNanzhuWingMd10011/Model/EDarkNanzhuWingMd10011::MI_EDarkNanzhuWingMd1001_Wing"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/Materials/MI_Mask_Anzhu_Wing_80014_CM.MI_Mask_Anzhu_Wing_80014_CM",
+      "type": "MaterialInstanceConstant",
+      "source": "EDarkNanzhuWingMd10011/Model/EDarkNanzhuWingMd10011::MI_Mask_Anzhu_Wing_80014_CM"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/test/Materials/MI_EDarkNanzhuWingMd1001_Wing.MI_EDarkNanzhuWingMd1001_Wing",
+      "type": "MaterialInstanceConstant",
+      "source": "EDarkNanzhuWingMd10011/Model/test/EDarkNanzhuWingMd10011::MI_EDarkNanzhuWingMd1001_Wing"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/test/Materials/MI_Trans_Anzhu_Wing_80008_CM.MI_Trans_Anzhu_Wing_80008_CM",
+      "type": "MaterialInstanceConstant",
+      "source": "EDarkNanzhuWingMd10011/Model/test/EDarkNanzhuWingMd10011::MI_Trans_Anzhu_Wing_80008_CM"
+    },
+    {
+      "path": "/Game/Wuwa/Wing/MB1ZhenwuguanzheMd601_Weapon1/Model/Materials/MI_MB1ZhenwuguanzheMd00601_Weapon.MI_MB1ZhenwuguanzheMd00601_Weapon",
+      "type": "MaterialInstanceConstant",
+      "source": "MB1ZhenwuguanzheMd601_Weapon1/Model/MB1ZhenwuguanzheMd601_Weapon1::MI_MB1ZhenwuguanzheMd00601_Weapon"
+    }
+  ],
+  "repairs": [
+    {
+      "mesh": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/EDarkNanzhuWingMd10011.EDarkNanzhuWingMd10011",
+      "slot_index": 0,
+      "slot": "MI_Trans_Anzhu_Wing_80008_CM",
+      "material": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/Materials/MI_Trans_Anzhu_Wing_80008_CM.MI_Trans_Anzhu_Wing_80008_CM",
+      "parent": "/Game/Wuwa/Wing/Materials/M_Wing_FX.M_Wing_FX",
+      "base_texture": null,
+      "effect": true,
+      "blend": "<BlendMode.BLEND_TRANSLUCENT: 2>"
+    },
+    {
+      "mesh": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/EDarkNanzhuWingMd10011.EDarkNanzhuWingMd10011",
+      "slot_index": 1,
+      "slot": "MI_EDarkNanzhuWingMd1001_Wing",
+      "material": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/Materials/MI_EDarkNanzhuWingMd1001_Wing.MI_EDarkNanzhuWingMd1001_Wing",
+      "parent": "/Game/Wuwa/Wing/Materials/M_Wing_Surface.M_Wing_Surface",
+      "base_texture": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/T_EDarkNanzhuWingMd10011_D.T_EDarkNanzhuWingMd10011_D",
+      "effect": false,
+      "blend": "<BlendMode.BLEND_OPAQUE: 0>"
+    },
+    {
+      "mesh": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/EDarkNanzhuWingMd10011.EDarkNanzhuWingMd10011",
+      "slot_index": 2,
+      "slot": "MI_Mask_Anzhu_Wing_80014_CM",
+      "material": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/Materials/MI_Mask_Anzhu_Wing_80014_CM.MI_Mask_Anzhu_Wing_80014_CM",
+      "parent": "/Game/Wuwa/Wing/Materials/M_Wing_Mask.M_Wing_Mask",
+      "base_texture": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/T_EDarkNanzhuWingMd10011_D.T_EDarkNanzhuWingMd10011_D",
+      "effect": false,
+      "blend": "<BlendMode.BLEND_MASKED: 1>"
+    },
+    {
+      "mesh": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/test/EDarkNanzhuWingMd10011.EDarkNanzhuWingMd10011",
+      "slot_index": 0,
+      "slot": "MI_EDarkNanzhuWingMd1001_Wing",
+      "material": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/test/Materials/MI_EDarkNanzhuWingMd1001_Wing.MI_EDarkNanzhuWingMd1001_Wing",
+      "parent": "/Game/Wuwa/Wing/Materials/M_Wing_Surface.M_Wing_Surface",
+      "base_texture": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/test/T_EDarkNanzhuWingMd10011_D.T_EDarkNanzhuWingMd10011_D",
+      "effect": false,
+      "blend": "<BlendMode.BLEND_OPAQUE: 0>"
+    },
+    {
+      "mesh": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/test/EDarkNanzhuWingMd10011.EDarkNanzhuWingMd10011",
+      "slot_index": 1,
+      "slot": "MI_Trans_Anzhu_Wing_80008_CM",
+      "material": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/test/Materials/MI_Trans_Anzhu_Wing_80008_CM.MI_Trans_Anzhu_Wing_80008_CM",
+      "parent": "/Game/Wuwa/Wing/Materials/M_Wing_FX.M_Wing_FX",
+      "base_texture": null,
+      "effect": true,
+      "blend": "<BlendMode.BLEND_TRANSLUCENT: 2>"
+    },
+    {
+      "mesh": "/Game/Wuwa/Wing/MB1ZhenwuguanzheMd601_Weapon1/Model/MB1ZhenwuguanzheMd601_Weapon1.MB1ZhenwuguanzheMd601_Weapon1",
+      "slot_index": 0,
+      "slot": "MI_MB1ZhenwuguanzheMd00601_Weapon",
+      "material": "/Game/Wuwa/Wing/MB1ZhenwuguanzheMd601_Weapon1/Model/Materials/MI_MB1ZhenwuguanzheMd00601_Weapon.MI_MB1ZhenwuguanzheMd00601_Weapon",
+      "parent": "/Game/Wuwa/Wing/Materials/M_Wing_Weapon.M_Wing_Weapon",
+      "base_texture": "/Game/Wuwa/Wing/MB1ZhenwuguanzheMd601_Weapon1/Model/T_MB1ZhenwuguanzheMd00601_Weapon_D.T_MB1ZhenwuguanzheMd00601_Weapon_D",
+      "effect": false,
+      "blend": "<BlendMode.BLEND_OPAQUE: 0>"
+    }
+  ],
+  "scale": 0.01,
+  "validation": {
+    "passed": true,
+    "checks": [
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/EDarkNanzhuWingMd10011.EDarkNanzhuWingMd10011"
+      },
+      {
+        "check": "Preserve complete source bone names",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/EDarkNanzhuWingMd10011.EDarkNanzhuWingMd10011"
+      },
+      {
+        "check": "Preserve material slot count",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/EDarkNanzhuWingMd10011.EDarkNanzhuWingMd10011"
+      },
+      {
+        "check": "Preserve material slot order",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/EDarkNanzhuWingMd10011.EDarkNanzhuWingMd10011"
+      },
+      {
+        "check": "Mesh unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/EDarkNanzhuWingMd10011.EDarkNanzhuWingMd10011"
+      },
+      {
+        "check": "Centimeter-scale model dimensions",
+        "passed": true,
+        "detail": [
+          163.00413060188293,
+          6.552472352981567,
+          162.9556541442871
+        ]
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/EDarkNanzhuWingMd10011_Skeleton.EDarkNanzhuWingMd10011_Skeleton"
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/MB1ZhenwuguanzheMd601_Weapon1/Model/MB1ZhenwuguanzheMd601_Weapon1.MB1ZhenwuguanzheMd601_Weapon1"
+      },
+      {
+        "check": "Preserve complete source bone names",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/MB1ZhenwuguanzheMd601_Weapon1/Model/MB1ZhenwuguanzheMd601_Weapon1.MB1ZhenwuguanzheMd601_Weapon1"
+      },
+      {
+        "check": "Preserve material slot count",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/MB1ZhenwuguanzheMd601_Weapon1/Model/MB1ZhenwuguanzheMd601_Weapon1.MB1ZhenwuguanzheMd601_Weapon1"
+      },
+      {
+        "check": "Preserve material slot order",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/MB1ZhenwuguanzheMd601_Weapon1/Model/MB1ZhenwuguanzheMd601_Weapon1.MB1ZhenwuguanzheMd601_Weapon1"
+      },
+      {
+        "check": "Mesh unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/MB1ZhenwuguanzheMd601_Weapon1/Model/MB1ZhenwuguanzheMd601_Weapon1.MB1ZhenwuguanzheMd601_Weapon1"
+      },
+      {
+        "check": "Centimeter-scale model dimensions",
+        "passed": true,
+        "detail": [
+          286.84471130371094,
+          14.940985679626465,
+          120.6729793548584
+        ]
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/MB1ZhenwuguanzheMd601_Weapon1/Model/MB1ZhenwuguanzheMd601_Weapon1_Skeleton.MB1ZhenwuguanzheMd601_Weapon1_Skeleton"
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/test/EDarkNanzhuWingMd10011.EDarkNanzhuWingMd10011"
+      },
+      {
+        "check": "Preserve complete source bone names",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/test/EDarkNanzhuWingMd10011.EDarkNanzhuWingMd10011"
+      },
+      {
+        "check": "Preserve material slot count",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/test/EDarkNanzhuWingMd10011.EDarkNanzhuWingMd10011"
+      },
+      {
+        "check": "Preserve material slot order",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/test/EDarkNanzhuWingMd10011.EDarkNanzhuWingMd10011"
+      },
+      {
+        "check": "Mesh unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/test/EDarkNanzhuWingMd10011.EDarkNanzhuWingMd10011"
+      },
+      {
+        "check": "Centimeter-scale model dimensions",
+        "passed": true,
+        "detail": [
+          163.0039146542549,
+          6.552470684051514,
+          162.9556999206543
+        ]
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/Attack02.Attack02"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/Attack02.Attack02"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/Attack02.Attack02"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/Attack02.Attack02",
+          "seconds": 3.6666667461395264,
+          "source_seconds": 3.6666666666666665
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/Attack02.Attack02"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/Attack02.Attack02"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/Attack02.Attack02"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/Attack02.Attack02",
+          "authored_motion": true,
+          "moving_bones": 138
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Attack03.B_Attack03"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Attack03.B_Attack03"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Attack03.B_Attack03"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/B_Attack03.B_Attack03",
+          "seconds": 3.4000000953674316,
+          "source_seconds": 3.4
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Attack03.B_Attack03"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Attack03.B_Attack03"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Attack03.B_Attack03"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/B_Attack03.B_Attack03",
+          "authored_motion": true,
+          "moving_bones": 138
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Attack04.B_Attack04"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Attack04.B_Attack04"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Attack04.B_Attack04"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/B_Attack04.B_Attack04",
+          "seconds": 4.666666507720947,
+          "source_seconds": 4.666666666666667
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Attack04.B_Attack04"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Attack04.B_Attack04"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Attack04.B_Attack04"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/B_Attack04.B_Attack04",
+          "authored_motion": true,
+          "moving_bones": 138
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_attack04_1.B_attack04_1"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_attack04_1.B_attack04_1"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_attack04_1.B_attack04_1"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/B_attack04_1.B_attack04_1",
+          "seconds": 4.5,
+          "source_seconds": 4.5
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_attack04_1.B_attack04_1"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_attack04_1.B_attack04_1"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_attack04_1.B_attack04_1"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/B_attack04_1.B_attack04_1",
+          "authored_motion": true,
+          "moving_bones": 138
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Attack05.B_Attack05"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Attack05.B_Attack05"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Attack05.B_Attack05"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/B_Attack05.B_Attack05",
+          "seconds": 4.066666603088379,
+          "source_seconds": 4.066666666666666
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Attack05.B_Attack05"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Attack05.B_Attack05"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Attack05.B_Attack05"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/B_Attack05.B_Attack05",
+          "authored_motion": true,
+          "moving_bones": 138
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Attack06.B_Attack06"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Attack06.B_Attack06"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Attack06.B_Attack06"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/B_Attack06.B_Attack06",
+          "seconds": 3.3333332538604736,
+          "source_seconds": 3.3333333333333335
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Attack06.B_Attack06"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Attack06.B_Attack06"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Attack06.B_Attack06"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/B_Attack06.B_Attack06",
+          "authored_motion": true,
+          "moving_bones": 138
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Burst01.B_Burst01"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Burst01.B_Burst01"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Burst01.B_Burst01"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/B_Burst01.B_Burst01",
+          "seconds": 4.5333333015441895,
+          "source_seconds": 4.533333333333333
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Burst01.B_Burst01"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Burst01.B_Burst01"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Burst01.B_Burst01"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/B_Burst01.B_Burst01",
+          "authored_motion": true,
+          "moving_bones": 138
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack01.B_Ex_Attack01"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack01.B_Ex_Attack01"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack01.B_Ex_Attack01"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack01.B_Ex_Attack01",
+          "seconds": 3.3333332538604736,
+          "source_seconds": 3.3333333333333335
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack01.B_Ex_Attack01"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack01.B_Ex_Attack01"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack01.B_Ex_Attack01"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack01.B_Ex_Attack01",
+          "authored_motion": true,
+          "moving_bones": 138
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack02.B_Ex_Attack02"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack02.B_Ex_Attack02"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack02.B_Ex_Attack02"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack02.B_Ex_Attack02",
+          "seconds": 3.6666667461395264,
+          "source_seconds": 3.6666666666666665
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack02.B_Ex_Attack02"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack02.B_Ex_Attack02"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack02.B_Ex_Attack02"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack02.B_Ex_Attack02",
+          "authored_motion": true,
+          "moving_bones": 138
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack03.B_Ex_Attack03"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack03.B_Ex_Attack03"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack03.B_Ex_Attack03"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack03.B_Ex_Attack03",
+          "seconds": 3.066666603088379,
+          "source_seconds": 3.066666666666667
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack03.B_Ex_Attack03"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack03.B_Ex_Attack03"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack03.B_Ex_Attack03"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack03.B_Ex_Attack03",
+          "authored_motion": true,
+          "moving_bones": 138
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack04.B_Ex_Attack04"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack04.B_Ex_Attack04"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack04.B_Ex_Attack04"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack04.B_Ex_Attack04",
+          "seconds": 4.199999809265137,
+          "source_seconds": 4.2
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack04.B_Ex_Attack04"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack04.B_Ex_Attack04"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack04.B_Ex_Attack04"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack04.B_Ex_Attack04",
+          "authored_motion": false,
+          "moving_bones": 0
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack05.B_Ex_Attack05"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack05.B_Ex_Attack05"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack05.B_Ex_Attack05"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack05.B_Ex_Attack05",
+          "seconds": 4.666666507720947,
+          "source_seconds": 4.666666666666667
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack05.B_Ex_Attack05"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack05.B_Ex_Attack05"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack05.B_Ex_Attack05"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack05.B_Ex_Attack05",
+          "authored_motion": true,
+          "moving_bones": 138
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_EX_Attack06.B_EX_Attack06"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_EX_Attack06.B_EX_Attack06"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_EX_Attack06.B_EX_Attack06"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/B_EX_Attack06.B_EX_Attack06",
+          "seconds": 3.7333333492279053,
+          "source_seconds": 3.7333333333333334
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_EX_Attack06.B_EX_Attack06"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_EX_Attack06.B_EX_Attack06"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_EX_Attack06.B_EX_Attack06"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/B_EX_Attack06.B_EX_Attack06",
+          "authored_motion": true,
+          "moving_bones": 138
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Skill01_02.B_Ex_Skill01_02"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Skill01_02.B_Ex_Skill01_02"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Skill01_02.B_Ex_Skill01_02"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Skill01_02.B_Ex_Skill01_02",
+          "seconds": 3.3333332538604736,
+          "source_seconds": 3.3333333333333335
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Skill01_02.B_Ex_Skill01_02"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Skill01_02.B_Ex_Skill01_02"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Skill01_02.B_Ex_Skill01_02"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Skill01_02.B_Ex_Skill01_02",
+          "authored_motion": true,
+          "moving_bones": 138
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Skill.B_Skill"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Skill.B_Skill"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Skill.B_Skill"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/B_Skill.B_Skill",
+          "seconds": 3.8333332538604736,
+          "source_seconds": 3.8333333333333335
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Skill.B_Skill"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Skill.B_Skill"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Skill.B_Skill"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/B_Skill.B_Skill",
+          "authored_motion": true,
+          "moving_bones": 138
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Skill01.B_Skill01"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Skill01.B_Skill01"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Skill01.B_Skill01"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/B_Skill01.B_Skill01",
+          "seconds": 3.133333444595337,
+          "source_seconds": 3.1333333333333333
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Skill01.B_Skill01"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Skill01.B_Skill01"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Skill01.B_Skill01"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/B_Skill01.B_Skill01",
+          "authored_motion": true,
+          "moving_bones": 138
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Skill02.B_Skill02"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Skill02.B_Skill02"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Skill02.B_Skill02"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/B_Skill02.B_Skill02",
+          "seconds": 4.333333492279053,
+          "source_seconds": 4.333333333333333
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Skill02.B_Skill02"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Skill02.B_Skill02"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_Skill02.B_Skill02"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/B_Skill02.B_Skill02",
+          "authored_motion": true,
+          "moving_bones": 138
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_SkillQte.B_SkillQte"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_SkillQte.B_SkillQte"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_SkillQte.B_SkillQte"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/B_SkillQte.B_SkillQte",
+          "seconds": 1.6666666269302368,
+          "source_seconds": 1.6666666666666667
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_SkillQte.B_SkillQte"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_SkillQte.B_SkillQte"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/B_SkillQte.B_SkillQte"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/B_SkillQte.B_SkillQte",
+          "authored_motion": true,
+          "moving_bones": 138
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/EDarkNanzhuWing_Wing09.EDarkNanzhuWing_Wing09"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/EDarkNanzhuWing_Wing09.EDarkNanzhuWing_Wing09"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/EDarkNanzhuWing_Wing09.EDarkNanzhuWing_Wing09"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/EDarkNanzhuWing_Wing09.EDarkNanzhuWing_Wing09",
+          "seconds": 2.0,
+          "source_seconds": 2.0
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/EDarkNanzhuWing_Wing09.EDarkNanzhuWing_Wing09"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/EDarkNanzhuWing_Wing09.EDarkNanzhuWing_Wing09"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/EDarkNanzhuWing_Wing09.EDarkNanzhuWing_Wing09"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/EDarkNanzhuWing_Wing09.EDarkNanzhuWing_Wing09",
+          "authored_motion": false,
+          "moving_bones": 0
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Attack03.G_Attack03"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Attack03.G_Attack03"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Attack03.G_Attack03"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/G_Attack03.G_Attack03",
+          "seconds": 3.0,
+          "source_seconds": 3.0
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Attack03.G_Attack03"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Attack03.G_Attack03"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Attack03.G_Attack03"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/G_Attack03.G_Attack03",
+          "authored_motion": true,
+          "moving_bones": 138
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Attack04.G_Attack04"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Attack04.G_Attack04"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Attack04.G_Attack04"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/G_Attack04.G_Attack04",
+          "seconds": 4.599999904632568,
+          "source_seconds": 4.6
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Attack04.G_Attack04"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Attack04.G_Attack04"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Attack04.G_Attack04"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/G_Attack04.G_Attack04",
+          "authored_motion": true,
+          "moving_bones": 138
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Attack04_1.G_Attack04_1"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Attack04_1.G_Attack04_1"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Attack04_1.G_Attack04_1"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/G_Attack04_1.G_Attack04_1",
+          "seconds": 4.400000095367432,
+          "source_seconds": 4.4
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Attack04_1.G_Attack04_1"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Attack04_1.G_Attack04_1"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Attack04_1.G_Attack04_1"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/G_Attack04_1.G_Attack04_1",
+          "authored_motion": true,
+          "moving_bones": 138
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Attack05.G_Attack05"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Attack05.G_Attack05"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Attack05.G_Attack05"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/G_Attack05.G_Attack05",
+          "seconds": 3.633333444595337,
+          "source_seconds": 3.6333333333333333
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Attack05.G_Attack05"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Attack05.G_Attack05"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Attack05.G_Attack05"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/G_Attack05.G_Attack05",
+          "authored_motion": true,
+          "moving_bones": 138
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Burst01.G_Burst01"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Burst01.G_Burst01"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Burst01.G_Burst01"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/G_Burst01.G_Burst01",
+          "seconds": 4.433333396911621,
+          "source_seconds": 4.433333333333334
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Burst01.G_Burst01"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Burst01.G_Burst01"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Burst01.G_Burst01"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/G_Burst01.G_Burst01",
+          "authored_motion": true,
+          "moving_bones": 138
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack01.G_Ex_Attack01"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack01.G_Ex_Attack01"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack01.G_Ex_Attack01"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack01.G_Ex_Attack01",
+          "seconds": 3.0999999046325684,
+          "source_seconds": 3.1
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack01.G_Ex_Attack01"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack01.G_Ex_Attack01"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack01.G_Ex_Attack01"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack01.G_Ex_Attack01",
+          "authored_motion": true,
+          "moving_bones": 138
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack02.G_Ex_Attack02"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack02.G_Ex_Attack02"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack02.G_Ex_Attack02"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack02.G_Ex_Attack02",
+          "seconds": 3.3333332538604736,
+          "source_seconds": 3.3333333333333335
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack02.G_Ex_Attack02"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack02.G_Ex_Attack02"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack02.G_Ex_Attack02"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack02.G_Ex_Attack02",
+          "authored_motion": true,
+          "moving_bones": 138
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack03.G_Ex_Attack03"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack03.G_Ex_Attack03"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack03.G_Ex_Attack03"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack03.G_Ex_Attack03",
+          "seconds": 3.2333333492279053,
+          "source_seconds": 3.2333333333333334
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack03.G_Ex_Attack03"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack03.G_Ex_Attack03"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack03.G_Ex_Attack03"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack03.G_Ex_Attack03",
+          "authored_motion": true,
+          "moving_bones": 138
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack04.G_Ex_Attack04"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack04.G_Ex_Attack04"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack04.G_Ex_Attack04"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack04.G_Ex_Attack04",
+          "seconds": 2.933333396911621,
+          "source_seconds": 2.933333333333333
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack04.G_Ex_Attack04"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack04.G_Ex_Attack04"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack04.G_Ex_Attack04"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack04.G_Ex_Attack04",
+          "authored_motion": false,
+          "moving_bones": 0
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack05.G_Ex_Attack05"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack05.G_Ex_Attack05"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack05.G_Ex_Attack05"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack05.G_Ex_Attack05",
+          "seconds": 2.933333396911621,
+          "source_seconds": 2.933333333333333
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack05.G_Ex_Attack05"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack05.G_Ex_Attack05"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack05.G_Ex_Attack05"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack05.G_Ex_Attack05",
+          "authored_motion": false,
+          "moving_bones": 0
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack06.G_Ex_Attack06"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack06.G_Ex_Attack06"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack06.G_Ex_Attack06"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack06.G_Ex_Attack06",
+          "seconds": 3.2333333492279053,
+          "source_seconds": 3.2333333333333334
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack06.G_Ex_Attack06"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack06.G_Ex_Attack06"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack06.G_Ex_Attack06"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack06.G_Ex_Attack06",
+          "authored_motion": true,
+          "moving_bones": 138
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Skill01_02.G_Ex_Skill01_02"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Skill01_02.G_Ex_Skill01_02"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Skill01_02.G_Ex_Skill01_02"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Skill01_02.G_Ex_Skill01_02",
+          "seconds": 2.7666666507720947,
+          "source_seconds": 2.7666666666666666
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Skill01_02.G_Ex_Skill01_02"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Skill01_02.G_Ex_Skill01_02"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Skill01_02.G_Ex_Skill01_02"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Skill01_02.G_Ex_Skill01_02",
+          "authored_motion": true,
+          "moving_bones": 138
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Skill.G_Skill"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Skill.G_Skill"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Skill.G_Skill"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/G_Skill.G_Skill",
+          "seconds": 3.0,
+          "source_seconds": 3.0
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Skill.G_Skill"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Skill.G_Skill"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Skill.G_Skill"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/G_Skill.G_Skill",
+          "authored_motion": true,
+          "moving_bones": 138
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Skill01.G_Skill01"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Skill01.G_Skill01"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Skill01.G_Skill01"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/G_Skill01.G_Skill01",
+          "seconds": 3.8333332538604736,
+          "source_seconds": 3.8333333333333335
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Skill01.G_Skill01"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Skill01.G_Skill01"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Skill01.G_Skill01"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/G_Skill01.G_Skill01",
+          "authored_motion": true,
+          "moving_bones": 138
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Skill02.G_Skill02"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Skill02.G_Skill02"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Skill02.G_Skill02"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/G_Skill02.G_Skill02",
+          "seconds": 3.5,
+          "source_seconds": 3.5
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Skill02.G_Skill02"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Skill02.G_Skill02"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_Skill02.G_Skill02"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/G_Skill02.G_Skill02",
+          "authored_motion": true,
+          "moving_bones": 138
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_SkillQte.G_SkillQte"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_SkillQte.G_SkillQte"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_SkillQte.G_SkillQte"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/G_SkillQte.G_SkillQte",
+          "seconds": 1.6666666269302368,
+          "source_seconds": 1.6666666666666667
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_SkillQte.G_SkillQte"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_SkillQte.G_SkillQte"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/BaseAnim/G_SkillQte.G_SkillQte"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/BaseAnim/G_SkillQte.G_SkillQte",
+          "authored_motion": true,
+          "moving_bones": 138
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Move_F.Rib_Move_F"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Move_F.Rib_Move_F"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Move_F.Rib_Move_F"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Move_F.Rib_Move_F",
+          "seconds": 1.3333333730697632,
+          "source_seconds": 1.3333333333333333
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Move_F.Rib_Move_F"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Move_F.Rib_Move_F"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Move_F.Rib_Move_F"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Move_F.Rib_Move_F",
+          "authored_motion": true,
+          "moving_bones": 138
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Run_F.Rib_Run_F"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Run_F.Rib_Run_F"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Run_F.Rib_Run_F"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Run_F.Rib_Run_F",
+          "seconds": 0.7333333492279053,
+          "source_seconds": 0.7333333333333333
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Run_F.Rib_Run_F"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Run_F.Rib_Run_F"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Run_F.Rib_Run_F"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Run_F.Rib_Run_F",
+          "authored_motion": true,
+          "moving_bones": 137
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Sprint_F.Rib_Sprint_F"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Sprint_F.Rib_Sprint_F"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Sprint_F.Rib_Sprint_F"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Sprint_F.Rib_Sprint_F",
+          "seconds": 0.5333333611488342,
+          "source_seconds": 0.5333333333333333
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Sprint_F.Rib_Sprint_F"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Sprint_F.Rib_Sprint_F"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Sprint_F.Rib_Sprint_F"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Sprint_F.Rib_Sprint_F",
+          "authored_motion": true,
+          "moving_bones": 138
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Sprint_Impulse_F.Rib_Sprint_Impulse_F"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Sprint_Impulse_F.Rib_Sprint_Impulse_F"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Sprint_Impulse_F.Rib_Sprint_Impulse_F"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Sprint_Impulse_F.Rib_Sprint_Impulse_F",
+          "seconds": 0.5333333611488342,
+          "source_seconds": 0.5333333333333333
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Sprint_Impulse_F.Rib_Sprint_Impulse_F"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Sprint_Impulse_F.Rib_Sprint_Impulse_F"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Sprint_Impulse_F.Rib_Sprint_Impulse_F"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Sprint_Impulse_F.Rib_Sprint_Impulse_F",
+          "authored_motion": true,
+          "moving_bones": 138
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stand1.Rib_Stand1"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stand1.Rib_Stand1"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stand1.Rib_Stand1"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stand1.Rib_Stand1",
+          "seconds": 2.6666667461395264,
+          "source_seconds": 2.6666666666666665
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stand1.Rib_Stand1"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stand1.Rib_Stand1"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stand1.Rib_Stand1"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stand1.Rib_Stand1",
+          "authored_motion": true,
+          "moving_bones": 138
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stand1_Change.Rib_Stand1_Change"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stand1_Change.Rib_Stand1_Change"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stand1_Change.Rib_Stand1_Change"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stand1_Change.Rib_Stand1_Change",
+          "seconds": 0.7333333492279053,
+          "source_seconds": 0.7333333333333333
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stand1_Change.Rib_Stand1_Change"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stand1_Change.Rib_Stand1_Change"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stand1_Change.Rib_Stand1_Change"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stand1_Change.Rib_Stand1_Change",
+          "authored_motion": true,
+          "moving_bones": 138
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Run_L.Rib_Stop_Run_L"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Run_L.Rib_Stop_Run_L"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Run_L.Rib_Stop_Run_L"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Run_L.Rib_Stop_Run_L",
+          "seconds": 1.3333333730697632,
+          "source_seconds": 1.3333333333333333
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Run_L.Rib_Stop_Run_L"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Run_L.Rib_Stop_Run_L"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Run_L.Rib_Stop_Run_L"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Run_L.Rib_Stop_Run_L",
+          "authored_motion": true,
+          "moving_bones": 138
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Run_R.Rib_Stop_Run_R"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Run_R.Rib_Stop_Run_R"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Run_R.Rib_Stop_Run_R"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Run_R.Rib_Stop_Run_R",
+          "seconds": 1.3333333730697632,
+          "source_seconds": 1.3333333333333333
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Run_R.Rib_Stop_Run_R"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Run_R.Rib_Stop_Run_R"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Run_R.Rib_Stop_Run_R"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Run_R.Rib_Stop_Run_R",
+          "authored_motion": true,
+          "moving_bones": 138
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Sprint_L.Rib_Stop_Sprint_L"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Sprint_L.Rib_Stop_Sprint_L"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Sprint_L.Rib_Stop_Sprint_L"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Sprint_L.Rib_Stop_Sprint_L",
+          "seconds": 1.4666666984558105,
+          "source_seconds": 1.4666666666666666
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Sprint_L.Rib_Stop_Sprint_L"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Sprint_L.Rib_Stop_Sprint_L"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Sprint_L.Rib_Stop_Sprint_L"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Sprint_L.Rib_Stop_Sprint_L",
+          "authored_motion": true,
+          "moving_bones": 138
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Sprint_R.Rib_Stop_Sprint_R"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Sprint_R.Rib_Stop_Sprint_R"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Sprint_R.Rib_Stop_Sprint_R"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Sprint_R.Rib_Stop_Sprint_R",
+          "seconds": 1.4666666984558105,
+          "source_seconds": 1.4666666666666666
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Sprint_R.Rib_Stop_Sprint_R"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Sprint_R.Rib_Stop_Sprint_R"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Sprint_R.Rib_Stop_Sprint_R"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Sprint_R.Rib_Stop_Sprint_R",
+          "authored_motion": true,
+          "moving_bones": 138
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/MB1ZhenwuguanzheMd601_Weapon1/BaseAnim/Scythe_Ex_Attack03.Scythe_Ex_Attack03"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/MB1ZhenwuguanzheMd601_Weapon1/BaseAnim/Scythe_Ex_Attack03.Scythe_Ex_Attack03"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/MB1ZhenwuguanzheMd601_Weapon1/BaseAnim/Scythe_Ex_Attack03.Scythe_Ex_Attack03"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/MB1ZhenwuguanzheMd601_Weapon1/BaseAnim/Scythe_Ex_Attack03.Scythe_Ex_Attack03",
+          "seconds": 0.8333333134651184,
+          "source_seconds": 0.8333333333333334
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/MB1ZhenwuguanzheMd601_Weapon1/BaseAnim/Scythe_Ex_Attack03.Scythe_Ex_Attack03"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/MB1ZhenwuguanzheMd601_Weapon1/BaseAnim/Scythe_Ex_Attack03.Scythe_Ex_Attack03"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/MB1ZhenwuguanzheMd601_Weapon1/BaseAnim/Scythe_Ex_Attack03.Scythe_Ex_Attack03"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/MB1ZhenwuguanzheMd601_Weapon1/BaseAnim/Scythe_Ex_Attack03.Scythe_Ex_Attack03",
+          "authored_motion": false,
+          "moving_bones": 0
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/MB1ZhenwuguanzheMd601_Weapon1/BaseAnim/Scythe_Ex_Attack04.Scythe_Ex_Attack04"
+      },
+      {
+        "check": "Animation skeleton identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/MB1ZhenwuguanzheMd601_Weapon1/BaseAnim/Scythe_Ex_Attack04.Scythe_Ex_Attack04"
+      },
+      {
+        "check": "Animation unit conversion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/MB1ZhenwuguanzheMd601_Weapon1/BaseAnim/Scythe_Ex_Attack04.Scythe_Ex_Attack04"
+      },
+      {
+        "check": "Animation duration preserved",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/MB1ZhenwuguanzheMd601_Weapon1/BaseAnim/Scythe_Ex_Attack04.Scythe_Ex_Attack04",
+          "seconds": 2.933333396911621,
+          "source_seconds": 2.933333333333333
+        }
+      },
+      {
+        "check": "No accidental actor root motion",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/MB1ZhenwuguanzheMd601_Weapon1/BaseAnim/Scythe_Ex_Attack04.Scythe_Ex_Attack04"
+      },
+      {
+        "check": "All source bones evaluate",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/MB1ZhenwuguanzheMd601_Weapon1/BaseAnim/Scythe_Ex_Attack04.Scythe_Ex_Attack04"
+      },
+      {
+        "check": "Finite evaluated bone transforms",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/MB1ZhenwuguanzheMd601_Weapon1/BaseAnim/Scythe_Ex_Attack04.Scythe_Ex_Attack04"
+      },
+      {
+        "check": "Match source motion or authored held pose",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/MB1ZhenwuguanzheMd601_Weapon1/BaseAnim/Scythe_Ex_Attack04.Scythe_Ex_Attack04",
+          "authored_motion": true,
+          "moving_bones": 1
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/T_EDarkNanzhuWingMd10011_D.T_EDarkNanzhuWingMd10011_D"
+      },
+      {
+        "check": "Texture color space",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/T_EDarkNanzhuWingMd10011_D.T_EDarkNanzhuWingMd10011_D"
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/test/T_EDarkNanzhuWingMd10011_D.T_EDarkNanzhuWingMd10011_D"
+      },
+      {
+        "check": "Texture color space",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/test/T_EDarkNanzhuWingMd10011_D.T_EDarkNanzhuWingMd10011_D"
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/MB1ZhenwuguanzheMd601_Weapon1/Model/T_MB1ZhenwuguanzheMd00601_Weapon_D.T_MB1ZhenwuguanzheMd00601_Weapon_D"
+      },
+      {
+        "check": "Texture color space",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/MB1ZhenwuguanzheMd601_Weapon1/Model/T_MB1ZhenwuguanzheMd00601_Weapon_D.T_MB1ZhenwuguanzheMd00601_Weapon_D"
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/MB1ZhenwuguanzheMd601_Weapon1/Model/T_MB1ZhenwuguanzheMd00601_Weapon_N.T_MB1ZhenwuguanzheMd00601_Weapon_N"
+      },
+      {
+        "check": "Texture color space",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/MB1ZhenwuguanzheMd601_Weapon1/Model/T_MB1ZhenwuguanzheMd00601_Weapon_N.T_MB1ZhenwuguanzheMd00601_Weapon_N"
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/Materials/M_Wing_Surface.M_Wing_Surface"
+      },
+      {
+        "check": "Compiled material shaders",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/Materials/M_Wing_Surface.M_Wing_Surface",
+          "pixel": 186,
+          "vertex": 291
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/Materials/M_Wing_Mask.M_Wing_Mask"
+      },
+      {
+        "check": "Compiled material shaders",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/Materials/M_Wing_Mask.M_Wing_Mask",
+          "pixel": 187,
+          "vertex": 291
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/Materials/M_Wing_Weapon.M_Wing_Weapon"
+      },
+      {
+        "check": "Compiled material shaders",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/Materials/M_Wing_Weapon.M_Wing_Weapon",
+          "pixel": 186,
+          "vertex": 291
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/Materials/M_Wing_FX.M_Wing_FX"
+      },
+      {
+        "check": "Compiled material shaders",
+        "passed": true,
+        "detail": {
+          "path": "/Game/Wuwa/Wing/Materials/M_Wing_FX.M_Wing_FX",
+          "pixel": 156,
+          "vertex": 486
+        }
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/Materials/MI_Trans_Anzhu_Wing_80008_CM.MI_Trans_Anzhu_Wing_80008_CM"
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/Materials/MI_EDarkNanzhuWingMd1001_Wing.MI_EDarkNanzhuWingMd1001_Wing"
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/Materials/MI_Mask_Anzhu_Wing_80014_CM.MI_Mask_Anzhu_Wing_80014_CM"
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/test/Materials/MI_EDarkNanzhuWingMd1001_Wing.MI_EDarkNanzhuWingMd1001_Wing"
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/test/Materials/MI_Trans_Anzhu_Wing_80008_CM.MI_Trans_Anzhu_Wing_80008_CM"
+      },
+      {
+        "check": "Load saved asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/MB1ZhenwuguanzheMd601_Weapon1/Model/Materials/MI_MB1ZhenwuguanzheMd00601_Weapon.MI_MB1ZhenwuguanzheMd00601_Weapon"
+      },
+      {
+        "check": "Mesh material assignment",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/EDarkNanzhuWingMd10011.EDarkNanzhuWingMd10011:MI_Trans_Anzhu_Wing_80008_CM"
+      },
+      {
+        "check": "Material instance parent",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/Materials/MI_Trans_Anzhu_Wing_80008_CM.MI_Trans_Anzhu_Wing_80008_CM"
+      },
+      {
+        "check": "Effect transparency, emissive, and two-sided settings",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/Materials/MI_Trans_Anzhu_Wing_80008_CM.MI_Trans_Anzhu_Wing_80008_CM"
+      },
+      {
+        "check": "Controlled effect opacity",
+        "passed": true,
+        "detail": 0.1599999964237213
+      },
+      {
+        "check": "Mesh material assignment",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/EDarkNanzhuWingMd10011.EDarkNanzhuWingMd10011:MI_EDarkNanzhuWingMd1001_Wing"
+      },
+      {
+        "check": "Material instance parent",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/Materials/MI_EDarkNanzhuWingMd1001_Wing.MI_EDarkNanzhuWingMd1001_Wing"
+      },
+      {
+        "check": "Material texture reference",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/Materials/MI_EDarkNanzhuWingMd1001_Wing.MI_EDarkNanzhuWingMd1001_Wing"
+      },
+      {
+        "check": "Mesh material assignment",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/EDarkNanzhuWingMd10011.EDarkNanzhuWingMd10011:MI_Mask_Anzhu_Wing_80014_CM"
+      },
+      {
+        "check": "Material instance parent",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/Materials/MI_Mask_Anzhu_Wing_80014_CM.MI_Mask_Anzhu_Wing_80014_CM"
+      },
+      {
+        "check": "Material texture reference",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/Materials/MI_Mask_Anzhu_Wing_80014_CM.MI_Mask_Anzhu_Wing_80014_CM"
+      },
+      {
+        "check": "Mesh material assignment",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/test/EDarkNanzhuWingMd10011.EDarkNanzhuWingMd10011:MI_EDarkNanzhuWingMd1001_Wing"
+      },
+      {
+        "check": "Material instance parent",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/test/Materials/MI_EDarkNanzhuWingMd1001_Wing.MI_EDarkNanzhuWingMd1001_Wing"
+      },
+      {
+        "check": "Material texture reference",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/test/Materials/MI_EDarkNanzhuWingMd1001_Wing.MI_EDarkNanzhuWingMd1001_Wing"
+      },
+      {
+        "check": "Mesh material assignment",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/test/EDarkNanzhuWingMd10011.EDarkNanzhuWingMd10011:MI_Trans_Anzhu_Wing_80008_CM"
+      },
+      {
+        "check": "Material instance parent",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/test/Materials/MI_Trans_Anzhu_Wing_80008_CM.MI_Trans_Anzhu_Wing_80008_CM"
+      },
+      {
+        "check": "Effect transparency, emissive, and two-sided settings",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/test/Materials/MI_Trans_Anzhu_Wing_80008_CM.MI_Trans_Anzhu_Wing_80008_CM"
+      },
+      {
+        "check": "Controlled effect opacity",
+        "passed": true,
+        "detail": 0.1599999964237213
+      },
+      {
+        "check": "Mesh material assignment",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/MB1ZhenwuguanzheMd601_Weapon1/Model/MB1ZhenwuguanzheMd601_Weapon1.MB1ZhenwuguanzheMd601_Weapon1:MI_MB1ZhenwuguanzheMd00601_Weapon"
+      },
+      {
+        "check": "Material instance parent",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/MB1ZhenwuguanzheMd601_Weapon1/Model/Materials/MI_MB1ZhenwuguanzheMd00601_Weapon.MI_MB1ZhenwuguanzheMd00601_Weapon"
+      },
+      {
+        "check": "Material texture reference",
+        "passed": true,
+        "detail": "/Game/Wuwa/Wing/MB1ZhenwuguanzheMd601_Weapon1/Model/Materials/MI_MB1ZhenwuguanzheMd00601_Weapon.MI_MB1ZhenwuguanzheMd00601_Weapon"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\BaseAnim\\Attack02.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\BaseAnim\\Attack02.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\BaseAnim\\B_Attack03.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\BaseAnim\\B_Attack03.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\BaseAnim\\B_Attack04.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\BaseAnim\\B_Attack04.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\BaseAnim\\B_attack04_1.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\BaseAnim\\B_attack04_1.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\BaseAnim\\B_Attack05.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\BaseAnim\\B_Attack05.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\BaseAnim\\B_Attack06.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\BaseAnim\\B_Attack06.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\BaseAnim\\B_Burst01.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\BaseAnim\\B_Burst01.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\BaseAnim\\B_Ex_Attack01.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\BaseAnim\\B_Ex_Attack01.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\BaseAnim\\B_Ex_Attack02.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\BaseAnim\\B_Ex_Attack02.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\BaseAnim\\B_Ex_Attack03.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\BaseAnim\\B_Ex_Attack03.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\BaseAnim\\B_Ex_Attack04.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\BaseAnim\\B_Ex_Attack04.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\BaseAnim\\B_Ex_Attack05.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\BaseAnim\\B_Ex_Attack05.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\BaseAnim\\B_EX_Attack06.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\BaseAnim\\B_EX_Attack06.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\BaseAnim\\B_Ex_Skill01_02.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\BaseAnim\\B_Ex_Skill01_02.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\BaseAnim\\B_Skill.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\BaseAnim\\B_Skill.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\BaseAnim\\B_Skill01.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\BaseAnim\\B_Skill01.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\BaseAnim\\B_Skill02.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\BaseAnim\\B_Skill02.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\BaseAnim\\B_SkillQte.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\BaseAnim\\B_SkillQte.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\BaseAnim\\EDarkNanzhuWing_Wing09.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\BaseAnim\\EDarkNanzhuWing_Wing09.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\BaseAnim\\G_Attack03.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\BaseAnim\\G_Attack03.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\BaseAnim\\G_Attack04.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\BaseAnim\\G_Attack04.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\BaseAnim\\G_Attack04_1.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\BaseAnim\\G_Attack04_1.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\BaseAnim\\G_Attack05.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\BaseAnim\\G_Attack05.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\BaseAnim\\G_Burst01.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\BaseAnim\\G_Burst01.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\BaseAnim\\G_Ex_Attack01.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\BaseAnim\\G_Ex_Attack01.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\BaseAnim\\G_Ex_Attack02.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\BaseAnim\\G_Ex_Attack02.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\BaseAnim\\G_Ex_Attack03.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\BaseAnim\\G_Ex_Attack03.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\BaseAnim\\G_Ex_Attack04.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\BaseAnim\\G_Ex_Attack04.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\BaseAnim\\G_Ex_Attack05.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\BaseAnim\\G_Ex_Attack05.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\BaseAnim\\G_Ex_Attack06.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\BaseAnim\\G_Ex_Attack06.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\BaseAnim\\G_Ex_Skill01_02.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\BaseAnim\\G_Ex_Skill01_02.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\BaseAnim\\G_Skill.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\BaseAnim\\G_Skill.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\BaseAnim\\G_Skill01.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\BaseAnim\\G_Skill01.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\BaseAnim\\G_Skill02.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\BaseAnim\\G_Skill02.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\BaseAnim\\G_SkillQte.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\BaseAnim\\G_SkillQte.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\EDarkNanzhuWingMd10011\\Model\\EDarkNanzhuWingMd10011.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\EDarkNanzhuWingMd10011\\Model\\EDarkNanzhuWingMd10011.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\EDarkNanzhuWingMd10011\\Model\\T_EDarkNanzhuWingMd10011_D.png"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\EDarkNanzhuWingMd10011\\Model\\T_EDarkNanzhuWingMd10011_D.png"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\EDarkNanzhuWingMd10011\\Model\\test\\EDarkNanzhuWingMd10011.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\EDarkNanzhuWingMd10011\\Model\\test\\EDarkNanzhuWingMd10011.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\EDarkNanzhuWingMd10011\\Model\\test\\T_EDarkNanzhuWingMd10011_D.png"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\EDarkNanzhuWingMd10011\\Model\\test\\T_EDarkNanzhuWingMd10011_D.png"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\EDarkNanzhuWingMd10011\\RibbonAnim\\Rib_Move_F.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\EDarkNanzhuWingMd10011\\RibbonAnim\\Rib_Move_F.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\EDarkNanzhuWingMd10011\\RibbonAnim\\Rib_Run_F.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\EDarkNanzhuWingMd10011\\RibbonAnim\\Rib_Run_F.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\EDarkNanzhuWingMd10011\\RibbonAnim\\Rib_Sprint_F.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\EDarkNanzhuWingMd10011\\RibbonAnim\\Rib_Sprint_F.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\EDarkNanzhuWingMd10011\\RibbonAnim\\Rib_Sprint_Impulse_F.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\EDarkNanzhuWingMd10011\\RibbonAnim\\Rib_Sprint_Impulse_F.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\EDarkNanzhuWingMd10011\\RibbonAnim\\Rib_Stand1.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\EDarkNanzhuWingMd10011\\RibbonAnim\\Rib_Stand1.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\EDarkNanzhuWingMd10011\\RibbonAnim\\Rib_Stand1_Change.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\EDarkNanzhuWingMd10011\\RibbonAnim\\Rib_Stand1_Change.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\EDarkNanzhuWingMd10011\\RibbonAnim\\Rib_Stop_Run_L.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\EDarkNanzhuWingMd10011\\RibbonAnim\\Rib_Stop_Run_L.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\EDarkNanzhuWingMd10011\\RibbonAnim\\Rib_Stop_Run_R.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\EDarkNanzhuWingMd10011\\RibbonAnim\\Rib_Stop_Run_R.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\EDarkNanzhuWingMd10011\\RibbonAnim\\Rib_Stop_Sprint_L.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\EDarkNanzhuWingMd10011\\RibbonAnim\\Rib_Stop_Sprint_L.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\EDarkNanzhuWingMd10011\\RibbonAnim\\Rib_Stop_Sprint_R.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\EDarkNanzhuWingMd10011\\RibbonAnim\\Rib_Stop_Sprint_R.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\MB1ZhenwuguanzheMd601_Weapon1\\BaseAnim\\Scythe_Ex_Attack03.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\MB1ZhenwuguanzheMd601_Weapon1\\BaseAnim\\Scythe_Ex_Attack03.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\MB1ZhenwuguanzheMd601_Weapon1\\BaseAnim\\Scythe_Ex_Attack04.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\MB1ZhenwuguanzheMd601_Weapon1\\BaseAnim\\Scythe_Ex_Attack04.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\MB1ZhenwuguanzheMd601_Weapon1\\Model\\MB1ZhenwuguanzheMd601_Weapon1.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\MB1ZhenwuguanzheMd601_Weapon1\\Model\\MB1ZhenwuguanzheMd601_Weapon1.fbx"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\MB1ZhenwuguanzheMd601_Weapon1\\Model\\T_MB1ZhenwuguanzheMd00601_Weapon_D.png"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\MB1ZhenwuguanzheMd601_Weapon1\\Model\\T_MB1ZhenwuguanzheMd00601_Weapon_D.png"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "D:\\下载\\BaiduwangpanDownloads\\Anzhu\\MB1ZhenwuguanzheMd601_Weapon1\\Model\\T_MB1ZhenwuguanzheMd00601_Weapon_N.png"
+      },
+      {
+        "check": "Original/copy integrity",
+        "passed": true,
+        "detail": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\Wing\\MB1ZhenwuguanzheMd601_Weapon1\\Model\\T_MB1ZhenwuguanzheMd00601_Weapon_N.png"
+      },
+      {
+        "check": "Exact asset inventory",
+        "passed": true,
+        "detail": {
+          "expected": 66,
+          "actual": 66,
+          "unexpected": []
+        }
+      }
+    ],
+    "meshes": [
+      {
+        "mesh": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/EDarkNanzhuWingMd10011.EDarkNanzhuWingMd10011",
+        "size_cm": [
+          163.00413060188293,
+          6.552472352981567,
+          162.9556541442871
+        ],
+        "bones": 139
+      },
+      {
+        "mesh": "/Game/Wuwa/Wing/MB1ZhenwuguanzheMd601_Weapon1/Model/MB1ZhenwuguanzheMd601_Weapon1.MB1ZhenwuguanzheMd601_Weapon1",
+        "size_cm": [
+          286.84471130371094,
+          14.940985679626465,
+          120.6729793548584
+        ],
+        "bones": 4
+      },
+      {
+        "mesh": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/test/EDarkNanzhuWingMd10011.EDarkNanzhuWingMd10011",
+        "size_cm": [
+          163.0039146542549,
+          6.552470684051514,
+          162.9556999206543
+        ],
+        "bones": 139
+      }
+    ],
+    "animations": [
+      {
+        "path": "/Game/Wuwa/Wing/BaseAnim/Attack02.Attack02",
+        "seconds": 3.6666667461395264,
+        "moving_bones": 138,
+        "authored_motion": true,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAA240) {x: 10.826895, y: 6.976282, z: 10.720010}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CA8B30) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/BaseAnim/B_Attack03.B_Attack03",
+        "seconds": 3.4000000953674316,
+        "moving_bones": 138,
+        "authored_motion": true,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAA7E0) {x: 10.838195, y: 8.635343, z: 5.028939}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAA240) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/BaseAnim/B_Attack04.B_Attack04",
+        "seconds": 4.666666507720947,
+        "moving_bones": 138,
+        "authored_motion": true,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAA630) {x: 13.760793, y: 5.576489, z: 5.103142}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAA7E0) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/BaseAnim/B_attack04_1.B_attack04_1",
+        "seconds": 4.5,
+        "moving_bones": 138,
+        "authored_motion": true,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CA8B30) {x: 13.759698, y: 5.576548, z: 5.101464}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAA630) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/BaseAnim/B_Attack05.B_Attack05",
+        "seconds": 4.066666603088379,
+        "moving_bones": 138,
+        "authored_motion": true,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAA240) {x: 13.286221, y: 6.385794, z: 4.188233}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CA8B30) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/BaseAnim/B_Attack06.B_Attack06",
+        "seconds": 3.3333332538604736,
+        "moving_bones": 138,
+        "authored_motion": true,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAA7E0) {x: 12.982189, y: 16.768877, z: 7.385828}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAA240) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/BaseAnim/B_Burst01.B_Burst01",
+        "seconds": 4.5333333015441895,
+        "moving_bones": 138,
+        "authored_motion": true,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAA630) {x: 9.822690, y: 5.738537, z: 4.842751}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAA7E0) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack01.B_Ex_Attack01",
+        "seconds": 3.3333332538604736,
+        "moving_bones": 138,
+        "authored_motion": true,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAA2D0) {x: 9.293158, y: 13.559391, z: 4.475984}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAA630) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack02.B_Ex_Attack02",
+        "seconds": 3.6666667461395264,
+        "moving_bones": 138,
+        "authored_motion": true,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAA240) {x: 9.293152, y: 13.559397, z: 4.475984}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAA2D0) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack03.B_Ex_Attack03",
+        "seconds": 3.066666603088379,
+        "moving_bones": 138,
+        "authored_motion": true,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAA7E0) {x: 9.293180, y: 13.559389, z: 4.475991}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAA240) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack04.B_Ex_Attack04",
+        "seconds": 4.199999809265137,
+        "moving_bones": 0,
+        "authored_motion": false,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAA630) {x: 9.293154, y: 13.559397, z: 4.475968}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAA7E0) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Attack05.B_Ex_Attack05",
+        "seconds": 4.666666507720947,
+        "moving_bones": 138,
+        "authored_motion": true,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAA2D0) {x: 9.293152, y: 13.559397, z: 4.475984}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAA630) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/BaseAnim/B_EX_Attack06.B_EX_Attack06",
+        "seconds": 3.7333333492279053,
+        "moving_bones": 138,
+        "authored_motion": true,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAA240) {x: 10.826982, y: 6.976291, z: 10.718713}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAA2D0) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/BaseAnim/B_Ex_Skill01_02.B_Ex_Skill01_02",
+        "seconds": 3.3333332538604736,
+        "moving_bones": 138,
+        "authored_motion": true,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAA7E0) {x: 11.569214, y: 11.042851, z: 5.627900}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAA240) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/BaseAnim/B_Skill.B_Skill",
+        "seconds": 3.8333332538604736,
+        "moving_bones": 138,
+        "authored_motion": true,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CA8230) {x: 10.826899, y: 6.976293, z: 10.719369}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAA7E0) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/BaseAnim/B_Skill01.B_Skill01",
+        "seconds": 3.133333444595337,
+        "moving_bones": 138,
+        "authored_motion": true,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAAD80) {x: 8.364573, y: 9.364612, z: 5.215127}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CA8230) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/BaseAnim/B_Skill02.B_Skill02",
+        "seconds": 4.333333492279053,
+        "moving_bones": 138,
+        "authored_motion": true,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAAE10) {x: 11.569212, y: 11.042851, z: 5.627892}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAAD80) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/BaseAnim/B_SkillQte.B_SkillQte",
+        "seconds": 1.6666666269302368,
+        "moving_bones": 138,
+        "authored_motion": true,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAA7E0) {x: 10.848191, y: 8.635377, z: 5.029168}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAAE10) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/BaseAnim/EDarkNanzhuWing_Wing09.EDarkNanzhuWing_Wing09",
+        "seconds": 2.0,
+        "moving_bones": 0,
+        "authored_motion": false,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAAEA0) {x: 9.732761, y: 13.176736, z: 2.063882}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAA7E0) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/BaseAnim/G_Attack03.G_Attack03",
+        "seconds": 3.0,
+        "moving_bones": 138,
+        "authored_motion": true,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAAD80) {x: 13.745052, y: 6.178444, z: 5.090882}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAAEA0) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/BaseAnim/G_Attack04.G_Attack04",
+        "seconds": 4.599999904632568,
+        "moving_bones": 138,
+        "authored_motion": true,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAAE10) {x: 13.761096, y: 5.576455, z: 5.101761}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAAD80) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/BaseAnim/G_Attack04_1.G_Attack04_1",
+        "seconds": 4.400000095367432,
+        "moving_bones": 138,
+        "authored_motion": true,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAA7E0) {x: 9.902019, y: 5.759785, z: 4.846108}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAAE10) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/BaseAnim/G_Attack05.G_Attack05",
+        "seconds": 3.633333444595337,
+        "moving_bones": 138,
+        "authored_motion": true,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAAEA0) {x: 13.286123, y: 6.386864, z: 4.188271}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAA7E0) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/BaseAnim/G_Burst01.G_Burst01",
+        "seconds": 4.433333396911621,
+        "moving_bones": 138,
+        "authored_motion": true,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAAD80) {x: -0.000027, y: -0.000015, z: -0.000008}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAAEA0) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack01.G_Ex_Attack01",
+        "seconds": 3.0999999046325684,
+        "moving_bones": 138,
+        "authored_motion": true,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAAE10) {x: 4.365650, y: 9.990828, z: 4.437890}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAAD80) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack02.G_Ex_Attack02",
+        "seconds": 3.3333332538604736,
+        "moving_bones": 138,
+        "authored_motion": true,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAAF30) {x: 5.390774, y: 10.973157, z: 2.913735}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAAE10) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack03.G_Ex_Attack03",
+        "seconds": 3.2333333492279053,
+        "moving_bones": 138,
+        "authored_motion": true,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAAEA0) {x: 3.796193, y: 8.698359, z: 2.729981}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAAF30) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack04.G_Ex_Attack04",
+        "seconds": 2.933333396911621,
+        "moving_bones": 0,
+        "authored_motion": false,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAAD80) {x: 12.575809, y: 9.195632, z: -0.088157}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAAEA0) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack05.G_Ex_Attack05",
+        "seconds": 2.933333396911621,
+        "moving_bones": 0,
+        "authored_motion": false,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAAE10) {x: 12.575809, y: 9.195632, z: -0.088157}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAAD80) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Attack06.G_Ex_Attack06",
+        "seconds": 3.2333333492279053,
+        "moving_bones": 138,
+        "authored_motion": true,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAAFC0) {x: 4.267995, y: 5.272613, z: 2.142930}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAAE10) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/BaseAnim/G_Ex_Skill01_02.G_Ex_Skill01_02",
+        "seconds": 2.7666666507720947,
+        "moving_bones": 138,
+        "authored_motion": true,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAB050) {x: 10.502821, y: 10.875432, z: 2.786378}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAAFC0) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/BaseAnim/G_Skill.G_Skill",
+        "seconds": 3.0,
+        "moving_bones": 138,
+        "authored_motion": true,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAAD80) {x: 10.502821, y: 10.875428, z: 2.786378}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAB050) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/BaseAnim/G_Skill01.G_Skill01",
+        "seconds": 3.8333332538604736,
+        "moving_bones": 138,
+        "authored_motion": true,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAB0E0) {x: 8.364570, y: 9.364612, z: 5.215142}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAAD80) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/BaseAnim/G_Skill02.G_Skill02",
+        "seconds": 3.5,
+        "moving_bones": 138,
+        "authored_motion": true,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAB170) {x: 9.446631, y: 9.167547, z: 4.132889}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAB0E0) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/BaseAnim/G_SkillQte.G_SkillQte",
+        "seconds": 1.6666666269302368,
+        "moving_bones": 138,
+        "authored_motion": true,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAB050) {x: 8.364572, y: 9.364615, z: 5.215119}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAB170) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Move_F.Rib_Move_F",
+        "seconds": 1.3333333730697632,
+        "moving_bones": 138,
+        "authored_motion": true,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAAD80) {x: 9.732574, y: 13.176755, z: 2.063874}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAB050) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Run_F.Rib_Run_F",
+        "seconds": 0.7333333492279053,
+        "moving_bones": 137,
+        "authored_motion": true,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAB0E0) {x: 9.732758, y: 13.176776, z: 2.063882}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAAD80) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Sprint_F.Rib_Sprint_F",
+        "seconds": 0.5333333611488342,
+        "moving_bones": 138,
+        "authored_motion": true,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAB170) {x: 9.732767, y: 13.176774, z: 2.063890}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAB0E0) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Sprint_Impulse_F.Rib_Sprint_Impulse_F",
+        "seconds": 0.5333333611488342,
+        "moving_bones": 138,
+        "authored_motion": true,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAB050) {x: 9.732767, y: 13.176774, z: 2.063890}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAB170) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stand1.Rib_Stand1",
+        "seconds": 2.6666667461395264,
+        "moving_bones": 138,
+        "authored_motion": true,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAAD80) {x: 4.728463, y: 12.418104, z: 2.870133}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAB050) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stand1_Change.Rib_Stand1_Change",
+        "seconds": 0.7333333492279053,
+        "moving_bones": 138,
+        "authored_motion": true,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAB0E0) {x: 4.728454, y: 12.418077, z: 2.870126}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAAD80) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Run_L.Rib_Stop_Run_L",
+        "seconds": 1.3333333730697632,
+        "moving_bones": 138,
+        "authored_motion": true,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAB170) {x: 9.732540, y: 13.176744, z: 2.063882}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAB0E0) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Run_R.Rib_Stop_Run_R",
+        "seconds": 1.3333333730697632,
+        "moving_bones": 138,
+        "authored_motion": true,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAB050) {x: 9.732567, y: 13.176751, z: 2.063882}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAB170) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Sprint_L.Rib_Stop_Sprint_L",
+        "seconds": 1.4666666984558105,
+        "moving_bones": 138,
+        "authored_motion": true,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAAD80) {x: 9.732563, y: 13.176749, z: 2.063874}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAB050) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Sprint_R.Rib_Stop_Sprint_R",
+        "seconds": 1.4666666984558105,
+        "moving_bones": 138,
+        "authored_motion": true,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAB0E0) {x: 9.732571, y: 13.176747, z: 2.063874}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAAD80) {x: 0.000000, y: 0.000004, z: 98.406792}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/MB1ZhenwuguanzheMd601_Weapon1/BaseAnim/Scythe_Ex_Attack03.Scythe_Ex_Attack03",
+        "seconds": 0.8333333134651184,
+        "moving_bones": 0,
+        "authored_motion": false,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAB050) {x: 0.000000, y: 0.000000, z: 0.000000}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAB0E0) {x: 0.000000, y: 0.000000, z: 0.000000}>"
+      },
+      {
+        "path": "/Game/Wuwa/Wing/MB1ZhenwuguanzheMd601_Weapon1/BaseAnim/Scythe_Ex_Attack04.Scythe_Ex_Attack04",
+        "seconds": 2.933333396911621,
+        "moving_bones": 1,
+        "authored_motion": true,
+        "anchor_world": "<Struct 'Vector' (0x0000021C89CAAD80) {x: 0.000000, y: 0.000000, z: 0.000000}>",
+        "reference_anchor_world": "<Struct 'Vector' (0x0000021C89CAB050) {x: 0.000000, y: 0.000000, z: 0.000000}>"
+      }
+    ],
+    "fresh_process": true
+  },
+  "gameplay_state": {
+    "wing_gameplay_disabled": true,
+    "entries": [
+      {
+        "client": false,
+        "server": false,
+        "component": "/Game/Main/Character/Hero/Wing/BP_PoverWingComponent.BP_PoverWingComponent_C"
+      }
+    ],
+    "dirty_content": [],
+    "dirty_maps": []
+  },
+  "source_files": [
+    {
+      "relative": "BaseAnim/Attack02.fbx",
+      "sha256": "0849ac67232a14ed67b5d364babfaca5ea5d3d9e38d418f25d63a8e59a6237d8",
+      "bytes": 2449515
+    },
+    {
+      "relative": "BaseAnim/B_Attack03.fbx",
+      "sha256": "ef3927b77d2dd046c87e3e7c95a362926fb173cb5565c478cd5ad99030a60bd3",
+      "bytes": 2381883
+    },
+    {
+      "relative": "BaseAnim/B_Attack04.fbx",
+      "sha256": "c8a70855545c23c229725f6b21c00d37d3b04c6b9616790b34d0ca6c392f5367",
+      "bytes": 2752683
+    },
+    {
+      "relative": "BaseAnim/B_attack04_1.fbx",
+      "sha256": "e7fc2f5fe2a0f129bf6f966e4610016130d8532ce0ea784480813e8a4c4c55d5",
+      "bytes": 2693787
+    },
+    {
+      "relative": "BaseAnim/B_Attack05.fbx",
+      "sha256": "f75501bc5701869ddcdc9afd3637645e8eb91fd3bde350d3f1f8dccf1bc247ea",
+      "bytes": 2555899
+    },
+    {
+      "relative": "BaseAnim/B_Attack06.fbx",
+      "sha256": "90c3070c50defe2963156ca13dcc0280b2513a46b538763f9623de39204a7b0a",
+      "bytes": 2368139
+    },
+    {
+      "relative": "BaseAnim/B_Burst01.fbx",
+      "sha256": "dae5c00f564d70a4f7091bdce6b1a7ffa4a3fb8a83389e99b26b5083b841d523",
+      "bytes": 2779227
+    },
+    {
+      "relative": "BaseAnim/B_Ex_Attack01.fbx",
+      "sha256": "94819221e424d600a3db54cfe57eef04a171dafd66299f62dded20994f615a1d",
+      "bytes": 2495787
+    },
+    {
+      "relative": "BaseAnim/B_Ex_Attack02.fbx",
+      "sha256": "106075141aa5241a6d3b83cee4a809dccf879f7d1f26e4fd3ed2591e4879ab3b",
+      "bytes": 2532955
+    },
+    {
+      "relative": "BaseAnim/B_Ex_Attack03.fbx",
+      "sha256": "a3f82dd37b25e3f9393c75f426dde15a810590483f65332fe838b91d92561770",
+      "bytes": 2211243
+    },
+    {
+      "relative": "BaseAnim/B_Ex_Attack04.fbx",
+      "sha256": "47d424cb55ca3e60494eb3eebf2b6cc6ef8684bbf2f87bc15705e2e2a70d62dd",
+      "bytes": 2380235
+    },
+    {
+      "relative": "BaseAnim/B_Ex_Attack05.fbx",
+      "sha256": "53edae47830e42299359e74dec5a7b521b3ca2c3f75302570e92dccd90b6c3ca",
+      "bytes": 2660379
+    },
+    {
+      "relative": "BaseAnim/B_EX_Attack06.fbx",
+      "sha256": "03d5c635e460568ca08551ac5d6a38b5d4f0d884d50570e6c32d4e9f37bba00b",
+      "bytes": 2511403
+    },
+    {
+      "relative": "BaseAnim/B_Ex_Skill01_02.fbx",
+      "sha256": "cdf12312c606eebbe22d77ec31e2e1d8d1398a590beb0a4b50b0b5ee3e3d16d1",
+      "bytes": 2397483
+    },
+    {
+      "relative": "BaseAnim/B_Skill.fbx",
+      "sha256": "9e79c2ac19a0ea5f0f0ece96a297082b3b1a620b2a8b573235991717c9c54043",
+      "bytes": 2479579
+    },
+    {
+      "relative": "BaseAnim/B_Skill01.fbx",
+      "sha256": "78a843b4edc7db3f570144c4ef8189e029445fd171ca289955cace2e1f603ccd",
+      "bytes": 2398363
+    },
+    {
+      "relative": "BaseAnim/B_Skill02.fbx",
+      "sha256": "b814cf823f8b603f6238a0228e9903fe4179ba512d4744ed8c89348819ab3cc9",
+      "bytes": 2662699
+    },
+    {
+      "relative": "BaseAnim/B_SkillQte.fbx",
+      "sha256": "52c6b3241ae5e604e6664d8f3dda4173a102be2035f9ef83dabf7a2f0f1bd3fc",
+      "bytes": 2037131
+    },
+    {
+      "relative": "BaseAnim/EDarkNanzhuWing_Wing09.fbx",
+      "sha256": "458cbed98f52b5d0cae6105b4eefe3df36b2d97086c999b7c59861cb12396845",
+      "bytes": 1948955
+    },
+    {
+      "relative": "BaseAnim/G_Attack03.fbx",
+      "sha256": "66a49e3bab84c3ad8f226c9967e12ac7b5ffd12cfefa11b1af16a806bf0a788d",
+      "bytes": 2290811
+    },
+    {
+      "relative": "BaseAnim/G_Attack04.fbx",
+      "sha256": "5eb57051a60afe88c2c523cdb110be5521bc52ad8b64b7058807709797f2b6d3",
+      "bytes": 2709131
+    },
+    {
+      "relative": "BaseAnim/G_Attack04_1.fbx",
+      "sha256": "55b906586cd1bfee9310deafe08b195afdbf3bd5b87675df8f17ff9032af0a5c",
+      "bytes": 2669643
+    },
+    {
+      "relative": "BaseAnim/G_Attack05.fbx",
+      "sha256": "122fc661b4721a23580ea4272f94b89f8d4cce4aff5a6a44c5e0e8ba5b90fad6",
+      "bytes": 2489883
+    },
+    {
+      "relative": "BaseAnim/G_Burst01.fbx",
+      "sha256": "3c87d9fdbde7498468ad1bba5d3450fc48a005bc1a6bb360e1f20b8016640e0b",
+      "bytes": 2750411
+    },
+    {
+      "relative": "BaseAnim/G_Ex_Attack01.fbx",
+      "sha256": "37f62614f8015cd60d5c0ef38c7c8bc590106e350b6f3d70d2a0979ab1b2955a",
+      "bytes": 2435883
+    },
+    {
+      "relative": "BaseAnim/G_Ex_Attack02.fbx",
+      "sha256": "54203cca7c5938dfec33d1ef6e54eb07e7ef47c303e69df52d277b501ec7ccb4",
+      "bytes": 2505899
+    },
+    {
+      "relative": "BaseAnim/G_Ex_Attack03.fbx",
+      "sha256": "48702fb7b4e84c1a0ec7e1ca77975c06226c95c558db8a6841601be7cdf33675",
+      "bytes": 2472875
+    },
+    {
+      "relative": "BaseAnim/G_Ex_Attack04.fbx",
+      "sha256": "73d4b5334feec5068560a802f1ea3e0a5018397a454d812cc479ad4945c28fba",
+      "bytes": 2143243
+    },
+    {
+      "relative": "BaseAnim/G_Ex_Attack05.fbx",
+      "sha256": "dac47304ec439660ab5cc9558234b542404e7df20eae788757a433214efa368b",
+      "bytes": 2143243
+    },
+    {
+      "relative": "BaseAnim/G_Ex_Attack06.fbx",
+      "sha256": "e96fe6194ec6d00863a47d216068ddf410fcb03e56f493eb3a0a2154f5fbf0b6",
+      "bytes": 2467659
+    },
+    {
+      "relative": "BaseAnim/G_Ex_Skill01_02.fbx",
+      "sha256": "1aaf5f65933ff6bc570bf628cf0f93a0f52bd35e5a408b651516a1c696873a43",
+      "bytes": 2315627
+    },
+    {
+      "relative": "BaseAnim/G_Skill.fbx",
+      "sha256": "55cf68209d03c188b0d0f130ef7b0b326de808c496723e43b0654c6bf6a002dc",
+      "bytes": 2373419
+    },
+    {
+      "relative": "BaseAnim/G_Skill01.fbx",
+      "sha256": "4e82b6459d7cbb6026e46cb6d04272990dbeffda1b3a685823ed9f99e0f8b9da",
+      "bytes": 2632043
+    },
+    {
+      "relative": "BaseAnim/G_Skill02.fbx",
+      "sha256": "a759f9b7f510c928ccc81b80968ba9b0a5d15767852f1941d99bdd39dcfff9a9",
+      "bytes": 2542267
+    },
+    {
+      "relative": "BaseAnim/G_SkillQte.fbx",
+      "sha256": "936a2e272485e5075d367935d6a2d732c8879b61abda6737d63a1a70950b4e46",
+      "bytes": 2036123
+    },
+    {
+      "relative": "EDarkNanzhuWingMd10011/Model/EDarkNanzhuWingMd10011.fbx",
+      "sha256": "d57c067e39ab9417a9525bc503b4c482961b940a3fdda004e2561c5249758220",
+      "bytes": 1803067
+    },
+    {
+      "relative": "EDarkNanzhuWingMd10011/Model/T_EDarkNanzhuWingMd10011_D.png",
+      "sha256": "5f2d19df213c8d75ec6910fe55820373fb895eefc6ddf68d2976d640337c0054",
+      "bytes": 1334991
+    },
+    {
+      "relative": "EDarkNanzhuWingMd10011/Model/test/EDarkNanzhuWingMd10011.fbx",
+      "sha256": "cd78a78a5f92d1d773b668fc28e87af4ed95af9648b3bca42385a3c646d09ed8",
+      "bytes": 1846299
+    },
+    {
+      "relative": "EDarkNanzhuWingMd10011/Model/test/T_EDarkNanzhuWingMd10011_D.png",
+      "sha256": "bc13cd5262d6e777c837717ad24f235fc3b25da8b4a074a105950cf2d1c29015",
+      "bytes": 1543474
+    },
+    {
+      "relative": "EDarkNanzhuWingMd10011/RibbonAnim/Rib_Move_F.fbx",
+      "sha256": "71a8b1976f3999660e3db89e0fe6f99e3f4930da1d21ecf00da8a4c238bebc3f",
+      "bytes": 1928507
+    },
+    {
+      "relative": "EDarkNanzhuWingMd10011/RibbonAnim/Rib_Run_F.fbx",
+      "sha256": "1f47ab0ca0b6cc4a6f4f4b3cd228ac79d45718ba9db3589e67175346c7945c31",
+      "bytes": 1757840
+    },
+    {
+      "relative": "EDarkNanzhuWingMd10011/RibbonAnim/Rib_Sprint_F.fbx",
+      "sha256": "5e88e8cd0ef1bae9bf5d5c14c03c6a222c9c2daf76045bedd67e27502ef50678",
+      "bytes": 1680976
+    },
+    {
+      "relative": "EDarkNanzhuWingMd10011/RibbonAnim/Rib_Sprint_Impulse_F.fbx",
+      "sha256": "85d0d438e844b09803872bf67f662424348774b83eae9e113bff1a9d5fcfd456",
+      "bytes": 1680976
+    },
+    {
+      "relative": "EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stand1.fbx",
+      "sha256": "b85654af826b5220c2bcfde936ea0271a5e9a7f021eeec67a0c2155998add9de",
+      "bytes": 2276219
+    },
+    {
+      "relative": "EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stand1_Change.fbx",
+      "sha256": "24d450c3182fb8657673c1ee0880d1f144f2e82e9f8b05891cbf5ecc63fcbdde",
+      "bytes": 1757840
+    },
+    {
+      "relative": "EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Run_L.fbx",
+      "sha256": "8327179ad8871bdeb4ff7f2abb50c3df8b7041ec47583a578d553681757639b7",
+      "bytes": 1925931
+    },
+    {
+      "relative": "EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Run_R.fbx",
+      "sha256": "86cbebd2ca822fa98f1506a6b27db6ae2bd1bd2b6ae060df9729da877822f255",
+      "bytes": 1928203
+    },
+    {
+      "relative": "EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Sprint_L.fbx",
+      "sha256": "f70a53d53c9d023eb11b2fd1f009f076f07d31ed2055be6878980d25bf6555c8",
+      "bytes": 1970331
+    },
+    {
+      "relative": "EDarkNanzhuWingMd10011/RibbonAnim/Rib_Stop_Sprint_R.fbx",
+      "sha256": "47427196e6b846d208b701269be02496a89368b71046093106956a94f5f4913b",
+      "bytes": 1970507
+    },
+    {
+      "relative": "MB1ZhenwuguanzheMd601_Weapon1/BaseAnim/Scythe_Ex_Attack03.fbx",
+      "sha256": "259b6b8902aa31dd38f05091848ef6dcf145c782e72813bdfee9578539015f59",
+      "bytes": 162707
+    },
+    {
+      "relative": "MB1ZhenwuguanzheMd601_Weapon1/BaseAnim/Scythe_Ex_Attack04.fbx",
+      "sha256": "d19b9ab6818f9b5721ca5ffa391d53e2ba4f46289214c4a86ee6e4f47473e20c",
+      "bytes": 174955
+    },
+    {
+      "relative": "MB1ZhenwuguanzheMd601_Weapon1/Model/MB1ZhenwuguanzheMd601_Weapon1.fbx",
+      "sha256": "1ff007c2c1d82eb2a3ef60292f72ab63aa86d7950bbeb269d3832aeb699caf80",
+      "bytes": 162811
+    },
+    {
+      "relative": "MB1ZhenwuguanzheMd601_Weapon1/Model/T_MB1ZhenwuguanzheMd00601_Weapon_D.png",
+      "sha256": "8e984da4720f322d437e6e52e6cc9476bca68e497c628623c1315a5d2a118ee1",
+      "bytes": 2228283
+    },
+    {
+      "relative": "MB1ZhenwuguanzheMd601_Weapon1/Model/T_MB1ZhenwuguanzheMd00601_Weapon_N.png",
+      "sha256": "74aca2627de7b96ce8af6be3029a4b7be544e6b174b43ad75c2ebb0474ffb59c",
+      "bytes": 126968
+    }
+  ]
+}
