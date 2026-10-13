@@ -13,9 +13,11 @@
 ## 属性成长与装备加成
 
 - [角色属性初始化、等级成长与装备加成](Design/character-attribute-growth.md)：首版已实现；曲线、服务器初始化顺序、升级/装备资源策略及实际验证见第 13 节。
+- [Lyra Inventory 与 Equipment 集成设计](Design/inventory-equipment-integration.md)：v0.1 草案，背包核心、单武器位、物品身份、复制与现有装备衔接；仅设计，尚未实现。
 
 ## 已实施方案与配置
 
+- [攻击前摇旋转 Motion Warping](Design/attack-facing-motion-warp.md)：首招立即播放、固定方向 TargetData、前摇根运动旋转、Recovery 释放与预测取消恢复；[实现和验证结果](Validation/attack-facing-motion-warp-2026-10-13.md)。
 - [配置检测体与多段独立技能](Design/skill-hit-volumes-usage.md)：形状、锚点、Window／Point、命中组、指定目标、输入授予和示例资产；[设计与后续 Actor 范围](Design/skill-hit-volumes-proposal.md)。
 - [命中检测调试绘制](Design/hit-detection-debug-draw.md)：Weapon、Body、HitBox 默认绘制 5 秒，控制台开关与验证范围。
 - [Timeline](Design/ability-timeline-stage1.md)、[Definition/连段](Design/ability-definition-combo-graph.md)、[技能编辑器](Design/ability-definition-editor.md)。
@@ -34,6 +36,20 @@
 
 Design 并非全是未实现草案：各篇开头区分当前实现、历史设计和后续目标；历史示例不覆盖当前事实。
 
+## 敌人 AI（v0.1 已实施）
+
+- [玩家与 AI 共享战斗请求层](Design/combat-action-requests.md)：独立 Definition 请求、Combo 意图、请求身份／结果、预测和取消边界；当前行为树任务支持两种模式。
+- [普通怪物 AI 与 Experience／GAS 集成设计](Design/enemy-ai-system.md)：多轮讨论整合后的 v0.1 基线，含 Lyra 对照、方案取舍、EnemyInit 生命周期、受检授予、行为树与 GAS 协同、首版验收及后续计划。
+- [普通怪物配置与开发手册](Guides/enemy-ai-configuration.md)、[实施验证报告](Validation/enemy-ai-implementation-2026-10-11.md)：正式 Guardian、初始化／授予接口、行为树、实际测试命令及未验证范围。
+- [敌人不攻击的目标键修复](Validation/enemy-attack-target-key-2026-10-11.md)：Actor 类型过滤导致 SelfActor 回退、目标键初始化与正式资产修复，三种 PIE 模式连续攻击回归。
+- [敌人现状与早期方案评估](Design/enemy-ai-development-assessment.md)、[审计结果](Validation/enemy-ai-audit-results-2026-10-10.json)：保留 2026-10-10 的源码／资产事实；首版范围和初始化契约以整合设计为准。
+
+## 玩家锁定（v0.4 软镜头修正）
+
+- [玩家目标锁定系统](Design/lock-on-system.md)、[配置手册](Guides/lock-on-configuration.md)、[实施验证](Validation/lock-on-implementation-2026-10-12.md)：中键获取／解除、鼠标甩动切换、短 GA 与 TargetData、服务器确认与拒绝恢复、锁定镜头／标记、Dash／Sprint 暂让与恢复；常规双目标构建、29 项原生回归、四种 PIE 模式各 20 项通过。正式美术、手感调优及独立进程／打包仍待验证。
+- [软锁定镜头调研与修正](Design/soft-lock-camera-research-2026-10-13.md)、[新验收](Validation/soft-lock-camera-2026-10-13.md)：取消八度限制／横向缓存，手动环绕、停手宽限与柔和构图；修正 CameraMode 栈顶诊断、技能优先及混合期间输入。31 项原生回归、四模式镜头专项各 24 项、原锁定回归各 20 项通过；真实物理设备和复杂地形仍待验证。
+- [锁定标记 WBP 与 Dash 即时起手](Validation/lock-on-indicator-dash-start-2026-10-13.md)：Designer 可编辑标记、画布恢复计时，正式 Profile 即时朝向；33 项原生、四模式九方向各 36 项及单人原流程 20 项验证。
+
 ## 战斗后续设计（尚未实施）
 
 - [近战索敌与攻击吸附](Design/melee-attack-assist.md)：软索敌、手动锁定、起手转向、有限接近、真实命中边界、预测与空中追击衔接。
@@ -41,6 +57,9 @@ Design 并非全是未实现草案：各篇开头区分当前实现、历史设�
 攻击吸附仍为设计草案，相关接口尚未创建；受击核心的当前字段见受击配置手册，削韧仍只预留数值。
 
 ## UI 迁移与学习
+
+- [参考主 HUD 配置](Guides/main-hud-reference-configuration.md)、[实际验证](Validation/main-hud-reference-2026-10-11.md)：用户参考图存档、底部生命条、右上终焉入口与正式 UMG 资产；常规构建、冷启动单人／Listen Server 与实际布局截图。
+- [当前任务与待办复核](KnowledgeBase/29-current-work-and-backlog.md)：HUD／AI／翅膀／锁定已完成范围、后续优先级、验收标准和用户暂缓事项。
 
 - [UMG 可视化制作与父类精简方案](Design/umg-authoring-ui-refactor.md)：已授权实施：布局已迁入 Designer，六个业务原生控件类归档，采用共享数据源；[本轮回归结果](Validation/umg-authoring-refactor-2026-10-08.md)。
 - [现行设计](Design/hodge-ui-foundation.md)、[配置指南](Guides/ui-foundation-configuration.md)、[实际验证](Validation/ui-foundation-2026-10-08.md)。
@@ -59,3 +78,5 @@ Design 并非全是未实现草案：各篇开头区分当前实现、历史设�
 - Validation 和 Design 中带日期的验收记录保留当时结果；不得据此宣称当前正式伤害、重生或打包全部通过。
 - [开发流程](AI_DEVELOPMENT.md)、[开发约定](../AGENTS.md)、[评审标准](../CODE_REVIEW.md)。
 - [旧长版 README](History/README-before-20261006.md)、[旧扫描快照](KnowledgeBase/History/snapshot-before-20261006.json) 保留历史。
+
+- [锁定镜头 v0.5 获取与屏幕区域跟随验证](Validation/soft-lock-tracking-2026-10-13.md)：平滑获取、分轴软区、鼠标抑制／恢复、模式切换与 PIE 回归。
