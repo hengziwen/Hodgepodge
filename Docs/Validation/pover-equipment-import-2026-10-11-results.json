@@ -1,0 +1,2358 @@
+{
+  "imported": [
+    {
+      "path": "/Game/Wuwa/PoverEquipment/Smaple.Smaple",
+      "type": "Texture2D",
+      "source": "Smaple.jpg"
+    },
+    {
+      "path": "/Game/Wuwa/PoverEquipment/sph/4391203i.4391203i",
+      "type": "Texture2D",
+      "source": "sph/4391203i.jpg"
+    },
+    {
+      "path": "/Game/Wuwa/PoverEquipment/sph/5836636.5836636",
+      "type": "Texture2D",
+      "source": "sph/5836636.png"
+    },
+    {
+      "path": "/Game/Wuwa/PoverEquipment/sph/s_02.s_02",
+      "type": "Texture2D",
+      "source": "sph/s_02.png"
+    },
+    {
+      "path": "/Game/Wuwa/PoverEquipment/Tex_0/Tex_0/T_EDarkNanzhuWingMd10011_D.T_EDarkNanzhuWingMd10011_D",
+      "type": "Texture2D",
+      "source": "Tex_0/Tex_0/T_EDarkNanzhuWingMd10011_D.png"
+    },
+    {
+      "path": "/Game/Wuwa/PoverEquipment/Tex_0/Tex_0/T_EWindzhujianMd10011_D.T_EWindzhujianMd10011_D",
+      "type": "Texture2D",
+      "source": "Tex_0/Tex_0/T_EWindzhujianMd10011_D.png"
+    },
+    {
+      "path": "/Game/Wuwa/PoverEquipment/Tex_0/Tex_0/T_EWindzhujianMd10011_N.T_EWindzhujianMd10011_N",
+      "type": "Texture2D",
+      "source": "Tex_0/Tex_0/T_EWindzhujianMd10011_N.png"
+    },
+    {
+      "path": "/Game/Wuwa/PoverEquipment/Tex_0/Tex_0/T_MB1ZhenwuguanzheMd00601_Weapon_D.T_MB1ZhenwuguanzheMd00601_Weapon_D",
+      "type": "Texture2D",
+      "source": "Tex_0/Tex_0/T_MB1ZhenwuguanzheMd00601_Weapon_D.png"
+    },
+    {
+      "path": "/Game/Wuwa/PoverEquipment/Tex_0/Tex_0/T_MB1ZhenwuguanzheMd00601_Weapon_N.T_MB1ZhenwuguanzheMd00601_Weapon_N",
+      "type": "Texture2D",
+      "source": "Tex_0/Tex_0/T_MB1ZhenwuguanzheMd00601_Weapon_N.png"
+    },
+    {
+      "path": "/Game/Wuwa/PoverEquipment/Tex_0/Tex_0/T_R5Sword504Md20001_D.T_R5Sword504Md20001_D",
+      "type": "Texture2D",
+      "source": "Tex_0/Tex_0/T_R5Sword504Md20001_D.png"
+    },
+    {
+      "path": "/Game/Wuwa/PoverEquipment/Tex_0/Tex_0/T_R5Sword504Md20001_ID.T_R5Sword504Md20001_ID",
+      "type": "Texture2D",
+      "source": "Tex_0/Tex_0/T_R5Sword504Md20001_ID.png"
+    },
+    {
+      "path": "/Game/Wuwa/PoverEquipment/Tex_0/Tex_0/T_R5Sword504Md20001_N.T_R5Sword504Md20001_N",
+      "type": "Texture2D",
+      "source": "Tex_0/Tex_0/T_R5Sword504Md20001_N.png"
+    },
+    {
+      "path": "/Game/Wuwa/PoverEquipment/Tex_1/暗流之镰.暗流之镰",
+      "type": "Texture2D",
+      "source": "Tex_1/暗流之镰.png"
+    },
+    {
+      "path": "/Game/Wuwa/PoverEquipment/Tex_1/暗流之镰A.暗流之镰A",
+      "type": "Texture2D",
+      "source": "Tex_1/暗流之镰A.png"
+    },
+    {
+      "path": "/Game/Wuwa/PoverEquipment/Tex_1/残象之翼.残象之翼",
+      "type": "Texture2D",
+      "source": "Tex_1/残象之翼.png"
+    },
+    {
+      "path": "/Game/Wuwa/PoverEquipment/Tex_1/血誓盟约.血誓盟约",
+      "type": "Texture2D",
+      "source": "Tex_1/血誓盟约.png"
+    },
+    {
+      "path": "/Game/Wuwa/PoverEquipment/Tex_1/血誓盟约A.血誓盟约A",
+      "type": "Texture2D",
+      "source": "Tex_1/血誓盟约A.png"
+    },
+    {
+      "path": "/Game/Wuwa/PoverEquipment/Tex_1/裁风之剑.裁风之剑",
+      "type": "Texture2D",
+      "source": "Tex_1/裁风之剑.png"
+    },
+    {
+      "path": "/Game/Wuwa/PoverEquipment/Tex_1/裁风之剑A.裁风之剑A",
+      "type": "Texture2D",
+      "source": "Tex_1/裁风之剑A.png"
+    },
+    {
+      "path": "/Game/Wuwa/PoverEquipment/toon_Defo_White.toon_Defo_White",
+      "type": "Texture2D",
+      "source": "toon_Defo_White.png"
+    },
+    {
+      "path": "/Game/Wuwa/PoverEquipment/暗流之镰.暗流之镰",
+      "type": "SkeletalMesh",
+      "source": "暗流之镰.pmx"
+    },
+    {
+      "path": "/Game/Wuwa/PoverEquipment/Materials/暗流之镰.暗流之镰",
+      "type": "Material",
+      "source": "暗流之镰.pmx::暗流之镰"
+    },
+    {
+      "path": "/Game/Wuwa/PoverEquipment/Materials/暗流之镰AL.暗流之镰AL",
+      "type": "Material",
+      "source": "暗流之镰.pmx::暗流之镰AL"
+    },
+    {
+      "path": "/Game/Wuwa/PoverEquipment/暗流之镰_Skeleton.暗流之镰_Skeleton",
+      "type": "Skeleton",
+      "source": "暗流之镰.pmx"
+    },
+    {
+      "path": "/Game/Wuwa/PoverEquipment/残象之翼.残象之翼",
+      "type": "SkeletalMesh",
+      "source": "残象之翼.pmx"
+    },
+    {
+      "path": "/Game/Wuwa/PoverEquipment/Materials/翼.翼",
+      "type": "Material",
+      "source": "残象之翼.pmx::翼"
+    },
+    {
+      "path": "/Game/Wuwa/PoverEquipment/Materials/羽.羽",
+      "type": "Material",
+      "source": "残象之翼.pmx::羽"
+    },
+    {
+      "path": "/Game/Wuwa/PoverEquipment/残象之翼_Skeleton.残象之翼_Skeleton",
+      "type": "Skeleton",
+      "source": "残象之翼.pmx"
+    },
+    {
+      "path": "/Game/Wuwa/PoverEquipment/血誓盟约.血誓盟约",
+      "type": "SkeletalMesh",
+      "source": "血誓盟约.pmx"
+    },
+    {
+      "path": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑鞘.血誓盟约-剑鞘",
+      "type": "Material",
+      "source": "血誓盟约.pmx::血誓盟约-剑鞘"
+    },
+    {
+      "path": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑.血誓盟约-剑",
+      "type": "Material",
+      "source": "血誓盟约.pmx::血誓盟约-剑"
+    },
+    {
+      "path": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑鞘AL.血誓盟约-剑鞘AL",
+      "type": "Material",
+      "source": "血誓盟约.pmx::血誓盟约-剑鞘AL"
+    },
+    {
+      "path": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑AL.血誓盟约-剑AL",
+      "type": "Material",
+      "source": "血誓盟约.pmx::血誓盟约-剑AL"
+    },
+    {
+      "path": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑鞘AL1.血誓盟约-剑鞘AL1",
+      "type": "Material",
+      "source": "血誓盟约.pmx::血誓盟约-剑鞘AL1"
+    },
+    {
+      "path": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑AL1.血誓盟约-剑AL1",
+      "type": "Material",
+      "source": "血誓盟约.pmx::血誓盟约-剑AL1"
+    },
+    {
+      "path": "/Game/Wuwa/PoverEquipment/血誓盟约_Skeleton.血誓盟约_Skeleton",
+      "type": "Skeleton",
+      "source": "血誓盟约.pmx"
+    },
+    {
+      "path": "/Game/Wuwa/PoverEquipment/裁风之剑.裁风之剑",
+      "type": "SkeletalMesh",
+      "source": "裁风之剑.pmx"
+    },
+    {
+      "path": "/Game/Wuwa/PoverEquipment/Materials/裁风之剑.裁风之剑",
+      "type": "Material",
+      "source": "裁风之剑.pmx::裁风之剑"
+    },
+    {
+      "path": "/Game/Wuwa/PoverEquipment/Materials/裁风之剑AL.裁风之剑AL",
+      "type": "Material",
+      "source": "裁风之剑.pmx::裁风之剑AL"
+    },
+    {
+      "path": "/Game/Wuwa/PoverEquipment/裁风之剑_Skeleton.裁风之剑_Skeleton",
+      "type": "Skeleton",
+      "source": "裁风之剑.pmx"
+    }
+  ],
+  "repairs": [
+    {
+      "mesh": "/Game/Wuwa/PoverEquipment/暗流之镰.暗流之镰",
+      "slot": "暗流之镰",
+      "source_material": "暗流之镰",
+      "material": "/Game/Wuwa/PoverEquipment/Materials/暗流之镰.暗流之镰",
+      "previous_material": null,
+      "references": [
+        {
+          "role": "BaseTexture",
+          "original_reference": "Tex_1/暗流之镰.png",
+          "resolved_texture": "/Game/Wuwa/PoverEquipment/Tex_1/暗流之镰.暗流之镰"
+        },
+        {
+          "role": "SphereTexture",
+          "original_reference": "sph/4391203i.jpg",
+          "resolved_texture": "/Game/Wuwa/PoverEquipment/sph/4391203i.4391203i"
+        },
+        {
+          "role": "ToonTexture",
+          "original_reference": "toon_Defo_White.png",
+          "resolved_texture": "/Game/Wuwa/PoverEquipment/toon_Defo_White.toon_Defo_White"
+        }
+      ],
+      "transparent": false,
+      "two_sided": true,
+      "statistics": "<Struct 'MaterialStatistics' (0x000008D3EBB52BE0) {num_vertex_shader_instructions: 291, num_pixel_shader_instructions: 109, num_samplers: 3, num_vertex_texture_samples: 3, num_pixel_texture_samples: 3, num_virtual_texture_samples: 0, num_uv_scalars: 2, num_interpolator_scalars: 0}>"
+    },
+    {
+      "mesh": "/Game/Wuwa/PoverEquipment/暗流之镰.暗流之镰",
+      "slot": "暗流之镰AL",
+      "source_material": "暗流之镰AL",
+      "material": "/Game/Wuwa/PoverEquipment/Materials/暗流之镰AL.暗流之镰AL",
+      "previous_material": null,
+      "references": [
+        {
+          "role": "BaseTexture",
+          "original_reference": "Tex_1/暗流之镰A.png",
+          "resolved_texture": "/Game/Wuwa/PoverEquipment/Tex_1/暗流之镰A.暗流之镰A"
+        },
+        {
+          "role": "SphereTexture",
+          "original_reference": "sph/4391203i.jpg",
+          "resolved_texture": "/Game/Wuwa/PoverEquipment/sph/4391203i.4391203i"
+        },
+        {
+          "role": "ToonTexture",
+          "original_reference": "toon_Defo_White.png",
+          "resolved_texture": "/Game/Wuwa/PoverEquipment/toon_Defo_White.toon_Defo_White"
+        }
+      ],
+      "transparent": true,
+      "two_sided": true,
+      "statistics": "<Struct 'MaterialStatistics' (0x000008D3FE3E7B40) {num_vertex_shader_instructions: 486, num_pixel_shader_instructions: 165, num_samplers: 4, num_vertex_texture_samples: 3, num_pixel_texture_samples: 3, num_virtual_texture_samples: 0, num_uv_scalars: 2, num_interpolator_scalars: 0}>"
+    },
+    {
+      "mesh": "/Game/Wuwa/PoverEquipment/残象之翼.残象之翼",
+      "slot": "翼",
+      "source_material": "翼",
+      "material": "/Game/Wuwa/PoverEquipment/Materials/翼.翼",
+      "previous_material": null,
+      "references": [
+        {
+          "role": "BaseTexture",
+          "original_reference": "Tex_1/残象之翼.png",
+          "resolved_texture": "/Game/Wuwa/PoverEquipment/Tex_1/残象之翼.残象之翼"
+        },
+        {
+          "role": "ToonTexture",
+          "original_reference": "toon_Defo_White.png",
+          "resolved_texture": "/Game/Wuwa/PoverEquipment/toon_Defo_White.toon_Defo_White"
+        }
+      ],
+      "transparent": false,
+      "two_sided": true,
+      "statistics": "<Struct 'MaterialStatistics' (0x000008D3FDC689A0) {num_vertex_shader_instructions: 291, num_pixel_shader_instructions: 96, num_samplers: 2, num_vertex_texture_samples: 3, num_pixel_texture_samples: 2, num_virtual_texture_samples: 0, num_uv_scalars: 2, num_interpolator_scalars: 0}>"
+    },
+    {
+      "mesh": "/Game/Wuwa/PoverEquipment/残象之翼.残象之翼",
+      "slot": "羽",
+      "source_material": "羽",
+      "material": "/Game/Wuwa/PoverEquipment/Materials/羽.羽",
+      "previous_material": null,
+      "references": [
+        {
+          "role": "BaseTexture",
+          "original_reference": "Tex_1/残象之翼.png",
+          "resolved_texture": "/Game/Wuwa/PoverEquipment/Tex_1/残象之翼.残象之翼"
+        },
+        {
+          "role": "ToonTexture",
+          "original_reference": "toon_Defo_White.png",
+          "resolved_texture": "/Game/Wuwa/PoverEquipment/toon_Defo_White.toon_Defo_White"
+        }
+      ],
+      "transparent": false,
+      "two_sided": true,
+      "statistics": "<Struct 'MaterialStatistics' (0x000008D3FDC68200) {num_vertex_shader_instructions: 291, num_pixel_shader_instructions: 96, num_samplers: 2, num_vertex_texture_samples: 3, num_pixel_texture_samples: 2, num_virtual_texture_samples: 0, num_uv_scalars: 2, num_interpolator_scalars: 0}>"
+    },
+    {
+      "mesh": "/Game/Wuwa/PoverEquipment/血誓盟约.血誓盟约",
+      "slot": "血誓盟约-剑鞘",
+      "source_material": "血誓盟约-剑鞘",
+      "material": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑鞘.血誓盟约-剑鞘",
+      "previous_material": null,
+      "references": [
+        {
+          "role": "BaseTexture",
+          "original_reference": "Tex_1/血誓盟约.png",
+          "resolved_texture": "/Game/Wuwa/PoverEquipment/Tex_1/血誓盟约.血誓盟约"
+        },
+        {
+          "role": "SphereTexture",
+          "original_reference": "sph/4391203i.jpg",
+          "resolved_texture": "/Game/Wuwa/PoverEquipment/sph/4391203i.4391203i"
+        },
+        {
+          "role": "ToonTexture",
+          "original_reference": "toon_Defo_White.png",
+          "resolved_texture": "/Game/Wuwa/PoverEquipment/toon_Defo_White.toon_Defo_White"
+        }
+      ],
+      "transparent": false,
+      "two_sided": true,
+      "statistics": "<Struct 'MaterialStatistics' (0x000008D3FDC69800) {num_vertex_shader_instructions: 291, num_pixel_shader_instructions: 109, num_samplers: 3, num_vertex_texture_samples: 3, num_pixel_texture_samples: 3, num_virtual_texture_samples: 0, num_uv_scalars: 2, num_interpolator_scalars: 0}>"
+    },
+    {
+      "mesh": "/Game/Wuwa/PoverEquipment/血誓盟约.血誓盟约",
+      "slot": "血誓盟约-剑",
+      "source_material": "血誓盟约-剑",
+      "material": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑.血誓盟约-剑",
+      "previous_material": null,
+      "references": [
+        {
+          "role": "BaseTexture",
+          "original_reference": "Tex_1/血誓盟约.png",
+          "resolved_texture": "/Game/Wuwa/PoverEquipment/Tex_1/血誓盟约.血誓盟约"
+        },
+        {
+          "role": "SphereTexture",
+          "original_reference": "sph/4391203i.jpg",
+          "resolved_texture": "/Game/Wuwa/PoverEquipment/sph/4391203i.4391203i"
+        },
+        {
+          "role": "ToonTexture",
+          "original_reference": "toon_Defo_White.png",
+          "resolved_texture": "/Game/Wuwa/PoverEquipment/toon_Defo_White.toon_Defo_White"
+        }
+      ],
+      "transparent": false,
+      "two_sided": true,
+      "statistics": "<Struct 'MaterialStatistics' (0x000008D3FDC65A60) {num_vertex_shader_instructions: 291, num_pixel_shader_instructions: 109, num_samplers: 3, num_vertex_texture_samples: 3, num_pixel_texture_samples: 3, num_virtual_texture_samples: 0, num_uv_scalars: 2, num_interpolator_scalars: 0}>"
+    },
+    {
+      "mesh": "/Game/Wuwa/PoverEquipment/血誓盟约.血誓盟约",
+      "slot": "血誓盟约-剑鞘AL",
+      "source_material": "血誓盟约-剑鞘AL",
+      "material": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑鞘AL.血誓盟约-剑鞘AL",
+      "previous_material": null,
+      "references": [
+        {
+          "role": "BaseTexture",
+          "original_reference": "Tex_1/血誓盟约.png",
+          "resolved_texture": "/Game/Wuwa/PoverEquipment/Tex_1/血誓盟约.血誓盟约"
+        },
+        {
+          "role": "SphereTexture",
+          "original_reference": "sph/4391203i.jpg",
+          "resolved_texture": "/Game/Wuwa/PoverEquipment/sph/4391203i.4391203i"
+        },
+        {
+          "role": "ToonTexture",
+          "original_reference": "toon_Defo_White.png",
+          "resolved_texture": "/Game/Wuwa/PoverEquipment/toon_Defo_White.toon_Defo_White"
+        }
+      ],
+      "transparent": false,
+      "two_sided": true,
+      "statistics": "<Struct 'MaterialStatistics' (0x000008D3FE22C780) {num_vertex_shader_instructions: 291, num_pixel_shader_instructions: 109, num_samplers: 3, num_vertex_texture_samples: 3, num_pixel_texture_samples: 3, num_virtual_texture_samples: 0, num_uv_scalars: 2, num_interpolator_scalars: 0}>"
+    },
+    {
+      "mesh": "/Game/Wuwa/PoverEquipment/血誓盟约.血誓盟约",
+      "slot": "血誓盟约-剑AL",
+      "source_material": "血誓盟约-剑AL",
+      "material": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑AL.血誓盟约-剑AL",
+      "previous_material": null,
+      "references": [
+        {
+          "role": "BaseTexture",
+          "original_reference": "Tex_1/血誓盟约.png",
+          "resolved_texture": "/Game/Wuwa/PoverEquipment/Tex_1/血誓盟约.血誓盟约"
+        },
+        {
+          "role": "SphereTexture",
+          "original_reference": "sph/4391203i.jpg",
+          "resolved_texture": "/Game/Wuwa/PoverEquipment/sph/4391203i.4391203i"
+        },
+        {
+          "role": "ToonTexture",
+          "original_reference": "toon_Defo_White.png",
+          "resolved_texture": "/Game/Wuwa/PoverEquipment/toon_Defo_White.toon_Defo_White"
+        }
+      ],
+      "transparent": false,
+      "two_sided": true,
+      "statistics": "<Struct 'MaterialStatistics' (0x000008D3FE22CA40) {num_vertex_shader_instructions: 291, num_pixel_shader_instructions: 109, num_samplers: 3, num_vertex_texture_samples: 3, num_pixel_texture_samples: 3, num_virtual_texture_samples: 0, num_uv_scalars: 2, num_interpolator_scalars: 0}>"
+    },
+    {
+      "mesh": "/Game/Wuwa/PoverEquipment/血誓盟约.血誓盟约",
+      "slot": "血誓盟约-剑鞘AL1",
+      "source_material": "血誓盟约-剑鞘AL1",
+      "material": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑鞘AL1.血誓盟约-剑鞘AL1",
+      "previous_material": null,
+      "references": [
+        {
+          "role": "BaseTexture",
+          "original_reference": "Tex_1/血誓盟约A.png",
+          "resolved_texture": "/Game/Wuwa/PoverEquipment/Tex_1/血誓盟约A.血誓盟约A"
+        },
+        {
+          "role": "SphereTexture",
+          "original_reference": "sph/5836636.png",
+          "resolved_texture": "/Game/Wuwa/PoverEquipment/sph/5836636.5836636"
+        },
+        {
+          "role": "ToonTexture",
+          "original_reference": "toon_Defo_White.png",
+          "resolved_texture": "/Game/Wuwa/PoverEquipment/toon_Defo_White.toon_Defo_White"
+        }
+      ],
+      "transparent": true,
+      "two_sided": true,
+      "statistics": "<Struct 'MaterialStatistics' (0x000008D3FE229900) {num_vertex_shader_instructions: 486, num_pixel_shader_instructions: 165, num_samplers: 4, num_vertex_texture_samples: 3, num_pixel_texture_samples: 3, num_virtual_texture_samples: 0, num_uv_scalars: 2, num_interpolator_scalars: 0}>"
+    },
+    {
+      "mesh": "/Game/Wuwa/PoverEquipment/血誓盟约.血誓盟约",
+      "slot": "血誓盟约-剑AL1",
+      "source_material": "血誓盟约-剑AL1",
+      "material": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑AL1.血誓盟约-剑AL1",
+      "previous_material": null,
+      "references": [
+        {
+          "role": "BaseTexture",
+          "original_reference": "Tex_1/血誓盟约A.png",
+          "resolved_texture": "/Game/Wuwa/PoverEquipment/Tex_1/血誓盟约A.血誓盟约A"
+        },
+        {
+          "role": "SphereTexture",
+          "original_reference": "sph/5836636.png",
+          "resolved_texture": "/Game/Wuwa/PoverEquipment/sph/5836636.5836636"
+        },
+        {
+          "role": "ToonTexture",
+          "original_reference": "toon_Defo_White.png",
+          "resolved_texture": "/Game/Wuwa/PoverEquipment/toon_Defo_White.toon_Defo_White"
+        }
+      ],
+      "transparent": true,
+      "two_sided": true,
+      "statistics": "<Struct 'MaterialStatistics' (0x000008D3FE229CA0) {num_vertex_shader_instructions: 486, num_pixel_shader_instructions: 165, num_samplers: 4, num_vertex_texture_samples: 3, num_pixel_texture_samples: 3, num_virtual_texture_samples: 0, num_uv_scalars: 2, num_interpolator_scalars: 0}>"
+    },
+    {
+      "mesh": "/Game/Wuwa/PoverEquipment/裁风之剑.裁风之剑",
+      "slot": "裁风之剑",
+      "source_material": "裁风之剑",
+      "material": "/Game/Wuwa/PoverEquipment/Materials/裁风之剑.裁风之剑",
+      "previous_material": null,
+      "references": [
+        {
+          "role": "BaseTexture",
+          "original_reference": "Tex_1/裁风之剑.png",
+          "resolved_texture": "/Game/Wuwa/PoverEquipment/Tex_1/裁风之剑.裁风之剑"
+        },
+        {
+          "role": "SphereTexture",
+          "original_reference": "sph/4391203i.jpg",
+          "resolved_texture": "/Game/Wuwa/PoverEquipment/sph/4391203i.4391203i"
+        },
+        {
+          "role": "ToonTexture",
+          "original_reference": "toon_Defo_White.png",
+          "resolved_texture": "/Game/Wuwa/PoverEquipment/toon_Defo_White.toon_Defo_White"
+        }
+      ],
+      "transparent": false,
+      "two_sided": true,
+      "statistics": "<Struct 'MaterialStatistics' (0x000008D3FE220E60) {num_vertex_shader_instructions: 291, num_pixel_shader_instructions: 109, num_samplers: 3, num_vertex_texture_samples: 3, num_pixel_texture_samples: 3, num_virtual_texture_samples: 0, num_uv_scalars: 2, num_interpolator_scalars: 0}>"
+    },
+    {
+      "mesh": "/Game/Wuwa/PoverEquipment/裁风之剑.裁风之剑",
+      "slot": "裁风之剑AL",
+      "source_material": "裁风之剑AL",
+      "material": "/Game/Wuwa/PoverEquipment/Materials/裁风之剑AL.裁风之剑AL",
+      "previous_material": null,
+      "references": [
+        {
+          "role": "BaseTexture",
+          "original_reference": "Tex_1/裁风之剑A.png",
+          "resolved_texture": "/Game/Wuwa/PoverEquipment/Tex_1/裁风之剑A.裁风之剑A"
+        },
+        {
+          "role": "SphereTexture",
+          "original_reference": "sph/5836636.png",
+          "resolved_texture": "/Game/Wuwa/PoverEquipment/sph/5836636.5836636"
+        },
+        {
+          "role": "ToonTexture",
+          "original_reference": "toon_Defo_White.png",
+          "resolved_texture": "/Game/Wuwa/PoverEquipment/toon_Defo_White.toon_Defo_White"
+        }
+      ],
+      "transparent": true,
+      "two_sided": true,
+      "statistics": "<Struct 'MaterialStatistics' (0x000008D3FDF91120) {num_vertex_shader_instructions: 486, num_pixel_shader_instructions: 165, num_samplers: 4, num_vertex_texture_samples: 3, num_pixel_texture_samples: 3, num_virtual_texture_samples: 0, num_uv_scalars: 2, num_interpolator_scalars: 0}>"
+    }
+  ],
+  "textures": {
+    "Smaple.jpg": "/Game/Wuwa/PoverEquipment/Smaple",
+    "sph/4391203i.jpg": "/Game/Wuwa/PoverEquipment/sph/4391203i",
+    "sph/5836636.png": "/Game/Wuwa/PoverEquipment/sph/5836636",
+    "sph/s_02.png": "/Game/Wuwa/PoverEquipment/sph/s_02",
+    "Tex_0/Tex_0/T_EDarkNanzhuWingMd10011_D.png": "/Game/Wuwa/PoverEquipment/Tex_0/Tex_0/T_EDarkNanzhuWingMd10011_D",
+    "Tex_0/Tex_0/T_EWindzhujianMd10011_D.png": "/Game/Wuwa/PoverEquipment/Tex_0/Tex_0/T_EWindzhujianMd10011_D",
+    "Tex_0/Tex_0/T_EWindzhujianMd10011_N.png": "/Game/Wuwa/PoverEquipment/Tex_0/Tex_0/T_EWindzhujianMd10011_N",
+    "Tex_0/Tex_0/T_MB1ZhenwuguanzheMd00601_Weapon_D.png": "/Game/Wuwa/PoverEquipment/Tex_0/Tex_0/T_MB1ZhenwuguanzheMd00601_Weapon_D",
+    "Tex_0/Tex_0/T_MB1ZhenwuguanzheMd00601_Weapon_N.png": "/Game/Wuwa/PoverEquipment/Tex_0/Tex_0/T_MB1ZhenwuguanzheMd00601_Weapon_N",
+    "Tex_0/Tex_0/T_R5Sword504Md20001_D.png": "/Game/Wuwa/PoverEquipment/Tex_0/Tex_0/T_R5Sword504Md20001_D",
+    "Tex_0/Tex_0/T_R5Sword504Md20001_ID.png": "/Game/Wuwa/PoverEquipment/Tex_0/Tex_0/T_R5Sword504Md20001_ID",
+    "Tex_0/Tex_0/T_R5Sword504Md20001_N.png": "/Game/Wuwa/PoverEquipment/Tex_0/Tex_0/T_R5Sword504Md20001_N",
+    "Tex_1/暗流之镰.png": "/Game/Wuwa/PoverEquipment/Tex_1/暗流之镰",
+    "Tex_1/暗流之镰A.png": "/Game/Wuwa/PoverEquipment/Tex_1/暗流之镰A",
+    "Tex_1/残象之翼.png": "/Game/Wuwa/PoverEquipment/Tex_1/残象之翼",
+    "Tex_1/血誓盟约.png": "/Game/Wuwa/PoverEquipment/Tex_1/血誓盟约",
+    "Tex_1/血誓盟约A.png": "/Game/Wuwa/PoverEquipment/Tex_1/血誓盟约A",
+    "Tex_1/裁风之剑.png": "/Game/Wuwa/PoverEquipment/Tex_1/裁风之剑",
+    "Tex_1/裁风之剑A.png": "/Game/Wuwa/PoverEquipment/Tex_1/裁风之剑A",
+    "toon_Defo_White.png": "/Game/Wuwa/PoverEquipment/toon_Defo_White"
+  },
+  "validation": {
+    "passed": true,
+    "checks": [
+      {
+        "check": "Fresh commandlet loads saved packages",
+        "passed": true,
+        "detail": {
+          "assets": 40
+        }
+      },
+      {
+        "check": "Load asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Smaple.Smaple"
+      },
+      {
+        "check": "Load asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/sph/4391203i.4391203i"
+      },
+      {
+        "check": "Load asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/sph/5836636.5836636"
+      },
+      {
+        "check": "Load asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/sph/s_02.s_02"
+      },
+      {
+        "check": "Load asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Tex_0/Tex_0/T_EDarkNanzhuWingMd10011_D.T_EDarkNanzhuWingMd10011_D"
+      },
+      {
+        "check": "Load asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Tex_0/Tex_0/T_EWindzhujianMd10011_D.T_EWindzhujianMd10011_D"
+      },
+      {
+        "check": "Load asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Tex_0/Tex_0/T_EWindzhujianMd10011_N.T_EWindzhujianMd10011_N"
+      },
+      {
+        "check": "Load asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Tex_0/Tex_0/T_MB1ZhenwuguanzheMd00601_Weapon_D.T_MB1ZhenwuguanzheMd00601_Weapon_D"
+      },
+      {
+        "check": "Load asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Tex_0/Tex_0/T_MB1ZhenwuguanzheMd00601_Weapon_N.T_MB1ZhenwuguanzheMd00601_Weapon_N"
+      },
+      {
+        "check": "Load asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Tex_0/Tex_0/T_R5Sword504Md20001_D.T_R5Sword504Md20001_D"
+      },
+      {
+        "check": "Load asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Tex_0/Tex_0/T_R5Sword504Md20001_ID.T_R5Sword504Md20001_ID"
+      },
+      {
+        "check": "Load asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Tex_0/Tex_0/T_R5Sword504Md20001_N.T_R5Sword504Md20001_N"
+      },
+      {
+        "check": "Load asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Tex_1/暗流之镰.暗流之镰"
+      },
+      {
+        "check": "Load asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Tex_1/暗流之镰A.暗流之镰A"
+      },
+      {
+        "check": "Load asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Tex_1/残象之翼.残象之翼"
+      },
+      {
+        "check": "Load asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Tex_1/血誓盟约.血誓盟约"
+      },
+      {
+        "check": "Load asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Tex_1/血誓盟约A.血誓盟约A"
+      },
+      {
+        "check": "Load asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Tex_1/裁风之剑.裁风之剑"
+      },
+      {
+        "check": "Load asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Tex_1/裁风之剑A.裁风之剑A"
+      },
+      {
+        "check": "Load asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/toon_Defo_White.toon_Defo_White"
+      },
+      {
+        "check": "Load asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/暗流之镰.暗流之镰"
+      },
+      {
+        "check": "Load asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/暗流之镰.暗流之镰"
+      },
+      {
+        "check": "Load asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/暗流之镰AL.暗流之镰AL"
+      },
+      {
+        "check": "Load asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/暗流之镰_Skeleton.暗流之镰_Skeleton"
+      },
+      {
+        "check": "Load asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/残象之翼.残象之翼"
+      },
+      {
+        "check": "Load asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/翼.翼"
+      },
+      {
+        "check": "Load asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/羽.羽"
+      },
+      {
+        "check": "Load asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/残象之翼_Skeleton.残象之翼_Skeleton"
+      },
+      {
+        "check": "Load asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/血誓盟约.血誓盟约"
+      },
+      {
+        "check": "Load asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑鞘.血誓盟约-剑鞘"
+      },
+      {
+        "check": "Load asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑.血誓盟约-剑"
+      },
+      {
+        "check": "Load asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑鞘AL.血誓盟约-剑鞘AL"
+      },
+      {
+        "check": "Load asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑AL.血誓盟约-剑AL"
+      },
+      {
+        "check": "Load asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑鞘AL1.血誓盟约-剑鞘AL1"
+      },
+      {
+        "check": "Load asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑AL1.血誓盟约-剑AL1"
+      },
+      {
+        "check": "Load asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/血誓盟约_Skeleton.血誓盟约_Skeleton"
+      },
+      {
+        "check": "Load asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/裁风之剑.裁风之剑"
+      },
+      {
+        "check": "Load asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/裁风之剑.裁风之剑"
+      },
+      {
+        "check": "Load asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/裁风之剑AL.裁风之剑AL"
+      },
+      {
+        "check": "Load asset",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/裁风之剑_Skeleton.裁风之剑_Skeleton"
+      },
+      {
+        "check": "Material texture dependencies",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/暗流之镰.暗流之镰"
+      },
+      {
+        "check": "Texture parameter",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/暗流之镰.暗流之镰:BaseTexture"
+      },
+      {
+        "check": "Texture parameter",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/暗流之镰.暗流之镰:SphereTexture"
+      },
+      {
+        "check": "Texture parameter",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/暗流之镰.暗流之镰:ToonTexture"
+      },
+      {
+        "check": "Two-sided material",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/暗流之镰.暗流之镰"
+      },
+      {
+        "check": "Material transparency",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/暗流之镰.暗流之镰"
+      },
+      {
+        "check": "Skeletal mesh material usage",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/暗流之镰.暗流之镰"
+      },
+      {
+        "check": "Compiled shader instructions",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/暗流之镰.暗流之镰"
+      },
+      {
+        "check": "Material texture dependencies",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/暗流之镰AL.暗流之镰AL"
+      },
+      {
+        "check": "Texture parameter",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/暗流之镰AL.暗流之镰AL:BaseTexture"
+      },
+      {
+        "check": "Texture parameter",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/暗流之镰AL.暗流之镰AL:SphereTexture"
+      },
+      {
+        "check": "Texture parameter",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/暗流之镰AL.暗流之镰AL:ToonTexture"
+      },
+      {
+        "check": "Two-sided material",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/暗流之镰AL.暗流之镰AL"
+      },
+      {
+        "check": "Material transparency",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/暗流之镰AL.暗流之镰AL"
+      },
+      {
+        "check": "Skeletal mesh material usage",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/暗流之镰AL.暗流之镰AL"
+      },
+      {
+        "check": "Compiled shader instructions",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/暗流之镰AL.暗流之镰AL"
+      },
+      {
+        "check": "Material texture dependencies",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/翼.翼"
+      },
+      {
+        "check": "Texture parameter",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/翼.翼:BaseTexture"
+      },
+      {
+        "check": "Texture parameter",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/翼.翼:ToonTexture"
+      },
+      {
+        "check": "Two-sided material",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/翼.翼"
+      },
+      {
+        "check": "Material transparency",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/翼.翼"
+      },
+      {
+        "check": "Skeletal mesh material usage",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/翼.翼"
+      },
+      {
+        "check": "Compiled shader instructions",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/翼.翼"
+      },
+      {
+        "check": "Material texture dependencies",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/羽.羽"
+      },
+      {
+        "check": "Texture parameter",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/羽.羽:BaseTexture"
+      },
+      {
+        "check": "Texture parameter",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/羽.羽:ToonTexture"
+      },
+      {
+        "check": "Two-sided material",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/羽.羽"
+      },
+      {
+        "check": "Material transparency",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/羽.羽"
+      },
+      {
+        "check": "Skeletal mesh material usage",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/羽.羽"
+      },
+      {
+        "check": "Compiled shader instructions",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/羽.羽"
+      },
+      {
+        "check": "Material texture dependencies",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑鞘.血誓盟约-剑鞘"
+      },
+      {
+        "check": "Texture parameter",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑鞘.血誓盟约-剑鞘:BaseTexture"
+      },
+      {
+        "check": "Texture parameter",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑鞘.血誓盟约-剑鞘:SphereTexture"
+      },
+      {
+        "check": "Texture parameter",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑鞘.血誓盟约-剑鞘:ToonTexture"
+      },
+      {
+        "check": "Two-sided material",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑鞘.血誓盟约-剑鞘"
+      },
+      {
+        "check": "Material transparency",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑鞘.血誓盟约-剑鞘"
+      },
+      {
+        "check": "Skeletal mesh material usage",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑鞘.血誓盟约-剑鞘"
+      },
+      {
+        "check": "Compiled shader instructions",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑鞘.血誓盟约-剑鞘"
+      },
+      {
+        "check": "Material texture dependencies",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑.血誓盟约-剑"
+      },
+      {
+        "check": "Texture parameter",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑.血誓盟约-剑:BaseTexture"
+      },
+      {
+        "check": "Texture parameter",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑.血誓盟约-剑:SphereTexture"
+      },
+      {
+        "check": "Texture parameter",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑.血誓盟约-剑:ToonTexture"
+      },
+      {
+        "check": "Two-sided material",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑.血誓盟约-剑"
+      },
+      {
+        "check": "Material transparency",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑.血誓盟约-剑"
+      },
+      {
+        "check": "Skeletal mesh material usage",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑.血誓盟约-剑"
+      },
+      {
+        "check": "Compiled shader instructions",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑.血誓盟约-剑"
+      },
+      {
+        "check": "Material texture dependencies",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑鞘AL.血誓盟约-剑鞘AL"
+      },
+      {
+        "check": "Texture parameter",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑鞘AL.血誓盟约-剑鞘AL:BaseTexture"
+      },
+      {
+        "check": "Texture parameter",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑鞘AL.血誓盟约-剑鞘AL:SphereTexture"
+      },
+      {
+        "check": "Texture parameter",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑鞘AL.血誓盟约-剑鞘AL:ToonTexture"
+      },
+      {
+        "check": "Two-sided material",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑鞘AL.血誓盟约-剑鞘AL"
+      },
+      {
+        "check": "Material transparency",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑鞘AL.血誓盟约-剑鞘AL"
+      },
+      {
+        "check": "Skeletal mesh material usage",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑鞘AL.血誓盟约-剑鞘AL"
+      },
+      {
+        "check": "Compiled shader instructions",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑鞘AL.血誓盟约-剑鞘AL"
+      },
+      {
+        "check": "Material texture dependencies",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑AL.血誓盟约-剑AL"
+      },
+      {
+        "check": "Texture parameter",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑AL.血誓盟约-剑AL:BaseTexture"
+      },
+      {
+        "check": "Texture parameter",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑AL.血誓盟约-剑AL:SphereTexture"
+      },
+      {
+        "check": "Texture parameter",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑AL.血誓盟约-剑AL:ToonTexture"
+      },
+      {
+        "check": "Two-sided material",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑AL.血誓盟约-剑AL"
+      },
+      {
+        "check": "Material transparency",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑AL.血誓盟约-剑AL"
+      },
+      {
+        "check": "Skeletal mesh material usage",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑AL.血誓盟约-剑AL"
+      },
+      {
+        "check": "Compiled shader instructions",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑AL.血誓盟约-剑AL"
+      },
+      {
+        "check": "Material texture dependencies",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑鞘AL1.血誓盟约-剑鞘AL1"
+      },
+      {
+        "check": "Texture parameter",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑鞘AL1.血誓盟约-剑鞘AL1:BaseTexture"
+      },
+      {
+        "check": "Texture parameter",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑鞘AL1.血誓盟约-剑鞘AL1:SphereTexture"
+      },
+      {
+        "check": "Texture parameter",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑鞘AL1.血誓盟约-剑鞘AL1:ToonTexture"
+      },
+      {
+        "check": "Two-sided material",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑鞘AL1.血誓盟约-剑鞘AL1"
+      },
+      {
+        "check": "Material transparency",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑鞘AL1.血誓盟约-剑鞘AL1"
+      },
+      {
+        "check": "Skeletal mesh material usage",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑鞘AL1.血誓盟约-剑鞘AL1"
+      },
+      {
+        "check": "Compiled shader instructions",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑鞘AL1.血誓盟约-剑鞘AL1"
+      },
+      {
+        "check": "Material texture dependencies",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑AL1.血誓盟约-剑AL1"
+      },
+      {
+        "check": "Texture parameter",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑AL1.血誓盟约-剑AL1:BaseTexture"
+      },
+      {
+        "check": "Texture parameter",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑AL1.血誓盟约-剑AL1:SphereTexture"
+      },
+      {
+        "check": "Texture parameter",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑AL1.血誓盟约-剑AL1:ToonTexture"
+      },
+      {
+        "check": "Two-sided material",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑AL1.血誓盟约-剑AL1"
+      },
+      {
+        "check": "Material transparency",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑AL1.血誓盟约-剑AL1"
+      },
+      {
+        "check": "Skeletal mesh material usage",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑AL1.血誓盟约-剑AL1"
+      },
+      {
+        "check": "Compiled shader instructions",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑AL1.血誓盟约-剑AL1"
+      },
+      {
+        "check": "Material texture dependencies",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/裁风之剑.裁风之剑"
+      },
+      {
+        "check": "Texture parameter",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/裁风之剑.裁风之剑:BaseTexture"
+      },
+      {
+        "check": "Texture parameter",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/裁风之剑.裁风之剑:SphereTexture"
+      },
+      {
+        "check": "Texture parameter",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/裁风之剑.裁风之剑:ToonTexture"
+      },
+      {
+        "check": "Two-sided material",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/裁风之剑.裁风之剑"
+      },
+      {
+        "check": "Material transparency",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/裁风之剑.裁风之剑"
+      },
+      {
+        "check": "Skeletal mesh material usage",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/裁风之剑.裁风之剑"
+      },
+      {
+        "check": "Compiled shader instructions",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/裁风之剑.裁风之剑"
+      },
+      {
+        "check": "Material texture dependencies",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/裁风之剑AL.裁风之剑AL"
+      },
+      {
+        "check": "Texture parameter",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/裁风之剑AL.裁风之剑AL:BaseTexture"
+      },
+      {
+        "check": "Texture parameter",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/裁风之剑AL.裁风之剑AL:SphereTexture"
+      },
+      {
+        "check": "Texture parameter",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/裁风之剑AL.裁风之剑AL:ToonTexture"
+      },
+      {
+        "check": "Two-sided material",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/裁风之剑AL.裁风之剑AL"
+      },
+      {
+        "check": "Material transparency",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/裁风之剑AL.裁风之剑AL"
+      },
+      {
+        "check": "Skeletal mesh material usage",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/裁风之剑AL.裁风之剑AL"
+      },
+      {
+        "check": "Compiled shader instructions",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Materials/裁风之剑AL.裁风之剑AL"
+      },
+      {
+        "check": "Material slot count",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/暗流之镰"
+      },
+      {
+        "check": "Original slot identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/暗流之镰:暗流之镰"
+      },
+      {
+        "check": "Mesh material assignment",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/暗流之镰:暗流之镰"
+      },
+      {
+        "check": "Original slot identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/暗流之镰:暗流之镰AL"
+      },
+      {
+        "check": "Mesh material assignment",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/暗流之镰:暗流之镰AL"
+      },
+      {
+        "check": "Preserved source skeleton",
+        "passed": true,
+        "detail": {
+          "mesh": "/Game/Wuwa/PoverEquipment/暗流之镰",
+          "missing": []
+        }
+      },
+      {
+        "check": "Renderable mesh LOD",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/暗流之镰"
+      },
+      {
+        "check": "Material slot count",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/残象之翼"
+      },
+      {
+        "check": "Original slot identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/残象之翼:翼"
+      },
+      {
+        "check": "Mesh material assignment",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/残象之翼:翼"
+      },
+      {
+        "check": "Original slot identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/残象之翼:羽"
+      },
+      {
+        "check": "Mesh material assignment",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/残象之翼:羽"
+      },
+      {
+        "check": "Preserved source skeleton",
+        "passed": true,
+        "detail": {
+          "mesh": "/Game/Wuwa/PoverEquipment/残象之翼",
+          "missing": []
+        }
+      },
+      {
+        "check": "Renderable mesh LOD",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/残象之翼"
+      },
+      {
+        "check": "Material slot count",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/血誓盟约"
+      },
+      {
+        "check": "Original slot identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/血誓盟约:血誓盟约-剑鞘"
+      },
+      {
+        "check": "Mesh material assignment",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/血誓盟约:血誓盟约-剑鞘"
+      },
+      {
+        "check": "Original slot identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/血誓盟约:血誓盟约-剑"
+      },
+      {
+        "check": "Mesh material assignment",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/血誓盟约:血誓盟约-剑"
+      },
+      {
+        "check": "Original slot identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/血誓盟约:血誓盟约-剑鞘AL"
+      },
+      {
+        "check": "Mesh material assignment",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/血誓盟约:血誓盟约-剑鞘AL"
+      },
+      {
+        "check": "Original slot identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/血誓盟约:血誓盟约-剑AL"
+      },
+      {
+        "check": "Mesh material assignment",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/血誓盟约:血誓盟约-剑AL"
+      },
+      {
+        "check": "Original slot identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/血誓盟约:血誓盟约-剑鞘AL1"
+      },
+      {
+        "check": "Mesh material assignment",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/血誓盟约:血誓盟约-剑鞘AL1"
+      },
+      {
+        "check": "Original slot identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/血誓盟约:血誓盟约-剑AL1"
+      },
+      {
+        "check": "Mesh material assignment",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/血誓盟约:血誓盟约-剑AL1"
+      },
+      {
+        "check": "Preserved source skeleton",
+        "passed": true,
+        "detail": {
+          "mesh": "/Game/Wuwa/PoverEquipment/血誓盟约",
+          "missing": []
+        }
+      },
+      {
+        "check": "Renderable mesh LOD",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/血誓盟约"
+      },
+      {
+        "check": "Material slot count",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/裁风之剑"
+      },
+      {
+        "check": "Original slot identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/裁风之剑:裁风之剑"
+      },
+      {
+        "check": "Mesh material assignment",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/裁风之剑:裁风之剑"
+      },
+      {
+        "check": "Original slot identity",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/裁风之剑:裁风之剑AL"
+      },
+      {
+        "check": "Mesh material assignment",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/裁风之剑:裁风之剑AL"
+      },
+      {
+        "check": "Preserved source skeleton",
+        "passed": true,
+        "detail": {
+          "mesh": "/Game/Wuwa/PoverEquipment/裁风之剑",
+          "missing": []
+        }
+      },
+      {
+        "check": "Renderable mesh LOD",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/裁风之剑"
+      },
+      {
+        "check": "Texture color space",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Smaple"
+      },
+      {
+        "check": "Texture color space",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/sph/4391203i"
+      },
+      {
+        "check": "Texture color space",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/sph/5836636"
+      },
+      {
+        "check": "Texture color space",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/sph/s_02"
+      },
+      {
+        "check": "Texture color space",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Tex_0/Tex_0/T_EDarkNanzhuWingMd10011_D"
+      },
+      {
+        "check": "Texture color space",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Tex_0/Tex_0/T_EWindzhujianMd10011_D"
+      },
+      {
+        "check": "Texture color space",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Tex_0/Tex_0/T_EWindzhujianMd10011_N"
+      },
+      {
+        "check": "Preserved packed channels",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Tex_0/Tex_0/T_EWindzhujianMd10011_N"
+      },
+      {
+        "check": "Texture color space",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Tex_0/Tex_0/T_MB1ZhenwuguanzheMd00601_Weapon_D"
+      },
+      {
+        "check": "Texture color space",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Tex_0/Tex_0/T_MB1ZhenwuguanzheMd00601_Weapon_N"
+      },
+      {
+        "check": "Preserved packed channels",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Tex_0/Tex_0/T_MB1ZhenwuguanzheMd00601_Weapon_N"
+      },
+      {
+        "check": "Texture color space",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Tex_0/Tex_0/T_R5Sword504Md20001_D"
+      },
+      {
+        "check": "Texture color space",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Tex_0/Tex_0/T_R5Sword504Md20001_ID"
+      },
+      {
+        "check": "Preserved packed channels",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Tex_0/Tex_0/T_R5Sword504Md20001_ID"
+      },
+      {
+        "check": "Texture color space",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Tex_0/Tex_0/T_R5Sword504Md20001_N"
+      },
+      {
+        "check": "Preserved packed channels",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Tex_0/Tex_0/T_R5Sword504Md20001_N"
+      },
+      {
+        "check": "Texture color space",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Tex_1/暗流之镰"
+      },
+      {
+        "check": "Texture color space",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Tex_1/暗流之镰A"
+      },
+      {
+        "check": "Texture color space",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Tex_1/残象之翼"
+      },
+      {
+        "check": "Texture color space",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Tex_1/血誓盟约"
+      },
+      {
+        "check": "Texture color space",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Tex_1/血誓盟约A"
+      },
+      {
+        "check": "Texture color space",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Tex_1/裁风之剑"
+      },
+      {
+        "check": "Texture color space",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/Tex_1/裁风之剑A"
+      },
+      {
+        "check": "Texture color space",
+        "passed": true,
+        "detail": "/Game/Wuwa/PoverEquipment/toon_Defo_White"
+      },
+      {
+        "check": "Original source unchanged",
+        "passed": true,
+        "detail": "Smaple.jpg"
+      },
+      {
+        "check": "Copied source unchanged",
+        "passed": true,
+        "detail": "Smaple.jpg"
+      },
+      {
+        "check": "Original source unchanged",
+        "passed": true,
+        "detail": "Tex_0.7z"
+      },
+      {
+        "check": "Copied source unchanged",
+        "passed": true,
+        "detail": "Tex_0.7z"
+      },
+      {
+        "check": "Original source unchanged",
+        "passed": true,
+        "detail": "toon_Defo_White.png"
+      },
+      {
+        "check": "Copied source unchanged",
+        "passed": true,
+        "detail": "toon_Defo_White.png"
+      },
+      {
+        "check": "Original source unchanged",
+        "passed": true,
+        "detail": "暗流之镰.pmx"
+      },
+      {
+        "check": "Copied source unchanged",
+        "passed": true,
+        "detail": "暗流之镰.pmx"
+      },
+      {
+        "check": "Original source unchanged",
+        "passed": true,
+        "detail": "残象之翼.pmx"
+      },
+      {
+        "check": "Copied source unchanged",
+        "passed": true,
+        "detail": "残象之翼.pmx"
+      },
+      {
+        "check": "Original source unchanged",
+        "passed": true,
+        "detail": "血誓盟约.pmx"
+      },
+      {
+        "check": "Copied source unchanged",
+        "passed": true,
+        "detail": "血誓盟约.pmx"
+      },
+      {
+        "check": "Original source unchanged",
+        "passed": true,
+        "detail": "裁风之剑.pmx"
+      },
+      {
+        "check": "Copied source unchanged",
+        "passed": true,
+        "detail": "裁风之剑.pmx"
+      },
+      {
+        "check": "Original source unchanged",
+        "passed": true,
+        "detail": "sph/4391203i.jpg"
+      },
+      {
+        "check": "Copied source unchanged",
+        "passed": true,
+        "detail": "sph/4391203i.jpg"
+      },
+      {
+        "check": "Original source unchanged",
+        "passed": true,
+        "detail": "sph/5836636.png"
+      },
+      {
+        "check": "Copied source unchanged",
+        "passed": true,
+        "detail": "sph/5836636.png"
+      },
+      {
+        "check": "Original source unchanged",
+        "passed": true,
+        "detail": "sph/s_02.png"
+      },
+      {
+        "check": "Copied source unchanged",
+        "passed": true,
+        "detail": "sph/s_02.png"
+      },
+      {
+        "check": "Original source unchanged",
+        "passed": true,
+        "detail": "Tex_0/Tex_0/T_EDarkNanzhuWingMd10011_D.png"
+      },
+      {
+        "check": "Copied source unchanged",
+        "passed": true,
+        "detail": "Tex_0/Tex_0/T_EDarkNanzhuWingMd10011_D.png"
+      },
+      {
+        "check": "Original source unchanged",
+        "passed": true,
+        "detail": "Tex_0/Tex_0/T_EWindzhujianMd10011_D.png"
+      },
+      {
+        "check": "Copied source unchanged",
+        "passed": true,
+        "detail": "Tex_0/Tex_0/T_EWindzhujianMd10011_D.png"
+      },
+      {
+        "check": "Original source unchanged",
+        "passed": true,
+        "detail": "Tex_0/Tex_0/T_EWindzhujianMd10011_N.png"
+      },
+      {
+        "check": "Copied source unchanged",
+        "passed": true,
+        "detail": "Tex_0/Tex_0/T_EWindzhujianMd10011_N.png"
+      },
+      {
+        "check": "Original source unchanged",
+        "passed": true,
+        "detail": "Tex_0/Tex_0/T_MB1ZhenwuguanzheMd00601_Weapon_D.png"
+      },
+      {
+        "check": "Copied source unchanged",
+        "passed": true,
+        "detail": "Tex_0/Tex_0/T_MB1ZhenwuguanzheMd00601_Weapon_D.png"
+      },
+      {
+        "check": "Original source unchanged",
+        "passed": true,
+        "detail": "Tex_0/Tex_0/T_MB1ZhenwuguanzheMd00601_Weapon_N.png"
+      },
+      {
+        "check": "Copied source unchanged",
+        "passed": true,
+        "detail": "Tex_0/Tex_0/T_MB1ZhenwuguanzheMd00601_Weapon_N.png"
+      },
+      {
+        "check": "Original source unchanged",
+        "passed": true,
+        "detail": "Tex_0/Tex_0/T_R5Sword504Md20001_D.png"
+      },
+      {
+        "check": "Copied source unchanged",
+        "passed": true,
+        "detail": "Tex_0/Tex_0/T_R5Sword504Md20001_D.png"
+      },
+      {
+        "check": "Original source unchanged",
+        "passed": true,
+        "detail": "Tex_0/Tex_0/T_R5Sword504Md20001_ID.png"
+      },
+      {
+        "check": "Copied source unchanged",
+        "passed": true,
+        "detail": "Tex_0/Tex_0/T_R5Sword504Md20001_ID.png"
+      },
+      {
+        "check": "Original source unchanged",
+        "passed": true,
+        "detail": "Tex_0/Tex_0/T_R5Sword504Md20001_N.png"
+      },
+      {
+        "check": "Copied source unchanged",
+        "passed": true,
+        "detail": "Tex_0/Tex_0/T_R5Sword504Md20001_N.png"
+      },
+      {
+        "check": "Original source unchanged",
+        "passed": true,
+        "detail": "Tex_1/暗流之镰.png"
+      },
+      {
+        "check": "Copied source unchanged",
+        "passed": true,
+        "detail": "Tex_1/暗流之镰.png"
+      },
+      {
+        "check": "Original source unchanged",
+        "passed": true,
+        "detail": "Tex_1/暗流之镰A.png"
+      },
+      {
+        "check": "Copied source unchanged",
+        "passed": true,
+        "detail": "Tex_1/暗流之镰A.png"
+      },
+      {
+        "check": "Original source unchanged",
+        "passed": true,
+        "detail": "Tex_1/残象之翼.png"
+      },
+      {
+        "check": "Copied source unchanged",
+        "passed": true,
+        "detail": "Tex_1/残象之翼.png"
+      },
+      {
+        "check": "Original source unchanged",
+        "passed": true,
+        "detail": "Tex_1/血誓盟约.png"
+      },
+      {
+        "check": "Copied source unchanged",
+        "passed": true,
+        "detail": "Tex_1/血誓盟约.png"
+      },
+      {
+        "check": "Original source unchanged",
+        "passed": true,
+        "detail": "Tex_1/血誓盟约A.png"
+      },
+      {
+        "check": "Copied source unchanged",
+        "passed": true,
+        "detail": "Tex_1/血誓盟约A.png"
+      },
+      {
+        "check": "Original source unchanged",
+        "passed": true,
+        "detail": "Tex_1/裁风之剑.png"
+      },
+      {
+        "check": "Copied source unchanged",
+        "passed": true,
+        "detail": "Tex_1/裁风之剑.png"
+      },
+      {
+        "check": "Original source unchanged",
+        "passed": true,
+        "detail": "Tex_1/裁风之剑A.png"
+      },
+      {
+        "check": "Copied source unchanged",
+        "passed": true,
+        "detail": "Tex_1/裁风之剑A.png"
+      },
+      {
+        "check": "Exact imported asset inventory",
+        "passed": true,
+        "detail": {
+          "expected": 40,
+          "actual": 40
+        }
+      },
+      {
+        "check": "All imported packages saved",
+        "passed": true,
+        "detail": []
+      }
+    ],
+    "meshes": [
+      {
+        "mesh": "/Game/Wuwa/PoverEquipment/暗流之镰",
+        "source_bones": 4,
+        "imported_bones": 5,
+        "source_triangles": 2948,
+        "materials": [
+          "/Game/Wuwa/PoverEquipment/Materials/暗流之镰.暗流之镰",
+          "/Game/Wuwa/PoverEquipment/Materials/暗流之镰AL.暗流之镰AL"
+        ]
+      },
+      {
+        "mesh": "/Game/Wuwa/PoverEquipment/残象之翼",
+        "source_bones": 269,
+        "imported_bones": 270,
+        "source_triangles": 5846,
+        "materials": [
+          "/Game/Wuwa/PoverEquipment/Materials/翼.翼",
+          "/Game/Wuwa/PoverEquipment/Materials/羽.羽"
+        ]
+      },
+      {
+        "mesh": "/Game/Wuwa/PoverEquipment/血誓盟约",
+        "source_bones": 2,
+        "imported_bones": 3,
+        "source_triangles": 22042,
+        "materials": [
+          "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑鞘.血誓盟约-剑鞘",
+          "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑.血誓盟约-剑",
+          "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑鞘AL.血誓盟约-剑鞘AL",
+          "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑AL.血誓盟约-剑AL",
+          "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑鞘AL1.血誓盟约-剑鞘AL1",
+          "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑AL1.血誓盟约-剑AL1"
+        ]
+      },
+      {
+        "mesh": "/Game/Wuwa/PoverEquipment/裁风之剑",
+        "source_bones": 1,
+        "imported_bones": 2,
+        "source_triangles": 13280,
+        "materials": [
+          "/Game/Wuwa/PoverEquipment/Materials/裁风之剑.裁风之剑",
+          "/Game/Wuwa/PoverEquipment/Materials/裁风之剑AL.裁风之剑AL"
+        ]
+      }
+    ],
+    "materials": [
+      {
+        "material": "/Game/Wuwa/PoverEquipment/Materials/暗流之镰.暗流之镰",
+        "textures": [
+          "/Game/Wuwa/PoverEquipment/Tex_1/暗流之镰.暗流之镰",
+          "/Game/Wuwa/PoverEquipment/sph/4391203i.4391203i",
+          "/Game/Wuwa/PoverEquipment/toon_Defo_White.toon_Defo_White"
+        ],
+        "vertex_instructions": 291,
+        "pixel_instructions": 109
+      },
+      {
+        "material": "/Game/Wuwa/PoverEquipment/Materials/暗流之镰AL.暗流之镰AL",
+        "textures": [
+          "/Game/Wuwa/PoverEquipment/Tex_1/暗流之镰A.暗流之镰A",
+          "/Game/Wuwa/PoverEquipment/sph/4391203i.4391203i",
+          "/Game/Wuwa/PoverEquipment/toon_Defo_White.toon_Defo_White"
+        ],
+        "vertex_instructions": 486,
+        "pixel_instructions": 165
+      },
+      {
+        "material": "/Game/Wuwa/PoverEquipment/Materials/翼.翼",
+        "textures": [
+          "/Game/Wuwa/PoverEquipment/Tex_1/残象之翼.残象之翼",
+          "/Game/Wuwa/PoverEquipment/toon_Defo_White.toon_Defo_White"
+        ],
+        "vertex_instructions": 291,
+        "pixel_instructions": 96
+      },
+      {
+        "material": "/Game/Wuwa/PoverEquipment/Materials/羽.羽",
+        "textures": [
+          "/Game/Wuwa/PoverEquipment/Tex_1/残象之翼.残象之翼",
+          "/Game/Wuwa/PoverEquipment/toon_Defo_White.toon_Defo_White"
+        ],
+        "vertex_instructions": 291,
+        "pixel_instructions": 96
+      },
+      {
+        "material": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑鞘.血誓盟约-剑鞘",
+        "textures": [
+          "/Game/Wuwa/PoverEquipment/Tex_1/血誓盟约.血誓盟约",
+          "/Game/Wuwa/PoverEquipment/sph/4391203i.4391203i",
+          "/Game/Wuwa/PoverEquipment/toon_Defo_White.toon_Defo_White"
+        ],
+        "vertex_instructions": 291,
+        "pixel_instructions": 109
+      },
+      {
+        "material": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑.血誓盟约-剑",
+        "textures": [
+          "/Game/Wuwa/PoverEquipment/Tex_1/血誓盟约.血誓盟约",
+          "/Game/Wuwa/PoverEquipment/sph/4391203i.4391203i",
+          "/Game/Wuwa/PoverEquipment/toon_Defo_White.toon_Defo_White"
+        ],
+        "vertex_instructions": 291,
+        "pixel_instructions": 109
+      },
+      {
+        "material": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑鞘AL.血誓盟约-剑鞘AL",
+        "textures": [
+          "/Game/Wuwa/PoverEquipment/Tex_1/血誓盟约.血誓盟约",
+          "/Game/Wuwa/PoverEquipment/sph/4391203i.4391203i",
+          "/Game/Wuwa/PoverEquipment/toon_Defo_White.toon_Defo_White"
+        ],
+        "vertex_instructions": 291,
+        "pixel_instructions": 109
+      },
+      {
+        "material": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑AL.血誓盟约-剑AL",
+        "textures": [
+          "/Game/Wuwa/PoverEquipment/Tex_1/血誓盟约.血誓盟约",
+          "/Game/Wuwa/PoverEquipment/sph/4391203i.4391203i",
+          "/Game/Wuwa/PoverEquipment/toon_Defo_White.toon_Defo_White"
+        ],
+        "vertex_instructions": 291,
+        "pixel_instructions": 109
+      },
+      {
+        "material": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑鞘AL1.血誓盟约-剑鞘AL1",
+        "textures": [
+          "/Game/Wuwa/PoverEquipment/Tex_1/血誓盟约A.血誓盟约A",
+          "/Game/Wuwa/PoverEquipment/sph/5836636.5836636",
+          "/Game/Wuwa/PoverEquipment/toon_Defo_White.toon_Defo_White"
+        ],
+        "vertex_instructions": 486,
+        "pixel_instructions": 165
+      },
+      {
+        "material": "/Game/Wuwa/PoverEquipment/Materials/血誓盟约-剑AL1.血誓盟约-剑AL1",
+        "textures": [
+          "/Game/Wuwa/PoverEquipment/Tex_1/血誓盟约A.血誓盟约A",
+          "/Game/Wuwa/PoverEquipment/sph/5836636.5836636",
+          "/Game/Wuwa/PoverEquipment/toon_Defo_White.toon_Defo_White"
+        ],
+        "vertex_instructions": 486,
+        "pixel_instructions": 165
+      },
+      {
+        "material": "/Game/Wuwa/PoverEquipment/Materials/裁风之剑.裁风之剑",
+        "textures": [
+          "/Game/Wuwa/PoverEquipment/Tex_1/裁风之剑.裁风之剑",
+          "/Game/Wuwa/PoverEquipment/sph/4391203i.4391203i",
+          "/Game/Wuwa/PoverEquipment/toon_Defo_White.toon_Defo_White"
+        ],
+        "vertex_instructions": 291,
+        "pixel_instructions": 109
+      },
+      {
+        "material": "/Game/Wuwa/PoverEquipment/Materials/裁风之剑AL.裁风之剑AL",
+        "textures": [
+          "/Game/Wuwa/PoverEquipment/Tex_1/裁风之剑A.裁风之剑A",
+          "/Game/Wuwa/PoverEquipment/sph/5836636.5836636",
+          "/Game/Wuwa/PoverEquipment/toon_Defo_White.toon_Defo_White"
+        ],
+        "vertex_instructions": 486,
+        "pixel_instructions": 165
+      }
+    ]
+  },
+  "source_manifest": [
+    {
+      "relative": "Smaple.jpg",
+      "size": 2169371,
+      "sha256": "10bc99cf615e8570bdf7d2ef6fe15bc0f7de89c93fd96eb566f628e94111f412"
+    },
+    {
+      "relative": "Tex_0.7z",
+      "size": 8499383,
+      "sha256": "e4be65e33a6f23d4611f7d3c816abb1a3a314b214127c0e3f74fb3a5e9b03b19"
+    },
+    {
+      "relative": "toon_Defo_White.png",
+      "size": 18073,
+      "sha256": "f6f43adc760697e3d603f208870b88b9656391e9357a347b545b3b8b4e4265f1"
+    },
+    {
+      "relative": "暗流之镰.pmx",
+      "size": 137626,
+      "sha256": "fe262bb42414010391f9f8a95f52809fec8a38bcaa5e9726fe4fbfc58d23b1c0"
+    },
+    {
+      "relative": "残象之翼.pmx",
+      "size": 384837,
+      "sha256": "9cf05545093ca0c5066c48303eb55559cb36150c852fc54710e81c2c1bd045e4"
+    },
+    {
+      "relative": "血誓盟约.pmx",
+      "size": 894092,
+      "sha256": "5f17e5c8f647b67a05299ba57351cc9f2d2bd34185fae22ddfdb5f0bc9e5f9fb"
+    },
+    {
+      "relative": "裁风之剑.pmx",
+      "size": 552222,
+      "sha256": "d8a96dccc54e99c62c8370dcaaf35eecb2cbdcc5e970b93232c293efca86ad86"
+    },
+    {
+      "relative": "sph/4391203i.jpg",
+      "size": 43694,
+      "sha256": "9904ca29b52635d05d912a57f198c00561f544a47c7a6a24008ab9b578f0b9c0"
+    },
+    {
+      "relative": "sph/5836636.png",
+      "size": 135487,
+      "sha256": "6c39d8b2e714998a86083146115f994cea8857266b231dcadb23b4e719f69be7"
+    },
+    {
+      "relative": "sph/s_02.png",
+      "size": 5776,
+      "sha256": "6a556aad797941d55f56b2618b9e7c68ac19faf66aaba48949c07a610b088923"
+    },
+    {
+      "relative": "Tex_0/Tex_0/T_EDarkNanzhuWingMd10011_D.png",
+      "size": 16806489,
+      "sha256": "3f8e0649b2c37029554fa5679f12daf67afa9d792d38b4afc18e3a8f9ad5dd9e"
+    },
+    {
+      "relative": "Tex_0/Tex_0/T_EWindzhujianMd10011_D.png",
+      "size": 4202201,
+      "sha256": "183c182e6541756cd6b301f9ded480207ed171e409a3a68c4c76c9370cb7c498"
+    },
+    {
+      "relative": "Tex_0/Tex_0/T_EWindzhujianMd10011_N.png",
+      "size": 16806489,
+      "sha256": "0f55509d5840387113ece913173effb761b1a5584e56afb4137eb18f9f776629"
+    },
+    {
+      "relative": "Tex_0/Tex_0/T_MB1ZhenwuguanzheMd00601_Weapon_D.png",
+      "size": 16806489,
+      "sha256": "c407909a19c7875e7a97a6a9b4ad40fd046b2a7ed7b4a418d30d08f160586946"
+    },
+    {
+      "relative": "Tex_0/Tex_0/T_MB1ZhenwuguanzheMd00601_Weapon_N.png",
+      "size": 16806489,
+      "sha256": "0d6ab703f8cbc4591cad17bf1f0f927f8618fb70f3490293ad46fad2cc1849c0"
+    },
+    {
+      "relative": "Tex_0/Tex_0/T_R5Sword504Md20001_D.png",
+      "size": 16806489,
+      "sha256": "8479447c5a1abe123e305615be3ba413f459b8cb92939d7849c313748570b55c"
+    },
+    {
+      "relative": "Tex_0/Tex_0/T_R5Sword504Md20001_ID.png",
+      "size": 12605396,
+      "sha256": "9e8dacb28c3c5c7cf7ebe61ebfc4cb25c7a973a571bd79e8c36e569139aa896f"
+    },
+    {
+      "relative": "Tex_0/Tex_0/T_R5Sword504Md20001_N.png",
+      "size": 16806489,
+      "sha256": "2b39205d76b58cad3452ee325cf177646e9a2038540a22de007ae647d19aa14c"
+    },
+    {
+      "relative": "Tex_1/暗流之镰.png",
+      "size": 1638045,
+      "sha256": "31c284ff057146f9938971c7747a4ece013f1db7d7e4c376602f63e741a8ef11"
+    },
+    {
+      "relative": "Tex_1/暗流之镰A.png",
+      "size": 1571760,
+      "sha256": "2e6b2220b788c6d8fabd2e0d95b9f661fa8c3208448484d4e1a09baf3aead92e"
+    },
+    {
+      "relative": "Tex_1/残象之翼.png",
+      "size": 1130067,
+      "sha256": "962655ea0539180ef43139af55b906882e4b5f85b02e87d7995042cde7b7fe94"
+    },
+    {
+      "relative": "Tex_1/血誓盟约.png",
+      "size": 3521519,
+      "sha256": "13d4bdd81c514af146887037892bb2472c6f5725d443388078f07c1119e2a123"
+    },
+    {
+      "relative": "Tex_1/血誓盟约A.png",
+      "size": 682202,
+      "sha256": "13c9088921067eb41b45dcf076ead127f10847ada6e5532056cdfde3d8f97a99"
+    },
+    {
+      "relative": "Tex_1/裁风之剑.png",
+      "size": 874244,
+      "sha256": "3e7940710e14889f175356e9ecaa56b25e0395905a2609c5ebb6ba204bce1a08"
+    },
+    {
+      "relative": "Tex_1/裁风之剑A.png",
+      "size": 200365,
+      "sha256": "169aa518d96cb528221dbcb98fed41dcd9373ec00d6d063c26af2d233aa115ba"
+    }
+  ],
+  "conversion": [
+    {
+      "source": "暗流之镰.pmx",
+      "mesh_name": "暗流之镰",
+      "fbx": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\PoverEquipment\\暗流之镰.fbx",
+      "vertices": 3094,
+      "triangles": 2948,
+      "source_bones": 4,
+      "export_bones": 4,
+      "blender_dimensions": [
+        [
+          0.15241187810897827,
+          2.9258170127868652,
+          1.2308751344680786
+        ]
+      ],
+      "materials": [
+        {
+          "index": 0,
+          "name": "暗流之镰",
+          "base_texture": "Tex_1/暗流之镰.png",
+          "sphere_texture": "sph/4391203i.jpg",
+          "sphere_mode": 1,
+          "toon_texture": "toon_Defo_White.png",
+          "diffuse": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "two_sided": true,
+          "indices": 4830
+        },
+        {
+          "index": 1,
+          "name": "暗流之镰AL",
+          "base_texture": "Tex_1/暗流之镰A.png",
+          "sphere_texture": "sph/4391203i.jpg",
+          "sphere_mode": 1,
+          "toon_texture": "toon_Defo_White.png",
+          "diffuse": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "two_sided": true,
+          "indices": 4014
+        }
+      ]
+    },
+    {
+      "source": "残象之翼.pmx",
+      "mesh_name": "残象之翼",
+      "fbx": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\PoverEquipment\\残象之翼.fbx",
+      "vertices": 5322,
+      "triangles": 5846,
+      "source_bones": 269,
+      "export_bones": 269,
+      "blender_dimensions": [
+        [
+          1.8129016160964966,
+          0.08911362290382385,
+          1.5621938705444336
+        ]
+      ],
+      "materials": [
+        {
+          "index": 0,
+          "name": "翼",
+          "base_texture": "Tex_1/残象之翼.png",
+          "sphere_texture": null,
+          "sphere_mode": 2,
+          "toon_texture": "toon_Defo_White.png",
+          "diffuse": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "two_sided": true,
+          "indices": 11052
+        },
+        {
+          "index": 1,
+          "name": "羽",
+          "base_texture": "Tex_1/残象之翼.png",
+          "sphere_texture": null,
+          "sphere_mode": 2,
+          "toon_texture": "toon_Defo_White.png",
+          "diffuse": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "two_sided": true,
+          "indices": 6486
+        }
+      ]
+    },
+    {
+      "source": "血誓盟约.pmx",
+      "mesh_name": "血誓盟约",
+      "fbx": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\PoverEquipment\\血誓盟约.fbx",
+      "vertices": 19993,
+      "triangles": 22042,
+      "source_bones": 2,
+      "export_bones": 2,
+      "blender_dimensions": [
+        [
+          0.2048797309398651,
+          1.6138026714324951,
+          0.04364610090851784
+        ]
+      ],
+      "materials": [
+        {
+          "index": 0,
+          "name": "血誓盟约-剑鞘",
+          "base_texture": "Tex_1/血誓盟约.png",
+          "sphere_texture": "sph/4391203i.jpg",
+          "sphere_mode": 1,
+          "toon_texture": "toon_Defo_White.png",
+          "diffuse": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "two_sided": true,
+          "indices": 22638
+        },
+        {
+          "index": 1,
+          "name": "血誓盟约-剑",
+          "base_texture": "Tex_1/血誓盟约.png",
+          "sphere_texture": "sph/4391203i.jpg",
+          "sphere_mode": 1,
+          "toon_texture": "toon_Defo_White.png",
+          "diffuse": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "two_sided": true,
+          "indices": 40314
+        },
+        {
+          "index": 2,
+          "name": "血誓盟约-剑鞘AL",
+          "base_texture": "Tex_1/血誓盟约.png",
+          "sphere_texture": "sph/4391203i.jpg",
+          "sphere_mode": 1,
+          "toon_texture": "toon_Defo_White.png",
+          "diffuse": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "two_sided": true,
+          "indices": 1092
+        },
+        {
+          "index": 3,
+          "name": "血誓盟约-剑AL",
+          "base_texture": "Tex_1/血誓盟约.png",
+          "sphere_texture": "sph/4391203i.jpg",
+          "sphere_mode": 1,
+          "toon_texture": "toon_Defo_White.png",
+          "diffuse": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "two_sided": true,
+          "indices": 1734
+        },
+        {
+          "index": 4,
+          "name": "血誓盟约-剑鞘AL1",
+          "base_texture": "Tex_1/血誓盟约A.png",
+          "sphere_texture": "sph/5836636.png",
+          "sphere_mode": 2,
+          "toon_texture": "toon_Defo_White.png",
+          "diffuse": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "two_sided": true,
+          "indices": 84
+        },
+        {
+          "index": 5,
+          "name": "血誓盟约-剑AL1",
+          "base_texture": "Tex_1/血誓盟约A.png",
+          "sphere_texture": "sph/5836636.png",
+          "sphere_mode": 1,
+          "toon_texture": "toon_Defo_White.png",
+          "diffuse": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "two_sided": true,
+          "indices": 264
+        }
+      ]
+    },
+    {
+      "source": "裁风之剑.pmx",
+      "mesh_name": "裁风之剑",
+      "fbx": "E:\\Project\\Git\\Hodgepodge\\Content\\Wuwa\\PoverEquipment\\裁风之剑.fbx",
+      "vertices": 12412,
+      "triangles": 13280,
+      "source_bones": 1,
+      "export_bones": 1,
+      "blender_dimensions": [
+        [
+          0.3927314281463623,
+          1.90621018409729,
+          0.10679111629724503
+        ]
+      ],
+      "materials": [
+        {
+          "index": 0,
+          "name": "裁风之剑",
+          "base_texture": "Tex_1/裁风之剑.png",
+          "sphere_texture": "sph/4391203i.jpg",
+          "sphere_mode": 1,
+          "toon_texture": "toon_Defo_White.png",
+          "diffuse": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "two_sided": true,
+          "indices": 19920
+        },
+        {
+          "index": 1,
+          "name": "裁风之剑AL",
+          "base_texture": "Tex_1/裁风之剑A.png",
+          "sphere_texture": "sph/5836636.png",
+          "sphere_mode": 2,
+          "toon_texture": "toon_Defo_White.png",
+          "diffuse": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "two_sided": true,
+          "indices": 19920
+        }
+      ]
+    }
+  ]
+}
