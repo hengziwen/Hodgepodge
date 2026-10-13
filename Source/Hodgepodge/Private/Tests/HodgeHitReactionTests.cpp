@@ -1,3 +1,6 @@
+/** @file HodgeHitReactionTests.cpp
+ * @brief 实现命中受击自动化测试相关的类型、接口与现有处理流程。
+ */
 #include "HodgeHitReactionTestAbility.h"
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeHitReactionTestAbility)
 #if WITH_DEV_AUTOMATION_TESTS
@@ -5,9 +8,12 @@
 #include "Combat/HodgeHitReactionTypes.h"
 #include "Component/HodgeHitReactionComponent.h"
 #include "Component/HodgePawnExtensionComponent.h"
+#include "Component/HodgeCombatComponentBase.h"
 #include "Component/HodgeCharacterMovementComponent.h"
 #include "Character/HodgeCombatCharacter.h"
 #include "Character/HodgeEnemyCharacter.h"
+#include "HodgeEnemyAITestSupport.h"
+#include "AIController.h"
 #include "AbilitySystem/HodgeAbilitySystemComponent.h"
 #include "AbilitySystem/HodgeGameplayTags.h"
 #include "AbilitySystem/HodgeGameplayEffectContext.h"
@@ -23,20 +29,31 @@
 #include "Animation/AnimMontage.h"
 #include "Engine/SkeletalMesh.h"
 
+/** 保存命中受击测试Access的数据和接口契约。 */
 struct FHodgeHitReactionTestAccess
 {
+	/** 使当前测试的缓存或会话达到过期条件。
+	 * @param Component 组件，由调用方传入。
+	 */
 	static void Expire(UHodgeHitReactionComponent* Component) { Component->State.EndsAt = Component->GetServerTime() - 1.f; }
 };
 
 namespace HodgeReactionTests
 {
+	/** 保存测试场景的数据和接口契约。 */
 	struct FFixture
 	{
+		// 本次操作所在的世界。
 		UWorld* World;
+		// 当前操作关联的Pawn角色。
 		AHodgeCombatCharacter* Pawn;
+		// 后续GAS操作使用的能力系统组件。
 		UHodgeAbilitySystemComponent* ASC;
+		// 受击的数据或对象引用。
 		UHodgeHitReactionComponent* Reaction;
+		// 当前操作使用的配置对象。
 		UHodgeHitReactionProfile* Profile;
+		/** 构造测试场景并初始化其默认状态。 */
 		FFixture()
 		{
 			const auto Values = UWorld::InitializationValues().AllowAudioPlayback(false).CreatePhysicsScene(true).CreateNavigation(false).CreateAISystem(false);
@@ -67,7 +84,12 @@ namespace HodgeReactionTests
 			Extension->InitializeAbilitySystem(ASC, Pawn);
 			ASC->GiveAbility(FGameplayAbilitySpec(UHodgeGameplayAbility_HitReaction::StaticClass(), 1));
 		}
+		/** 销毁该对象，执行当前类型的析构收尾。 */
 		~FFixture() { Reaction->UninitializeFromAbilitySystem(); World->DestroyWorld(false); }
+		/** 提交当前操作请求。
+		 * @param Type 类型，由调用方传入。
+		 * @return 本次计算、查询或创建得到的命中受击配置。
+		 */
 		FHodgeHitReactionConfig Request(EHodgeImpactType Type = EHodgeImpactType::HitStun) const
 		{
 			FHodgeHitReactionConfig Config;
@@ -77,6 +99,10 @@ namespace HodgeReactionTests
 			Config.Impacts.Add(Impact);
 			return Config;
 		}
+		/** 提交当前测试使用的伤害。
+		 * @param Id 当前记录的唯一标识。
+		 * @param Amount 数量，由调用方传入。
+		 */
 		void Damage(const FGuid& Id, float Amount)
 		{
 			auto* Effect = NewObject<UGameplayEffect>();
@@ -89,8 +115,14 @@ namespace HodgeReactionTests
 			auto* Context = new FHodgeGameplayEffectContext();
 			Context->HitSettlementId = Id;
 			FGameplayEffectSpec Spec(Effect, FGameplayEffectContextHandle(Context), 1.f);
+			// 将构造的效果规格提交给GAS执行属性更新。
 			ASC->ApplyGameplayEffectSpecToSelf(Spec);
 		}
+		/** 执行当前检测或测试使用的命中操作。
+		 * @param Config 配置，由调用方传入。
+		 * @param Amount 数量，由调用方传入。
+		 * @return 本次计算、查询或创建得到的命中受击结果。
+		 */
 		FHodgeHitReactionResult Hit(const FHodgeHitReactionConfig& Config, float Amount = 10.f)
 		{
 			const FGuid Id = Reaction->BeginHit(Config, Pawn, Pawn->GetActorLocation() - FVector(100.f, 0.f, 0.f));
@@ -101,6 +133,7 @@ namespace HodgeReactionTests
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeReactionRanksTest, "Hodge.HitReaction.RanksAndValidation", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeReactionRanksTest::RunTest(const FString& Parameters)
 {
 	using namespace HodgeHitReactionTags;
@@ -129,6 +162,7 @@ bool FHodgeReactionRanksTest::RunTest(const FString& Parameters)
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeReactionSettlementTest, "Hodge.HitReaction.DamageAndBodySnapshot", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeReactionSettlementTest::RunTest(const FString& Parameters)
 {
 	HodgeReactionTests::FFixture F;
@@ -152,6 +186,7 @@ bool FHodgeReactionSettlementTest::RunTest(const FString& Parameters)
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeReactionImmuneTest, "Hodge.HitReaction.ImmunityNoOutputAndDeath", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeReactionImmuneTest::RunTest(const FString& Parameters)
 {
 	HodgeReactionTests::FFixture F;
@@ -167,6 +202,7 @@ bool FHodgeReactionImmuneTest::RunTest(const FString& Parameters)
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeReactionLifecycleTest, "Hodge.HitReaction.UpdateExpiryAndDetach", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeReactionLifecycleTest::RunTest(const FString& Parameters)
 {
 	HodgeReactionTests::FFixture F;
@@ -205,6 +241,7 @@ bool FHodgeReactionLifecycleTest::RunTest(const FString& Parameters)
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeReactionFallbackTest, "Hodge.HitReaction.FallbackAndEmptyImpact", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeReactionFallbackTest::RunTest(const FString& Parameters)
 {
 	HodgeReactionTests::FFixture F;
@@ -225,6 +262,7 @@ bool FHodgeReactionFallbackTest::RunTest(const FString& Parameters)
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeReactionMotionTest, "Hodge.HitReaction.MotionAndDownedRecovery", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeReactionMotionTest::RunTest(const FString& Parameters)
 {
 	HodgeReactionTests::FFixture F;
@@ -246,11 +284,13 @@ bool FHodgeReactionMotionTest::RunTest(const FString& Parameters)
 	return true;
 }
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeReactionCancellationTest, "Hodge.HitReaction.CancellationAndInput", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeReactionCancellationTest::RunTest(const FString& Parameters)
 {
 	HodgeReactionTests::FFixture F;
 	F.Pawn->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 	const auto JumpHandle = F.ASC->GiveAbility(FGameplayAbilitySpec(UHodgeHitReactionTestAbility::StaticClass(), 1));
+	// 通过ASC发起激活，保留GAS自身的条件与消耗校验。
 	if (!TestTrue(TEXT("Native action starts before hit"), F.ASC->TryActivateAbility(JumpHandle, false))) { return false; }
 	UGameplayAbility* Jump = F.ASC->FindAbilitySpecFromHandle(JumpHandle)->GetPrimaryInstance();
 	Jump->SetCanBeCanceled(false);
@@ -272,11 +312,15 @@ bool FHodgeReactionCancellationTest::RunTest(const FString& Parameters)
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeReactionEnemyTest, "Hodge.HitReaction.EnemyPawnDataInitialization", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeReactionEnemyTest::RunTest(const FString& Parameters)
 {
-	const auto Values = UWorld::InitializationValues().AllowAudioPlayback(false).CreatePhysicsScene(true).CreateNavigation(false).CreateAISystem(false);
-	UWorld* World = UWorld::CreateWorld(EWorldType::EditorPreview, false, NAME_None, nullptr, true, ERHIFeatureLevel::Num, &Values);
+	UGameInstance* Instance = nullptr;
+	// 本次操作所在的世界。
+	UWorld* World = FHodgeEnemyInitTestAccess::CreateWorld(Instance);
 	auto* Enemy = World->SpawnActor<AHodgeEnemyCharacter>();
+	if (!Enemy->GetController()) { World->SpawnActor<AAIController>()->Possess(Enemy); }
+	Enemy->FindComponentByClass<UHodgePawnExtensionComponent>()->TryToChangeInitState(HodgeGameplayTags::InitState_Spawned);
 	auto* EarlyASC = Enemy->FindComponentByClass<UHodgeAbilitySystemComponent>();
 	TestEqual(TEXT("Native enemy exposes attribute ownership before PawnData arrives"), Enemy->GetHodgeAbilitySystemComponent(), EarlyASC);
 	auto* EarlyHealth = NewObject<UHodgeHealthSet>(Enemy);
@@ -287,18 +331,22 @@ bool FHodgeReactionEnemyTest::RunTest(const FString& Parameters)
 	Data->StatProfile->BaseDamage = FScalableFloat(25.f);
 	Data->HitReactionProfile = NewObject<UHodgeHitReactionProfile>(Enemy);
 	Enemy->EnemyPawnData = Data;
+	FHodgeEnemyInitTestAccess::WithoutExperience(Enemy->GetEnemyInitComponent());
+	// 统一战斗组件。
+	auto* Combat = NewObject<UHodgeCombatComponentBase>(Enemy); Enemy->AddInstanceComponent(Combat); Combat->RegisterComponent();
 	TestTrue(TEXT("Native enemy binds configured PawnData without PlayerState"), Enemy->InitializeEnemyAbilitySystem());
 	auto* ASC = Enemy->GetHodgeAbilitySystemComponent();
 	if (TestNotNull(TEXT("Enemy ASC exists"), ASC))
 	{
 		TestEqual(TEXT("Enemy ASC owner is the Pawn"), ASC->GetOwnerActor(), static_cast<AActor*>(Enemy));
 		TestEqual(TEXT("Enemy ASC avatar is the Pawn"), ASC->GetAvatarActor(), static_cast<AActor*>(Enemy));
-		TestEqual(TEXT("Configured stats initialize full enemy health"), ASC->GetSet<UHodgeHealthSet>()->GetHealth(), 350.f);
+		if (TestNotNull(TEXT("Enemy HealthSet is initialized"), ASC->GetSet<UHodgeHealthSet>()))
+		{ TestEqual(TEXT("Configured stats initialize full enemy health"), ASC->GetSet<UHodgeHealthSet>()->GetHealth(), 350.f); }
 		const int32 Sets = ASC->GetSpawnedAttributes().Num();
 		TestTrue(TEXT("Repeat bind is idempotent"), Enemy->InitializeEnemyAbilitySystem());
 		TestEqual(TEXT("No duplicate attribute sets"), ASC->GetSpawnedAttributes().Num(), Sets);
 	}
-	World->DestroyWorld(false);
+	FHodgeEnemyInitTestAccess::DestroyWorld(Instance, World);
 	return true;
 }
 #endif

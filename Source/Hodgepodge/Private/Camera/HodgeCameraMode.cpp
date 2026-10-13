@@ -1,3 +1,6 @@
+/** @file HodgeCameraMode.cpp
+ * @brief 实现相机模式与混合栈相关的类型、接口与现有处理流程。
+ */
 // 111 屎山代码来袭
 
 
@@ -441,6 +444,7 @@ void UHodgeCameraModeStack::PushCameraMode(TSubclassOf<UHodgeCameraMode> CameraM
 	}
 
 	// 判断新 CameraMode 是否需要进行平滑混合
+	CameraMode->OnBecomeTop();
 	const bool bShouldBlend = ((CameraMode->GetBlendTime() > 0.0f) && (StackSize > 0));
 
 	// 如果需要混合，则继承原来的贡献权重，否则直接从 100% 开始
@@ -643,8 +647,8 @@ void UHodgeCameraModeStack::GetBlendInfo(float& OutWeightOfTopLayer, FGameplayTa
 	}
 	else
 	{
-		// 获取栈底的 CameraMode
-		UHodgeCameraMode* TopEntry = CameraModeStack.Last();
+		// 栈顶位于索引零，不能把底层的满权重误报为当前模式。
+		UHodgeCameraMode* TopEntry = CameraModeStack[0];
 		check(TopEntry);
 
 		// 获取该 CameraMode 当前的混合权重
@@ -653,4 +657,9 @@ void UHodgeCameraModeStack::GetBlendInfo(float& OutWeightOfTopLayer, FGameplayTa
 		// 获取该 CameraMode 的类型 GameplayTag
 		OutTagOfTopLayer = TopEntry->GetCameraTypeTag();
 	}
+}
+
+TSubclassOf<UHodgeCameraMode> UHodgeCameraModeStack::GetTopCameraModeClass() const
+{
+	return CameraModeStack.IsEmpty() ? nullptr : CameraModeStack[0]->GetClass();
 }

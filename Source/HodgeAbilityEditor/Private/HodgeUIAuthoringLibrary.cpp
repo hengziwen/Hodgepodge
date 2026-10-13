@@ -1,4 +1,13 @@
+﻿/** @file HodgeUIAuthoringLibrary.cpp
+ * @brief 实现UMG编辑器制作与验证函数库相关的类型、接口与现有处理流程。
+ */
 #include "HodgeUIAuthoringLibrary.h"
+#include "GameFramework/PlayerInput.h"
+#include "InputCoreTypes.h"
+#include "UI/IndicatorSystem/IndicatorLayer.h"
+#include "UI/Targeting/HodgeLockOnIndicatorWidget.h"
+#include "UI/IndicatorSystem/HodgeIndicatorManagerComponent.h"
+#include "UI/IndicatorSystem/IndicatorDescriptor.h"
 #include "Editor.h"
 #include "UI/Foundation/HodgePrimaryGameLayout.h"
 #include "UI/Subsystem/HodgeUIManagerSubsystem.h"
@@ -10,8 +19,12 @@
 #include "Component/HodgeExperienceManagerComponent.h"
 #include "Component/HodgeHealthComponent.h"
 #include "Component/HodgeHeroComponent.h"
+#include "Component/HodgePawnExtensionComponent.h"
+#include "Data/HodgePawnData.h"
+#include "Camera/HodgeCameraMode.h"
 #include "AbilitySystem/HodgeGameplayTags.h"
 #include "AbilitySystem/HodgeAbilitySystemComponent.h"
+#include "AbilitySystem/Abilities/HodgeGameplayAbility_LockOn.h"
 #include "AbilitySystem/AttributeSet/HodgeHealthSet.h"
 #include "Core/PlayerController/HodgePlayerController.h"
 #include "Blueprint/WidgetTree.h"
@@ -74,9 +87,15 @@
 #include "Kismet/KismetTextLibrary.h"
 #include "Components/Overlay.h"
 #include "Components/OverlaySlot.h"
+#include "Components/CanvasPanel.h"
+#include "Components/CanvasPanelSlot.h"
+#include "Components/Image.h"
+#include "Engine/Texture2D.h"
 #include "Components/VerticalBox.h"
+#include "Components/VerticalBoxSlot.h"
 #include "Components/HorizontalBox.h"
 #include "Components/SizeBox.h"
+#include "Components/SizeBoxSlot.h"
 #include "Components/Border.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
@@ -87,16 +106,31 @@
 
 namespace
 {
+    /** 将当前报告对象序列化为JSON字符串。
+     * @param Data 当前操作使用的数据。
+     * @return 本次生成的文字或诊断信息。
+     */
     FString Json(const TSharedRef<FJsonObject>& Data)
     { FString Result; FJsonSerializer::Serialize(Data, TJsonWriterFactory<>::Create(&Result)); return Result; }
+    /** 保存当前资产。
+     * @param Asset 资产，由调用方传入。
+     * @return true表示本次检查或操作成功，false表示失败。
+     */
     bool Save(UObject* Asset)
     {
         FSavePackageArgs Args; Args.TopLevelFlags = RF_Public | RF_Standalone; Args.SaveFlags = SAVE_NoError;
         const FString Filename = FPackageName::LongPackageNameToFilename(Asset->GetOutermost()->GetName(), FPackageName::GetAssetPackageExtension());
         return UPackage::SavePackage(Asset->GetOutermost(), Asset, *Filename, Args);
     }
+    /** 在指定资产路径创建或取得蓝图。
+     * @param Path 路径，由调用方传入。
+     * @param Parent 父项，由调用方传入。
+     * @param Widget 控件，由调用方传入。
+     * @return 本次计算、查询或创建得到的Blueprint。
+     */
     UBlueprint* Blueprint(const FString& Path, UClass* Parent, bool Widget)
     {
+        // 先检查对象与上下文，避免在依赖失效后继续处理。
         if (auto* Existing = LoadObject<UBlueprint>(nullptr, *Path))
         { return Existing->ParentClass == Parent ? Existing : nullptr; }
         const FString Name = FPackageName::GetShortName(Path);
@@ -112,9 +146,14 @@ namespace
         if (Log.NumErrors || !BP->GeneratedClass || !Save(BP)) { return nullptr; }
         return BP;
     }
+    /** 在测试调度入口执行指定的界面动作。
+     * @param World 本次操作所在的世界。
+     * @return 本次计算、查询或创建得到的游戏功能扩展动作。
+     */
     UGameFeatureAction* UIAction(UWorld* World)
     {
         auto* Manager = World && World->GetGameState() ? World->GetGameState()->FindComponentByClass<UHodgeExperienceManagerComponent>() : nullptr;
+        // 先检查对象与上下文，避免在依赖失效后继续处理。
         if (!Manager || !Manager->IsExperienceLoaded()) { return nullptr; }
         for (const UHodgeExperienceActionSet* Set : Manager->GetCurrentExperienceChecked()->ActionSets)
         { for (UGameFeatureAction* Action : Set->Actions) { if (Action && Action->IsA<UGameFeatureAction_AddWidgets>()) { return Action; } } }
@@ -122,6 +161,7 @@ namespace
     }
 }
 
+/** 创建FoundationAssets。 */
 FString UHodgeUIAuthoringLibrary::CreateFoundationAssets()
 {
     auto Report = MakeShared<FJsonObject>(); Report->SetBoolField(TEXT("success"), false);
@@ -134,6 +174,7 @@ FString UHodgeUIAuthoringLibrary::CreateFoundationAssets()
     auto* AbilitiesBP = LoadObject<UBlueprint>(nullptr, *(Base + TEXT("HUD/WBP_AbilityBar")));
     auto* MenuBP = LoadObject<UBlueprint>(nullptr, *(Base + TEXT("Menu/WBP_HodgePauseMenu")));
     auto* DialogBP = LoadObject<UBlueprint>(nullptr, *(Base + TEXT("Menu/WBP_HodgeConfirmation")));
+    // 先检查对象与上下文，避免在依赖失效后继续处理。
     if (!RootBP || !HUDBP || !VitalsBP || !AbilitiesBP || !MenuBP || !DialogBP)
     { Report->SetStringField(TEXT("error"), TEXT("MigrateDesignerAssets must create the formal WBP first")); return Json(Report); }
 
@@ -187,6 +228,7 @@ FString UHodgeUIAuthoringLibrary::CreateFoundationAssets()
     return Json(Report);
 }
 
+/** 检查玩家界面。 */
 FString UHodgeUIAuthoringLibrary::InspectPlayerUI(APlayerController* Player)
 {
     auto Data = MakeShared<FJsonObject>();
@@ -202,6 +244,7 @@ FString UHodgeUIAuthoringLibrary::InspectPlayerUI(APlayerController* Player)
     Data->SetBoolField(TEXT("own_viewport"), LP && Player->GetWorld()->GetGameViewport() && Player->GetWorld()->GetGameViewport()->GetGameInstance() == LP->GetGameInstance());
     Data->SetBoolField(TEXT("game_input"), Manager ? Manager->IsGameInputAllowed(LP) : true);
     Data->SetNumberField(TEXT("pending"), Root ? Root->GetPendingRequestCount() : 0);
+    // 先检查对象与上下文，避免在依赖失效后继续处理。
     if (!Root) { return Json(Data); }
     for (const auto& Pair : {TPair<FString,FGameplayTag>(TEXT("game"), HodgeGameplayTags::UI_Layer_Game),
         TPair<FString,FGameplayTag>(TEXT("menu"), HodgeGameplayTags::UI_Layer_Menu),
@@ -213,6 +256,24 @@ FString UHodgeUIAuthoringLibrary::InspectPlayerUI(APlayerController* Player)
     }
     auto* Game = Root->GetLayer(HodgeGameplayTags::UI_Layer_Game);
     auto* HUD = Game ? Game->GetActiveWidget() : nullptr;
+    if (HUD && HUD->WidgetTree)
+    {
+        const FGeometry& RootGeometry = Root->GetCachedGeometry();
+        const FVector2D RootSize = RootGeometry.GetLocalSize();
+        if (RootSize.X > 0 && RootSize.Y > 0)
+        {
+            auto RecordPosition = [&](UWidget* Widget, const FString& Prefix)
+            {
+                if (!Widget) { return; }
+                const FGeometry& Geometry = Widget->GetCachedGeometry();
+                const FVector2D Center = RootGeometry.AbsoluteToLocal(Geometry.LocalToAbsolute(Geometry.GetLocalSize() * .5f));
+                Data->SetNumberField(Prefix + TEXT("_x"), Center.X / RootSize.X);
+                Data->SetNumberField(Prefix + TEXT("_y"), Center.Y / RootSize.Y);
+            };
+            RecordPosition(HUD->WidgetTree->FindWidget(TEXT("PlayerVitalsPoint")), TEXT("vitals_center"));
+            RecordPosition(HUD->WidgetTree->FindWidget(TEXT("EndButton")), TEXT("end_center"));
+        }
+    }
     int32 Entries = 0;
     if (HUD && HUD->WidgetTree)
     {
@@ -227,6 +288,7 @@ FString UHodgeUIAuthoringLibrary::InspectPlayerUI(APlayerController* Player)
                     {
                         if (auto* Bar = Cast<UProgressBar>(Entry->WidgetTree->FindWidget(TEXT("HealthBar")))) { Data->SetNumberField(TEXT("display_percent"),Bar->GetPercent()); }
                         if (auto* Text = Cast<UTextBlock>(Entry->WidgetTree->FindWidget(TEXT("HealthText")))) { Data->SetStringField(TEXT("display_text"),Text->GetText().ToString()); }
+                        if (auto* Text = Cast<UTextBlock>(Entry->WidgetTree->FindWidget(TEXT("LevelText")))) { Data->SetStringField(TEXT("display_level"),Text->GetText().ToString()); }
                     }
                     if (Entry->GetClass()->GetFName() == TEXT("WBP_AbilityBar_C") && Entry->WidgetTree)
                     {
@@ -252,6 +314,19 @@ FString UHodgeUIAuthoringLibrary::InspectPlayerUI(APlayerController* Player)
         Data->SetBoolField(TEXT("vitals_ready"),Vitals.bReady);
     }
     Data->SetNumberField(TEXT("entries"), Entries);
+    if (auto* IndicatorManager = Player->FindComponentByClass<UHodgeIndicatorManagerComponent>())
+    {
+        Data->SetNumberField(TEXT("indicators"),IndicatorManager->GetIndicators().Num());
+        TArray<TSharedPtr<FJsonValue>> Widgets;
+        for (auto* Descriptor : IndicatorManager->GetIndicators())
+        {
+            auto Entry = MakeShared<FJsonObject>(); Entry->SetStringField(TEXT("class"),Descriptor->GetIndicatorClass().ToString());
+            auto* Widget = Descriptor->IndicatorWidget.Get(); Entry->SetBoolField(TEXT("ready"),Widget!=nullptr);
+            if (Widget) { Entry->SetStringField(TEXT("world"),GetPathNameSafe(Widget->GetWorld())); }
+            Widgets.Add(MakeShared<FJsonValueObject>(Entry));
+        }
+        Data->SetArrayField(TEXT("indicator_widgets"),Widgets);
+    }
     if (Player->GetPawn())
     {
         if (auto* Hero = Player->GetPawn()->FindComponentByClass<UHodgeHeroComponent>())
@@ -260,10 +335,12 @@ FString UHodgeUIAuthoringLibrary::InspectPlayerUI(APlayerController* Player)
     return Json(Data);
 }
 
+/** 把验证用界面或属性操作排入后续游戏Tick。 */
 bool UHodgeUIAuthoringLibrary::QueueUIAction(APlayerController* Player, FName Action, float Value)
 {
     if (!Player || !Player->GetWorld() || Player->GetWorld()->WorldType != EWorldType::PIE) { return false; }
     TWeakObjectPtr<APlayerController> Weak = Player;
+    // 向当前监听者发布状态变化，调用方继续负责后续处理。
     Player->GetWorld()->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateLambda([Weak, Action, Value]()
     {
         auto* PC = Weak.Get(); if (!PC) { return; }
@@ -271,6 +348,29 @@ bool UHodgeUIAuthoringLibrary::QueueUIAction(APlayerController* Player, FName Ac
         auto* Instance = LP ? LP->GetGameInstance() : nullptr;
     auto* Manager = Instance ? Instance->GetSubsystem<UHodgeUIManagerSubsystem>() : nullptr;
         auto* Root = Manager ? Manager->GetRootLayout(LP) : nullptr;
+        // 从按键入口验证 IMC，而非绕过映射直接注入 InputAction。
+        if (Action == TEXT("LockOnKey"))
+        {
+            if (PC->IsLocalController()) { PC->InputKey(FInputKeyParams(EKeys::MiddleMouseButton,Value > .5f ? IE_Pressed : IE_Released,Value > .5f ? 1. : 0.)); }
+            return;
+        }
+        if (Action == TEXT("CameraOverride"))
+        {
+            // 此入口只操作 PIE 本地 Hero，复用实际 GA 使用的模式所有权接口。
+            if (!PC->IsLocalController() || !PC->GetPawn() || !PC->GetWorld()->IsPlayInEditor()) { return; }
+            auto* Hero = PC->GetPawn()->FindComponentByClass<UHodgeHeroComponent>();
+            const auto* Extension = UHodgePawnExtensionComponent::FindPawnExtensionComponent(PC->GetPawn());
+            const auto* Data = Extension ? Extension->GetPawnData<UHodgePawnData>() : nullptr;
+            auto* ASC = Extension ? Extension->GetHodgeAbilitySystemComponent() : nullptr;
+            const auto* Spec = ASC ? ASC->FindAbilitySpecFromClass(UHodgeGameplayAbility_LockOn::StaticClass()) : nullptr;
+            if (Hero && Data && Data->DefaultCameraMode && Spec)
+            {
+                // 用已授予的命令 Spec 标识验证请求，不在 Editor 模块生成不可导出的 GAS 句柄。
+                if (Value > .5f) { Hero->SetAbilityCameraMode(Data->DefaultCameraMode,Spec->Handle); }
+                else { Hero->ClearAbilityCameraMode(Spec->Handle); }
+            }
+            return;
+        }
         if (Action == TEXT("Damage"))
         {
             auto* HC = Cast<AHodgePlayerController>(PC);
@@ -350,6 +450,18 @@ bool UHodgeUIAuthoringLibrary::QueueUIAction(APlayerController* Player, FName Ac
                 }
             }
         }
+        else if (Action == TEXT("EndButton"))
+        {
+            auto* HUD = Root->GetLayer(HodgeGameplayTags::UI_Layer_Game)->GetActiveWidget();
+            auto* Button = HUD && HUD->WidgetTree ? Cast<UButton>(HUD->WidgetTree->FindWidget(TEXT("EndButton"))) : nullptr;
+            if (Button) { Button->OnClicked.Broadcast(); }
+        }
+        else if (Action == TEXT("MenuReturn"))
+        {
+            auto* Menu = Root->GetLayer(HodgeGameplayTags::UI_Layer_Menu)->GetActiveWidget();
+            auto* Button = Menu && Menu->WidgetTree ? Menu->WidgetTree->FindWidget(TEXT("ResumeButton")) : nullptr;
+            if (Button) { if (auto* Function = Button->FindFunction(TEXT("HandleButtonClicked"))) { Button->ProcessEvent(Function, nullptr); } }
+        }
         else if (Action == TEXT("Menu"))
         { Root->PushAsync(HodgeGameplayTags::UI_Layer_Menu, TSoftClassPtr<UCommonActivatableWidget>(FSoftObjectPath(TEXT("/Game/Main/UI/Menu/WBP_HodgePauseMenu.WBP_HodgePauseMenu_C"))), [](UCommonActivatableWidget*){}); }
         else if (Action == TEXT("Modal"))
@@ -380,19 +492,34 @@ bool UHodgeUIAuthoringLibrary::QueueUIAction(APlayerController* Player, FName Ac
 
 namespace
 {
+    /** 保存Designer图的数据和接口契约。 */
     struct FDesignerGraph
     {
+        // BP的数据或对象引用。
         UWidgetBlueprint* BP;
+        // 图的数据或对象引用。
         UEdGraph* Graph;
+        // Schema的数据或对象引用。
         const UEdGraphSchema_K2* Schema = GetDefault<UEdGraphSchema_K2>();
+        // 收集配置或执行失败的诊断。
         TArray<FString>& Errors;
+        // X的数值或阈值。
         int32 X = 0;
+        // Y的数值或阈值。
         int32 Y = 0;
+        /** 构造Designer图并初始化其默认状态。
+         * @param InBP BP，由调用方传入。
+         * @param InErrors 收集配置或执行失败的诊断。
+         */
         FDesignerGraph(UWidgetBlueprint* InBP, TArray<FString>& InErrors) : BP(InBP), Errors(InErrors)
         {
             Graph = BP->UbergraphPages.Num() ? BP->UbergraphPages[0].Get() : FBlueprintEditorUtils::CreateNewGraph(BP, TEXT("EventGraph"), UEdGraph::StaticClass(), UEdGraphSchema_K2::StaticClass());
             if (!BP->UbergraphPages.Contains(Graph)) { FBlueprintEditorUtils::AddUbergraphPage(BP, Graph); }
         }
+        /** 创建当前图中的指定节点。
+         * @param Allocate Allocate，由调用方传入。
+         * @return 本次计算、查询或创建得到的T。
+         */
         template<class T> T* Node(bool Allocate = true)
         {
             auto* N = NewObject<T>(Graph); Graph->AddNode(N, false, false); N->CreateNewGuid();
@@ -400,52 +527,116 @@ namespace
             if (Allocate) { N->AllocateDefaultPins(); }
             return N;
         }
+        /** 构造当前图节点需要的引脚类型描述。
+         * @param Category Category，由调用方传入。
+         * @param Object 对象，由调用方传入。
+         * @return 本次计算、查询或创建得到的Ed图Pin类型。
+         */
         static FEdGraphPinType Type(FName Category, UObject* Object = nullptr)
         { FEdGraphPinType T; T.PinCategory = Category; T.PinSubCategoryObject = Object; return T; }
+        /** 查找目标节点的指定引脚。
+         * @param N N，由调用方传入。
+         * @param Name 名称，由调用方传入。
+         * @return 本次计算、查询或创建得到的Ed图Pin。
+         */
         UEdGraphPin* Pin(UEdGraphNode* N, FName Name)
         {
             auto* P = N ? N->FindPin(Name) : nullptr;
             if (!P) { Errors.Add(FString::Printf(TEXT("%s: missing %s.%s"), *BP->GetName(), *GetNameSafe(N), *Name.ToString())); }
             return P;
         }
+        /** 按图模式校验并连接两个引脚。
+         * @param A 参与当前计算的第一份输入值。
+         * @param B 参与当前计算的第二份输入值。
+         */
         void Link(UEdGraphPin* A, UEdGraphPin* B)
         {
             if (!A || !B || !Schema->TryCreateConnection(A, B))
             { Errors.Add(FString::Printf(TEXT("%s: failed link %s -> %s"), *BP->GetName(), A ? *A->PinName.ToString() : TEXT("null"), B ? *B->PinName.ToString() : TEXT("null"))); }
         }
+        /** 设置指定节点引脚的默认值。
+         * @param N N，由调用方传入。
+         * @param Name 名称，由调用方传入。
+         * @param Value 值，由调用方传入。
+         */
         void Default(UEdGraphNode* N, FName Name, const FString& Value)
         { if (auto* P = Pin(N, Name)) { Schema->TrySetDefaultValue(*P, Value); } }
+        /** 设置指定引脚使用的对象引用。
+         * @param N N，由调用方传入。
+         * @param Name 名称，由调用方传入。
+         * @param Value 值，由调用方传入。
+         */
         void Object(UEdGraphNode* N, FName Name, UObject* Value)
         { if (auto* P = Pin(N, Name)) { Schema->TrySetDefaultObject(*P, Value); } }
+        /** 连接编辑器节点的执行引脚。
+         * @param A 参与当前计算的第一份输入值。
+         * @param B 参与当前计算的第二份输入值。
+         */
         void Exec(UEdGraphNode* A, UEdGraphNode* B)
         { Link(Pin(A, UEdGraphSchema_K2::PN_Then), Pin(B, UEdGraphSchema_K2::PN_Execute)); }
+        /** 生成当前蓝图自身对象的引用引脚。
+         * @return 本次计算、查询或创建得到的Ed图Pin。
+         */
         UEdGraphPin* Self() { return Pin(Node<UK2Node_Self>(), UEdGraphSchema_K2::PN_Self); }
+        /** 创建指定类函数的蓝图调用节点。
+         * @param Class 类型，由调用方传入。
+         * @param Name 名称，由调用方传入。
+         * @param Target 本次操作的目标。
+         * @return 本次计算、查询或创建得到的2节点调用Function。
+         */
         UK2Node_CallFunction* Call(UClass* Class, FName Name, UEdGraphPin* Target = nullptr)
         {
             auto* N = Node<UK2Node_CallFunction>(false); N->FunctionReference.SetExternalMember(Name, Class); N->AllocateDefaultPins();
             if (Target) { Link(Target, Pin(N, UEdGraphSchema_K2::PN_Self)); }
             return N;
         }
+        /** 创建当前蓝图自身函数的调用节点。
+         * @param Name 名称，由调用方传入。
+         * @return 本次计算、查询或创建得到的2节点调用Function。
+         */
         UK2Node_CallFunction* CallSelf(FName Name)
         {
             auto* N = Node<UK2Node_CallFunction>(false); N->FunctionReference.SetSelfMember(Name); N->AllocateDefaultPins(); return N;
         }
+        /** 取得当前节点的结果引脚。
+         * @param N N，由调用方传入。
+         * @return 本次计算、查询或创建得到的Ed图Pin。
+         */
         UEdGraphPin* Return(UEdGraphNode* N) { return Pin(N, N && N->IsA<UK2Node_FormatText>() ? FName(TEXT("Result")) : UEdGraphSchema_K2::PN_ReturnValue); }
+        /** 获取当前记录。
+         * @param Name 名称，由调用方传入。
+         * @return 的当前值或引用。
+         */
         UEdGraphPin* Get(FName Name)
         {
             auto* N = Node<UK2Node_VariableGet>(false); N->VariableReference.SetSelfMember(Name); N->AllocateDefaultPins(); return Pin(N, Name);
         }
+        /** 设置当前记录。
+         * @param Name 名称，由调用方传入。
+         * @param Value 值，由调用方传入。
+         * @return 本次计算、查询或创建得到的2节点Variable设置。
+         */
         UK2Node_VariableSet* Set(FName Name, UEdGraphPin* Value = nullptr)
         {
             auto* N = Node<UK2Node_VariableSet>(false); N->VariableReference.SetSelfMember(Name); N->AllocateDefaultPins();
             if (Value) { Link(Value, Pin(N, Name)); }
             return N;
         }
+        /** 创建指定的蓝图事件节点。
+         * @param Class 类型，由调用方传入。
+         * @param Name 名称，由调用方传入。
+         * @return 本次计算、查询或创建得到的2节点事件。
+         */
         UK2Node_Event* Event(UClass* Class, FName Name)
         {
             X = 0; Y += 480;
             auto* N = Node<UK2Node_Event>(false); N->EventReference.SetExternalMember(Name, Class); N->bOverrideFunction = true; N->AllocateDefaultPins(); return N;
         }
+        /** 创建带参数的自定义事件节点。
+         * @param Name 名称，由调用方传入。
+         * @param Params 参数，由调用方传入。
+         * @return 本次计算、查询或创建得到的2节点自定义事件。
+         */
         UK2Node_CustomEvent* Custom(FName Name, const TArray<TPair<FName, FEdGraphPinType>>& Params = {})
         {
             X = 0; Y += 480;
@@ -453,47 +644,93 @@ namespace
             for (const auto& P : Params) { N->CreateUserDefinedPin(P.Key, P.Value, EGPD_Output); }
             return N;
         }
+        /** 向当前蓝图添加指定成员变量。
+         * @param Name 名称，由调用方传入。
+         * @param T T，由调用方传入。
+         * @param Value 值，由调用方传入。
+         */
         void Variable(FName Name, const FEdGraphPinType& T, const FString& Value = {})
         {
             if (!FBlueprintEditorUtils::AddMemberVariable(BP, Name, T, Value)) { Errors.Add(TEXT("Cannot add variable ") + Name.ToString()); }
         }
+        /** 刷新蓝图的反射骨架以供后续节点绑定。 */
         void Skeleton() { FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(BP); }
+        /** 取得当前本地玩家的根布局或当前根节点。
+         * @return 本次计算、查询或创建得到的Ed图Pin。
+         */
         UEdGraphPin* Root()
         {
+            // 玩家控制器对象。
             auto* PC = Call(UUserWidget::StaticClass(), TEXT("GetOwningPlayer"));
             auto* R = Call(UHodgeUIManagerSubsystem::StaticClass(), TEXT("GetRootLayoutForController"));
             Link(Return(PC), Pin(R, TEXT("Controller"))); return Return(R);
         }
+        /** 获取当前LocalPlayer对应的共享界面数据源。
+         * @return 本次计算、查询或创建得到的Ed图Pin。
+         */
         UEdGraphPin* Data()
         {
+            // 玩家控制器对象。
             auto* PC = Call(UUserWidget::StaticClass(), TEXT("GetOwningPlayer"));
             auto* D = Call(UHodgeUIManagerSubsystem::StaticClass(), TEXT("GetGameplayDataForController"));
             Link(Return(PC), Pin(D, TEXT("Controller"))); return Return(D);
         }
+        /** 为当前图创建条件分支节点。
+         * @param Previous 更新前的状态。
+         * @param Condition 条件，由调用方传入。
+         * @return 本次计算、查询或创建得到的2节点IfThenElse。
+         */
         UK2Node_IfThenElse* Branch(UEdGraphNode* Previous, UEdGraphPin* Condition)
         {
             auto* B = Node<UK2Node_IfThenElse>(); Exec(Previous, B); Link(Condition, Pin(B, UEdGraphSchema_K2::PN_Condition)); return B;
         }
+        /** 检查当前对象或记录是否可用于后续处理。
+         * @param Previous 更新前的状态。
+         * @param Value 值，由调用方传入。
+         * @return 本次计算、查询或创建得到的2节点IfThenElse。
+         */
         UK2Node_IfThenElse* Valid(UEdGraphNode* Previous, UEdGraphPin* Value)
         {
             auto* C = Call(UKismetSystemLibrary::StaticClass(), TEXT("IsValid")); Link(Value, Pin(C, TEXT("Object"))); return Branch(Previous, Return(C));
         }
+        /** 创建用于拆分指定结构数据的图节点。
+         * @param Struct Struct，由调用方传入。
+         * @param Value 值，由调用方传入。
+         * @return 本次计算、查询或创建得到的2节点BreakStruct。
+         */
         UK2Node_BreakStruct* Break(UScriptStruct* Struct, UEdGraphPin* Value)
         {
             auto* B = Node<UK2Node_BreakStruct>(false); B->StructType = Struct; B->bMadeAfterOverridePinRemoval = true; B->AllocateDefaultPins();
             for (auto* P : B->Pins) { if (P->Direction == EGPD_Input && P->PinType.PinCategory == UEdGraphSchema_K2::PC_Struct) { Link(Value, P); break; } }
             return B;
         }
+        /** 创建用于绑定事件的委托引脚。
+         * @param Function Function，由调用方传入。
+         * @return 本次计算、查询或创建得到的Ed图Pin。
+         */
         UEdGraphPin* Delegate(FName Function)
         {
             auto* D = Node<UK2Node_CreateDelegate>(); D->SetFunction(Function); Link(Self(), D->GetObjectInPin()); return D->GetDelegateOutPin();
         }
+        /** 建立当前对象的委托或节点连接。
+         * @param Class 类型，由调用方传入。
+         * @param Name 名称，由调用方传入。
+         * @param Target 本次操作的目标。
+         * @param Function Function，由调用方传入。
+         * @return 本次计算、查询或创建得到的T。
+         */
         template<class T> T* Bind(UClass* Class, FName Name, UEdGraphPin* Target, FName Function)
         {
             auto* N = Node<T>(false); N->DelegateReference.SetExternalMember(Name, Class); N->AllocateDefaultPins();
             Link(Target, Pin(N, UEdGraphSchema_K2::PN_Self));
             auto* D = Node<UK2Node_CreateDelegate>(); Link(Self(), D->GetObjectInPin()); Link(D->GetDelegateOutPin(), N->GetDelegatePin()); D->SetFunction(Function); return N;
         }
+        /** 建立指定按钮的蓝图点击事件节点。
+         * @param Widget 控件，由调用方传入。
+         * @param Class 类型，由调用方传入。
+         * @param DelegateName 委托名称，由调用方传入。
+         * @return 本次计算、查询或创建得到的2节点组件已绑定事件。
+         */
         UK2Node_ComponentBoundEvent* Click(FName Widget, UClass* Class, FName DelegateName)
         {
             X = 0; Y += 480;
@@ -503,10 +740,20 @@ namespace
             if (!Property || !DelegateProperty) { Errors.Add(TEXT("Missing button property/delegate: ") + Widget.ToString()); return N; }
             N->InitializeComponentBoundEventParams(Property, DelegateProperty); N->AllocateDefaultPins(); return N;
         }
+        /** 创建指定类型的对象转换节点。
+         * @param Class 类型，由调用方传入。
+         * @param Value 值，由调用方传入。
+         * @return 本次计算、查询或创建得到的2节点DynamicCast。
+         */
         UK2Node_DynamicCast* Cast(UClass* Class, UEdGraphPin* Value)
         {
             auto* N = Node<UK2Node_DynamicCast>(false); N->TargetType = Class; N->SetPurity(true); N->AllocateDefaultPins(); Link(Value, N->GetCastSourcePin()); return N;
         }
+        /** 创建当前图中遍历集合的执行节点。
+         * @param Previous 更新前的状态。
+         * @param Array 数组，由调用方传入。
+         * @return 本次计算、查询或创建得到的2节点MacroInstance。
+         */
         UK2Node_MacroInstance* ForEach(UEdGraphNode* Previous, UEdGraphPin* Array)
         {
             auto* Standard = LoadObject<UBlueprint>(nullptr, TEXT("/Engine/EditorBlueprintResources/StandardMacros.StandardMacros"));
@@ -515,6 +762,9 @@ namespace
             auto* N = Node<UK2Node_MacroInstance>(false); N->SetMacroGraph(Macro); N->AllocateDefaultPins();
             Link(Pin(Previous, UEdGraphSchema_K2::PN_Then), Pin(N, TEXT("Exec"))); Link(Array, Pin(N, TEXT("Array"))); return N;
         }
+        /** 生成页面的默认焦点目标。
+         * @param Widget 控件，由调用方传入。
+         */
         void Focus(FName Widget)
         {
             auto* G = FBlueprintEditorUtils::CreateNewGraph(BP, TEXT("BP_GetDesiredFocusTarget"), UEdGraph::StaticClass(), UEdGraphSchema_K2::StaticClass());
@@ -525,6 +775,10 @@ namespace
             Link(Getter->FindPin(Widget), Result ? Result->FindPin(UEdGraphSchema_K2::PN_ReturnValue) : nullptr);
             if (Entry && Result && Entry->FindPin(UEdGraphSchema_K2::PN_Then)) { Link(Entry->FindPin(UEdGraphSchema_K2::PN_Then), Result->FindPin(UEdGraphSchema_K2::PN_Execute)); }
         }
+        /** 从所属根布局移除指定页面。
+         * @param Previous 更新前的状态。
+         * @param Widget 控件，由调用方传入。
+         */
         void Pop(UEdGraphNode* Previous, UEdGraphPin* Widget)
         {
             auto* V = Valid(Previous, Root()); auto* P = Call(UHodgePrimaryGameLayout::StaticClass(), TEXT("Pop"), Root());
@@ -532,11 +786,23 @@ namespace
         }
     };
 
+    /** 在当前控件树中建立文字显示元素。
+     * @param Tree 编辑器制作或查询使用的UMG控件树。
+     * @param Name 名称，由调用方传入。
+     * @param Value 值，由调用方传入。
+     * @param Size 大小，由调用方传入。
+     * @return 本次计算、查询或创建得到的文字Block。
+     */
     UTextBlock* DesignerText(UWidgetTree* Tree, FName Name, const TCHAR* Value, int32 Size = 18)
     {
         auto* T = Tree->ConstructWidget<UTextBlock>(UTextBlock::StaticClass(), Name); T->bIsVariable = true; T->SetText(FText::FromString(Value));
         auto Font = T->GetFont(); Font.Size = Size; T->SetFont(Font); return T;
     }
+    /** 建立当前页面使用的布局面板。
+     * @param Tree 编辑器制作或查询使用的UMG控件树。
+     * @param Width 宽度，由调用方传入。
+     * @return 本次计算、查询或创建得到的垂直盒体。
+     */
     UVerticalBox* DesignerPanel(UWidgetTree* Tree, float Width)
     {
         auto* Root = Tree->ConstructWidget<UOverlay>(UOverlay::StaticClass(), TEXT("PageRoot")); Tree->RootWidget = Root;
@@ -546,10 +812,23 @@ namespace
         Border->SetBrushColor(FLinearColor(.025f,.035f,.05f,.96f)); Box->AddChild(Border);
         auto* Column = Tree->ConstructWidget<UVerticalBox>(UVerticalBox::StaticClass(), TEXT("Content")); Border->AddChild(Column); return Column;
     }
+    /** 在指定控件树中建立按钮实例。
+     * @param Tree 编辑器制作或查询使用的UMG控件树。
+     * @param Parent 父项，由调用方传入。
+     * @param Class 类型，由调用方传入。
+     * @param Name 名称，由调用方传入。
+     * @return 本次计算、查询或创建得到的控件。
+     */
     UWidget* DesignerButton(UWidgetTree* Tree, UPanelWidget* Parent, UClass* Class, FName Name)
     {
         auto* B = Tree->ConstructWidget<UCommonButtonBase>(Class, Name); B->bIsVariable = true; Parent->AddChild(B); return B;
     }
+    /** 编译当前UMG资产并收集图与控件树诊断。
+     * @param BP BP，由调用方传入。
+     * @param Errors 收集配置或执行失败的诊断。
+     * @param SaveAsset 保存资产，由调用方传入。
+     * @return true表示本次检查或操作成功，false表示失败。
+     */
     bool CompileDesigner(UWidgetBlueprint* BP, TArray<FString>& Errors, bool SaveAsset = false)
     {
         FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(BP);
@@ -557,10 +836,17 @@ namespace
         if (Log.NumErrors) { Errors.Add(TEXT("Blueprint compilation failed: ") + BP->GetName()); return false; }
         return !SaveAsset || Save(BP);
     }
+    /** 按当前制作契约取得UMG蓝图资产。
+     * @param Path 路径，由调用方传入。
+     * @param Parent 父项，由调用方传入。
+     * @param Errors 收集配置或执行失败的诊断。
+     * @return 本次计算、查询或创建得到的控件Blueprint。
+     */
     UWidgetBlueprint* DesignerBlueprint(const FString& Path, UClass* Parent, TArray<FString>& Errors)
     {
         auto* BP = LoadObject<UWidgetBlueprint>(nullptr, *Path);
         if (!BP) { BP = Cast<UWidgetBlueprint>(Blueprint(Path, Parent, true)); }
+        // 先检查对象与上下文，避免在依赖失效后继续处理。
         if (!BP) { Errors.Add(TEXT("Missing WBP: ") + Path); return nullptr; }
         if (BP->GetOutermost()->GetMetaData()->GetValue(BP, TEXT("HodgeUMGVersion")) == FString(TEXT("1"))) { return BP; }
         if (BP->WidgetTree && BP->WidgetTree->RootWidget)
@@ -574,6 +860,10 @@ namespace
 
 namespace
 {
+    /** 构建按钮图。
+     * @param BP BP，由调用方传入。
+     * @param Errors 收集配置或执行失败的诊断。
+     */
     void BuildButtonGraph(UWidgetBlueprint* BP, TArray<FString>& Errors)
     {
         FDesignerGraph G(BP, Errors);
@@ -586,10 +876,16 @@ namespace
         auto* Preview = G.Event(UUserWidget::StaticClass(), TEXT("PreConstruct"));
         auto* Apply = G.CallSelf(TEXT("SetLabel")); G.Link(G.Get(TEXT("LabelText")), G.Pin(Apply, TEXT("Label"))); G.Exec(Preview, Apply);
     }
-    void BuildVitalsGraph(UWidgetBlueprint* BP, TArray<FString>& Errors)
+    /** 构建生命显示图。
+     * @param BP BP，由调用方传入。
+     * @param Errors 收集配置或执行失败的诊断。
+     * @param bReferenceHUD 是否引用HUD界面的控制标记。
+     */
+    void BuildVitalsGraph(UWidgetBlueprint* BP, TArray<FString>& Errors, bool bReferenceHUD = false)
     {
         FDesignerGraph G(BP, Errors);
-        G.Variable(TEXT("GameplayData"), G.Type(UEdGraphSchema_K2::PC_Object, UHodgeGameplayUIDataSource::StaticClass()));
+        if (FBlueprintEditorUtils::FindNewVariableIndex(BP, TEXT("GameplayData")) == INDEX_NONE)
+        { G.Variable(TEXT("GameplayData"), G.Type(UEdGraphSchema_K2::PC_Object, UHodgeGameplayUIDataSource::StaticClass())); }
         auto SnapshotType = G.Type(UEdGraphSchema_K2::PC_Struct, FHodgeUIVitalsSnapshot::StaticStruct());
         SnapshotType.bIsReference = true; SnapshotType.bIsConst = true;
         auto* Apply = G.Custom(TEXT("ApplyVitals"), {{TEXT("Snapshot"), SnapshotType}});
@@ -599,7 +895,9 @@ namespace
         for (bool Ready : {true, false})
         {
             auto* Format = G.Node<UK2Node_FormatText>();
-            G.Schema->TrySetDefaultText(*Format->GetFormatPin(), FText::FromString(Ready ? TEXT("HP {Health} / {MaxHealth}") : TEXT("HP --")));
+            G.Schema->TrySetDefaultText(*Format->GetFormatPin(), FText::FromString(bReferenceHUD
+                ? (Ready ? TEXT("{Health}/{MaxHealth}") : TEXT("--/--"))
+                : (Ready ? TEXT("HP {Health} / {MaxHealth}") : TEXT("HP --"))));
             Format->PinDefaultValueChanged(Format->GetFormatPin());
             if (Ready)
             {
@@ -615,6 +913,15 @@ namespace
             G.Link(G.Pin(Condition, Ready ? UEdGraphSchema_K2::PN_Then : UEdGraphSchema_K2::PN_Else), G.Pin(Label, UEdGraphSchema_K2::PN_Execute));
             auto* Progress = G.Call(UProgressBar::StaticClass(), TEXT("SetPercent"), G.Get(TEXT("HealthBar")));
             G.Link(G.Pin(Break, TEXT("Percent")), G.Pin(Progress, TEXT("InPercent"))); G.Exec(Label, Progress);
+            if (bReferenceHUD)
+            {
+                auto* Level = G.Node<UK2Node_FormatText>();
+                G.Schema->TrySetDefaultText(*Level->GetFormatPin(), FText::FromString(Ready ? TEXT("Lv. {Level}") : TEXT("Lv. --")));
+                Level->PinDefaultValueChanged(Level->GetFormatPin());
+                if (Ready) { G.Link(G.Pin(Break, TEXT("CharacterLevel")), Level->FindArgumentPin(TEXT("Level"))); }
+                auto* SetLevel = G.Call(UTextBlock::StaticClass(), TEXT("SetText"), G.Get(TEXT("LevelText")));
+                G.Link(G.Return(Level), G.Pin(SetLevel, TEXT("InText"))); G.Exec(Progress, SetLevel);
+            }
         }
         auto* Valid = G.Valid(Refresh, G.Get(TEXT("GameplayData")));
         auto* Vitals = G.Call(UHodgeGameplayUIDataSource::StaticClass(), TEXT("GetVitals"), G.Get(TEXT("GameplayData")));
@@ -634,10 +941,15 @@ namespace
         auto* Preview = G.Event(UUserWidget::StaticClass(), TEXT("PreConstruct"));
         auto* Design = G.Branch(Preview, G.Pin(Preview, TEXT("IsDesignTime")));
         auto* PreviewText = G.Call(UTextBlock::StaticClass(), TEXT("SetText"), G.Get(TEXT("HealthText")));
-        G.Schema->TrySetDefaultText(*G.Pin(PreviewText, TEXT("InText")), FText::FromString(TEXT("HP 75 / 100")));
+        G.Schema->TrySetDefaultText(*G.Pin(PreviewText, TEXT("InText")), FText::FromString(bReferenceHUD ? TEXT("75/100") : TEXT("HP 75 / 100")));
         G.Link(G.Pin(Design, UEdGraphSchema_K2::PN_Then), G.Pin(PreviewText, UEdGraphSchema_K2::PN_Execute));
         auto* PreviewBar = G.Call(UProgressBar::StaticClass(), TEXT("SetPercent"), G.Get(TEXT("HealthBar"))); G.Default(PreviewBar, TEXT("InPercent"), TEXT("0.75")); G.Exec(PreviewText, PreviewBar);
     }
+    /** 构建槽位图。
+     * @param BP BP，由调用方传入。
+     * @param ButtonClass 按钮类型，由调用方传入。
+     * @param Errors 收集配置或执行失败的诊断。
+     */
     void BuildSlotGraph(UWidgetBlueprint* BP, UClass* ButtonClass, TArray<FString>& Errors)
     {
         FDesignerGraph G(BP, Errors);
@@ -679,6 +991,11 @@ namespace
         G.Schema->TrySetDefaultText(*G.Pin(PreviewLabel, TEXT("Label")), FText::FromString(TEXT("Skill [Key]")));
         G.Link(G.Pin(Design, UEdGraphSchema_K2::PN_Then), G.Pin(PreviewLabel, UEdGraphSchema_K2::PN_Execute));
     }
+    /** 构建条形显示图。
+     * @param BP BP，由调用方传入。
+     * @param SlotClass 槽位类型，由调用方传入。
+     * @param Errors 收集配置或执行失败的诊断。
+     */
     void BuildBarGraph(UWidgetBlueprint* BP, UClass* SlotClass, TArray<FString>& Errors)
     {
         FDesignerGraph G(BP, Errors);
@@ -714,6 +1031,9 @@ namespace
 
 namespace
 {
+    /** 添加结果Dispatcher。
+     * @param BP BP，由调用方传入。
+     */
     void AddResultDispatcher(UWidgetBlueprint* BP)
     {
         FEdGraphPinType T; T.PinCategory = UEdGraphSchema_K2::PC_MCDelegate;
@@ -733,6 +1053,10 @@ namespace
         }
         BP->DelegateSignatureGraphs.Add(Graph); FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(BP);
     }
+    /** 构建确认图。
+     * @param BP BP，由调用方传入。
+     * @param Errors 收集配置或执行失败的诊断。
+     */
     void BuildConfirmationGraph(UWidgetBlueprint* BP, TArray<FString>& Errors)
     {
         AddResultDispatcher(BP);
@@ -774,6 +1098,11 @@ namespace
         }
         G.Focus(TEXT("AcceptButton"));
     }
+    /** 构建菜单图。
+     * @param BP BP，由调用方传入。
+     * @param ConfirmationClass 确认类型，由调用方传入。
+     * @param Errors 收集配置或执行失败的诊断。
+     */
     void BuildMenuGraph(UWidgetBlueprint* BP, UClass* ConfirmationClass, TArray<FString>& Errors)
     {
         FDesignerGraph G(BP, Errors);
@@ -819,6 +1148,7 @@ namespace
     }
 }
 
+/** 把指定UI原型迁入保存的UMG控件树与Graph。 */
 FString UHodgeUIAuthoringLibrary::MigrateDesignerAssets()
 {
     auto Report = MakeShared<FJsonObject>(); Report->SetBoolField(TEXT("success"), false);
@@ -834,6 +1164,7 @@ FString UHodgeUIAuthoringLibrary::MigrateDesignerAssets()
     }
     if (Complete) { Report->SetBoolField(TEXT("success"), true); Report->SetBoolField(TEXT("alreadyMigrated"), true); return Json(Report); }
     TArray<FHodgeHUDAbilitySlot> OldSlots;
+    // 先检查对象与上下文，避免在依赖失效后继续处理。
     if (auto* Old = LoadObject<UBlueprint>(nullptr, *(Base + TEXT("HUD/WBP_AbilityBar"))))
     { if (auto* CDO = Old->GeneratedClass ? Old->GeneratedClass->GetDefaultObject() : nullptr)
       { if (auto* P = FindFProperty<FArrayProperty>(CDO->GetClass(),TEXT("Slots"))) { OldSlots = *P->ContainerPtrToValuePtr<TArray<FHodgeHUDAbilitySlot>>(CDO); } } }
@@ -913,6 +1244,110 @@ FString UHodgeUIAuthoringLibrary::MigrateDesignerAssets()
     Report->SetArrayField(TEXT("errors"),Messages); Report->SetBoolField(TEXT("success"),Errors.IsEmpty()); return Json(Report);
 }
 
+/** 配置引用HUD界面。 */
+FString UHodgeUIAuthoringLibrary::ConfigureReferenceHUD()
+{
+    auto Report = MakeShared<FJsonObject>();
+    TArray<FString> Errors;
+    if (GEditor && GEditor->PlayWorld)
+    { Report->SetStringField(TEXT("error"), TEXT("Stop PIE before editing HUD assets")); return Json(Report); }
+    auto* HUD = LoadObject<UWidgetBlueprint>(nullptr, TEXT("/Game/Main/UI/HUD/WBP_HodgeHUD.WBP_HodgeHUD"));
+    auto* Vitals = LoadObject<UWidgetBlueprint>(nullptr, TEXT("/Game/Main/UI/HUD/WBP_PlayerVitals.WBP_PlayerVitals"));
+    auto* Menu = LoadObject<UWidgetBlueprint>(nullptr, TEXT("/Game/Main/UI/Menu/WBP_HodgeEndMenu.WBP_HodgeEndMenu"));
+    auto* Icon = LoadObject<UTexture2D>(nullptr, TEXT("/Game/Main/UI/Art/T_EndIcon.T_EndIcon"));
+    if (!HUD || !Vitals || !Menu || !Icon)
+    { Report->SetStringField(TEXT("error"), TEXT("Missing formal HUD, vitals, end menu or icon")); return Json(Report); }
+    if (HUD->GetOutermost()->GetMetaData()->GetValue(HUD, TEXT("HodgeReferenceHUD")) == FString(TEXT("1")))
+    { Report->SetBoolField(TEXT("alreadyConfigured"), true); return Json(Report); }
+
+    auto* Root = Cast<UOverlay>(HUD->WidgetTree->FindWidget(TEXT("HUDRoot")));
+    auto* Point = HUD->WidgetTree->FindWidget(TEXT("PlayerVitalsPoint"));
+    auto* Size = Cast<USizeBox>(Vitals->WidgetTree->FindWidget(TEXT("VitalsSize")));
+    auto* Background = Cast<UBorder>(Vitals->WidgetTree->FindWidget(TEXT("VitalsBackground")));
+    auto* Column = Cast<UVerticalBox>(Vitals->WidgetTree->FindWidget(TEXT("VitalsContent")));
+    auto* Bar = Cast<UProgressBar>(Vitals->WidgetTree->FindWidget(TEXT("HealthBar")));
+    auto* HealthText = Cast<UTextBlock>(Vitals->WidgetTree->FindWidget(TEXT("HealthText")));
+    // 先检查对象与上下文，避免在依赖失效后继续处理。
+    if (!Root || !Point || !Size || !Background || !Column || !Bar || !HealthText)
+    { Report->SetStringField(TEXT("error"), TEXT("Formal Designer structure differs from expected HUD")); return Json(Report); }
+
+    HUD->Modify(); Vitals->Modify();
+    Root->ClearChildren();
+    auto* Canvas = HUD->WidgetTree->ConstructWidget<UCanvasPanel>(UCanvasPanel::StaticClass(), TEXT("ReferenceHUDCanvas"));
+    auto* CanvasSlot = Root->AddChildToOverlay(Canvas);
+    CanvasSlot->SetHorizontalAlignment(HAlign_Fill); CanvasSlot->SetVerticalAlignment(VAlign_Fill);
+    auto* VitalsSlot = Canvas->AddChildToCanvas(Point);
+    VitalsSlot->SetAnchors(FAnchors(.5f, 1.f)); VitalsSlot->SetAlignment(FVector2D(.5f, 1.f));
+    VitalsSlot->SetPosition(FVector2D(0, -12)); VitalsSlot->SetAutoSize(true);
+
+    Size->SetWidthOverride(320); Size->SetHeightOverride(20);
+    Background->SetPadding(FMargin(0)); Background->SetBrushColor(FLinearColor::Transparent);
+    Column->ClearChildren();
+    auto* Row = Vitals->WidgetTree->ConstructWidget<UOverlay>(UOverlay::StaticClass(), TEXT("HealthRow"));
+    Column->AddChild(Row);
+    auto* BarSlot = Row->AddChildToOverlay(Bar); BarSlot->SetPadding(FMargin(0, 3, 52, 3));
+    BarSlot->SetHorizontalAlignment(HAlign_Fill); BarSlot->SetVerticalAlignment(VAlign_Fill);
+    FProgressBarStyle Style = Bar->GetWidgetStyle();
+    Style.BackgroundImage.DrawAs = ESlateBrushDrawType::Box; Style.BackgroundImage.Margin = FMargin(0);
+    Style.BackgroundImage.TintColor = FSlateColor(FLinearColor(.07f, .09f, .08f, .65f));
+    Style.FillImage.DrawAs = ESlateBrushDrawType::Box; Style.FillImage.Margin = FMargin(0);
+    Style.FillImage.TintColor = FSlateColor(FLinearColor::White); Style.EnableFillAnimation = false;
+    Bar->SetWidgetStyle(Style); Bar->SetFillColorAndOpacity(FLinearColor(.86f, .96f, .68f, 1));
+    auto* TextSlot = Row->AddChildToOverlay(HealthText); TextSlot->SetPadding(FMargin(0, 0, 52, 0));
+    TextSlot->SetHorizontalAlignment(HAlign_Fill); TextSlot->SetVerticalAlignment(VAlign_Center);
+    auto Font = HealthText->GetFont(); Font.Size = 12; HealthText->SetFont(Font);
+    HealthText->SetColorAndOpacity(FSlateColor(FLinearColor(.06f, .075f, .06f, 1))); HealthText->SetJustification(ETextJustify::Center);
+    HealthText->SetShadowOffset(FVector2D(0, 0));
+    auto* Level = DesignerText(Vitals->WidgetTree, TEXT("LevelText"), TEXT("Lv. 1"), 12);
+    auto* LevelSlot = Row->AddChildToOverlay(Level); LevelSlot->SetHorizontalAlignment(HAlign_Right); LevelSlot->SetVerticalAlignment(VAlign_Center);
+    Level->SetShadowColorAndOpacity(FLinearColor(0, 0, 0, .9f)); Level->SetShadowOffset(FVector2D(1, 1));
+
+    auto* Button = HUD->WidgetTree->ConstructWidget<UButton>(UButton::StaticClass(), TEXT("EndButton"));
+    Button->bIsVariable = true; Button->SetToolTipText(FText::FromString(TEXT("终焉 · Esc")));
+    auto* ButtonSlot = Canvas->AddChildToCanvas(Button);
+    ButtonSlot->SetAnchors(FAnchors(1.f, 0.f)); ButtonSlot->SetAlignment(FVector2D(1, 0));
+    ButtonSlot->SetPosition(FVector2D(-26, 20)); ButtonSlot->SetSize(FVector2D(64, 70));
+    FButtonStyle ButtonStyle = Button->GetStyle();
+    for (auto* Brush : {&ButtonStyle.Normal, &ButtonStyle.Hovered, &ButtonStyle.Pressed})
+    { Brush->DrawAs = ESlateBrushDrawType::Box; Brush->Margin = FMargin(0); }
+    ButtonStyle.Normal.TintColor = FSlateColor(FLinearColor::Transparent);
+    ButtonStyle.Hovered.TintColor = FSlateColor(FLinearColor(1, 1, 1, .13f));
+    ButtonStyle.Pressed.TintColor = FSlateColor(FLinearColor(.72f, .84f, .65f, .26f));
+    Button->SetStyle(ButtonStyle);
+    auto* Content = HUD->WidgetTree->ConstructWidget<UVerticalBox>(UVerticalBox::StaticClass(), TEXT("EndButtonContent"));
+    Button->AddChild(Content);
+    auto* IconSize = HUD->WidgetTree->ConstructWidget<USizeBox>(USizeBox::StaticClass(), TEXT("EndIconSize"));
+    IconSize->SetWidthOverride(34); IconSize->SetHeightOverride(34);
+    Content->AddChildToVerticalBox(IconSize)->SetHorizontalAlignment(HAlign_Center);
+    auto* Image = HUD->WidgetTree->ConstructWidget<UImage>(UImage::StaticClass(), TEXT("EndIcon"));
+    Image->SetBrushFromTexture(Icon); IconSize->AddChild(Image);
+    auto* Label = DesignerText(HUD->WidgetTree, TEXT("EndLabel"), TEXT("终焉"), 16);
+    Label->SetShadowColorAndOpacity(FLinearColor(0, 0, 0, .85f)); Label->SetShadowOffset(FVector2D(1, 1));
+    auto* LabelSlot = Content->AddChildToVerticalBox(Label); LabelSlot->SetHorizontalAlignment(HAlign_Center); LabelSlot->SetPadding(FMargin(0, 4, 0, 0));
+    for (auto* Widget : {static_cast<UWidget*>(Row), static_cast<UWidget*>(HealthText), static_cast<UWidget*>(Level), static_cast<UWidget*>(Content)})
+    { Widget->SetVisibility(ESlateVisibility::HitTestInvisible); }
+
+    // 只替换本次血条 Graph；其他页面与能力资产保持原有配置。
+    for (UEdGraph* Graph : Vitals->UbergraphPages) { Graph->Nodes.Empty(); }
+    CompileDesigner(Vitals, Errors, false); BuildVitalsGraph(Vitals, Errors, true); CompileDesigner(Vitals, Errors, false);
+    CompileDesigner(HUD, Errors, false);
+    FDesignerGraph Graph(HUD, Errors);
+    auto* Click = Graph.Click(TEXT("EndButton"), UButton::StaticClass(), TEXT("OnClicked"));
+    auto* Toggle = Graph.Call(UHodgeHUDLayout::StaticClass(), TEXT("ToggleHUDMenu")); Graph.Exec(Click, Toggle);
+    CompileDesigner(HUD, Errors, false);
+    auto* DefaultHUD = HUD->GeneratedClass->GetDefaultObject();
+    FindFProperty<FSoftClassProperty>(DefaultHUD->GetClass(), TEXT("EscapeMenuClass"))->SetPropertyValue_InContainer(DefaultHUD, FSoftObjectPtr(Menu->GeneratedClass.Get()));
+    if (Errors.IsEmpty())
+    {
+        HUD->GetOutermost()->GetMetaData()->SetValue(HUD, TEXT("HodgeReferenceHUD"), TEXT("1"));
+        HUD->MarkPackageDirty(); Vitals->MarkPackageDirty();
+        if (!Save(HUD) || !Save(Vitals)) { Errors.Add(TEXT("Failed to save reference HUD assets")); }
+    }
+    TArray<TSharedPtr<FJsonValue>> Messages; for (const auto& Error : Errors) { Messages.Add(MakeShared<FJsonValueString>(Error)); }
+    Report->SetArrayField(TEXT("errors"), Messages); Report->SetBoolField(TEXT("success"), Errors.IsEmpty()); return Json(Report);
+}
+
+/** 检查DesignerAssets。 */
 FString UHodgeUIAuthoringLibrary::InspectDesignerAssets()
 {
     auto Report = MakeShared<FJsonObject>(); TArray<TSharedPtr<FJsonValue>> Items;
@@ -928,6 +1363,7 @@ FString UHodgeUIAuthoringLibrary::InspectDesignerAssets()
     Report->SetArrayField(TEXT("assets"),Items); return Json(Report);
 }
 
+/** 配置DesignerPreviews。 */
 FString UHodgeUIAuthoringLibrary::ConfigureDesignerPreviews()
 {
     auto R = MakeShared<FJsonObject>(); R->SetBoolField(TEXT("success"),false);
@@ -940,6 +1376,7 @@ FString UHodgeUIAuthoringLibrary::ConfigureDesignerPreviews()
         BP->MarkPackageDirty(); if (!Save(BP)) { return Json(R); }
     }
     auto* Root = LoadObject<UWidgetBlueprint>(nullptr,TEXT("/Game/Main/UI/Foundation/WBP_HodgePrimaryLayout"));
+    // 先检查对象与上下文，避免在依赖失效后继续处理。
     if (!Root || !Root->WidgetTree) { return Json(R); }
     Root->WidgetTree->ForEachWidget([](UWidget* Widget)
     { if (auto* Stack = Cast<UCommonActivatableWidgetContainerBase>(Widget)) { Stack->SetTransitionDuration(0.f); } });
@@ -975,4 +1412,37 @@ FString UHodgeUIAuthoringLibrary::ConfigureDesignerPreviews()
         if (!Save(Confirm)) { return Json(R); }
     }
     R->SetBoolField(TEXT("success"),true); return Json(R);
+}
+
+/** 只补充既有画布中的 IndicatorLayer，保留用户其他控件与布局。 */
+bool UHodgeUIAuthoringLibrary::ConfigureLockOnHUD(UWidgetBlueprint* Blueprint)
+{
+    if (!Blueprint || !Blueprint->WidgetTree || (GEditor && GEditor->PlayWorld)) { return false; }
+    auto* Canvas = Cast<UCanvasPanel>(Blueprint->WidgetTree->FindWidget(TEXT("ReferenceHUDCanvas")));
+    if (!Canvas) { return false; }
+    auto* Existing = Blueprint->WidgetTree->FindWidget(TEXT("LockOnIndicatorLayer"));
+    if (Existing) { return Existing->IsA<UIndicatorLayer>() && Existing->GetParent() == Canvas; }
+    Blueprint->Modify();
+    auto* Layer = Blueprint->WidgetTree->ConstructWidget<UIndicatorLayer>(UIndicatorLayer::StaticClass(),TEXT("LockOnIndicatorLayer"));
+    auto* Slot = Canvas->AddChildToCanvas(Layer); Slot->SetAnchors(FAnchors(0.f,0.f,1.f,1.f)); Slot->SetOffsets(FMargin(0)); Slot->SetZOrder(-1);
+    FCompilerResultsLog Results; FKismetEditorUtilities::CompileBlueprint(Blueprint,EBlueprintCompileOptions::None,&Results);
+    Blueprint->MarkPackageDirty(); return Results.NumErrors == 0;
+}
+
+bool UHodgeUIAuthoringLibrary::ConfigureLockOnIndicator(UWidgetBlueprint* Blueprint)
+{
+    if (!Blueprint || !Blueprint->ParentClass || !Blueprint->ParentClass->IsChildOf(UHodgeLockOnIndicatorWidget::StaticClass()) || !Blueprint->WidgetTree || (GEditor && GEditor->PlayWorld)) { return false; }
+    if (Blueprint->WidgetTree->RootWidget) { return true; }
+    Blueprint->Modify();
+    auto* Box = Blueprint->WidgetTree->ConstructWidget<USizeBox>(USizeBox::StaticClass(),TEXT("MarkerSize"));
+    Box->SetWidthOverride(36.f); Box->SetHeightOverride(36.f);
+    auto* Text = Blueprint->WidgetTree->ConstructWidget<UTextBlock>(UTextBlock::StaticClass(),TEXT("MarkerGlyph"));
+    Text->SetText(FText::FromString(TEXT("◇"))); Text->SetJustification(ETextJustify::Center);
+    auto Font = Text->GetFont(); Font.Size = 26; Font.TypefaceFontName = TEXT("Bold"); Text->SetFont(Font);
+    Text->SetColorAndOpacity(FSlateColor(FLinearColor::White));
+    auto* Slot = Cast<USizeBoxSlot>(Box->AddChild(Text));
+    Slot->SetHorizontalAlignment(HAlign_Center); Slot->SetVerticalAlignment(VAlign_Center);
+    Blueprint->WidgetTree->RootWidget = Box;
+    FCompilerResultsLog Results; FKismetEditorUtilities::CompileBlueprint(Blueprint,EBlueprintCompileOptions::None,&Results);
+    Blueprint->MarkPackageDirty(); return Results.NumErrors == 0;
 }

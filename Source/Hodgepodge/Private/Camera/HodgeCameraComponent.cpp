@@ -1,3 +1,6 @@
+/** @file HodgeCameraComponent.cpp
+ * @brief 实现相机模式与混合组件相关的类型、接口与现有处理流程。
+ */
 // 111屎山代码来袭
 
 
@@ -9,6 +12,7 @@
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeCameraComponent)
 
 
+/** 构造相机模式与混合组件并初始化其默认状态。 */
 UHodgeCameraComponent::UHodgeCameraComponent(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -19,6 +23,7 @@ UHodgeCameraComponent::UHodgeCameraComponent(const FObjectInitializer& ObjectIni
 	FieldOfViewOffset = 0.0f;
 }
 
+/** 组件注册后接入当前Owner的依赖。 */
 void UHodgeCameraComponent::OnRegister()
 {
 	Super::OnRegister();
@@ -33,6 +38,7 @@ void UHodgeCameraComponent::OnRegister()
 	}
 }
 
+/** 获取相机视图。 */
 void UHodgeCameraComponent::GetCameraView(float DeltaTime, FMinimalViewInfo& DesiredView)
 {
 	// 相机模式栈必须存在。
@@ -60,6 +66,7 @@ void UHodgeCameraComponent::GetCameraView(float DeltaTime, FMinimalViewInfo& Des
 
 	// 应用当前帧额外增加的 FOV 偏移量。
 	CameraModeView.FieldOfView += FieldOfViewOffset;
+	LastCameraModeView = CameraModeView; bHasCameraModeView = true;
 
 	// FOV 偏移只生效一帧，应用后立即清零。
 	FieldOfViewOffset = 0.0f;
@@ -108,6 +115,17 @@ void UHodgeCameraComponent::GetCameraView(float DeltaTime, FMinimalViewInfo& Des
 	}
 }
 
+TSubclassOf<UHodgeCameraMode> UHodgeCameraComponent::GetActiveCameraModeClass() const
+{
+	return CameraModeStack ? CameraModeStack->GetTopCameraModeClass() : nullptr;
+}
+bool UHodgeCameraComponent::GetLastCameraModeView(FHodgeCameraModeView& OutView) const
+{
+	if (!bHasCameraModeView) { return false; }
+	OutView = LastCameraModeView; return true;
+}
+
+/** 更新相机Modes。 */
 void UHodgeCameraComponent::UpdateCameraModes()
 {
 	// 相机模式栈必须存在。
@@ -129,6 +147,7 @@ void UHodgeCameraComponent::UpdateCameraModes()
 	}
 }
 
+/** 按既有调试设置绘制当前状态或检测几何。 */
 void UHodgeCameraComponent::DrawDebug(UCanvas* Canvas) const
 {
 	// 调试绘制必须提供有效的 Canvas。
@@ -165,6 +184,7 @@ void UHodgeCameraComponent::DrawDebug(UCanvas* Canvas) const
 	CameraModeStack->DrawDebug(Canvas);
 }
 
+/** 获取混合信息。 */
 void UHodgeCameraComponent::GetBlendInfo(float& OutWeightOfTopLayer, FGameplayTag& OutTagOfTopLayer) const
 {
 	// 相机模式栈必须存在。

@@ -1,3 +1,6 @@
+/** @file HodgeEquipmentInstance.cpp
+ * @brief 实现装备运行实例相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "Equipment/HodgeEquipmentInstance.h"
@@ -112,6 +115,12 @@ APawn* UHodgeEquipmentInstance::GetTypedPawn(TSubclassOf<APawn> PawnType) const
 // 根据 Definition 提供的生成配置创建并挂接装备 Actor。
 void UHodgeEquipmentInstance::SpawnEquipmentActors(const TArray<FHodgeEquipmentActorToSpawn>& ActorsToSpawn)
 {
+	TrySpawnEquipmentActors(ActorsToSpawn);
+}
+
+/** 按装备配置生成与挂接Actor，并报告创建是否成功。 */
+bool UHodgeEquipmentInstance::TrySpawnEquipmentActors(const TArray<FHodgeEquipmentActorToSpawn>& ActorsToSpawn)
+{
 	// 只有存在有效所属 Pawn 时才能生成并挂接装备 Actor。
 	if (APawn* OwningPawn = GetPawn())
 	{
@@ -128,24 +137,31 @@ void UHodgeEquipmentInstance::SpawnEquipmentActors(const TArray<FHodgeEquipmentA
 		for (const FHodgeEquipmentActorToSpawn& SpawnInfo : ActorsToSpawn)
 		{
 			// 延迟生成装备 Actor，并将所属 Pawn 设置为新 Actor 的 Owner。
+			if (!IsValid(OwningPawn) || OwningPawn->IsActorBeingDestroyed() || !SpawnInfo.ActorToSpawn || !AttachTarget)
+			{ DestroyEquipmentActors(); return false; }
 			AActor* NewActor = GetWorld()->SpawnActorDeferred<AActor>(SpawnInfo.ActorToSpawn, FTransform::Identity,
 			                                                          OwningPawn);
 
+			if (!NewActor) { DestroyEquipmentActors(); return false; }
+			SpawnedActors.Add(NewActor);
 			// 完成延迟生成流程，初始 Transform 使用单位变换。
 			NewActor->FinishSpawning(FTransform::Identity, /*bIsDefaultTransform=*/ true);
+			if (!IsValid(NewActor) || NewActor->IsActorBeingDestroyed() || OwningPawn->IsActorBeingDestroyed())
+			{ DestroyEquipmentActors(); return false; }
 
 			// 设置装备 Actor 相对于挂接目标的配置偏移。
 			NewActor->SetActorRelativeTransform(SpawnInfo.AttachTransform);
 
 			// 将装备 Actor 挂接到目标组件指定 Socket，并保留当前相对 Transform。
-			NewActor->AttachToComponent(AttachTarget, FAttachmentTransformRules::KeepRelativeTransform,
-			                            SpawnInfo.AttachSocket);
+			if (!NewActor->AttachToComponent(AttachTarget, FAttachmentTransformRules::KeepRelativeTransform, SpawnInfo.AttachSocket))
+			{ DestroyEquipmentActors(); return false; }
 
 			// 保存实际生成的 Actor，供查询、网络复制以及卸装销毁使用。
-			SpawnedActors.Add(NewActor);
 		}
 		OnSpawnedActorsChanged();
+		return true;
 	}
+	return false;
 }
 
 // 销毁当前装备实例生成的所有装备 Actor。
@@ -164,6 +180,7 @@ void UHodgeEquipmentInstance::DestroyEquipmentActors()
 	OnSpawnedActorsChanged();
 }
 
+/** 收到SpawnedActors复制后更新本地状态。 */
 void UHodgeEquipmentInstance::OnRep_SpawnedActors()
 {
 	OnSpawnedActorsChanged();
@@ -188,8 +205,10 @@ void UHodgeEquipmentInstance::OnRep_Instigator()
 {
 }
 
+/** 设置该装备实例的身份、等级与属性配置。 */
 void UHodgeEquipmentInstance::SetStatIdentity(FGuid Id, int32 Level, const UHodgeEquipmentStatProfile* Profile)
 {
+    // 按服务器权限区分本次处理分支。
     if (!GetPawn() || !GetPawn()->HasAuthority()) { return; }
     EquipmentId = Id;
     EquipmentLevel = Level;

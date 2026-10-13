@@ -1,8 +1,53 @@
+﻿/** @file HodgeAnimationAuthoringLibrary.cpp
+ * @brief 实现动画/行为树编辑器制作函数库相关的类型、接口与现有处理流程。
+ */
 #include "HodgeAnimationAuthoringLibrary.h"
+#include "Data/HodgeAbilityDefinition.h"
+#include "Animation/HodgeRootMotionModifier_AttackFacing.h"
+#include "AnimNotifyState_MotionWarping.h"
 
 #include "Animation/AnimBlueprint.h"
 #include "Animation/AnimBlueprintGeneratedClass.h"
 #include "Animation/AnimMontage.h"
+#include "Animation/AnimSequence.h"
+#include "Engine/SkeletalMesh.h"
+#include "Model.h"
+#include "Character/HodgeEnemyCharacter.h"
+#include "Equipment/HodgeEquipmentManagerComponent.h"
+#include "GameFeatureAction_AddComponents.h"
+#include "Builders/CubeBuilder.h"
+#include "Components/BrushComponent.h"
+#include "NavMesh/NavMeshBoundsVolume.h"
+#include "NavigationSystem.h"
+#include "AnimGraphNode_SequencePlayer.h"
+#include "AnimGraphNode_Root.h"
+#include "AI/HodgeBTTask_ExecuteAbility.h"
+#include "Animation/HodgeEnemyAnimInstance.h"
+#include "Animation/HodgeWingAnimInstance.h"
+#include "Animation/HodgeAnimNotifyState_WingAction.h"
+#include "Engine/SCS_Node.h"
+#include "Engine/SimpleConstructionScript.h"
+#include "GameFramework/Character.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "Component/HodgeWingComponent.h"
+#include "HodgeCombatValidationLibrary.h"
+#include "Animation/HodgeWingProfile.h"
+#include "AnimGraphNode_LocalRefPose.h"
+#include "AnimGraphNode_LocalToComponentSpace.h"
+#include "AnimGraphNode_ComponentToLocalSpace.h"
+#include "AnimGraphNode_ModifyBone.h"
+#include "BehaviorTree/BehaviorTree.h"
+#include "BehaviorTree/BlackboardData.h"
+#include "BehaviorTree/Blackboard/BlackboardKeyType_Bool.h"
+#include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
+#include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
+#include "BehaviorTree/Composites/BTComposite_Selector.h"
+#include "BehaviorTree/Composites/BTComposite_Sequence.h"
+#include "BehaviorTree/Tasks/BTTask_MoveTo.h"
+#include "BehaviorTree/Tasks/BTTask_Wait.h"
+#include "BehaviorTree/Decorators/BTDecorator_Blackboard.h"
+#include "BehaviorTreeGraph.h"
+#include "EdGraphSchema_BehaviorTree.h"
 #include "Animation/Skeleton.h"
 #include "AnimGraphNode_ApplyAdditive.h"
 #include "AnimGraphNode_IdentityPose.h"
@@ -40,15 +85,123 @@
 #include "Serialization/ArchiveReplaceObjectRef.h"
 #include "Settings/LevelEditorPlaySettings.h"
 #include "ScopedTransaction.h"
+#include "Misc/ScopeExit.h"
+#include "Rendering/SkeletalMeshRenderData.h"
+#include "Rendering/SkeletalMeshLODRenderData.h"
+#include "UObject/StrongObjectPtr.h"
 #include "UObject/Package.h"
 #include "UObject/UObjectHash.h"
 #include "UObject/UnrealType.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeAnimationAuthoringLibrary)
 
+FString UHodgeAnimationAuthoringLibrary::ConfigureWingBoxHit(UAnimMontage* Montage, UHodgeWingProfile* Profile, FName AnchorBone, float Margin)
+{
+	if (!GEditor || GEditor->PlayWorld || !Montage || !Profile || !Profile->Mesh || AnchorBone.IsNone() ||
+		!FMath::IsFinite(Margin) || Margin < 0.f || Profile->PlaybackMode != EHodgeWingPlaybackMode::AnimationAsset ||
+		!Montage->GetOutermost()->GetName().StartsWith(TEXT("/Game/Main/Character/Hero/Anim/Montages/")) ||
+		!Profile->GetOutermost()->GetName().StartsWith(TEXT("/Game/Main/Character/Hero/Wing/"))) { return TEXT("Invalid wing box authoring context"); }
+	const auto* Binding = Profile->AnimationBindings.FindByPredicate([Montage](const auto& Item) { return Item.SourceAnimation == Montage; });
+	if (!Binding || !Binding->WingAnimation || Profile->Mesh->GetRefSkeleton().FindBoneIndex(AnchorBone) == INDEX_NONE)
+	{ return TEXT("Missing mapped wing animation or anchor bone"); }
+	FAnimNotifyEvent* WingEvent = nullptr;
+	UHodgeAnimNotifyState_HitCheck* Primary = nullptr;
+	for (auto& Event : Montage->Notifies)
+	{
+		auto* Hit = Cast<UHodgeAnimNotifyState_HitCheck>(Event.NotifyStateClass);
+		if (!Hit) { continue; }
+		if (Hit->Hit.Source == EHodgeAnimHitSource::NamedComponent && Hit->Hit.ComponentName == TEXT("WingMesh"))
+		{
+			if (WingEvent) { return TEXT("Multiple wing hit windows require explicit selection"); }
+			WingEvent = &Event;
+		}
+		else if (Hit->Hit.Source == EHodgeAnimHitSource::CharacterMeshSocket) { Primary = Hit; }
+	}
+	if (!WingEvent || !Primary) { return TEXT("Expected one existing wing window and a shared primary strike"); }
+	const float Start = WingEvent->GetTime();
+	const float End = Start + WingEvent->GetDuration();
+	if (Start < 0.f || End <= Start || End > Montage->GetPlayLength() || !Binding->IsWindowOpen(Start) || !Binding->IsWindowOpen(End - .0001f))
+	{ return TEXT("Wing damage window must be inside its presentation window"); }
+	const auto* RenderData = Profile->Mesh->GetResourceForRendering();
+	if (!RenderData || RenderData->LODRenderData.IsEmpty()) { return TEXT("Wing LOD0 render data unavailable"); }
+	TStrongObjectPtr<USkeletalMeshComponent> Mesh(NewObject<USkeletalMeshComponent>(GetTransientPackage()));
+	Mesh->SetSkeletalMeshAsset(Profile->Mesh);
+	Mesh->SetAnimationMode(EAnimationMode::AnimationSingleNode);
+	Mesh->SetWorldTransform(Profile->MeshOffset);
+	Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	Mesh->SetVisibility(false);
+	Mesh->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
+	Mesh->RegisterComponentWithWorld(GEditor->GetEditorWorldContext().World());
+	ON_SCOPE_EXIT { Mesh->DestroyComponent(); };
+	Mesh->SetAnimation(Binding->WingAnimation);
+	const int32 Samples = FMath::Clamp(FMath::CeilToInt((End - Start) * 60.f) + 1, 2, 241);
+	FBox Bounds(ForceInit);
+	int64 VertexSamples = 0;
+	for (int32 Sample = 0; Sample < Samples; ++Sample)
+	{
+		const float Time = FMath::Lerp(Start, End, float(Sample) / (Samples - 1));
+		Mesh->SetPosition(Binding->EvaluateWingTime(Time), false);
+		Mesh->TickAnimation(0.f, false);
+		Mesh->RefreshBoneTransforms();
+		TArray<FMatrix44f> RefToLocal;
+		Mesh->GetCurrentRefToLocalMatrices(RefToLocal, 0);
+		TArray<FVector3f> Vertices;
+		const auto& LOD = RenderData->LODRenderData[0];
+		const auto* Weights = LOD.GetSkinWeightVertexBuffer();
+		if (!Weights || RefToLocal.IsEmpty()) { return TEXT("Wing CPU skin weights or pose matrices unavailable"); }
+		// 直接计算骨骼蒙皮顶点，不依赖临时组件的渲染 MeshObject。
+		USkinnedMeshComponent::ComputeSkinnedPositions(Mesh.Get(), Vertices, RefToLocal, LOD, *Weights);
+		FTransform Anchor = Mesh->GetSocketTransform(AnchorBone);
+		Anchor.SetScale3D(FVector::OneVector);
+		// 原始特效槽不承担实体判定，实体与遮罩翼面都纳入包围范围。
+		for (const auto& Section : RenderData->LODRenderData[0].RenderSections)
+		{
+			if (Section.MaterialIndex == 0) { continue; }
+			for (uint32 Index = Section.BaseVertexIndex; Index < Section.BaseVertexIndex + Section.NumVertices; ++Index)
+			{
+				if (!Vertices.IsValidIndex(Index)) { return TEXT("Wing CPU skin vertex data incomplete"); }
+				const FVector Point = Anchor.InverseTransformPosition(Mesh->GetComponentTransform().TransformPosition(FVector(Vertices[Index])));
+				if (Point.ContainsNaN()) { return TEXT("Nonfinite wing skin vertex"); }
+				Bounds += Point;
+				++VertexSamples;
+			}
+		}
+	}
+	if (!Bounds.IsValid || VertexSamples == 0) { return TEXT("No physical wing vertices sampled"); }
+	const FVector Center = Bounds.GetCenter();
+	const FVector Extent = Bounds.GetExtent() + FVector(Margin);
+	auto* Notify = CastChecked<UHodgeAnimNotifyState_HitCheck>(WingEvent->NotifyStateClass);
+	FHodgeAnimHitConfig Config = Notify->Hit;
+	Config.Shape = EHodgeHitShape::Box;
+	Config.BoneOrSocket = AnchorBone;
+	Config.BoxHalfExtent = Extent;
+	Config.LocalTransform = FTransform(FQuat::Identity, Center);
+	Config.TransformPolicy = EHodgeHitTransformPolicy::Follow;
+	Config.HitGroup = Primary->Hit.HitGroup.IsNone() ? FName(TEXT("PoverWingFinisher")) : Primary->Hit.HitGroup;
+	Config.AttackPhase = Primary->Hit.AttackPhase.IsNone() ? FName(TEXT("Strike")) : Primary->Hit.AttackPhase;
+	TArray<FText> Errors;
+	if (!Config.Validate(Errors)) { return TEXT("Measured wing box configuration failed validation"); }
+	// 测量与预校验全部成功后再提交，避免失败留下一半资产配置。
+	Montage->Modify(); Notify->Modify(); Primary->Modify(); Profile->Modify();
+	Notify->Hit = Config;
+	Primary->Hit.HitGroup = Config.HitGroup;
+	Primary->Hit.AttackPhase = Config.AttackPhase;
+	Profile->bEnableAuthorityHitSampling = true;
+	Montage->RefreshCacheData(); Montage->MarkPackageDirty(); Profile->MarkPackageDirty();
+	return FString::Printf(TEXT("{\"begin\":%.6f,\"end\":%.6f,\"samples\":%d,\"vertices\":%lld,\"center\":[%.6f,%.6f,%.6f],\"half_extent\":[%.6f,%.6f,%.6f],\"margin\":%.6f}"),
+		Start, End, Samples, VertexSamples, Center.X, Center.Y, Center.Z, Extent.X, Extent.Y, Extent.Z, Margin);
+}
+
 namespace HodgeAnimationAuthoring
 {
 	template<typename T>
+	/** 查找Or添加姿势节点。
+	 * @param Graph 图，由调用方传入。
+	 * @param Name 名称，由调用方传入。
+	 * @param X X，由调用方传入。
+	 * @param Y Y，由调用方传入。
+	 * @return Or添加姿势节点的当前值或引用。
+	 */
 	T* FindOrAddPoseNode(UEdGraph* Graph, FName Name, int32 X, int32 Y)
 	{
 		if (T* Existing = FindObject<T>(Graph, *Name.ToString())) { return Existing; }
@@ -61,31 +214,54 @@ namespace HodgeAnimationAuthoring
 		return Node;
 	}
 
+	/** 判断Work资产。
+	 * @param Object 对象，由调用方传入。
+	 * @return true表示满足该查询条件，false表示不满足。
+	 */
 	bool IsWorkAsset(const UObject* Object)
 	{
 		return Object && (Object->GetOutermost()->GetName().StartsWith(TEXT("/Game/CodexText/LyraAnimation/"))
-			|| Object->GetOutermost()->GetName().StartsWith(TEXT("/Game/Main/Character/Hero/Anim/")));
+			|| Object->GetOutermost()->GetName().StartsWith(TEXT("/Game/Main/Character/Enemies/"))
+			|| Object->GetOutermost()->GetName().StartsWith(TEXT("/Game/Main/Character/Hero/Anim/"))
+			|| Object->GetOutermost()->GetName().StartsWith(TEXT("/Game/Main/Character/Hero/Wing/")));
 	}
 
+	/** 封装动画文字Factory的状态与操作接口。 */
 	class FAnimationTextFactory final : public FCustomizableTextObjectFactory
 	{
 	public:
+		/** 构造动画文字Factory并初始化其默认状态。 */
 		FAnimationTextFactory() : FCustomizableTextObjectFactory(GWarn) {}
+		// Blueprint的数据或对象引用。
 		UAnimBlueprint* Blueprint = nullptr;
 
 	protected:
+		/** 检查是否允许创建类型。
+		 * @param ObjectClass 对象类型，由调用方传入。
+		 * @param bOmitSubObjs 是否OmitSubObjs的控制标记。
+		 * @return true表示满足该查询条件，false表示不满足。
+		 */
 		virtual bool CanCreateClass(UClass* ObjectClass, bool& bOmitSubObjs) const override
 		{
 			bOmitSubObjs = false;
 			return ObjectClass && ObjectClass->IsChildOf(UAnimBlueprint::StaticClass());
 		}
 
+		/** 记录文本导入过程中构造的对象。
+		 * @param Object 对象，由调用方传入。
+		 */
 		virtual void ProcessConstructedObject(UObject* Object) override
 		{
 			Blueprint = Cast<UAnimBlueprint>(Object);
 		}
 	};
 
+	/** 按引擎属性导入规则写入目标配置字段。
+	 * @param Object 对象，由调用方传入。
+	 * @param PropertyPath 属性路径，由调用方传入。
+	 * @param Value 值，由调用方传入。
+	 * @return true表示本次检查或操作成功，false表示失败。
+	 */
 	bool ImportProperty(UObject* Object, const FString& PropertyPath, const FString& Value)
 	{
 		TArray<FString> Segments;
@@ -124,8 +300,196 @@ namespace HodgeAnimationAuthoring
 	}
 }
 
+/** 配置翅膀动画。 */
+bool UHodgeAnimationAuthoringLibrary::ConfigureWingActionWindow(UAnimSequenceBase* Source, float Begin, float End)
+{
+	if (!Source || (GEditor && GEditor->PlayWorld) || !FMath::IsFinite(Begin) || !FMath::IsFinite(End) ||
+		Begin < 0.f || End <= Begin || End > Source->GetPlayLength()) { return false; }
+	Source->Modify();
+	for (auto& Event : Source->Notifies)
+	{
+		if (auto* Window = Cast<UHodgeAnimNotifyState_WingAction>(Event.NotifyStateClass); Window && Window->WindowId == TEXT("AttackWing"))
+		{
+			Event.Link(Source, Begin);
+			Event.SetDuration(End - Begin);
+			Event.EndLink.Link(Source, End);
+			Source->RefreshCacheData();
+			return true;
+		}
+	}
+	// 只追加本功能的窗口，不删除用户已有的命中和手持通知。
+	FAnimNotifyEvent Event;
+	Event.NotifyStateClass = NewObject<UHodgeAnimNotifyState_WingAction>(Source);
+	Event.NotifyName = TEXT("AttackWing");
+	Event.MontageTickType = EMontageNotifyTickType::BranchingPoint;
+	Event.Link(Source, Begin);
+	Event.SetDuration(End - Begin);
+	Event.EndLink.Link(Source, End);
+	Source->Notifies.Add(Event);
+	Source->RefreshCacheData();
+	return true;
+}
+
+bool UHodgeAnimationAuthoringLibrary::ConfigureWingAttackPreview(UBlueprint* Blueprint, UHodgeWingProfile* Profile)
+{
+	if (!Blueprint || !Profile || Profile->PlaybackMode != EHodgeWingPlaybackMode::AnimationAsset ||
+		!Blueprint->SimpleConstructionScript || (GEditor && GEditor->PlayWorld)) { return false; }
+	USCS_Node* WingNode = nullptr;
+	USCS_Node* CoordinatorNode = nullptr;
+	for (USCS_Node* Node : Blueprint->SimpleConstructionScript->GetAllNodes())
+	{
+		if (Node->GetVariableName() == TEXT("SkeletalMesh")) { WingNode = Node; }
+		if (Node->GetVariableName() == TEXT("WingPresentation")) { CoordinatorNode = Node; }
+	}
+	auto* Mesh = WingNode ? Cast<USkeletalMeshComponent>(WingNode->ComponentTemplate) : nullptr;
+	if (!Mesh || Mesh->GetSkeletalMeshAsset() != Profile->Mesh) { return false; }
+	Blueprint->Modify();
+	if (!CoordinatorNode)
+	{
+		CoordinatorNode = Blueprint->SimpleConstructionScript->CreateNode(UHodgeWingComponent::StaticClass(), TEXT("WingPresentation"));
+		Blueprint->SimpleConstructionScript->AddNode(CoordinatorNode);
+	}
+	auto* Coordinator = Cast<UHodgeWingComponent>(CoordinatorNode->ComponentTemplate);
+	if (!Coordinator) { return false; }
+	Coordinator->Profile = Profile;
+	Coordinator->ExistingMeshComponentName = TEXT("SkeletalMesh");
+	Mesh->Modify();
+	Mesh->SetHiddenInGame(true);
+	Mesh->SetVisibility(false);
+	Mesh->AnimationData.bSavedPlaying = false;
+	Mesh->AnimationData.bSavedLooping = false;
+	// 身体仍使用用户选择的源动画，仅打开编辑器动画更新。
+	if (auto* Character = Cast<ACharacter>(Blueprint->GeneratedClass->GetDefaultObject()))
+	{
+		Character->GetMesh()->SetUpdateAnimationInEditor(true);
+	}
+	FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(Blueprint);
+	return true;
+}
+
+bool UHodgeAnimationAuthoringLibrary::ConfigureWingAnimation(UAnimBlueprint* Blueprint)
+{
+	if (!Blueprint || !Blueprint->ParentClass->IsChildOf(UHodgeWingAnimInstance::StaticClass()) ||
+		!Blueprint->GetOutermost()->GetName().StartsWith(TEXT("/Game/Main/Character/Hero/Wing/")) || (GEditor && GEditor->PlayWorld)) { return false; }
+	UEdGraph* Graph = nullptr;
+	for (UEdGraph* Candidate : Blueprint->FunctionGraphs)
+	{ if (Candidate && Candidate->GetFName() == TEXT("AnimGraph")) { Graph = Candidate; break; } }
+	if (!Graph) { return false; }
+	using namespace HodgeAnimationAuthoring;
+	auto* Root = FindOrAddPoseNode<UAnimGraphNode_Root>(Graph, TEXT("WingOutput"), 1500, 0);
+	for (UEdGraphNode* Node : TArray<UEdGraphNode*>(Graph->Nodes))
+	{ if (Node != Root && Node->IsA<UAnimGraphNode_Root>()) { FBlueprintEditorUtils::RemoveNode(Blueprint, Node, true); } }
+	auto* Ref = FindOrAddPoseNode<UAnimGraphNode_LocalRefPose>(Graph, TEXT("WingReference"), 0, 0);
+	auto* ToComponent = FindOrAddPoseNode<UAnimGraphNode_LocalToComponentSpace>(Graph, TEXT("WingToComponent"), 200, 0);
+	auto* ToLocal = FindOrAddPoseNode<UAnimGraphNode_ComponentToLocalSpace>(Graph, TEXT("WingToLocal"), 1250, 0);
+	const auto* Schema = Graph->GetSchema();
+	const auto Link = [Schema](UEdGraphNode* A, FName Out, UEdGraphNode* B, FName In)
+	{
+		auto* X = A->FindPin(Out); auto* Y = B->FindPin(In);
+		return X && Y && (X->LinkedTo.Contains(Y) || Schema->TryCreateConnection(X, Y));
+	};
+	bool bOK = Link(Ref, TEXT("Pose"), ToComponent, TEXT("LocalPose"));
+	UEdGraphNode* Previous = ToComponent;
+	const FName Bones[] = {TEXT("Wing000"), TEXT("Wing003"), TEXT("Wing006")};
+	const FName Variables[] = {TEXT("WingRootRotation"), TEXT("WingMidRotation"), TEXT("WingTipRotation")};
+	for (int32 I = 0; I < 3; ++I)
+	{
+		auto* Modify = FindOrAddPoseNode<UAnimGraphNode_ModifyBone>(Graph, *FString::Printf(TEXT("WingBone%d"), I), 450 + I * 260, 0);
+		Modify->Node.BoneToModify.BoneName = Bones[I];
+		Modify->Node.RotationMode = BMM_Additive;
+		Modify->Node.RotationSpace = BCS_BoneSpace;
+		Modify->Node.TranslationMode = BMM_Ignore;
+		Modify->Node.ScaleMode = BMM_Ignore;
+		Modify->Node.Alpha = 1.f;
+		for (int32 P = 0; P < Modify->ShowPinForProperties.Num(); ++P)
+		{ if (Modify->ShowPinForProperties[P].PropertyName == TEXT("Rotation")) { Modify->SetPinVisibility(true, P); break; } }
+		Modify->ReconstructNode();
+		auto* Get = FindOrAddPoseNode<UK2Node_VariableGet>(Graph, *FString::Printf(TEXT("WingRotation%d"), I), 450 + I * 260, -200);
+		Get->VariableReference.SetSelfMember(Variables[I]); Get->ReconstructNode();
+		bOK &= Link(Get, Variables[I], Modify, TEXT("Rotation")) &&
+			Link(Previous, I == 0 ? TEXT("ComponentPose") : TEXT("Pose"), Modify, TEXT("ComponentPose"));
+		Previous = Modify;
+	}
+	bOK &= Link(Previous, TEXT("Pose"), ToLocal, TEXT("ComponentPose")) && Link(ToLocal, TEXT("Pose"), Root, TEXT("Result"));
+	FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(Blueprint);
+	return bOK;
+}
+
+/** 配置翅膀Experience配置。 */
+bool UHodgeAnimationAuthoringLibrary::ConfigureWingExperience(UBlueprint* Experience, TSubclassOf<AActor> ActorClass, TSubclassOf<UActorComponent> ComponentClass)
+{
+	if (!Experience || !Experience->GeneratedClass || !ActorClass || !ComponentClass ||
+		!ComponentClass->IsChildOf(UHodgeWingComponent::StaticClass()) ||
+		Experience->GetOutermost()->GetName() != TEXT("/Game/Main/Experiences/Exp_HodgeDefaultExperience") || (GEditor && GEditor->PlayWorld)) { return false; }
+	UObject* CDO = Experience->GeneratedClass->GetDefaultObject();
+	auto* Property = FindFProperty<FArrayProperty>(CDO->GetClass(), TEXT("Actions"));
+	if (!Property) { return false; }
+	FScriptArrayHelper Actions(Property, Property->ContainerPtrToValuePtr<void>(CDO));
+	for (int32 I = 0; I < Actions.Num(); ++I)
+	{
+		auto* Action = Cast<UGameFeatureAction_AddComponents>(CastFieldChecked<FObjectPropertyBase>(Property->Inner)->GetObjectPropertyValue(Actions.GetRawPtr(I)));
+		if (!Action) { continue; }
+		for (const auto& Entry : Action->ComponentList)
+		{ if (Entry.ActorClass.Get() == ActorClass && Entry.ComponentClass.Get() == ComponentClass) { return true; } }
+		Experience->Modify(); CDO->Modify(); Action->Modify();
+		FGameFeatureComponentEntry Entry; Entry.ActorClass = ActorClass.Get(); Entry.ComponentClass = ComponentClass.Get();
+		Entry.bClientComponent = true; Entry.bServerComponent = true;
+		Action->ComponentList.Add(Entry);
+		FBlueprintEditorUtils::MarkBlueprintAsModified(Experience);
+		return true;
+	}
+	return false;
+}
+
+/** 配置翅膀Finisher。 */
+bool UHodgeAnimationAuthoringLibrary::ConfigureWingFinisher(UAnimMontage* Montage, UHodgeWingProfile* Profile)
+{
+	if (!Montage || !Profile || !Montage->GetOutermost()->GetName().StartsWith(TEXT("/Game/Main/Character/Hero/Anim/Montages/")) ||
+		!Profile->GetOutermost()->GetName().StartsWith(TEXT("/Game/Main/Character/Hero/Wing/")) || (GEditor && GEditor->PlayWorld)) { return false; }
+	for (const auto& Event : Montage->Notifies)
+	{
+		const auto* Existing = Cast<UHodgeAnimNotifyState_HitCheck>(Event.NotifyStateClass);
+		if (Existing && Existing->Hit.Source == EHodgeAnimHitSource::NamedComponent && Existing->Hit.ComponentName == TEXT("WingMesh"))
+		{ return Profile->AttackMontage == Montage; }
+	}
+	FHodgeAnimHitConfig* Primary = nullptr;
+	UObject* PrimaryNotify = nullptr;
+	float Start = TNumericLimits<float>::Max();
+	float End = 0.f;
+	for (auto& Event : Montage->Notifies)
+	{
+		auto* State = Cast<UHodgeAnimNotifyState_HitCheck>(Event.NotifyStateClass);
+		auto* Point = Cast<UHodgeAnimNotify_Hit>(Event.Notify);
+		FHodgeAnimHitConfig* Hit = State ? &State->Hit : (Point ? &Point->Hit : nullptr);
+		if (Hit && Event.GetTime() < Start)
+		{
+			Primary = Hit; PrimaryNotify = State ? static_cast<UObject*>(State) : Point;
+			Start = Event.GetTime(); End = Start + (State ? Event.GetDuration() : .08f);
+		}
+	}
+	if (!Primary || Start < .03f || End <= Start || End + .2f > Montage->GetPlayLength()) { return false; }
+	Montage->Modify(); PrimaryNotify->Modify(); Profile->Modify();
+	if (Primary->HitGroup.IsNone()) { Primary->HitGroup = TEXT("PoverWingFinisher"); }
+	if (Primary->AttackPhase.IsNone()) { Primary->AttackPhase = TEXT("Strike"); }
+	FHodgeAnimHitConfig Config = *Primary;
+	Config.Source = EHodgeAnimHitSource::NamedComponent;
+	Config.ComponentName = TEXT("WingMesh"); Config.BoneOrSocket = TEXT("WingHitTip");
+	Config.WeaponSourceTag = FGameplayTag(); Config.Shape = EHodgeHitShape::Sphere; Config.Radius = 18.f;
+	Config.LocalTransform = FTransform::Identity; Config.TransformPolicy = EHodgeHitTransformPolicy::Follow;
+	Profile->AttackMontage = Montage;
+	Profile->WindupStart = FMath::Max(0.f, Start - .22f);
+	Profile->StrikeStart = Start - .02f;
+	Profile->StrikePeak = (Start + End) * .5f;
+	Profile->RecoveryEnd = End + .2f;
+	const bool bOK = UHodgeCombatValidationLibrary::AddHitNotify(Montage, Start, End, Config, false);
+	Montage->MarkPackageDirty(); Profile->MarkPackageDirty();
+	return bOK;
+}
+
+/** 导入动画蓝图文本并恢复其中的对象与图节点。 */
 UAnimBlueprint* UHodgeAnimationAuthoringLibrary::ImportAnimationBlueprintText(const FString& AssetPath, const FString& TextFilename, UClass* ParentClass, USkeleton* TargetSkeleton)
 {
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (!AssetPath.StartsWith(TEXT("/Game/CodexText/LyraAnimation/")) || !FPackageName::IsValidLongPackageName(AssetPath))
 	{
 		return nullptr;
@@ -190,6 +554,7 @@ UAnimBlueprint* UHodgeAnimationAuthoringLibrary::ImportAnimationBlueprintText(co
 	return Blueprint;
 }
 
+/** 设置动画默认。 */
 bool UHodgeAnimationAuthoringLibrary::SetAnimationDefault(UBlueprint* Blueprint, const FString& PropertyName, const FString& Value)
 {
 	if (!HodgeAnimationAuthoring::IsWorkAsset(Blueprint) || !Blueprint->GeneratedClass) { return false; }
@@ -199,6 +564,7 @@ bool UHodgeAnimationAuthoringLibrary::SetAnimationDefault(UBlueprint* Blueprint,
 	return true;
 }
 
+/** 设置动画节点属性。 */
 bool UHodgeAnimationAuthoringLibrary::SetAnimationNodeProperty(UBlueprint* Blueprint, const FString& NodePath, const FString& PropertyPath, const FString& Value)
 {
 	if (!HodgeAnimationAuthoring::IsWorkAsset(Blueprint)) { return false; }
@@ -210,6 +576,7 @@ bool UHodgeAnimationAuthoringLibrary::SetAnimationNodeProperty(UBlueprint* Bluep
 	return true;
 }
 
+/** 按指定映射更新动画图中的资源引用。 */
 bool UHodgeAnimationAuthoringLibrary::RemapAnimationReferences(UBlueprint* Blueprint, const TArray<UObject*>& Sources, const TArray<UObject*>& Destinations)
 {
 	if (!HodgeAnimationAuthoring::IsWorkAsset(Blueprint) || Sources.Num() != Destinations.Num()) { return false; }
@@ -233,6 +600,7 @@ bool UHodgeAnimationAuthoringLibrary::RemapAnimationReferences(UBlueprint* Bluep
 	return true;
 }
 
+/** 编译当前动画蓝图并返回诊断结果。 */
 FString UHodgeAnimationAuthoringLibrary::CompileAnimationBlueprint(UBlueprint* Blueprint)
 {
 	if (!HodgeAnimationAuthoring::IsWorkAsset(Blueprint)) { return TEXT("ERRORS=1\nAsset is outside the animation work directory."); }
@@ -250,6 +618,7 @@ FString UHodgeAnimationAuthoringLibrary::CompileAnimationBlueprint(UBlueprint* B
 	return Output;
 }
 
+/** 获取骨架骨骼Names。 */
 TArray<FName> UHodgeAnimationAuthoringLibrary::GetSkeletonBoneNames(USkeleton* Skeleton)
 {
 	TArray<FName> Names;
@@ -260,9 +629,11 @@ TArray<FName> UHodgeAnimationAuthoringLibrary::GetSkeletonBoneNames(USkeleton* S
 	return Names;
 }
 
+/** 设置骨架槽位分组。 */
 bool UHodgeAnimationAuthoringLibrary::SetSkeletonSlotGroup(USkeleton* Skeleton, FName Slot, FName Group)
 {
-	if (!Skeleton || !Skeleton->GetPathName().StartsWith(TEXT("/Game/Main/Character/Hero/Anim/")) || Slot.IsNone() || Group.IsNone()) { return false; }
+	if (!Skeleton || (!Skeleton->GetPathName().StartsWith(TEXT("/Game/Main/Character/Hero/Anim/")) &&
+		!Skeleton->GetPathName().StartsWith(TEXT("/Game/Main/Character/Enemies/"))) || Slot.IsNone() || Group.IsNone()) { return false; }
 	Skeleton->Modify();
 	Skeleton->RegisterSlotNode(Slot);
 	Skeleton->SetSlotGroupName(Slot, Group);
@@ -270,11 +641,13 @@ bool UHodgeAnimationAuthoringLibrary::SetSkeletonSlotGroup(USkeleton* Skeleton, 
 	return Skeleton->GetSlotGroupName(Slot) == Group;
 }
 
+/** 获取骨架槽位分组。 */
 FName UHodgeAnimationAuthoringLibrary::GetSkeletonSlotGroup(USkeleton* Skeleton, FName Slot)
 {
 	return Skeleton ? Skeleton->GetSlotGroupName(Slot) : NAME_None;
 }
 
+/** 设置玩家角色受击蒙太奇槽位。 */
 bool UHodgeAnimationAuthoringLibrary::SetHeroReactionMontageSlot(UAnimMontage* Montage, FName Slot)
 {
 	if (!Montage || (!Montage->GetPathName().StartsWith(TEXT("/Game/Main/Character/Hero/Anim/HitReactions/")) &&
@@ -286,6 +659,7 @@ bool UHodgeAnimationAuthoringLibrary::SetHeroReactionMontageSlot(UAnimMontage* M
 	return !Montage->SlotAnimTracks.IsEmpty();
 }
 
+/** 设置玩家角色受击骨架。 */
 bool UHodgeAnimationAuthoringLibrary::SetHeroReactionSkeleton(UAnimationAsset* Asset, USkeleton* Skeleton)
 {
 	if (!Asset || (!Asset->GetPathName().StartsWith(TEXT("/Game/Main/Character/Hero/Anim/HitReactions/")) &&
@@ -296,6 +670,7 @@ bool UHodgeAnimationAuthoringLibrary::SetHeroReactionSkeleton(UAnimationAsset* A
 	return Asset->ReplaceSkeleton(Skeleton, false);
 }
 
+/** 配置玩家角色命中硬直持续时间。 */
 bool UHodgeAnimationAuthoringLibrary::ConfigureHeroHitStunDuration(UAnimMontage* Montage, float Duration)
 {
 	if (!Montage || Montage->GetPathName() != TEXT("/Game/Main/Character/Hero/Anim/HitReactions/AM_Hero_HitStun.AM_Hero_HitStun") ||
@@ -313,6 +688,7 @@ bool UHodgeAnimationAuthoringLibrary::ConfigureHeroHitStunDuration(UAnimMontage*
 	return true;
 }
 
+/** 配置玩家角色命中受击图。 */
 bool UHodgeAnimationAuthoringLibrary::ConfigureHeroHitReactionGraph(UAnimBlueprint* Blueprint)
 {
 	if (!Blueprint || Blueprint->GetPathName() != TEXT("/Game/Main/Character/Hero/Anim/ABP_Pover_Base.ABP_Pover_Base") ||
@@ -374,6 +750,7 @@ bool UHodgeAnimationAuthoringLibrary::ConfigureHeroHitReactionGraph(UAnimBluepri
 	return bLinked && SetSkeletonSlotGroup(Blueprint->TargetSkeleton, TEXT("AdditiveHitReact"), TEXT("HodgeHitFeedback"));
 }
 
+/** 配置玩家角色Dash冲刺脚部IK。 */
 FString UHodgeAnimationAuthoringLibrary::ConfigureHeroDashFootIK(UAnimBlueprint* LayerBlueprint)
 {
 	if (!LayerBlueprint || !GEditor || GEditor->PlayWorld ||
@@ -401,6 +778,7 @@ FString UHodgeAnimationAuthoringLibrary::ConfigureHeroDashFootIK(UAnimBlueprint*
 	return TEXT("OK DashFootIK=continuous OtherFullBody=weighted");
 }
 
+/** 配置玩家角色移动蒙太奇同步。 */
 bool UHodgeAnimationAuthoringLibrary::ConfigureHeroMovementMontageSync(UAnimMontage* Montage)
 {
 	if (!Montage || !GEditor || GEditor->PlayWorld || !Montage->GetPathName().StartsWith(TEXT("/Game/Main/Character/Hero/Anim/Movement/"))) { return false; }
@@ -409,6 +787,7 @@ bool UHodgeAnimationAuthoringLibrary::ConfigureHeroMovementMontageSync(UAnimMont
 	return Montage->MarkerData.AuthoredSyncMarkers.Num() >= 2;
 }
 
+/** 配置玩家角色Sprint奔跑同步。 */
 FString UHodgeAnimationAuthoringLibrary::ConfigureHeroSprintSync(UAnimBlueprint* LayerBlueprint)
 {
 	if (!LayerBlueprint || !GEditor || GEditor->PlayWorld || LayerBlueprint->GetPathName() !=
@@ -448,6 +827,7 @@ FString UHodgeAnimationAuthoringLibrary::ConfigureHeroSprintSync(UAnimBlueprint*
 	return TEXT("OK DedicatedSprintGroup=HodgeSprint OriginalLocomotion=preserved");
 }
 
+/** 配置玩家角色朝向Modes。 */
 FString UHodgeAnimationAuthoringLibrary::ConfigureHeroFacingModes(UAnimBlueprint* MainBlueprint, UAnimBlueprint* LayerBlueprint)
 {
 	if (!MainBlueprint || !LayerBlueprint || !GEditor || GEditor->PlayWorld ||
@@ -531,6 +911,7 @@ FString UHodgeAnimationAuthoringLibrary::ConfigureHeroFacingModes(UAnimBlueprint
 	return FString::Printf(TEXT("OK DirectionEntries=%d WarpingEntries=%d"), DirectionEntries, WarpingEntries);
 }
 
+/** 配置玩家角色Sprint奔跑Animations。 */
 FString UHodgeAnimationAuthoringLibrary::ConfigureHeroSprintAnimations(UAnimBlueprint* MainBlueprint, UAnimBlueprint* LayerBlueprint)
 {
 	if (!MainBlueprint || !LayerBlueprint || !GEditor || GEditor->PlayWorld ||
@@ -605,6 +986,7 @@ FString UHodgeAnimationAuthoringLibrary::ConfigureHeroSprintAnimations(UAnimBlue
 	return FString::Printf(TEXT("OK Cycles=%d Pivots=%d Gates=%d"), Cycles, Pivots, Gates);
 }
 
+/** 配置玩家角色Sprint奔跑掉头Timing。 */
 FString UHodgeAnimationAuthoringLibrary::ConfigureHeroSprintPivotTiming(UAnimBlueprint* MainBlueprint, UAnimBlueprint* LayerBlueprint)
 {
 	if (!MainBlueprint || MainBlueprint->GetPathName() != TEXT("/Game/Main/Character/Hero/Anim/ABP_Pover_Base.ABP_Pover_Base") ||
@@ -674,6 +1056,7 @@ FString UHodgeAnimationAuthoringLibrary::ConfigureHeroSprintPivotTiming(UAnimBlu
 	return FString::Printf(TEXT("OK PivotEvaluators=%d TimingExits=%d"), Evaluators, Exits);
 }
 
+/** 配置动画实验场景PIE。 */
 bool UHodgeAnimationAuthoringLibrary::ConfigureAnimationLabPIE(int32 PlayerCount, bool bListenServer)
 {
 	if (!GEditor || GEditor->PlayWorld || PlayerCount < 1 || PlayerCount > 2 ||
@@ -684,8 +1067,10 @@ bool UHodgeAnimationAuthoringLibrary::ConfigureAnimationLabPIE(int32 PlayerCount
 	return true;
 }
 
+/** 配置动画实验场景游戏Mode。 */
 bool UHodgeAnimationAuthoringLibrary::ConfigureAnimationLabGameMode(UBlueprint* Blueprint, TSubclassOf<APawn> PawnClass)
 {
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (!HodgeAnimationAuthoring::IsWorkAsset(Blueprint) || !PawnClass || !Blueprint->ParentClass ||
 		!Blueprint->ParentClass->IsChildOf(AGameModeBase::StaticClass())) { return false; }
 	const FName FunctionName(TEXT("GetDefaultPawnClassForController"));
@@ -731,4 +1116,211 @@ bool UHodgeAnimationAuthoringLibrary::ConfigureAnimationLabGameMode(UBlueprint* 
 	if (!Schema->TryCreateConnection(ThenPin, ExecutePin)) { return false; }
 	FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(Blueprint);
 	return ReturnPin->DefaultObject == PawnClass.Get();
+}
+
+
+/** 设置敌人网格骨架。 */
+bool UHodgeAnimationAuthoringLibrary::SetEnemyMeshSkeleton(USkeletalMesh* Mesh, USkeleton* Skeleton)
+{
+	if (!Mesh || !Skeleton || !Mesh->GetOutermost()->GetName().StartsWith(TEXT("/Game/Main/Character/Enemies/"))) { return false; }
+	Mesh->Modify(); Mesh->SetSkeleton(Skeleton); Mesh->PostEditChange(); return true;
+}
+
+/** 配置敌人行为树。 */
+bool UHodgeAnimationAuthoringLibrary::ConfigureEnemyBehaviorTree(UBehaviorTree* Tree, UBlackboardData* BB, FGameplayTag AttackTag, bool bComboIntent)
+{
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
+	if (!Tree || !BB || !AttackTag.IsValid() || !Tree->GetOutermost()->GetName().StartsWith(TEXT("/Game/Main/Character/Enemies/"))) { return false; }
+	Tree->Modify(); BB->Modify(); BB->Keys.Reset();
+	auto Key = [BB](FName Name, UClass* Type)
+	{
+		FBlackboardEntry Entry; Entry.EntryName = Name; Entry.KeyType = NewObject<UBlackboardKeyType>(BB, Type);
+		if (auto* ObjectKey = Cast<UBlackboardKeyType_Object>(Entry.KeyType)) { ObjectKey->BaseClass = AActor::StaticClass(); }
+		BB->Keys.Add(Entry);
+	};
+	Key(TEXT("TargetActor"), UBlackboardKeyType_Object::StaticClass());
+	Key(TEXT("LastKnownLocation"), UBlackboardKeyType_Vector::StaticClass());
+	for (FName Name : {FName(TEXT("CanAct")), FName(TEXT("HasLineOfSight")), FName(TEXT("HasLastKnownLocation")), FName(TEXT("InAttackRange"))})
+	{ Key(Name, UBlackboardKeyType_Bool::StaticClass()); }
+	BB->PostEditChange(); Tree->BlackboardAsset = BB;
+	auto* Root = NewObject<UBTComposite_Selector>(Tree);
+	// 统一战斗组件。
+	auto* Combat = NewObject<UBTComposite_Selector>(Tree);
+	auto* Attack = NewObject<UBTComposite_Sequence>(Tree);
+	Tree->RootNode = Root;
+	auto Attach = [](UBTCompositeNode* Parent, UBTNode* Node) -> FBTCompositeChild&
+	{
+		FBTCompositeChild Child; Child.ChildComposite = Cast<UBTCompositeNode>(Node); Child.ChildTask = Cast<UBTTaskNode>(Node);
+		return Parent->Children.Add_GetRef(Child);
+	};
+	auto Condition = [Tree, BB](FBTCompositeChild& Child, FName Name, EBTFlowAbortMode::Type Abort)
+	{
+		auto* Decorator = NewObject<UBTDecorator_Blackboard>(Tree);
+		auto* Property = FindFProperty<FStructProperty>(Decorator->GetClass(), TEXT("BlackboardKey"));
+		auto* Selector = Property->ContainerPtrToValuePtr<FBlackboardKeySelector>(Decorator);
+		Selector->SelectedKeyName = Name; Selector->ResolveSelectedKey(*BB);
+		FindFProperty<FByteProperty>(Decorator->GetClass(), TEXT("FlowAbortMode"))->SetPropertyValue_InContainer(Decorator, uint8(Abort));
+		FindFProperty<FByteProperty>(Decorator->GetClass(), TEXT("OperationType"))->SetPropertyValue_InContainer(Decorator, 0);
+		static_cast<UBTNode*>(Decorator)->InitializeFromAsset(*Tree);
+		Decorator->BuildDescription(); Child.Decorators.Add(Decorator);
+	};
+	Condition(Attach(Root, Combat), TEXT("CanAct"), EBTFlowAbortMode::Both);
+	Attach(Root, NewObject<UBTTask_Wait>(Tree));
+	Condition(Attach(Combat, Attack), TEXT("InAttackRange"), EBTFlowAbortMode::LowerPriority);
+	auto* Ability = NewObject<UHodgeBTTask_ExecuteAbility>(Tree);
+	Ability->RequestType = bComboIntent ? EHodgeCombatActionRequestType::ComboIntent : EHodgeCombatActionRequestType::StandaloneAbility;
+	if (bComboIntent) { Ability->IntentTag = AttackTag; } else { Ability->AbilityTag = AttackTag; }
+	Ability->TargetActor.SelectedKeyName = TEXT("TargetActor");
+	Attach(Attack, Ability);
+	auto* Recovery = NewObject<UBTTask_Wait>(Tree); Recovery->WaitTime = .65f; Recovery->RandomDeviation = .05f; Attach(Attack, Recovery);
+	auto Move = [Tree, BB](FName Name)
+	{
+		auto* Task = NewObject<UBTTask_MoveTo>(Tree);
+		auto* Selector = FindFProperty<FStructProperty>(Task->GetClass(), TEXT("BlackboardKey"))->ContainerPtrToValuePtr<FBlackboardKeySelector>(Task);
+		Selector->SelectedKeyName = Name; Selector->ResolveSelectedKey(*BB);
+		Task->AcceptableRadius = 130.f;
+		Task->bReachTestIncludesAgentRadius = false;
+		Task->bReachTestIncludesGoalRadius = false;
+		return Task;
+	};
+	Condition(Attach(Combat, Move(TEXT("TargetActor"))), TEXT("HasLineOfSight"), EBTFlowAbortMode::Both);
+	Condition(Attach(Combat, Move(TEXT("LastKnownLocation"))), TEXT("HasLastKnownLocation"), EBTFlowAbortMode::Both);
+	Attach(Combat, NewObject<UBTTask_Wait>(Tree));
+	// 从运行节点重建可编辑图，保存后不会出现空图覆盖运行树。
+	auto* Graph = Cast<UBehaviorTreeGraph>(FBlueprintEditorUtils::CreateNewGraph(Tree, TEXT("BehaviorTreeGraph"), UBehaviorTreeGraph::StaticClass(), UEdGraphSchema_BehaviorTree::StaticClass()));
+	Tree->BTGraph = Graph; Graph->LockUpdates(); Graph->GetSchema()->CreateDefaultNodesForGraph(*Graph);
+	Graph->OnCreated(); Graph->Initialize(); Graph->UnlockUpdates(); Graph->UpdateAsset();
+	Tree->MarkPackageDirty(); BB->MarkPackageDirty(); return Tree->RootNode != nullptr;
+}
+
+/** 配置敌人动画。 */
+bool UHodgeAnimationAuthoringLibrary::ConfigureEnemyAnimation(UAnimBlueprint* Blueprint, UAnimSequence* Idle, UAnimSequence* Run, FName SpineBone)
+{
+	if (!Blueprint || !Idle || !Run || !Blueprint->GetOutermost()->GetName().StartsWith(TEXT("/Game/Main/Character/Enemies/"))) { return false; }
+	UEdGraph* Graph = nullptr;
+	for (UEdGraph* Candidate : Blueprint->FunctionGraphs) { if (Candidate && Candidate->GetFName() == TEXT("AnimGraph")) { Graph = Candidate; break; } }
+	if (!Graph) { return false; }
+	using namespace HodgeAnimationAuthoring;
+	auto* Root = FindOrAddPoseNode<UAnimGraphNode_Root>(Graph, TEXT("EnemyRoot"), 1500, 0);
+	for (UEdGraphNode* Node : Graph->Nodes)
+	{ if (Node != Root && Node->IsA<UAnimGraphNode_Root>()) { FBlueprintEditorUtils::RemoveNode(Blueprint, Node, true); break; } }
+	auto* IdleNode = FindOrAddPoseNode<UAnimGraphNode_SequencePlayer>(Graph, TEXT("EnemyIdle"), 0, 250);
+	auto* RunNode = FindOrAddPoseNode<UAnimGraphNode_SequencePlayer>(Graph, TEXT("EnemyRun"), 0, 0);
+	IdleNode->Node.SetSequence(Idle); RunNode->Node.SetSequence(Run);
+	auto* Blend = FindOrAddPoseNode<UAnimGraphNode_BlendListByBool>(Graph, TEXT("EnemyMovement"), 300, 100);
+	auto* PosesProperty = FindFProperty<FArrayProperty>(FAnimNode_BlendListBase::StaticStruct(), TEXT("BlendPose"));
+	FScriptArrayHelper Poses(PosesProperty, PosesProperty->ContainerPtrToValuePtr<void>(&Blend->Node)); Poses.Resize(2);
+	auto* TimesProperty = FindFProperty<FArrayProperty>(FAnimNode_BlendListBase::StaticStruct(), TEXT("BlendTime"));
+	FScriptArrayHelper Times(TimesProperty, TimesProperty->ContainerPtrToValuePtr<void>(&Blend->Node)); Times.Resize(2);
+	for (int32 I = 0; I < 2; ++I) { CastFieldChecked<FFloatProperty>(TimesProperty->Inner)->SetPropertyValue(Times.GetRawPtr(I), .15f); }
+	Blend->ReconstructNode();
+	auto* Moving = FindOrAddPoseNode<UK2Node_VariableGet>(Graph, TEXT("EnemyMoving"), 0, -250);
+	Moving->VariableReference.SetSelfMember(TEXT("bEnemyMoving")); Moving->ReconstructNode();
+	auto* Full = FindOrAddPoseNode<UAnimGraphNode_Slot>(Graph, TEXT("EnemyFullBody"), 600, 100); Full->Node.SlotName = TEXT("FullBobySlot");
+	auto* Cache = FindOrAddPoseNode<UAnimGraphNode_SaveCachedPose>(Graph, TEXT("EnemyBaseCache"), 800, 100); Cache->CacheName = TEXT("EnemyBase");
+	auto* Base = FindOrAddPoseNode<UAnimGraphNode_UseCachedPose>(Graph, TEXT("EnemyBaseUse"), 950, 0); Base->SaveCachedPoseNode = Cache;
+	auto* FeedbackBase = FindOrAddPoseNode<UAnimGraphNode_UseCachedPose>(Graph, TEXT("EnemyFeedbackBase"), 600, 350); FeedbackBase->SaveCachedPoseNode = Cache;
+	auto* Upper = FindOrAddPoseNode<UAnimGraphNode_Slot>(Graph, TEXT("EnemyLightFeedback"), 800, 350); Upper->Node.SlotName = TEXT("UpperBobySlot");
+	auto* Bone = FindOrAddPoseNode<UAnimGraphNode_LayeredBoneBlend>(Graph, TEXT("EnemyUpperBlend"), 1150, 100);
+	Bone->Node.BlendPoses.SetNum(1); Bone->Node.BlendWeights.SetNum(1); Bone->Node.LayerSetup.SetNum(1); Bone->Node.BlendWeights[0] = 1.f;
+	FBranchFilter Filter; Filter.BoneName = SpineBone; Filter.BlendDepth = 3; Bone->Node.LayerSetup[0].BranchFilters = {Filter}; Bone->ReconstructNode();
+	const auto* Schema = Graph->GetSchema();
+	auto Link = [Schema](UEdGraphNode* A, const TCHAR* Out, UEdGraphNode* B, const TCHAR* In)
+	{ auto* X = A->FindPin(Out); auto* Y = B->FindPin(In); return X && Y && (X->LinkedTo.Contains(Y) || Schema->TryCreateConnection(X, Y)); };
+	const bool bOK = Link(Moving, TEXT("bEnemyMoving"), Blend, TEXT("bActiveValue")) &&
+		Link(RunNode, TEXT("Pose"), Blend, TEXT("BlendPose_0")) && Link(IdleNode, TEXT("Pose"), Blend, TEXT("BlendPose_1")) &&
+		Link(Blend, TEXT("Pose"), Full, TEXT("Source")) && Link(Full, TEXT("Pose"), Cache, TEXT("Pose")) &&
+		Link(FeedbackBase, TEXT("Pose"), Upper, TEXT("Source")) && Link(Base, TEXT("Pose"), Bone, TEXT("BasePose")) && Link(Upper, TEXT("Pose"), Bone, TEXT("BlendPoses_0")) &&
+		Link(Bone, TEXT("Pose"), Root, TEXT("Result"));
+	FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(Blueprint);
+	return bOK;
+}
+
+
+/** 配置敌人动画资产。 */
+bool UHodgeAnimationAuthoringLibrary::ConfigureEnemyAnimationAsset(UAnimationAsset* Asset, USkeleton* Skeleton, FName Slot)
+{
+	if (!Asset || !Skeleton || !Asset->GetOutermost()->GetName().StartsWith(TEXT("/Game/Main/Character/Enemies/")) ||
+		!Skeleton->GetOutermost()->GetName().StartsWith(TEXT("/Game/Main/Character/Enemies/"))) { return false; }
+	Asset->Modify();
+	if (Asset->GetSkeleton() != Skeleton && !Asset->ReplaceSkeleton(Skeleton, false)) { return false; }
+	if (auto* Montage = Cast<UAnimMontage>(Asset); Montage && !Slot.IsNone())
+	{
+		for (auto& Track : Montage->SlotAnimTracks) { Track.SlotName = Slot; }
+		Montage->RefreshCacheData();
+	}
+	Asset->MarkPackageDirty(); return true;
+}
+
+
+/** 配置敌人导航边界。 */
+bool UHodgeAnimationAuthoringLibrary::ConfigureEnemyNavigationBounds(ANavMeshBoundsVolume* Volume, FVector Size)
+{
+	if (!Volume || !Volume->GetWorld() || Volume->GetWorld()->WorldType != EWorldType::Editor ||
+		!Volume->GetOutermost()->GetName().StartsWith(TEXT("/Game/Main/Maps/L_EnemyAIValidation")) ||
+		Size.ContainsNaN() || Size.GetMin() <= 0.f) { return false; }
+	Volume->Modify();
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
+	if (!Volume->Brush) { Volume->Brush = NewObject<UModel>(Volume, NAME_None, RF_Transactional); Volume->Brush->Initialize(nullptr, true); }
+	Volume->GetBrushComponent()->Brush = Volume->Brush;
+	auto* Builder = NewObject<UCubeBuilder>(Volume);
+	Builder->X = Size.X; Builder->Y = Size.Y; Builder->Z = Size.Z;
+	Volume->BrushBuilder = Builder;
+	if (!static_cast<UBrushBuilder*>(Builder)->Build(Volume->GetWorld(), Volume)) { return false; }
+	Volume->PostEditChange();
+	if (auto* Nav = FNavigationSystem::GetCurrent<UNavigationSystemV1>(Volume->GetWorld()))
+	{ Nav->OnNavigationBoundsUpdated(Volume); Nav->Build(); }
+	return Volume->GetComponentsBoundingBox(true).GetSize().GetMin() > 0.f;
+}
+
+
+/** 配置敌人Experience配置Components。 */
+bool UHodgeAnimationAuthoringLibrary::ConfigureEnemyExperienceComponents(UBlueprint* Experience)
+{
+	if (!Experience || !Experience->GeneratedClass || Experience->GetOutermost()->GetName() != TEXT("/Game/Main/Experiences/Exp_HodgeDefaultExperience")) { return false; }
+	auto* CDO = Experience->GeneratedClass->GetDefaultObject();
+	auto* Property = FindFProperty<FArrayProperty>(CDO->GetClass(), TEXT("Actions"));
+	if (!Property) { return false; }
+	FScriptArrayHelper Actions(Property, Property->ContainerPtrToValuePtr<void>(CDO));
+	for (int32 I = 0; I < Actions.Num(); ++I)
+	{
+		auto* Action = Cast<UGameFeatureAction_AddComponents>(CastFieldChecked<FObjectPropertyBase>(Property->Inner)->GetObjectPropertyValue(Actions.GetRawPtr(I)));
+		if (!Action) { continue; }
+		for (const auto& Entry : Action->ComponentList)
+		{ if (Entry.ActorClass.Get() == AHodgeEnemyCharacter::StaticClass() && Entry.ComponentClass.Get() == UHodgeEquipmentManagerComponent::StaticClass()) { return true; } }
+		Experience->Modify(); CDO->Modify(); Action->Modify();
+		FGameFeatureComponentEntry Entry; Entry.ActorClass = AHodgeEnemyCharacter::StaticClass();
+		Entry.ComponentClass = UHodgeEquipmentManagerComponent::StaticClass(); Entry.bClientComponent = true; Entry.bServerComponent = true;
+		Action->ComponentList.Add(Entry);
+		FBlueprintEditorUtils::MarkBlueprintAsModified(Experience); return true;
+	}
+	return false;
+}
+
+/** 只维护本功能的一条通知，已有其他通知与轨道保持原样。 */
+FString UHodgeAnimationAuthoringLibrary::ConfigureAttackFacingWarp(UHodgeAbilityDefinition* Definition, float StartTime, float EndTime)
+{
+ if (!Definition || !Definition->ExecutionConfig.Montage || StartTime<0.f || EndTime<=StartTime) { return TEXT("Invalid definition or window"); }
+ auto* Montage=Definition->ExecutionConfig.Montage.Get(); Montage->Modify(); Definition->Modify();
+ UAnimNotifyState_MotionWarping* State=nullptr; FAnimNotifyEvent* Event=nullptr;
+ for (auto& Notify : Montage->Notifies)
+ {
+  auto* Candidate=Cast<UAnimNotifyState_MotionWarping>(Notify.NotifyStateClass);
+  if (Candidate && Candidate->RootMotionModifier && Candidate->RootMotionModifier->IsA<UHodgeRootMotionModifier_AttackFacing>()) { State=Candidate; Event=&Notify; break; }
+ }
+ if (!State)
+ {
+  State=NewObject<UAnimNotifyState_MotionWarping>(Montage,NAME_None,RF_Transactional);
+  State->RootMotionModifier=NewObject<UHodgeRootMotionModifier_AttackFacing>(State,NAME_None,RF_Transactional);
+  Event=&Montage->Notifies.AddDefaulted_GetRef(); Event->NotifyStateClass=State; Event->NotifyName=TEXT("Hodge Attack Facing Warp");
+ }
+ auto* Modifier=Cast<UHodgeRootMotionModifier_AttackFacing>(State->RootMotionModifier);
+ Modifier->WarpTargetName=Definition->FacingWarp.WarpTargetName; Modifier->bWarpTranslation=false; Modifier->bWarpRotation=true;
+ Modifier->RotationType=EMotionWarpRotationType::Default; Modifier->RotationMethod=EMotionWarpRotationMethod::SlerpWithClampedRate;
+ Modifier->WarpMaxRotationRate=Definition->FacingWarp.MaxRotationRate;
+ Event->Link(Montage,StartTime); Event->SetDuration(EndTime-StartTime); Event->EndLink.Link(Montage,EndTime);
+ Definition->FacingWarp.bEnabled=true; Montage->RefreshCacheData(); Montage->MarkPackageDirty(); Definition->MarkPackageDirty();
+ TArray<FText> Errors; Definition->ValidateDefinition(Errors);
+ FString Result; for (const auto& Error : Errors) { Result+=Error.ToString()+TEXT("\n"); }
+ return Errors.IsEmpty() ? TEXT("OK") : Result;
 }

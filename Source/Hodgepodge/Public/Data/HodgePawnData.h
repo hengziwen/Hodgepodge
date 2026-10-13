@@ -1,3 +1,6 @@
+/** @file HodgePawnData.h
+ * @brief 声明Pawn能力/输入/相机配置相关的类型、接口与现有处理流程。
+ */
 // 111屎山代码来袭
 
 #pragma once
@@ -16,6 +19,7 @@ class UHodgeComboDefinition;
 class UHodgeEquipmentDefinition;
 class UHodgeCharacterStatProfile;
 class UHodgeHitReactionProfile;
+class UHodgeLockOnProfile;
 
 // CameraMode：定义 Pawn 默认使用的相机模式。
 class UHodgeCameraMode;
@@ -40,8 +44,15 @@ class HODGEPODGE_API UHodgePawnData : public UPrimaryDataAsset
 
 public:
 	// 构造函数。
+	/** 构造Pawn能力/输入/相机配置并初始化其默认状态。
+	 * @param ObjectInitializer UE构造对象时传入的初始化器。
+	 */
 	UHodgePawnData(const FObjectInitializer& ObjectInitializer);
 #if WITH_EDITOR
+	/** 在编辑器校验当前配置并收集诊断。
+	 * @param Context 本次操作的上下文。
+	 * @return 当前配置的校验结果。
+	 */
 	virtual EDataValidationResult IsDataValid(FDataValidationContext& Context) const override;
 #endif
 
@@ -60,8 +71,13 @@ public:
 	// 目标自身的受击动作、恢复规则和支持的 Impact。
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Combat")
 	TObjectPtr<UHodgeHitReactionProfile> HitReactionProfile;
+	// Dash/Sprint参数配置的数据或对象引用。
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Movement")
 	TObjectPtr<UHodgeSprintAbilityProfile> SprintAbilityProfile;
+
+	// 玩家显式锁定配置；空值表示此 Pawn 不启用锁定。
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Targeting")
+	TObjectPtr<UHodgeLockOnProfile> LockOnProfile;
 
 	// Ability sets to grant to this pawn's ability system.
 	// 需要授予给这个 Pawn 的 ASC 的 AbilitySet 集合。

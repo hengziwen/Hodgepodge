@@ -1,12 +1,21 @@
+﻿/** @file HodgeAbilityDefinition.cpp
+ * @brief 实现单段技能执行定义相关的类型、接口与现有处理流程。
+ */
 #include "Data/HodgeAbilityDefinition.h"
 #include "AbilitySystem/Abilities/HodgeGameplayAbility.h"
 #include "AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h"
 #include "Animation/AnimMontage.h"
+#include "MotionWarpingComponent.h"
+#include "AnimNotifyState_MotionWarping.h"
+#include "Animation/HodgeRootMotionModifier_AttackFacing.h"
+#include "Animation/HodgeCombatAnimNotifies.h"
+#include "AbilitySystem/HodgeGameplayTags.h"
 #if WITH_EDITOR
 #include "Misc/DataValidation.h"
 #endif
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeAbilityDefinition)
 
+/** 构造混合。 */
 FAlphaBlend FHodgeAbilityBlendSettings::MakeBlend() const
 {
 	FAlphaBlend Result;
@@ -16,6 +25,7 @@ FAlphaBlend FHodgeAbilityBlendSettings::MakeBlend() const
 	return Result;
 }
 
+/** 检查当前对象、配置或句柄是否满足其有效性条件。 */
 bool FHodgeAbilityBlendSettings::IsValid() const
 {
 	return FMath::IsFinite(Time) && Time >= 0.f
@@ -23,11 +33,24 @@ bool FHodgeAbilityBlendSettings::IsValid() const
 		&& (Curve != EAlphaBlendOption::Custom || CustomCurve != nullptr);
 }
 
+/** 根据当前配置计算动作持续时间。 */
 float UHodgeAbilityDefinition::GetDuration() const
 {
 	return ExecutionConfig.Montage ? ExecutionConfig.Montage->GetPlayLength() : 0.f;
 }
 
+/** 窗口仅来自原生通知，避免配置和动画轨维护两份时间。 */
+bool UHodgeAbilityDefinition::GetFacingWarpWindow(float& OutStart, float& OutEnd) const
+{
+	if (!ExecutionConfig.Montage) { return false; }
+	TArray<FMotionWarpingWindowData> Windows;
+	UMotionWarpingUtilities::GetMotionWarpingWindowsForWarpTargetFromAnimation(ExecutionConfig.Montage,FacingWarp.WarpTargetName,Windows);
+	if (Windows.Num()!=1 || !Windows[0].AnimNotify || !Windows[0].AnimNotify->RootMotionModifier ||
+		!Windows[0].AnimNotify->RootMotionModifier->IsA<UHodgeRootMotionModifier_AttackFacing>()) { return false; }
+	OutStart=Windows[0].StartTime; OutEnd=Windows[0].EndTime; return true;
+}
+
+/** 检查定义配置及其引用资源是否满足执行契约。 */
 bool UHodgeAbilityDefinition::ValidateDefinition(TArray<FText>& Errors) const
 {
 	const int32 Before = Errors.Num();
@@ -35,6 +58,7 @@ bool UHodgeAbilityDefinition::ValidateDefinition(TArray<FText>& Errors) const
 	{
 		Errors.Add(FText::FromString(Message));
 	};
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (!AbilityTag.IsValid() || !AbilityClass)
 	{
 		Error(TEXT("AbilityTag / AbilityClass is required"));
@@ -51,6 +75,26 @@ bool UHodgeAbilityDefinition::ValidateDefinition(TArray<FText>& Errors) const
 		{
 			Error(TEXT("Definition abilities require InstancedPerActor and LocalPredicted"));
 		}
+	}
+	FString FacingError; if (!FacingWarp.Validate(FacingError)) { Error(FacingError); }
+	if (FacingWarp.bEnabled)
+	{
+		float Start=0.f, End=0.f;
+		if (!GetFacingWarpWindow(Start,End) || !FMath::IsFinite(Start) || !FMath::IsFinite(End) || Start<0.f || End<=Start || End>GetDuration())
+		{ Error(TEXT("Attack facing requires one valid Hodge rotation-warp window in the Montage.")); }
+		if (!ExecutionConfig.Montage || !ExecutionConfig.Montage->HasRootMotion()) { Error(TEXT("Attack facing requires a root-motion Montage.")); }
+		float FirstHit=MAX_flt, Recovery=MAX_flt;
+		if (ExecutionConfig.Montage) for (const auto& Notify : ExecutionConfig.Montage->Notifies)
+		{
+			const float Time=Notify.GetTriggerTime();
+			if ((Notify.NotifyStateClass && Notify.NotifyStateClass->IsA<UHodgeAnimNotifyState_HitCheck>()) || (Notify.Notify && Notify.Notify->IsA<UHodgeAnimNotify_Hit>())) { FirstHit=FMath::Min(FirstHit,Time); }
+			if (const auto* Tag=Cast<UHodgeAnimNotifyState_GameplayTag>(Notify.NotifyStateClass))
+			{
+				if (Tag->StateTag==HodgeGameplayTags::Status_Attack_Recovery) { Recovery=FMath::Min(Recovery,Time); }
+				if (Tag->StateTag==HodgeGameplayTags::Status_Rotation_Locked && Time<End && Time+Notify.GetDuration()>Start) { Error(TEXT("Attack rotation lock must not overlap the Warp window.")); }
+			}
+		}
+		if (FirstHit==MAX_flt || End>=FirstHit || Recovery<End) { Error(TEXT("Warp must end before the first hit and before recovery.")); }
 	}
 	DefaultHitConfig.Reaction.Validate(Errors);
 	if (ExecutionBodyTag.IsValid() && HodgeHitReaction::BodyRank(ExecutionBodyTag) == 0)
@@ -90,6 +134,7 @@ bool UHodgeAbilityDefinition::ValidateDefinition(TArray<FText>& Errors) const
 	return Before == Errors.Num();
 }
 #if WITH_EDITOR
+/** 在编辑器校验当前配置并收集诊断。 */
 EDataValidationResult UHodgeAbilityDefinition::IsDataValid(FDataValidationContext& Context) const
 {
 	const auto Parent = Super::IsDataValid(Context);

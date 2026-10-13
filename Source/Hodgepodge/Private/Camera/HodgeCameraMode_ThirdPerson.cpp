@@ -1,3 +1,6 @@
+/** @file HodgeCameraMode_ThirdPerson.cpp
+ * @brief 实现第三人称相机模式相关的类型、接口与现有处理流程。
+ */
 // 111屎山代码来袭
 
 #include "Camera/HodgeCameraMode_ThirdPerson.h"
@@ -17,6 +20,7 @@ namespace HodgeCameraMode_ThirdPerson_Statics
 	static const FName NAME_IgnoreCameraCollision = TEXT("IgnoreCameraCollision");
 }
 
+/** 构造第三人称相机模式并初始化其默认状态。 */
 UHodgeCameraMode_ThirdPerson::UHodgeCameraMode_ThirdPerson()
 {
 	// 默认不使用目标偏移曲线。
@@ -51,6 +55,7 @@ UHodgeCameraMode_ThirdPerson::UHodgeCameraMode_ThirdPerson()
 		FHodgePenetrationAvoidanceFeeler(FRotator(-20.0f, +00.0f, 0.0f), 0.50f, 0.50f, 00.f, 4));
 }
 
+/** 更新视图。 */
 void UHodgeCameraMode_ThirdPerson::UpdateView(float DeltaTime)
 {
 	// 根据当前目标更新相机相关状态。
@@ -106,6 +111,7 @@ void UHodgeCameraMode_ThirdPerson::UpdateView(float DeltaTime)
 	UpdatePreventPenetration(DeltaTime);
 }
 
+/** 更新关联目标。 */
 void UHodgeCameraMode_ThirdPerson::UpdateForTarget(float DeltaTime)
 {
 	// 判断当前相机目标是否为角色。
@@ -132,6 +138,7 @@ void UHodgeCameraMode_ThirdPerson::UpdateForTarget(float DeltaTime)
 	SetTargetCrouchOffset(FVector::ZeroVector);
 }
 
+/** 按既有调试设置绘制当前状态或检测几何。 */
 void UHodgeCameraMode_ThirdPerson::DrawDebug(UCanvas* Canvas) const
 {
 	// 绘制父类相机模式的调试信息。
@@ -155,6 +162,7 @@ void UHodgeCameraMode_ThirdPerson::DrawDebug(UCanvas* Canvas) const
 #endif
 }
 
+/** 更新PreventPenetration。 */
 void UHodgeCameraMode_ThirdPerson::UpdatePreventPenetration(float DeltaTime)
 {
 	// 未开启相机防穿透时直接跳过检测。
@@ -246,6 +254,7 @@ void UHodgeCameraMode_ThirdPerson::UpdatePreventPenetration(float DeltaTime)
 	}
 }
 
+/** 准备vent相机Penetration。 */
 void UHodgeCameraMode_ThirdPerson::PreventCameraPenetration(class AActor const& ViewTarget, FVector const& SafeLoc,
                                                             FVector& CameraLoc, float const& DeltaTime,
                                                             float& DistBlockedPct, bool bSingleRayOnly)
@@ -508,6 +517,7 @@ void UHodgeCameraMode_ThirdPerson::PreventCameraPenetration(class AActor const& 
 	}
 }
 
+/** 设置目标下蹲偏移。 */
 void UHodgeCameraMode_ThirdPerson::SetTargetCrouchOffset(FVector NewTargetOffset)
 {
 	// 新一轮蹲伏偏移插值从0开始。
@@ -520,6 +530,7 @@ void UHodgeCameraMode_ThirdPerson::SetTargetCrouchOffset(FVector NewTargetOffset
 	TargetCrouchOffset = NewTargetOffset;
 }
 
+/** 更新下蹲偏移。 */
 void UHodgeCameraMode_ThirdPerson::UpdateCrouchOffset(float DeltaTime)
 {
 	// 只有插值尚未完成时才继续更新。
@@ -540,4 +551,16 @@ void UHodgeCameraMode_ThirdPerson::UpdateCrouchOffset(float DeltaTime)
 		// 确保插值进度保持完成状态。
 		CrouchOffsetBlendPct = 1.0f;
 	}
+}
+
+/** 复制静态取景配置，不复制碰撞结果与运行时混合进度。 */
+void UHodgeCameraMode_ThirdPerson::CopyViewSettingsFrom(const UHodgeCameraMode_ThirdPerson* Source)
+{
+ if (!Source || Source == this) { return; }
+ FieldOfView = Source->FieldOfView; TargetOffsetCurve = Source->TargetOffsetCurve; bUseRuntimeFloatCurves = Source->bUseRuntimeFloatCurves;
+ TargetOffsetX = Source->TargetOffsetX; TargetOffsetY = Source->TargetOffsetY; TargetOffsetZ = Source->TargetOffsetZ;
+ PenetrationBlendInTime = Source->PenetrationBlendInTime; PenetrationBlendOutTime = Source->PenetrationBlendOutTime;
+ bPreventPenetration = Source->bPreventPenetration; bDoPredictiveAvoidance = Source->bDoPredictiveAvoidance;
+ CollisionPushOutDistance = Source->CollisionPushOutDistance; ReportPenetrationPercent = Source->ReportPenetrationPercent;
+ PenetrationAvoidanceFeelers = Source->PenetrationAvoidanceFeelers;
 }

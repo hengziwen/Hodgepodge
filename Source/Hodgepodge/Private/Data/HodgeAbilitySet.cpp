@@ -1,3 +1,6 @@
+/** @file HodgeAbilitySet.cpp
+ * @brief 实现能力/属性/效果授予包相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "Data/HodgeAbilitySet.h"
@@ -6,12 +9,15 @@
 
 #include "AbilitySystem/Abilities/HodgeGameplayAbility.h"
 #include "AbilitySystem/HodgeAbilitySystemComponent.h"
+#include "Data/HodgeAbilityDefinition.h"
+#include "GameFramework/Actor.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeAbilitySet)
 
 // 添加一个有效的 GameplayAbility SpecHandle，用于之后移除对应 Ability
 void FHodgeAbilitySet_GrantedHandles::AddAbilitySpecHandle(const FGameplayAbilitySpecHandle& Handle)
 {
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (Handle.IsValid())
 	{
 		AbilitySpecHandles.Add(Handle);
@@ -21,6 +27,7 @@ void FHodgeAbilitySet_GrantedHandles::AddAbilitySpecHandle(const FGameplayAbilit
 // 添加一个有效的 GameplayEffect Handle，用于之后移除对应 GameplayEffect
 void FHodgeAbilitySet_GrantedHandles::AddGameplayEffectHandle(const FActiveGameplayEffectHandle& Handle)
 {
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (Handle.IsValid())
 	{
 		GameplayEffectHandles.Add(Handle);
@@ -39,7 +46,7 @@ void FHodgeAbilitySet_GrantedHandles::TakeFromAbilitySystem(UHodgeAbilitySystemC
 	check(HodgeASC);
 
 	// AbilitySet 的授予和移除必须由服务器执行
-	if (!HodgeASC->IsOwnerActorAuthoritative())
+	if (!HodgeASC->GetOwner() || !HodgeASC->GetOwner()->HasAuthority())
 	{
 		// Must be authoritative to give or take ability sets.
 		return;
@@ -75,23 +82,33 @@ void FHodgeAbilitySet_GrantedHandles::TakeFromAbilitySystem(UHodgeAbilitySystemC
 	GrantedAttributeSets.Reset();
 }
 
+/** 构造能力/属性/效果授予包并初始化其默认状态。 */
 UHodgeAbilitySet::UHodgeAbilitySet(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 }
 
 // 将当前 AbilitySet 中配置的 Ability、Effect 和 AttributeSet 全部授予指定 ASC
-void UHodgeAbilitySet::GiveToAbilitySystem(UHodgeAbilitySystemComponent* HodgeASC,
+FHodgeAbilityGrantResult UHodgeAbilitySet::GrantInternal(UHodgeAbilitySystemComponent* HodgeASC,
                                            FHodgeAbilitySet_GrantedHandles* OutGrantedHandles,
-                                           UObject* SourceObject) const
+	                                       UObject* SourceObject, bool bChecked) const
 {
 	check(HodgeASC);
+	FHodgeAbilityGrantResult Result;
+	// 当前操作关联的所属对象。
+	TWeakObjectPtr<AActor> Owner = HodgeASC->GetOwnerActor();
+	TWeakObjectPtr<AActor> Avatar = HodgeASC->GetAvatarActor();
+	auto Current = [&]() { return Owner.IsValid() && Avatar.IsValid() && HodgeASC->IsRegistered() &&
+		!Owner->IsActorBeingDestroyed() && !Avatar->IsActorBeingDestroyed() &&
+		HodgeASC->GetOwnerActor() == Owner.Get() && HodgeASC->GetAvatarActor() == Avatar.Get(); };
+	auto Fail = [&](const TCHAR* Message) { Result.Error = Message; return Result; };
+	if (bChecked && !Current()) { return Fail(TEXT("ASC ActorInfo is not bound")); }
 
 	// AbilitySet 的授予必须由服务器执行
 	if (!HodgeASC->IsOwnerActorAuthoritative())
 	{
 		// Must be authoritative to give or take ability sets.
-		return;
+		return Fail(TEXT("Ability grants require authority"));
 	}
 
 	// 授予 AttributeSet。
@@ -105,6 +122,7 @@ void UHodgeAbilitySet::GiveToAbilitySystem(UHodgeAbilitySystemComponent* HodgeAS
 		{
 			UE_LOG(LogTemp, Error, TEXT("GrantedAttributes[%d] on ability set [%s] is not valid"),
 			       SetIndex, *GetNameSafe(this));
+			if (bChecked) { return Fail(TEXT("Invalid AttributeSet")); }
 			continue;
 		}
 
@@ -130,6 +148,7 @@ void UHodgeAbilitySet::GiveToAbilitySystem(UHodgeAbilitySystemComponent* HodgeAS
 		{
 			OutGrantedHandles->AddAttributeSet(NewSet);
 		}
+		if (bChecked && !Current()) { return Fail(TEXT("Binding changed during AttributeSet grant")); }
 	}
 
 	// 授予 GameplayAbility。
@@ -143,11 +162,13 @@ void UHodgeAbilitySet::GiveToAbilitySystem(UHodgeAbilitySystemComponent* HodgeAS
 		{
 			UE_LOG(LogTemp, Error, TEXT("GrantedGameplayAbilities[%d] on ability set [%s] is not valid."),
 			       AbilityIndex, *GetNameSafe(this));
+			if (bChecked) { return Fail(TEXT("Invalid ability")); }
 			continue;
 		}
 
 		// 获取 GameplayAbility 的 CDO，用于构造 GameplayAbilitySpec
 		UHodgeGameplayAbility* AbilityCDO = AbilityToGrant.Ability->GetDefaultObject<UHodgeGameplayAbility>();
+		Result.bHasIrreversibleEffects |= AbilityCDO->GetActivationPolicy() == EHodgeAbilityActivationPolicy::OnSpawn;
 
 		// 根据 Ability 类和等级创建 AbilitySpec
 		FGameplayAbilitySpec AbilitySpec(AbilityCDO, AbilityToGrant.AbilityLevel);
@@ -166,6 +187,8 @@ void UHodgeAbilitySet::GiveToAbilitySystem(UHodgeAbilitySystemComponent* HodgeAS
 		{
 			OutGrantedHandles->AddAbilitySpecHandle(AbilitySpecHandle);
 		}
+		if (bChecked && (!Current() || !AbilitySpecHandle.IsValid() || !HodgeASC->FindAbilitySpecFromHandle(AbilitySpecHandle)))
+		{ return Fail(TEXT("Ability grant failed or binding changed")); }
 	}
 
 	for (const FHodgeAbilitySet_Definition& Entry : GrantedAbilityDefinitions)
@@ -176,6 +199,8 @@ void UHodgeAbilitySet::GiveToAbilitySystem(UHodgeAbilitySystemComponent* HodgeAS
 		{
 			OutGrantedHandles->AddAbilitySpecHandle(Handle);
 		}
+		if (bChecked && (!Current() || !Handle.IsValid() || !HodgeASC->FindAbilitySpecFromHandle(Handle)))
+		{ return Fail(TEXT("Definition grant failed or binding changed")); }
 	}
 
 	// 授予 GameplayEffect。
@@ -189,6 +214,7 @@ void UHodgeAbilitySet::GiveToAbilitySystem(UHodgeAbilitySystemComponent* HodgeAS
 		{
 			UE_LOG(LogTemp, Error, TEXT("GrantedGameplayEffects[%d] on ability set [%s] is not valid"),
 			       EffectIndex, *GetNameSafe(this));
+			if (bChecked) { return Fail(TEXT("Invalid GameplayEffect")); }
 			continue;
 		}
 
@@ -204,5 +230,136 @@ void UHodgeAbilitySet::GiveToAbilitySystem(UHodgeAbilitySystemComponent* HodgeAS
 		{
 			OutGrantedHandles->AddGameplayEffectHandle(GameplayEffectHandle);
 		}
+		Result.bHasIrreversibleEffects |= GameplayEffectHandle.WasSuccessfullyApplied() && GameplayEffect->DurationPolicy == EGameplayEffectDurationType::Instant;
+		if (bChecked && (!Current() || !GameplayEffectHandle.WasSuccessfullyApplied()))
+		{ return Fail(TEXT("GameplayEffect grant failed or binding changed")); }
 	}
+	Result.bSucceeded = !bChecked || (Current() && OutGrantedHandles && OutGrantedHandles->AreValidFor(HodgeASC));
+	if (!Result.bSucceeded) { Result.Error = TEXT("Granted resources changed before commit"); }
+	return Result;
+}
+
+/** 追加当前记录或授予结果到目标集合。 */
+void FHodgeAbilitySet_GrantedHandles::Append(FHodgeAbilitySet_GrantedHandles&& Other)
+{
+	AbilitySpecHandles.Append(Other.AbilitySpecHandles);
+	GameplayEffectHandles.Append(Other.GameplayEffectHandles);
+	GrantedAttributeSets.Append(Other.GrantedAttributeSets);
+	Other.AbilitySpecHandles.Reset(); Other.GameplayEffectHandles.Reset(); Other.GrantedAttributeSets.Reset();
+}
+
+/** 检查记录的授予句柄是否仍属于指定ASC。 */
+bool FHodgeAbilitySet_GrantedHandles::AreValidFor(const UHodgeAbilitySystemComponent* ASC) const
+{
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
+	if (!IsValid(ASC)) { return false; }
+	for (const auto Handle : AbilitySpecHandles) { if (!ASC->FindAbilitySpecFromHandle(Handle)) { return false; } }
+	for (const auto Handle : GameplayEffectHandles) { if (!ASC->GetActiveGameplayEffect(Handle)) { return false; } }
+	for (const UAttributeSet* Set : GrantedAttributeSets) { if (!ASC->GetSpawnedAttributes().Contains(Set)) { return false; } }
+	return true;
+}
+
+/** 将配置中的能力、属性与效果授予目标ASC。 */
+void UHodgeAbilitySet::GiveToAbilitySystem(UHodgeAbilitySystemComponent* ASC,
+	FHodgeAbilitySet_GrantedHandles* OutHandles, UObject* SourceObject) const
+{
+	// 旧入口保留宽松配置语义，受检调用复用同一执行循环。
+	GrantInternal(ASC, OutHandles, SourceObject, false);
+}
+
+/** 按受检授予流程执行配置并返回授予结果。 */
+FHodgeAbilityGrantResult UHodgeAbilitySet::TryGiveToAbilitySystem(UHodgeAbilitySystemComponent* ASC,
+	FHodgeAbilitySet_GrantedHandles& OutHandles, UObject* SourceObject, bool bForInitialization) const
+{
+	TArray<FText> Errors;
+	FHodgeAbilityGrantResult Result;
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
+	if (!IsValid(ASC) || !ValidateForGrant(ASC, Errors, bForInitialization))
+	{ Result.Error = Errors.IsEmpty() ? TEXT("Invalid ASC") : Errors[0].ToString(); return Result; }
+	FHodgeAbilitySet_GrantedHandles Pending;
+	Result = GrantInternal(ASC, &Pending, SourceObject, true);
+	if (Result.bSucceeded) { OutHandles.Append(MoveTemp(Pending)); }
+	else { Pending.TakeFromAbilitySystem(ASC); }
+	return Result;
+}
+
+/** 校验关联授予。 */
+bool UHodgeAbilitySet::ValidateForGrant(const UHodgeAbilitySystemComponent* ASC, TArray<FText>& Errors, bool bForInitialization) const
+{
+	const int32 Before = Errors.Num();
+	auto Fail = [&Errors, this](const TCHAR* Reason) { Errors.Add(FText::FromString(GetPathName() + TEXT(": ") + Reason)); };
+	TSet<UClass*> Attributes;
+	for (const auto& Entry : GrantedAttributes)
+	{
+		UClass* Type = Entry.AttributeSet;
+		if (!Type || Type->HasAnyClassFlags(CLASS_Abstract) || Attributes.Contains(Type)) { Fail(TEXT("Invalid or duplicate AttributeSet")); continue; }
+		Attributes.Add(Type);
+		if (!ASC) { continue; }
+		for (const UAttributeSet* Existing : ASC->GetSpawnedAttributes())
+		{
+			if (Existing && (Existing->IsA(Type) ||
+				(Type->IsChildOf(UHodgeHealthSet::StaticClass()) && Existing->IsA<UHodgeHealthSet>()) ||
+				(Type->IsChildOf(UHodgeCombatSet::StaticClass()) && Existing->IsA<UHodgeCombatSet>())))
+			{ Fail(TEXT("AttributeSet already exists on ASC")); break; }
+		}
+	}
+	TSet<UClass*> Abilities;
+	for (const auto& Entry : GrantedGameplayAbilities)
+	{
+		UClass* Type = Entry.Ability;
+		if (!Type || Type->HasAnyClassFlags(CLASS_Abstract) || Entry.AbilityLevel < 1 || Abilities.Contains(Type))
+		{ Fail(TEXT("Invalid or duplicate ability")); continue; }
+		Abilities.Add(Type);
+		if (bForInitialization && Type->GetDefaultObject<UHodgeGameplayAbility>()->GetActivationPolicy() == EHodgeAbilityActivationPolicy::OnSpawn)
+		{ Fail(TEXT("Bootstrap abilities cannot activate OnSpawn")); }
+	}
+	TSet<FGameplayTag> Definitions;
+	for (const auto& Entry : GrantedAbilityDefinitions)
+	{
+		if (!Entry.Definition || Entry.AbilityLevel < 1) { Fail(TEXT("Missing Definition or invalid level")); continue; }
+		Entry.Definition->ValidateDefinition(Errors);
+		if (Definitions.Contains(Entry.Definition->AbilityTag) || (ASC && ASC->FindDefinitionAbility(Entry.Definition->AbilityTag).IsValid()))
+		{ Fail(TEXT("Definition identity is already granted")); }
+		Definitions.Add(Entry.Definition->AbilityTag);
+	}
+	for (const auto& Entry : GrantedGameplayEffects)
+	{
+		UClass* Type = Entry.GameplayEffect;
+		if (!Type || Type->HasAnyClassFlags(CLASS_Abstract) || !FMath::IsFinite(Entry.EffectLevel) || Entry.EffectLevel <= 0.f)
+		{ Fail(TEXT("Invalid GameplayEffect")); }
+	}
+	return Before == Errors.Num();
+}
+
+/** 在授予前校验整批配置与目标ASC的兼容性。 */
+bool UHodgeAbilitySet::ValidateBatchForGrant(const TArray<const UHodgeAbilitySet*>& Sets,
+	const UHodgeAbilitySystemComponent* ASC, TArray<FText>& Errors, bool bForInitialization)
+{
+	const int32 Before = Errors.Num();
+	TSet<const UHodgeAbilitySet*> UniqueSets;
+	TSet<FGameplayTag> Definitions;
+	TSet<UClass*> Attributes;
+	TSet<UClass*> Abilities;
+	for (const auto* Set : Sets)
+	{
+		if (!IsValid(Set) || UniqueSets.Contains(Set)) { Errors.Add(FText::FromString(TEXT("Null or duplicate AbilitySet in batch"))); continue; }
+		UniqueSets.Add(Set); Set->ValidateForGrant(ASC, Errors, bForInitialization);
+		for (const auto& Entry : Set->GrantedAbilityDefinitions)
+		{
+			if (!Entry.Definition) { continue; }
+			if (Definitions.Contains(Entry.Definition->AbilityTag)) { Errors.Add(FText::FromString(TEXT("Duplicate Definition identity across AbilitySets"))); }
+			Definitions.Add(Entry.Definition->AbilityTag);
+		}
+		for (const auto& Entry : Set->GrantedAttributes)
+		{
+			if (Attributes.Contains(Entry.AttributeSet.Get())) { Errors.Add(FText::FromString(TEXT("Duplicate AttributeSet across AbilitySets"))); }
+			Attributes.Add(Entry.AttributeSet.Get());
+		}
+		for (const auto& Entry : Set->GrantedGameplayAbilities)
+		{
+			if (Abilities.Contains(Entry.Ability.Get())) { Errors.Add(FText::FromString(TEXT("Duplicate ability across AbilitySets"))); }
+			Abilities.Add(Entry.Ability.Get());
+		}
+	}
+	return Before == Errors.Num();
 }

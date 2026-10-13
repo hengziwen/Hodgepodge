@@ -1,3 +1,6 @@
+/** @file HodgeHUDLayout.h
+ * @brief 声明HUD布局与所属菜单相关的类型、接口与现有处理流程。
+ */
 //Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
@@ -49,31 +52,47 @@ class HODGEPODGE_API UHodgeHUDLayout : public UHodgeActivatableWidget
 
 public:
 	// 构造函数。
+	/** 构造HUD布局与所属菜单并初始化其默认状态。
+	 * @param ObjectInitializer UE构造对象时传入的初始化器。
+	 */
 	UHodgeHUDLayout(const FObjectInitializer& ObjectInitializer);
 
 	// Widget 完成初始化时调用。
 	//
 	// 适合在这里注册输入动作、输入设备连接状态变化等
 	// 与 HUD 整体生命周期一致的监听。
+	/** 在控件实例初始化时建立必要的输入或页面绑定。 */
 	virtual void NativeOnInitialized() override;
 
 	// Widget 销毁时调用。
 	//
 	// 用于解除事件监听、Ticker 等当前 HUD Layout 持有的运行时状态。
+	/** 在控件析构时解除界面监听与临时资源。 */
 	virtual void NativeDestruct() override;
+	/** 处理页面停用时的输入和所属页面清理。 */
 	virtual void NativeOnDeactivated() override;
+
+	/** HUD 按钮与 Escape 共用所属菜单的打开、取消和清理流程。 */
+	/** 让HUD按钮与Escape共用所属菜单的打开和关闭流程。 */
+	UFUNCTION(BlueprintCallable, Category="Hodge|UI")
+	void ToggleHUDMenu();
 
 protected:
 	// 处理 Escape / Pause 输入。
 	//
 	// 通常用于将 EscapeMenuClass 对应的菜单
 	// Push 到 CommonUI 的菜单 Layer 中。
+	/** 响应Escape，在当前本地玩家的菜单层打开或关闭页面。 */
 	void HandleEscapeAction();
+	/** 取消本HUD未完成的菜单请求并关闭其所属菜单。 */
 	void CloseOwnedMenu();
+	// 待处理Escape菜单的数据或对象引用。
 	FGuid PendingEscapeMenu;
+	// Escape菜单Instance的弱引用，不延长目标对象生命周期。
 	TWeakObjectPtr<UCommonActivatableWidget> EscapeMenuInstance;
 
 	// 确保菜单层栈（对应 UI.Layer.Menu）可用。
+	/** 取得当前本地玩家根布局对应的菜单层容器。 */
 	void EnsureMenuLayerStack();
 
 	/** 
@@ -90,6 +109,11 @@ protected:
 	//
 	// 如果玩家已经没有可用控制器，
 	// 后续会触发“Controller Disconnected”界面的显示检查。
+	/** 处理输入设备Connection变化。
+	 * @param NewConnectionState 新Connection状态，由调用方传入。
+	 * @param PlatformUserId 平台用户标识，由调用方传入。
+	 * @param InputDeviceId 输入设备标识，由调用方传入。
+	 */
 	void HandleInputDeviceConnectionChanged(EInputDeviceConnectionState NewConnectionState,
 	                                        FPlatformUserId PlatformUserId, FInputDeviceId InputDeviceId);
 
@@ -105,6 +129,11 @@ protected:
 	// 当前玩家拥有的可用控制器集合也可能发生变化。
 	//
 	// 这里会重新检查是否仍然需要显示“Controller Disconnected”界面。
+	/** 处理输入设备Pairing变化。
+	 * @param InputDeviceId 输入设备标识，由调用方传入。
+	 * @param NewUserPlatformId 新用户平台标识，由调用方传入。
+	 * @param OldUserPlatformId 旧用户平台标识，由调用方传入。
+	 */
 	void HandleInputDevicePairingChanged(FInputDeviceId InputDeviceId, FPlatformUserId NewUserPlatformId,
 	                                     FPlatformUserId OldUserPlatformId);
 
@@ -118,6 +147,7 @@ protected:
 	// 这里不会立刻执行完整检查，
 	// 而是通过 Ticker 将处理请求安排到下一 Tick，
 	// 再统一判断是否应该显示 / 隐藏控制器断连界面。
+	/** 通知控制器状态变更关联Disconnect屏幕。 */
 	void NotifyControllerStateChangeForDisconnectScreen();
 
 	/**
@@ -134,6 +164,7 @@ protected:
 	// - 如果重新拥有可用控制器，则隐藏已经显示的断连菜单。
 	//
 	// virtual 允许具体项目 / 平台进一步覆盖自己的设备判断逻辑。
+	/** 处理控制器DevicesHaving变化关联Disconnect屏幕。 */
 	virtual void ProcessControllerDevicesHavingChangedForDisconnectScreen();
 
 	/**
@@ -144,6 +175,9 @@ protected:
 	//
 	// 不同平台对控制器断开的处理要求不同，
 	// 因此这里通过平台配置决定是否启用该机制。
+	/** 判断是否应平台显示控制器Disconnect屏幕。
+	 * @return true表示满足该查询条件，false表示不满足。
+	 */
 	virtual bool ShouldPlatformDisplayControllerDisconnectScreen() const;
 
 	/**
@@ -157,6 +191,7 @@ protected:
 	//
 	// BlueprintNativeEvent 允许 C++ 提供默认实现，
 	// 同时允许蓝图覆盖具体显示行为。
+	/** 按当前本地玩家的输入设备状态显示所属断连页面。 */
 	UFUNCTION(BlueprintNativeEvent, Category="Controller Disconnect Menu")
 	void DisplayControllerDisconnectedMenu();
 
@@ -167,6 +202,7 @@ protected:
 	// 如果当前“控制器断开连接”菜单已经显示，则将其隐藏。
 	//
 	// BlueprintNativeEvent 允许蓝图覆盖具体关闭行为。
+	/** 移除本HUD持有的设备断连页面。 */
 	UFUNCTION(BlueprintNativeEvent, Category="Controller Disconnect Menu")
 	void HideControllerDisconnectedMenu();
 

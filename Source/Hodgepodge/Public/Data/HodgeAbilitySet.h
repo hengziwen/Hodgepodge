@@ -1,3 +1,6 @@
+/** @file HodgeAbilitySet.h
+ * @brief 声明能力/属性/效果授予包相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
@@ -17,6 +20,20 @@ class UHodgeGameplayAbility;
 class UObject;
 class UHodgeAbilityDefinition;
 
+/** 受检授予的结果；失败清理不能撤销已经发生的 Instant 或自动激活副作用。 */
+USTRUCT(BlueprintType)
+struct FHodgeAbilityGrantResult
+{
+	GENERATED_BODY()
+	// 控制是否Succeeded的状态标记。
+	UPROPERTY(BlueprintReadOnly) bool bSucceeded = false;
+	// 控制是否存在判断IrreversibleEffects的状态标记。
+	UPROPERTY(BlueprintReadOnly) bool bHasIrreversibleEffects = false;
+	// 错误的数据或对象引用。
+	UPROPERTY(BlueprintReadOnly) FString Error;
+};
+
+/** 保存能力设置定义的数据和接口契约。 */
 USTRUCT(BlueprintType)
 struct FHodgeAbilitySet_Definition
 {
@@ -102,16 +119,41 @@ struct FHodgeAbilitySet_GrantedHandles
 
 public:
 	// 保存授予的 GameplayAbility 对应的 SpecHandle。
+	/** 添加能力规格句柄。
+	 * @param Handle 对应操作或能力的句柄。
+	 */
 	void AddAbilitySpecHandle(const FGameplayAbilitySpecHandle& Handle);
 
 	// 保存授予的 GameplayEffect 对应的 ActiveGameplayEffectHandle。
+	/** 添加玩法效果句柄。
+	 * @param Handle 对应操作或能力的句柄。
+	 */
 	void AddGameplayEffectHandle(const FActiveGameplayEffectHandle& Handle);
 
 	// 保存授予的 AttributeSet 对象指针。
+	/** 添加属性集基类。
+	 * @param Set 设置，由调用方传入。
+	 */
 	void AddAttributeSet(UAttributeSet* Set);
 
 	// 根据保存的 Handles 和 AttributeSet，将 AbilitySet 授予的内容从 ASC 中全部移除。
+	/** 撤销该句柄集合拥有的能力、效果和属性。
+	 * @param HodgeASC ASC，由调用方传入。
+	 */
 	void TakeFromAbilitySystem(UHodgeAbilitySystemComponent* HodgeASC);
+	/** 追加当前记录或授予结果到目标集合。
+	 * @param Other Other，由调用方传入。
+	 */
+	void Append(FHodgeAbilitySet_GrantedHandles&& Other);
+	/** 检查记录的授予句柄是否仍属于指定ASC。
+	 * @param ASC 后续GAS操作使用的能力系统组件。
+	 * @return true表示本次检查或操作成功，false表示失败。
+	 */
+	bool AreValidFor(const UHodgeAbilitySystemComponent* ASC) const;
+	/** 获取能力数量。
+	 * @return 能力数量的当前值或引用。
+	 */
+	int32 GetAbilityCount() const { return AbilitySpecHandles.Num(); }
 
 protected:
 	// 已授予 GameplayAbility 的 SpecHandle 列表。
@@ -142,12 +184,48 @@ class UHodgeAbilitySet : public UPrimaryDataAsset
 	GENERATED_BODY()
 
 public:
+	/** 构造能力/属性/效果授予包并初始化其默认状态。
+	 * @param ObjectInitializer UE构造对象时传入的初始化器。
+	 */
 	UHodgeAbilitySet(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	/** 获取GrantedDefinitions。
+	 * @return GrantedDefinitions的当前值或引用。
+	 */
 	const TArray<FHodgeAbilitySet_Definition>& GetGrantedDefinitions() const { return GrantedAbilityDefinitions; }
 
 	// 将当前 AbilitySet 中配置的所有内容授予指定的 AbilitySystemComponent，并可通过返回的 Handles 在之后移除这些内容。
+	/** 将配置中的能力、属性与效果授予目标ASC。
+	 * @param HodgeASC ASC，由调用方传入。
+	 * @param OutGrantedHandles 本来源授予的能力/效果/属性句柄集合。
+	 * @param SourceObject 能力或效果的来源对象。
+	 */
 	void GiveToAbilitySystem(UHodgeAbilitySystemComponent* HodgeASC, FHodgeAbilitySet_GrantedHandles* OutGrantedHandles,
 	                         UObject* SourceObject = nullptr) const;
+	/** 校验关联授予。
+	 * @param ASC 后续GAS操作使用的能力系统组件。
+	 * @param Errors 收集配置或执行失败的诊断。
+	 * @param bForInitialization 是否关联初始化的控制标记。
+	 * @return true表示本次检查或操作成功，false表示失败。
+	 */
+	bool ValidateForGrant(const UHodgeAbilitySystemComponent* ASC, TArray<FText>& Errors, bool bForInitialization = false) const;
+	/** 在授予前校验整批配置与目标ASC的兼容性。
+	 * @param Sets Sets，由调用方传入。
+	 * @param ASC 后续GAS操作使用的能力系统组件。
+	 * @param Errors 收集配置或执行失败的诊断。
+	 * @param bForInitialization 是否关联初始化的控制标记。
+	 * @return true表示本次检查或操作成功，false表示失败。
+	 */
+	static bool ValidateBatchForGrant(const TArray<const UHodgeAbilitySet*>& Sets, const UHodgeAbilitySystemComponent* ASC,
+		TArray<FText>& Errors, bool bForInitialization = false);
+	/** 按受检授予流程执行配置并返回授予结果。
+	 * @param ASC 后续GAS操作使用的能力系统组件。
+	 * @param OutHandles 输出Handles。
+	 * @param SourceObject 能力或效果的来源对象。
+	 * @param bForInitialization 是否关联初始化的控制标记。
+	 * @return 本次计算、查询或创建得到的能力授予结果。
+	 */
+	FHodgeAbilityGrantResult TryGiveToAbilitySystem(UHodgeAbilitySystemComponent* ASC,
+		FHodgeAbilitySet_GrantedHandles& OutHandles, UObject* SourceObject = nullptr, bool bForInitialization = false) const;
 
 protected:
 	// 授予 AbilitySet 时需要添加的 GameplayAbility 列表。
@@ -165,4 +243,14 @@ protected:
 	// 授予 AbilitySet 时需要添加的 AttributeSet 列表。
 	UPROPERTY(EditDefaultsOnly, Category = "Attribute Sets", meta=(TitleProperty=AttributeSet))
 	TArray<FHodgeAbilitySet_AttributeSet> GrantedAttributes;
+private:
+	/** 执行内部授予步骤并收集来源句柄。
+	 * @param ASC 后续GAS操作使用的能力系统组件。
+	 * @param OutHandles 输出Handles。
+	 * @param SourceObject 能力或效果的来源对象。
+	 * @param bChecked 是否Checked的控制标记。
+	 * @return 本次计算、查询或创建得到的能力授予结果。
+	 */
+	FHodgeAbilityGrantResult GrantInternal(UHodgeAbilitySystemComponent* ASC,
+		FHodgeAbilitySet_GrantedHandles* OutHandles, UObject* SourceObject, bool bChecked) const;
 };

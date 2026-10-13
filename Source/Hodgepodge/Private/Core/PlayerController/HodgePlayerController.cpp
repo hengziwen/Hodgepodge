@@ -1,8 +1,13 @@
-﻿// 111屎山代码来袭
+﻿/** @file HodgePlayerController.cpp
+ * @brief 实现玩家控制器相关的类型、接口与现有处理流程。
+ */
+// 111屎山代码来袭
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 // AHodgePlayerController / AHodgeReplayPlayerController 类定义。
 #include "Core/PlayerController/HodgePlayerController.h"
+#include "Component/HodgeLockOnComponent.h"
+#include "UI/IndicatorSystem/HodgeIndicatorManagerComponent.h"
 
 // CommonInput 输入设备类型定义，当前暂未启用。
 //#include "CommonInputTypeEnum.h"
@@ -100,6 +105,7 @@ AHodgePlayerController::AHodgePlayerController(const FObjectInitializer& ObjectI
 {
 	// 使用项目自定义 PlayerCameraManager。
 	PlayerCameraManagerClass = AHodgePlayerCameraManager::StaticClass();
+	IndicatorManager = CreateDefaultSubobject<UHodgeIndicatorManagerComponent>(TEXT("IndicatorManager"));
 
 	// 如果启用了 CheatManager，则可以在这里指定项目自定义 CheatManager。
 	// #if USING_CHEAT_MANAGER

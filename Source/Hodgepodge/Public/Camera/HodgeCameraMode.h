@@ -1,3 +1,6 @@
+/** @file HodgeCameraMode.h
+ * @brief 声明相机模式与混合栈相关的类型、接口与现有处理流程。
+ */
 // 111 屎山代码来袭
 
 #pragma once
@@ -41,9 +44,14 @@ struct FHodgeCameraModeView
 {
 public:
 	// 初始化默认摄像机视图数据
+	/** 构造相机Mode视图并初始化其默认状态。 */
 	FHodgeCameraModeView();
 
 	// 将另一个摄像机视图按照指定权重混合到当前视图
+	/** 根据给定权重混合两份状态或表现数据。
+	 * @param Other Other，由调用方传入。
+	 * @param OtherWeight OtherWeight，由调用方传入。
+	 */
 	void Blend(const FHodgeCameraModeView& Other, float OtherWeight);
 
 public:
@@ -71,62 +79,109 @@ class HODGEPODGE_API UHodgeCameraMode : public UObject
 
 public:
 	// 构造摄像机模式
+	/** 构造相机模式与混合栈并初始化其默认状态。 */
 	UHodgeCameraMode();
 
 	// 获取当前摄像机模式所属的 HodgeCameraComponent
+	/** 获取相机模式与混合组件。
+	 * @return 相机模式与混合组件的当前值或引用。
+	 */
 	UHodgeCameraComponent* GetHodgeCameraComponent() const;
 
 	// 获取当前摄像机模式所在的 World
+	/** 获取世界。
+	 * @return 世界的当前值或引用。
+	 */
 	virtual UWorld* GetWorld() const override;
 
 	// 获取当前摄像机模式对应的目标 Actor
+	/** 获取目标Actor对象。
+	 * @return 目标Actor对象的当前值或引用。
+	 */
 	AActor* GetTargetActor() const;
 
 	// 获取当前摄像机模式计算出来的视图数据
+	/** 获取相机Mode视图。
+	 * @return 相机Mode视图的当前值或引用。
+	 */
 	const FHodgeCameraModeView& GetCameraModeView() const { return View; }
 
 	// 摄像机模式被压入摄像机模式栈并激活时调用
+	/** 处理Activation。 */
 	virtual void OnActivation()
 	{
 	};
+	/** 每次晋升栈顶时准备动态配置，包括仍在混合栈中的模式再次成为主导。 */
+	virtual void OnBecomeTop() {}
 
 	// 摄像机模式从摄像机模式栈中移除并停用时调用
+	/** 处理Deactivation。 */
 	virtual void OnDeactivation()
 	{
 	};
 
 	// 更新摄像机模式，包括视图计算和混合权重更新
+	/** 更新相机模式与混合栈。
+	 * @param DeltaTime 本次更新的时间步长，单位秒。
+	 */
 	void UpdateCameraMode(float DeltaTime);
 
 	// 获取当前摄像机模式的混合持续时间
+	/** 获取混合时间。
+	 * @return 混合时间的当前值或引用。
+	 */
 	float GetBlendTime() const { return BlendTime; }
 
 	// 获取当前摄像机模式的混合权重
+	/** 获取混合Weight。
+	 * @return 混合Weight的当前值或引用。
+	 */
 	float GetBlendWeight() const { return BlendWeight; }
 
 	// 设置当前摄像机模式的混合权重
+	/** 设置混合Weight。
+	 * @param Weight Weight，由调用方传入。
+	 */
 	void SetBlendWeight(float Weight);
 
 	// 获取当前摄像机模式的类型标签
+	/** 获取相机类型标签。
+	 * @return 相机类型标签的当前值或引用。
+	 */
 	FGameplayTag GetCameraTypeTag() const
 	{
 		return CameraTypeTag;
 	}
 
 	// 绘制当前摄像机模式的调试信息
+	/** 按既有调试设置绘制当前状态或检测几何。
+	 * @param Canvas 画布，由调用方传入。
+	 */
 	virtual void DrawDebug(UCanvas* Canvas) const;
 
 protected:
 	// 获取摄像机计算旋转和位置时使用的中心点位置
+	/** 获取掉头位置。
+	 * @return 掉头位置的当前值或引用。
+	 */
 	virtual FVector GetPivotLocation() const;
 
 	// 获取摄像机计算视图时使用的中心点旋转
+	/** 获取掉头旋转。
+	 * @return 掉头旋转的当前值或引用。
+	 */
 	virtual FRotator GetPivotRotation() const;
 
 	// 更新当前摄像机模式的视图数据
+	/** 更新视图。
+	 * @param DeltaTime 本次更新的时间步长，单位秒。
+	 */
 	virtual void UpdateView(float DeltaTime);
 
 	// 更新当前摄像机模式的混合状态
+	/** 更新Blending。
+	 * @param DeltaTime 本次更新的时间步长，单位秒。
+	 */
 	virtual void UpdateBlending(float DeltaTime);
 
 protected:
@@ -140,16 +195,19 @@ protected:
 	// 摄像机水平视野角度，单位为度
 	UPROPERTY(EditDefaultsOnly, Category = "View",
 		Meta = (UIMin = "5.0", UIMax = "170", ClampMin = "5.0", ClampMax = "170.0"))
+	// 字段Of视图的数值或阈值。
 	float FieldOfView;
 
 	// 摄像机允许的最小俯仰角，单位为度
 	UPROPERTY(EditDefaultsOnly, Category = "View",
 		Meta = (UIMin = "-89.9", UIMax = "89.9", ClampMin = "-89.9", ClampMax = "89.9"))
+	// 视图Pitch角最小的数值或阈值。
 	float ViewPitchMin;
 
 	// 摄像机允许的最大俯仰角，单位为度
 	UPROPERTY(EditDefaultsOnly, Category = "View",
 		Meta = (UIMin = "-89.9", UIMax = "89.9", ClampMin = "-89.9", ClampMax = "89.9"))
+	// 视图Pitch角最大的数值或阈值。
 	float ViewPitchMax;
 
 	// 切换到当前摄像机模式需要持续的混合时间
@@ -187,37 +245,70 @@ class UHodgeCameraModeStack : public UObject
 
 public:
 	// 构造摄像机模式栈
+	/** 构造相机Mode堆叠并初始化其默认状态。 */
 	UHodgeCameraModeStack();
 
 	// 激活摄像机模式栈
+	/** 激活堆叠。 */
 	void ActivateStack();
 
 	// 停用摄像机模式栈
+	/** 停用堆叠。 */
 	void DeactivateStack();
 
 	// 判断摄像机模式栈当前是否处于激活状态
+	/** 判断堆叠Activate。
+	 * @return true表示满足该查询条件，false表示不满足。
+	 */
 	bool IsStackActivate() const { return bIsActive; }
 
 	// 将指定类型的摄像机模式压入栈顶
+	/** 按当前条件将相机模式加入混合栈。
+	 * @param CameraModeClass 相机Mode类型，由调用方传入。
+	 */
 	void PushCameraMode(TSubclassOf<UHodgeCameraMode> CameraModeClass);
 
 	// 更新并计算整个摄像机模式栈最终的摄像机视图
+	/** 计算堆叠。
+	 * @param DeltaTime 本次更新的时间步长，单位秒。
+	 * @param OutCameraModeView 输出相机Mode视图。
+	 * @return true表示本次检查或操作成功，false表示失败。
+	 */
 	bool EvaluateStack(float DeltaTime, FHodgeCameraModeView& OutCameraModeView);
 
 	// 绘制摄像机模式栈的调试信息
+	/** 按既有调试设置绘制当前状态或检测几何。
+	 * @param Canvas 画布，由调用方传入。
+	 */
 	void DrawDebug(UCanvas* Canvas) const;
 
 	// 获取栈顶摄像机模式的混合权重和摄像机类型标签
+	/** 获取混合信息。
+	 * @param OutWeightOfTopLayer 输出WeightOfTop层。
+	 * @param OutTagOfTopLayer 标签OfTop层，用于对应标签查询或匹配。
+	 */
 	void GetBlendInfo(float& OutWeightOfTopLayer, FGameplayTag& OutTagOfTopLayer) const;
+	/** 返回本帧选择的栈顶类型，混合权重另由 GetBlendInfo 查询。 */
+	TSubclassOf<UHodgeCameraMode> GetTopCameraModeClass() const;
 
 protected:
 	// 获取指定摄像机模式类型对应的实例，没有实例时会创建
+	/** 获取相机ModeInstance。
+	 * @param CameraModeClass 相机Mode类型，由调用方传入。
+	 * @return 相机ModeInstance的当前值或引用。
+	 */
 	UHodgeCameraMode* GetCameraModeInstance(TSubclassOf<UHodgeCameraMode> CameraModeClass);
 
 	// 更新摄像机模式栈中所有模式的状态
+	/** 更新堆叠。
+	 * @param DeltaTime 本次更新的时间步长，单位秒。
+	 */
 	void UpdateStack(float DeltaTime);
 
 	// 按照各摄像机模式的混合权重计算最终摄像机视图
+	/** 按当前权重混合相机模式栈的输出。
+	 * @param OutCameraModeView 输出相机Mode视图。
+	 */
 	void BlendStack(FHodgeCameraModeView& OutCameraModeView) const;
 
 protected:

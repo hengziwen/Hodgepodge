@@ -1,3 +1,6 @@
+/** @file HodgeHeroCharacter.h
+ * @brief 声明玩家角色相关的类型、接口与现有处理流程。
+ */
 // **
 //  * @file HodgeHeroCharacter.h
 //  * @brief AHodgeHeroCharacter 类的头文件
@@ -44,6 +47,9 @@ public:
 	 *
 	 * 当前仅把 FObjectInitializer 透传给父类,所有默认组件由基类负责。
 	 */
+	/** 构造玩家角色并初始化其默认状态。
+	 * @param ObjectInitializer UE构造对象时传入的初始化器。
+	 */
 	explicit AHodgeHeroCharacter(const FObjectInitializer& ObjectInitializer);
 
 	// =============================================================================
@@ -61,6 +67,9 @@ public:
 	 *
 	 * @param NewController 新的控制器指针(通常是 AHodgePlayerController)
 	 */
+	/** 服务器角色被控制器接管时更新绑定和初始化。
+	 * @param NewController 新控制器，由调用方传入。
+	 */
 	virtual void PossessedBy(AController* NewController) override;
 
 	/**
@@ -68,9 +77,15 @@ public:
 	 *
 	 * 这是 GAS 客户端初始化的入口。
 	 */
+	/** 收到PlayerState复制后刷新角色绑定。 */
 	virtual void OnRep_PlayerState() override;
+	/** 锁定角色朝向由 CMC 解析目标，禁止输入视角提前旋转角色造成同帧抢写。 */
+	virtual void FaceRotation(FRotator NewControlRotation, float DeltaTime = 0.f) override;
 
 private:
+	// 原生玩家锁定组件，配置与能力仍由 PawnData 授予。
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Hodge|Targeting", meta=(AllowPrivateAccess="true"))
+	TObjectPtr<class UHodgeLockOnComponent> LockOnComponent;
 	// Hero 扩展组件
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hodge|Character", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UHodgeHeroComponent> HeroComponent = nullptr;

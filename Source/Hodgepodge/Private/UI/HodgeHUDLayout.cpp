@@ -1,3 +1,6 @@
+/** @file HodgeHUDLayout.cpp
+ * @brief 实现HUD布局与所属菜单相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "UI/HodgeHUDLayout.h"
@@ -165,6 +168,7 @@ void UHodgeHUDLayout::NativeDestruct()
 	}
 }
 
+/** 取消本HUD未完成的菜单请求并关闭其所属菜单。 */
 void UHodgeHUDLayout::CloseOwnedMenu()
 {
     const FGuid Pending = PendingEscapeMenu;
@@ -173,6 +177,7 @@ void UHodgeHUDLayout::CloseOwnedMenu()
     if (auto* Root = UHodgeUIManagerSubsystem::GetRootLayoutForController(GetOwningPlayer()))
     { Root->CancelPush(Pending); Root->Pop(Menu.Get()); }
 }
+/** 处理页面停用时的输入和所属页面清理。 */
 void UHodgeHUDLayout::NativeOnDeactivated()
 {
     // 停用时立即撤销所属菜单，不等待 Slate 切换结束后才 Destruct。
@@ -189,12 +194,19 @@ void UHodgeHUDLayout::EnsureMenuLayerStack()
     MenuLayerStack = Root ? Cast<UCommonActivatableWidgetStack>(Root->GetLayer(TAG_UI_LAYER_MENU)) : nullptr;
 }
 
+/** 让HUD按钮与Escape共用所属菜单的打开和关闭流程。 */
+void UHodgeHUDLayout::ToggleHUDMenu()
+{
+    if (IsActivated()) { HandleEscapeAction(); }
+}
+
 // 处理玩家触发 Escape / Pause UI Action。
 void UHodgeHUDLayout::HandleEscapeAction()
 {
     auto* GI = GetGameInstance();
     auto* UI = GI ? GI->GetSubsystem<UHodgeUIManagerSubsystem>() : nullptr;
     auto* Root = UI ? UI->GetRootLayout(GetOwningLocalPlayer()) : nullptr;
+    // 先检查对象与上下文，避免在依赖失效后继续处理。
     if (!Root || EscapeMenuClass.IsNull()) { return; }
     if (PendingEscapeMenu.IsValid()) { Root->CancelPush(PendingEscapeMenu); PendingEscapeMenu.Invalidate(); return; }
     if (EscapeMenuInstance.IsValid() && EscapeMenuInstance->IsActivated())

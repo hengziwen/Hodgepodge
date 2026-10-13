@@ -1,3 +1,6 @@
+﻿/** @file HodgeCombatCharacter.cpp
+ * @brief 实现共用战斗角色相关的类型、接口与现有处理流程。
+ */
 /**
  * @file HodgeCombatCharacter.cpp
  * @brief AHodgeCombatCharacter 类的实现
@@ -8,6 +11,8 @@
  */
 
 #include "Character/HodgeCombatCharacter.h"
+#include "Character/HodgeEnemyCharacter.h"
+#include "Component/HodgeEnemyInitComponent.h"
 #include "AbilitySystem/Stats/HodgeAttributeCoordinator.h"
 
 #include "SignificanceManager.h"
@@ -15,6 +20,7 @@
 #include "Camera/HodgeCameraComponent.h"
 #include "Component/HodgeCharacterMovementComponent.h"
 #include "Component/HodgeCharacterRotationComponent.h"
+#include "Component/HodgeAttackMotionWarpingComponent.h"
 #include "Component/HodgeLocomotionPolicyComponent.h"
 #include "Component/HodgeDefenseComponent.h"
 #include "Component/HodgeHealthComponent.h"
@@ -123,6 +129,7 @@ AHodgeCombatCharacter::AHodgeCombatCharacter(const FObjectInitializer& ObjectIni
 	//Pawn 扩展组件，负责连接 Pawn 与 AbilitySystem 等系统
 	PawnExtComponent = CreateDefaultSubobject<UHodgePawnExtensionComponent>(TEXT("PawnExtensionComponent"));
 	RotationComponent = CreateDefaultSubobject<UHodgeCharacterRotationComponent>(TEXT("CharacterRotationComponent"));
+	AttackMotionWarpingComponent = CreateDefaultSubobject<UHodgeAttackMotionWarpingComponent>(TEXT("AttackMotionWarpingComponent"));
 	LocomotionPolicyComponent = CreateDefaultSubobject<UHodgeLocomotionPolicyComponent>(TEXT("LocomotionPolicyComponent"));
 	DefenseComponent = CreateDefaultSubobject<UHodgeDefenseComponent>(TEXT("DefenseComponent"));
 	HitReactionComponent = CreateDefaultSubobject<UHodgeHitReactionComponent>(TEXT("HitReactionComponent"));
@@ -377,8 +384,10 @@ void AHodgeCombatCharacter::OnAbilitySystemUninitialized()
 	HealthComponent->UninitializeFromAbilitySystem();
 }
 
+/** 按当前角色朝向策略处理控制器提出的旋转。 */
 void AHodgeCombatCharacter::FaceRotation(FRotator NewControlRotation, float DeltaTime)
 {
+	// 按预测状态或网络角色选择对应处理。
 	if (bUseControllerRotationYaw && RotationComponent && GetLocalRole() != ROLE_SimulatedProxy)
 	{
 		Super::FaceRotation(RotationComponent->FilterControlRotation(NewControlRotation, DeltaTime), DeltaTime);
@@ -388,6 +397,7 @@ void AHodgeCombatCharacter::FaceRotation(FRotator NewControlRotation, float Delt
 	Super::FaceRotation(NewControlRotation, DeltaTime);
 }
 
+/** 按当前角色配置准备默认武器，复用已有有效实例。 */
 void AHodgeCombatCharacter::InitializeDefaultEquipment()
 {
 	// 客户端只接收装备复制，不自行生成武器或授予能力。
@@ -397,11 +407,13 @@ void AHodgeCombatCharacter::InitializeDefaultEquipment()
 	}
 
 	const UHodgePawnData* PawnData = PawnExtComponent->GetPawnData<UHodgePawnData>();
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (!PawnData || !PawnData->DefaultWeaponDefinition)
 	{
 		return;
 	}
 
+	// 后续GAS操作使用的能力系统组件。
 	UHodgeAbilitySystemComponent* ASC = GetHodgeAbilitySystemComponent();
 	if (!ensure(ASC && ASC->GetAvatarActor() == this))
 	{
@@ -424,6 +436,7 @@ void AHodgeCombatCharacter::InitializeDefaultEquipment()
 		return;
 	}
 
+	// 当前操作使用的定义配置。
 	const UHodgeEquipmentDefinition* Definition = GetDefault<UHodgeEquipmentDefinition>(
 		PawnData->DefaultWeaponDefinition);
 	if (!Definition->InstanceType || !Definition->InstanceType->IsChildOf(UHodgeWeaponInstance::StaticClass()))
@@ -452,8 +465,10 @@ void AHodgeCombatCharacter::InitializeDefaultEquipment()
 	}
 }
 
+/** 撤销本角色默认装备来源并清空缓存引用。 */
 void AHodgeCombatCharacter::UninitializeDefaultEquipment()
 {
+	// 按服务器权限区分本次处理分支。
 	if (!HasAuthority())
 	{
 		return;
@@ -1085,10 +1100,16 @@ bool FSharedRepMovement::NetSerialize(FArchive& Ar, class UPackageMap* Map, bool
 	return true;
 }
 
+/** 尝试初始化AttributesAnd装备。 */
 void AHodgeCombatCharacter::TryInitializeAttributesAndEquipment()
 {
+    if (auto* Enemy = Cast<AHodgeEnemyCharacter>(this))
+    { Enemy->GetEnemyInitComponent()->TryInitialize(); return; }
+    // 按服务器权限区分本次处理分支。
     if (!HasAuthority() || !PawnExtComponent) { return; }
+    // 后续GAS操作使用的能力系统组件。
     auto* ASC = GetHodgeAbilitySystemComponent();
+    // 玩家状态对象。
     auto* PS = ASC ? Cast<AHodgePlayerState>(ASC->GetOwnerActor()) : nullptr;
     const auto* Data = PawnExtComponent->GetPawnData<UHodgePawnData>();
     if (!PS || !Data) { return; }
@@ -1098,4 +1119,22 @@ void AHodgeCombatCharacter::TryInitializeAttributesAndEquipment()
         InitializeDefaultEquipment();
         Coordinator->CompleteAvatarInitialization();
     }
+}
+
+
+/** 准备默认装备。 */
+bool AHodgeCombatCharacter::PrepareDefaultEquipment()
+{
+	InitializeDefaultEquipment();
+	return IsDefaultEquipmentReady();
+}
+
+/** 判断默认装备就绪。 */
+bool AHodgeCombatCharacter::IsDefaultEquipmentReady() const
+{
+	const auto* Data = PawnExtComponent ? PawnExtComponent->GetPawnData<UHodgePawnData>() : nullptr;
+	if (!Data) { return false; }
+	if (!Data->DefaultWeaponDefinition) { return true; }
+	const auto* Manager = DefaultEquipmentManager.Get();
+	return Manager && DefaultWeaponInstance && Manager->IsEquipmentReady(DefaultWeaponInstance);
 }

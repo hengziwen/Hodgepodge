@@ -1,6 +1,11 @@
+/** @file HodgeEquipmentManagerComponent.cpp
+ * @brief 实现装备管理组件相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "Equipment/HodgeEquipmentManagerComponent.h"
+#include "Character/HodgeEnemyCharacter.h"
+#include "UObject/StrongObjectPtr.h"
 #include "AbilitySystem/Stats/HodgeAttributeCoordinator.h"
 #include "AbilitySystem/HodgeGameplayTags.h"
 #include "Core/PlayState/HodgePlayerState.h"
@@ -33,10 +38,16 @@
 
 class FLifetimeProperty;
 
+/** 保存装备MutationScope的数据和接口契约。 */
 struct FHodgeEquipmentMutationScope
 {
+	// 管理器的数据或对象引用。
 	UHodgeEquipmentManagerComponent& Manager;
+	/** 构造装备MutationScope并初始化其默认状态。
+	 * @param InManager 管理器，由调用方传入。
+	 */
 	explicit FHodgeEquipmentMutationScope(UHodgeEquipmentManagerComponent& InManager) : Manager(InManager) { Manager.bEquipmentMutation = true; }
+	/** 销毁该对象，执行当前类型的析构收尾。 */
 	~FHodgeEquipmentMutationScope()
 	{
 		Manager.bEquipmentMutation = false;
@@ -120,92 +131,64 @@ UHodgeAbilitySystemComponent* FHodgeEquipmentList::GetAbilitySystemComponent() c
 }
 
 // 在服务器上根据 EquipmentDefinition 创建并添加一条新的已装备记录。
-UHodgeEquipmentInstance* FHodgeEquipmentList::AddEntry(TSubclassOf<UHodgeEquipmentDefinition> EquipmentDefinition, FGuid Id, int32 Level)
+UHodgeEquipmentInstance* FHodgeEquipmentList::AddEntry(TSubclassOf<UHodgeEquipmentDefinition> Definition, FGuid Id, int32 Level)
 {
-	// 保存最终创建出来的运行时装备实例。
-	UHodgeEquipmentInstance* Result = nullptr;
-
-	// EquipmentDefinition 必须有效。
-	check(EquipmentDefinition != nullptr);
-
-	// EquipmentList 必须已经绑定有效的 OwnerComponent。
-	check(OwnerComponent);
-
-	// 装备列表的新增只能由服务器权威端执行。
-	check(OwnerComponent->GetOwner()->HasAuthority());
-
-	// 获取 EquipmentDefinition 的类默认对象，直接读取这类装备的静态配置。
-	const UHodgeEquipmentDefinition* EquipmentCDO = GetDefault<UHodgeEquipmentDefinition>(EquipmentDefinition);
-
-	// 从装备定义中取得需要创建的运行时 EquipmentInstance 类型。
-	TSubclassOf<UHodgeEquipmentInstance> InstanceType = EquipmentCDO->InstanceType;
-
-	// 没有指定特殊 InstanceType 时退回基础 UHodgeEquipmentInstance。
-	if (InstanceType == nullptr)
+	auto* Manager = CastChecked<UHodgeEquipmentManagerComponent>(OwnerComponent);
+	Manager->LastEquipError.Reset(); Manager->bEquipIrreversibleEffects = false;
+	// 后续GAS操作使用的能力系统组件。
+	auto* ASC = GetAbilitySystemComponent();
+	TArray<FText> Errors;
+	const bool bBootstrap = OwnerComponent->GetOwner()->IsA<AHodgeEnemyCharacter>();
+	// 按服务器权限区分本次处理分支。
+	if (!OwnerComponent->GetOwner()->HasAuthority() ||
+		!UHodgeEquipmentManagerComponent::ValidateEquipmentForGrant(Definition, ASC, Level, Errors, bBootstrap))
+	{ Manager->LastEquipError = Errors.IsEmpty() ? TEXT("Equipment requires authority") : Errors[0].ToString(); return nullptr; }
+	const auto* CDO = GetDefault<UHodgeEquipmentDefinition>(Definition);
+	UClass* Type = CDO->InstanceType ? CDO->InstanceType.Get() : UHodgeEquipmentInstance::StaticClass();
+	TStrongObjectPtr<UHodgeEquipmentInstance> Instance(NewObject<UHodgeEquipmentInstance>(OwnerComponent->GetOwner(), Type));
+	FHodgeAppliedEquipmentEntry Pending;
+	Pending.EquipmentDefinition = Definition; Pending.Instance = Instance.Get(); Pending.GrantedAbilitySystem = ASC;
+	Instance->SetStatIdentity(Id, Level, CDO->StatProfile);
+	TWeakObjectPtr<AActor> Avatar = ASC ? ASC->GetAvatarActor() : nullptr;
+	auto Current = [&]() { return ASC && Avatar.IsValid() && !Avatar->IsActorBeingDestroyed() && Manager->IsRegistered() &&
+		!Manager->bPendingUninitialize && ASC->GetAvatarActor() == Avatar.Get() && GetAbilitySystemComponent() == ASC; };
+	auto Fail = [&](const FString& Error) -> UHodgeEquipmentInstance*
 	{
-		InstanceType = UHodgeEquipmentInstance::StaticClass();
-	}
-
-    const UHodgeEquipmentStatProfile* Stats = EquipmentCDO->StatProfile.Get();
-    float HealthBonus = 0.f, DamageBonus = 0.f;
-    TArray<FText> Errors;
-    auto* ASC = GetAbilitySystemComponent();
-    if (!ASC || (Stats && (!Stats->Validate(Errors) || !Stats->Evaluate(Level, HealthBonus, DamageBonus)))) { return nullptr; }
-
-	// 在装备列表中创建一条新的默认 Entry，并取得其引用。
-	FHodgeAppliedEquipmentEntry& NewEntry = Entries.AddDefaulted_GetRef();
-
-	// 记录当前 Entry 对应的装备定义类型。
-	NewEntry.EquipmentDefinition = EquipmentDefinition;
-
-	// 创建这件装备对应的运行时实例，并将 Owner Actor 作为该 UObject 的 Outer。
-	NewEntry.Instance = NewObject<UHodgeEquipmentInstance>(OwnerComponent->GetOwner(), InstanceType);
-
-	//@TODO: Using the actor instead of component as the outer due to UE-127172
-
-	// 保存新创建的运行时装备实例作为返回值。
-	Result = NewEntry.Instance;
-    Result->SetStatIdentity(Id, Level, Stats);
-    if (Stats)
-    {
-        auto Context = ASC->MakeEffectContext();
-        Context.AddSourceObject(Result);
-        auto Spec = ASC->MakeOutgoingSpec(Stats->AttributeEffect, Level, Context);
-        if (Spec.IsValid())
-        {
-            Spec.Data->SetSetByCallerMagnitude(HodgeGameplayTags::SetByCaller_Stat_MaxHealth, HealthBonus);
-            Spec.Data->SetSetByCallerMagnitude(HodgeGameplayTags::SetByCaller_Stat_BaseDamage, DamageBonus);
-            NewEntry.AttributeHandle = ASC->ApplyGameplayEffectSpecToSelf(*Spec.Data.Get());
-        }
-        if (!NewEntry.AttributeHandle.IsValid()) { Entries.RemoveAt(Entries.Num() - 1); return nullptr; }
-    }
-
-	// 获取当前 Pawn 使用的 ASC，装备授予 GAS 内容需要由 ASC 完成。
-	if (ASC)
-	{
-		NewEntry.GrantedAbilitySystem = ASC;
-
-		// 遍历当前 EquipmentDefinition 配置的所有 AbilitySet。
-		for (const TObjectPtr<const UHodgeAbilitySet>& AbilitySet : EquipmentCDO->AbilitySetsToGrant)
+		Manager->LastEquipError = Error;
+		if (ASC)
 		{
-			// 将 AbilitySet 授予 ASC，并把授予句柄记录到当前 Entry 供卸装时精确撤销。
-			AbilitySet->GiveToAbilitySystem(ASC, /*inout*/ &NewEntry.GrantedHandles, Result);
+			Pending.GrantedHandles.TakeFromAbilitySystem(ASC);
+			if (Pending.AttributeHandle.IsValid()) { ASC->RemoveActiveGameplayEffect(Pending.AttributeHandle); }
 		}
-	}
-	else
+		Instance->DestroyEquipmentActors();
+		UE_LOG(LogTemp, Warning, TEXT("Equipment grant failed: %s (%s)"), *GetNameSafe(Definition), *Error);
+		return nullptr;
+	};
+	if (!Current()) { return Fail(TEXT("Equipment ASC is not bound to the current Pawn")); }
+	// 将构造的效果规格提交给GAS执行属性更新。
+	if (CDO->StatProfile)
 	{
-		//@TODO: Warning logging?
+		float HealthBonus, DamageBonus; CDO->StatProfile->Evaluate(Level, HealthBonus, DamageBonus);
+		auto Context = ASC->MakeEffectContext(); Context.AddSourceObject(Instance.Get());
+		auto Spec = ASC->MakeOutgoingSpec(CDO->StatProfile->AttributeEffect, Level, Context);
+		if (!Spec.IsValid()) { return Fail(TEXT("Equipment attribute spec is invalid")); }
+		Spec.Data->SetSetByCallerMagnitude(HodgeGameplayTags::SetByCaller_Stat_MaxHealth, HealthBonus);
+		Spec.Data->SetSetByCallerMagnitude(HodgeGameplayTags::SetByCaller_Stat_BaseDamage, DamageBonus);
+		Pending.AttributeHandle = ASC->ApplyGameplayEffectSpecToSelf(*Spec.Data.Get());
+		if (!Pending.AttributeHandle.IsValid() || !Current()) { return Fail(TEXT("Equipment attribute application failed")); }
 	}
-
-	// 根据 EquipmentDefinition 配置生成并挂接这件装备需要的表现 Actor。
-	Result->SpawnEquipmentActors(EquipmentCDO->ActorsToSpawn);
-
-
-	// 标记当前 FastArray Entry 已发生变化，使其能够通过增量复制同步到客户端。
-	MarkItemDirty(NewEntry);
-
-	// 返回新创建的运行时装备实例。
-	return Result;
+	for (const UHodgeAbilitySet* Set : CDO->AbilitySetsToGrant)
+	{
+		const auto Result = Set->TryGiveToAbilitySystem(ASC, Pending.GrantedHandles, Instance.Get(), bBootstrap);
+		Manager->bEquipIrreversibleEffects |= Result.bHasIrreversibleEffects;
+		if (!Result.bSucceeded || !Current()) { return Fail(Result.Error.IsEmpty() ? TEXT("Equipment binding changed during grant") : Result.Error); }
+	}
+	if (!Instance->TrySpawnEquipmentActors(CDO->ActorsToSpawn) || !Current() || !Pending.GrantedHandles.AreValidFor(ASC))
+	{ return Fail(TEXT("Equipment actors or granted resources are invalid")); }
+	// 只提交完整记录，失败候选从未进入 FastArray 或复制子对象列表。
+	const int32 Index = Entries.Add(MoveTemp(Pending));
+	MarkItemDirty(Entries[Index]);
+	return Instance.Get();
 }
 
 // 在服务器上根据 EquipmentInstance 移除对应的已装备记录。
@@ -269,19 +252,25 @@ void UHodgeEquipmentManagerComponent::GetLifetimeReplicatedProps(TArray<FLifetim
 // 在服务器上根据 EquipmentDefinition 为当前 Pawn 装备一件物品。
 UHodgeEquipmentInstance* UHodgeEquipmentManagerComponent::EquipItem(TSubclassOf<UHodgeEquipmentDefinition> EquipmentClass)
 {
+    // 先检查对象与上下文，避免在依赖失效后继续处理。
     if (!EquipmentClass) { return nullptr; }
     const UHodgeEquipmentStatProfile* Stats = EquipmentClass->GetDefaultObject<UHodgeEquipmentDefinition>()->StatProfile.Get();
     return EquipItemWithState(EquipmentClass, FGuid::NewGuid(), Stats ? Stats->MinLevel : 1);
 }
 
+/** 按已有物品身份和等级创建装备并提交其授予。 */
 UHodgeEquipmentInstance* UHodgeEquipmentManagerComponent::EquipItemWithState(TSubclassOf<UHodgeEquipmentDefinition> EquipmentClass, FGuid Id, int32 Level)
 {
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (bEquipmentMutation) { return nullptr; }
 	FHodgeEquipmentMutationScope MutationScope(*this);
+    // 按服务器权限区分本次处理分支。
     if (!GetOwner()->HasAuthority() || !Id.IsValid()) { return nullptr; }
     if (auto* Existing = EquipmentList.Entries.FindByPredicate([Id](const auto& Entry) { return Entry.Instance && Entry.Instance->GetEquipmentId() == Id; }))
     { return Existing->EquipmentDefinition == EquipmentClass ? Existing->Instance.Get() : nullptr; }
+    // 后续GAS操作使用的能力系统组件。
     auto* ASC = Cast<UHodgeAbilitySystemComponent>(UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(GetOwner()));
+    // 玩家状态对象。
     auto* PS = ASC ? Cast<AHodgePlayerState>(ASC->GetOwnerActor()) : nullptr;
     auto* Coordinator = PS ? PS->GetAttributeCoordinator() : nullptr;
     const bool bBound = Coordinator && Coordinator->IsBoundTo(Cast<APawn>(GetOwner()));
@@ -322,8 +311,11 @@ void UHodgeEquipmentManagerComponent::UnequipItem(UHodgeEquipmentInstance* ItemI
 {
 	if (bEquipmentMutation) { return; }
 	FHodgeEquipmentMutationScope MutationScope(*this);
+    // 按服务器权限区分本次处理分支。
     if (!GetOwner()->HasAuthority() || !ItemInstance) { return; }
+    // 后续GAS操作使用的能力系统组件。
     auto* ASC = Cast<UHodgeAbilitySystemComponent>(UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(GetOwner()));
+    // 玩家状态对象。
     auto* PS = ASC ? Cast<AHodgePlayerState>(ASC->GetOwnerActor()) : nullptr;
     auto* Coordinator = PS ? PS->GetAttributeCoordinator() : nullptr;
     const bool bBound = Coordinator && Coordinator->IsBoundTo(Cast<APawn>(GetOwner()));
@@ -491,29 +483,35 @@ TArray<UHodgeEquipmentInstance*> UHodgeEquipmentManagerComponent::GetEquipmentIn
 	return Results;
 }
 
+/** 查找InstanceOf定义。 */
 UHodgeEquipmentInstance* UHodgeEquipmentManagerComponent::FindInstanceOfDefinition(TSubclassOf<UHodgeEquipmentDefinition> Definition) const
 {
     const auto* Entry = EquipmentList.Entries.FindByPredicate([Definition](const auto& Item) { return Item.EquipmentDefinition == Definition; });
     return Entry ? Entry->Instance.Get() : nullptr;
 }
 
+/** 设置装备等级。 */
 bool UHodgeEquipmentManagerComponent::SetEquipmentLevel(UHodgeEquipmentInstance* Instance, int32 Level)
 {
 	if (bEquipmentMutation) { return false; }
 	FHodgeEquipmentMutationScope MutationScope(*this);
+    // 按服务器权限区分本次处理分支。
     if (!GetOwner()->HasAuthority() || !Instance) { return false; }
     auto* Entry = EquipmentList.Entries.FindByPredicate([Instance](const auto& Item) { return Item.Instance == Instance; });
+    // 先检查对象与上下文，避免在依赖失效后继续处理。
     if (!Entry || !Entry->GrantedAbilitySystem.IsValid() || !Instance->GetStatProfile()) { return false; }
     const auto* Stats = Instance->GetStatProfile();
     float HealthBonus, DamageBonus;
     TArray<FText> Errors;
     if (!Stats->Validate(Errors) || !Stats->Evaluate(Level, HealthBonus, DamageBonus)) { return false; }
     if (Instance->GetEquipmentLevel() == Level && Entry->GrantedAbilitySystem->GetActiveGameplayEffect(Entry->AttributeHandle)) { return true; }
+    // 玩家状态对象。
     auto* PS = Cast<AHodgePlayerState>(Entry->GrantedAbilitySystem->GetOwnerActor());
     auto* Coordinator = PS ? PS->GetAttributeCoordinator() : nullptr;
     const bool bBound = Coordinator && Coordinator->IsBoundTo(Cast<APawn>(GetOwner()));
     if (bBound && (Coordinator->IsUpdating() || !Coordinator->BeginEquipmentUpdate())) { return false; }
     bool bSuccess = false;
+    // 将构造的效果规格提交给GAS执行属性更新。
     if (Entry->GrantedAbilitySystem->GetActiveGameplayEffect(Entry->AttributeHandle))
     {
         TMap<FGameplayTag, float> Values;
@@ -544,4 +542,42 @@ bool UHodgeEquipmentManagerComponent::SetEquipmentLevel(UHodgeEquipmentInstance*
     }
     if (bBound) { Coordinator->FinishEquipmentUpdate(bSuccess); }
     return bSuccess;
+}
+
+
+/** 校验装备关联授予。 */
+bool UHodgeEquipmentManagerComponent::ValidateEquipmentForGrant(TSubclassOf<UHodgeEquipmentDefinition> Definition,
+	const UHodgeAbilitySystemComponent* ASC, int32 Level, TArray<FText>& Errors, bool bForInitialization)
+{
+	const int32 Before = Errors.Num();
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
+	if (!ASC || !Definition || Definition->HasAnyClassFlags(CLASS_Abstract) || Level < 1)
+	{ Errors.Add(FText::FromString(TEXT("Missing ASC/equipment Definition or invalid level"))); return false; }
+	const auto* CDO = GetDefault<UHodgeEquipmentDefinition>(Definition);
+	if (CDO->InstanceType && CDO->InstanceType->HasAnyClassFlags(CLASS_Abstract))
+	{ Errors.Add(FText::FromString(TEXT("Equipment instance class is abstract"))); }
+	if (CDO->StatProfile)
+	{
+		float Health, Damage;
+		if (!CDO->StatProfile->Validate(Errors) || !CDO->StatProfile->Evaluate(Level, Health, Damage))
+		{ Errors.Add(FText::FromString(TEXT("Equipment stat configuration is invalid"))); }
+	}
+	TArray<const UHodgeAbilitySet*> Sets;
+	for (const UHodgeAbilitySet* Set : CDO->AbilitySetsToGrant) { Sets.Add(Set); }
+	UHodgeAbilitySet::ValidateBatchForGrant(Sets, ASC, Errors, bForInitialization);
+	for (const auto& Actor : CDO->ActorsToSpawn)
+	{
+		if (!Actor.ActorToSpawn || Actor.ActorToSpawn->HasAnyClassFlags(CLASS_Abstract) || !Actor.AttachTransform.IsValid())
+		{ Errors.Add(FText::FromString(TEXT("Equipment actor configuration is invalid"))); }
+	}
+	return Before == Errors.Num();
+}
+
+/** 判断装备就绪。 */
+bool UHodgeEquipmentManagerComponent::IsEquipmentReady(const UHodgeEquipmentInstance* Instance) const
+{
+	const auto* Entry = EquipmentList.Entries.FindByPredicate([Instance](const auto& Item) { return Item.Instance == Instance; });
+	return IsRegistered() && !bPendingUninitialize && Entry && IsValid(Instance) && Entry->GrantedAbilitySystem.IsValid() &&
+		Entry->GrantedHandles.AreValidFor(Entry->GrantedAbilitySystem.Get()) &&
+		(!Instance->GetStatProfile() || Entry->GrantedAbilitySystem->GetActiveGameplayEffect(Entry->AttributeHandle));
 }

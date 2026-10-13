@@ -1,3 +1,6 @@
+/** @file HodgeWeaponPresentationActor.cpp
+ * @brief 实现武器表现Actor相关的类型、接口与现有处理流程。
+ */
 #include "Equipment/HodgeWeaponPresentationActor.h"
 #include "Equipment/HodgeWeaponInstance.h"
 #include "Equipment/HodgeWeaponPresentationProfile.h"
@@ -11,6 +14,7 @@
 #include "TimerManager.h"
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeWeaponPresentationActor)
 
+/** 构造武器表现Actor并初始化其默认状态。 */
 AHodgeWeaponPresentationActor::AHodgeWeaponPresentationActor()
 {
 	bReplicates = true;
@@ -33,16 +37,20 @@ AHodgeWeaponPresentationActor::AHodgeWeaponPresentationActor()
 	AddTickPrerequisiteComponent(SkeletalMesh);
 }
 
+/** 进入世界运行阶段并接入本对象的生命周期依赖。 */
 void AHodgeWeaponPresentationActor::BeginPlay()
 {
 	Super::BeginPlay();
 	SkeletalMesh->SetComponentTickEnabled(false);
 	TryBindWeapon();
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (!Weapon.IsValid()) { GetWorldTimerManager().SetTimer(BindRetryTimer, this, &ThisClass::TryBindWeapon, .05f, true); }
 }
 
+/** 尝试绑定武器。 */
 void AHodgeWeaponPresentationActor::TryBindWeapon()
 {
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (const auto* Manager = GetOwner() ? GetOwner()->FindComponentByClass<UHodgeEquipmentManagerComponent>() : nullptr)
 	{
 		for (auto* Instance : Manager->GetEquipmentInstancesOfType(UHodgeWeaponInstance::StaticClass()))
@@ -53,6 +61,7 @@ void AHodgeWeaponPresentationActor::TryBindWeapon()
 	if (Weapon.IsValid() || ++BindAttempts >= 100) { GetWorldTimerManager().ClearTimer(BindRetryTimer); }
 }
 
+/** 配置配置。 */
 void AHodgeWeaponPresentationActor::ConfigureProfile(const UHodgeWeaponPresentationProfile* Profile)
 {
 	if (!Profile || Profile == AppliedProfile) { return; }
@@ -70,6 +79,7 @@ void AHodgeWeaponPresentationActor::ConfigureProfile(const UHodgeWeaponPresentat
 	}
 }
 
+/** 绑定武器。 */
 void AHodgeWeaponPresentationActor::BindWeapon(UHodgeWeaponInstance* Instance)
 {
 	Weapon = Instance;
@@ -94,24 +104,30 @@ void AHodgeWeaponPresentationActor::BindWeapon(UHodgeWeaponInstance* Instance)
 	RefreshPresentation();
 }
 
+/** 刷新表现。 */
 void AHodgeWeaponPresentationActor::RefreshPresentation()
 {
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (!Weapon.IsValid() || !AppliedProfile) { WeaponVisualMesh->SetVisibility(false); SetActorTickEnabled(false); return; }
 	const bool bHand = Weapon->GetPresentationState().Phase == EHodgeWeaponPresentationPhase::Hand;
 	SkeletalMesh->SetComponentTickEnabled(bHand);
 	EvaluatePresentation();
 }
 
+/** 获取Visual变换。 */
 FTransform AHodgeWeaponPresentationActor::GetVisualTransform() const
 {
 	return GetNetMode() == NM_DedicatedServer ? SkeletalMesh->GetComponentTransform() : WeaponVisualMesh->GetComponentTransform();
 }
 
+/** 计算表现。 */
 void AHodgeWeaponPresentationActor::EvaluatePresentation()
 {
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (!Weapon.IsValid() || !AppliedProfile || !Weapon->GetPawn()) { return; }
 	const auto& P = *AppliedProfile;
 	const auto State = Weapon->GetPresentationState();
+	const bool bFadeAtHand = State.EndBehavior == EHodgeWeaponHandEndBehavior::FadeAtHand;
 	const FTransform PawnTransform = Weapon->GetPawn()->GetRootComponent()->GetComponentTransform();
 	auto* Character = Cast<ACharacter>(Weapon->GetPawn());
 	auto* CharacterMesh = Character ? Character->GetMesh() : nullptr;
@@ -134,7 +150,7 @@ void AHodgeWeaponPresentationActor::EvaluatePresentation()
 		Phase = EHodgeWeaponPresentationPhase::Fading;
 	}
 	if (Phase == EHodgeWeaponPresentationPhase::Fading && Elapsed >= P.FadeSeconds) { Phase = EHodgeWeaponPresentationPhase::Hidden; }
-	FTransform Pose = BackPose;
+	FTransform Pose = bFadeAtHand ? SkeletalMesh->GetComponentTransform().GetRelativeTransform(PawnTransform) : BackPose;
 	VisibilityAmount = 1.f;
 	if (Phase == EHodgeWeaponPresentationPhase::Hand)
 	{
@@ -155,12 +171,13 @@ void AHodgeWeaponPresentationActor::EvaluatePresentation()
 	}
 	else if (Phase == EHodgeWeaponPresentationPhase::Fading)
 	{
-		if (bHasBackSocket) { Pose.AddToTranslation(FVector(0.f, 0.f, P.HoverAmplitude * FMath::Sin((Elapsed + P.HoverSeconds) * UE_TWO_PI * P.HoverFrequency))); }
-		VisibilityAmount = 1.f - FMath::Clamp(static_cast<float>(Elapsed) / P.FadeSeconds, 0.f, 1.f);
+		if (bFadeAtHand) { Pose = SkeletalMesh->GetComponentTransform().GetRelativeTransform(PawnTransform); }
+		else if (bHasBackSocket) { Pose.AddToTranslation(FVector(0.f, 0.f, P.HoverAmplitude * FMath::Sin((Elapsed + P.HoverSeconds) * UE_TWO_PI * P.HoverFrequency))); }
+		VisibilityAmount = State.StartVisibility * (1.f - FMath::Clamp(static_cast<float>(Elapsed) / P.FadeSeconds, 0.f, 1.f));
 	}
 	else { VisibilityAmount = 0.f; }
 	// 只切换可见 Mesh 的挂接，逻辑命中来源始终保持手部挂接。
-	const bool bOnBack = bHasBackSocket && (Phase == EHodgeWeaponPresentationPhase::Hovering || Phase == EHodgeWeaponPresentationPhase::Fading || Phase == EHodgeWeaponPresentationPhase::Hidden);
+	const bool bOnBack = !bFadeAtHand && bHasBackSocket && (Phase == EHodgeWeaponPresentationPhase::Hovering || Phase == EHodgeWeaponPresentationPhase::Fading || Phase == EHodgeWeaponPresentationPhase::Hidden);
 	USceneComponent* VisualParent = bOnBack ? CharacterMesh : (Phase == EHodgeWeaponPresentationPhase::Returning ? Weapon->GetPawn()->GetRootComponent() : SkeletalMesh.Get());
 	const FName VisualSocket = bOnBack ? P.BackSocket : NAME_None;
 	if (WeaponVisualMesh->GetAttachParent() != VisualParent || WeaponVisualMesh->GetAttachSocketName() != VisualSocket)
@@ -179,12 +196,14 @@ void AHodgeWeaponPresentationActor::EvaluatePresentation()
 	SetActorTickEnabled(bAnimate && GetNetMode() != NM_DedicatedServer);
 }
 
+/** 推进当前对象的随帧更新。 */
 void AHodgeWeaponPresentationActor::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 	EvaluatePresentation();
 }
 
+/** 离开世界运行阶段并解除本对象持有的监听或资源。 */
 void AHodgeWeaponPresentationActor::EndPlay(const EEndPlayReason::Type Reason)
 {
 	GetWorldTimerManager().ClearTimer(BindRetryTimer);

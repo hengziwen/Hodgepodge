@@ -1,3 +1,6 @@
+/** @file HodgeHeroCharacter.cpp
+ * @brief 实现玩家角色相关的类型、接口与现有处理流程。
+ */
 /**
  * @file HodgeHeroCharacter.cpp
  * @brief AHodgeHeroCharacter 类的实现
@@ -11,9 +14,16 @@
 #include "Character/HodgeHeroCharacter.h"
 
 #include "Component/HodgeHeroComponent.h"
+#include "Component/HodgeLockOnComponent.h"
 #include "Core/PlayState/HodgePlayerState.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeHeroCharacter)
+
+void AHodgeHeroCharacter::FaceRotation(FRotator NewControlRotation, float DeltaTime)
+{
+	if (LockOnComponent && LockOnComponent->CanOwnControllerFacing()) { return; }
+	Super::FaceRotation(NewControlRotation, DeltaTime);
+}
 
 /**
  * @brief 构造函数
@@ -24,6 +34,7 @@ AHodgeHeroCharacter::AHodgeHeroCharacter(const FObjectInitializer& ObjectInitial
 	: Super(ObjectInitializer)
 {
 	HeroComponent = CreateDefaultSubobject<UHodgeHeroComponent>(TEXT("HeroComponent"));
+	LockOnComponent = CreateDefaultSubobject<UHodgeLockOnComponent>(TEXT("LockOnComponent"));
 }
 
 /**

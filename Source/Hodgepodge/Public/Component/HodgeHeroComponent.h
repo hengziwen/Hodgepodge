@@ -1,4 +1,7 @@
-﻿// Copyright Epic Games, Inc. All Rights Reserved.
+﻿/** @file HodgeHeroComponent.h
+ * @brief 声明玩家输入与相机接入组件相关的类型、接口与现有处理流程。
+ */
+// Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
 
@@ -72,10 +75,17 @@ class HODGEPODGE_API UHodgeHeroComponent : public UPawnComponent, public IGameFr
 
 public:
 	// 构造函数。
+	/** 构造玩家输入与相机接入组件并初始化其默认状态。
+	 * @param ObjectInitializer UE构造对象时传入的初始化器。
+	 */
 	UHodgeHeroComponent(const FObjectInitializer& ObjectInitializer);
 
 	/** Returns the hero component if one exists on the specified actor. */
 	// 从指定 Actor 上查找 HeroComponent，不存在时返回 nullptr。
+	/** 查找玩家输入与相机接入组件。
+	 * @param Actor 本次操作关联的Actor。
+	 * @return 玩家输入与相机接入组件的当前值或引用。
+	 */
 	UFUNCTION(BlueprintPure, Category = "Hodge|Hero")
 	static UHodgeHeroComponent* FindHeroComponent(const AActor* Actor)
 	{
@@ -85,23 +95,41 @@ public:
 
 	/** Overrides the camera from an active gameplay ability */
 	// 允许某个正在运行的 GameplayAbility 临时覆盖当前相机模式。
+	/** 设置能力相机Mode。
+	 * @param CameraMode 相机模式与混合栈，由调用方传入。
+	 * @param OwningSpecHandle 已授予能力的Spec句柄。
+	 */
 	void SetAbilityCameraMode(TSubclassOf<UHodgeCameraMode> CameraMode,
 	                          const FGameplayAbilitySpecHandle& OwningSpecHandle);
+	/** 查询能力、锁定和默认配置仲裁后的期望镜头，实际混合栈另由相机组件查询。 */
+	UFUNCTION(BlueprintPure, Category="Hodge|Camera") TSubclassOf<UHodgeCameraMode> GetDesiredCameraMode() const { return DetermineCameraMode(); }
 
 	/** Clears the camera override if it is set */
 	// 如果指定 Ability 正是当前相机覆盖的拥有者，则清除 Ability 相机模式。
+	/** 清空能力相机Mode。
+	 * @param OwningSpecHandle 已授予能力的Spec句柄。
+	 */
 	void ClearAbilityCameraMode(const FGameplayAbilitySpecHandle& OwningSpecHandle);
 
 	/** Adds mode-specific input config */
 	// 动态添加一份额外输入配置，常用于 GameFeature、武器模式或特殊玩法。
+	/** 添加Additional输入配置。
+	 * @param InputConfig 输入动作与Tag映射，由调用方传入。
+	 */
 	void AddAdditionalInputConfig(const UHodgeInputConfig* InputConfig);
 
 	/** Removes a mode-specific input config if it has been added */
 	// 移除之前动态添加的额外输入配置。
+	/** 移除Additional输入配置。
+	 * @param InputConfig 输入动作与Tag映射，由调用方传入。
+	 */
 	void RemoveAdditionalInputConfig(const UHodgeInputConfig* InputConfig);
 
 	/** True if this is controlled by a real player and has progressed far enough in initialization where additional input bindings can be added */
 	// 判断当前 Pawn 是否已经完成足够的初始化，可以安全添加额外输入绑定。
+	/** 判断就绪目标绑定Inputs。
+	 * @return true表示满足该查询条件，false表示不满足。
+	 */
 	bool IsReadyToBindInputs() const;
 
 	/**
@@ -115,22 +143,55 @@ public:
 	 * DisableMovement 让攻击期间不能移动，Input_Move 将不再回调，这个意图会恒为 false，
 	 * 依赖它的取消逻辑会**静默失效**。所以：禁止移动不要用屏蔽输入来实现。
 	 */
+	/** 判断是否存在移动意图。
+	 * @param Threshold 阈值，由调用方传入。
+	 * @return true表示满足该查询条件，false表示不满足。
+	 */
 	UFUNCTION(BlueprintPure, Category = "Hodge|Hero|Input")
 	bool HasMoveIntent(float Threshold = 0.1f) const;
+	/** 重置玩法输入。 */
 	void ResetGameplayInput();
+	/** 开始Sprint奔跑输入。 */
 	UFUNCTION(BlueprintCallable, Category="Hodge|Movement") void BeginSprintInput();
+	/** 结束Sprint奔跑输入。 */
 	UFUNCTION(BlueprintCallable, Category="Hodge|Movement") void EndSprintInput();
+	/** 获取Sprint奔跑输入会话。
+	 * @return Sprint奔跑输入会话的当前值或引用。
+	 */
 	UFUNCTION(BlueprintPure, Category="Hodge|Movement") FHodgeSprintInputSession GetSprintInputSession() const { return SprintInputSession; }
+	/** 通知Dash冲刺Committed。
+	 * @param SessionId 本次会话的唯一身份。
+	 */
 	void NotifyDashCommitted(int32 SessionId);
+	/** 通知Sprint奔跑Committed。
+	 * @param SessionId 本次会话的唯一身份。
+	 */
 	void NotifySprintCommitted(int32 SessionId);
+	/** 通知移动动作结束。
+	 * @param SessionId 本次会话的唯一身份。
+	 * @param bHandedOff 是否HandedOff的控制标记。
+	 */
 	void NotifyMovementActionEnded(int32 SessionId, bool bHandedOff);
+	/** 请求Sprint奔跑Handoff。
+	 * @param SessionId 本次会话的唯一身份。
+	 * @param HoldThreshold 按住阈值，由调用方传入。
+	 */
 	void RequestSprintHandoff(int32 SessionId, float HoldThreshold);
 
 	// 最近的二维移动输入原始值（X = 左右，Y = 前后；未做阈值判断），供需要方向或大小的消费方使用。
+	/** 获取移动意图。
+	 * @return 移动意图的当前值或引用。
+	 */
 	UFUNCTION(BlueprintPure, Category = "Hodge|Hero|Input")
 	FVector2D GetMoveIntent() const { return CurrentMoveInput; }
+	/** 获取移动意图快照。
+	 * @return 移动意图快照的当前值或引用。
+	 */
 	UFUNCTION(BlueprintPure, Category="Hodge|Hero|Input")
 	FHodgeMoveIntentSnapshot GetMoveIntentSnapshot() const { return MoveIntentSnapshot; }
+	/** 获取世界移动意图。
+	 * @return 世界移动意图的当前值或引用。
+	 */
 	UFUNCTION(BlueprintPure, Category="Hodge|Hero|Input")
 	FVector GetWorldMoveIntent() const { return MoveIntentSnapshot.DesiredDirectionWorld; }
 
@@ -149,69 +210,126 @@ public:
 	//~ Begin IGameFrameworkInitStateInterface interface
 
 	// 返回当前组件在初始化状态系统中的 Feature 名称。
+	/** 获取功能扩展名称。
+	 * @return 功能扩展名称的当前值或引用。
+	 */
 	virtual FName GetFeatureName() const override { return NAME_ActorFeatureName; }
 
 	// 判断当前初始化状态是否满足进入 DesiredState 的前置条件。
+	/** 只判断初始化阶段能否推进，不承担阶段副作用。
+	 * @param Manager 管理器，由调用方传入。
+	 * @param CurrentState 当前状态，用于对应标签查询或匹配。
+	 * @param DesiredState 期望状态，用于对应标签查询或匹配。
+	 * @return true表示满足该查询条件，false表示不满足。
+	 */
 	virtual bool CanChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState,
 	                                FGameplayTag DesiredState) const override;
 
 	// 当组件真正切换到新的初始化状态时执行对应初始化逻辑。
+	/** 执行初始化状态转换对应的阶段处理。
+	 * @param Manager 管理器，由调用方传入。
+	 * @param CurrentState 当前状态，用于对应标签查询或匹配。
+	 * @param DesiredState 期望状态，用于对应标签查询或匹配。
+	 */
 	virtual void HandleChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState,
 	                                   FGameplayTag DesiredState) override;
 
 	// 监听同一个 Actor 上其他 Feature 的初始化状态变化。
+	/** 处理Actor对象Init状态变化。
+	 * @param Params 参数，由调用方传入。
+	 */
 	virtual void OnActorInitStateChanged(const FActorInitStateChangedParams& Params) override;
 
 	// 检查当前组件是否可以继续沿默认 InitState 链推进。
+	/** 尝试推进当前组件及相关Feature的初始化链。 */
 	virtual void CheckDefaultInitialization() override;
 
 	//~ End IGameFrameworkInitStateInterface interface
 
 protected:
 	// 组件注册到 Actor 时调用，可用于检查 Owner 和组件依赖。
+	/** 组件注册后接入当前Owner的依赖。 */
 	virtual void OnRegister() override;
 
 	// 游戏开始时调用，通常在这里注册 InitState Feature 并开始初始化流程。
+	/** 进入世界运行阶段并接入本对象的生命周期依赖。 */
 	virtual void BeginPlay() override;
 
 	// 组件结束生命周期时调用，用于注销初始化 Feature 和清理资源。
+	/** 离开世界运行阶段并解除本对象持有的监听或资源。
+	 * @param EndPlayReason 结束PlayReason，由调用方传入。
+	 */
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	// 初始化本地玩家输入，包括 MappingContext、Native Input 和 Ability Input 绑定。
+	/** 初始化玩家输入。
+	 * @param PlayerInputComponent 玩家输入组件，由调用方传入。
+	 */
 	virtual void InitializePlayerInput(UInputComponent* PlayerInputComponent);
 
 	// Ability 类型输入按下时调用，将 InputTag 转发给 ASC。
+	/** 把玩家输入按下转交ASC的Tag输入入口。
+	 * @param InputTag 输入动作对应的GameplayTag。
+	 */
 	void Input_AbilityInputTagPressed(FGameplayTag InputTag);
 
 	// Ability 类型输入松开时调用，将 InputTag 转发给 ASC。
+	/** 把玩家输入松开转交ASC的Tag输入入口。
+	 * @param InputTag 输入动作对应的GameplayTag。
+	 */
 	void Input_AbilityInputTagReleased(FGameplayTag InputTag);
 
 	// 处理角色移动输入。
+	/** 把当前二维输入转换并提交给角色移动意图。
+	 * @param InputActionValue 输入动作值，由调用方传入。
+	 */
 	void Input_Move(const FInputActionValue& InputActionValue);
 
 	// 移动输入结束（Completed）或被取消（Canceled）时清零移动意图。
 	// 只接 Triggered 会让意图"粘住"：松手、切换 InputContext、失焦都不会让它回到 0。
+	/** 清理已经停止的移动输入意图。
+	 * @param InputActionValue 输入动作值，由调用方传入。
+	 */
 	void Input_MoveStopped(const FInputActionValue& InputActionValue);
 
 	// 处理鼠标视角输入。
+	/** 按输入配置处理鼠标视角增量。
+	 * @param InputActionValue 输入动作值，由调用方传入。
+	 */
 	void Input_LookMouse(const FInputActionValue& InputActionValue);
 
 	// 处理手柄摇杆视角输入。
+	/** 按输入配置处理手柄视角增量。
+	 * @param InputActionValue 输入动作值，由调用方传入。
+	 */
 	void Input_LookStick(const FInputActionValue& InputActionValue);
 
 	// 处理蹲伏输入。
+	/** 处理当前玩家的下蹲输入。
+	 * @param InputActionValue 输入动作值，由调用方传入。
+	 */
 	void Input_Crouch(const FInputActionValue& InputActionValue);
 
 	// 处理自动奔跑输入。
+	/** 切换当前玩家的自动移动意图。
+	 * @param InputActionValue 输入动作值，由调用方传入。
+	 */
 	void Input_AutoRun(const FInputActionValue& InputActionValue);
 
 	// 根据 Ability 覆盖和 PawnData 默认配置决定当前应该使用的相机模式。
+	/** 按当前角色与能力状态选择相机模式类。
+	 * @return 本次计算、查询或创建得到的TSubclassOfUHodge相机Mode。
+	 */
 	TSubclassOf<UHodgeCameraMode> DetermineCameraMode() const;
 
 	// 记录移动意图并按需广播变化。Input_Move / Input_MoveStopped 都走这里，保证只有一条写入路径。
+	/** 设置移动意图。
+	 * @param NewValue 新值，由调用方传入。
+	 */
 	void SetMoveIntent(const FVector2D& NewValue);
 
 	// 重新计算布尔意图，只在结果翻转时广播 OnMoveIntentChanged。
+	/** 刷新移动意图。 */
 	void RefreshMoveIntent();
 
 protected:
@@ -239,7 +357,9 @@ protected:
 	 * 它同时供 HasMoveIntent / GetMoveIntent 与 OnMoveIntentChanged 使用。
 	 */
 	FVector2D CurrentMoveInput = FVector2D::ZeroVector;
+	// 移动意图快照的数据或对象引用。
 	FHodgeMoveIntentSnapshot MoveIntentSnapshot;
+	// Sprint奔跑输入会话的数据或对象引用。
 	FHodgeSprintInputSession SprintInputSession;
 
 	// 上一次广播出去的移动意图，用于"只在翻转时广播"。

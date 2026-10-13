@@ -1,3 +1,6 @@
+﻿/** @file HodgeAbilityDefinition.h
+ * @brief 声明单段技能执行定义相关的类型、接口与现有处理流程。
+ */
 #pragma once
 
 #include "CoreMinimal.h"
@@ -6,14 +9,17 @@
 #include "Animation/AnimMontage.h"
 #include "GameplayTagContainer.h"
 #include "Combat/HodgeHitDetection.h"
+#include "Combat/HodgeAttackFacingTypes.h"
 #include "HodgeAbilityDefinition.generated.h"
 
 class UHodgeGameplayAbility;
 class UAnimMontage;
 
+/** 区分连段协调器授权与独立GAS激活两条执行路由。 */
 UENUM(BlueprintType)
-enum class EHodgeAbilityExecutionRoute : uint8 { ComboCoordinated, Standalone };
+enum class EHodgeAbilityExecutionRoute : uint8 { /* 由连段协调器授权执行。 */ ComboCoordinated, /* 通过GAS常规入口独立执行。 */ Standalone };
 
+/** 保存能力混合设置的数据和接口契约。 */
 USTRUCT(BlueprintType)
 struct HODGEPODGE_API FHodgeAbilityBlendSettings
 {
@@ -26,10 +32,17 @@ struct HODGEPODGE_API FHodgeAbilityBlendSettings
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) EAlphaBlendOption Curve = EAlphaBlendOption::Linear;
 	// 自定义混合权重曲线，仅在 Curve 为 Custom 时必填。
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<UCurveFloat> CustomCurve;
+	/** 构造混合。
+	 * @return 本次计算、查询或创建得到的混合权重混合。
+	 */
 	FAlphaBlend MakeBlend() const;
+	/** 检查当前对象、配置或句柄是否满足其有效性条件。
+	 * @return true表示满足该查询条件，false表示不满足。
+	 */
 	bool IsValid() const;
 };
 
+/** 保存能力执行配置的数据和接口契约。 */
 USTRUCT(BlueprintType)
 struct FHodgeAbilityExecutionConfig
 {
@@ -65,11 +78,26 @@ public:
 	// 仅独立 Definition 使用；授予时写入 Spec 的输入标签。
 	// Standalone 授予时写入 Spec 的输入标签，不会自动创建输入动作或按键映射。
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(Categories="InputTag")) FGameplayTag InputTag;
+	// 攻击旋转 Warp 默认关闭，不改变现有 Dash 或伤害时间轴。
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Facing") FHodgeAttackFacingConfig FacingWarp;
+	/** 获取唯一 Warp 窗口的源时间，失败时不输出隐式窗口。 */
+	bool GetFacingWarpWindow(float& OutStart, float& OutEnd) const;
 	// 当前动作的默认伤害参数，命中通知可继承或显式覆盖。
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Combat") FHodgeHitEffectConfig DefaultHitConfig;
+	/** 根据当前配置计算动作持续时间。
+	 * @return 持续时间的当前值或引用。
+	 */
 	UFUNCTION(BlueprintPure) float GetDuration() const;
+	/** 检查定义配置及其引用资源是否满足执行契约。
+	 * @param Errors 收集配置或执行失败的诊断。
+	 * @return true表示本次检查或操作成功，false表示失败。
+	 */
 	bool ValidateDefinition(TArray<FText>& Errors) const;
 #if WITH_EDITOR
+	/** 在编辑器校验当前配置并收集诊断。
+	 * @param Context 本次操作的上下文。
+	 * @return 当前配置的校验结果。
+	 */
 	virtual EDataValidationResult IsDataValid(FDataValidationContext& Context) const override;
 #endif
 };

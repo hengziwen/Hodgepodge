@@ -1,3 +1,6 @@
+﻿/** @file IndicatorLayer.h
+ * @brief 声明Actor指示器UMG层相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
@@ -21,7 +24,7 @@ class UObject;
 // 负责在 UMG Widget Tree 中提供一个 Indicator 显示区域，
 // 并在内部创建和持有真正执行 Indicator 布局工作的 SActorCanvas。
 UCLASS()
-class UIndicatorLayer : public UWidget
+class HODGEPODGE_API UIndicatorLayer : public UWidget
 {
 	GENERATED_UCLASS_BODY()
 
@@ -36,10 +39,16 @@ protected:
 
 	// 释放当前 UWidget 持有的 Slate 资源。
 	// IndicatorLayer 销毁或重建时，需要在这里释放 MyActorCanvas 等 Slate 对象引用。
+	/** 释放Slate界面Resources。
+	 * @param bReleaseChildren 是否释放子项的控制标记。
+	 */
 	virtual void ReleaseSlateResources(bool bReleaseChildren) override;
 
 	// 根据当前 UMG Widget 重建其底层 Slate Widget。
 	// UIndicatorLayer 会在这里创建并返回实际负责 Indicator 布局的 SActorCanvas。
+	/** 根据当前属性创建对应的Slate控件。
+	 * @return 本次计算、查询或创建得到的T共享RefS控件。
+	 */
 	virtual TSharedRef<SWidget> RebuildWidget() override;
 
 	// End UWidget

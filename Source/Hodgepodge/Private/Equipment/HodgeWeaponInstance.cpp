@@ -1,3 +1,6 @@
+/** @file HodgeWeaponInstance.cpp
+ * @brief 实现武器运行实例相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "Equipment/HodgeWeaponInstance.h"
@@ -230,6 +233,7 @@ void UHodgeWeaponInstance::OnDeathStarted(AActor* OwningActor)
 {
 	bPresentationDisabled = true;
 	HandRequests.Reset();
+	NextHandRequestOrder = 0;
 	UpdateOwnerPosePolicy();
 	ClearPresentationTimer();
 	SetPresentationPhase(EHodgeWeaponPresentationPhase::Hidden, LocalPresentation.ActivationKey);
@@ -247,24 +251,30 @@ void UHodgeWeaponInstance::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>&
 	DOREPLIFETIME(ThisClass, ReplicatedPresentation);
 }
 
+/** 获取表现时间。 */
 double UHodgeWeaponInstance::GetPresentationTime() const
 {
+	// 本次操作所在的世界。
 	const auto* World = GetWorld();
 	const auto* State = World ? World->GetGameState() : nullptr;
 	return State ? State->GetServerWorldTimeSeconds() : (World ? World->GetTimeSeconds() : 0.0);
 }
 
+/** 检查是否允许Drive表现。 */
 bool UHodgeWeaponInstance::CanDrivePresentation() const
 {
+	// 当前操作关联的Pawn角色。
 	const APawn* Pawn = GetPawn();
 	const auto* Health = Pawn ? UHodgeHealthComponent::FindHealthComponent(Pawn) : nullptr;
 	return bPresentationEquipped && !bPresentationDisabled && PresentationProfile && Pawn
 		&& (Pawn->HasAuthority() || Pawn->IsLocallyControlled()) && (!Health || !Health->IsDeadOrDying());
 }
 
+/** 解析表现武器。 */
 UHodgeWeaponInstance* UHodgeWeaponInstance::ResolvePresentationWeapon(APawn* Pawn, UObject* SourceObject)
 {
 	const auto* Manager = Pawn ? Pawn->FindComponentByClass<UHodgeEquipmentManagerComponent>() : nullptr;
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (!Manager) { return nullptr; }
 	const auto Instances = Manager->GetEquipmentInstancesOfType(StaticClass());
 	if (auto* Source = Cast<UHodgeWeaponInstance>(SourceObject))
@@ -288,6 +298,7 @@ UHodgeWeaponInstance* UHodgeWeaponInstance::ResolvePresentationWeapon(APawn* Paw
 	return Result;
 }
 
+/** 初始化表现。 */
 void UHodgeWeaponInstance::InitializePresentation()
 {
 	if (bPresentationEquipped)
@@ -297,6 +308,7 @@ void UHodgeWeaponInstance::InitializePresentation()
 	}
 	bPresentationEquipped = true;
 	bPresentationDisabled = false;
+	// 解除本对象的监听，避免旧生命周期回调继续进入。
 	if (auto* Health = UHodgeHealthComponent::FindHealthComponent(GetPawn()))
 	{
 		Health->OnDeathStarted.RemoveAll(this);
@@ -304,17 +316,21 @@ void UHodgeWeaponInstance::InitializePresentation()
 		bPresentationDisabled = Health->IsDeadOrDying();
 	}
 	LocalPresentation = ReplicatedPresentation;
+	// 按服务器权限区分本次处理分支。
 	if (GetPawn() && GetPawn()->HasAuthority()) { SetPresentationPhase(EHodgeWeaponPresentationPhase::Hidden, 0); }
 	RefreshPresentationActors();
 }
 
+/** 清空表现计时器。 */
 void UHodgeWeaponInstance::ClearPresentationTimer()
 {
 	if (UWorld* World = GetWorld()) { World->GetTimerManager().ClearTimer(PresentationTimer); }
 }
 
+/** 清理当前武器表现的计时器与来源记录。 */
 void UHodgeWeaponInstance::ShutdownPresentation()
 {
+	// 解除本对象的监听，避免旧生命周期回调继续进入。
 	if (auto* Health = UHodgeHealthComponent::FindHealthComponent(GetPawn()))
 	{
 		Health->OnDeathStarted.RemoveAll(this);
@@ -328,15 +344,18 @@ void UHodgeWeaponInstance::ShutdownPresentation()
 	SetPresentationPhase(EHodgeWeaponPresentationPhase::Hidden, 0);
 }
 
-FGuid UHodgeWeaponInstance::AcquireHandUse(FGuid ExecutionId, int32 OccurrenceId, int32 ActivationKey)
+/** 按执行身份申请武器手持窗口。 */
+FGuid UHodgeWeaponInstance::AcquireHandUse(FGuid ExecutionId, int32 OccurrenceId, int32 ActivationKey, EHodgeWeaponHandEndBehavior EndBehavior)
 {
-	if (!ExecutionId.IsValid() || !CanDrivePresentation()) { return {}; }
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
+	if (!ExecutionId.IsValid() || !CanDrivePresentation() || NextHandRequestOrder == MAX_uint64 ||
+		(EndBehavior != EHodgeWeaponHandEndBehavior::ReturnToBack && EndBehavior != EHodgeWeaponHandEndBehavior::FadeAtHand)) { return {}; }
 	for (const auto& Entry : HandRequests)
 	{
 		if (Entry.Value.ExecutionId == ExecutionId && Entry.Value.OccurrenceId == OccurrenceId) { return Entry.Key; }
 	}
 	const FGuid Handle = FGuid::NewGuid();
-	HandRequests.Add(Handle, {ExecutionId, OccurrenceId, ActivationKey});
+	HandRequests.Add(Handle, {ExecutionId, OccurrenceId, ActivationKey, EndBehavior, ++NextHandRequestOrder});
 	UpdateOwnerPosePolicy();
 	ClearPresentationTimer();
 	bPredictedPresentation = !GetPawn()->HasAuthority();
@@ -358,35 +377,45 @@ FGuid UHodgeWeaponInstance::AcquireHandUse(FGuid ExecutionId, int32 OccurrenceId
 	return Handle;
 }
 
+/** 释放手部Use。 */
 void UHodgeWeaponInstance::ReleaseHandUse(FGuid Handle)
 {
-	if (HandRequests.Remove(Handle) == 0) { return; }
+	FHandRequest Released;
+	if (!HandRequests.RemoveAndCopyValue(Handle, Released)) { return; }
 	UpdateOwnerPosePolicy();
-	if (HandRequests.IsEmpty()) { BeginIdlePresentation(); }
+	if (HandRequests.IsEmpty()) { BeginIdlePresentation(Released.EndBehavior); }
 }
 
+/** 释放手部Uses关联执行。 */
 void UHodgeWeaponInstance::ReleaseHandUsesForExecution(const FGuid& ExecutionId)
 {
 	TArray<FGuid> Handles;
 	for (const auto& Entry : HandRequests) { if (Entry.Value.ExecutionId == ExecutionId) { Handles.Add(Entry.Key); } }
+	Handles.Sort([this](const FGuid& A, const FGuid& B) { return HandRequests.FindChecked(A).Order < HandRequests.FindChecked(B).Order; });
 	for (const FGuid& Handle : Handles) { ReleaseHandUse(Handle); }
 }
 
-void UHodgeWeaponInstance::BeginIdlePresentation()
+/** 开始Idle表现。 */
+void UHodgeWeaponInstance::BeginIdlePresentation(EHodgeWeaponHandEndBehavior EndBehavior)
 {
 	if (!CanDrivePresentation()) { return; }
-	SchedulePresentationPhase(EHodgeWeaponPresentationPhase::Returning, PresentationProfile->ReturnGraceSeconds);
+	if (EndBehavior == EHodgeWeaponHandEndBehavior::FadeAtHand)
+	{
+		SetPresentationPhase(EHodgeWeaponPresentationPhase::Fading, LocalPresentation.ActivationKey, EndBehavior);
+	}
+	else { SchedulePresentationPhase(EHodgeWeaponPresentationPhase::Returning, PresentationProfile->ReturnGraceSeconds, EndBehavior); }
 }
 
-void UHodgeWeaponInstance::SchedulePresentationPhase(EHodgeWeaponPresentationPhase Phase, float Seconds)
+/** 按配置安排下一次武器表现阶段切换。 */
+void UHodgeWeaponInstance::SchedulePresentationPhase(EHodgeWeaponPresentationPhase Phase, float Seconds, EHodgeWeaponHandEndBehavior EndBehavior)
 {
 	ClearPresentationTimer();
 	const int32 Version = LocalPresentation.Revision;
-	FTimerDelegate Callback = FTimerDelegate::CreateWeakLambda(this, [this, Version, Phase]()
+	FTimerDelegate Callback = FTimerDelegate::CreateWeakLambda(this, [this, Version, Phase, EndBehavior]()
 	{
 		if (CanDrivePresentation() && HandRequests.IsEmpty() && LocalPresentation.Revision == Version)
 		{
-			SetPresentationPhase(Phase, LocalPresentation.ActivationKey);
+			SetPresentationPhase(Phase, LocalPresentation.ActivationKey, EndBehavior);
 		}
 	});
 	if (Seconds <= 0.f) { Callback.ExecuteIfBound(); }
@@ -396,17 +425,28 @@ void UHodgeWeaponInstance::SchedulePresentationPhase(EHodgeWeaponPresentationPha
 	}
 }
 
-void UHodgeWeaponInstance::SetPresentationPhase(EHodgeWeaponPresentationPhase Phase, int32 ActivationKey)
+/** 设置表现Phase。 */
+void UHodgeWeaponInstance::SetPresentationPhase(EHodgeWeaponPresentationPhase Phase, int32 ActivationKey, EHodgeWeaponHandEndBehavior EndBehavior)
 {
 	ClearPresentationTimer();
 	const auto Previous = LocalPresentation;
 	LocalPresentation.Phase = Phase;
+	LocalPresentation.EndBehavior = EndBehavior;
 	LocalPresentation.StartTime = GetPresentationTime();
 	LocalPresentation.ActivationKey = ActivationKey;
 	LocalPresentation.Revision = Previous.Revision < MAX_int32 ? Previous.Revision + 1 : 1;
 	LocalPresentation.StartVisibility = Phase == EHodgeWeaponPresentationPhase::Hand
 		                                    ? (Previous.Phase == Phase ? 1.f : 0.f)
 		                                    : 1.f;
+	if (PresentationProfile && ((Phase == EHodgeWeaponPresentationPhase::Fading && EndBehavior == EHodgeWeaponHandEndBehavior::FadeAtHand) ||
+		(Phase == EHodgeWeaponPresentationPhase::Hand && Previous.Phase == EHodgeWeaponPresentationPhase::Fading && Previous.EndBehavior == EHodgeWeaponHandEndBehavior::FadeAtHand)))
+	{
+		const float Elapsed = float(FMath::Max(0.0, GetPresentationTime() - Previous.StartTime));
+		// 直接淡出和紧接的新攻击都从当前透明度开始，不闪回零或一。
+		LocalPresentation.StartVisibility = Previous.Phase == EHodgeWeaponPresentationPhase::Hand
+			? FMath::Lerp(Previous.StartVisibility, 1.f, PresentationProfile->DrawSeconds > 0.f ? FMath::Clamp(Elapsed / PresentationProfile->DrawSeconds, 0.f, 1.f) : 1.f)
+			: Previous.StartVisibility * (1.f - FMath::Clamp(Elapsed / PresentationProfile->FadeSeconds, 0.f, 1.f));
+	}
 	if (Phase == EHodgeWeaponPresentationPhase::Returning && GetPawn())
 	{
 		for (AActor* Actor : GetSpawnedActors())
@@ -419,6 +459,7 @@ void UHodgeWeaponInstance::SetPresentationPhase(EHodgeWeaponPresentationPhase Ph
 			}
 		}
 	}
+	// 按服务器权限区分本次处理分支。
 	if (GetPawn() && GetPawn()->HasAuthority())
 	{
 		ReplicatedPresentation = LocalPresentation;
@@ -428,18 +469,19 @@ void UHodgeWeaponInstance::SetPresentationPhase(EHodgeWeaponPresentationPhase Ph
 	if (!CanDrivePresentation() || !HandRequests.IsEmpty()) { return; }
 	if (Phase == EHodgeWeaponPresentationPhase::Returning)
 	{
-		SchedulePresentationPhase(EHodgeWeaponPresentationPhase::Hovering, PresentationProfile->ReturnSeconds);
+		SchedulePresentationPhase(EHodgeWeaponPresentationPhase::Hovering, PresentationProfile->ReturnSeconds, EndBehavior);
 	}
 	else if (Phase == EHodgeWeaponPresentationPhase::Hovering)
 	{
-		SchedulePresentationPhase(EHodgeWeaponPresentationPhase::Fading, PresentationProfile->HoverSeconds);
+		SchedulePresentationPhase(EHodgeWeaponPresentationPhase::Fading, PresentationProfile->HoverSeconds, EndBehavior);
 	}
 	else if (Phase == EHodgeWeaponPresentationPhase::Fading)
 	{
-		SchedulePresentationPhase(EHodgeWeaponPresentationPhase::Hidden, PresentationProfile->FadeSeconds);
+		SchedulePresentationPhase(EHodgeWeaponPresentationPhase::Hidden, PresentationProfile->FadeSeconds, EndBehavior);
 	}
 }
 
+/** 获取表现状态。 */
 FHodgeWeaponPresentationState UHodgeWeaponInstance::GetPresentationState() const
 {
 	if (!bPresentationEquipped || bPresentationDisabled) { return {}; }
@@ -448,6 +490,7 @@ FHodgeWeaponPresentationState UHodgeWeaponInstance::GetPresentationState() const
 		       : ReplicatedPresentation;
 }
 
+/** 收到表现状态复制后更新本地状态。 */
 void UHodgeWeaponInstance::OnRep_PresentationState()
 {
 	if (!bPresentationEquipped)
@@ -469,8 +512,10 @@ void UHodgeWeaponInstance::OnRep_PresentationState()
 	RefreshPresentationActors();
 }
 
+/** 撤销被服务器拒绝的预测手持请求。 */
 void UHodgeWeaponInstance::RejectPredictedHandUse(int32 ActivationKey)
 {
+	// 按服务器权限区分本次处理分支。
 	if (!GetPawn() || GetPawn()->HasAuthority()) { return; }
 	TArray<FGuid> Handles;
 	for (const auto& Entry : HandRequests)
@@ -487,6 +532,7 @@ void UHodgeWeaponInstance::RejectPredictedHandUse(int32 ActivationKey)
 	}
 }
 
+/** 按当前武器表现状态更新关联Actor。 */
 void UHodgeWeaponInstance::RefreshPresentationActors()
 {
 	if (!PresentationProfile) { return; }
@@ -496,12 +542,14 @@ void UHodgeWeaponInstance::RefreshPresentationActors()
 	}
 }
 
+/** 处理SpawnedActors变化。 */
 void UHodgeWeaponInstance::OnSpawnedActorsChanged()
 {
 	Super::OnSpawnedActorsChanged();
 	RefreshPresentationActors();
 }
 
+/** 在UObject销毁前清理仍由本对象持有的资源。 */
 void UHodgeWeaponInstance::BeginDestroy()
 {
 	ClearPresentationTimer();
@@ -509,8 +557,10 @@ void UHodgeWeaponInstance::BeginDestroy()
 }
 
 
+/** 更新所属对象姿势策略。 */
 void UHodgeWeaponInstance::UpdateOwnerPosePolicy()
 {
+	// 按服务器权限区分本次处理分支。
 	if (GetPawn() && GetPawn()->HasAuthority() && !HandRequests.IsEmpty())
 	{
 		if (!CombatPoseLease.IsValid())

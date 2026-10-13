@@ -1,6 +1,10 @@
+﻿/** @file HodgeCharacterMovementComponent.cpp
+ * @brief 实现角色移动组件相关的类型、接口与现有处理流程。
+ */
 // 111 屎山代码来袭
 
 #include "Component/HodgeCharacterMovementComponent.h"
+#include "Component/HodgeLockOnComponent.h"
 #include "Combat/HodgeHitReactionTypes.h"
 
 #include "AbilitySystemComponent.h"
@@ -35,19 +39,28 @@ namespace HodgeCharacter
 
 namespace HodgeRotationPrediction
 {
+	/** 查找旋转。
+	 * @param Character 角色，由调用方传入。
+	 * @return 旋转的当前值或引用。
+	 */
 	UHodgeCharacterRotationComponent* FindRotation(const ACharacter* Character)
 	{
 		const AHodgeCombatCharacter* CombatCharacter = Cast<AHodgeCombatCharacter>(Character);
 		return CombatCharacter ? CombatCharacter->GetCharacterRotationComponent() : nullptr;
 	}
 
+	/** 封装Saved移动的状态与操作接口。 */
 	class FSavedMove final : public FSavedMove_Character
 	{
 	public:
+		// 旋转状态的数据或对象引用。
 		FHodgeCharacterRotationState RotationState;
+		// 移动表现状态的数据或对象引用。
 		FHodgeLocomotionState LocomotionState;
+		// 控制是否受击Controlled的状态标记。
 		bool bReactionControlled = false;
 
+		/** 清空当前容器或缓存保存的数据。 */
 		virtual void Clear() override
 		{
 			Super::Clear();
@@ -56,11 +69,18 @@ namespace HodgeRotationPrediction
 			bReactionControlled = false;
 		}
 
+		/** 设置移动关联。
+		 * @param Character 角色，由调用方传入。
+		 * @param InDeltaTime 本次更新的时间步长，单位秒。
+		 * @param NewAcceleration 新加速度，由调用方传入。
+		 * @param ClientData 客户端数据，由调用方传入。
+		 */
 		virtual void SetMoveFor(ACharacter* Character, float InDeltaTime, const FVector& NewAcceleration,
 			FNetworkPredictionData_Client_Character& ClientData) override
 		{
 			Super::SetMoveFor(Character, InDeltaTime, NewAcceleration, ClientData);
 			if (const auto* Policy = Character->FindComponentByClass<UHodgeLocomotionPolicyComponent>()) { LocomotionState = Policy->GetResolvedPolicy(); }
+			// 后续GAS操作使用的能力系统组件。
 			const auto* ASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(Character);
 			bReactionControlled = ASC && ASC->HasMatchingGameplayTag(HodgeHitReactionTags::Controlled);
 			if (const UHodgeCharacterRotationComponent* Rotation = FindRotation(Character))
@@ -69,10 +89,17 @@ namespace HodgeRotationPrediction
 			}
 		}
 
+		/** 检查是否允许Combine关联。
+		 * @param NewMove 新移动，由调用方传入。
+		 * @param Character 角色，由调用方传入。
+		 * @param MaxDelta 最大增量，由调用方传入。
+		 * @return true表示满足该查询条件，false表示不满足。
+		 */
 		virtual bool CanCombineWith(const FSavedMovePtr& NewMove, ACharacter* Character, float MaxDelta) const override
 		{
 			const FSavedMove* Other = static_cast<const FSavedMove*>(NewMove.Get());
-			if (!Other || RotationState.Driver != Other->RotationState.Driver || RotationState.Style != Other->RotationState.Style
+			if (!Other || RotationState.Driver != Other->RotationState.Driver || RotationState.ExecutionMode!=Other->RotationState.ExecutionMode ||
+				RotationState.WarpDefinition!=Other->RotationState.WarpDefinition || RotationState.ActionYaw!=Other->RotationState.ActionYaw || RotationState.Style != Other->RotationState.Style
 				|| LocomotionState.ActivationKey != Other->LocomotionState.ActivationKey || LocomotionState.Version != Other->LocomotionState.Version
 				|| LocomotionState.bSprinting != Other->LocomotionState.bSprinting
 				|| RotationState.RequestSequence != Other->RotationState.RequestSequence || RotationState.ActionRequestId != Other->RotationState.ActionRequestId
@@ -86,6 +113,9 @@ namespace HodgeRotationPrediction
 			return Super::CanCombineWith(NewMove, Character, MaxDelta);
 		}
 
+		/** 准备p移动关联。
+		 * @param Character 角色，由调用方传入。
+		 */
 		virtual void PrepMoveFor(ACharacter* Character) override
 		{
 			Super::PrepMoveFor(Character);
@@ -102,42 +132,71 @@ namespace HodgeRotationPrediction
 		using Super = FSavedMove_Character;
 	};
 
+	/** 封装客户端预测数据的状态与操作接口。 */
 	class FClientPredictionData final : public FNetworkPredictionData_Client_Character
 	{
 	public:
+		/** 构造客户端预测数据并初始化其默认状态。
+		 * @param Movement 角色移动组件或移动数据。
+		 */
 		explicit FClientPredictionData(const UCharacterMovementComponent& Movement)
 			: FNetworkPredictionData_Client_Character(Movement) {}
 
+		/** 分配本项目带扩展预测状态的SavedMove。
+		 * @return 本次计算、查询或创建得到的Saved移动Ptr。
+		 */
 		virtual FSavedMovePtr AllocateNewMove() override { return FSavedMovePtr(new FSavedMove()); }
 	};
 
+	/** 保存移动数据的数据和接口契约。 */
 	struct FMoveData final : FCharacterNetworkMoveData
 	{
+		// 朝向序号的数值或阈值。
 		uint32 FacingSequence = 0;
+		int32 MontageWarpKey = 0;
+		// Sprint奔跑Activation键的数值或阈值。
 		int32 SprintActivationKey = 0;
+		/** 处理客户端侧的填充网络移动数据消息，沿用当前身份与权限校验。
+		 * @param Move 移动，由调用方传入。
+		 * @param Type 类型，由调用方传入。
+		 */
 		virtual void ClientFillNetworkMoveData(const FSavedMove_Character& Move, ENetworkMoveType Type) override
 		{
 			FCharacterNetworkMoveData::ClientFillNetworkMoveData(Move, Type);
 			FacingSequence = static_cast<const FSavedMove&>(Move).RotationState.RequestSequence;
+			const auto& Facing=static_cast<const FSavedMove&>(Move).RotationState;
+			MontageWarpKey=Facing.ExecutionMode==EHodgeFacingExecutionMode::MontageWarp ? Facing.ActionPredictionKey : 0;
 			SprintActivationKey = static_cast<const FSavedMove&>(Move).LocomotionState.bSprinting ? static_cast<const FSavedMove&>(Move).LocomotionState.ActivationKey : 0;
 		}
+		/** 读取或写入当前对象的序列化数据。
+		 * @param Movement 角色移动组件或移动数据。
+		 * @param Ar 读取或写入数据的归档对象。
+		 * @param Map 序列化使用的对象映射或当前映射表。
+		 * @param Type 类型，由调用方传入。
+		 * @return true表示本次检查或操作成功，false表示失败。
+		 */
 		virtual bool Serialize(UCharacterMovementComponent& Movement, FArchive& Ar, UPackageMap* Map, ENetworkMoveType Type) override
 		{
 			const bool bValid = FCharacterNetworkMoveData::Serialize(Movement, Ar, Map, Type);
 			Ar.SerializeIntPacked(FacingSequence);
+			Ar << MontageWarpKey;
 			Ar << SprintActivationKey;
 			return bValid && !Ar.IsError();
 		}
 	};
 
+	/** 保存移动数据Container的数据和接口契约。 */
 	struct FMoveDataContainer final : FCharacterNetworkMoveDataContainer
 	{
+		// Moves的数据或对象引用。
 		FMoveData Moves[3];
+		/** 构造移动数据Container并初始化其默认状态。 */
 		FMoveDataContainer() { NewMoveData = &Moves[0]; PendingMoveData = &Moves[1]; OldMoveData = &Moves[2]; }
 	};
 }
 
 
+/** 构造角色移动组件并初始化其默认状态。 */
 UHodgeCharacterMovementComponent::UHodgeCharacterMovementComponent(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -149,6 +208,7 @@ UHodgeCharacterMovementComponent::UHodgeCharacterMovementComponent(const FObject
 void UHodgeCharacterMovementComponent::PerformMovement(float DeltaTime)
 {
 	const auto* Policy = CharacterOwner ? CharacterOwner->FindComponentByClass<UHodgeLocomotionPolicyComponent>() : nullptr;
+	// 后续GAS操作使用的能力系统组件。
 	const auto* ASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(CharacterOwner);
 	const bool bStopped = IsHitReactionControlled() || (ASC && (ASC->HasMatchingGameplayTag(HodgeGameplayTags::Status_Death) ||
 		ASC->HasMatchingGameplayTag(TAG_Gameplay_MovementStopped)));
@@ -165,10 +225,12 @@ void UHodgeCharacterMovementComponent::PerformMovement(float DeltaTime)
 	Super::PerformMovement(DeltaTime);
 }
 
+/** 处理客户端侧的句柄移动响应消息，沿用当前身份与权限校验。 */
 void UHodgeCharacterMovementComponent::ClientHandleMoveResponse(const FCharacterMoveResponseDataContainer& MoveResponse)
 {
 	TOptional<FVector> CorrectionVelocity;
 	const auto* Policy = CharacterOwner ? CharacterOwner->FindComponentByClass<UHodgeLocomotionPolicyComponent>() : nullptr;
+	// 后续GAS操作使用的能力系统组件。
 	const auto* ASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(CharacterOwner);
 	const bool bStopped = IsHitReactionControlled() || (ASC && (ASC->HasMatchingGameplayTag(HodgeGameplayTags::Status_Death) ||
 		ASC->HasMatchingGameplayTag(TAG_Gameplay_MovementStopped)));
@@ -190,6 +252,7 @@ void UHodgeCharacterMovementComponent::ClientHandleMoveResponse(const FCharacter
 	Super::ClientHandleMoveResponse(MoveResponse);
 }
 
+/** 处理客户端侧的Adjust位置消息，沿用当前身份与权限校验。 */
 void UHodgeCharacterMovementComponent::ClientAdjustPosition_Implementation(float TimeStamp, FVector NewLoc, FVector NewVel,
 	UPrimitiveComponent* NewBase, FName NewBaseBoneName, bool bHasBase, bool bBaseRelativePosition,
 	uint8 ServerMovementMode, TOptional<FRotator> OptionalRotation)
@@ -199,6 +262,7 @@ void UHodgeCharacterMovementComponent::ClientAdjustPosition_Implementation(float
 		NewBaseBoneName, bHasBase, bBaseRelativePosition, ServerMovementMode, OptionalRotation);
 }
 
+/** 按当前复制状态更新模拟代理的角色移动。 */
 void UHodgeCharacterMovementComponent::SimulateMovement(float DeltaTime)
 {
 	if (bHasReplicatedAcceleration)
@@ -229,6 +293,7 @@ bool UHodgeCharacterMovementComponent::CanAttemptJump() const
 	// Falling 状态用于支持二段跳以及跳跃持续按压等情况，具体是否合法由 Character 再进行校验
 }
 
+/** 初始化组件。 */
 void UHodgeCharacterMovementComponent::InitializeComponent()
 {
 	// 执行父类移动组件的初始化逻辑
@@ -329,6 +394,7 @@ void UHodgeCharacterMovementComponent::SetReplicatedAcceleration(const FVector& 
 // 获取角色在当前帧允许产生的旋转变化
 FRotator UHodgeCharacterMovementComponent::GetDeltaRotation(float DeltaTime) const
 {
+	// 朝向组件或旋转数据。
 	const UHodgeCharacterRotationComponent* Rotation = HodgeRotationPrediction::FindRotation(CharacterOwner);
 	const bool bApplyLocalConstraint = CharacterOwner && CharacterOwner->GetLocalRole() != ROLE_SimulatedProxy;
 	if (Rotation && bApplyLocalConstraint && Rotation->IsYawLocked()) { return FRotator::ZeroRotator; }
@@ -354,13 +420,19 @@ FRotator UHodgeCharacterMovementComponent::GetDeltaRotation(float DeltaTime) con
 	return Delta;
 }
 
+/** 通过当前旋转模式和约束更新角色实际朝向。 */
 void UHodgeCharacterMovementComponent::PhysicsRotation(float DeltaTime)
 {
+	// 朝向组件或旋转数据。
 	UHodgeCharacterRotationComponent* Rotation = HodgeRotationPrediction::FindRotation(CharacterOwner);
 	if (Rotation && Rotation->IsFacingSystemReady()) { Rotation->ApplyResolvedMode(); }
+	// 按预测状态或网络角色选择对应处理。
 	if (Rotation && Rotation->IsYawLocked() && CharacterOwner->GetLocalRole() != ROLE_SimulatedProxy) { return; }
+	// Warp 占用持续到合法恢复阶段，不因窗口结束而重新执行物理插值。
+	if (Rotation && Rotation->GetResolvedState().ExecutionMode==EHodgeFacingExecutionMode::MontageWarp) { return; }
 	// 根运动蒙太奇提供唯一旋转增量，动作朝向请求不能逐帧把 Yaw 改回起点。
 	const auto* Policy = CharacterOwner ? CharacterOwner->FindComponentByClass<UHodgeLocomotionPolicyComponent>() : nullptr;
+	// 当前操作使用的配置对象。
 	const auto* Profile = Policy ? Policy->GetProfile() : nullptr;
 	const auto* Anim = CharacterOwner && CharacterOwner->GetMesh() ? CharacterOwner->GetMesh()->GetAnimInstance() : nullptr;
 	const auto* RootMontage = Anim ? Anim->GetRootMotionMontageInstance() : nullptr;
@@ -374,6 +446,15 @@ void UHodgeCharacterMovementComponent::PhysicsRotation(float DeltaTime)
 		MoveUpdatedComponent(FVector::ZeroVector, Facing, false);
 		Rotation->NotifyFacingApplied(TargetYaw);
 		return;
+	}
+	// 角色旋转在 CMC 内执行，专服使用确认目标而不依赖渲染镜头。
+	if (CharacterOwner && CharacterOwner->GetLocalRole() != ROLE_SimulatedProxy && Rotation && Rotation->GetResolvedState().Driver == EHodgeCharacterFacingDriver::Controller)
+	{
+		if (const auto* Lock = CharacterOwner->FindComponentByClass<UHodgeLockOnComponent>())
+		{
+			FRotator Facing = CharacterOwner->GetActorRotation();
+			if (Lock->ResolveControlRotation(Facing,DeltaTime)) { MoveUpdatedComponent(FVector::ZeroVector,FRotator(0.f,Facing.Yaw,0.f),false); Rotation->NotifyFacingApplied(Facing.Yaw); return; }
+		}
 	}
 	FRotator DesiredRotation = CharacterOwner ? CharacterOwner->GetActorRotation() : FRotator::ZeroRotator;
 	if (Rotation && Rotation->IsRecoveringFacing() && CharacterOwner)
@@ -395,24 +476,30 @@ void UHodgeCharacterMovementComponent::PhysicsRotation(float DeltaTime)
 	}
 }
 
+/** 处理服务器侧的移动Perform移动消息，沿用当前身份与权限校验。 */
 void UHodgeCharacterMovementComponent::ServerMove_PerformMovement(const FCharacterNetworkMoveData& MoveData)
 {
 	UHodgeLocomotionPolicyComponent* Policy = CharacterOwner ? CharacterOwner->FindComponentByClass<UHodgeLocomotionPolicyComponent>() : nullptr;
+	// 按预测状态或网络角色选择对应处理。
 	if (Policy) { Policy->BeginServerMove(static_cast<const HodgeRotationPrediction::FMoveData&>(MoveData).SprintActivationKey); }
+	// 朝向组件或旋转数据。
 	UHodgeCharacterRotationComponent* Rotation = HodgeRotationPrediction::FindRotation(CharacterOwner);
 	const bool bServerOverride = CharacterOwner && CharacterOwner->HasAuthority() && Rotation;
 	if (bServerOverride)
-	{ Rotation->BeginServerMove(static_cast<const HodgeRotationPrediction::FMoveData&>(MoveData).FacingSequence); }
+	{ Rotation->BeginServerMove(static_cast<const HodgeRotationPrediction::FMoveData&>(MoveData).FacingSequence,static_cast<const HodgeRotationPrediction::FMoveData&>(MoveData).MontageWarpKey); }
 	Super::ServerMove_PerformMovement(MoveData);
 	if (Policy) { Policy->EndServerMove(); }
 	if (bServerOverride) { Rotation->EndServerMove(); }
 }
 
+/** 按当前组件约束执行实际移动与碰撞处理。 */
 bool UHodgeCharacterMovementComponent::MoveUpdatedComponentImpl(const FVector& Delta, const FQuat& NewRotation,
 	bool bSweep, FHitResult* OutHit, ETeleportType Teleport)
 {
 	FQuat AppliedRotation = NewRotation;
+	// 朝向组件或旋转数据。
 	const UHodgeCharacterRotationComponent* Rotation = HodgeRotationPrediction::FindRotation(CharacterOwner);
+	// 按预测状态或网络角色选择对应处理。
 	if (Rotation && Rotation->IsYawLocked() && CharacterOwner->GetLocalRole() != ROLE_SimulatedProxy
 		&& Teleport == ETeleportType::None && !bApplyingRotationCorrection && UpdatedComponent
 		&& !UpdatedComponent->IsSimulatingPhysics())
@@ -425,8 +512,10 @@ bool UHodgeCharacterMovementComponent::MoveUpdatedComponentImpl(const FVector& D
 	return Super::MoveUpdatedComponentImpl(Delta, AppliedRotation, bSweep, OutHit, Teleport);
 }
 
+/** 获取预测数据客户端。 */
 FNetworkPredictionData_Client* UHodgeCharacterMovementComponent::GetPredictionData_Client() const
 {
+	// 按预测状态或网络角色选择对应处理。
 	if (!ClientPredictionData)
 	{
 		UHodgeCharacterMovementComponent* MutableThis = const_cast<UHodgeCharacterMovementComponent*>(this);
@@ -435,11 +524,14 @@ FNetworkPredictionData_Client* UHodgeCharacterMovementComponent::GetPredictionDa
 	return ClientPredictionData;
 }
 
+/** 处理客户端侧的更新位置After服务器更新消息，沿用当前身份与权限校验。 */
 bool UHodgeCharacterMovementComponent::ClientUpdatePositionAfterServerUpdate()
 {
 	const bool bResult = Super::ClientUpdatePositionAfterServerUpdate();
 	bHasReactionReplay = false;
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (auto* Policy = CharacterOwner ? CharacterOwner->FindComponentByClass<UHodgeLocomotionPolicyComponent>() : nullptr) { Policy->ClearMoveReplayState(); }
+	// 按预测状态或网络角色选择对应处理。
 	if (UHodgeCharacterRotationComponent* Rotation = HodgeRotationPrediction::FindRotation(CharacterOwner))
 	{
 		Rotation->ClearMoveReplayState();
@@ -447,6 +539,7 @@ bool UHodgeCharacterMovementComponent::ClientUpdatePositionAfterServerUpdate()
 	return bResult;
 }
 
+/** 按现有网络策略平滑本次位置修正。 */
 void UHodgeCharacterMovementComponent::SmoothCorrection(const FVector& OldLocation, const FQuat& OldRotation,
 	const FVector& NewLocation, const FQuat& NewRotation)
 {
@@ -474,36 +567,44 @@ float UHodgeCharacterMovementComponent::GetMaxSpeed() const
 	return State.bSprinting ? State.MaxSpeed : Super::GetMaxSpeed() * State.SpeedScale;
 }
 
+/** 获取最大加速度。 */
 float UHodgeCharacterMovementComponent::GetMaxAcceleration() const
 {
 	const auto* Policy = CharacterOwner ? CharacterOwner->FindComponentByClass<UHodgeLocomotionPolicyComponent>() : nullptr;
 	const auto State = Policy ? Policy->GetResolvedPolicy() : FHodgeLocomotionState();
 	return State.bSprinting ? State.Acceleration : Super::GetMaxAcceleration();
 }
+/** 获取最大BrakingDeceleration。 */
 float UHodgeCharacterMovementComponent::GetMaxBrakingDeceleration() const
 {
 	const auto* Policy = CharacterOwner ? CharacterOwner->FindComponentByClass<UHodgeLocomotionPolicyComponent>() : nullptr;
 	const auto State = Policy ? Policy->GetResolvedPolicy() : FHodgeLocomotionState();
 	return State.bSprinting ? State.Braking : Super::GetMaxBrakingDeceleration();
 }
+/** 按当前朝向与动作策略约束输入加速度。 */
 FVector UHodgeCharacterMovementComponent::ConstrainInputAcceleration(const FVector& InputAcceleration) const
 {
 	if (IsHitReactionControlled()) { return FVector::ZeroVector; }
+	// 后续GAS操作使用的能力系统组件。
 	const auto* ASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(GetOwner());
 	if (ASC && (ASC->HasMatchingGameplayTag(HodgeMovementTags::DashPreparing) || ASC->HasMatchingGameplayTag(HodgeMovementTags::Dashing))) { return FVector::ZeroVector; }
+	// 统一战斗组件。
 	const auto* Combat = UHodgeCombatComponentBase::FindCombatComponent(GetOwner());
 	if (ASC && ASC->HasMatchingGameplayTag(HodgeGameplayTags::Status_Attack) && (!Combat || !Combat->IsMoveCancelPredicted()))
 	{ return FVector::ZeroVector; }
 	return Super::ConstrainInputAcceleration(InputAcceleration);
 }
 
+/** 判断命中受击Controlled。 */
 bool UHodgeCharacterMovementComponent::IsHitReactionControlled() const
 {
 	if (CharacterOwner && CharacterOwner->bClientUpdating && bHasReactionReplay) { return bReactionReplayControlled; }
+	// 后续GAS操作使用的能力系统组件。
 	const auto* ASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(GetOwner());
 	return ASC && ASC->HasMatchingGameplayTag(HodgeHitReactionTags::Controlled);
 }
 
+/** 应用Requested移动。 */
 bool UHodgeCharacterMovementComponent::ApplyRequestedMove(float DeltaTime, float MaxAccel, float MaxSpeed, float Friction,
 	float BrakingDeceleration, FVector& OutAcceleration, float& OutRequestedSpeed)
 {

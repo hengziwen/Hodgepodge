@@ -1,7 +1,13 @@
+/** @file HodgeHeroComponent.cpp
+ * @brief 实现玩家输入与相机接入组件相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 // HeroComponent 本体定义。
 #include "Component/HodgeHeroComponent.h"
+#include "Component/HodgeLockOnComponent.h"
+#include "Data/HodgeLockOnProfile.h"
+#include "GameFramework/InputSettings.h"
 #include "Component/HodgeCharacterRotationComponent.h"
 #include "Component/HodgeLocomotionPolicyComponent.h"
 #include "EnhancedPlayerInput.h"
@@ -774,6 +780,8 @@ bool UHodgeHeroComponent::IsReadyToBindInputs() const
 // Ability 类型输入按下时调用。
 void UHodgeHeroComponent::Input_AbilityInputTagPressed(FGameplayTag InputTag)
 {
+	if (InputTag == HodgeLockOnTags::Input)
+	{ if (auto* Lock = GetOwner()->FindComponentByClass<UHodgeLockOnComponent>()) { Lock->ToggleLock(); } return; }
 	if (InputTag == HodgeGameplayTags::InputTag_Ability_Dash || InputTag == HodgeGameplayTags::InputTag_Sprint)
 	{ BeginSprintInput(); return; }
 	if (!UHodgeUIManagerSubsystem::AllowsGameplayInput(GetController<APlayerController>())) { return; }
@@ -800,6 +808,7 @@ void UHodgeHeroComponent::Input_AbilityInputTagPressed(FGameplayTag InputTag)
 // Ability 类型输入松开时调用。
 void UHodgeHeroComponent::Input_AbilityInputTagReleased(FGameplayTag InputTag)
 {
+	if (InputTag == HodgeLockOnTags::Input) { return; }
 	if (InputTag == HodgeGameplayTags::InputTag_Ability_Dash || InputTag == HodgeGameplayTags::InputTag_Sprint)
 	{ EndSprintInput(); return; }
 	// [HODGE-DBG] 临时诊断：确认 Ability 输入是否真的触发并转发给 ASC（定位后删除）。
@@ -928,11 +937,14 @@ bool UHodgeHeroComponent::HasMoveIntent(float Threshold) const
 void UHodgeHeroComponent::SetMoveIntent(const FVector2D& NewValue)
 {
 	CurrentMoveInput = NewValue.ContainsNaN() ? FVector2D::ZeroVector : NewValue;
+	// 当前操作关联的Pawn角色。
 	const APawn* Pawn = GetPawn<APawn>();
+	// 朝向组件或旋转数据。
 	const auto* Rotation = Pawn ? Pawn->FindComponentByClass<UHodgeCharacterRotationComponent>() : nullptr;
 	const float Yaw = Pawn && Pawn->Controller ? Pawn->Controller->GetControlRotation().Yaw : 0.f;
 	MoveIntentSnapshot = HodgeFacing::MakeMoveIntent(CurrentMoveInput, Yaw,
 		GetWorld() ? GetWorld()->GetTimeSeconds() : 0., Rotation ? Rotation->GetAvatarGeneration() : 0);
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (!Pawn || !Pawn->Controller) { MoveIntentSnapshot.DesiredDirectionWorld = FVector::ZeroVector; }
 	RefreshMoveIntent();
 }
@@ -948,6 +960,7 @@ void UHodgeHeroComponent::RefreshMoveIntent()
 	}
 
 	bLastMoveIntent = bNow;
+	// 向当前监听者发布状态变化，调用方继续负责后续处理。
 	OnMoveIntentChanged.Broadcast(bNow);
 }
 
@@ -977,6 +990,18 @@ void UHodgeHeroComponent::Input_LookMouse(const FInputActionValue& InputActionVa
 
 	// 获取鼠标二维视角输入。
 	const FVector2D Value = InputActionValue.Get<FVector2D>();
+	if (auto* Lock = Pawn->FindComponentByClass<UHodgeLockOnComponent>())
+	{
+		FVector2D Degrees = Value;
+		if (auto* PC = Pawn->GetController<APlayerController>(); PC && GetDefault<UInputSettings>()->bEnableLegacyInputScales)
+		{
+			PRAGMA_DISABLE_DEPRECATION_WARNINGS
+			Degrees.X *= PC->GetDeprecatedInputYawScale(); Degrees.Y *= PC->GetDeprecatedInputPitchScale();
+			PRAGMA_ENABLE_DEPRECATION_WARNINGS
+		}
+		// 相机混合的两层共享角位移；临时技能镜头期间只观察，不发目标切换。
+		Lock->SubmitLookIntent(Degrees, !AbilityCameraMode);
+	}
 
 	// 存在水平输入时修改 Controller Yaw。
 	if (Value.X != 0.0f)
@@ -1092,6 +1117,10 @@ TSubclassOf<UHodgeCameraMode> UHodgeHeroComponent::DetermineCameraMode() const
 		return nullptr;
 	}
 
+	// 技能临时镜头优先；锁定模式不占用 AbilityCameraMode。
+	if (const auto* Lock = Pawn->FindComponentByClass<UHodgeLockOnComponent>(); Lock && Lock->IsReady() && Lock->GetPresentationTarget() && Lock->GetProfile())
+	{ return Lock->GetProfile()->CameraMode; }
+
 	// 查找 PawnExtensionComponent。
 	if (UHodgePawnExtensionComponent* PawnExtComp = UHodgePawnExtensionComponent::FindPawnExtensionComponent(Pawn))
 	{
@@ -1136,6 +1165,7 @@ void UHodgeHeroComponent::ClearAbilityCameraMode(const FGameplayAbilitySpecHandl
 	}
 }
 
+/** 重置玩法输入。 */
 void UHodgeHeroComponent::ResetGameplayInput()
 {
 	EndSprintInput();
@@ -1143,10 +1173,14 @@ void UHodgeHeroComponent::ResetGameplayInput()
 	if (auto* Pawn = GetPawn<APawn>()) { Pawn->ConsumeMovementInputVector(); }
 }
 
+/** 开始Sprint奔跑输入。 */
 void UHodgeHeroComponent::BeginSprintInput()
 {
+	// 当前操作关联的Pawn角色。
 	APawn* Pawn = GetPawn<APawn>();
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (!Pawn || !Pawn->IsLocallyControlled() || !UHodgeUIManagerSubsystem::AllowsGameplayInput(GetController<APlayerController>())) { return; }
+	// 朝向组件或旋转数据。
 	auto* Rotation = Pawn->FindComponentByClass<UHodgeCharacterRotationComponent>();
 	auto* Policy = Pawn->FindComponentByClass<UHodgeLocomotionPolicyComponent>();
 	const auto* Extension = UHodgePawnExtensionComponent::FindPawnExtensionComponent(Pawn);
@@ -1164,14 +1198,18 @@ void UHodgeHeroComponent::BeginSprintInput()
 	if (!Handle.IsValid() || !ASC->TryActivateAbility(Handle)) { SprintInputSession.Consume(); }
 }
 
+/** 结束Sprint奔跑输入。 */
 void UHodgeHeroComponent::EndSprintInput()
 {
 	const int32 Id = SprintInputSession.SessionId;
 	SprintInputSession.Release();
+	// 当前操作关联的Pawn角色。
 	APawn* Pawn = GetPawn<APawn>();
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (!Pawn || Id <= 0) { return; }
 	if (auto* Policy = Pawn->FindComponentByClass<UHodgeLocomotionPolicyComponent>()) { Policy->SetSprintInput(Id, false); }
 	const auto* Extension = UHodgePawnExtensionComponent::FindPawnExtensionComponent(Pawn);
+	// 后续GAS操作使用的能力系统组件。
 	auto* ASC = Extension ? Extension->GetHodgeAbilitySystemComponent() : nullptr;
 	if (!ASC) { return; }
 	for (const FGameplayAbilitySpec& Spec : ASC->GetActivatableAbilities())
@@ -1181,25 +1219,30 @@ void UHodgeHeroComponent::EndSprintInput()
 	}
 }
 
+/** 通知Dash冲刺Committed。 */
 void UHodgeHeroComponent::NotifyDashCommitted(int32 Id)
 {
 	if (Id == SprintInputSession.SessionId && SprintInputSession.bHeld)
 	{ SprintInputSession.State = EHodgeSprintInputState::DashActive; }
 }
+/** 通知Sprint奔跑Committed。 */
 void UHodgeHeroComponent::NotifySprintCommitted(int32 Id)
 {
 	if (Id == SprintInputSession.SessionId && SprintInputSession.bHeld)
 	{ SprintInputSession.State = EHodgeSprintInputState::SprintActive; }
 }
+/** 通知移动动作结束。 */
 void UHodgeHeroComponent::NotifyMovementActionEnded(int32 Id, bool bHandedOff)
 {
 	if (Id == SprintInputSession.SessionId && !bHandedOff) { SprintInputSession.Consume(); }
 }
+/** 请求Sprint奔跑Handoff。 */
 void UHodgeHeroComponent::RequestSprintHandoff(int32 Id, float HoldThreshold)
 {
 	if (Id != SprintInputSession.SessionId || !SprintInputSession.Qualifies(GetWorld()->GetTimeSeconds(), HoldThreshold))
 	{ SprintInputSession.Consume(); return; }
 	const auto* Extension = UHodgePawnExtensionComponent::FindPawnExtensionComponent(GetOwner());
+	// 后续GAS操作使用的能力系统组件。
 	auto* ASC = Extension ? Extension->GetHodgeAbilitySystemComponent() : nullptr;
 	FGameplayAbilitySpecHandle Handle;
 	if (ASC)
@@ -1207,5 +1250,6 @@ void UHodgeHeroComponent::RequestSprintHandoff(int32 Id, float HoldThreshold)
 		for (const FGameplayAbilitySpec& Spec : ASC->GetActivatableAbilities())
 		{ if (Spec.Ability && Spec.Ability->IsA<UHodgeGameplayAbility_Sprint>()) { Handle = Spec.Handle; break; } }
 	}
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (!ASC || !Handle.IsValid() || !ASC->TryActivateAbility(Handle)) { SprintInputSession.Consume(); }
 }

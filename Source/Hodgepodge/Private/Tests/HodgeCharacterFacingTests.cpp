@@ -1,3 +1,6 @@
+/** @file HodgeCharacterFacingTests.cpp
+ * @brief 实现角色朝向自动化测试相关的类型、接口与现有处理流程。
+ */
 #if WITH_DEV_AUTOMATION_TESTS
 
 #include "Misc/AutomationTest.h"
@@ -9,6 +12,8 @@
 #include "Character/HodgeCombatCharacter.h"
 #include "Combat/HodgeCharacterFacingTypes.h"
 #include "Combat/HodgeHitReactionTypes.h"
+#include "Combat/HodgeMovementActionTypes.h"
+#include "Data/HodgeSprintAbilityProfile.h"
 #include "Component/HodgeCharacterMovementComponent.h"
 #include "Component/HodgeCharacterRotationComponent.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -19,8 +24,15 @@
 #include "UObject/UnrealType.h"
 #include <limits>
 
+/** 保存朝向Lifecycle测试Access的数据和接口契约。 */
 struct FHodgeFacingLifecycleTestAccess
 {
+	/** 检查当前配置或场景的契约条件。
+	 * @param Rotation 朝向组件或旋转数据。
+	 * @param Handle 对应操作或能力的句柄。
+	 * @param Key 键，由调用方传入。
+	 * @return true表示本次检查或操作成功，false表示失败。
+	 */
 	static bool Check(UHodgeCharacterRotationComponent* Rotation, FGameplayAbilitySpecHandle Handle, int32 Key)
 	{
 		Rotation->ReplicatedState.ActionAbilityHandle = Handle; Rotation->ReplicatedState.ActionPredictionKey = Key;
@@ -30,14 +42,22 @@ struct FHodgeFacingLifecycleTestAccess
 
 namespace HodgeFacingTests
 {
+	/** 保存测试场景的数据和接口契约。 */
 	struct FFixture
 	{
+		// 本次操作所在的世界。
 		UWorld* World = nullptr;
+		// 角色的数据或对象引用。
 		AHodgeCombatCharacter* Character = nullptr;
+		// 当前角色使用的控制器。
 		APlayerController* Controller = nullptr;
+		// 后续GAS操作使用的能力系统组件。
 		UHodgeAbilitySystemComponent* ASC = nullptr;
+		// 朝向组件或旋转数据。
 		UHodgeCharacterRotationComponent* Rotation = nullptr;
+		// 角色移动组件或移动数据。
 		UHodgeCharacterMovementComponent* Movement = nullptr;
+		/** 构造测试场景并初始化其默认状态。 */
 		FFixture()
 		{
 			const UWorld::InitializationValues Values = UWorld::InitializationValues().AllowAudioPlayback(false).RequiresHitProxies(false)
@@ -51,23 +71,35 @@ namespace HodgeFacingTests
 			Movement = CastChecked<UHodgeCharacterMovementComponent>(Character->GetCharacterMovement());
 			Rotation->InitializeWithAbilitySystem(ASC);
 		}
+		/** 销毁该对象，执行当前类型的析构收尾。 */
 		~FFixture() { Rotation->UninitializeFromAbilitySystem(); World->DestroyWorld(false); }
+		/** 推进当前用例或实验流程的一个步骤。
+		 * @param Seconds 秒，由调用方传入。
+		 */
 		void Step(float Seconds = 1.f / 60.f) { Movement->PhysicsRotation(Seconds); static_cast<UActorComponent*>(Rotation)->TickComponent(Seconds, LEVELTICK_All, nullptr); }
 	};
+	/** 按反射类型写入当前蓝图的布尔配置字段。
+	 * @param Object 对象，由调用方传入。
+	 * @param Name 名称，由调用方传入。
+	 * @return true表示本次检查或操作成功，false表示失败。
+	 */
 	bool BoolProperty(UObject* Object, FName Name)
 	{ return FindFProperty<FBoolProperty>(Object->GetClass(), Name)->GetPropertyValue_InContainer(Object); }
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeFacingAuthorityActionTest, "Hodge.Facing.AuthorityActionLifecycle", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeFacingAuthorityActionTest::RunTest(const FString& Parameters)
 {
 	HodgeFacingTests::FFixture F;
 	const auto Dash = F.ASC->GiveAbility(FGameplayAbilitySpec(UHodgeGameplayAbility_Dash::StaticClass(), 1));
 	TestFalse(TEXT("Ended or inactive predicted Dash cannot restore authority action facing"), FHodgeFacingLifecycleTestAccess::Check(F.Rotation, Dash, 1));
 	const auto Handle = F.ASC->GiveAbility(FGameplayAbilitySpec(UHodgeFacingPredictionTestAbility::StaticClass(), 1));
+	// 通过ASC发起激活，保留GAS自身的条件与消耗校验。
 	TestTrue(TEXT("Prediction lifecycle fixture activates"), F.ASC->TryActivateAbility(Handle));
 	const auto* Spec = F.ASC->FindAbilitySpecFromHandle(Handle);
 	const auto* Instance = Spec ? Spec->GetPrimaryInstance() : nullptr;
+	// 按预测状态或网络角色选择对应处理。
 	if (!Instance) { AddError(TEXT("Prediction fixture instance missing")); return false; }
 	const int32 Key = Instance->GetCurrentActivationInfo().GetActivationPredictionKey().Current;
 	TestTrue(TEXT("Live matching predicted action remains authoritative"), FHodgeFacingLifecycleTestAccess::Check(F.Rotation, Handle, Key));
@@ -81,6 +113,7 @@ bool FHodgeFacingAuthorityActionTest::RunTest(const FString& Parameters)
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeFacingInputTest, "Hodge.Facing.InputSnapshots", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeFacingInputTest::RunTest(const FString& Parameters)
 {
 	const auto North = HodgeFacing::MakeMoveIntent(FVector2D(0.f, 1.f), 90.f, 1., 3);
@@ -100,6 +133,7 @@ bool FHodgeFacingInputTest::RunTest(const FString& Parameters)
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeFacingModesTest, "Hodge.Facing.ModesAndPriority", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeFacingModesTest::RunTest(const FString& Parameters)
 {
 	HodgeFacingTests::FFixture F;
@@ -126,6 +160,7 @@ bool FHodgeFacingModesTest::RunTest(const FString& Parameters)
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeFacingActionTest, "Hodge.Facing.ActionsAndConstraints", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeFacingActionTest::RunTest(const FString& Parameters)
 {
 	HodgeFacingTests::FFixture F;
@@ -159,12 +194,14 @@ bool FHodgeFacingActionTest::RunTest(const FString& Parameters)
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeFacingLifecycleTest, "Hodge.Facing.LifecycleAndExceptions", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeFacingLifecycleTest::RunTest(const FString& Parameters)
 {
 	HodgeFacingTests::FFixture F;
 	const int32 Generation = F.Rotation->GetAvatarGeneration();
 	F.Rotation->InitializeWithAbilitySystem(F.ASC);
 	TestEqual(TEXT("Duplicate bind does not create an epoch"), F.Rotation->GetAvatarGeneration(), Generation);
+	// 本次操作的来源。
 	UObject* Source = NewObject<USkeletalMeshComponent>(F.Character);
 	auto Handle = F.Rotation->AcquireBaseFacingMode(EHodgeCharacterFacingDriver::Controller, Source);
 	Source->MarkAsGarbage(); F.Step();
@@ -190,6 +227,7 @@ bool FHodgeFacingLifecycleTest::RunTest(const FString& Parameters)
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeFacingActivationPairTest, "Hodge.Facing.ActivationPair", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeFacingActivationPairTest::RunTest(const FString& Parameters)
 {
 	HodgeFacingTests::FFixture F;
@@ -212,6 +250,7 @@ bool FHodgeFacingActivationPairTest::RunTest(const FString& Parameters)
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeFacingReplayTest, "Hodge.Facing.ReplayAndNetworkData", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeFacingReplayTest::RunTest(const FString& Parameters)
 {
 	HodgeFacingTests::FFixture F;
@@ -243,9 +282,11 @@ bool FHodgeFacingReplayTest::RunTest(const FString& Parameters)
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeFacingAnimationTest, "Hodge.Facing.AnimationSnapshot", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 执行本自动化用例的准备、操作与断言。 */
 bool FHodgeFacingAnimationTest::RunTest(const FString& Parameters)
 {
 	HodgeFacingTests::FFixture F;
+	// 当前网格使用的动画实例。
 	auto* Anim = NewObject<UHodgeAnimInstance>(F.Character->GetMesh());
 	static_cast<UAnimInstance*>(Anim)->NativeUpdateAnimation(.12f);
 	TestFalse(TEXT("Free style is default animation branch"), HodgeFacingTests::BoolProperty(Anim, TEXT("bUseStrafeLocomotion")));
@@ -259,4 +300,23 @@ bool FHodgeFacingAnimationTest::RunTest(const FString& Parameters)
 	return true;
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeDashInstantFacingTest,"Hodge.Facing.DashInstantStart",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FHodgeDashInstantFacingTest::RunTest(const FString&)
+{
+	HodgeFacingTests::FFixture F; const auto* Profile = NewObject<UHodgeSprintAbilityProfile>();
+	TestTrue(TEXT("Dash 默认立即对齐朝向"),Profile->bInstantFacingAtStart);
+	const auto LockBase = F.Rotation->AcquireBaseFacingMode(EHodgeCharacterFacingDriver::Controller,F.Character);
+	for (float Angle : {0.f,45.f,90.f,130.f,135.f,180.f,-135.f,-90.f,-45.f})
+	{
+		F.Character->SetActorRotation(FRotator::ZeroRotator);
+		FHodgeDashDirections Directions;
+		TestTrue(TEXT("各方向判定有效"),FHodgeDashDirections::Select(FRotator(0.f,Angle,0.f).Vector(),FVector::ForwardVector,Profile->bEnableBackwardVariant,Profile->BackwardConeAngle,Directions));
+		const auto DashBase = F.Rotation->AcquireBaseFacingMode(EHodgeCharacterFacingDriver::Movement,F.Character);
+		const auto Action = F.Rotation->RequestActionFacing(Directions.FacingDirection,F.Character,FGuid::NewGuid(),Profile->bInstantFacingAtStart);
+		TestTrue(FString::Printf(TEXT("%.0f度在返回句柄时已满足 Dash 提交条件"),Angle),F.Rotation->IsActionFacingApplied(Action));
+		TestTrue(TEXT("实际角色已朝向蒙太奇对应方向"),FMath::Abs(FMath::FindDeltaAngleDegrees(F.Character->GetActorRotation().Yaw,Directions.FacingDirection.Rotation().Yaw))<.1f);
+		F.Rotation->ReleaseFacingRequest(Action);F.Rotation->ReleaseFacingRequest(DashBase);
+	}
+	F.Rotation->ReleaseFacingRequest(LockBase);return true;
+}
 #endif

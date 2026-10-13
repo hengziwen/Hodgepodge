@@ -1,4 +1,7 @@
-﻿// **
+﻿/** @file HodgeInputComponent.h
+ * @brief 声明EnhancedInput绑定组件相关的类型、接口与现有处理流程。
+ */
+// **
 //  * @file HodgeInputComponentBase.h
 //  * @brief UHodgeInputComponent 类的头文件
 //  *
@@ -52,6 +55,7 @@ public:
 	 *
 	 * 调用父类 UEnhancedInputComponent 构造函数,当前无自定义初始化逻辑。
 	 */
+	/** 构造EnhancedInput绑定组件并初始化其默认状态。 */
 	UHodgeInputComponent();
 
 	/**
@@ -64,6 +68,10 @@ public:
 	 * @param InputConfig 输入配置数据资产,提供映射上下文信息
 	 * @param InputSubsystem Enhanced Input 本地玩家子系统,用于管理输入映射
 	 */
+	/** 添加输入Mappings。
+	 * @param InputConfig 输入动作与Tag映射，由调用方传入。
+	 * @param InputSubsystem 输入Subsystem，由调用方传入。
+	 */
 	void AddInputMappings(const UHodgeInputConfig* InputConfig,
 	                      UEnhancedInputLocalPlayerSubsystem* InputSubsystem) const;
 
@@ -75,6 +83,10 @@ public:
 	 *
 	 * @param InputConfig 输入配置数据资产,提供映射上下文信息
 	 * @param InputSubsystem Enhanced Input 本地玩家子系统,用于管理输入映射
+	 */
+	/** 移除输入Mappings。
+	 * @param InputConfig 输入动作与Tag映射，由调用方传入。
+	 * @param InputSubsystem 输入Subsystem，由调用方传入。
 	 */
 	void RemoveInputMappings(const UHodgeInputConfig* InputConfig,
 	                         UEnhancedInputLocalPlayerSubsystem* InputSubsystem) const;
@@ -97,6 +109,14 @@ public:
 	 * @param bLogIfNotFound 未找到 InputAction 时是否输出日志警告
 	 */
 	template <class UserClass, typename FuncType>
+	/** 绑定原生动作。
+	 * @param InputConfig 输入动作与Tag映射，由调用方传入。
+	 * @param InputTag 输入动作对应的GameplayTag。
+	 * @param TriggerEvent Trigger事件，由调用方传入。
+	 * @param Object 对象，由调用方传入。
+	 * @param Func Func，由调用方传入。
+	 * @param bLogIfNotFound 是否LogIfNotFound的控制标记。
+	 */
 	void BindNativeAction(const UHodgeInputConfig* InputConfig, const FGameplayTag& InputTag,
 	                      ETriggerEvent TriggerEvent, UserClass* Object, FuncType Func, bool bLogIfNotFound);
 
@@ -119,6 +139,13 @@ public:
 	 * @param BindHandles 输出参数,存储所有绑定的句柄 ID,用于后续 RemoveBinds 清理
 	 */
 	template <class UserClass, typename PressedFuncType, typename ReleasedFuncType>
+	/** 绑定能力Actions。
+	 * @param InputConfig 输入动作与Tag映射，由调用方传入。
+	 * @param Object 对象，由调用方传入。
+	 * @param PressedFunc 按下Func，由调用方传入。
+	 * @param ReleasedFunc 松开Func，由调用方传入。
+	 * @param BindHandles 绑定Handles，由调用方传入。
+	 */
 	void BindAbilityActions(const UHodgeInputConfig* InputConfig, UserClass* Object, PressedFuncType PressedFunc,
 	                        ReleasedFuncType ReleasedFunc, TArray<uint32>& BindHandles);
 
@@ -130,11 +157,22 @@ public:
 	 *
 	 * 参数: 绑定Handles 之前通过 绑定能力Actions 记录的绑定句柄列表
 	 */
+	/** 移除Binds。
+	 * @param BindHandles 绑定Handles，由调用方传入。
+	 */
 	void RemoveBinds(TArray<uint32>& BindHandles);
 };
 
 
 template <class UserClass, typename FuncType>
+/** 绑定原生动作。
+ * @param InputConfig 输入动作与Tag映射，由调用方传入。
+ * @param InputTag 输入动作对应的GameplayTag。
+ * @param TriggerEvent Trigger事件，由调用方传入。
+ * @param Object 对象，由调用方传入。
+ * @param Func Func，由调用方传入。
+ * @param bLogIfNotFound 是否LogIfNotFound的控制标记。
+ */
 void UHodgeInputComponent::BindNativeAction(const UHodgeInputConfig* InputConfig, const FGameplayTag& InputTag,
                                             ETriggerEvent TriggerEvent, UserClass* Object, FuncType Func,
                                             bool bLogIfNotFound)
@@ -147,6 +185,13 @@ void UHodgeInputComponent::BindNativeAction(const UHodgeInputConfig* InputConfig
 }
 
 template <class UserClass, typename PressedFuncType, typename ReleasedFuncType>
+/** 绑定能力Actions。
+ * @param InputConfig 输入动作与Tag映射，由调用方传入。
+ * @param Object 对象，由调用方传入。
+ * @param PressedFunc 按下Func，由调用方传入。
+ * @param ReleasedFunc 松开Func，由调用方传入。
+ * @param BindHandles 绑定Handles，由调用方传入。
+ */
 void UHodgeInputComponent::BindAbilityActions(const UHodgeInputConfig* InputConfig, UserClass* Object,
                                               PressedFuncType PressedFunc, ReleasedFuncType ReleasedFunc,
                                               TArray<uint32>& BindHandles)
@@ -159,9 +204,10 @@ void UHodgeInputComponent::BindAbilityActions(const UHodgeInputConfig* InputConf
 		{
 			if (PressedFunc)
 			{
-				const bool bMovementAction = Action.InputTag == FGameplayTag::RequestGameplayTag(TEXT("InputTag.Ability.Dash")) ||
-					Action.InputTag == FGameplayTag::RequestGameplayTag(TEXT("InputTag.Sprint"));
-				BindHandles.Add(BindAction(Action.InputAction, bMovementAction ? ETriggerEvent::Started : ETriggerEvent::Triggered, Object, PressedFunc,
+				const bool bPressOnce = Action.InputTag == FGameplayTag::RequestGameplayTag(TEXT("InputTag.Ability.Dash")) ||
+					Action.InputTag == FGameplayTag::RequestGameplayTag(TEXT("InputTag.Sprint")) ||
+					Action.InputTag == FGameplayTag::RequestGameplayTag(TEXT("InputTag.Ability.LockOn"));
+				BindHandles.Add(BindAction(Action.InputAction, bPressOnce ? ETriggerEvent::Started : ETriggerEvent::Triggered, Object, PressedFunc,
 				                           Action.InputTag).GetHandle());
 			}
 

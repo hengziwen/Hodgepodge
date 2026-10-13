@@ -1,3 +1,6 @@
+/** @file HodgePawnExtensionComponent.cpp
+ * @brief 实现Pawn初始化扩展组件相关的类型、接口与现有处理流程。
+ */
 // 111屎山代码来袭
 
 
@@ -17,6 +20,7 @@ class UActorComponent;
 // PawnExtension 在 InitState 系统中的 Feature 名称，用于区分 Pawn 上的不同初始化功能模块
 const FName UHodgePawnExtensionComponent::NAME_ActorFeatureName("PawnExtension");
 
+/** 构造Pawn初始化扩展组件并初始化其默认状态。 */
 UHodgePawnExtensionComponent::UHodgePawnExtensionComponent(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -31,6 +35,7 @@ UHodgePawnExtensionComponent::UHodgePawnExtensionComponent(const FObjectInitiali
 	AbilitySystemComponent = nullptr;
 }
 
+/** 登记本类型需要网络复制的属性及复制条件。 */
 void UHodgePawnExtensionComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
@@ -39,6 +44,7 @@ void UHodgePawnExtensionComponent::GetLifetimeReplicatedProps(TArray<FLifetimePr
 	DOREPLIFETIME(UHodgePawnExtensionComponent, PawnData);
 }
 
+/** 组件注册后接入当前Owner的依赖。 */
 void UHodgePawnExtensionComponent::OnRegister()
 {
 	Super::OnRegister();
@@ -58,6 +64,7 @@ void UHodgePawnExtensionComponent::OnRegister()
 	RegisterInitStateFeature();
 }
 
+/** 进入世界运行阶段并接入本对象的生命周期依赖。 */
 void UHodgePawnExtensionComponent::BeginPlay()
 {
 	Super::BeginPlay();
@@ -72,6 +79,7 @@ void UHodgePawnExtensionComponent::BeginPlay()
 	CheckDefaultInitialization();
 }
 
+/** 离开世界运行阶段并解除本对象持有的监听或资源。 */
 void UHodgePawnExtensionComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	// Pawn 销毁前先解除 ASC 绑定关系
@@ -83,10 +91,12 @@ void UHodgePawnExtensionComponent::EndPlay(const EEndPlayReason::Type EndPlayRea
 	Super::EndPlay(EndPlayReason);
 }
 
+/** 设置Pawn能力/输入/相机配置。 */
 void UHodgePawnExtensionComponent::SetPawnData(const UHodgePawnData* InPawnData)
 {
 	check(InPawnData);
 
+	// 当前操作关联的Pawn角色。
 	APawn* Pawn = GetPawnChecked<APawn>();
 
 	// PawnData 只能由服务器设置
@@ -105,6 +115,8 @@ void UHodgePawnExtensionComponent::SetPawnData(const UHodgePawnData* InPawnData)
 
 	// 保存 Pawn 对应的数据定义
 	PawnData = InPawnData;
+	// 向当前监听者发布状态变化，调用方继续负责后续处理。
+	OnPawnDataChanged.Broadcast();
 
 	// PawnData 发生变化后立即请求一次网络更新
 	Pawn->ForceNetUpdate();
@@ -113,12 +125,16 @@ void UHodgePawnExtensionComponent::SetPawnData(const UHodgePawnData* InPawnData)
 	CheckDefaultInitialization();
 }
 
+/** 收到PawnData复制后推进本地初始化。 */
 void UHodgePawnExtensionComponent::OnRep_PawnData()
 {
+	// 向当前监听者发布状态变化，调用方继续负责后续处理。
+	OnPawnDataChanged.Broadcast();
 	// 客户端收到 PawnData 后继续推进初始化流程
 	CheckDefaultInitialization();
 }
 
+/** 建立ASC与当前Pawn的ActorInfo绑定并通知依赖组件。 */
 void UHodgePawnExtensionComponent::InitializeAbilitySystem(UHodgeAbilitySystemComponent* InASC,
                                                            AActor* InOwnerActor)
 {
@@ -139,6 +155,7 @@ void UHodgePawnExtensionComponent::InitializeAbilitySystem(UHodgeAbilitySystemCo
 		UninitializeAbilitySystem();
 	}
 
+	// 当前操作关联的Pawn角色。
 	APawn* Pawn = GetPawnChecked<APawn>();
 
 	// 获取 ASC 当前绑定的 AvatarActor
@@ -179,6 +196,7 @@ void UHodgePawnExtensionComponent::InitializeAbilitySystem(UHodgeAbilitySystemCo
 	OnAbilitySystemInitialized.Broadcast();
 }
 
+/** 解除当前Pawn与ASC的绑定并通知依赖组件。 */
 void UHodgePawnExtensionComponent::UninitializeAbilitySystem()
 {
 	// 当前没有绑定 ASC，无需处理
@@ -224,6 +242,7 @@ void UHodgePawnExtensionComponent::UninitializeAbilitySystem()
 	AbilitySystemComponent = nullptr;
 }
 
+/** 处理控制器变化。 */
 void UHodgePawnExtensionComponent::HandleControllerChanged()
 {
 	// 如果 ASC 存在并且当前 Pawn 仍然是 ASC 的 AvatarActor，则刷新 ASC 的 ActorInfo
@@ -248,18 +267,21 @@ void UHodgePawnExtensionComponent::HandleControllerChanged()
 	CheckDefaultInitialization();
 }
 
+/** 处理玩家状态复制。 */
 void UHodgePawnExtensionComponent::HandlePlayerStateReplicated()
 {
 	// PlayerState 到达后重新检查 Pawn 初始化条件
 	CheckDefaultInitialization();
 }
 
+/** 将角色输入组件绑定到既有动作与标签配置。 */
 void UHodgePawnExtensionComponent::SetupPlayerInputComponent()
 {
 	// 输入组件准备完成后重新检查 Pawn 是否可以进入 GameplayReady
 	CheckDefaultInitialization();
 }
 
+/** 尝试推进当前组件及相关Feature的初始化链。 */
 void UHodgePawnExtensionComponent::CheckDefaultInitialization()
 {
 	// 先尝试推进 Pawn 上其他依赖 Feature 的初始化状态
@@ -275,11 +297,13 @@ void UHodgePawnExtensionComponent::CheckDefaultInitialization()
 	ContinueInitStateChain(StateChain);
 }
 
+/** 只判断初始化阶段能否推进，不承担阶段副作用。 */
 bool UHodgePawnExtensionComponent::CanChangeInitState(UGameFrameworkComponentManager* Manager,
                                                       FGameplayTag CurrentState, FGameplayTag DesiredState) const
 {
 	check(Manager);
 
+	// 当前操作关联的Pawn角色。
 	APawn* Pawn = GetPawn<APawn>();
 
 	// 初始状态 -> Spawned：只要 Pawn 有效，就认为 Pawn 已经生成
@@ -335,6 +359,7 @@ bool UHodgePawnExtensionComponent::CanChangeInitState(UGameFrameworkComponentMan
 	return false;
 }
 
+/** 执行初始化状态转换对应的阶段处理。 */
 void UHodgePawnExtensionComponent::HandleChangeInitState(UGameFrameworkComponentManager* Manager,
                                                          FGameplayTag CurrentState, FGameplayTag DesiredState)
 {
@@ -345,6 +370,7 @@ void UHodgePawnExtensionComponent::HandleChangeInitState(UGameFrameworkComponent
 	}
 }
 
+/** 处理Actor对象Init状态变化。 */
 void UHodgePawnExtensionComponent::OnActorInitStateChanged(const FActorInitStateChangedParams& Params)
 {
 	// 其他 Feature 到达 DataAvailable 后，检查 PawnExtension 是否也可以继续初始化
@@ -357,6 +383,7 @@ void UHodgePawnExtensionComponent::OnActorInitStateChanged(const FActorInitState
 	}
 }
 
+/** 处理能力SystemInitialized注册And调用。 */
 void UHodgePawnExtensionComponent::OnAbilitySystemInitialized_RegisterAndCall(
 	FSimpleMulticastDelegate::FDelegate Delegate)
 {
@@ -373,6 +400,7 @@ void UHodgePawnExtensionComponent::OnAbilitySystemInitialized_RegisterAndCall(
 	}
 }
 
+/** 处理能力SystemUninitialized注册。 */
 void UHodgePawnExtensionComponent::OnAbilitySystemUninitialized_Register(FSimpleMulticastDelegate::FDelegate Delegate)
 {
 	// 防止同一个对象重复注册 ASC 解除初始化回调
@@ -382,6 +410,7 @@ void UHodgePawnExtensionComponent::OnAbilitySystemUninitialized_Register(FSimple
 	}
 }
 
+/** 注销能力SystemDelegates。 */
 void UHodgePawnExtensionComponent::UnregisterAbilitySystemDelegates(const UObject* Subscriber)
 {
 	OnAbilitySystemInitialized.RemoveAll(Subscriber);

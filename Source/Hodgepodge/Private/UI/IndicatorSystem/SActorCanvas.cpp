@@ -1,3 +1,6 @@
+/** @file SActorCanvas.cpp
+ * @brief 实现Actor指示器Slate布局容器相关的类型、接口与现有处理流程。
+ */
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "UI/IndicatorSystem/SActorCanvas.h"
@@ -41,6 +44,7 @@ class FSlateRect;
 // Indicator 被 Clamp 到屏幕边缘时所在的方向。
 namespace EArrowDirection
 {
+	/** 定义类型的可选状态与配置取值。 */
 	enum Type
 	{
 		// 屏幕左侧。
@@ -898,6 +902,8 @@ void SActorCanvas::OnIndicatorAdded(UIndicatorDescriptor* Indicator)
 
 	// 开始为这个 Descriptor 创建真正的 UI。
 	AddIndicatorForEntry(Indicator);
+	// 空列表已停止计时后，新增目标必须重新恢复投影更新。
+	UpdateActiveTimer();
 }
 
 // IndicatorManager 移除 Indicator 时的回调。
@@ -1033,6 +1039,7 @@ void SActorCanvas::RemoveIndicatorForEntry(UIndicatorDescriptor* Indicator)
 	// 尝试取得当前 Indicator 在 Canvas 中对应的 Slate Host。
 	TSharedPtr<SWidget> CanvasHost = Indicator->CanvasHost.Pin();
 
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (CanvasHost.IsValid())
 	{
 		// 从 CanvasChildren 中移除对应 Slot。
@@ -1105,6 +1112,7 @@ void SActorCanvas::GetOffsetAndSize(const UIndicatorDescriptor* Indicator,
 	// 取得 Descriptor 对应的 CanvasHost。
 	TSharedPtr<SWidget> CanvasHost = Indicator->CanvasHost.Pin();
 
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (CanvasHost.IsValid())
 	{
 		// 使用 Widget 自身 DesiredSize 作为最终 Indicator Slot 尺寸。
