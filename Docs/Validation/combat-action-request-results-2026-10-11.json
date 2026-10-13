@@ -1,0 +1,748 @@
+{
+  "date": "2026-10-11",
+  "scope": "Shared Combat Action Requests",
+  "engine": "5.5.4",
+  "builds": {
+    "editor": {
+      "exit_code": 0,
+      "log": "Saved/CombatActionRequests/EditorBuild8.log"
+    },
+    "game": {
+      "exit_code": 0,
+      "log": "Saved/CombatActionRequests/GameBuild5.log"
+    }
+  },
+  "native": {
+    "passed": 65,
+    "with_warnings": 37,
+    "failed": 0,
+    "tests": [
+      {
+        "name": "Hodge.ActionRequests.AIIntentWithoutInputBinding",
+        "state": "Success",
+        "warnings": 2,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.ActionRequests.BoundedHistoryAndShutdown",
+        "state": "Success",
+        "warnings": 2,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.ActionRequests.BufferedIdentityAcrossMoveResolution",
+        "state": "Success",
+        "warnings": 2,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.ActionRequests.HeldDeathPoseCompatibility",
+        "state": "Success",
+        "warnings": 2,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.ActionRequests.IntentMappingAndBuffer",
+        "state": "Success",
+        "warnings": 2,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.ActionRequests.StandaloneLifecycle",
+        "state": "Success",
+        "warnings": 2,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.ActionRequests.SynchronousEndAndReentrancy",
+        "state": "Success",
+        "warnings": 2,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.ActionRequests.ValidationAndRevocation",
+        "state": "Success",
+        "warnings": 2,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Attributes.AvatarAndBootstrapFailure",
+        "state": "Success",
+        "warnings": 4,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Attributes.GrowthEquipmentLifecycle",
+        "state": "Success",
+        "warnings": 4,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Attributes.ProfileValidation",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Attributes.ReentryAndFailure",
+        "state": "Success",
+        "warnings": 1,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Combat.DetectionRouting",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Combat.HitGeometry",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Combat.HitProfileValidation",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Combat.MeleeHitHistory",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Combat.MeleeSpecContext",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Combo.DefinitionGrant",
+        "state": "Success",
+        "warnings": 8,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Combo.GraphValidation",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Combo.Retention",
+        "state": "Success",
+        "warnings": 4,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Combo.SessionRules",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Enemy.AI.ControlAndDeath",
+        "state": "Success",
+        "warnings": 1,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Enemy.AI.EndedExecutionIdentity",
+        "state": "Success",
+        "warnings": 1,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Enemy.AI.PossessLifecycle",
+        "state": "Success",
+        "warnings": 2,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Enemy.AI.StaleTaskCallbacks",
+        "state": "Success",
+        "warnings": 1,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Enemy.Equipment.NullSetAndActorFailure",
+        "state": "Success",
+        "warnings": 3,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Enemy.Grants.BindingChangedDuringGrant",
+        "state": "Success",
+        "warnings": 1,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Enemy.Grants.InstantFailureIsNotRollback",
+        "state": "Success",
+        "warnings": 1,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Enemy.Grants.Preflight",
+        "state": "Success",
+        "warnings": 1,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Enemy.Initialization.ASCConflict",
+        "state": "Success",
+        "warnings": 2,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Enemy.Initialization.BindingInvalidation",
+        "state": "Success",
+        "warnings": 1,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Enemy.Initialization.ComponentRemoval",
+        "state": "Success",
+        "warnings": 1,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Enemy.Initialization.Idempotent",
+        "state": "Success",
+        "warnings": 1,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Enemy.Initialization.InvalidLevel",
+        "state": "Success",
+        "warnings": 2,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Enemy.Initialization.LateComponentsAndEquipment",
+        "state": "Success",
+        "warnings": 2,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Enemy.Initialization.MissingStatProfile",
+        "state": "Success",
+        "warnings": 2,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Facing.ActionsAndConstraints",
+        "state": "Success",
+        "warnings": 1,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Facing.ActivationPair",
+        "state": "Success",
+        "warnings": 1,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Facing.AnimationSnapshot",
+        "state": "Success",
+        "warnings": 1,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Facing.AuthorityActionLifecycle",
+        "state": "Success",
+        "warnings": 1,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Facing.InputSnapshots",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Facing.LifecycleAndExceptions",
+        "state": "Success",
+        "warnings": 1,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Facing.ModesAndPriority",
+        "state": "Success",
+        "warnings": 1,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Facing.ReplayAndNetworkData",
+        "state": "Success",
+        "warnings": 1,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.HitReaction.CancellationAndInput",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.HitReaction.DamageAndBodySnapshot",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.HitReaction.EnemyPawnDataInitialization",
+        "state": "Success",
+        "warnings": 1,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.HitReaction.FallbackAndEmptyImpact",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.HitReaction.ImmunityNoOutputAndDeath",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.HitReaction.MotionAndDownedRecovery",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.HitReaction.RanksAndValidation",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.HitReaction.UpdateExpiryAndDetach",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Movement.DashDirections",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Movement.DashFootIKContinuity",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Movement.DefenseWindows",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Movement.InputSessions",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Movement.PolicyAndAuthorization",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Movement.RootMotionPivot",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Movement.TargetDataSerialization",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Movement.TimingAndPivot",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Relationship.ActualCancellation",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Relationship.PriorityAndHierarchy",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.Rotation.ConstraintsAndReplay",
+        "state": "Success",
+        "warnings": 1,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.WeaponPresentation.GeometrySeparation",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Hodge.WeaponPresentation.RequestsAndLifecycle",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      }
+    ]
+  },
+  "blueprints": [
+    {
+      "path": "/Game/Main/Character/Enemies/Guardian/AIC_Guardian.AIC_Guardian",
+      "diagnostic": "ERRORS=0 WARNINGS=0\n"
+    },
+    {
+      "path": "/Game/Main/Character/Enemies/Guardian/Anim/ABP_Guardian.ABP_Guardian",
+      "diagnostic": "ERRORS=0 WARNINGS=0\n"
+    },
+    {
+      "path": "/Game/Main/Character/Enemies/Guardian/BP_Enemy_Guardian.BP_Enemy_Guardian",
+      "diagnostic": "ERRORS=0 WARNINGS=0\n"
+    },
+    {
+      "path": "/Game/Main/Character/Enemies/Guardian/BP_Enemy_GuardianEquipped.BP_Enemy_GuardianEquipped",
+      "diagnostic": "ERRORS=0 WARNINGS=0\n"
+    },
+    {
+      "path": "/Game/Main/Character/Enemies/Guardian/BP_Guardian_Equipment.BP_Guardian_Equipment",
+      "diagnostic": "ERRORS=0 WARNINGS=0\n"
+    },
+    {
+      "path": "/Game/Main/Character/Enemies/Guardian/BP_Guardian_WeaponActor.BP_Guardian_WeaponActor",
+      "diagnostic": "ERRORS=0 WARNINGS=0\n"
+    },
+    {
+      "path": "/Game/Main/Character/Enemies/Guardian/GA_Guardian_Death.GA_Guardian_Death",
+      "diagnostic": "ERRORS=0 WARNINGS=0\n"
+    },
+    {
+      "path": "/Game/Main/Character/Enemies/Guardian/Validation/AIC_EnemyCombo.AIC_EnemyCombo",
+      "diagnostic": "ERRORS=0 WARNINGS=0\n"
+    },
+    {
+      "path": "/Game/Main/Character/Enemies/Guardian/Validation/BP_EnemyCombo.BP_EnemyCombo",
+      "diagnostic": "ERRORS=0 WARNINGS=0\n"
+    }
+  ],
+  "e2e": {
+    "shared-single": {
+      "passed": 9,
+      "failed": 0,
+      "error": null,
+      "results": [
+        {
+          "case": "ai_combo_ready",
+          "passed": true
+        },
+        {
+          "case": "ai_intent_without_input_mapping",
+          "passed": true
+        },
+        {
+          "case": "ai_coordinator_authorization",
+          "passed": true
+        },
+        {
+          "case": "ai_task_completes_and_repeats",
+          "passed": true,
+          "instances": [
+            11,
+            13
+          ]
+        },
+        {
+          "case": "ai_combo_damage",
+          "passed": true,
+          "before": 102.0,
+          "after": 86.0
+        },
+        {
+          "case": "real_player_input_enters_shared_combo",
+          "passed": true
+        },
+        {
+          "case": "player_queued_followup_starts",
+          "passed": true
+        },
+        {
+          "case": "server_authorizes_player_combo",
+          "passed": true
+        },
+        {
+          "case": "player_combo_server_damage",
+          "passed": true,
+          "before": 350.0,
+          "after": 257.0
+        }
+      ],
+      "elapsed_seconds": 8.25,
+      "evidence": "E:\\Project\\Git\\Hodgepodge\\Saved\\CombatActionRequests\\shared-single.json",
+      "sha256": "c6eb4490834643072b3b62b5ef215e9c0c16535ba859ab41458cc916f6feb97b"
+    },
+    "shared-network": {
+      "passed": 11,
+      "failed": 0,
+      "error": null,
+      "results": [
+        {
+          "case": "ai_combo_ready",
+          "passed": true
+        },
+        {
+          "case": "ai_intent_without_input_mapping",
+          "passed": true
+        },
+        {
+          "case": "ai_coordinator_authorization",
+          "passed": true
+        },
+        {
+          "case": "ai_task_completes_and_repeats",
+          "passed": true,
+          "instances": [
+            16,
+            20
+          ]
+        },
+        {
+          "case": "ai_combo_damage",
+          "passed": true,
+          "before": 150.0,
+          "after": 134.0
+        },
+        {
+          "case": "remote_ai_combo_animation",
+          "passed": true
+        },
+        {
+          "case": "real_player_input_enters_shared_combo",
+          "passed": true
+        },
+        {
+          "case": "player_queued_followup_starts",
+          "passed": true
+        },
+        {
+          "case": "server_authorizes_player_combo",
+          "passed": true
+        },
+        {
+          "case": "player_combo_server_damage",
+          "passed": true,
+          "before": 350.0,
+          "after": 288.0
+        },
+        {
+          "case": "remote_owner_local_prediction_path",
+          "passed": true
+        }
+      ],
+      "elapsed_seconds": 8.312999999965541,
+      "evidence": "E:\\Project\\Git\\Hodgepodge\\Saved\\CombatActionRequests\\shared-network.json",
+      "sha256": "592feff97cb6b91cf9fa701e6de963ed076e6b45298f4c9e0c9e12d3f60ff33d"
+    },
+    "standalone-single-e2e": {
+      "passed": 14,
+      "failed": 0,
+      "error": null,
+      "results": [
+        {
+          "case": "preplaced_experience_ready",
+          "passed": true,
+          "diagnostic": ""
+        },
+        {
+          "case": "pawn_owned_asc",
+          "passed": true
+        },
+        {
+          "case": "unarmed_ready",
+          "passed": true
+        },
+        {
+          "case": "equipped_ready",
+          "passed": true
+        },
+        {
+          "case": "idempotent_callbacks",
+          "passed": true
+        },
+        {
+          "case": "navigation_chase",
+          "passed": true,
+          "initial_distance": 850.0,
+          "distance": 645.3603356854151
+        },
+        {
+          "case": "gas_attack_damage",
+          "passed": true,
+          "initial_hp": 150.0,
+          "current_hp": 134.0
+        },
+        {
+          "case": "task_completion_repeats",
+          "passed": true,
+          "instances": [
+            28,
+            30
+          ],
+          "duration": 4.400127600878477
+        },
+        {
+          "case": "actual_hit_reaction",
+          "passed": true,
+          "hp": 340.70001220703125
+        },
+        {
+          "case": "controlled_actions_rejected",
+          "passed": true
+        },
+        {
+          "case": "repeated_init_does_not_heal",
+          "passed": true,
+          "health": 340.70001220703125
+        },
+        {
+          "case": "control_recovery",
+          "passed": true
+        },
+        {
+          "case": "death_stops_normal_ai",
+          "passed": true
+        },
+        {
+          "case": "death_finishes_lifecycle",
+          "passed": true
+        }
+      ],
+      "elapsed_seconds": 10.719000000040978,
+      "evidence": "E:\\Project\\Git\\Hodgepodge\\Saved\\CombatActionRequests\\standalone-single-e2e.json",
+      "sha256": "adfb1e60ef19cdf567f8340df2624ec5b6b571f82878f6d1c096350aded46684"
+    },
+    "standalone-network-e2e": {
+      "passed": 18,
+      "failed": 0,
+      "error": null,
+      "results": [
+        {
+          "case": "preplaced_experience_ready",
+          "passed": true,
+          "diagnostic": ""
+        },
+        {
+          "case": "pawn_owned_asc",
+          "passed": true
+        },
+        {
+          "case": "unarmed_ready",
+          "passed": true
+        },
+        {
+          "case": "equipped_ready",
+          "passed": true
+        },
+        {
+          "case": "remote_presentation_ready",
+          "passed": true
+        },
+        {
+          "case": "idempotent_callbacks",
+          "passed": true
+        },
+        {
+          "case": "navigation_chase",
+          "passed": true,
+          "initial_distance": 850.0,
+          "distance": 646.8124617996598
+        },
+        {
+          "case": "gas_attack_damage",
+          "passed": true,
+          "initial_hp": 150.0,
+          "current_hp": 134.0
+        },
+        {
+          "case": "task_completion_repeats",
+          "passed": true,
+          "instances": [
+            0,
+            4
+          ],
+          "duration": 4.45427979901433
+        },
+        {
+          "case": "remote_attack_animation",
+          "passed": true
+        },
+        {
+          "case": "actual_hit_reaction",
+          "passed": true,
+          "hp": 340.70001220703125
+        },
+        {
+          "case": "controlled_actions_rejected",
+          "passed": true
+        },
+        {
+          "case": "remote_hit_reaction",
+          "passed": true
+        },
+        {
+          "case": "repeated_init_does_not_heal",
+          "passed": true,
+          "health": 340.70001220703125
+        },
+        {
+          "case": "control_recovery",
+          "passed": true
+        },
+        {
+          "case": "death_stops_normal_ai",
+          "passed": true
+        },
+        {
+          "case": "death_finishes_lifecycle",
+          "passed": true
+        },
+        {
+          "case": "remote_death_animation",
+          "passed": true
+        }
+      ],
+      "elapsed_seconds": 10.797000000020489,
+      "evidence": "E:\\Project\\Git\\Hodgepodge\\Saved\\CombatActionRequests\\standalone-network-e2e.json",
+      "sha256": "bcbf7fadf1a1583b88514d7b8121550f8e3ce6de8cbdc3f4990397b54e84d8b3"
+    }
+  },
+  "limitations": [
+    "Dedicated Server 未执行",
+    "Cook/打包未执行",
+    "未进行行/分支覆盖率插桩",
+    "延迟/丢包压力未执行",
+    "普通非Definition GA与移动输入会话不在本轮迁移范围"
+  ],
+  "committed": false
+}

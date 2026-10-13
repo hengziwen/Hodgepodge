@@ -1,0 +1,155 @@
+{
+  "date": "2026-10-11",
+  "builds": {
+    "editor": "EditorBuild2.log: exit 0",
+    "game": "GameBuild.log: exit 0"
+  },
+  "native": {
+    "succeeded": 1,
+    "succeededWithWarnings": 23,
+    "failed": 0,
+    "notRun": 0
+  },
+  "attacks": {
+    "single": {
+      "error": null,
+      "mode": "single",
+      "results": [
+        {
+          "actor": "BP_Enemy_Guardian_C_0",
+          "passed": true,
+          "attack_instances": 3,
+          "elapsed_game_s": 7.380540814250708,
+          "initial_health": 150.0,
+          "health": 118.0,
+          "remote_animation": null
+        },
+        {
+          "actor": "BP_Enemy_GuardianEquipped_C_0",
+          "passed": true,
+          "attack_instances": 3,
+          "elapsed_game_s": 5.723776154220104,
+          "initial_health": 102.0,
+          "health": 70.0,
+          "remote_animation": null
+        }
+      ],
+      "montage_instances": [
+        [
+          0,
+          2,
+          4
+        ],
+        [
+          6,
+          8,
+          10
+        ]
+      ]
+    },
+    "listen": {
+      "error": null,
+      "mode": "listen",
+      "results": [
+        {
+          "actor": "BP_Enemy_Guardian_C_0",
+          "passed": true,
+          "attack_instances": 3,
+          "instance_start_times": [
+            1.600000023841858,
+            4.800000071525574,
+            8.00000011920929
+          ],
+          "elapsed_game_s": 8.00000011920929,
+          "initial_health": 150.0,
+          "health": 118.0,
+          "remote_animation": true
+        },
+        {
+          "actor": "BP_Enemy_GuardianEquipped_C_0",
+          "passed": true,
+          "attack_instances": 3,
+          "instance_start_times": [
+            1.2000000178813934,
+            4.400000065565109,
+            7.600000113248825
+          ],
+          "elapsed_game_s": 7.600000113248825,
+          "initial_health": 102.0,
+          "health": 70.0,
+          "remote_animation": true
+        }
+      ],
+      "montage_instances": [
+        [
+          120,
+          124,
+          128
+        ],
+        [
+          132,
+          136,
+          140
+        ]
+      ]
+    },
+    "dedicated": {
+      "error": null,
+      "mode": "dedicated",
+      "results": [
+        {
+          "actor": "BP_Enemy_Guardian_C_0",
+          "passed": true,
+          "attack_instances": 3,
+          "instance_start_times": [
+            1.2000000178813934,
+            4.400000065565109,
+            7.600000113248825
+          ],
+          "elapsed_game_s": 7.600000113248825,
+          "initial_health": 150.0,
+          "health": 118.0,
+          "remote_animation": true
+        },
+        {
+          "actor": "BP_Enemy_GuardianEquipped_C_0",
+          "passed": true,
+          "attack_instances": 3,
+          "instance_start_times": [
+            1.2000000178813934,
+            4.800000071525574,
+            8.00000011920929
+          ],
+          "elapsed_game_s": 8.00000011920929,
+          "initial_health": 102.0,
+          "health": 70.0,
+          "remote_animation": true
+        }
+      ],
+      "montage_instances": [
+        [
+          160,
+          166,
+          172
+        ],
+        [
+          178,
+          184,
+          190
+        ]
+      ]
+    }
+  },
+  "shared_combo": {
+    "checks": 9,
+    "error": null
+  },
+  "root_cause": "TargetActor UObject base filtered out by Actor selector; task selected SelfActor before shared request submission",
+  "unverified": [
+    "Independent dedicated server",
+    "Cook/package",
+    "Packet loss pressure",
+    "Code coverage"
+  ],
+  "committed": false
+}

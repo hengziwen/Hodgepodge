@@ -1,0 +1,524 @@
+{
+  "date": "2026-10-11",
+  "engine": "5.5.4",
+  "scope": "Enemy AI v0.1",
+  "native": {
+    "passed": 57,
+    "passed_with_warnings": 29,
+    "failed": 0,
+    "not_run": 0,
+    "tests": [
+      {
+        "name": "Hodge.Attributes.AvatarAndBootstrapFailure",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Attributes.GrowthEquipmentLifecycle",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Attributes.ProfileValidation",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Attributes.ReentryAndFailure",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Combat.DetectionRouting",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Combat.HitGeometry",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Combat.HitProfileValidation",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Combat.MeleeHitHistory",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Combat.MeleeSpecContext",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Combo.DefinitionGrant",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Combo.GraphValidation",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Combo.Retention",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Combo.SessionRules",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Enemy.AI.ControlAndDeath",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Enemy.AI.EndedExecutionIdentity",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Enemy.AI.PossessLifecycle",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Enemy.AI.StaleTaskCallbacks",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Enemy.Equipment.NullSetAndActorFailure",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Enemy.Grants.BindingChangedDuringGrant",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Enemy.Grants.InstantFailureIsNotRollback",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Enemy.Grants.Preflight",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Enemy.Initialization.ASCConflict",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Enemy.Initialization.BindingInvalidation",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Enemy.Initialization.ComponentRemoval",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Enemy.Initialization.Idempotent",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Enemy.Initialization.InvalidLevel",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Enemy.Initialization.LateComponentsAndEquipment",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Enemy.Initialization.MissingStatProfile",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Facing.ActionsAndConstraints",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Facing.ActivationPair",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Facing.AnimationSnapshot",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Facing.AuthorityActionLifecycle",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Facing.InputSnapshots",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Facing.LifecycleAndExceptions",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Facing.ModesAndPriority",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Facing.ReplayAndNetworkData",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.HitReaction.CancellationAndInput",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.HitReaction.DamageAndBodySnapshot",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.HitReaction.EnemyPawnDataInitialization",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.HitReaction.FallbackAndEmptyImpact",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.HitReaction.ImmunityNoOutputAndDeath",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.HitReaction.MotionAndDownedRecovery",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.HitReaction.RanksAndValidation",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.HitReaction.UpdateExpiryAndDetach",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Movement.DashDirections",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Movement.DashFootIKContinuity",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Movement.DefenseWindows",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Movement.InputSessions",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Movement.PolicyAndAuthorization",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Movement.RootMotionPivot",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Movement.TargetDataSerialization",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Movement.TimingAndPivot",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Relationship.ActualCancellation",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Relationship.PriorityAndHierarchy",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.Rotation.ConstraintsAndReplay",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.WeaponPresentation.GeometrySeparation",
+        "state": "Success"
+      },
+      {
+        "name": "Hodge.WeaponPresentation.RequestsAndLifecycle",
+        "state": "Success"
+      }
+    ],
+    "evidence": "Saved/EnemyAIImplementation/Native4/index.json",
+    "sha256": "e9e747e528faff579352618c2c373dee3606d16b6cf64802e38e941c39824db1"
+  },
+  "builds": {
+    "editor": {
+      "result": "passed",
+      "log": "Saved/EnemyAIImplementation/EditorBuild15.log"
+    },
+    "game": {
+      "result": "passed",
+      "log": "Saved/EnemyAIImplementation/GameBuild3.log"
+    }
+  },
+  "limitations": [
+    "Dedicated Server 未执行",
+    "Cook/打包未执行",
+    "GameFeature 必需扩展全面改造、热切换、Encounter 与 Combo AI 为后续范围"
+  ],
+  "blueprints": [
+    {
+      "path": "/Game/Main/Character/Enemies/Guardian/AIC_Guardian.AIC_Guardian",
+      "diagnostic": "ERRORS=0 WARNINGS=0\n"
+    },
+    {
+      "path": "/Game/Main/Character/Enemies/Guardian/Anim/ABP_Guardian.ABP_Guardian",
+      "diagnostic": "ERRORS=0 WARNINGS=0\n"
+    },
+    {
+      "path": "/Game/Main/Character/Enemies/Guardian/BP_Enemy_Guardian.BP_Enemy_Guardian",
+      "diagnostic": "ERRORS=0 WARNINGS=0\n"
+    },
+    {
+      "path": "/Game/Main/Character/Enemies/Guardian/BP_Enemy_GuardianEquipped.BP_Enemy_GuardianEquipped",
+      "diagnostic": "ERRORS=0 WARNINGS=0\n"
+    },
+    {
+      "path": "/Game/Main/Character/Enemies/Guardian/BP_Guardian_Equipment.BP_Guardian_Equipment",
+      "diagnostic": "ERRORS=0 WARNINGS=0\n"
+    },
+    {
+      "path": "/Game/Main/Character/Enemies/Guardian/BP_Guardian_WeaponActor.BP_Guardian_WeaponActor",
+      "diagnostic": "ERRORS=0 WARNINGS=0\n"
+    },
+    {
+      "path": "/Game/Main/Character/Enemies/Guardian/GA_Guardian_Death.GA_Guardian_Death",
+      "diagnostic": "ERRORS=0 WARNINGS=0\n"
+    }
+  ],
+  "assets": {
+    "root": "/Game/Main/Character/Enemies/Guardian",
+    "assets": [
+      "/Game/Main/Character/Enemies/Guardian/AI/BB_Guardian",
+      "/Game/Main/Character/Enemies/Guardian/AI/BT_Guardian",
+      "/Game/Main/Character/Enemies/Guardian/AIC_Guardian",
+      "/Game/Main/Character/Enemies/Guardian/AS_Guardian_Basic",
+      "/Game/Main/Character/Enemies/Guardian/AS_Guardian_Lifecycle",
+      "/Game/Main/Character/Enemies/Guardian/AS_Guardian_Weapon",
+      "/Game/Main/Character/Enemies/Guardian/Anim/ABP_Guardian",
+      "/Game/Main/Character/Enemies/Guardian/Anim/AM_Attack",
+      "/Game/Main/Character/Enemies/Guardian/Anim/AM_Death",
+      "/Game/Main/Character/Enemies/Guardian/Anim/AM_GetUp",
+      "/Game/Main/Character/Enemies/Guardian/Anim/AM_HitStun",
+      "/Game/Main/Character/Enemies/Guardian/Anim/AM_Hold",
+      "/Game/Main/Character/Enemies/Guardian/Anim/AM_Knockback",
+      "/Game/Main/Character/Enemies/Guardian/Anim/AM_LightFeedback",
+      "/Game/Main/Character/Enemies/Guardian/Anim/A_Attack",
+      "/Game/Main/Character/Enemies/Guardian/Anim/A_Death",
+      "/Game/Main/Character/Enemies/Guardian/Anim/A_GetUp",
+      "/Game/Main/Character/Enemies/Guardian/Anim/A_HitStun",
+      "/Game/Main/Character/Enemies/Guardian/Anim/A_Hold",
+      "/Game/Main/Character/Enemies/Guardian/Anim/A_Idle",
+      "/Game/Main/Character/Enemies/Guardian/Anim/A_Knockback",
+      "/Game/Main/Character/Enemies/Guardian/Anim/A_LightFeedback",
+      "/Game/Main/Character/Enemies/Guardian/Anim/A_Run",
+      "/Game/Main/Character/Enemies/Guardian/BP_Enemy_Guardian",
+      "/Game/Main/Character/Enemies/Guardian/BP_Enemy_GuardianEquipped",
+      "/Game/Main/Character/Enemies/Guardian/BP_Guardian_Equipment",
+      "/Game/Main/Character/Enemies/Guardian/BP_Guardian_WeaponActor",
+      "/Game/Main/Character/Enemies/Guardian/DA_Guardian_Attack",
+      "/Game/Main/Character/Enemies/Guardian/DA_Guardian_EquippedPawnData",
+      "/Game/Main/Character/Enemies/Guardian/DA_Guardian_HitReaction",
+      "/Game/Main/Character/Enemies/Guardian/DA_Guardian_PawnData",
+      "/Game/Main/Character/Enemies/Guardian/DA_Guardian_Stats",
+      "/Game/Main/Character/Enemies/Guardian/GA_Guardian_Death",
+      "/Game/Main/Character/Enemies/Guardian/Model/SKM_Guardian",
+      "/Game/Main/Character/Enemies/Guardian/Model/SK_Guardian"
+    ],
+    "spine_bone": "b_MF_Spine_01",
+    "animation_compile": "ERRORS=0 WARNINGS=0\n",
+    "controller_class": "/Game/Main/Character/Enemies/Guardian/AIC_Guardian.AIC_Guardian_C",
+    "behavior_tree": "/Game/Main/Character/Enemies/Guardian/AI/BT_Guardian.BT_Guardian",
+    "source_assets_modified": false
+  },
+  "e2e": {
+    "single": {
+      "passed": 14,
+      "failed": 0,
+      "error": null,
+      "duration_wall_s": 10.51500000001397,
+      "attack_instances": [
+        8,
+        10
+      ],
+      "results": [
+        {
+          "case": "preplaced_experience_ready",
+          "passed": true,
+          "diagnostic": ""
+        },
+        {
+          "case": "pawn_owned_asc",
+          "passed": true
+        },
+        {
+          "case": "unarmed_ready",
+          "passed": true
+        },
+        {
+          "case": "equipped_ready",
+          "passed": true
+        },
+        {
+          "case": "idempotent_callbacks",
+          "passed": true
+        },
+        {
+          "case": "navigation_chase",
+          "passed": true,
+          "initial_distance": 850.0,
+          "distance": 649.330695163783
+        },
+        {
+          "case": "gas_attack_damage",
+          "passed": true,
+          "initial_hp": 134.0,
+          "current_hp": 118.0
+        },
+        {
+          "case": "task_completion_repeats",
+          "passed": true,
+          "instances": [
+            8,
+            10
+          ],
+          "duration": 4.183458499610424
+        },
+        {
+          "case": "actual_hit_reaction",
+          "passed": true,
+          "hp": 340.70001220703125
+        },
+        {
+          "case": "controlled_actions_rejected",
+          "passed": true
+        },
+        {
+          "case": "repeated_init_does_not_heal",
+          "passed": true,
+          "health": 340.70001220703125
+        },
+        {
+          "case": "control_recovery",
+          "passed": true
+        },
+        {
+          "case": "death_stops_normal_ai",
+          "passed": true
+        },
+        {
+          "case": "death_finishes_lifecycle",
+          "passed": true
+        }
+      ],
+      "evidence": "E:\\Project\\Git\\Hodgepodge\\Saved\\EnemyAIImplementation\\single-e2e.json",
+      "sha256": "3cfc99cc49b5a62c8fea6acc222100abf7e3f3b24d0b6a8bc332ac08920ad162"
+    },
+    "network": {
+      "passed": 18,
+      "failed": 0,
+      "error": null,
+      "duration_wall_s": 10.780999999959022,
+      "attack_instances": [
+        33,
+        35
+      ],
+      "results": [
+        {
+          "case": "preplaced_experience_ready",
+          "passed": true,
+          "diagnostic": ""
+        },
+        {
+          "case": "pawn_owned_asc",
+          "passed": true
+        },
+        {
+          "case": "unarmed_ready",
+          "passed": true
+        },
+        {
+          "case": "equipped_ready",
+          "passed": true
+        },
+        {
+          "case": "remote_presentation_ready",
+          "passed": true
+        },
+        {
+          "case": "idempotent_callbacks",
+          "passed": true
+        },
+        {
+          "case": "navigation_chase",
+          "passed": true,
+          "initial_distance": 850.0,
+          "distance": 649.3312543539051
+        },
+        {
+          "case": "gas_attack_damage",
+          "passed": true,
+          "initial_hp": 86.0,
+          "current_hp": 70.0
+        },
+        {
+          "case": "task_completion_repeats",
+          "passed": true,
+          "instances": [
+            33,
+            35
+          ],
+          "duration": 4.4667913019657135
+        },
+        {
+          "case": "remote_attack_animation",
+          "passed": true
+        },
+        {
+          "case": "actual_hit_reaction",
+          "passed": true,
+          "hp": 340.70001220703125
+        },
+        {
+          "case": "controlled_actions_rejected",
+          "passed": true
+        },
+        {
+          "case": "remote_hit_reaction",
+          "passed": true
+        },
+        {
+          "case": "repeated_init_does_not_heal",
+          "passed": true,
+          "health": 340.70001220703125
+        },
+        {
+          "case": "control_recovery",
+          "passed": true
+        },
+        {
+          "case": "death_stops_normal_ai",
+          "passed": true
+        },
+        {
+          "case": "death_finishes_lifecycle",
+          "passed": true
+        },
+        {
+          "case": "remote_death_animation",
+          "passed": true
+        }
+      ],
+      "evidence": "E:\\Project\\Git\\Hodgepodge\\Saved\\EnemyAIImplementation\\network-e2e.json",
+      "sha256": "33c11f616408661d4c93ead7f31eb2f3bdbb13f928bb93ced9d05fbe35da56b4"
+    }
+  },
+  "coverage": {
+    "kind": "functional scenarios",
+    "instrumented_line_or_branch_percentage": null
+  },
+  "worktree": {
+    "committed": false,
+    "pre_existing_documents_preserved": true,
+    "original_hero_and_source_enemy_assets_changed": false
+  }
+}

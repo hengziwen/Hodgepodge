@@ -1,0 +1,463 @@
+{
+  "date": "2026-10-10",
+  "engine": "5.5.4",
+  "baseline_commit": "06cd38f96ab326c0c98cba58f2cc45630de97b0a",
+  "conclusion": "Existing enemy Pawn/GAS/combat foundation; formal ACT enemy autonomous AI not implemented.",
+  "project_asset_count": 2447,
+  "project_decision_asset_counts": {
+    "BehaviorTree": 0,
+    "BlackboardData": 0,
+    "StateTree": 0,
+    "EnvQuery": 0
+  },
+  "blueprint_exports": 83,
+  "formal_enemy_animation": [
+    {
+      "path": "/Game/Main/Character/EnemyBase/ALI_Enemy",
+      "parent_class": "/Script/CoreUObject.Class'/Script/Engine.AnimLayerInterface'",
+      "target_skeleton": null,
+      "export_succeeded": true,
+      "export_filename": "E:\\Project\\Git\\Hodgepodge\\Saved\\EnemyAIAudit\\_Game_Main_Character_EnemyBase_ALI_Enemy.copy"
+    },
+    {
+      "path": "/Game/Main/Character/EnemyBase/ABP_Enemy_Base",
+      "parent_class": "/Script/CoreUObject.Class'/Script/Engine.AnimInstance'",
+      "target_skeleton": null,
+      "export_succeeded": true,
+      "export_filename": "E:\\Project\\Git\\Hodgepodge\\Saved\\EnemyAIAudit\\_Game_Main_Character_EnemyBase_ABP_Enemy_Base.copy"
+    }
+  ],
+  "enemy_defaults": [
+    {
+      "class": "/Script/Hodgepodge.HodgeEnemyCharacter",
+      "ai_controller_class": "/Script/AIModule.AIController",
+      "auto_possess_ai": "<AutoPossessAI.PLACED_IN_WORLD_OR_SPAWNED: 3>",
+      "pawn_data": null,
+      "components": [
+        {
+          "name": "CollisionCylinder",
+          "class": "/Script/Engine.CapsuleComponent"
+        },
+        {
+          "name": "Arrow",
+          "class": "/Script/Engine.ArrowComponent"
+        },
+        {
+          "name": "CharMoveComp",
+          "class": "/Script/Hodgepodge.HodgeCharacterMovementComponent"
+        },
+        {
+          "name": "CharacterMesh0",
+          "class": "/Script/Engine.SkeletalMeshComponent"
+        },
+        {
+          "name": "PawnExtensionComponent",
+          "class": "/Script/Hodgepodge.HodgePawnExtensionComponent"
+        },
+        {
+          "name": "CharacterRotationComponent",
+          "class": "/Script/Hodgepodge.HodgeCharacterRotationComponent"
+        },
+        {
+          "name": "LocomotionPolicyComponent",
+          "class": "/Script/Hodgepodge.HodgeLocomotionPolicyComponent"
+        },
+        {
+          "name": "DefenseComponent",
+          "class": "/Script/Hodgepodge.HodgeDefenseComponent"
+        },
+        {
+          "name": "HitReactionComponent",
+          "class": "/Script/Hodgepodge.HodgeHitReactionComponent"
+        },
+        {
+          "name": "HealthComponent",
+          "class": "/Script/Hodgepodge.HodgeHealthComponent"
+        },
+        {
+          "name": "CameraComponent",
+          "class": "/Script/Hodgepodge.HodgeCameraComponent"
+        },
+        {
+          "name": "EnemyAbilitySystem",
+          "class": "/Script/Hodgepodge.HodgeAbilitySystemComponent"
+        }
+      ]
+    },
+    {
+      "class": "/Game/CodexText/HitReactionValidation/BP_EnemyProbe.BP_EnemyProbe_C",
+      "ai_controller_class": "/Script/AIModule.AIController",
+      "auto_possess_ai": "<AutoPossessAI.PLACED_IN_WORLD_OR_SPAWNED: 3>",
+      "pawn_data": "/Game/CodexText/HitReactionValidation/DA_EnemyPawnData.DA_EnemyPawnData",
+      "components": [
+        {
+          "name": "CollisionCylinder",
+          "class": "/Script/Engine.CapsuleComponent"
+        },
+        {
+          "name": "Arrow",
+          "class": "/Script/Engine.ArrowComponent"
+        },
+        {
+          "name": "CharMoveComp",
+          "class": "/Script/Hodgepodge.HodgeCharacterMovementComponent"
+        },
+        {
+          "name": "CharacterMesh0",
+          "class": "/Script/Engine.SkeletalMeshComponent"
+        },
+        {
+          "name": "PawnExtensionComponent",
+          "class": "/Script/Hodgepodge.HodgePawnExtensionComponent"
+        },
+        {
+          "name": "CharacterRotationComponent",
+          "class": "/Script/Hodgepodge.HodgeCharacterRotationComponent"
+        },
+        {
+          "name": "LocomotionPolicyComponent",
+          "class": "/Script/Hodgepodge.HodgeLocomotionPolicyComponent"
+        },
+        {
+          "name": "DefenseComponent",
+          "class": "/Script/Hodgepodge.HodgeDefenseComponent"
+        },
+        {
+          "name": "HitReactionComponent",
+          "class": "/Script/Hodgepodge.HodgeHitReactionComponent"
+        },
+        {
+          "name": "HealthComponent",
+          "class": "/Script/Hodgepodge.HodgeHealthComponent"
+        },
+        {
+          "name": "CameraComponent",
+          "class": "/Script/Hodgepodge.HodgeCameraComponent"
+        },
+        {
+          "name": "EnemyAbilitySystem",
+          "class": "/Script/Hodgepodge.HodgeAbilitySystemComponent"
+        }
+      ],
+      "pawn_data_values": {
+        "stat_profile": "/Game/Main/Data/CharacterStats/DA_Pover_Stats.DA_Pover_Stats",
+        "hit_reaction_profile": "/Game/CodexText/HitReactionValidation/DA_ReactionProfile.DA_ReactionProfile",
+        "default_weapon_definition": null,
+        "tag_relationship_mapping": null,
+        "combo_definition": null
+      },
+      "ability_sets": [
+        "/Game/CodexText/HitReactionValidation/AS_ReactionProbe.AS_ReactionProbe"
+      ],
+      "blueprint_component_templates": [
+        {
+          "name": "Default__BP_EnemyProbe_C",
+          "class": "/Game/CodexText/HitReactionValidation/BP_EnemyProbe.BP_EnemyProbe_C"
+        },
+        {
+          "name": "CollisionCylinder",
+          "class": "/Script/Engine.CapsuleComponent"
+        },
+        {
+          "name": "Arrow",
+          "class": "/Script/Engine.ArrowComponent"
+        },
+        {
+          "name": "CameraComponent",
+          "class": "/Script/Hodgepodge.HodgeCameraComponent"
+        },
+        {
+          "name": "CharacterMesh0",
+          "class": "/Script/Engine.SkeletalMeshComponent"
+        },
+        {
+          "name": "CharacterRotationComponent",
+          "class": "/Script/Hodgepodge.HodgeCharacterRotationComponent"
+        },
+        {
+          "name": "CharMoveComp",
+          "class": "/Script/Hodgepodge.HodgeCharacterMovementComponent"
+        },
+        {
+          "name": "PawnExtensionComponent",
+          "class": "/Script/Hodgepodge.HodgePawnExtensionComponent"
+        },
+        {
+          "name": "DefenseComponent",
+          "class": "/Script/Hodgepodge.HodgeDefenseComponent"
+        },
+        {
+          "name": "HitReactionComponent",
+          "class": "/Script/Hodgepodge.HodgeHitReactionComponent"
+        },
+        {
+          "name": "HealthComponent",
+          "class": "/Script/Hodgepodge.HodgeHealthComponent"
+        },
+        {
+          "name": "LocomotionPolicyComponent",
+          "class": "/Script/Hodgepodge.HodgeLocomotionPolicyComponent"
+        },
+        {
+          "name": "EnemyAbilitySystem",
+          "class": "/Script/Hodgepodge.HodgeAbilitySystemComponent"
+        },
+        {
+          "name": "HodgeCombatComponentBase_GEN_VARIABLE",
+          "class": "/Script/Hodgepodge.HodgeCombatComponentBase"
+        }
+      ]
+    }
+  ],
+  "experience": {
+    "default_pawn_data": "/Game/Main/Data/PawnData/DA_Dafult_PawnData.DA_Dafult_PawnData",
+    "actions": [
+      {
+        "class": "/Script/Hodgepodge.GameFeatureAction_AddInputContextMapping"
+      },
+      {
+        "class": "/Script/GameFeatures.GameFeatureAction_AddComponents",
+        "components": [
+          {
+            "ActorClass": "/Script/Hodgepodge.HodgeHeroCharacter",
+            "ComponentClass": "/Script/Hodgepodge.HodgeEquipmentManagerComponent",
+            "bClientComponent": "True",
+            "bServerComponent": "True"
+          },
+          {
+            "ActorClass": "/Script/Hodgepodge.HodgeCombatCharacter",
+            "ComponentClass": "/Script/Hodgepodge.HodgeCombatComponentBase",
+            "bClientComponent": "True",
+            "bServerComponent": "True"
+          }
+        ]
+      }
+    ],
+    "action_sets": [
+      "/Game/Main/UI/EAS_HodgeGameplayUI.EAS_HodgeGameplayUI"
+    ],
+    "game_features_to_enable": []
+  },
+  "probe_ability_set": {
+    "granted_gameplay_abilities": [
+      "/Script/Hodgepodge.HodgeGameplayAbility_HitReaction"
+    ],
+    "granted_ability_definitions": [
+      "/Game/CodexText/HitReactionValidation/DA_ProbeAttack.DA_ProbeAttack",
+      "/Game/CodexText/HitReactionValidation/DA_ProbeHold.DA_ProbeHold"
+    ]
+  },
+  "map_audit": [
+    {
+      "path": "/Game/CodexText/L_Terminal",
+      "loaded": true,
+      "actor_classes": {
+        "/Game/CodexText/BP_TerminalHost.BP_TerminalHost_C": 1
+      },
+      "ai_or_navigation_actors": [],
+      "game_mode_override": "/Game/CodexText/BP_MainMenuMode.BP_MainMenuMode_C"
+    },
+    {
+      "path": "/Game/CodexText/L_SurvivalHUD",
+      "loaded": true,
+      "actor_classes": {
+        "/Game/CodexText/BP_SurvivalHUDHost.BP_SurvivalHUDHost_C": 1
+      },
+      "ai_or_navigation_actors": [],
+      "game_mode_override": "/Game/CodexText/BP_MainMenuMode.BP_MainMenuMode_C"
+    },
+    {
+      "path": "/Game/CodexText/L_MainMenu",
+      "loaded": true,
+      "actor_classes": {
+        "/Game/CodexText/BP_MainMenuHost.BP_MainMenuHost_C": 1
+      },
+      "ai_or_navigation_actors": [],
+      "game_mode_override": "/Game/CodexText/BP_MainMenuMode.BP_MainMenuMode_C"
+    },
+    {
+      "path": "/Game/CodexText/L_Character",
+      "loaded": true,
+      "actor_classes": {
+        "/Game/CodexText/BP_CharacterHost.BP_CharacterHost_C": 1
+      },
+      "ai_or_navigation_actors": [],
+      "game_mode_override": "/Game/CodexText/BP_MainMenuMode.BP_MainMenuMode_C"
+    },
+    {
+      "path": "/Game/CodexText/Locomotion/L_LocomotionLab",
+      "loaded": true,
+      "actor_classes": {
+        "/Script/Engine.StaticMeshActor": 4,
+        "/Script/Engine.PlayerStart": 1,
+        "/Script/Engine.DirectionalLight": 1,
+        "/Script/Engine.SkyLight": 1,
+        "/Script/Engine.PostProcessVolume": 1,
+        "/Script/Engine.TextRenderActor": 4,
+        "/Script/Engine.SkyAtmosphere": 1
+      },
+      "ai_or_navigation_actors": [],
+      "game_mode_override": "/Script/Hodgepodge.HodgeLocomotionLabMode"
+    },
+    {
+      "path": "/Game/CodexText/LyraAnimation/Maps/L_PoverLyraLab",
+      "loaded": true,
+      "actor_classes": {
+        "/Script/Engine.StaticMeshActor": 7,
+        "/Script/Engine.PlayerStart": 2,
+        "/Script/Engine.DirectionalLight": 1,
+        "/Script/Engine.SkyLight": 1
+      },
+      "ai_or_navigation_actors": [],
+      "game_mode_override": "/Game/CodexText/LyraAnimation/Test/BP_Pover_LyraGameMode.BP_Pover_LyraGameMode_C"
+    },
+    {
+      "path": "/Game/CodexText/Survivor/L_Survivor",
+      "loaded": true,
+      "actor_classes": {
+        "/Script/Engine.StaticMeshActor": 149,
+        "/Script/Engine.DirectionalLight": 2,
+        "/Script/Engine.PlayerStart": 1,
+        "/Script/Engine.PostProcessVolume": 1
+      },
+      "ai_or_navigation_actors": [],
+      "game_mode_override": "/Game/CodexText/Survivor/BP_SurvivorMode.BP_SurvivorMode_C"
+    },
+    {
+      "path": "/Game/ThirdPerson/Maps/ThirdPersonMap",
+      "loaded": true,
+      "actor_classes": {
+        "/Script/Engine.WorldDataLayers": 1,
+        "/Script/Engine.StaticMeshActor": 30,
+        "/Script/Engine.PostProcessVolume": 1,
+        "/Script/Engine.TextRenderActor": 1,
+        "/Game/Main/Character/Hero/BP_Hero_Pover.BP_Hero_Pover_C": 1,
+        "/Script/Engine.VolumetricCloud": 1,
+        "/Script/Engine.SkyAtmosphere": 1,
+        "/Script/Engine.DirectionalLight": 1,
+        "/Script/Engine.ExponentialHeightFog": 1,
+        "/Script/Engine.SkyLight": 1,
+        "/Script/Engine.PlayerStart": 1,
+        "/Script/Engine.WorldPartitionMiniMap": 1
+      },
+      "ai_or_navigation_actors": [],
+      "game_mode_override": "/Game/ThirdPerson/Blueprints/BP_ThirdPersonGameMode.BP_ThirdPersonGameMode_C"
+    }
+  ],
+  "navigation_packages": [
+    {
+      "path": "/Game/__ExternalActors__/ALSExtras/Levels/L_Als_Playground/6/XU/86CSJQA7FJGPSNMS042V3Q",
+      "class": "NavMeshBoundsVolume"
+    }
+  ],
+  "plugin_decision_assets": [
+    {
+      "path": "/ALS/ALSExtras/AI/BT_Als",
+      "class": "BehaviorTree"
+    },
+    {
+      "path": "/ALS/ALSExtras/AI/BB_Als",
+      "class": "BlackboardData"
+    }
+  ],
+  "lyra_reference": {
+    "project": "E:/Project/UProject/study/Epic/LyraStarterGame",
+    "assets": [
+      {
+        "path": "/ShooterCore/Bot/B_AI_Controller_LyraShooter",
+        "class": "/Script/Engine.Blueprint",
+        "parent": "/Script/CoreUObject.Class'/Script/LyraGame.LyraPlayerBotController'",
+        "export_succeeded": true
+      },
+      {
+        "path": "/ShooterCore/Bot/B_ShooterBotSpawner",
+        "class": "/Script/Engine.Blueprint",
+        "parent": "/Script/CoreUObject.Class'/Script/LyraGame.LyraBotCreationComponent'",
+        "export_succeeded": true
+      },
+      {
+        "path": "/ShooterCore/Bot/Services/BTS_Shoot",
+        "class": "/Script/Engine.Blueprint",
+        "parent": "/Script/CoreUObject.Class'/Script/AIModule.BTService_BlueprintBase'",
+        "export_succeeded": true
+      },
+      {
+        "path": "/ShooterCore/Bot/Services/BTS_SetFocus",
+        "class": "/Script/Engine.Blueprint",
+        "parent": "/Script/CoreUObject.Class'/Script/AIModule.BTService_BlueprintBase'",
+        "export_succeeded": true
+      },
+      {
+        "path": "/ShooterCore/Bot/Services/BTS_ReloadWeapon",
+        "class": "/Script/Engine.Blueprint",
+        "parent": "/Script/CoreUObject.Class'/Script/AIModule.BTService_BlueprintBase'",
+        "export_succeeded": true
+      },
+      {
+        "path": "/ShooterCore/Bot/Services/BTS_CheckAmmo",
+        "class": "/Script/Engine.Blueprint",
+        "parent": "/Script/CoreUObject.Class'/Script/AIModule.BTService_BlueprintBase'",
+        "export_succeeded": true
+      },
+      {
+        "path": "/ShooterCore/Bot/BT/BTDecorator_AllowedToFire",
+        "class": "/Script/Engine.Blueprint",
+        "parent": "/Script/CoreUObject.Class'/Script/AIModule.BTDecorator_BlueprintBase'",
+        "export_succeeded": true
+      },
+      {
+        "path": "/ShooterCore/Bot/BT/BT_Lyra_Shooter_Bot",
+        "class": "/Script/AIModule.BehaviorTree",
+        "parent": "None",
+        "export_succeeded": true
+      },
+      {
+        "path": "/ShooterCore/Bot/BT/BB_Lyra_Shooter_Bot",
+        "class": "/Script/AIModule.BlackboardData",
+        "parent": "None",
+        "export_succeeded": true
+      }
+    ],
+    "errors": []
+  },
+  "commandlet_results": [
+    {
+      "log": "Saved/EnemyAIAudit/InspectAssets.log",
+      "exit_code": 0,
+      "scope": "Initial asset registry and map/default inspection; protected Blueprint property reads incomplete"
+    },
+    {
+      "log": "Saved/EnemyAIAudit/InspectAssets2.log",
+      "exit_code": 1,
+      "scope": "Full export completed; preexisting GA_Attack PlayTimeline load/compiler errors"
+    },
+    {
+      "log": "Saved/EnemyAIAudit/InspectIntegration3.log",
+      "exit_code": 0,
+      "scope": "Final Experience component targets and probe granted abilities"
+    },
+    {
+      "log": "Saved/EnemyAIAudit/InspectLyra.log",
+      "exit_code": 0,
+      "scope": "Nine Lyra ShooterCore AI assets exported"
+    }
+  ],
+  "preexisting_issue": {
+    "asset": "/Game/Main/Character/Hero/GA_Attack",
+    "error": "Deleted PlayTimeline async task referenced during asset loading",
+    "modified": false
+  },
+  "not_executed": [
+    "C++ Editor/Game builds",
+    "AI native tests",
+    "AI PIE/network behavior tests",
+    "Cook/package",
+    "instrumented code coverage"
+  ],
+  "files_changed": [
+    "Docs/Design/enemy-ai-development-assessment.md",
+    "Docs/Validation/enemy-ai-audit-results-2026-10-10.json"
+  ],
+  "runtime_code_and_asset_edits": false,
+  "git_commit_created": false
+}
