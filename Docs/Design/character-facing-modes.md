@@ -1,5 +1,7 @@
 # 角色旋转与移动动画模式调整设计
 
+> 2026-10-13 攻击根运动执行修订：首版以 [攻击前摇 Motion Warping 契约](attack-facing-motion-warp.md) 为准；PhysicalTurn 保留等待 Applied，MontageWarp 获准即播放，Warp 窗口与朝向占用分离。本文历史冻结窗口描述不要求新增攻击旋转锁。
+
 日期：2026-10-09。版本：1.0。适用 Hodgepodge、UE 5.5.4 与现有 Hodgepodge Runtime 模块。
 
 **状态：核心模式、旋转请求、输入快照、动画隔离与移动预测已实施。** 当前 API 及实际配置以[接口指南](../Guides/character-facing-configuration.md)为准，构建／测试及边界见[验证报告](../Validation/character-facing-implementation-2026-10-10.md)。正文保留设计契约和待决项，拟议名称不必与落地 API 一一相同；完整锁定目标服务和锁定 CameraMode 仍不在本轮范围。

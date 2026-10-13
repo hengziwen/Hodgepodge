@@ -149,7 +149,9 @@ Source=AvatarRoot，Shape=Sphere／Box／Capsule，配置偏移与尺寸即可�
 
 攻击开头可调整方向，之后要锁朝向：把 Rotation.Locked 通知区间从需要锁定的帧开始，结束放在可恢复转向的帧。移动取消与接段权限分别配置对应状态区间，时间不用覆盖整个动作。
 
-`Hodge 武器手持区间`：没有额外字段，使用当前装备 WeaponInstance 的手部 Socket 和表现配置；Begin 申请，End 释放。最后一个请求释放后回 WeaponOnBack、悬浮再消隐。连续连段的新请求会打断回收，GA 取消和预测拒绝同样释放。
+`Hodge 武器手持区间`：使用当前装备 WeaponInstance 的手部 Socket 和表现配置；Begin 申请，End 释放。通知的 **结束方式 / EndBehavior** 可选择“回背部后延迟淡出”（默认旧行为）或“在手部直接淡出”。前者依次使用 ReturnGraceSeconds、ReturnSeconds、HoverSeconds、FadeSeconds；后者在最后一个手持请求释放时直接开始 FadeSeconds 淡出，挂在手部，不经过回背和悬浮。正常 End 与 GA 取消都沿用通知开始时保存的选择；死亡和卸装仍立即隐藏。
+
+重叠区间只有全部请求结束才收回武器，自然结束使用最后释放请求的配置；同一 GA 批量取消按申请顺序释放，采用最新区间的选择。新连段会取消旧收回或消隐计时器；若正在手部淡出，新攻击从当前透明度重新显现，旧请求或计时器不能隐藏新攻击。修改任何已有通知之前可以保留默认选项，不需要重建资产。
 
 `Hodge 玩法消息.EventTag`：发送给 ASC 和当前连段协调器，适用于实际需要消息的业务边。普通命中、手持和状态不需要额外事件标签。
 
@@ -180,3 +182,39 @@ GA 播放前租用角色骨骼更新，身体攻击即使没有手持请求也�
 有动画无扣血：检查 GA 是否有服务器执行、有效伤害 GE、来源 Socket、目标 ASC／Avatar／HealthSet／碰撞对象类型、友伤规则、LOS，以及通知是否放在 Montage 本身。不要通过增加旧 Timeline 绑定解决。
 
 取消后持续锁定：检查是否还有其他状态／GE 来源，或当前 GA 未结束；本执行只负责撤销自己持有的计数。完整验证结果与尚未验证项以迁移报告为准，编译通过不等于联机／打包通过。
+
+## 9. 新 Anzhu 翅膀的 Box 配置
+
+正式第 5 段是 `/Game/Main/Character/Hero/Anim/Montages/AM_Attack04_Montage`。选中其中 `Source=NamedComponent`、`ComponentName=WingMesh` 的 Hodge 持续命中，当前配置如下：
+
+- Shape=Box；BoneOrSocket=Bone_Wing000；TransformPolicy=Follow。
+- BoxHalfExtent=(67.642195, 33.136577, 77.690944) cm，是三轴半尺寸。
+- LocalTransform.Location=(61.441557, 5.547495, -35.116657) cm；Rotation 为零，Scale=1。
+- 伤害区间保留 0.566667～0.866667 秒；WingAction 的显示窗口与 FadeOutSeconds 不控制伤害时长。
+- HitGroup=PoverWingFinisher、AttackPhase=Strike，与同一刀的手部通知共享去重；RepeatHitInterval=0。
+
+这些值在当前 0.8 组件缩放下按实际翼动画实体顶点测量，已经包含各轴 4 cm 余量；不要再将 BoxHalfExtent 乘 0.8。尺寸及偏移属于命中通知，Profile `/Game/Main/Character/Hero/Wing/DA_PoverWing_Anzhu` 只提供已开启的 EnableAuthorityHitSampling，以及原有资源和显示配置。
+
+单人 PIE 或 Listen Server 服务端可用 `Hodge.Combat.DebugDraw.Body 1`、`Hodge.Combat.DebugDraw.Duration 0.05` 查看跟随翼根的当前盒体；客户端不结算或绘制服务器查询，专服也不绘制。WingText 是显示预览，不提供正式 GAS 命中链路。调整翼动画、伤害窗口或组件缩放后重新测量；改尺寸和偏移可直接编辑上述通知。设计与服务器准备流程见[设计第 12 节](../Design/attack-wing-presentation.md#12-翼面-box-攻击判定2026-10-12)。
+
+## 旋转 Motion Warping 首版（2026-10-13）
+
+正式首招 DA_Attack_1 已配置 FacingWarp；DA_Attack_2～5 默认关闭。角色原生持有 HodgeAttackMotionWarpingComponent，MotionWarping 插件已启用，不重复添加组件。
+
+方向顺序：当前有效锁定目标 → 有效移动意图 → 镜头水平朝向（无移动输入，用户确认）；无控制器才保留 Actor 朝向。每刀采样一次，不持续追踪移动目标，不修改镜头。
+
+- FacingWarp.bEnabled：开启本动作旋转 Warp。
+- WarpTargetName：与 Montage 原生 Motion Warping 通知一致，首版 HodgeAttackFacing。
+- MaxCorrectionAngle=90：最大起手修正角度，超过时限幅，不在命中时补 Snap。
+- MaxRotationRate=1080：自动旋转上限，度／秒。
+- RotationTimeMultiplier=1：转向完成节奏；执行器按实际 PlayRate 转换时间。
+- TargetDataTimeout=1：服务器等待固定方向的最大游戏秒数，超时取消本次激活。
+- StartYawTolerance=45、TargetYawTolerance=30：服务器允许的有限起手／锁定目标方向误差。
+
+唯一窗口在 Montage 通知轨，使用 Motion Warping＋Hodge Attack Facing Warp 修正器。第 1 段源时间 0～0.1 秒，首刀约 0.1333 秒。修改后验证窗口必须在首刀前结束；不得与 Rotation.Locked 重叠。关闭 Translation Warp 保留原动画位移。
+
+窗口结束只停止 Warp，朝向占用在 Status.Attack.Recovery 开始或真实结束时释放。当前第 1 段 Recovery 约 0.6 秒。请求许可不等于 Applied；根运动攻击不额外等待物理转身。
+
+GAS 方向载荷只发送一次；等待期间服务器保留当前姿态，方向确认后开始本次 Montage。预测移动取消暂停本地占用但保留执行数据，拒绝后按权威动画位置恢复；窗口之后不重播 Warp。旧执行只能清理自己的请求和目标。
+
+首版不启用平移吸附、自动搜敌、攻击旋转锁或空中追击，不改变 Dash RMS／Sprint／锁定镜头。完整契约见[设计](../Design/attack-facing-motion-warp.md)。

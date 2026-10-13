@@ -1,0 +1,523 @@
+{
+  "date": "2026-10-13",
+  "engine": "5.5.4",
+  "builds": {
+    "Editor": {
+      "exit_code": 0,
+      "log": "Saved/AttackWarp/editor-build.log"
+    },
+    "Game": {
+      "exit_code": 0,
+      "log": "Saved/AttackWarp/game-build.log"
+    }
+  },
+  "automation": {
+    "report": "Saved/AttackWarp/Automation/index.json",
+    "succeeded": 23,
+    "succeeded_with_warnings": 26,
+    "failed": 0,
+    "tests": [
+      {
+        "name": "Hodge.AttackWarp.ConfigBounds",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.AttackWarp.FixedYaw",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.AttackWarp.LateAuthorityDoesNotRevive",
+        "state": "Success",
+        "warnings": 9
+      },
+      {
+        "name": "Hodge.AttackWarp.LeaseAndSuspension",
+        "state": "Success",
+        "warnings": 5
+      },
+      {
+        "name": "Hodge.AttackWarp.PayloadValidation",
+        "state": "Success",
+        "warnings": 5
+      },
+      {
+        "name": "Hodge.AttackWarp.ReplayAndOwnership",
+        "state": "Success",
+        "warnings": 5
+      },
+      {
+        "name": "Hodge.AttackWarp.RootExecutor",
+        "state": "Success",
+        "warnings": 5
+      },
+      {
+        "name": "Hodge.AttackWarp.TargetDataRetirement",
+        "state": "Success",
+        "warnings": 5
+      },
+      {
+        "name": "Hodge.AttackWarp.WindowContract",
+        "state": "Success",
+        "warnings": 4
+      },
+      {
+        "name": "Hodge.Combo.DefinitionGrant",
+        "state": "Success",
+        "warnings": 4
+      },
+      {
+        "name": "Hodge.Combo.GraphValidation",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.Combo.Retention",
+        "state": "Success",
+        "warnings": 4
+      },
+      {
+        "name": "Hodge.Combo.SessionRules",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.Facing.ActionsAndConstraints",
+        "state": "Success",
+        "warnings": 1
+      },
+      {
+        "name": "Hodge.Facing.ActivationPair",
+        "state": "Success",
+        "warnings": 1
+      },
+      {
+        "name": "Hodge.Facing.AnimationSnapshot",
+        "state": "Success",
+        "warnings": 1
+      },
+      {
+        "name": "Hodge.Facing.AuthorityActionLifecycle",
+        "state": "Success",
+        "warnings": 1
+      },
+      {
+        "name": "Hodge.Facing.DashInstantStart",
+        "state": "Success",
+        "warnings": 1
+      },
+      {
+        "name": "Hodge.Facing.InputSnapshots",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.Facing.LifecycleAndExceptions",
+        "state": "Success",
+        "warnings": 1
+      },
+      {
+        "name": "Hodge.Facing.ModesAndPriority",
+        "state": "Success",
+        "warnings": 1
+      },
+      {
+        "name": "Hodge.Facing.ReplayAndNetworkData",
+        "state": "Success",
+        "warnings": 1
+      },
+      {
+        "name": "Hodge.LockOn.AuthorityIdentityAndVersions",
+        "state": "Success",
+        "warnings": 5
+      },
+      {
+        "name": "Hodge.LockOn.CameraAcquireEase",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.LockOn.CameraInputRecoveryAndFrameRate",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.LockOn.CameraModePriorityAndContinuity",
+        "state": "Success",
+        "warnings": 5
+      },
+      {
+        "name": "Hodge.LockOn.CameraScreenZones",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.LockOn.ControlAndMotionLifecycle",
+        "state": "Success",
+        "warnings": 5
+      },
+      {
+        "name": "Hodge.LockOn.DeathClearsAndDoesNotReacquire",
+        "state": "Success",
+        "warnings": 5
+      },
+      {
+        "name": "Hodge.LockOn.GASShortCommand",
+        "state": "Success",
+        "warnings": 5
+      },
+      {
+        "name": "Hodge.LockOn.MouseGesture",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.LockOn.PredictionReconciliation",
+        "state": "Success",
+        "warnings": 5
+      },
+      {
+        "name": "Hodge.LockOn.ProfileValidation",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.LockOn.RangeGraceAndInvalidTarget",
+        "state": "Success",
+        "warnings": 5
+      },
+      {
+        "name": "Hodge.LockOn.SoftCameraManualAndAssist",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.LockOn.TargetDataEarlyAndRetired",
+        "state": "Success",
+        "warnings": 5
+      },
+      {
+        "name": "Hodge.Movement.DashDirections",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.Movement.DashFootIKContinuity",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.Movement.DefenseWindows",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.Movement.InputSessions",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.Movement.PolicyAndAuthorization",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.Movement.RootMotionPivot",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.Movement.TargetDataSerialization",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.Movement.TimingAndPivot",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.Rotation.ConstraintsAndReplay",
+        "state": "Success",
+        "warnings": 1
+      },
+      {
+        "name": "Hodge.UI.ClosedRootAndInvalidRequests",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.UI.DataSourceInactive",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.UI.LockOnIndicatorDesigner",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.UI.ManagerScope",
+        "state": "Success",
+        "warnings": 0
+      }
+    ]
+  },
+  "attack_pie": {
+    "single": {
+      "report": "Saved/AttackWarp/single-attack-warp-e2e.json",
+      "checks": 72,
+      "passed": true
+    },
+    "listen": {
+      "report": "Saved/AttackWarp/listen-attack-warp-e2e.json",
+      "checks": 83,
+      "passed": true
+    },
+    "dedicated": {
+      "report": "Saved/AttackWarp/dedicated-attack-warp-e2e.json",
+      "checks": 83,
+      "passed": true
+    },
+    "listen-lag": {
+      "report": "Saved/AttackWarp/listen-lag-attack-warp-e2e.json",
+      "checks": 83,
+      "passed": true
+    }
+  },
+  "combo_pie": {
+    "single": {
+      "report": "Saved/AttackWarp/single-combo-regression.json",
+      "checks": 1,
+      "passed": true
+    },
+    "listen": {
+      "report": "Saved/AttackWarp/listen-combo-regression.json",
+      "checks": 1,
+      "passed": true
+    },
+    "dedicated": {
+      "report": "Saved/AttackWarp/dedicated-combo-regression.json",
+      "checks": 1,
+      "passed": true
+    },
+    "listen-lag": {
+      "report": "Saved/AttackWarp/listen-lag-combo-regression.json",
+      "checks": 1,
+      "passed": true
+    }
+  },
+  "lock_pie": {
+    "single": {
+      "report": "Saved/AttackWarp/single-e2e.json",
+      "checks": 20,
+      "passed": true
+    },
+    "listen": {
+      "report": "Saved/AttackWarp/listen-e2e.json",
+      "checks": 20,
+      "passed": true
+    },
+    "dedicated": {
+      "report": "Saved/AttackWarp/dedicated-e2e.json",
+      "checks": 20,
+      "passed": true
+    },
+    "listen-lag": {
+      "report": "Saved/AttackWarp/listen-lag-e2e.json",
+      "checks": 20,
+      "passed": true
+    }
+  },
+  "configuration": {
+    "definition": "/Game/Main/Character/Hero/Ability/BasicAttack/DA_Attack_1.DA_Attack_1",
+    "montage": "/Game/Main/Character/Hero/Anim/Montages/AM_Attack01_Montage.AM_Attack01_Montage",
+    "warp_component": true,
+    "config": {
+      "bEnabled": true,
+      "MaxCorrectionAngle": 90.0,
+      "MaxRotationRate": 1080.0,
+      "RotationTimeMultiplier": 1.0,
+      "TargetDataTimeout": 1.0,
+      "StartYawTolerance": 45.0,
+      "TargetYawTolerance": 30.0
+    },
+    "other_attacks_enabled": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "target_name": "HodgeAttackFacing",
+    "window_source": "native WindowContract test and ConfigureAttackFacingWarp(0, 0.1)"
+  },
+  "editor_restore": {
+    "map": "/Game/Main/Maps/L_EnemyAIValidation",
+    "dirty_maps": [],
+    "dirty_content": [],
+    "pie": 0,
+    "performance": {
+      "throttle": false,
+      "slate": 1,
+      "idle": 0
+    },
+    "play_settings": "single standalone baseline; original PIE settings were not recorded"
+  },
+  "coverage": "需求 AW-01～07 与实际用例对应；未运行编译器行覆盖率工具。",
+  "limitations": [
+    "PIE Dedicated，不是独立 Server 构建",
+    "拒绝恢复结果由 Editor 探针注入",
+    "未做跨机器、Cook、打包或严重丢包测试"
+  ],
+  "files": [
+    {
+      "path": "Content/Main/Character/Hero/Ability/BasicAttack/DA_Attack_1.uasset",
+      "sha256": "d42dc07875108a9f77a9c265f7221061b32e9b32fab60a3cfea1bdb4a9a21fb6"
+    },
+    {
+      "path": "Content/Main/Character/Hero/Anim/Montages/AM_Attack01_Montage.uasset",
+      "sha256": "59a4be10746dbb1b525af7b0c1865f3fcd4be4a349376c9129adee149efce76e"
+    },
+    {
+      "path": "Hodgepodge.uproject",
+      "sha256": "8804b9b0f0a755041b5a22cf4f0c55b9663ec6c0f112d64ecb0c97187c0834df"
+    },
+    {
+      "path": "Source/HodgeAbilityEditor/HodgeAbilityEditor.Build.cs",
+      "sha256": "a5daec9f018250521497178c529517e717d4897e0b397af619b992dd3b1c88dc"
+    },
+    {
+      "path": "Source/HodgeAbilityEditor/Private/HodgeAnimationAuthoringLibrary.cpp",
+      "sha256": "b5f5cdc8c43543ea0ed2699a31bcc13bde01fe4fcdd730f0eae8025ad3de32bc"
+    },
+    {
+      "path": "Source/HodgeAbilityEditor/Private/HodgeAnimationAuthoringLibrary.h",
+      "sha256": "8df6c0eee7de3b3a08518635b51b0b2c314527a88ed772f91e1047c3f99589d4"
+    },
+    {
+      "path": "Source/HodgeAbilityEditor/Private/HodgeCombatValidationLibrary.cpp",
+      "sha256": "fb867b79ee5b4a303de29dba3401dee5e3ef461c2d473bb103f3feba716cf2a2"
+    },
+    {
+      "path": "Source/HodgeAbilityEditor/Private/HodgeCombatValidationLibrary.h",
+      "sha256": "01550f8be3b1bf2cc0c966b873df8cc47f5921649d46ccca0f31340e2e385356"
+    },
+    {
+      "path": "Source/Hodgepodge/Hodgepodge.Build.cs",
+      "sha256": "9a0032537ce66afe3e762128f54ccd85f0f3eb57b0e4139491c7576350114d0d"
+    },
+    {
+      "path": "Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.cpp",
+      "sha256": "dd9da4b3ae4537b273ed67ec198c36c394bd24ed4c74fbcf58945dfb174981d8"
+    },
+    {
+      "path": "Source/Hodgepodge/Private/AbilitySystem/HodgeAbilitySystemComponent.cpp",
+      "sha256": "6e901f4feb3260f548bc2831cd73799de93d43e079c69f2bf85dcf1565d4b45c"
+    },
+    {
+      "path": "Source/Hodgepodge/Private/Animation/HodgeRootMotionModifier_AttackFacing.cpp",
+      "sha256": "bbd1300abb2d5f1d5514a91969b53fb17777fb4932d14b28dbb758fa0ced9552"
+    },
+    {
+      "path": "Source/Hodgepodge/Private/Character/HodgeCombatCharacter.cpp",
+      "sha256": "4f646bc661577e881ffde9a75793b1e64e7d109d492ea4ff8d4c01ec8713f5bc"
+    },
+    {
+      "path": "Source/Hodgepodge/Private/Combat/HodgeAttackFacingTypes.cpp",
+      "sha256": "4c29f7bf3b7210692534ac9216e21aff78a85e519480f02031c2701a8b40a1a8"
+    },
+    {
+      "path": "Source/Hodgepodge/Private/Component/HodgeAttackMotionWarpingComponent.cpp",
+      "sha256": "0422b35de7d6eca5c31600b7c636db5a4480789b9147b6d6a88de989ef999cff"
+    },
+    {
+      "path": "Source/Hodgepodge/Private/Component/HodgeCharacterMovementComponent.cpp",
+      "sha256": "b9f7c78cc013db61fd1c2305c994491ac6abb3d1a8e2bc8e873cf0c88c11e0bb"
+    },
+    {
+      "path": "Source/Hodgepodge/Private/Component/HodgeCharacterRotationComponent.cpp",
+      "sha256": "240c7df8cfd522ea9d021e3b503bb66f25c8a0974aa452cb5f46af895185a26f"
+    },
+    {
+      "path": "Source/Hodgepodge/Private/Component/HodgeCombatComponentBase.cpp",
+      "sha256": "4339b3955d235e81dd9f0cab0eb9895750902b7c270aef6ec448ac2dbf840663"
+    },
+    {
+      "path": "Source/Hodgepodge/Private/Data/HodgeAbilityDefinition.cpp",
+      "sha256": "4910d776dca9ae02485c27f1996e148f53ff88435f7efa3efe2e90babf2e3582"
+    },
+    {
+      "path": "Source/Hodgepodge/Private/Tests/HodgeAttackWarpTests.cpp",
+      "sha256": "30300edbfda2e4297862add57bba3f99eed17331f4da1bf55d703a5a54b1f846"
+    },
+    {
+      "path": "Source/Hodgepodge/Private/Tests/HodgeAttackWarpTestTypes.cpp",
+      "sha256": "72d830a4f0a21aa27055b092c61f11faa1d4b8ff401e8893e47d4beedd3e7b00"
+    },
+    {
+      "path": "Source/Hodgepodge/Private/Tests/HodgeAttackWarpTestTypes.h",
+      "sha256": "a21a9016898f25580508fcfefdcba319985f72394ea2f15fd58308050203c6d7"
+    },
+    {
+      "path": "Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h",
+      "sha256": "e489e546c728c30c4a23adeb3fa08bd0040ae9a3ec10bc29f5a4345f97ae5caa"
+    },
+    {
+      "path": "Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h",
+      "sha256": "a280d85f52185e5e249e280a1ab3146fcacbf655ea98963396c04ebcf1a5c1ad"
+    },
+    {
+      "path": "Source/Hodgepodge/Public/Animation/HodgeRootMotionModifier_AttackFacing.h",
+      "sha256": "38e758740a14856ffce84feb714c2b6b22a944e7d87135038207d62f33f38f74"
+    },
+    {
+      "path": "Source/Hodgepodge/Public/Character/HodgeCombatCharacter.h",
+      "sha256": "151281634576e96abcbbdeeeedc35c805e0c997c31c74ef3dc37ecd28b8464de"
+    },
+    {
+      "path": "Source/Hodgepodge/Public/Combat/HodgeAttackFacingTypes.h",
+      "sha256": "3a89ea1ecfc1cf23f3684d03cdb0893e831125fdc78cc452712f27a98ee2e73c"
+    },
+    {
+      "path": "Source/Hodgepodge/Public/Component/HodgeAttackMotionWarpingComponent.h",
+      "sha256": "28a8cb38973f774cb45c4e070924e3f9f78e12f6b1ee3586b6278e76ae1c70c5"
+    },
+    {
+      "path": "Source/Hodgepodge/Public/Component/HodgeCharacterRotationComponent.h",
+      "sha256": "eec44b91158f34e77fad8eb7005f0346e56849ef20b9ff0383aa591e4db5cd3f"
+    },
+    {
+      "path": "Source/Hodgepodge/Public/Data/HodgeAbilityDefinition.h",
+      "sha256": "27b3858c32970725d591e5f284f3c5377eab7339822069f6c84322996974fec8"
+    },
+    {
+      "path": "Tools/AttackWarp/configure_assets.py",
+      "sha256": "b2fe34511e56ee98abd5c41c1c39988bdecf049d2f5ff8d995e91fbef0058010"
+    },
+    {
+      "path": "Tools/AttackWarp/export_results.py",
+      "sha256": "3e4448e3b6b8cc256a92a4b9b4d3578e65312a9285867d82041cd0bd4058d05a"
+    },
+    {
+      "path": "Tools/AttackWarp/inspect_configuration.py",
+      "sha256": "7b617c3f1cfbcbd50ff38ddde3c9403db7deede1eb49888617420d42ea6fadcf"
+    },
+    {
+      "path": "Tools/AttackWarp/README.md",
+      "sha256": "7362b420f5c90de62652e726eec0fd48e7e5610ab7971ae280f878bcd39f9591"
+    },
+    {
+      "path": "Tools/AttackWarp/run_batch.py",
+      "sha256": "053fecc40aa51d696bd4c38561a72c9710e614a88f4c68bb16d9ef4ed3aa91ce"
+    },
+    {
+      "path": "Tools/AttackWarp/run_combo_regression.py",
+      "sha256": "9c344bb36c9fb31cac91a433290e9f1e02bbc7a13cb5c07a2727e9ac13a96550"
+    },
+    {
+      "path": "Tools/AttackWarp/run_e2e.py",
+      "sha256": "c8c6a1fce8d9fd058209e90230d83e02e55d824f59b90ae0b9350897c43570a8"
+    }
+  ]
+}

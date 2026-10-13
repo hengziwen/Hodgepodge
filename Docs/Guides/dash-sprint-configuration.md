@@ -29,7 +29,7 @@ bAllowMoveCancel=True、MoveCancelOpenTime=0.35 秒。释放 Shift 后持续移�
 
 B 默认启用，BackwardConeAngle=45° 是角色后向锥半角。锥内用 B 沿正后方退、面向不变；其余方向用 F，关闭 B 后全部使用 F；无输入 F 朝前。
 
-bInstantFacingAtStart=False、FacingPreparationTimeout=0.5 秒。当前旋转攻击不使用旋转锁，也不进行锁交接。Dash 的攻击中断由 PawnData.TagRelationshipMapping 决定，AttackCancelWindow 保留兼容但不再由 Dash 消费；角色移动取消攻击仍使用原有执行窗口。
+bInstantFacingAtStart=True、FacingPreparationTimeout=0.5 秒。2026-10-13 修正：正式 `/Game/Main/Character/Hero/Ability/Sprint/DA_Hero_SprintAbility` 已启用即时朝向，在同次提交前对齐角色并启动蒙太奇／RMS，避免锁定侧移时先停步转身。若手动改回 False，仍会等待朝向应用，适合有意设计的转身准备，不能用于当前即时 Dash。约束与网络确认继续校验，不直接绕过门槛。当前旋转攻击不使用旋转锁，也不进行锁交接。Dash 的攻击中断由 PawnData.TagRelationshipMapping 决定，AttackCancelWindow 保留兼容但不再由 Dash 消费；角色移动取消攻击仍使用原有执行窗口。
 
 ## Dash→Sprint 调参
 

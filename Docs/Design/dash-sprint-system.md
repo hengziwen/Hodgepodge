@@ -1,10 +1,10 @@
 # Dash 与 Sprint：动作时序、移动取消与奔跑策略
 
-日期：2026-10-10。版本：1.7。适用 Hodgepodge、UE 5.5.4。
+日期：2026-10-13。版本：1.8。适用 Hodgepodge、UE 5.5.4。
 
 本修订按最新要求暂时移除体力系统及所有 Dash／Sprint 资源逻辑。v1.2 的体力属性、费用、恢复、持续预算和 UI 建议不再是当前开发契约。历史结果保留在[此前实施报告](../Validation/dash-sprint-implementation-2026-10-10.md)，不能作为本修订测试结果。
 
-v1.4 滑步修复见[根运动与接地验证](../Validation/pivot-foot-slide-2026-10-10.md)。此前交付结果见[时序与 Pivot 验证](../Validation/dash-sprint-timing-2026-10-10.md)。实际资产、字段和调参步骤见[配置指南](../Guides/dash-sprint-configuration.md)。旋转基础沿用[角色旋转与移动动画模式调整](character-facing-modes.md)。完整锁定目标服务、锁定 CameraMode、攻击吸附不纳入本次实现。
+v1.4 滑步修复见[根运动与接地验证](../Validation/pivot-foot-slide-2026-10-10.md)。此前交付结果见[时序与 Pivot 验证](../Validation/dash-sprint-timing-2026-10-10.md)。实际资产、字段和调参步骤见[配置指南](../Guides/dash-sprint-configuration.md)。旋转基础沿用[角色旋转与移动动画模式调整](character-facing-modes.md)。锁定由[独立系统](lock-on-system.md)提供，v1.8 仅修正其下 Dash 的即时起手，见[验证](../Validation/lock-on-indicator-dash-start-2026-10-13.md)；本篇不开发攻击吸附。
 
 ## 1. 目标与确定规则
 
@@ -60,7 +60,7 @@ ASC 继续由 PlayerState 持有；Pawn 服务沿 PawnExtension 初始化／解�
 - MontagePlayRate：完整蒙太奇播放倍率，默认 1；有效倍率还乘资产 RateScale。
 - ForwardMontage／BackwardMontage：同骨架、原地、单 FullBody Slot，B 启用时两份必须存在。
 - bEnableBackwardVariant=True；BackwardConeAngle=45°，是后向锥半角且包含边界。
-- bInstantFacingAtStart=False；FacingPreparationTimeout=0.5 秒。
+- bInstantFacingAtStart=True；FacingPreparationTimeout=0.5 秒。v1.8 使用既有即时朝向机制，使各方向同次提交播放蒙太奇／启动 RMS；False 会刻意等待转身，锁定时会造成可感知停顿。后向锥形 B 保持角色原朝向，其他方向仍为 F。
 - AttackCancelWindow：保留兼容旧资产；Dash 不再读取此字段。攻击中断由当前 PawnData 的 TagRelationshipMapping 决定，不要求进入移动取消窗口。
 - bAllowMoveCancel=True；MoveCancelOpenTime=0.35 秒。
 - HandoffOpenTime=0.35 秒；HandoffCloseTime=1.2 秒。
