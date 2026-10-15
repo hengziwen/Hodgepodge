@@ -3,6 +3,9 @@ import json
 from pathlib import Path
 import unreal
 
+# 旧工具会重建映射表和窗口，禁止覆盖当前通知蒙太奇配置。
+raise RuntimeError('已迁移为通知蒙太奇，请使用 Tools/WingAttack/configure_montages.py；此旧工具仅保留历史。')
+
 PROJECT=Path('E:/Project/Git/Hodgepodge')
 WORK=PROJECT/'Saved/WingAttack'
 ROOT='/Game/Main/Character/Hero/Wing'

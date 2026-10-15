@@ -23,7 +23,10 @@ namespace HodgeWingAttackTests
 	void AddWindow(UAnimSequenceBase* Source, float Begin, float End)
 	{
 		FAnimNotifyEvent Event;
-		Event.NotifyStateClass = NewObject<UHodgeAnimNotifyState_WingAction>(Source);
+		auto* Window = NewObject<UHodgeAnimNotifyState_WingAction>(Source);
+		Window->WingMontage = LoadObject<UAnimMontage>(nullptr, TEXT("/Game/Main/Character/Hero/Wing/Montages/AM_Wing_Attack04.AM_Wing_Attack04"));
+		Window->StartPosition = Begin;
+		Event.NotifyStateClass = Window;
 		Event.Link(Source, Begin);
 		Event.SetDuration(End - Begin);
 		Event.EndLink.Link(Source, End);
@@ -76,40 +79,42 @@ bool FHodgeWingFadeStateTest::RunTest(const FString& Parameters)
 	return true;
 }
 
-IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeWingAnimationMappingTest, "Hodge.Wing.AnimationMapping",
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeWingAnimationMappingTest, "Hodge.Wing.NotifyMontage",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 /** 验证 WING-02/03/04/07/08，Parameters 为自动化框架参数，失败由断言记录。 */
 bool FHodgeWingAnimationMappingTest::RunTest(const FString& Parameters)
 {
 	auto Binding = HodgeWingAttackTests::MakeBinding();
 	if (!TestNotNull(TEXT("WING-02 Source asset"), Binding.SourceAnimation.Get()) || !TestNotNull(TEXT("WING-02 Wing asset"), Binding.WingAnimation.Get())) { return false; }
-	TestFalse(TEXT("WING-03 Before begin hidden"), Binding.IsWindowOpen(.19f));
-	TestTrue(TEXT("WING-03 Begin inclusive"), Binding.IsWindowOpen(.2f));
-	TestFalse(TEXT("WING-03 End exclusive"), Binding.IsWindowOpen(1.f));
-	HodgeWingAttackTests::AddWindow(Binding.SourceAnimation, .8f, 1.4f);
-	TestTrue(TEXT("WING-03 Overlapping window keeps visibility"), Binding.IsWindowOpen(1.1f));
-	TestFalse(TEXT("WING-08 Nonfinite time hidden"), Binding.IsWindowOpen(NAN));
-	Binding.SourceStartTime = .2f;
-	Binding.WingStartTime = .1f;
-	Binding.PlayRateRatio = 2.f;
-	TestEqual(TEXT("WING-04 Source time mapping"), Binding.EvaluateWingTime(.6f), .9f);
-	TestEqual(TEXT("WING-04 End clamps instead of looping"), Binding.EvaluateWingTime(100.f), Binding.WingAnimation->GetPlayLength());
-	TestEqual(TEXT("WING-04 Early source clamps"), Binding.EvaluateWingTime(0.f), 0.f);
+	auto* Window = CastChecked<UHodgeAnimNotifyState_WingAction>(Binding.SourceAnimation->Notifies[0].NotifyStateClass);
+	Window->StartPosition = .1f;
+	Window->PlayRate = 2.f;
+	TestEqual(TEXT("WING-14 Notify local clock"), Window->EvaluateWingTime(.6f, .2f), .9f);
+	TestEqual(TEXT("WING-14 Late source clamps at montage end"), Window->EvaluateWingTime(100.f, .2f), Window->WingMontage->GetPlayLength());
 	auto* Profile = NewObject<UHodgeWingProfile>();
 	Profile->PlaybackMode = EHodgeWingPlaybackMode::AnimationAsset;
 	Profile->Mesh = LoadObject<USkeletalMesh>(nullptr, TEXT("/Game/Wuwa/Wing/EDarkNanzhuWingMd10011/Model/EDarkNanzhuWingMd10011.EDarkNanzhuWingMd10011"));
+	Profile->AnimClass = LoadClass<UAnimInstance>(nullptr, TEXT("/Game/Main/Character/Hero/Wing/ABP_PoverWing_Anzhu.ABP_PoverWing_Anzhu_C"));
 	Profile->MeshOffset.SetScale3D(FVector(.8f));
-	Profile->AnimationBindings.Add(Binding);
 	TArray<FText> Errors;
-	TestTrue(TEXT("WING-07 New skeleton and calibrated uniform scale accepted"), Profile->Validate(Errors));
-	Profile->AnimationBindings.Add(Binding);
+	TestTrue(TEXT("WING-14 No Profile mappings required"), Profile->Validate(Errors));
+	TestTrue(TEXT("WING-14 Valid notify montage"), Window->Validate(Profile->Mesh, Errors));
+	Window->PlayRate = NAN;
 	Errors.Reset();
-	TestFalse(TEXT("WING-08 Duplicate source rejected"), Profile->Validate(Errors));
-	Profile->AnimationBindings.SetNum(1);
-	Profile->AnimationBindings[0].PlayRateRatio = NAN;
+	TestFalse(TEXT("WING-08 Nonfinite notify rate rejected"), Window->Validate(Profile->Mesh, Errors));
+	Window->PlayRate = 1.f;
+	Window->FadeOutSeconds = -.5f;
 	Errors.Reset();
-	TestFalse(TEXT("WING-08 Nonfinite rate rejected"), Profile->Validate(Errors));
-	Profile->AnimationBindings[0].PlayRateRatio = 1.f;
+	TestFalse(TEXT("WING-08 Illegal fade sentinel rejected"), Window->Validate(Profile->Mesh, Errors));
+	Window->FadeOutSeconds = -1.f;
+	Window->WingMontage = nullptr;
+	Errors.Reset();
+	TestFalse(TEXT("WING-08 Missing montage rejected"), Window->Validate(Profile->Mesh, Errors));
+	auto* WrongSlot = DuplicateObject<UAnimMontage>(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/Main/Character/Hero/Wing/Montages/AM_Wing_Attack04.AM_Wing_Attack04")), GetTransientPackage());
+	WrongSlot->SlotAnimTracks[0].SlotName = TEXT("MissingWingSlot");
+	Window->WingMontage = WrongSlot;
+	Errors.Reset();
+	TestFalse(TEXT("WING-08 Wrong montage slot rejected"), Window->Validate(Profile->Mesh, Errors));
 	Profile->MeshOffset.SetScale3D(FVector(.8f, 1.f, .8f));
 	Errors.Reset();
 	TestFalse(TEXT("WING-08 Nonuniform scale rejected"), Profile->Validate(Errors));
@@ -165,7 +170,7 @@ bool FHodgeWingAttackIntegrationTest::RunTest(const FString& Parameters)
 	Profile->Mesh = WingAsset;
 	Profile->AttachSocket = TEXT("WingCase");
 	Profile->MeshOffset.SetScale3D(FVector(.8f));
-	Profile->AnimationBindings.Add(Binding);
+	Profile->AnimClass = LoadClass<UAnimInstance>(nullptr, TEXT("/Game/Main/Character/Hero/Wing/ABP_PoverWing_Anzhu.ABP_PoverWing_Anzhu_C"));
 	// 原有清理用例保持零时长，淡出用例单独打开配置。
 	Profile->FadeOutSeconds = 0.f;
 	auto* Wing = NewObject<UHodgeWingComponent>(Character);
@@ -183,6 +188,7 @@ bool FHodgeWingAttackIntegrationTest::RunTest(const FString& Parameters)
 	Character->GetMesh()->SetPosition(.5f, false);
 	Wing->RefreshPresentation();
 	TestTrue(TEXT("WING-05 First frame prepared and shown"), Wing->GetPresentationState().bVisible && Wing->GetPresentationState().PoseEvaluations > 0);
+	TestNotNull(TEXT("WING-14 Native wing montage is active"), Mesh->GetAnimInstance()->GetActiveInstanceForMontage(CastChecked<UHodgeAnimNotifyState_WingAction>(Binding.SourceAnimation->Notifies[0].NotifyStateClass)->WingMontage));
 	const auto Point = Mesh->GetSocketTransform(TEXT("Bone_Wing006"), RTS_Component).GetLocation();
 	Character->GetMesh()->SetPosition(.7f, false);
 	Wing->RefreshPresentation();

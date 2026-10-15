@@ -4,6 +4,7 @@
 #include "Component/HodgeWingComponent.h"
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimMontage.h"
+#include "Animation/HodgeAnimNotifyState_WingAction.h"
 #include "Animation/AnimSingleNodeInstance.h"
 #include "Animation/AnimSequence.h"
 #include "AbilitySystemGlobals.h"
@@ -104,8 +105,7 @@ bool UHodgeWingComponent::InitializeWing()
 	WingMesh->SetGenerateOverlapEvents(false);
 	WingMesh->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
 	WingMesh->bEnableUpdateRateOptimizations = false;
-	if (Profile->PlaybackMode == EHodgeWingPlaybackMode::Procedural) { WingMesh->SetAnimInstanceClass(Profile->AnimClass); }
-	else { WingMesh->SetAnimationMode(EAnimationMode::AnimationSingleNode); }
+	WingMesh->SetAnimInstanceClass(Profile->AnimClass);
 	WingMesh->bCastHiddenShadow = false;
 	WingMesh->PrimaryComponentTick.bAllowTickOnDedicatedServer = true;
 	WingMesh->PrimaryComponentTick.TickGroup = TG_PrePhysics;
@@ -155,7 +155,7 @@ void UHodgeWingComponent::ApplyFadeVisibility()
 
 void UHodgeWingComponent::BeginFadeOut()
 {
-	Fade.BeginFade(Profile ? Profile->FadeOutSeconds : 0.f);
+	Fade.BeginFade(WindowFadeOutSeconds >= 0.f ? WindowFadeOutSeconds : (Profile ? Profile->FadeOutSeconds : 0.f));
 	ApplyFadeVisibility();
 }
 
@@ -169,50 +169,80 @@ bool UHodgeWingComponent::ResolveSource(int32& BindingIndex, int32& InstanceId, 
 {
 	SourceInstance = Character.IsValid() ? Character->GetMesh()->GetAnimInstance() : nullptr;
 	if (!SourceInstance || !Profile) { return false; }
-	for (int32 Index = 0; Index < Profile->AnimationBindings.Num(); ++Index)
+	const auto FindWindow = [this, &BindingIndex, &Position](UAnimSequenceBase* Source)
 	{
-		const auto& Binding = Profile->AnimationBindings[Index];
-		if (auto* Montage = Cast<UAnimMontage>(Binding.SourceAnimation))
+		int32 Selected = INDEX_NONE;
+		float LatestStart = -1.f;
+		for (int32 Index = 0; Index < Source->Notifies.Num(); ++Index)
 		{
-			auto* Instance = SourceInstance->GetActiveInstanceForMontage(Montage);
-			if (!Instance || !Instance->IsActive()) { continue; }
-			BindingIndex = Index;
-			InstanceId = Instance->GetInstanceID();
-			Position = Instance->GetPosition();
-			return FMath::IsFinite(Position);
-		}
-		if (auto* Single = Character->GetMesh()->GetSingleNodeInstance(); Single && Single->GetCurrentAsset() == Binding.SourceAnimation)
-		{
-			Position = Single->GetCurrentTime();
-			if (!FMath::IsFinite(Position)) { return false; }
-			if (PreviewSource != Binding.SourceAnimation || Position < LastPreviewPosition - KINDA_SMALL_NUMBER)
+			const auto& Event = Source->Notifies[Index];
+			auto* Window = Cast<UHodgeAnimNotifyState_WingAction>(Event.NotifyStateClass);
+			const float Start = Event.GetTime();
+			const float End = Start + Event.GetDuration();
+			if (!Window || !FMath::IsFinite(Start) || !FMath::IsFinite(End) || Start < 0.f || End <= Start ||
+				Position < Start || Position >= End || Start < LatestStart) { continue; }
+			TArray<FText> Errors;
+			if (!Window->Validate(Profile->Mesh, Errors))
 			{
-				PreviewEpoch = PreviewEpoch < MAX_int32 ? PreviewEpoch + 1 : 1;
-				PreviewSource = Binding.SourceAnimation;
+				if (!InvalidWindows.Contains(Window))
+				{
+					InvalidWindows.Add(Window);
+					for (const FText& Error : Errors) { UE_LOG(LogTemp, Error, TEXT("Wing window %s: %s"), *Window->GetPathName(), *Error.ToString()); }
+				}
+				return false;
 			}
-			LastPreviewPosition = Position;
-			BindingIndex = Index;
-			InstanceId = PreviewEpoch;
-			return true;
+			Selected = Index;
+			LatestStart = Start;
 		}
+		if (Selected == INDEX_NONE) { return false; }
+		// 同时存在窗口时，后开始的窗口接管，退出后重新查询当前合法窗口。
+		BindingIndex = Selected;
+		ActiveWindow = CastChecked<UHodgeAnimNotifyState_WingAction>(Source->Notifies[Selected].NotifyStateClass);
+		ActiveSourceAnimation = Source;
+		WindowStartTime = LatestStart;
+		return true;
+	};
+	// 查询实际角色蒙太奇，新增攻击无需修改 Profile 白名单。
+	for (int32 Index = SourceInstance->MontageInstances.Num() - 1; Index >= 0; --Index)
+	{
+		auto* Instance = SourceInstance->MontageInstances[Index];
+		if (!Instance || !Instance->IsActive()) { continue; }
+		Position = Instance->GetPosition();
+		if (!FMath::IsFinite(Position) || !FindWindow(Instance->Montage)) { continue; }
+		InstanceId = Instance->GetInstanceID();
+		return true;
+	}
+	if (auto* Single = Character->GetMesh()->GetSingleNodeInstance(); Single && Single->GetCurrentAsset())
+	{
+		auto* Preview = Cast<UAnimSequenceBase>(Single->GetCurrentAsset());
+		if (!Preview) { return false; }
+		Position = Single->GetCurrentTime();
+		if (!FMath::IsFinite(Position)) { return false; }
+		if (PreviewSource != Preview || Position < LastPreviewPosition - KINDA_SMALL_NUMBER)
+		{
+			PreviewEpoch = PreviewEpoch < MAX_int32 ? PreviewEpoch + 1 : 1;
+			PreviewSource = Preview;
+		}
+		LastPreviewPosition = Position;
+		if (!FindWindow(Preview)) { return false; }
+		InstanceId = PreviewEpoch;
+		return true;
 	}
 	return false;
 }
 
 FHodgeWingActionHandle UHodgeWingComponent::BeginWingAction(int32 BindingIndex, int32 InstanceId, FGuid ExecutionId)
 {
-	if (!Profile || Profile->PlaybackMode != EHodgeWingPlaybackMode::AnimationAsset || !Profile->AnimationBindings.IsValidIndex(BindingIndex)) { return {}; }
+	if (!Profile || Profile->PlaybackMode != EHodgeWingPlaybackMode::AnimationAsset || BindingIndex < 0) { return {}; }
 	return Presentation.Begin(BindingIndex, InstanceId, ExecutionId);
 }
 
 bool UHodgeWingComponent::EndWingAction(FHodgeWingActionHandle Handle)
 {
 	const int32 EndingInstance = Presentation.SourceInstanceId;
-	const int32 EndingBinding = Presentation.BindingIndex;
 	if (!Presentation.End(Handle)) { return false; }
 	SuppressedSourceInstance = ActiveSourceInstance;
 	SuppressedInstanceId = EndingInstance;
-	SuppressedBindingIndex = EndingBinding;
 	BeginFadeOut();
 	SourceInstanceId = INDEX_NONE;
 	SourcePosition = 0.f;
@@ -228,6 +258,10 @@ void UHodgeWingComponent::ResetWingPresentation()
 {
 	if (Presentation.Handle.IsValid()) { EndWingAction(Presentation.Handle); }
 	Presentation.Reset();
+	WingMontageInstanceId = INDEX_NONE;
+	if (WingMesh && WingMesh->GetAnimInstance()) { WingMesh->GetAnimInstance()->Montage_Stop(0.f); }
+	ActiveWindow = nullptr;
+	ActiveSourceAnimation = nullptr;
 	Fade.Reset();
 	ApplyFadeVisibility();
 	Pose = {};
@@ -235,26 +269,32 @@ void UHodgeWingComponent::ResetWingPresentation()
 	SourceInstanceId = INDEX_NONE;
 }
 
-bool UHodgeWingComponent::EvaluateAnimationPose(int32 BindingIndex, float Position)
+bool UHodgeWingComponent::EvaluateWindowPose(float Position)
 {
-	if (!IsValid(WingMesh) || !Profile || !Profile->AnimationBindings.IsValidIndex(BindingIndex) || !FMath::IsFinite(Position)) { return false; }
-	const auto& Binding = Profile->AnimationBindings[BindingIndex];
-	if (!Binding.WingAnimation || !WingMesh->GetSkeletalMeshAsset() ||
-		Binding.WingAnimation->GetSkeleton() != WingMesh->GetSkeletalMeshAsset()->GetSkeleton() ||
-		!FMath::IsFinite(Binding.SourceStartTime) || !FMath::IsFinite(Binding.WingStartTime) ||
-		!FMath::IsFinite(Binding.PlayRateRatio) || Binding.PlayRateRatio <= 0.f) { return false; }
-	WingMesh->SetAnimationMode(EAnimationMode::AnimationSingleNode);
-	auto* Single = WingMesh->GetSingleNodeInstance();
-	if (!Single) { return false; }
-	const float WingTime = Binding.EvaluateWingTime(Position);
-	// 主时钟暂停时复用已经求值的局部姿势，挂接仍由父网格更新。
-	if (Presentation.PoseEvaluations > 0 && Single->GetCurrentAsset() == Binding.WingAnimation && FMath::IsNearlyEqual(Single->GetCurrentTime(), WingTime, SMALL_NUMBER)) { return true; }
-	if (Single->GetCurrentAsset() != Binding.WingAnimation) { WingMesh->SetAnimation(Binding.WingAnimation); }
-	Single->SetPlaying(false);
-	WingMesh->SetPosition(WingTime, false);
-	// 空闲时网格不 Tick，因此显现前必须同步完成姿势求值。
-	WingMesh->TickAnimation(0.f, false);
+	if (!IsValid(WingMesh) || !ActiveWindow || !FMath::IsFinite(Position)) { return false; }
+	auto* Anim = WingMesh->GetAnimInstance();
+	if (!Anim) { return false; }
+	const float WingTime = ActiveWindow->EvaluateWingTime(Position, WindowStartTime);
+	auto* Instance = Anim->GetMontageInstanceForID(WingMontageInstanceId);
+	const bool bRestart = !Instance || !Instance->IsActive() || Instance->Montage != ActiveWindow->WingMontage;
+	if (bRestart)
+	{
+		if (Anim->Montage_Play(ActiveWindow->WingMontage, 1.f, EMontagePlayReturnType::MontageLength, WingTime) <= 0.f)
+		{ UE_LOG(LogTemp, Error, TEXT("Wing %s: montage %s could not play"), *GetNameSafe(GetOwner()), *GetNameSafe(ActiveWindow->WingMontage)); return false; }
+		Instance = Anim->GetActiveInstanceForMontage(ActiveWindow->WingMontage);
+		if (!Instance) { return false; }
+		WingMontageInstanceId = Instance->GetInstanceID();
+		// 翼位置由角色时钟校正，禁止独立推进和自动回到参考姿势。
+		Instance->Pause();
+		Instance->bEnableAutoBlendOut = false;
+	}
+	else if (Presentation.PoseEvaluations > 0 && FMath::IsNearlyEqual(Instance->GetPosition(), WingTime, SMALL_NUMBER)) { return true; }
+	const float Step = bRestart ? FMath::Max(0.f, Position - WindowStartTime) : FMath::Abs(Position - Presentation.SourceTime);
+	Instance->SetPosition(WingTime);
+	// Tick 仅推进原生混入权重，蒙太奇位置始终来自通知内经过的源时间。
+	WingMesh->TickAnimation(Step, false);
 	WingMesh->RefreshBoneTransforms();
+	Presentation.WingTime = WingTime;
 	++Presentation.PoseEvaluations;
 	return true;
 }
@@ -282,12 +322,14 @@ bool UHodgeWingComponent::PrepareAuthorityHitPose(FGuid ExecutionId)
 	float Position = 0.f;
 	UAnimInstance* SourceInstance = nullptr;
 	if (!ResolveSource(BindingIndex, InstanceId, Position, SourceInstance) ||
-		Profile->AnimationBindings[BindingIndex].SourceAnimation != Ability->GetCurrentMontage() ||
-		!EvaluateAnimationPose(BindingIndex, Position)) { return false; }
+		ActiveSourceAnimation != Ability->GetCurrentMontage()) { return false; }
+	if (Presentation.BindingIndex != BindingIndex || Presentation.SourceInstanceId != InstanceId || Presentation.ExecutionId != ExecutionId)
+	{ WingMontageInstanceId = INDEX_NONE; }
+	if (!BeginWingAction(BindingIndex, InstanceId, ExecutionId).IsValid() || !EvaluateWindowPose(Position)) { return false; }
 	// 命中准备不打开显示窗口，攻击结束后的材质尾迹也不产生伤害。
 	SourcePosition = Presentation.SourceTime = Position;
 	SourceInstanceId = Presentation.SourceInstanceId = InstanceId;
-	Presentation.WingTime = Profile->AnimationBindings[BindingIndex].EvaluateWingTime(Position);
+	Presentation.WingTime = ActiveWindow->EvaluateWingTime(Position, WindowStartTime);
 	return true;
 }
 
@@ -322,7 +364,7 @@ void UHodgeWingComponent::RefreshPresentation()
 		SourcePosition = 0.f;
 		return;
 	}
-	if (SuppressedSourceInstance == SourceInstance && SuppressedInstanceId == InstanceId && SuppressedBindingIndex == BindingIndex)
+	if (SuppressedSourceInstance == SourceInstance && SuppressedInstanceId == InstanceId)
 	{
 		BeginFadeOut();
 		return;
@@ -335,18 +377,19 @@ void UHodgeWingComponent::RefreshPresentation()
 	if (auto* ASC = Cast<UHodgeAbilitySystemComponent>(UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(GetOwner())))
 	{
 		const auto* Ability = Cast<UHodgeGameplayAbility_Definition>(ASC->GetAnimatingAbility());
-		if (Ability && Ability->GetExecutionId().IsValid() && Ability->GetCurrentMontage() == Profile->AnimationBindings[BindingIndex].SourceAnimation)
+		if (Ability && Ability->GetExecutionId().IsValid() && Ability->GetCurrentMontage() == ActiveSourceAnimation)
 		{
 			Execution = Ability->GetExecutionId();
 		}
 	}
 	ActiveSourceInstance = SourceInstance;
+	const bool bNewWindow = Presentation.BindingIndex != BindingIndex || Presentation.SourceInstanceId != InstanceId || Presentation.ExecutionId != Execution;
+	if (bNewWindow) { WingMontageInstanceId = INDEX_NONE; }
+	WindowFadeOutSeconds = ActiveWindow->FadeOutSeconds;
 	if (!BeginWingAction(BindingIndex, InstanceId, Execution).IsValid()) { ResetWingPresentation(); return; }
-	Presentation.SourceTime = SourcePosition = Position;
-	Presentation.WingTime = Profile->AnimationBindings[BindingIndex].EvaluateWingTime(Position);
 	SourceInstanceId = InstanceId;
-	if (!Profile->AnimationBindings[BindingIndex].IsWindowOpen(Position)) { BeginFadeOut(); return; }
-	if (!EvaluateAnimationPose(BindingIndex, Position)) { ResetWingPresentation(); return; }
+	if (!EvaluateWindowPose(Position)) { ResetWingPresentation(); return; }
+	Presentation.SourceTime = SourcePosition = Position;
 	Fade.Show();
 	ApplyFadeVisibility();
 }

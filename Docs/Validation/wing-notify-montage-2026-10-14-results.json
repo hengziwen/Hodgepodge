@@ -1,0 +1,925 @@
+{
+  "date": "2026-10-14",
+  "builds": {
+    "Editor": {
+      "exit_code": 0,
+      "log": "Saved/WingMontage/EditorBuild.log"
+    },
+    "Game": {
+      "exit_code": 0,
+      "log": "Saved/WingMontage/GameBuild.log"
+    }
+  },
+  "native": {
+    "passed": 8,
+    "with_warnings": 1,
+    "tests": [
+      {
+        "name": "Hodge.Wing.AssetContract",
+        "state": "Success",
+        "warnings": 4
+      },
+      {
+        "name": "Hodge.Wing.AttackPresentationIntegration",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.Wing.BoxHitGeometry",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.Wing.CancellationAndClock",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.Wing.Envelope",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.Wing.FadeState",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.Wing.NotifyMontage",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.Wing.PresentationSession",
+        "state": "Success",
+        "warnings": 0
+      }
+    ]
+  },
+  "assets": {
+    "passed": true,
+    "checks": [
+      {
+        "requirement": "WING-14",
+        "check": "翼 AnimBP 已配置",
+        "passed": true
+      },
+      {
+        "requirement": "WING-14",
+        "check": "权威采样保留",
+        "passed": true
+      },
+      {
+        "requirement": "WING-14",
+        "check": "挂接缩放保留",
+        "passed": true
+      },
+      {
+        "requirement": "WING-14",
+        "check": "材质和默认淡出保留",
+        "passed": true
+      },
+      {
+        "requirement": "WING-14",
+        "check": "用户挂接偏移保留",
+        "passed": true
+      },
+      {
+        "requirement": "WING-14",
+        "check": "已有窗口保留_04",
+        "passed": true
+      },
+      {
+        "requirement": "WING-14",
+        "check": "通知直接选择翼蒙太奇_04",
+        "passed": true
+      },
+      {
+        "requirement": "WING-14",
+        "check": "独立翼骨架_04",
+        "passed": true
+      },
+      {
+        "requirement": "WING-14",
+        "check": "默认倍率和淡出_04",
+        "passed": true
+      },
+      {
+        "requirement": "WING-14",
+        "check": "窗口时间轨道原样保留_04",
+        "passed": true
+      },
+      {
+        "requirement": "WING-14",
+        "check": "Box 和真实翼根保留",
+        "passed": true
+      },
+      {
+        "requirement": "WING-14",
+        "check": "已有窗口保留_05",
+        "passed": true
+      },
+      {
+        "requirement": "WING-14",
+        "check": "通知直接选择翼蒙太奇_05",
+        "passed": true
+      },
+      {
+        "requirement": "WING-14",
+        "check": "独立翼骨架_05",
+        "passed": true
+      },
+      {
+        "requirement": "WING-14",
+        "check": "默认倍率和淡出_05",
+        "passed": true
+      },
+      {
+        "requirement": "WING-14",
+        "check": "窗口时间轨道原样保留_05",
+        "passed": true
+      }
+    ]
+  },
+  "blueprints": [
+    {
+      "success": true,
+      "message": "Blueprint fetched",
+      "parentClass": "/Script/Engine.AnimInstance",
+      "assetPath": "/Game/Main/Character/Hero/Wing/ABP_PoverWing_Anzhu.ABP_PoverWing_Anzhu",
+      "blueprintType": "normal",
+      "compileStatus": "BS_UpToDate",
+      "hasCompileErrors": false,
+      "variables": [],
+      "functions": [
+        {
+          "name": "AnimGraph",
+          "public": true
+        }
+      ],
+      "events": [
+        {
+          "name": "BlueprintUpdateAnimation",
+          "eventType": "K2Node_Event"
+        }
+      ],
+      "functionGraphs": [
+        {
+          "name": "AnimGraph",
+          "nodeCount": 3
+        }
+      ],
+      "eventGraphs": [
+        {
+          "name": "EventGraph",
+          "nodeCount": 2
+        }
+      ],
+      "defaults": {},
+      "details": {
+        "blueprintPath": "/Game/Main/Character/Hero/Wing/ABP_PoverWing_Anzhu",
+        "resolvedPath": "/Game/Main/Character/Hero/Wing/ABP_PoverWing_Anzhu",
+        "generatedClass": "/Game/Main/Character/Hero/Wing/ABP_PoverWing_Anzhu.ABP_PoverWing_Anzhu_C",
+        "scsNodeCount": 0,
+        "components": []
+      }
+    },
+    {
+      "success": true,
+      "message": "Blueprint fetched",
+      "parentClass": "/Script/Hodgepodge.HodgeWingComponent",
+      "assetPath": "/Game/Main/Character/Hero/Wing/BP_PoverWing_Anzhu.BP_PoverWing_Anzhu",
+      "blueprintType": "normal",
+      "compileStatus": "BS_UpToDate",
+      "hasCompileErrors": false,
+      "variables": [],
+      "functions": [],
+      "events": [
+        {
+          "name": "ReceiveBeginPlay",
+          "eventType": "K2Node_Event"
+        },
+        {
+          "name": "ReceiveTick",
+          "eventType": "K2Node_Event"
+        }
+      ],
+      "functionGraphs": [],
+      "eventGraphs": [
+        {
+          "name": "EventGraph",
+          "nodeCount": 2
+        }
+      ],
+      "defaults": {},
+      "details": {
+        "blueprintPath": "/Game/Main/Character/Hero/Wing/BP_PoverWing_Anzhu",
+        "resolvedPath": "/Game/Main/Character/Hero/Wing/BP_PoverWing_Anzhu",
+        "generatedClass": "/Game/Main/Character/Hero/Wing/BP_PoverWing_Anzhu.BP_PoverWing_Anzhu_C",
+        "scsNodeCount": 0,
+        "components": []
+      }
+    },
+    {
+      "success": true,
+      "message": "Blueprint fetched",
+      "parentClass": "/Script/Engine.Character",
+      "assetPath": "/Game/Main/WingText.WingText",
+      "blueprintType": "normal",
+      "compileStatus": "BS_UpToDate",
+      "hasCompileErrors": false,
+      "variables": [],
+      "functions": [
+        {
+          "name": "UserConstructionScript",
+          "public": true
+        }
+      ],
+      "events": [
+        {
+          "name": "ReceiveBeginPlay",
+          "eventType": "K2Node_Event"
+        },
+        {
+          "name": "ReceiveActorBeginOverlap",
+          "eventType": "K2Node_Event"
+        },
+        {
+          "name": "ReceiveTick",
+          "eventType": "K2Node_Event"
+        }
+      ],
+      "functionGraphs": [
+        {
+          "name": "UserConstructionScript",
+          "nodeCount": 1
+        }
+      ],
+      "eventGraphs": [
+        {
+          "name": "EventGraph",
+          "nodeCount": 3
+        }
+      ],
+      "defaults": {},
+      "details": {
+        "blueprintPath": "/Game/Main/WingText",
+        "resolvedPath": "/Game/Main/WingText",
+        "generatedClass": "/Game/Main/WingText.WingText_C",
+        "scsNodeCount": 2,
+        "components": [
+          {
+            "name": "SkeletalMesh",
+            "class": "SkeletalMeshComponent",
+            "classPath": "/Script/Engine.SkeletalMeshComponent",
+            "parent": "CharacterMesh0",
+            "isRoot": true,
+            "source": "SCS"
+          },
+          {
+            "name": "WingPresentation",
+            "class": "HodgeWingComponent",
+            "classPath": "/Script/Hodgepodge.HodgeWingComponent",
+            "parent": "None",
+            "isRoot": true,
+            "source": "SCS"
+          }
+        ]
+      }
+    }
+  ],
+  "pie": {
+    "presentation": {
+      "single": {
+        "passed": true,
+        "checks": [
+          {
+            "requirement": "WING-12",
+            "check": "组件唯一_0",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-01",
+            "check": "初始隐藏_0",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-10",
+            "check": "翼自动Tick关闭_0",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-07",
+            "check": "校准骨骼_0",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-07",
+            "check": "校准缩放_0",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-02",
+            "check": "五段连段已执行",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-09",
+            "check": "所有表现端显现",
+            "passed": true,
+            "detail": [
+              0
+            ]
+          },
+          {
+            "requirement": "WING-05",
+            "check": "实际翼骨运动",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-14",
+            "check": "两份通知蒙太奇在各表现端播放",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-06",
+            "check": "正常收招各端隐藏",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-13",
+            "check": "正常收招各端有材质淡出",
+            "passed": true,
+            "detail": [
+              0
+            ]
+          },
+          {
+            "requirement": "WING-10",
+            "check": "空闲没有额外翼求值",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-06",
+            "check": "Dash 取消主攻击",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-06",
+            "check": "Dash 取消各端隐藏",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-13",
+            "check": "Dash 取消各端有材质淡出",
+            "passed": true,
+            "detail": [
+              0
+            ]
+          },
+          {
+            "requirement": "WING-10",
+            "check": "取消后空闲不求值",
+            "passed": true,
+            "detail": null
+          }
+        ],
+        "samples": 728,
+        "evidence": "Saved/WingMontage/presentation/single-e2e.json"
+      },
+      "listen": {
+        "passed": true,
+        "checks": [
+          {
+            "requirement": "WING-12",
+            "check": "组件唯一_0",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-01",
+            "check": "初始隐藏_0",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-10",
+            "check": "翼自动Tick关闭_0",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-07",
+            "check": "校准骨骼_0",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-07",
+            "check": "校准缩放_0",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-12",
+            "check": "组件唯一_1",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-01",
+            "check": "初始隐藏_1",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-10",
+            "check": "翼自动Tick关闭_1",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-07",
+            "check": "校准骨骼_1",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-07",
+            "check": "校准缩放_1",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-02",
+            "check": "五段连段已执行",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-09",
+            "check": "所有表现端显现",
+            "passed": true,
+            "detail": [
+              0,
+              1
+            ]
+          },
+          {
+            "requirement": "WING-05",
+            "check": "实际翼骨运动",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-14",
+            "check": "两份通知蒙太奇在各表现端播放",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-06",
+            "check": "正常收招各端隐藏",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-13",
+            "check": "正常收招各端有材质淡出",
+            "passed": true,
+            "detail": [
+              0,
+              1
+            ]
+          },
+          {
+            "requirement": "WING-10",
+            "check": "空闲没有额外翼求值",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-06",
+            "check": "Dash 取消主攻击",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-06",
+            "check": "Dash 取消各端隐藏",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-13",
+            "check": "Dash 取消各端有材质淡出",
+            "passed": true,
+            "detail": [
+              0,
+              1
+            ]
+          },
+          {
+            "requirement": "WING-10",
+            "check": "取消后空闲不求值",
+            "passed": true,
+            "detail": null
+          }
+        ],
+        "samples": 638,
+        "evidence": "Saved/WingMontage/presentation/listen-e2e.json"
+      },
+      "dedicated": {
+        "passed": true,
+        "checks": [
+          {
+            "requirement": "WING-12",
+            "check": "组件唯一_0",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-HIT-02",
+            "check": "专服采样网格隐藏",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-HIT-02",
+            "check": "专服翼不自动Tick",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-12",
+            "check": "组件唯一_1",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-01",
+            "check": "初始隐藏_1",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-10",
+            "check": "翼自动Tick关闭_1",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-07",
+            "check": "校准骨骼_1",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-07",
+            "check": "校准缩放_1",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-12",
+            "check": "组件唯一_2",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-01",
+            "check": "初始隐藏_2",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-10",
+            "check": "翼自动Tick关闭_2",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-07",
+            "check": "校准骨骼_2",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-07",
+            "check": "校准缩放_2",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-02",
+            "check": "五段连段已执行",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-09",
+            "check": "所有表现端显现",
+            "passed": true,
+            "detail": [
+              1,
+              2
+            ]
+          },
+          {
+            "requirement": "WING-05",
+            "check": "实际翼骨运动",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-14",
+            "check": "两份通知蒙太奇在各表现端播放",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-06",
+            "check": "正常收招各端隐藏",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-13",
+            "check": "正常收招各端有材质淡出",
+            "passed": true,
+            "detail": [
+              1,
+              2
+            ]
+          },
+          {
+            "requirement": "WING-10",
+            "check": "空闲没有额外翼求值",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-06",
+            "check": "Dash 取消主攻击",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-06",
+            "check": "Dash 取消各端隐藏",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-13",
+            "check": "Dash 取消各端有材质淡出",
+            "passed": true,
+            "detail": [
+              1,
+              2
+            ]
+          },
+          {
+            "requirement": "WING-10",
+            "check": "取消后空闲不求值",
+            "passed": true,
+            "detail": null
+          }
+        ],
+        "samples": 700,
+        "evidence": "Saved/WingMontage/presentation/dedicated-e2e.json"
+      }
+    },
+    "damage": {
+      "single": {
+        "passed": true,
+        "checks": [
+          {
+            "requirement": "WING-HIT-03",
+            "check": "翼盒单独造成伤害",
+            "passed": true,
+            "detail": [
+              350.0,
+              319.0
+            ]
+          },
+          {
+            "requirement": "WING-HIT-03",
+            "check": "多帧扫掠每目标本刀一次",
+            "passed": true,
+            "detail": 1
+          },
+          {
+            "requirement": "WING-HIT-03",
+            "check": "本段只有翼 Box 伤害来源",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-HIT-03",
+            "check": "服务器翼骨骼按当前主动画准备",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-HIT-03",
+            "check": "范围外目标不受伤",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-HIT-03",
+            "check": "伤害窗口前请求服务器技能取消",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-HIT-03",
+            "check": "取消及淡出期间不产生伤害",
+            "passed": true,
+            "detail": null
+          }
+        ],
+        "samples": 1359,
+        "evidence": "Saved/WingMontage/damage/single-damage.json"
+      },
+      "listen": {
+        "passed": true,
+        "checks": [
+          {
+            "requirement": "WING-HIT-03",
+            "check": "翼盒单独造成伤害",
+            "passed": true,
+            "detail": [
+              350.0,
+              319.0
+            ]
+          },
+          {
+            "requirement": "WING-HIT-03",
+            "check": "多帧扫掠每目标本刀一次",
+            "passed": true,
+            "detail": 1
+          },
+          {
+            "requirement": "WING-HIT-03",
+            "check": "本段只有翼 Box 伤害来源",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-HIT-03",
+            "check": "服务器翼骨骼按当前主动画准备",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-HIT-03",
+            "check": "范围外目标不受伤",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-HIT-03",
+            "check": "伤害窗口前请求服务器技能取消",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-HIT-03",
+            "check": "取消及淡出期间不产生伤害",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-HIT-03",
+            "check": "客户端生命值复制_0",
+            "passed": true,
+            "detail": null
+          }
+        ],
+        "samples": 1060,
+        "evidence": "Saved/WingMontage/damage/listen-damage.json"
+      },
+      "dedicated": {
+        "passed": true,
+        "checks": [
+          {
+            "requirement": "WING-HIT-03",
+            "check": "翼盒单独造成伤害",
+            "passed": true,
+            "detail": [
+              350.0,
+              319.0
+            ]
+          },
+          {
+            "requirement": "WING-HIT-03",
+            "check": "多帧扫掠每目标本刀一次",
+            "passed": true,
+            "detail": 1
+          },
+          {
+            "requirement": "WING-HIT-03",
+            "check": "本段只有翼 Box 伤害来源",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-HIT-03",
+            "check": "服务器翼骨骼按当前主动画准备",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-HIT-03",
+            "check": "范围外目标不受伤",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-HIT-03",
+            "check": "伤害窗口前请求服务器技能取消",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-HIT-03",
+            "check": "取消及淡出期间不产生伤害",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-HIT-03",
+            "check": "专服采样翼网格不渲染",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-HIT-03",
+            "check": "客户端生命值复制_0",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "requirement": "WING-HIT-03",
+            "check": "客户端生命值复制_1",
+            "passed": true,
+            "detail": null
+          }
+        ],
+        "samples": 1116,
+        "evidence": "Saved/WingMontage/damage/dedicated-damage.json"
+      }
+    }
+  },
+  "hashes": {
+    "Source/Hodgepodge/Public/Animation/HodgeAnimNotifyState_WingAction.h": "e2130fb6361da91fae8d22d24cd1504d9389089d878f7d0615706f134cca7c89",
+    "Source/Hodgepodge/Private/Animation/HodgeAnimNotifyState_WingAction.cpp": "4ea517c6c11c5a23cfa4f2154ed43b68c56ebb5e9496bedd091242cad9f2ca4f",
+    "Source/Hodgepodge/Public/Animation/HodgeWingProfile.h": "186172ebe27fcba16e6b258cddefe5b220e1f1ab290720524ced407bbae0150d",
+    "Source/Hodgepodge/Private/Animation/HodgeWingProfile.cpp": "b5516aa3815e476f12a7e7eec176e1c2c73be6ae306b4077ceefea0c0d527c7c",
+    "Source/Hodgepodge/Public/Component/HodgeWingComponent.h": "a8b5500cf99dcaccf4a06718a6694ce73ad27320993acc49a21aadc5c7f65584",
+    "Source/Hodgepodge/Private/Component/HodgeWingComponent.cpp": "af19352a0a3f75cf8fd599cf230530148f0282e7a00fd373a73473edab50b67a",
+    "Source/Hodgepodge/Private/Tests/HodgeWingAttackPresentationTests.cpp": "862847fc1e31191db17c50002f0ec926d15dee33ec64e2a00571dc0d25d069bc",
+    "Source/HodgeAbilityEditor/Private/HodgeAnimationAuthoringLibrary.h": "6885014448e58b1d1c79cb8cceeb08745f472026b8225468641880b75dac3221",
+    "Source/HodgeAbilityEditor/Private/HodgeAnimationAuthoringLibrary.cpp": "2ad787ea932bd10e75244bc9e321820444ac8031f1396de1daa72b294f5e24df",
+    "Content/Main/Character/Hero/Wing/DA_PoverWing_Anzhu.uasset": "f9283bbda5443e5b7d87aab51e1b0f0661b6eda9871bbc3596ffa2f4f9cf5edd",
+    "Content/Main/Character/Hero/Wing/ABP_PoverWing_Anzhu.uasset": "310c9dfee4eff360bcb904b9f5a8ef49d8462c4228f9b217dc391d22ac495d4d",
+    "Content/Main/Character/Hero/Wing/Montages/AM_Wing_Attack04.uasset": "c6ea6ca6e265d2671d6b6e86778820c6570df653d286af91667a2ab28816414a",
+    "Content/Main/Character/Hero/Wing/Montages/AM_Wing_Attack05.uasset": "96ff225b1dc5820c0dcef2eadad8c5b552cf63404beef5ebde5f1fff136611b4",
+    "Content/Main/Character/Hero/Anim/Montages/AM_Attack04_Montage.uasset": "05d164aaee5d0a4b9f5ee7b25828a223a6a1eddea80760b833e21302826bb97c",
+    "Content/Main/Character/Hero/Anim/Montages/AM_Attack05_Montage.uasset": "5228ad0107571cbd9dd4ac6c27e6990aecd9a50c24fc402081e4b56804787549",
+    "Content/Wuwa/Anim/AM_Attack04.uasset": "ebc40ff3ce47f7a9ffe1e77a24b0d222e196b46131640d8338db1c65d5ff075b",
+    "Content/Main/WingText.uasset": "a97f303759d11d7fb8344248d8fa86fdf422573c74acabc42ea5ce1cca77b23a"
+  },
+  "restored": {
+    "map": "/Game/ThirdPerson/Maps/ThirdPersonMap",
+    "pie": 0,
+    "dirty_maps": [],
+    "dirty_content": [],
+    "performance": {
+      "throttle": false,
+      "slate": 1,
+      "idle": 0
+    },
+    "play_settings": "single baseline; original full settings were not recorded"
+  },
+  "limitations": [
+    "没有独立专服进程、Cook/打包或手动物理输入手感验证",
+    "翼蒙太奇只驱动表现和姿势，技能与伤害事件保留在角色蒙太奇",
+    "旧字段仅保留序列化兼容，未删除旧程序化资产",
+    "隔离 Box 场景最初发 Dash 输入未结束攻击，未单独定位激活失败；Box 清理改用服务器原生技能取消队列，Dash 另由表现 E2E 验证"
+  ]
+}

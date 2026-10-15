@@ -13,6 +13,7 @@ class UAnimInstance;
 class UAnimSequenceBase;
 class UMaterialInstanceDynamic;
 class UMaterialInterface;
+class UHodgeAnimNotifyState_WingAction;
 
 /** Experience 注入的翅膀协调组件；角色骨骼 → 驱动参数 → 翼骨骼 → 命中采样。 */
 UCLASS(Blueprintable, ClassGroup=(Hodge), meta=(BlueprintSpawnableComponent))
@@ -49,8 +50,8 @@ public:
 	 * @return 身份、主动画与骨骼均有效时返回 true。
 	 */
 	bool PrepareAuthorityHitPose(FGuid ExecutionId);
-	/** 建立已校验源的会话。
-	 * @param BindingIndex Profile 的映射索引。
+	/** 建立已校验通知窗口的会话。
+	 * @param BindingIndex 源动画的通知索引。
 	 * @param InstanceId 本地源动画实例身份。
 	 * @param ExecutionId 关联的攻击执行身份。
 	 * @return 合法身份对应的表现句柄，失败返回空句柄。
@@ -94,14 +95,28 @@ protected:
 	 */
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 private:
-	/** 查询白名单中的当前源。
-	 * @param BindingIndex 输出映射索引。
+	/** 查询当前角色动画中的有效 Wing 通知窗口。
+	 * @param BindingIndex 输出通知索引。
 	 * @param InstanceId 输出本地实例身份。
 	 * @param Position 输出源动画秒。
 	 * @param SourceInstance 输出角色动画实例。
 	 * @return 找到仍有效的有限时钟时返回 true。
 	 */
 	bool ResolveSource(int32& BindingIndex, int32& InstanceId, float& Position, UAnimInstance*& SourceInstance);
+	/** 根据窗口通知求值真正的翼蒙太奇，角色时间是唯一播放时钟。 */
+	bool EvaluateWindowPose(float Position);
+	/** 当前窗口的配置来自源动画资产，不复制到 Profile。 */
+	UPROPERTY(Transient) TObjectPtr<UHodgeAnimNotifyState_WingAction> ActiveWindow;
+	/** 当前源资源用于区分同索引的不同攻击。 */
+	UPROPERTY(Transient) TObjectPtr<UAnimSequenceBase> ActiveSourceAnimation;
+	/** 当前窗口开始的角色源秒。 */
+	float WindowStartTime = 0.f;
+	/** 最近已求值的翼蒙太奇实例身份。 */
+	int32 WingMontageInstanceId = INDEX_NONE;
+	/** 当前窗口的淡出配置，结束后仍保留给材质尾迹使用。 */
+	float WindowFadeOutSeconds = -1.f;
+	/** 非法通知每个对象仅报告一次，防止逐帧刷日志。 */
+	TSet<TWeakObjectPtr<UHodgeAnimNotifyState_WingAction>> InvalidWindows;
 	/** 应用组件可见性，隐藏时关闭翼网格自动 Tick。 */
 	void SetWingVisible(bool bVisible);
 	/** 保留最后一帧姿势，开始淡出并同步渲染状态。 */
@@ -114,12 +129,6 @@ private:
 	UPROPERTY(Transient) TArray<TObjectPtr<UMaterialInterface>> OriginalMaterials;
 	/** 淡出只推进材质，不重新求值已经结束的翼动画。 */
 	FHodgeWingFadeState Fade;
-	/** 单节点实例求值到目标秒。
-	 * @param BindingIndex 已校验的动画映射索引。
-	 * @param Position 当前角色源秒。
-	 * @return 正确姿势已可显示时返回 true。
-	 */
-	bool EvaluateAnimationPose(int32 BindingIndex, float Position);
 	/** 判断死亡或 Avatar 更换是否禁止本组件继续显示。 */
 	bool IsOwnerPresentationBlocked() const;
 	/** 新动画模式的游戏线程会话及诊断数据。 */
@@ -130,8 +139,6 @@ private:
 	TWeakObjectPtr<UAnimInstance> SuppressedSourceInstance;
 	/** 被取消源的本地实例身份。 */
 	int32 SuppressedInstanceId = INDEX_NONE;
-	/** 被取消源的映射索引。 */
-	int32 SuppressedBindingIndex = INDEX_NONE;
 	/** 预览单节点实例的当前资源。 */
 	TWeakObjectPtr<UAnimSequenceBase> PreviewSource;
 	/** 预览循环或资源更换时递增的实例身份。 */

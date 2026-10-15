@@ -62,22 +62,7 @@ struct HODGEPODGE_API FHodgeWingAnimationBinding
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(ClampMin="0")) float WingStartTime = 0.f;
 	/** 翼源秒相对角色源秒的倍率。 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(ClampMin="0.01")) float PlayRateRatio = 1.f;
-	/** 校验资源及时钟配置。
-	 * @param Mesh 本次表现使用的翼网格。
-	 * @param Errors 收集具体失败诊断。
-	 * @return 全部条件合法时返回 true。
-	 */
-	bool Validate(const USkeletalMesh* Mesh, TArray<FText>& Errors) const;
-	/** 将角色源秒转换为有界翼源秒。
-	 * @param SourceTime 当前角色动画位置，单位秒。
-	 * @return 裁剪后的翼动画位置，非法输入返回零。
-	 */
-	float EvaluateWingTime(float SourceTime) const;
-	/** 判断当前时间是否在同名通知窗口的并集内。
-	 * @param SourceTime 当前角色动画位置，单位秒。
-	 * @return 处于至少一个有效窗口时返回 true。
-	 */
-	bool IsWindowOpen(float SourceTime) const;
+
 };
 
 /** 初始化代和唯一身份共同阻止迟到回调结束新表现。 */
@@ -102,7 +87,7 @@ struct HODGEPODGE_API FHodgeWingPresentationState
 	UPROPERTY(BlueprintReadOnly) FHodgeWingActionHandle Handle;
 	/** 当前攻击的执行身份。 */
 	UPROPERTY(BlueprintReadOnly) FGuid ExecutionId;
-	/** Profile 中的当前映射索引。 */
+	/** 源动画中的当前通知索引。 */
 	UPROPERTY(BlueprintReadOnly) int32 BindingIndex = INDEX_NONE;
 	/** 本地角色动画实例的身份。 */
 	UPROPERTY(BlueprintReadOnly) int32 SourceInstanceId = INDEX_NONE;
@@ -117,7 +102,7 @@ struct HODGEPODGE_API FHodgeWingPresentationState
 	/** 成功的翼骨骼求值次数，便于验证空闲成本。 */
 	UPROPERTY(BlueprintReadOnly) int32 PoseEvaluations = 0;
 	/** 建立或复用同一来源会话。
-	 * @param Binding 已校验的映射索引。
+	 * @param Binding 已校验的通知索引。
 	 * @param Instance 本地源动画实例身份。
 	 * @param Execution 本次执行身份。
 	 * @return 同一来源复用句柄，非法身份返回空句柄。
@@ -158,10 +143,10 @@ class HODGEPODGE_API UHodgeWingProfile : public UDataAsset
 {
 	GENERATED_BODY()
 public:
-	/** 旧模式保留原姿势校验，新模式使用动画映射。 */
+	/** 旧模式保留原姿势校验，新模式由通知选择蒙太奇。 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Hodge|Wing") EHodgeWingPlaybackMode PlaybackMode = EHodgeWingPlaybackMode::Procedural;
-	/** 新动画模式的资源白名单与时间映射。 */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Hodge|Wing") TArray<FHodgeWingAnimationBinding> AnimationBindings;
+	/** 旧映射只保留序列化兼容；正式播放配置迁入 Wing 通知。 */
+	UPROPERTY() TArray<FHodgeWingAnimationBinding> AnimationBindings;
 	/** 开启后服务器创建隐藏翼网格，命中任务按攻击主时钟准备骨骼。 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Hodge|Wing|Hit") bool bEnableAuthorityHitSampling = false;
 	/** 动画窗口关闭或攻击取消后的淡出时长；零表示立即隐藏。 */
@@ -179,21 +164,21 @@ public:
 	// 挂接后的相对变换偏移。
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) FTransform MeshOffset = FTransform::Identity;
 	// 驱动当前攻击表现时钟的蒙太奇。
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<UAnimMontage> AttackMontage;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(EditCondition="PlaybackMode == EHodgeWingPlaybackMode::Procedural", EditConditionHides)) TObjectPtr<UAnimMontage> AttackMontage;
 	// 准备阶段的蒙太奇源时间，单位秒。
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(Units="s", ClampMin="0")) float WindupStart = .05f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(EditCondition="PlaybackMode == EHodgeWingPlaybackMode::Procedural", EditConditionHides, Units="s", ClampMin="0")) float WindupStart = .05f;
 	// 挥击阶段的蒙太奇源时间，单位秒。
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(Units="s", ClampMin="0")) float StrikeStart = .25f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(EditCondition="PlaybackMode == EHodgeWingPlaybackMode::Procedural", EditConditionHides, Units="s", ClampMin="0")) float StrikeStart = .25f;
 	// 挥击达到峰值的蒙太奇源时间，单位秒。
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(Units="s", ClampMin="0")) float StrikePeak = .4f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(EditCondition="PlaybackMode == EHodgeWingPlaybackMode::Procedural", EditConditionHides, Units="s", ClampMin="0")) float StrikePeak = .4f;
 	// 恢复阶段结束的蒙太奇源时间，单位秒。
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(Units="s", ClampMin="0")) float RecoveryEnd = .75f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(EditCondition="PlaybackMode == EHodgeWingPlaybackMode::Procedural", EditConditionHides, Units="s", ClampMin="0")) float RecoveryEnd = .75f;
 	// 取消后回到休止姿势的混合时间，单位秒。
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(Units="s", ClampMin="0.01")) float CancelReturnSeconds = .18f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(EditCondition="PlaybackMode == EHodgeWingPlaybackMode::Procedural", EditConditionHides, Units="s", ClampMin="0.01")) float CancelReturnSeconds = .18f;
 	// 准备阶段使用的局部骨骼旋转姿势。
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) FHodgeWingPose WindupPose;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(EditCondition="PlaybackMode == EHodgeWingPlaybackMode::Procedural", EditConditionHides)) FHodgeWingPose WindupPose;
 	// 挥击阶段使用的局部骨骼旋转姿势。
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) FHodgeWingPose StrikePose;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(EditCondition="PlaybackMode == EHodgeWingPlaybackMode::Procedural", EditConditionHides)) FHodgeWingPose StrikePose;
 	/** 判断是否存在有效Timing。
 	 * @return true表示满足该查询条件，false表示不满足。
 	 */

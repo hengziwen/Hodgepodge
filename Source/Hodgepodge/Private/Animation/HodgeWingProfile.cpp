@@ -7,6 +7,9 @@
 #include "Animation/AnimSequence.h"
 #include "Animation/AnimMontage.h"
 #include "Animation/AnimBlueprintGeneratedClass.h"
+#include "Animation/AnimClassInterface.h"
+#include "AnimNodes/AnimNode_Slot.h"
+#include "UObject/UnrealType.h"
 #include "Engine/SkeletalMesh.h"
 #include "Misc/DataValidation.h"
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeWingProfile)
@@ -78,64 +81,6 @@ void FHodgeWingPresentationState::Reset()
 	PoseEvaluations = Evaluations;
 }
 
-float FHodgeWingAnimationBinding::EvaluateWingTime(float SourceTime) const
-{
-	if (!WingAnimation || !FMath::IsFinite(SourceTime) || !FMath::IsFinite(PlayRateRatio) || PlayRateRatio <= 0.f) { return 0.f; }
-	const double Position = double(WingStartTime) + (double(SourceTime) - SourceStartTime) * PlayRateRatio;
-	return FMath::IsFinite(Position) ? float(FMath::Clamp(Position, 0., double(WingAnimation->GetPlayLength()))) : 0.f;
-}
-
-bool FHodgeWingAnimationBinding::IsWindowOpen(float SourceTime) const
-{
-	if (!SourceAnimation || !FMath::IsFinite(SourceTime)) { return false; }
-	for (const FAnimNotifyEvent& Event : SourceAnimation->Notifies)
-	{
-		const auto* Window = Cast<UHodgeAnimNotifyState_WingAction>(Event.NotifyStateClass);
-		if (Window && Window->WindowId == WindowId && SourceTime >= Event.GetTime() && SourceTime < Event.GetTime() + Event.GetDuration())
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-bool FHodgeWingAnimationBinding::Validate(const USkeletalMesh* Mesh, TArray<FText>& Errors) const
-{
-	if (!SourceAnimation || (!SourceAnimation->IsA<UAnimSequence>() && !SourceAnimation->IsA<UAnimMontage>()) || !WingAnimation)
-	{
-		Errors.Add(FText::FromString(TEXT("Wing binding requires a source Sequence/Montage and a wing Sequence")));
-	}
-	if (Mesh && WingAnimation && Mesh->GetSkeleton() != WingAnimation->GetSkeleton())
-	{
-		Errors.Add(FText::FromString(TEXT("Wing animation skeleton does not match the wing mesh")));
-	}
-	if (!FMath::IsFinite(SourceStartTime) || !FMath::IsFinite(WingStartTime) || !FMath::IsFinite(PlayRateRatio) ||
-		SourceStartTime < 0.f || WingStartTime < 0.f || PlayRateRatio <= 0.f ||
-		(SourceAnimation && SourceStartTime >= SourceAnimation->GetPlayLength()) ||
-		(WingAnimation && WingStartTime >= WingAnimation->GetPlayLength()))
-	{
-		Errors.Add(FText::FromString(TEXT("Wing binding times and positive rate must be finite and inside the source assets")));
-	}
-	bool bHasWindow = false;
-	if (SourceAnimation)
-	{
-		for (const FAnimNotifyEvent& Event : SourceAnimation->Notifies)
-		{
-			const auto* Window = Cast<UHodgeAnimNotifyState_WingAction>(Event.NotifyStateClass);
-			if (!Window || Window->WindowId != WindowId) { continue; }
-			bHasWindow = true;
-			const float Begin = Event.GetTime();
-			const float End = Begin + Event.GetDuration();
-			if (!FMath::IsFinite(Begin) || !FMath::IsFinite(End) || Begin < 0.f || End <= Begin || End > SourceAnimation->GetPlayLength() + KINDA_SMALL_NUMBER)
-			{
-				Errors.Add(FText::FromString(TEXT("Wing notification window must be ordered and inside its source animation")));
-			}
-		}
-	}
-	if (WindowId.IsNone() || !bHasWindow) { Errors.Add(FText::FromString(TEXT("Wing binding has no matching WingAction notification window"))); }
-	return Errors.IsEmpty();
-}
-
 /** 根据给定权重混合两份状态或表现数据。 */
 FHodgeWingPose FHodgeWingPose::Blend(const FHodgeWingPose& A, const FHodgeWingPose& B, float Alpha)
 {
@@ -180,22 +125,29 @@ bool UHodgeWingProfile::Validate(TArray<FText>& Errors) const
 		{
 			Errors.Add(FText::FromString(TEXT("Wing fade requires a finite nonnegative duration and a visibility parameter")));
 		}
-		if (!Mesh || AnimationBindings.IsEmpty() || AnimationBindings.Num() > 32)
+		const auto* BlueprintClass = Cast<UAnimBlueprintGeneratedClass>(AnimClass.Get());
+		if (!Mesh || !BlueprintClass || BlueprintClass->GetTargetSkeleton() != Mesh->GetSkeleton())
 		{
-			Errors.Add(FText::FromString(TEXT("Animation wing requires a mesh and between 1 and 32 bindings")));
+			Errors.Add(FText::FromString(TEXT("Animation wing requires a mesh and an AnimBP using the wing skeleton")));
 		}
+		bool bHasSlot = false;
+		if (const auto* Interface = IAnimClassInterface::GetFromClass(AnimClass.Get()))
+		{
+			for (FStructProperty* Property : Interface->GetAnimNodeProperties())
+			{
+				if (!Property || Property->Struct != FAnimNode_Slot::StaticStruct()) { continue; }
+				const auto* Slot = Property->ContainerPtrToValuePtr<FAnimNode_Slot>(AnimClass->GetDefaultObject());
+				bHasSlot |= Slot && Slot->SlotName == TEXT("DefaultSlot");
+			}
+		}
+		// 只有匹配骨架还不能保证蒙太奇进入输出图，缺少 Slot 时必须失败关闭。
+		if (!bHasSlot) { Errors.Add(FText::FromString(TEXT("Wing AnimBP must contain a DefaultSlot node"))); }
 		const FVector Scale = MeshOffset.GetScale3D();
 		if (AttachSocket.IsNone() || !MeshOffset.IsValid() || Scale.X <= 0.f || Scale.X > 10.f || !Scale.Equals(FVector(Scale.X)))
 		{
 			Errors.Add(FText::FromString(TEXT("Animation wing offset requires a socket and a finite positive uniform scale no greater than 10")));
 		}
-		TSet<const UAnimSequenceBase*> Sources;
-		for (const FHodgeWingAnimationBinding& Binding : AnimationBindings)
-		{
-			Binding.Validate(Mesh, Errors);
-			if (Sources.Contains(Binding.SourceAnimation)) { Errors.Add(FText::FromString(TEXT("Duplicate source animation in wing bindings"))); }
-			Sources.Add(Binding.SourceAnimation);
-		}
+		// 每次攻击的蒙太奇与时间参数由通知校验，不再要求 Profile 映射表。
 		return Errors.IsEmpty();
 	}
 	if (!Mesh || !AnimClass || !AnimClass->IsChildOf(UHodgeWingAnimInstance::StaticClass()) || !AttackMontage)
