@@ -1,0 +1,8 @@
+---
+description: 根据请求意图自动选择必要的 skill 并遵守调用与组合边界
+alwaysApply: true
+---
+
+- 遵守根 `AGENTS.md`，按 `.agents/skill-routing.md` 自动识别请求对象、动作和交付面。
+- 逐项判定、正反例及调用方法见 `Docs/Guides/skills-usage-manual.md`；按需读取选中的 `SKILL.md`，不全量加载所有正文。
+- 保留显式命令条件、真实能力限制和授权范围；不把文档规则当作自动执行 Hook 或权限变更。

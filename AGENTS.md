@@ -2,6 +2,7 @@
 
 适用于整个项目。开始任务先读本文、`Docs/Development/development-standards.md` 及 `Docs/AI_DEVELOPMENT.md`，再读相关代码和配置。
 
+- 处理任务时按 `.agents/skill-routing.md` 自动识别对象、意图和交付面，选择并读取合适的 `SKILL.md`；用户无需手动指定。逐项功能、触发/排除条件和组合规则见 `Docs/Guides/skills-usage-manual.md`，只加载本次必要的 skill，遵守显式调用条件、当前工具能力及授权范围。
 - 以当前 `.uproject`、`Source`、`Config`、插件描述为事实依据；README、Lyra 学习文档和架构方案是背景，不代表功能已经实现。
 - 保持 UE 5.5 兼容；本机核实为 5.5.4。不要自行升级引擎、插件或构建设置。
 - 业务代码属于单一 `Hodgepodge` Runtime 模块，维持 `Public` / `Private` 对应目录和 `Hodge` 命名。不要为了整理目录引入额外模块。
