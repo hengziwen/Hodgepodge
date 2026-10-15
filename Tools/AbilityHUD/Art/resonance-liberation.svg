@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><g fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round">
+<path stroke-width="2.5" d="M62.0,51.0 C36.0,38.0 47.0,19.0 62.0,30.0"/>
+<path stroke-width="2.5" d="M62.0,30.0 C72.0,37.0 66.0,47.0 62.0,51.0"/>
+<path stroke-width="2.5" d="M77.0,62.0 C90.0,36.0 109.0,47.0 98.0,62.0"/>
+<path stroke-width="2.5" d="M98.0,62.0 C91.0,72.0 81.0,66.0 77.0,62.0"/>
+<path stroke-width="2.5" d="M66.0,77.0 C92.0,90.0 81.0,109.0 66.0,98.0"/>
+<path stroke-width="2.5" d="M66.0,98.0 C56.0,91.0 62.0,81.0 66.0,77.0"/>
+<path stroke-width="2.5" d="M51.0,66.0 C38.0,92.0 19.0,81.00000000000001 30.0,66.0"/>
+<path stroke-width="2.5" d="M30.0,66.0 C37.0,56.00000000000001 47.0,62.0 51.0,66.0"/>
+<polyline stroke-width="2.5" points="64.0,24.0 64.0,42.0 57.0,48.0"/>
+<polyline stroke-width="2.5" points="104.0,64.0 86.0,64.0 80.0,57.0"/>
+<polyline stroke-width="2.5" points="64.0,104.0 64.0,86.0 71.0,80.0"/>
+<polyline stroke-width="2.5" points="24.0,64.00000000000001 42.0,64.0 48.0,71.0"/>
+<polyline stroke-width="2.5" points="64,52 76,64 64,76 52,64 64,52"/>
+<circle cx="64" cy="64" r="41" stroke-width="2"/>
+<circle cx="64" cy="64" r="7" stroke-width="2"/>
+</g></svg>

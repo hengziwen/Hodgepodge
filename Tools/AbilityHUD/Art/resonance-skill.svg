@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><g fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round">
+<path stroke-width="4" d="M61,64 C18,60 10,27 25,28"/>
+<path stroke-width="4" d="M25,28 C44,28 43,53 61,64"/>
+<path stroke-width="3" d="M60,68 C23,64 13,78 31,83"/>
+<path stroke-width="3" d="M31,83 C45,87 50,74 60,68"/>
+<path stroke-width="3" d="M57,70 C34,85 41,100 58,89"/>
+<path stroke-width="3" d="M58,89 C62,84 62,78 62,74"/>
+<path stroke-width="4" d="M67,64 C110,60 118,27 103,28"/>
+<path stroke-width="4" d="M103,28 C84,28 85,53 67,64"/>
+<path stroke-width="3" d="M68,68 C105,64 115,78 97,83"/>
+<path stroke-width="3" d="M97,83 C83,87 78,74 68,68"/>
+<path stroke-width="3" d="M71,70 C94,85 87,100 70,89"/>
+<path stroke-width="3" d="M70,89 C66,84 66,78 66,74"/>
+<polyline stroke-width="4" points="64,20 64,105"/>
+<polyline stroke-width="3" points="58,98 64,108 70,98"/>
+<circle cx="64" cy="62" r="5" stroke-width="2"/>
+</g></svg>
