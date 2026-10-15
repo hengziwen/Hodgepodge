@@ -1,0 +1,11 @@
+---
+description: 讨论或设计具体实现前查阅 Lyra，直接复用已有成熟方案
+alwaysApply: true
+---
+
+- 按 AGENTS.md 与 Docs/Development/development-standards.md 第 3 节执行。
+- 先查 E:/Project/UProject/study/Epic/LyraStarterGame 的相关源码、调用者、初始化/清理、配置及插件依赖，再提出具体方案。
+- 已有成熟详细实现时直接复用，沿用 Hodge 命名与现有入口做最小适配，不另造同职责系统。
+- 给出参考文件/函数、复用内容、适配差异和测试范围；已迁入的功能只补缺口，不重复迁入。
+- 发现 TODO、unimplemented、空实现或版本差异要明确标注，不能把示例占位当作成熟实现。
+- Lyra 无对应实现或确实不兼容时，说明检索依据与原因，再采用引擎能力或项目扩展；路径不可用不等于功能不存在。

@@ -4,5 +4,6 @@ alwaysApply: true
 ---
 
 - 遵守项目根目录 `AGENTS.md`。
+- 完整开发准则见 `Docs/Development/development-standards.md`，中文注释和设计前查阅 Lyra 为全项目要求。
 - 编译命令、当前工程事实和 UE 编辑器操作见 `Docs/AI_DEVELOPMENT.md`。
 - 当前代码与配置优先于历史 README 和 Lyra 参考文档；不可自行升级引擎或覆盖用户已有改动。

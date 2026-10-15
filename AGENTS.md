@@ -1,15 +1,19 @@
 # Hodgepodge AI 开发约定
 
-适用于整个项目。开始任务先读本文及 `Docs/AI_DEVELOPMENT.md`，再读相关代码和配置。
+适用于整个项目。开始任务先读本文、`Docs/Development/development-standards.md` 及 `Docs/AI_DEVELOPMENT.md`，再读相关代码和配置。
 
 - 以当前 `.uproject`、`Source`、`Config`、插件描述为事实依据；README、Lyra 学习文档和架构方案是背景，不代表功能已经实现。
 - 保持 UE 5.5 兼容；本机核实为 5.5.4。不要自行升级引擎、插件或构建设置。
 - 业务代码属于单一 `Hodgepodge` Runtime 模块，维持 `Public` / `Private` 对应目录和 `Hodge` 命名。不要为了整理目录引入额外模块。
 - 同一个项目自有 C++ 类的非内联成员函数必须集中在一个主 `.cpp` 中，禁止按功能拆成 `_Combo.cpp`、`_Presentation.cpp`、`_Montage.cpp`、`_Validation.cpp` 等多个实现文件；编辑器实现使用主文件内的 `WITH_EDITOR`。不得通过 `#include` 其他 `.cpp` 绕过。独立类、测试文件和 UE 生成代码不属于这种拆分。
 - 优先沿用 Experience、PawnData、GameFeature、GAS 和 Init State 设计；修改前追踪实际调用链，不把 Lyra 示例当成本项目现状。
+- 讨论或设计具体实现方案前，必须查阅本机 Lyra 项目 `E:/Project/UProject/study/Epic/LyraStarterGame` 的相关源码、调用链和配置；已存在成熟详细实现时，直接复用其实现方案并做最小项目适配，不另造同职责系统。记录参考文件、函数、依赖及适配差异；未实现、占位或不兼容部分明确说明，不把“找到同名类”当作已完成核查。
 - 玩家 ASC 的 PlayerState 所有权、服务器权限与客户端复制入口必须同时考虑；新增初始化需处理重复调用、解绑和 Pawn 更换。
 - 遵循相邻代码风格、UE 类型前缀和反射宏；`.generated.h` 放在头文件 include 末尾，反射实现沿用 `UE_INLINE_GENERATED_CPP_BY_NAME`。
-- 中文注释以“一行说明一件事”为原则：函数体内的 `//` 内联注释单个块最多 3 行，禁止 4 行及以上；文件头/类头的 `/** */` Doxygen 注释不受此限；不逐行翻译代码、不为排版凑行数。
+- 所有新编写的项目自有代码必须包含简洁中文注释，包括 C++、C# 构建规则、Python 工具、测试及蓝图关键逻辑；说明职责、必要的接口契约与关键处理原因，include 不需要注释，保留第三方版权与许可原文，不改生成代码。
+- 中文注释以“一行说明一个功能点”为原则，避免凑注释或频繁换行；函数体内的 `//` 注释单个连续块最多 3 行，禁止 4 行及以上。文件头/类头的 `/** */` Doxygen 注释不受此限；不逐行翻译代码，更新逻辑时同步更新注释。
+- 同一状态明确事实来源、修改入口和最终执行者；初始化须幂等，委托、Timer、能力句柄和动作请求配对清理，异步回调验证对象及执行身份，不得恢复旧 Pawn 或旧动作的状态。
+- 可调玩法参数放入现有配置资产；临时实现标明范围、位置和退出条件。配置错误、依赖等待与运行失败分别诊断，不静默伪装成功，不无限重试。
 - UObject 持有关系考虑 GC；公开头文件暴露的模块类型需核实 Build.cs 依赖可见性；Runtime 模块不得无条件依赖 Editor 模块。
 - 修改类名、属性、GameplayTag、资产路径前核对蓝图引用、配置和 CoreRedirects。不要顺手修正 `Dafult`、`PlayState` 等已有拼写。
 - 第三方 ALS、RiderLink 和二进制资产不做顺手重构或清理；需要修改时明确关联当前任务及验证办法。
