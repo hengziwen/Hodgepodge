@@ -8,6 +8,8 @@
 #include "Data/HodgeSprintAbilityProfile.h"
 #include "Abilities/GameplayAbility.h"
 #include "GameFramework/Pawn.h"
+#include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Net/UnrealNetwork.h"
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeLocomotionPolicyComponent)
 
@@ -177,10 +179,26 @@ void UHodgeLocomotionPolicyComponent::RecordDashExitVelocity(FName Source, float
 /** 获取Dash冲刺退出速度。 */
 bool UHodgeLocomotionPolicyComponent::GetDashExitVelocity(FName Source, float& OutMaximumSpeed) const
 {
+	const auto* Character = Cast<ACharacter>(GetOwner());
+	bool bClamp = false;
+	return GetDashFinishVelocity(Source, Character && Character->GetCharacterMovement()->IsFalling(), OutMaximumSpeed, bClamp) && bClamp;
+}
+/** 活动记录覆盖位移时长和有限回放余量，不因短暂落地提前删除。 */
+void UHodgeLocomotionPolicyComponent::RecordDashMotionVelocity(FName Source, float MaximumSpeed, float MotionDuration)
+{
+	if (!ASC.IsValid() || ASC->GetAvatarActor() != GetOwner() || Source.IsNone() || !FMath::IsFinite(MaximumSpeed) || MaximumSpeed <= 0.f ||
+		!FMath::IsFinite(MotionDuration) || MotionDuration <= 0.f) { return; }
+	DashExitVelocities.Add(Source, {MaximumSpeed, GetWorld()->GetTimeSeconds() + MotionDuration + 1., true});
+}
+/** 显式成功交接优先；活动来源按本次物理模式选择 SetVelocity 或 ClampVelocity。 */
+bool UHodgeLocomotionPolicyComponent::GetDashFinishVelocity(FName Source, bool bFalling, float& OutMaximumSpeed, bool& bOutClamp) const
+{
 	const auto* Exit = DashExitVelocities.Find(Source);
 	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (!Exit || !ASC.IsValid() || ASC->GetAvatarActor() != GetOwner() || Exit->ExpiresAt < GetWorld()->GetTimeSeconds()) { return false; }
-	OutMaximumSpeed = Exit->MaximumSpeed; return true;
+	OutMaximumSpeed = Exit->MaximumSpeed;
+	bOutClamp = !Exit->bAirborneOnly || bFalling;
+	return true;
 }
 /** 收到状态复制后更新本地状态。 */
 void UHodgeLocomotionPolicyComponent::OnRep_State()

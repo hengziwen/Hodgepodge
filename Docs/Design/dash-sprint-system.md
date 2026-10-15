@@ -1,8 +1,16 @@
 # Dash 与 Sprint：动作时序、移动取消与奔跑策略
 
-日期：2026-10-13。版本：1.8。适用 Hodgepodge、UE 5.5.4。
+日期：2026-10-13。版本：1.9。适用 Hodgepodge、UE 5.5.4。
 
 本修订按最新要求暂时移除体力系统及所有 Dash／Sprint 资源逻辑。v1.2 的体力属性、费用、恢复、持续预算和 UI 建议不再是当前开发契约。历史结果保留在[此前实施报告](../Validation/dash-sprint-implementation-2026-10-10.md)，不能作为本修订测试结果。
+
+v1.9 修复地面 Dash 冲出台阶时被公共地面检查取消的问题：起手和准备仍要求地面，已提交 Dash 允许 Walking／Falling，继续原定剩余水平位移并保留重力。落地不重新开始或延长 Dash；死亡、强控制、解绑和其他不支持模式仍可中断。Sprint 继续要求地面。
+
+已由用户确认：Dash 仍活动、落地仍在有效衔接窗口、Shift 未松开且有移动输入时允许 Sprint；空中不提交也不消费衔接请求。动作或窗口已经结束后不自动补进 Sprint，需松开再按。实现和本轮实际测试范围见[离地续冲验证](../Validation/dash-air-continuation-2026-10-13.md)。
+
+Lyra 对照：本机 `/ShooterCore/Game/Dash/GA_Hero_Dash` 为 LocalPredicted GA，分离 Montage 与 ConstantForce RMS，并以限速处理退出；没有持续必须在地面的判断。本项目复用现有 GAS、原生任务和 RMS 收尾机制，保留覆盖式水平位移以维持距离配置，不迁入 Lyra 的加法式速度、四方向资产或冷却。重力使用原生任务的 IgnoreZAccumulate，Actor 位移仍由 CMC 应用。
+
+公共合法性负责身份和约束，执行模式由移动能力派生类提供。Dash 仅在已提交后扩展 Falling；Sprint 保留地面规则。活动 RMS 按来源记录收尾策略，CMC 在引擎清理前根据当前物理模式选择地面原停止或空中限速；成功移动交接覆盖活动记录，保存帧回放复用同一记录，避免晚到数据恢复全速度清零。
 
 v1.4 滑步修复见[根运动与接地验证](../Validation/pivot-foot-slide-2026-10-10.md)。此前交付结果见[时序与 Pivot 验证](../Validation/dash-sprint-timing-2026-10-10.md)。实际资产、字段和调参步骤见[配置指南](../Guides/dash-sprint-configuration.md)。旋转基础沿用[角色旋转与移动动画模式调整](character-facing-modes.md)。锁定由[独立系统](lock-on-system.md)提供，v1.8 仅修正其下 Dash 的即时起手，见[验证](../Validation/lock-on-indicator-dash-start-2026-10-13.md)；本篇不开发攻击吸附。
 

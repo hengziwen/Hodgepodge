@@ -104,6 +104,10 @@ public:
 	 * @param MaximumSpeed 最大速度，由调用方传入。
 	 */
 	void RecordDashExitVelocity(FName Source, float MaximumSpeed);
+	/** 登记活动 Dash 的收尾策略；地面保持原停止语义，空中保留下落速度。 */
+	void RecordDashMotionVelocity(FName Source, float MaximumSpeed, float MotionDuration);
+	/** 读取本次来源在当前物理模式下的收尾策略，返回 false 表示记录无效。 */
+	bool GetDashFinishVelocity(FName Source, bool bFalling, float& OutMaximumSpeed, bool& bOutClamp) const;
 	/** 获取Dash冲刺退出速度。
 	 * @param Source 本次操作的来源。
 	 * @param OutMaximumSpeed 输出最大速度。
@@ -130,7 +134,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<UHodgeSprintAbilityProfile> OverrideProfile;
 private:
 	/** 保存Dash冲刺退出速度的数据和接口契约。 */
-	struct FDashExitVelocity { /* 最大速度的数值或阈值。 */ float MaximumSpeed = 0.f; /* Expires时刻的数值或阈值。 */ double ExpiresAt = 0.; };
+	struct FDashExitVelocity
+	{
+		float MaximumSpeed = 0.f; // 水平退出速度上限，单位 cm/s。
+		double ExpiresAt = 0.; // 保存帧回放允许使用记录的截止时间。
+		bool bAirborneOnly = false; // 活动 Dash 只在 Falling 限速，正常移动交接始终限速。
+	};
 	// Dash冲刺退出Velocities的记录集合。
 	TMap<FName, FDashExitVelocity> DashExitVelocities;
 	/** 处理服务器侧的设置Sprint奔跑输入消息，沿用当前身份与权限校验。

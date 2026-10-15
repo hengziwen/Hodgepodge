@@ -215,11 +215,20 @@ void UHodgeCharacterMovementComponent::PerformMovement(float DeltaTime)
 	if (Policy && !bStopped)
 	{
 		// 保存帧可能带回交接前的 RMS，按来源恢复成功退出策略再执行引擎清理。
-		for (const auto& Source : CurrentRootMotion.RootMotionSources)
+		for (const auto* Sources : {&CurrentRootMotion.RootMotionSources, &CurrentRootMotion.PendingAddRootMotionSources})
 		{
-			float MaximumSpeed = 0.f;
-			if (Source && Policy->GetDashExitVelocity(Source->InstanceName, MaximumSpeed))
-			{ Source->FinishVelocityParams.Mode = ERootMotionFinishVelocityMode::ClampVelocity; Source->FinishVelocityParams.ClampVelocity = MaximumSpeed; }
+			for (const auto& Source : *Sources)
+			{
+				float MaximumSpeed = 0.f;
+				bool bClamp = false;
+				if (Source && Policy->GetDashFinishVelocity(Source->InstanceName, IsFalling(), MaximumSpeed, bClamp))
+				{
+					// 活动源与待加入源使用同一策略，避免首个物理步保留过时收尾模式。
+					Source->FinishVelocityParams.Mode = bClamp ? ERootMotionFinishVelocityMode::ClampVelocity : ERootMotionFinishVelocityMode::SetVelocity;
+					Source->FinishVelocityParams.ClampVelocity = MaximumSpeed;
+					if (!bClamp) { Source->FinishVelocityParams.SetVelocity = FVector::ZeroVector; }
+				}
+			}
 		}
 	}
 	Super::PerformMovement(DeltaTime);

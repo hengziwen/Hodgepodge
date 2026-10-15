@@ -21,6 +21,11 @@
 /** 构造玩法能力Dash冲刺并初始化其默认状态。 */
 UHodgeGameplayAbility_Dash::UHodgeGameplayAbility_Dash()
 { FGameplayTagContainer Tags = GetAssetTags(); Tags.AddTag(HodgeGameplayTags::Ability_Type_Action_Dash); SetAssetTags(Tags); }
+/** 模式切换不延长动作，死亡和强控制仍由公共合法性检查中断。 */
+bool UHodgeGameplayAbility_Dash::IsExecutionMovementModeValid(const UCharacterMovementComponent* Movement) const
+{
+	return Movement && (Movement->IsMovingOnGround() || (bCommitted && Movement->IsFalling()));
+}
 /** 检查消耗。 */
 bool UHodgeGameplayAbility_Dash::CheckCost(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* Info, FGameplayTagContainer* Tags) const
 {
@@ -79,9 +84,11 @@ void UHodgeGameplayAbility_Dash::CommitDash()
 	MontageTask->OnInterrupted.AddDynamic(this, &ThisClass::OnMontageInterrupted); MontageTask->OnCancelled.AddDynamic(this, &ThisClass::OnMontageInterrupted);
 	MontageTask->ReadyForActivation(); if (!IsActive()) { return; }
 	MotionInstanceName = FName(*FString::Printf(TEXT("HodgeDash_%s_%d"), *CurrentSpecHandle.ToString(), SessionId));
+	// 按本次 RMS 来源记录模式相关的收尾策略，物理更新和保存帧重放共用。
+	Policy->RecordDashMotionVelocity(MotionInstanceName, CastChecked<ACharacter>(GetAvatarActorFromActorInfo())->GetCharacterMovement()->GetMaxSpeed(), ExecutionProfile->Duration);
 	MotionTask = UAbilityTask_ApplyRootMotionConstantForce::ApplyRootMotionConstantForce(this, MotionInstanceName, Directions.MoveDirection,
 		ExecutionProfile->Distance / ExecutionProfile->Duration, ExecutionProfile->Duration, false, nullptr,
-		ERootMotionFinishVelocityMode::SetVelocity, FVector::ZeroVector, 0.f, false);
+		ERootMotionFinishVelocityMode::SetVelocity, FVector::ZeroVector, 0.f, true);
 	MotionTask->ReadyForActivation(); StartCue(HodgeGameplayTags::GameplayCue_Character_Dash);
 }
 /** 更新移动。 */
@@ -110,10 +117,13 @@ void UHodgeGameplayAbility_Dash::UpdateMovement(float DeltaTime)
 	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (FacingHandle.IsValid() && Rotation->GetFacingRequestStatus(FacingHandle) == EHodgeFacingRequestStatus::Rejected) { Finish(); return; }
 	const double Age = GetWorld()->GetTimeSeconds() - CommittedAt;
+	const auto* DashCharacter = Cast<ACharacter>(GetAvatarActorFromActorInfo());
+	const bool bGrounded = DashCharacter && DashCharacter->GetCharacterMovement()->IsMovingOnGround();
 	const bool bOwnerWindow = ExecutionProfile->IsHandoffWindow(Age);
 	const bool bRemoteAuthorityWindow = CurrentActorInfo->IsNetAuthority() && !CurrentActorInfo->IsLocallyControlled() && ExecutionProfile->IsAuthorityHandoffWindow(Age);
 	// 按预测状态或网络角色选择对应处理。
-	if (bOwnerWindow || bRemoteAuthorityWindow)
+	// 空中不消费一次性的衔接请求，落地后仍可在有效窗口内发起。
+	if (bGrounded && (bOwnerWindow || bRemoteAuthorityWindow))
 	{
 		bHandoffOpened = true;
 		Policy->AuthorizeHandoff(CurrentActivationInfo.GetActivationPredictionKey().Current, SessionId,
@@ -144,8 +154,9 @@ void UHodgeGameplayAbility_Dash::UpdateMovement(float DeltaTime)
 /** 完成Dash到Sprint的会话交接并释放交接记录。 */
 void UHodgeGameplayAbility_Dash::CompleteHandoff()
 {
+	const auto* Character = Cast<ACharacter>(GetAvatarActorFromActorInfo());
 	// 根据当前生命周期状态决定是否继续执行。
-	if (!IsActive() || !bCommitted || !bHandoffOpened) { return; }
+	if (!IsActive() || !bCommitted || !bHandoffOpened || !Character || !Character->GetCharacterMovement()->IsMovingOnGround()) { return; }
 	bHandedOff = true;
 	PrepareLocomotionExit(ExecutionProfile->SprintMaxSpeed * Policy->GetResolvedPolicy().SpeedScale);
 	// 客户端只预测交接；服务器批准 Sprint 后才结束自己的 Dash。

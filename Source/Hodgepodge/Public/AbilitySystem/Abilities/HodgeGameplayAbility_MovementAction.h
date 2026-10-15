@@ -11,6 +11,7 @@
 class UHodgeSprintAbilityProfile;
 class UHodgeLocomotionPolicyComponent;
 class UHodgeCharacterRotationComponent;
+class UCharacterMovementComponent;
 
 /** GAS 激活关联的方向快照，客户端不能提交速度、费用或防御时间。 */
 USTRUCT()
@@ -106,6 +107,9 @@ public:
 		const FGameplayTagContainer* SourceTags = nullptr, const FGameplayTagContainer* TargetTags = nullptr,
 		FGameplayTagContainer* RelevantTags = nullptr) const override;
 protected:
+	friend struct FHodgeDashAirTestAccess;
+	/** 判断执行期间允许的移动模式，起手合法性仍由 CanActivateAbility 检查。 */
+	virtual bool IsExecutionMovementModeValid(const UCharacterMovementComponent* Movement) const;
 	/** 启动本次技能，按现有配置提交消耗并建立执行资源。
 	 * @param Handle 对应操作或能力的句柄。
 	 * @param Info 本次GAS调用关联的ASC、Owner与Avatar信息。

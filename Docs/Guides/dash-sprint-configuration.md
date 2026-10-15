@@ -1,4 +1,12 @@
-# Dash／Sprint 配置与接口（v1.7）
+# Dash／Sprint 配置与接口（v1.9）
+
+## 地面 Dash 离地续冲（2026-10-13）
+
+本次行为为固定契约，不新增空中起手开关：起手／准备要求地面，已提交 Dash 进入 Falling 后继续原来的 Duration，水平 RMS 保留重力。落地不延长位移或重播蒙太奇。现有 Distance、Duration、MontagePlayRate 和取消／衔接窗口继续有效，无需重新保存正式能力资产。
+
+Sprint 只在地面衔接。Dash 仍活动、落地在窗口内、持续按键且有移动意图时可衔接；空中不提交失败请求，窗口过期或 Dash 已结束后需松开再按。死亡、强受击和移动停止仍可中断空中续冲。
+
+正常地面短按保留原停止策略；活动来源在 Falling 时采用限速收尾，保留下落 Z，成功移动交接则继续沿用显式交接速度策略。具体实现与实测范围见[离地续冲验证](../Validation/dash-air-continuation-2026-10-13.md)。
 
 当前玩家的攻击中断改用 Tag Relationship Mapping，详见[中断配置指南](dash-interrupt-configuration.md)。以下 Dash 动画时序、移动后摇取消与 Sprint 衔接参数继续有效。
 

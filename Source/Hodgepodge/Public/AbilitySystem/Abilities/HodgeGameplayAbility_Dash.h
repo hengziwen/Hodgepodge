@@ -30,6 +30,8 @@ public:
 	 */
 	virtual bool CheckCost(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* Info, FGameplayTagContainer* Tags = nullptr) const override;
 protected:
+	/** 已提交的地面 Dash 离地后继续执行，准备阶段不开放空中起手。 */
+	virtual bool IsExecutionMovementModeValid(const UCharacterMovementComponent* Movement) const override;
 	/** 开始移动。
 	 * @param Intent 意图，由调用方传入。
 	 */

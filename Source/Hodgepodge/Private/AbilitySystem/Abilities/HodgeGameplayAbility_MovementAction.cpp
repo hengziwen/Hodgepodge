@@ -116,9 +116,14 @@ bool UHodgeGameplayAbility_MovementAction::IsMovementValid() const
 	// 后续GAS操作使用的能力系统组件。
 	const auto* ASC = GetAbilitySystemComponentFromActorInfo();
 	return Character && !Character->bIsCrouched && ASC && ASC->GetAvatarActor() == Character && Policy.IsValid() && Rotation.IsValid() &&
-		Rotation->IsFacingSystemReady() && Character->GetCharacterMovement()->IsMovingOnGround() &&
+		Rotation->IsFacingSystemReady() && IsExecutionMovementModeValid(Character->GetCharacterMovement()) &&
 		!ASC->HasMatchingGameplayTag(HodgeGameplayTags::Status_Death) && !ASC->HasMatchingGameplayTag(HodgeHitReactionTags::Controlled) &&
 		!ASC->HasMatchingGameplayTag(TAG_Gameplay_MovementStopped);
+}
+/** 默认维持地面执行，Dash 只在已经提交后扩展 Falling。 */
+bool UHodgeGameplayAbility_MovementAction::IsExecutionMovementModeValid(const UCharacterMovementComponent* Movement) const
+{
+	return Movement && Movement->IsMovingOnGround();
 }
 /** 更新移动。 */
 void UHodgeGameplayAbility_MovementAction::TickMovement()

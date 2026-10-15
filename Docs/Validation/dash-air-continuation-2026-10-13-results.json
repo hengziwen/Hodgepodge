@@ -1,0 +1,355 @@
+{
+  "date": "2026-10-13",
+  "engine": "5.5.4",
+  "confirmed_behavior": "地面起手；已提交后离地续冲并保留重力；有效窗口内落地可衔接；空中或过期不补 Sprint",
+  "builds": {
+    "Editor": {
+      "exit_code": 0,
+      "log": "Saved/DashAirImplementation/editor-build.log"
+    },
+    "Game": {
+      "exit_code": 0,
+      "log": "Saved/DashAirImplementation/game-build.log"
+    }
+  },
+  "automation": {
+    "report": "Saved/DashAirImplementation/Automation/index.json",
+    "succeeded": 17,
+    "succeeded_with_warnings": 28,
+    "failed": 0,
+    "not_run": 0,
+    "tests": [
+      {
+        "name": "Hodge.AttackWarp.ConfigBounds",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.AttackWarp.FixedYaw",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.AttackWarp.LateAuthorityDoesNotRevive",
+        "state": "Success",
+        "warnings": 9
+      },
+      {
+        "name": "Hodge.AttackWarp.LeaseAndSuspension",
+        "state": "Success",
+        "warnings": 5
+      },
+      {
+        "name": "Hodge.AttackWarp.PayloadValidation",
+        "state": "Success",
+        "warnings": 5
+      },
+      {
+        "name": "Hodge.AttackWarp.ReplayAndOwnership",
+        "state": "Success",
+        "warnings": 5
+      },
+      {
+        "name": "Hodge.AttackWarp.RootExecutor",
+        "state": "Success",
+        "warnings": 5
+      },
+      {
+        "name": "Hodge.AttackWarp.TargetDataRetirement",
+        "state": "Success",
+        "warnings": 5
+      },
+      {
+        "name": "Hodge.AttackWarp.WindowContract",
+        "state": "Success",
+        "warnings": 4
+      },
+      {
+        "name": "Hodge.Facing.ActionsAndConstraints",
+        "state": "Success",
+        "warnings": 1
+      },
+      {
+        "name": "Hodge.Facing.ActivationPair",
+        "state": "Success",
+        "warnings": 1
+      },
+      {
+        "name": "Hodge.Facing.AnimationSnapshot",
+        "state": "Success",
+        "warnings": 1
+      },
+      {
+        "name": "Hodge.Facing.AuthorityActionLifecycle",
+        "state": "Success",
+        "warnings": 1
+      },
+      {
+        "name": "Hodge.Facing.DashInstantStart",
+        "state": "Success",
+        "warnings": 1
+      },
+      {
+        "name": "Hodge.Facing.InputSnapshots",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.Facing.LifecycleAndExceptions",
+        "state": "Success",
+        "warnings": 1
+      },
+      {
+        "name": "Hodge.Facing.ModesAndPriority",
+        "state": "Success",
+        "warnings": 1
+      },
+      {
+        "name": "Hodge.Facing.ReplayAndNetworkData",
+        "state": "Success",
+        "warnings": 1
+      },
+      {
+        "name": "Hodge.LockOn.AuthorityIdentityAndVersions",
+        "state": "Success",
+        "warnings": 5
+      },
+      {
+        "name": "Hodge.LockOn.CameraAcquireEase",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.LockOn.CameraInputRecoveryAndFrameRate",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.LockOn.CameraModePriorityAndContinuity",
+        "state": "Success",
+        "warnings": 5
+      },
+      {
+        "name": "Hodge.LockOn.CameraScreenZones",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.LockOn.ControlAndMotionLifecycle",
+        "state": "Success",
+        "warnings": 5
+      },
+      {
+        "name": "Hodge.LockOn.DeathClearsAndDoesNotReacquire",
+        "state": "Success",
+        "warnings": 5
+      },
+      {
+        "name": "Hodge.LockOn.GASShortCommand",
+        "state": "Success",
+        "warnings": 5
+      },
+      {
+        "name": "Hodge.LockOn.MouseGesture",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.LockOn.PredictionReconciliation",
+        "state": "Success",
+        "warnings": 5
+      },
+      {
+        "name": "Hodge.LockOn.ProfileValidation",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.LockOn.RangeGraceAndInvalidTarget",
+        "state": "Success",
+        "warnings": 5
+      },
+      {
+        "name": "Hodge.LockOn.SoftCameraManualAndAssist",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.LockOn.TargetDataEarlyAndRetired",
+        "state": "Success",
+        "warnings": 5
+      },
+      {
+        "name": "Hodge.Movement.DashAir.Constraints",
+        "state": "Success",
+        "warnings": 1
+      },
+      {
+        "name": "Hodge.Movement.DashAir.Eligibility",
+        "state": "Success",
+        "warnings": 1
+      },
+      {
+        "name": "Hodge.Movement.DashAir.FinishPolicy",
+        "state": "Success",
+        "warnings": 1
+      },
+      {
+        "name": "Hodge.Movement.DashAir.Physics",
+        "state": "Success",
+        "warnings": 1
+      },
+      {
+        "name": "Hodge.Movement.DashDirections",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.Movement.DashFootIKContinuity",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.Movement.DefenseWindows",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.Movement.InputSessions",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.Movement.PolicyAndAuthorization",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.Movement.RootMotionPivot",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.Movement.TargetDataSerialization",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.Movement.TimingAndPivot",
+        "state": "Success",
+        "warnings": 0
+      },
+      {
+        "name": "Hodge.Rotation.ConstraintsAndReplay",
+        "state": "Success",
+        "warnings": 1
+      }
+    ]
+  },
+  "dash_air_pie": {
+    "single": {
+      "file": "Saved/DashAirImplementation/single-dash-air-e2e.json",
+      "checks": 36,
+      "passed": true
+    },
+    "listen": {
+      "file": "Saved/DashAirImplementation/listen-dash-air-e2e.json",
+      "checks": 36,
+      "passed": true
+    },
+    "dedicated": {
+      "file": "Saved/DashAirImplementation/dedicated-dash-air-e2e.json",
+      "checks": 41,
+      "passed": true
+    },
+    "listen-lag": {
+      "file": "Saved/DashAirImplementation/listen-lag-dash-air-e2e.json",
+      "checks": 36,
+      "passed": true
+    }
+  },
+  "lock_regression": {
+    "single": {
+      "file": "Saved/DashAirImplementation/single-e2e.json",
+      "checks": 20,
+      "passed": true
+    },
+    "listen": {
+      "file": "Saved/DashAirImplementation/listen-e2e.json",
+      "checks": 20,
+      "passed": true
+    },
+    "dedicated": {
+      "file": "Saved/DashAirImplementation/dedicated-e2e.json",
+      "checks": 20,
+      "passed": true
+    },
+    "listen-lag": {
+      "file": "Saved/DashAirImplementation/listen-lag-e2e.json",
+      "checks": 20,
+      "passed": true
+    }
+  },
+  "restore": {
+    "map": "/Game/ThirdPerson/Maps/ThirdPersonMap",
+    "dirty_maps": [],
+    "dirty_content": [],
+    "pie": 0,
+    "performance": {
+      "throttle": false,
+      "slate": 1,
+      "idle": 0
+    },
+    "play_settings": "single standalone baseline; original PIE settings were not recorded"
+  },
+  "limitations": [
+    "本机多世界 PIE，未测试独立 Server、跨机器、丢包、Cook 或打包",
+    "空中实际受击／死亡联机场景未专项复跑，强约束由原生测试覆盖"
+  ],
+  "files": [
+    {
+      "path": "Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_MovementAction.h",
+      "sha256": "28861410ab59284786e3bd595e41cd778f8f25477470abc51287f12c5fad21af"
+    },
+    {
+      "path": "Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility_MovementAction.cpp",
+      "sha256": "1f59c88ce1e5d9a1fb1ec686c75a2122bc8179a13a364ed2b12607215248ef07"
+    },
+    {
+      "path": "Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Dash.h",
+      "sha256": "2f7fadd994b97df846f2fe86a5f5b024e5420739536df294efa6cbee74bc9a57"
+    },
+    {
+      "path": "Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility_Dash.cpp",
+      "sha256": "be82090820327a2f13b879de02142e76c00eec98d1fa547cea9d6af51860ba95"
+    },
+    {
+      "path": "Source/Hodgepodge/Public/Component/HodgeLocomotionPolicyComponent.h",
+      "sha256": "8c3c593065247f5a367d8489f06b153a8b2343461f24c7a22412e91a6227ecb8"
+    },
+    {
+      "path": "Source/Hodgepodge/Private/Component/HodgeLocomotionPolicyComponent.cpp",
+      "sha256": "0ec0ea2bf6187279c54da8e70b5fd4d173b01388f0a805a141ddf544842cc21f"
+    },
+    {
+      "path": "Source/Hodgepodge/Private/Component/HodgeCharacterMovementComponent.cpp",
+      "sha256": "894f88cdedb1ba1853fad45d5721746ca90fec2181856ef9394b9737e272ab90"
+    },
+    {
+      "path": "Source/Hodgepodge/Private/Tests/HodgeDashAirTests.cpp",
+      "sha256": "e8efbc94ab8d65fa7e22b3981f638bc89cdf072f53e0fc668e75b2143f975864"
+    },
+    {
+      "path": "Tools/DashAir/export_results.py",
+      "sha256": "5d26984d20aa39b58c52c8edb5d11b1d01cf872770717a6d98f892a49fbd7450"
+    },
+    {
+      "path": "Tools/DashAir/run_batch.py",
+      "sha256": "97a67d030c259679a4fb319765882aed1a23ec46f7aa2abcba1899d44a83b26a"
+    },
+    {
+      "path": "Tools/DashAir/run_e2e.py",
+      "sha256": "22ae5a26b99bddc68ff26417c14521531dceb45db8b48f51a35f27b97ab8953c"
+    }
+  ]
+}
