@@ -16,9 +16,9 @@ CodexText 实验：6 向地面运动动画实例，不属于主 Hero 动画链�
 
 定义候选（多行签名仅展示首行）：
 
-- L28: `FName UHodgeALSLocomotion::GetLabActiveState()`
-- L34: `void UHodgeALSLocomotion::NativeUpdateAnimation(float Dt)`
-- L107: `bool UHodgeALSAuthoring::BuildLocomotionGraph(UObject* Blueprint, const TArray<UObject*>& Animations, UObject* Idle, UObject* Fall)`
+- L32: `FName UHodgeALSLocomotion::GetLabActiveState()`
+- L39: `void UHodgeALSLocomotion::NativeUpdateAnimation(float Dt)`
+- L113: `bool UHodgeALSAuthoring::BuildLocomotionGraph(UObject* Blueprint, const TArray<UObject*>& Animations, UObject* Idle, UObject* Fall)`
 
 ## HodgeGroundedAuthoring.cpp
 
@@ -30,12 +30,12 @@ CodexText 实验：编辑器辅助库，含 Grounded 图层与停步/转身精�
 
 定义候选（多行签名仅展示首行）：
 
-- L51: `bool UHodgeGroundedAuthoring::RepairGroundedLegIK(UObject* Blueprint)`
-- L101: `bool UHodgeGroundedAuthoring::RefineGroundedTransitions(UObject* Blueprint)`
-- L164: `bool UHodgeGroundedAuthoring::AddStrideLayer(UObject* Blueprint)`
-- L223: `bool UHodgeGroundedAuthoring::AddTerrainLayer(UObject* Blueprint)`
-- L285: `bool UHodgeGroundedAuthoring::AddCombatLayer(UObject* Blueprint, UObject* Overlay)`
-- L341: `bool UHodgeGroundedAuthoring::AddGroundedLayer(UObject* Blueprint, const TArray<UObject*>& Actions, UObject* Idle, UObject* Fall, UObject* PreviewMesh)`
+- L69: `bool UHodgeGroundedAuthoring::RepairGroundedLegIK(UObject* Blueprint)`
+- L120: `bool UHodgeGroundedAuthoring::RefineGroundedTransitions(UObject* Blueprint)`
+- L184: `bool UHodgeGroundedAuthoring::AddStrideLayer(UObject* Blueprint)`
+- L244: `bool UHodgeGroundedAuthoring::AddTerrainLayer(UObject* Blueprint)`
+- L307: `bool UHodgeGroundedAuthoring::AddCombatLayer(UObject* Blueprint, UObject* Overlay)`
+- L364: `bool UHodgeGroundedAuthoring::AddGroundedLayer(UObject* Blueprint, const TArray<UObject*>& Actions, UObject* Idle, UObject* Fall, UObject* PreviewMesh)`
 
 ## HodgeGroundedLocomotion.cpp
 
@@ -47,12 +47,12 @@ CodexText 实验：在 ALS 基础动画上增加平地起停/转身/脚锁，并
 
 定义候选（多行签名仅展示首行）：
 
-- L10: `void UHodgeGroundedLocomotion::NativeInitializeAnimation()`
-- L29: `FName UHodgeGroundedLocomotion::GetGroundedState()`
-- L35: `void UHodgeGroundedLocomotion::SetLeftHandGrip(USceneComponent* Component, FName Socket, float Weight)`
-- L40: `void UHodgeGroundedLocomotion::NativeUninitializeAnimation()`
-- L49: `void UHodgeGroundedLocomotion::CacheFinalizedFootPose()`
-- L61: `void UHodgeGroundedLocomotion::NativeUpdateAnimation(float Dt)`
+- L14: `void UHodgeGroundedLocomotion::NativeInitializeAnimation()`
+- L35: `FName UHodgeGroundedLocomotion::GetGroundedState()`
+- L42: `void UHodgeGroundedLocomotion::SetLeftHandGrip(USceneComponent* Component, FName Socket, float Weight)`
+- L48: `void UHodgeGroundedLocomotion::NativeUninitializeAnimation()`
+- L59: `void UHodgeGroundedLocomotion::CacheFinalizedFootPose()`
+- L72: `void UHodgeGroundedLocomotion::NativeUpdateAnimation(float Dt)`
 
 ## HodgeLocomotionLab.cpp
 
@@ -64,14 +64,14 @@ CodexText 实验：在 ALS 基础动画上增加平地起停/转身/脚锁，并
 
 定义候选（多行签名仅展示首行）：
 
-- L27: `UHodgeLocomotionLabComponent::UHodgeLocomotionLabComponent()`
-- L33: `void UHodgeLocomotionLabComponent::BeginPlay()`
-- L47: `void UHodgeLocomotionLabComponent::SetCombatFacing(bool bEnabled)`
-- L60: `void UHodgeLocomotionLabComponent::SetWalking(bool bEnabled)`
-- L69: `void UHodgeLocomotionLabComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)`
-- L111: `void AHodgeLocomotionLabMode::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)`
-- L118: `bool UHodgeLocomotionLabAuthoring::RemapCopy(UObject* Asset, const TArray<UObject*>& Sources, const TArray<UObject*>& Copies)`
-- L155: `bool UHodgeLocomotionLabAuthoring::ConfigureGroundBlend(UObject* Blueprint, UObject* BlendSpace)`
+- L31: `UHodgeLocomotionLabComponent::UHodgeLocomotionLabComponent()`
+- L38: `void UHodgeLocomotionLabComponent::BeginPlay()`
+- L53: `void UHodgeLocomotionLabComponent::SetCombatFacing(bool bEnabled)`
+- L67: `void UHodgeLocomotionLabComponent::SetWalking(bool bEnabled)`
+- L77: `void UHodgeLocomotionLabComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)`
+- L121: `void AHodgeLocomotionLabMode::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)`
+- L129: `bool UHodgeLocomotionLabAuthoring::RemapCopy(UObject* Asset, const TArray<UObject*>& Sources, const TArray<UObject*>& Copies)`
+- L167: `bool UHodgeLocomotionLabAuthoring::ConfigureGroundBlend(UObject* Blueprint, UObject* BlendSpace)`
 
 ## HodgeSurvivor.cpp
 
@@ -83,28 +83,28 @@ CodexText 实验：在 ALS 基础动画上增加平地起停/转身/脚锁，并
 
 定义候选（多行签名仅展示首行）：
 
-- L22: `AHodgeSurvivorHero::AHodgeSurvivorHero()`
-- L49: `void AHodgeSurvivorHero::SetupPlayerInputComponent(UInputComponent* Input)`
-- L70: `void AHodgeSurvivorHero::Forward(const FInputActionValue& Value)`
-- L75: `void AHodgeSurvivorHero::Right(const FInputActionValue& Value)`
-- L80: `void AHodgeSurvivorHero::Dash()`
-- L89: `void AHodgeSurvivorHero::Tick(float Dt)`
-- L106: `void AHodgeSurvivorHero::EndPlay(const EEndPlayReason::Type Reason)`
-- L114: `AHodgeSurvivorMode::AHodgeSurvivorMode()`
-- L124: `void AHodgeSurvivorMode::StartPlay()`
-- L137: `AActor* AHodgeSurvivorMode::MakeShape(FVector Location, FVector Scale, UMaterialInterface* Material, float Life)`
-- L151: `void AHodgeSurvivorMode::SpawnEnemy(bool Elite)`
-- L172: `void AHodgeSurvivorMode::HitEnemy(int32 Index, float Amount)`
-- L188: `void AHodgeSurvivorMode::DamageHero(float Amount)`
-- L195: `void AHodgeSurvivorMode::GrantExperience(int32 Amount)`
-- L207: `FString AHodgeSurvivorMode::GetUpgradeText(int32 Slot) const`
-- L212: `void AHodgeSurvivorMode::ChooseUpgrade(int32 Slot)`
-- L226: `void AHodgeSurvivorMode::SetRunState(EHodgeSurvivorState NewState)`
-- L246: `void AHodgeSurvivorMode::TogglePause()`
-- L251: `void AHodgeSurvivorMode::RestartRun()`
-- L255: `void AHodgeSurvivorMode::ReturnToMenu()`
-- L259: `void AHodgeSurvivorMode::Tick(float Dt)`
-- L342: `void AHodgeSurvivorMode::EndPlay(const EEndPlayReason::Type Reason)`
+- L26: `AHodgeSurvivorHero::AHodgeSurvivorHero()`
+- L54: `void AHodgeSurvivorHero::SetupPlayerInputComponent(UInputComponent* Input)`
+- L77: `void AHodgeSurvivorHero::Forward(const FInputActionValue& Value)`
+- L83: `void AHodgeSurvivorHero::Right(const FInputActionValue& Value)`
+- L89: `void AHodgeSurvivorHero::Dash()`
+- L99: `void AHodgeSurvivorHero::Tick(float Dt)`
+- L117: `void AHodgeSurvivorHero::EndPlay(const EEndPlayReason::Type Reason)`
+- L126: `AHodgeSurvivorMode::AHodgeSurvivorMode()`
+- L137: `void AHodgeSurvivorMode::StartPlay()`
+- L152: `AActor* AHodgeSurvivorMode::MakeShape(FVector Location, FVector Scale, UMaterialInterface* Material, float Life)`
+- L168: `void AHodgeSurvivorMode::SpawnEnemy(bool Elite)`
+- L190: `void AHodgeSurvivorMode::HitEnemy(int32 Index, float Amount)`
+- L208: `void AHodgeSurvivorMode::DamageHero(float Amount)`
+- L216: `void AHodgeSurvivorMode::GrantExperience(int32 Amount)`
+- L229: `FString AHodgeSurvivorMode::GetUpgradeText(int32 Slot) const`
+- L235: `void AHodgeSurvivorMode::ChooseUpgrade(int32 Slot)`
+- L251: `void AHodgeSurvivorMode::SetRunState(EHodgeSurvivorState NewState)`
+- L272: `void AHodgeSurvivorMode::TogglePause()`
+- L278: `void AHodgeSurvivorMode::RestartRun()`
+- L283: `void AHodgeSurvivorMode::ReturnToMenu()`
+- L288: `void AHodgeSurvivorMode::Tick(float Dt)`
+- L374: `void AHodgeSurvivorMode::EndPlay(const EEndPlayReason::Type Reason)`
 
 ## HodgeSurvivorHUD.cpp
 
@@ -116,18 +116,18 @@ CodexText 实验：代码构建的 Survivor HUD UserWidget。
 
 定义候选（多行签名仅展示首行）：
 
-- L27: `AHodgeSurvivorMode* UHodgeSurvivorHUD::Mode() const { return GetWorld()?GetWorld()->GetAuthGameMode<AHodgeSurvivorMode>():nullptr; }`
-- L28: `void UHodgeSurvivorHUD::Text(FName Name,const FString& Value)`
-- L32: `UButton* UHodgeSurvivorHUD::AddButton(UVerticalBox* Box,const FString& Label,UTextBlock*& OutLabel)`
-- L46: `void UHodgeSurvivorHUD::NativeConstruct()`
-- L116: `void UHodgeSurvivorHUD::Refresh(AHodgeSurvivorMode* M)`
-- L155: `void UHodgeSurvivorHUD::NativeDestruct()`
-- L163: `void UHodgeSurvivorHUD::ChooseOne() { if (auto* M=Mode()) M->ChooseUpgrade(0); }`
-- L164: `void UHodgeSurvivorHUD::ChooseTwo() { if (auto* M=Mode()) M->ChooseUpgrade(1); }`
-- L165: `void UHodgeSurvivorHUD::ChooseThree() { if (auto* M=Mode()) M->ChooseUpgrade(2); }`
-- L166: `void UHodgeSurvivorHUD::Retry() { if (auto* M=Mode()) M->RestartRun(); }`
-- L167: `void UHodgeSurvivorHUD::Menu() { if (auto* M=Mode()) M->ReturnToMenu(); }`
-- L168: `void UHodgeSurvivorHUD::Pause() { if (auto* M=Mode()) M->TogglePause(); }`
+- L41: `AHodgeSurvivorMode* UHodgeSurvivorHUD::Mode() const { return GetWorld()?GetWorld()->GetAuthGameMode<AHodgeSurvivorMode>():nullptr; }`
+- L43: `void UHodgeSurvivorHUD::Text(FName Name,const FString& Value)`
+- L48: `UButton* UHodgeSurvivorHUD::AddButton(UVerticalBox* Box,const FString& Label,UTextBlock*& OutLabel)`
+- L63: `void UHodgeSurvivorHUD::NativeConstruct()`
+- L134: `void UHodgeSurvivorHUD::Refresh(AHodgeSurvivorMode* M)`
+- L174: `void UHodgeSurvivorHUD::NativeDestruct()`
+- L184: `void UHodgeSurvivorHUD::ChooseOne() { if (auto* M=Mode()) M->ChooseUpgrade(0); }`
+- L186: `void UHodgeSurvivorHUD::ChooseTwo() { if (auto* M=Mode()) M->ChooseUpgrade(1); }`
+- L188: `void UHodgeSurvivorHUD::ChooseThree() { if (auto* M=Mode()) M->ChooseUpgrade(2); }`
+- L190: `void UHodgeSurvivorHUD::Retry() { if (auto* M=Mode()) M->RestartRun(); }`
+- L192: `void UHodgeSurvivorHUD::Menu() { if (auto* M=Mode()) M->ReturnToMenu(); }`
+- L194: `void UHodgeSurvivorHUD::Pause() { if (auto* M=Mode()) M->TogglePause(); }`
 
 ## HodgeALSLocomotion.h
 
@@ -140,81 +140,81 @@ CodexText 实验：6 向地面运动动画实例，不属于主 Hero 动画链�
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   1: #pragma once
-   3: #include "CoreMinimal.h"
-   4: #include "Animation/HodgeAnimInstance.h"
-   5: #include "Kismet/BlueprintFunctionLibrary.h"
-   6: #include "HodgeALSLocomotion.generated.h"
-   8: UENUM(BlueprintType)
-   9: enum class EHodgeALSDirection : uint8 { Forward, Backward, LeftForward, LeftBackward, RightForward, RightBackward };
-  12: UCLASS()
-  13: class HODGEPODGE_API UHodgeALSLocomotion : public UHodgeAnimInstance
-  14: {
-  15: 	GENERATED_BODY()
-  17: public:
-  18: 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
-  19: 	UFUNCTION(BlueprintPure, Category="ALS Lab")
-  20: 	FName GetLabActiveState();
-  21: 	UFUNCTION(BlueprintCallable, Category="ALS Lab")
-  22: 	void SetHipBias(float Bias) { HipOrientationBias = FMath::Clamp(Bias, -1.f, 1.f); }
-  24: 	UPROPERTY(Transient, BlueprintReadOnly, Category="ALS Lab")
-  25: 	EHodgeALSDirection LabDirection = EHodgeALSDirection::Forward;
-  26: 	UPROPERTY(Transient, BlueprintReadOnly, Category="ALS Lab")
-  27: 	float LabForward = 1.f;
-  28: 	UPROPERTY(Transient, BlueprintReadOnly, Category="ALS Lab")
-  29: 	float LabBackward = 0.f;
-  30: 	UPROPERTY(Transient, BlueprintReadOnly, Category="ALS Lab")
-  31: 	float LabLeft = 0.f;
-  32: 	UPROPERTY(Transient, BlueprintReadOnly, Category="ALS Lab")
-  33: 	float LabRight = 0.f;
-  34: 	UPROPERTY(Transient, BlueprintReadOnly, Category="ALS Lab")
-  35: 	float LabGait = 0.f;
-  36: 	UPROPERTY(Transient, BlueprintReadOnly, Category="ALS Lab")
-  37: 	float LabPlayRate = 1.f;
-  38: 	UPROPERTY(Transient, BlueprintReadOnly, Category="ALS Lab")
-  39: 	float LabSpeed = 0.f;
-  40: 	UPROPERTY(Transient, BlueprintReadOnly, Category="ALS Lab")
-  41: 	float LabViewAngle = 0.f;
+   4: #pragma once
+   6: #include "CoreMinimal.h"
+   7: #include "Animation/HodgeAnimInstance.h"
+   8: #include "Kismet/BlueprintFunctionLibrary.h"
+   9: #include "HodgeALSLocomotion.generated.h"
+  12: UENUM(BlueprintType)
+  13: enum class EHodgeALSDirection : uint8 {             Forward,             Backward,                 LeftForward,                 LeftBackward,                  RightForward,                  RightBackward };
+  17: UCLASS()
+  18: class HODGEPODGE_API UHodgeALSLocomotion : public UHodgeAnimInstance
+  19: {
+  20: 	GENERATED_BODY()
+  22: public:
+  26: 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
+  30: 	UFUNCTION(BlueprintPure, Category="ALS Lab")
+  31: 	FName GetLabActiveState();
+  35: 	UFUNCTION(BlueprintCallable, Category="ALS Lab")
+  36: 	void SetHipBias(float Bias) { HipOrientationBias = FMath::Clamp(Bias, -1.f, 1.f); }
+  39: 	UPROPERTY(Transient, BlueprintReadOnly, Category="ALS Lab")
+  40: 	EHodgeALSDirection LabDirection = EHodgeALSDirection::Forward;
   42: 	UPROPERTY(Transient, BlueprintReadOnly, Category="ALS Lab")
-  43: 	float LabYawOffset = 0.f;
-  44: 	UPROPERTY(Transient, BlueprintReadOnly, Category="ALS Lab")
-  45: 	float LabFeetCrossing = 0.f;
-  46: 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="ALS Lab", meta=(ClampMin="-1", ClampMax="1"))
-  47: 	float HipOrientationBias = 0.f;
-  48: 	UPROPERTY(EditDefaultsOnly, Category="ALS Lab")
-  49: 	TObjectPtr<class UCurveFloat> ForwardBackwardYawCurve;
-  50: 	UPROPERTY(EditDefaultsOnly, Category="ALS Lab")
-  51: 	TObjectPtr<class UCurveFloat> LeftYawCurve;
-  52: 	UPROPERTY(EditDefaultsOnly, Category="ALS Lab")
-  53: 	TObjectPtr<class UCurveFloat> RightYawCurve;
+  43: 	float LabForward = 1.f;
+  45: 	UPROPERTY(Transient, BlueprintReadOnly, Category="ALS Lab")
+  46: 	float LabBackward = 0.f;
+  48: 	UPROPERTY(Transient, BlueprintReadOnly, Category="ALS Lab")
+  49: 	float LabLeft = 0.f;
+  51: 	UPROPERTY(Transient, BlueprintReadOnly, Category="ALS Lab")
+  52: 	float LabRight = 0.f;
   54: 	UPROPERTY(Transient, BlueprintReadOnly, Category="ALS Lab")
-  55: 	bool bLabIdle = true;
-  56: 	UPROPERTY(Transient, BlueprintReadOnly, Category="ALS Lab")
-  57: 	bool bLabFall = false;
-  58: 	UPROPERTY(Transient, BlueprintReadOnly, Category="ALS Lab")
-  59: 	bool bLabF = false;
+  55: 	float LabGait = 0.f;
+  57: 	UPROPERTY(Transient, BlueprintReadOnly, Category="ALS Lab")
+  58: 	float LabPlayRate = 1.f;
   60: 	UPROPERTY(Transient, BlueprintReadOnly, Category="ALS Lab")
-  61: 	bool bLabB = false;
-  62: 	UPROPERTY(Transient, BlueprintReadOnly, Category="ALS Lab")
-  63: 	bool bLabLF = false;
-  64: 	UPROPERTY(Transient, BlueprintReadOnly, Category="ALS Lab")
-  65: 	bool bLabLB = false;
+  61: 	float LabSpeed = 0.f;
+  63: 	UPROPERTY(Transient, BlueprintReadOnly, Category="ALS Lab")
+  64: 	float LabViewAngle = 0.f;
   66: 	UPROPERTY(Transient, BlueprintReadOnly, Category="ALS Lab")
-  67: 	bool bLabRF = false;
-  68: 	UPROPERTY(Transient, BlueprintReadOnly, Category="ALS Lab")
-  69: 	bool bLabRB = false;
-  71: private:
-  72: 	float DirectionHoldRemaining = 0.f;
-  73: };
-  75: UCLASS()
-  76: class HODGEPODGE_API UHodgeALSAuthoring : public UBlueprintFunctionLibrary
-  77: {
-  78: 	GENERATED_BODY()
-  80: public:
-  82: 	UFUNCTION(BlueprintCallable, Category="CodexText|Editor")
-  83: 	static bool BuildLocomotionGraph(UObject* Blueprint, const TArray<UObject*>& WalkRunAnimations, UObject* Idle,
-  84: 	                                 UObject* Fall);
-  85: };
+  67: 	float LabYawOffset = 0.f;
+  69: 	UPROPERTY(Transient, BlueprintReadOnly, Category="ALS Lab")
+  70: 	float LabFeetCrossing = 0.f;
+  72: 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="ALS Lab", meta=(ClampMin="-1", ClampMax="1"))
+  73: 	float HipOrientationBias = 0.f;
+  75: 	UPROPERTY(EditDefaultsOnly, Category="ALS Lab")
+  76: 	TObjectPtr<class UCurveFloat> ForwardBackwardYawCurve;
+  78: 	UPROPERTY(EditDefaultsOnly, Category="ALS Lab")
+  79: 	TObjectPtr<class UCurveFloat> LeftYawCurve;
+  81: 	UPROPERTY(EditDefaultsOnly, Category="ALS Lab")
+  82: 	TObjectPtr<class UCurveFloat> RightYawCurve;
+  84: 	UPROPERTY(Transient, BlueprintReadOnly, Category="ALS Lab")
+  85: 	bool bLabIdle = true;
+  87: 	UPROPERTY(Transient, BlueprintReadOnly, Category="ALS Lab")
+  88: 	bool bLabFall = false;
+  90: 	UPROPERTY(Transient, BlueprintReadOnly, Category="ALS Lab")
+  91: 	bool bLabF = false;
+  93: 	UPROPERTY(Transient, BlueprintReadOnly, Category="ALS Lab")
+  94: 	bool bLabB = false;
+  96: 	UPROPERTY(Transient, BlueprintReadOnly, Category="ALS Lab")
+  97: 	bool bLabLF = false;
+  99: 	UPROPERTY(Transient, BlueprintReadOnly, Category="ALS Lab")
+ 100: 	bool bLabLB = false;
+ 102: 	UPROPERTY(Transient, BlueprintReadOnly, Category="ALS Lab")
+ 103: 	bool bLabRF = false;
+ 105: 	UPROPERTY(Transient, BlueprintReadOnly, Category="ALS Lab")
+ 106: 	bool bLabRB = false;
+ 108: private:
+ 110: 	float DirectionHoldRemaining = 0.f;
+ 111: };
+ 114: UCLASS()
+ 115: class HODGEPODGE_API UHodgeALSAuthoring : public UBlueprintFunctionLibrary
+ 116: {
+ 117: 	GENERATED_BODY()
+ 119: public:
+ 128: 	UFUNCTION(BlueprintCallable, Category="CodexText|Editor")
+ 129: 	static bool BuildLocomotionGraph(UObject* Blueprint, const TArray<UObject*>& WalkRunAnimations, UObject* Idle,
+ 130: 	                                 UObject* Fall);
+ 131: };
 ```
 
 ## HodgeGroundedLocomotion.h
@@ -228,137 +228,137 @@ CodexText 实验：在 ALS 基础动画上增加平地起停/转身/脚锁，并
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   1: #pragma once
-   2: #include "CoreMinimal.h"
-   3: #include "CodexText/HodgeALSLocomotion.h"
-   4: #include "HodgeGroundedLocomotion.generated.h"
-   7: UCLASS()
-   8: class HODGEPODGE_API UHodgeGroundedLocomotion : public UHodgeALSLocomotion
-   9: {
-  10: 	GENERATED_BODY()
-  12: public:
-  13: 	virtual void NativeInitializeAnimation() override;
-  14: 	virtual void NativeUpdateAnimation(float Dt) override;
-  15:     virtual void NativeUninitializeAnimation() override;
-  16: 	UFUNCTION(BlueprintPure)
-  17: 	FName GetGroundedState();
-  18: 	UFUNCTION(BlueprintPure)
-  19: 	float GetGroundedRotationTarget() const { return RotationTarget; }
-  21: 	UFUNCTION(BlueprintPure)
-  22: 	bool IsTurningInPlace() const { return bGroundTurnL || bGroundTurnR; }
-  23: 	UFUNCTION(BlueprintCallable, Category="Grounded|Combat")
-  24: 	void SetOverlayEnabled(bool bEnabled) { OverlayTarget = bEnabled ? 1.f : 0.f; }
-  25: 	UFUNCTION(BlueprintCallable, Category="Grounded|Combat")
-  26: 	void SetLeftHandGrip(class USceneComponent* Component, FName Socket, float Weight = 1.f);
-  27: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Grounded|Combat")
-  28: 	TObjectPtr<class UAnimSequence> OverlayPose;
-  29: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded|Combat")
-  30: 	float OverlayAlpha = 0.f;
-  31: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded|Combat")
-  32: 	float HandIKAlpha = 0.f;
-  33: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded|Combat")
-  34: 	FVector HandGripLocation = FVector::ZeroVector;
-  35: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded|Combat")
-  36: 	FRotator HandGripRotation = FRotator::ZeroRotator;
-  38: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded")
-  39: 	bool bGroundIdle = true;
-  40: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded")
-  41: 	bool bGroundMove = false;
-  42: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded")
-  43: 	bool bGroundStopWalkL = false;
-  44: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded")
-  45: 	bool bGroundStopWalkR = false;
-  46: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded")
-  47: 	bool bGroundStopRunL = false;
-  48: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded")
-  49: 	bool bGroundStopRunR = false;
-  50: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded")
-  51: 	bool bGroundTurnL = false;
-  52: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded")
-  53: 	bool bGroundTurnR = false;
-  54: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded")
-  55: 	float GroundActionTime = 0.f;
-  56: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded")
-  57: 	float GroundActionPlayRate = 1.f;
-  58: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded")
-  59: 	bool bStopPlanted = false;
-  60: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded")
-  61: 	bool bStopAirborne = true;
-  62: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded|Stride")
-  63: 	float StrideScale = 1.f;
-  64: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded|Stride")
-  65: 	float StrideAlpha = 0.f;
-  66: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded|Stride")
-  67: 	float DiagonalScale = 1.f;
-  68: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded|Stride")
-  69: 	FVector StrideDirection = FVector::ForwardVector;
-  70: 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Grounded|Terrain")
-  71: 	bool bEnableTerrainIK = true;
-  72: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded|Terrain")
-  73: 	float TerrainAlpha = 0.f;
-  74: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded")
-  75: 	float FootAlphaL = 0.f;
+   4: #pragma once
+   5: #include "CoreMinimal.h"
+   6: #include "CodexText/HodgeALSLocomotion.h"
+   7: #include "HodgeGroundedLocomotion.generated.h"
+  11: UCLASS()
+  12: class HODGEPODGE_API UHodgeGroundedLocomotion : public UHodgeALSLocomotion
+  13: {
+  14: 	GENERATED_BODY()
+  16: public:
+  18: 	virtual void NativeInitializeAnimation() override;
+  22: 	virtual void NativeUpdateAnimation(float Dt) override;
+  24:     virtual void NativeUninitializeAnimation() override;
+  28: 	UFUNCTION(BlueprintPure)
+  29: 	FName GetGroundedState();
+  33: 	UFUNCTION(BlueprintPure)
+  34: 	float GetGroundedRotationTarget() const { return RotationTarget; }
+  39: 	UFUNCTION(BlueprintPure)
+  40: 	bool IsTurningInPlace() const { return bGroundTurnL || bGroundTurnR; }
+  44: 	UFUNCTION(BlueprintCallable, Category="Grounded|Combat")
+  45: 	void SetOverlayEnabled(bool bEnabled) { OverlayTarget = bEnabled ? 1.f : 0.f; }
+  51: 	UFUNCTION(BlueprintCallable, Category="Grounded|Combat")
+  52: 	void SetLeftHandGrip(class USceneComponent* Component, FName Socket, float Weight = 1.f);
+  54: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Grounded|Combat")
+  55: 	TObjectPtr<class UAnimSequence> OverlayPose;
+  57: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded|Combat")
+  58: 	float OverlayAlpha = 0.f;
+  60: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded|Combat")
+  61: 	float HandIKAlpha = 0.f;
+  63: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded|Combat")
+  64: 	FVector HandGripLocation = FVector::ZeroVector;
+  66: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded|Combat")
+  67: 	FRotator HandGripRotation = FRotator::ZeroRotator;
+  70: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded")
+  71: 	bool bGroundIdle = true;
+  73: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded")
+  74: 	bool bGroundMove = false;
   76: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded")
-  77: 	float FootAlphaR = 0.f;
-  78: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded")
-  79: 	FVector FootTargetL = FVector::ZeroVector;
-  80: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded")
-  81: 	FVector FootTargetR = FVector::ZeroVector;
+  77: 	bool bGroundStopWalkL = false;
+  79: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded")
+  80: 	bool bGroundStopWalkR = false;
   82: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded")
-  83: 	FRotator FootRotationL = FRotator::ZeroRotator;
-  84: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded")
-  85: 	FRotator FootRotationR = FRotator::ZeroRotator;
-  86: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded")
-  87: 	bool bSupportLeft = true;
-  88: 	UPROPERTY(EditDefaultsOnly, Category="Grounded")
-  89: 	TArray<TObjectPtr<class UAnimSequence>> GroundActions;
-  90: 	UPROPERTY(EditDefaultsOnly, Category="Grounded")
-  91: 	TObjectPtr<class UCurveFloat> TurnYawLeft;
-  92: 	UPROPERTY(EditDefaultsOnly, Category="Grounded")
-  93: 	TObjectPtr<class UCurveFloat> TurnYawRight;
-  94: 	UPROPERTY(EditDefaultsOnly, Category="Grounded")
-  95: 	float TurnThreshold = 70.f;
-  97: private:
-  98:     TWeakObjectPtr<class USceneComponent> HandGripComponent;
-  99:     FName HandGripSocket;
- 100:     float HandGripWeight = 0.f;
- 101:     float OverlayTarget = 0.f;
- 102:     void CacheFinalizedFootPose();
- 103:     TWeakObjectPtr<class USkeletalMeshComponent> PoseMesh;
- 104:     FDelegateHandle FinalizedPoseHandle;
- 105: 	FTransform PreviousRawFeet[2];
- 106: 	FTransform LockedFeet[2];
- 107: 	bool bHavePose = false;
- 108: 	bool bHadMovement = false;
- 109: 	bool bLastWalk = false;
- 110: 	bool bLocked[2] = {false, false};
- 111: 	float PreviousLockCurve[2] = {0.f, 0.f};
- 112: 	float RotationTarget = 0.f;
- 113: 	float TurnStartYaw = 0.f;
- 114: 	float TurnDelay = 0.f;
- 115: 	float StopEntryContact[2] = {0.f, 0.f};
- 116: 	int32 ActionIndex = INDEX_NONE;
- 117: 	FVector PreviousActorLocation = FVector::ZeroVector;
- 118: };
- 120: UCLASS()
- 121: class HODGEPODGE_API UHodgeGroundedAuthoring : public UBlueprintFunctionLibrary
- 122: {
- 123: 	GENERATED_BODY()
- 125: public:
- 126: 	UFUNCTION(BlueprintCallable, Category="CodexText|Editor")
- 127: 	static bool RepairGroundedLegIK(UObject* Blueprint);
- 128: 	UFUNCTION(BlueprintCallable, Category="CodexText|Editor")
- 129: 	static bool RefineGroundedTransitions(UObject* Blueprint);
- 130: 	UFUNCTION(BlueprintCallable, Category="CodexText|Editor")
- 131: 	static bool AddStrideLayer(UObject* Blueprint);
- 132: 	UFUNCTION(BlueprintCallable, Category="CodexText|Editor")
- 133: 	static bool AddTerrainLayer(UObject* Blueprint);
- 134: 	UFUNCTION(BlueprintCallable, Category="CodexText|Editor")
- 135: 	static bool AddCombatLayer(UObject* Blueprint, UObject* Overlay);
- 137: 	UFUNCTION(BlueprintCallable, Category="CodexText|Editor")
- 138: 	static bool AddGroundedLayer(UObject* Blueprint, const TArray<UObject*>& Actions, UObject* Idle, UObject* Fall,
- 139: 	                             UObject* PreviewMesh);
- 140: };
+  83: 	bool bGroundStopRunL = false;
+  85: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded")
+  86: 	bool bGroundStopRunR = false;
+  88: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded")
+  89: 	bool bGroundTurnL = false;
+  91: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded")
+  92: 	bool bGroundTurnR = false;
+  94: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded")
+  95: 	float GroundActionTime = 0.f;
+  97: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded")
+  98: 	float GroundActionPlayRate = 1.f;
+ 100: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded")
+ 101: 	bool bStopPlanted = false;
+ 103: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded")
+ 104: 	bool bStopAirborne = true;
+ 106: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded|Stride")
+ 107: 	float StrideScale = 1.f;
+ 109: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded|Stride")
+ 110: 	float StrideAlpha = 0.f;
+ 112: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded|Stride")
+ 113: 	float DiagonalScale = 1.f;
+ 115: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded|Stride")
+ 116: 	FVector StrideDirection = FVector::ForwardVector;
+ 118: 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Grounded|Terrain")
+ 119: 	bool bEnableTerrainIK = true;
+ 121: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded|Terrain")
+ 122: 	float TerrainAlpha = 0.f;
+ 124: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded")
+ 125: 	float FootAlphaL = 0.f;
+ 127: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded")
+ 128: 	float FootAlphaR = 0.f;
+ 130: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded")
+ 131: 	FVector FootTargetL = FVector::ZeroVector;
+ 133: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded")
+ 134: 	FVector FootTargetR = FVector::ZeroVector;
+ 136: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded")
+ 137: 	FRotator FootRotationL = FRotator::ZeroRotator;
+ 139: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded")
+ 140: 	FRotator FootRotationR = FRotator::ZeroRotator;
+ 142: 	UPROPERTY(Transient, BlueprintReadOnly, Category="Grounded")
+ 143: 	bool bSupportLeft = true;
+ 145: 	UPROPERTY(EditDefaultsOnly, Category="Grounded")
+ 146: 	TArray<TObjectPtr<class UAnimSequence>> GroundActions;
+ 148: 	UPROPERTY(EditDefaultsOnly, Category="Grounded")
+ 149: 	TObjectPtr<class UCurveFloat> TurnYawLeft;
+ 151: 	UPROPERTY(EditDefaultsOnly, Category="Grounded")
+ 152: 	TObjectPtr<class UCurveFloat> TurnYawRight;
+ 154: 	UPROPERTY(EditDefaultsOnly, Category="Grounded")
+ 155: 	float TurnThreshold = 70.f;
+ 157: private:
+ 159:     TWeakObjectPtr<class USceneComponent> HandGripComponent;
+ 161:     FName HandGripSocket;
+ 163:     float HandGripWeight = 0.f;
+ 165:     float OverlayTarget = 0.f;
+ 167:     void CacheFinalizedFootPose();
+ 169:     TWeakObjectPtr<class USkeletalMeshComponent> PoseMesh;
+ 171:     FDelegateHandle FinalizedPoseHandle;
+ 173: 	FTransform PreviousRawFeet[2];
+ 175: 	FTransform LockedFeet[2];
+ 177: 	bool bHavePose = false;
+ 179: 	bool bHadMovement = false;
+ 181: 	bool bLastWalk = false;
+ 183: 	bool bLocked[2] = {false, false};
+ 185: 	float PreviousLockCurve[2] = {0.f, 0.f};
+ 187: 	float RotationTarget = 0.f;
+ 189: 	float TurnStartYaw = 0.f;
+ 191: 	float TurnDelay = 0.f;
+ 193: 	float StopEntryContact[2] = {0.f, 0.f};
+ 195: 	int32 ActionIndex = INDEX_NONE;
+ 197: 	FVector PreviousActorLocation = FVector::ZeroVector;
+ 198: };
+ 201: UCLASS()
+ 202: class HODGEPODGE_API UHodgeGroundedAuthoring : public UBlueprintFunctionLibrary
+ 203: {
+ 204: 	GENERATED_BODY()
+ 206: public:
+ 211: 	UFUNCTION(BlueprintCallable, Category="CodexText|Editor")
+ 212: 	static bool RepairGroundedLegIK(UObject* Blueprint);
+ 217: 	UFUNCTION(BlueprintCallable, Category="CodexText|Editor")
+ 218: 	static bool RefineGroundedTransitions(UObject* Blueprint);
+ 223: 	UFUNCTION(BlueprintCallable, Category="CodexText|Editor")
+ 224: 	static bool AddStrideLayer(UObject* Blueprint);
+ 229: 	UFUNCTION(BlueprintCallable, Category="CodexText|Editor")
+ 230: 	static bool AddTerrainLayer(UObject* Blueprint);
+ 236: 	UFUNCTION(BlueprintCallable, Category="CodexText|Editor")
+ 237: 	static bool AddCombatLayer(UObject* Blueprint, UObject* Overlay);
+ 247: 	UFUNCTION(BlueprintCallable, Category="CodexText|Editor")
+ 248: 	static bool AddGroundedLayer(UObject* Blueprint, const TArray<UObject*>& Actions, UObject* Idle, UObject* Fall,
+ 249: 	                             UObject* PreviewMesh);
+ 250: };
 ```
 
 ## HodgeLocomotionLab.h
@@ -372,47 +372,47 @@ CodexText 实验：在 ALS 基础动画上增加平地起停/转身/脚锁，并
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   1: #pragma once
-   3: #include "CoreMinimal.h"
-   4: #include "Components/ActorComponent.h"
-   5: #include "Core/GameMode/HodgeGameModeBase.h"
-   6: #include "Kismet/BlueprintFunctionLibrary.h"
-   7: #include "HodgeLocomotionLab.generated.h"
-  10: UCLASS(Blueprintable, ClassGroup=(Hodge), meta=(BlueprintSpawnableComponent))
-  11: class HODGEPODGE_API UHodgeLocomotionLabComponent : public UActorComponent
-  12: {
-  13:     GENERATED_BODY()
-  14: public:
-  15:     UHodgeLocomotionLabComponent();
-  16:     virtual void BeginPlay() override;
-  17:     virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-  18:     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Locomotion") float WalkSpeed = 180.f;
-  19:     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Locomotion") float RunSpeed = 420.f;
-  20:     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Locomotion") bool bCombatFacing = true;
-  21:     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Locomotion") bool bWalking = false;
-  22:     UFUNCTION(BlueprintCallable) void SetCombatFacing(bool bEnabled);
-  23:     UFUNCTION(BlueprintCallable) void SetWalking(bool bEnabled);
-  24:     UFUNCTION(BlueprintCallable) void SetKeyboardControlsEnabled(bool bEnabled) { bKeyboardControlsEnabled = bEnabled; }
-  25: private:
-  26:     bool bKeyboardControlsEnabled = true;
-  27: };
-  30: UCLASS()
-  31: class HODGEPODGE_API AHodgeLocomotionLabMode : public AHodgeGameModeBase
-  32: {
-  33:     GENERATED_BODY()
-  34: public:
-  35:     virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
-  36: };
-  39: UCLASS()
-  40: class HODGEPODGE_API UHodgeLocomotionLabAuthoring : public UBlueprintFunctionLibrary
-  41: {
-  42:     GENERATED_BODY()
-  43: public:
-  44:     UFUNCTION(BlueprintCallable, Category="CodexText|Editor")
-  45:     static bool RemapCopy(UObject* Asset, const TArray<UObject*>& Sources, const TArray<UObject*>& Copies);
-  46:     UFUNCTION(BlueprintCallable, Category="CodexText|Editor")
-  47:     static bool ConfigureGroundBlend(UObject* Blueprint, UObject* BlendSpace);
-  48: };
+   4: #pragma once
+   6: #include "CoreMinimal.h"
+   7: #include "Components/ActorComponent.h"
+   8: #include "Core/GameMode/HodgeGameModeBase.h"
+   9: #include "Kismet/BlueprintFunctionLibrary.h"
+  10: #include "HodgeLocomotionLab.generated.h"
+  14: UCLASS(Blueprintable, ClassGroup=(Hodge), meta=(BlueprintSpawnableComponent))
+  15: class HODGEPODGE_API UHodgeLocomotionLabComponent : public UActorComponent
+  16: {
+  17:     GENERATED_BODY()
+  18: public:
+  20:     UHodgeLocomotionLabComponent();
+  22:     virtual void BeginPlay() override;
+  28:     virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+  30:     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Locomotion") float WalkSpeed = 180.f;
+  32:     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Locomotion") float RunSpeed = 420.f;
+  34:     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Locomotion") bool bCombatFacing = true;
+  36:     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Locomotion") bool bWalking = false;
+  40:     UFUNCTION(BlueprintCallable) void SetCombatFacing(bool bEnabled);
+  44:     UFUNCTION(BlueprintCallable) void SetWalking(bool bEnabled);
+  48:     UFUNCTION(BlueprintCallable) void SetKeyboardControlsEnabled(bool bEnabled) { bKeyboardControlsEnabled = bEnabled; }
+  49: private:
+  51:     bool bKeyboardControlsEnabled = true;
+  52: };
+  56: UCLASS()
+  57: class HODGEPODGE_API AHodgeLocomotionLabMode : public AHodgeGameModeBase
+  58: {
+  59:     GENERATED_BODY()
+  60: public:
+  66:     virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
+  67: };
+  71: UCLASS()
+  72: class HODGEPODGE_API UHodgeLocomotionLabAuthoring : public UBlueprintFunctionLibrary
+  73: {
+  74:     GENERATED_BODY()
+  75: public:
+  82:     UFUNCTION(BlueprintCallable, Category="CodexText|Editor")
+  83:     static bool RemapCopy(UObject* Asset, const TArray<UObject*>& Sources, const TArray<UObject*>& Copies);
+  89:     UFUNCTION(BlueprintCallable, Category="CodexText|Editor")
+  90:     static bool ConfigureGroundBlend(UObject* Blueprint, UObject* BlendSpace);
+  91: };
 ```
 
 ## HodgeSurvivor.h
@@ -424,143 +424,143 @@ CodexText 实验：在 ALS 基础动画上增加平地起停/转身/脚锁，并
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   1: #pragma once
-   3: #include "CoreMinimal.h"
-   4: #include "GameFramework/Character.h"
-   5: #include "GameFramework/GameModeBase.h"
-   6: #include "Blueprint/UserWidget.h"
-   7: #include "HodgeSurvivor.generated.h"
-   9: class UInputAction;
-  10: class UInputMappingContext;
-  11: struct FInputActionValue;
-  12: class UAnimationAsset;
-  13: class UMaterialInterface;
-  14: class UStaticMesh;
-  15: class UCanvasPanel;
-  16: class UVerticalBox;
-  17: class UTextBlock;
-  18: class UButton;
-  19: class UProgressBar;
-  21: UCLASS()
-  22: class HODGEPODGE_API AHodgeSurvivorHero : public ACharacter
-  23: {
-  24:     GENERATED_BODY()
-  25: public:
-  26:     AHodgeSurvivorHero();
-  27:     virtual void Tick(float DeltaSeconds) override;
-  28:     virtual void SetupPlayerInputComponent(UInputComponent* Input) override;
-  29:     virtual void EndPlay(const EEndPlayReason::Type Reason) override;
-  30:     UFUNCTION(BlueprintCallable) void Dash();
-  31:     UPROPERTY(BlueprintReadOnly) float DashCooldown = 0;
-  32:     UPROPERTY(BlueprintReadOnly) float Invulnerability = 0;
-  33: private:
-  34:     void Forward(const FInputActionValue& Value);
-  35:     void Right(const FInputActionValue& Value);
-  36:     UPROPERTY() TObjectPtr<UInputMappingContext> Mapping;
-  37:     UPROPERTY() TObjectPtr<UInputAction> ForwardAction;
-  38:     UPROPERTY() TObjectPtr<UInputAction> RightAction;
-  39:     UPROPERTY() TObjectPtr<UAnimationAsset> Idle;
-  40:     UPROPERTY() TObjectPtr<UAnimationAsset> Run;
-  41:     bool bRunning = false;
-  42: };
-  44: UENUM(BlueprintType)
-  45: enum class EHodgeSurvivorState : uint8 { Playing, Upgrade, Paused, Defeat, Victory };
-  47: struct FHodgeSurvivorEnemy
-  48: {
-  49:     TWeakObjectPtr<AActor> Actor;
-  50:     float Health = 30;
-  51:     float Speed = 130;
-  52:     bool bElite = false;
-  53: };
-  55: struct FHodgeSurvivorOrb
-  56: {
-  57:     TWeakObjectPtr<AActor> Actor;
-  58:     int32 Value = 1;
-  59: };
-  61: UCLASS()
-  62: class HODGEPODGE_API AHodgeSurvivorMode : public AGameModeBase
-  63: {
-  64:     GENERATED_BODY()
-  65: public:
-  66:     AHodgeSurvivorMode();
-  67:     virtual void StartPlay() override;
-  68:     virtual void Tick(float DeltaSeconds) override;
-  69:     virtual void EndPlay(const EEndPlayReason::Type Reason) override;
-  70:     UFUNCTION(BlueprintCallable) void ChooseUpgrade(int32 Slot);
-  71:     UFUNCTION(BlueprintCallable) void TogglePause();
-  72:     UFUNCTION(BlueprintCallable) void RestartRun();
-  73:     UFUNCTION(BlueprintCallable) void ReturnToMenu();
-  74:     UFUNCTION(BlueprintCallable) void GrantExperience(int32 Amount);
-  75:     UFUNCTION(BlueprintCallable) void DamageHero(float Amount);
-  76:     UFUNCTION(BlueprintCallable) void SpawnEnemy(bool bElite = false);
-  77:     UFUNCTION(BlueprintPure) int32 GetEnemyCount() const { return Enemies.Num(); }
-  78:     UFUNCTION(BlueprintPure) int32 GetOrbCount() const { return Orbs.Num(); }
-  79:     UFUNCTION(BlueprintPure) FString GetUpgradeText(int32 Slot) const;
-  80:     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Survivor") float RoundDuration = 180;
-  81:     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Survivor") float SpawnInterval = 1.15f;
-  82:     UPROPERTY(EditDefaultsOnly, Category="Survivor") TSubclassOf<UUserWidget> InterfaceClass;
-  83:     UPROPERTY(EditDefaultsOnly, Category="Survivor") TObjectPtr<UMaterialInterface> EnemyMaterial;
-  84:     UPROPERTY(EditDefaultsOnly, Category="Survivor") TObjectPtr<UMaterialInterface> EliteMaterial;
-  85:     UPROPERTY(EditDefaultsOnly, Category="Survivor") TObjectPtr<UMaterialInterface> EnergyMaterial;
-  86:     UPROPERTY(BlueprintReadOnly) EHodgeSurvivorState State = EHodgeSurvivorState::Playing;
-  87:     UPROPERTY(BlueprintReadOnly) float Health = 100;
-  88:     UPROPERTY(BlueprintReadOnly) float MaxHealth = 100;
-  89:     UPROPERTY(BlueprintReadOnly) float Elapsed = 0;
-  90:     UPROPERTY(BlueprintReadOnly) int32 Kills = 0;
-  91:     UPROPERTY(BlueprintReadOnly) int32 Level = 1;
-  92:     UPROPERTY(BlueprintReadOnly) int32 Experience = 0;
-  93:     UPROPERTY(BlueprintReadOnly) int32 NextLevelXP = 5;
-  94:     UPROPERTY(BlueprintReadOnly) float Damage = 22;
-  95:     UPROPERTY(BlueprintReadOnly) float AttackInterval = .65f;
-  96:     UPROPERTY(BlueprintReadOnly) float PickupRadius = 320;
-  97:     UPROPERTY(BlueprintReadOnly) int32 PulseLevel = 0;
-  98:     UPROPERTY(BlueprintReadOnly) TObjectPtr<AHodgeSurvivorHero> Hero;
-  99:     UPROPERTY(BlueprintReadOnly) TObjectPtr<UUserWidget> Interface;
- 100:     TArray<int32> Choices;
- 101: private:
- 102:     void SetRunState(EHodgeSurvivorState NewState);
- 103:     void HitEnemy(int32 Index, float Amount);
- 104:     AActor* MakeShape(FVector Location, FVector Scale, UMaterialInterface* Material, float Life = 0);
- 105:     UPROPERTY() TObjectPtr<UStaticMesh> Sphere;
- 106:     UPROPERTY() TObjectPtr<USkeletalMesh> EnemyMesh;
- 107:     UPROPERTY() TObjectPtr<UAnimationAsset> EnemyRun;
- 108:     TArray<FHodgeSurvivorEnemy> Enemies;
- 109:     TArray<FHodgeSurvivorOrb> Orbs;
- 110:     float SpawnClock = 0;
- 111:     float AttackClock = 0;
- 112:     float HurtClock = 0;
- 113:     float PulseClock = 0;
- 114:     float InterfaceClock = 0;
- 115:     int32 NextElite = 35;
- 116: };
- 118: UCLASS()
- 119: class HODGEPODGE_API UHodgeSurvivorHUD : public UUserWidget
- 120: {
- 121:     GENERATED_BODY()
- 122: public:
- 123:     virtual void NativeConstruct() override;
- 124:     virtual void NativeDestruct() override;
- 125:     void Refresh(AHodgeSurvivorMode* Mode);
- 126:     UFUNCTION() void ChooseOne();
- 127:     UFUNCTION() void ChooseTwo();
- 128:     UFUNCTION() void ChooseThree();
- 129:     UFUNCTION() void Retry();
- 130:     UFUNCTION() void Menu();
- 131:     UFUNCTION() void Pause();
- 132: private:
- 133:     AHodgeSurvivorMode* Mode() const;
- 134:     void Text(FName Name, const FString& Value);
- 135:     UButton* AddButton(UVerticalBox* Box, const FString& Label, UTextBlock*& OutLabel);
- 136:     UPROPERTY() TObjectPtr<UCanvasPanel> Modal;
- 137:     UPROPERTY() TObjectPtr<UTextBlock> ModalTitle;
- 138:     UPROPERTY() TObjectPtr<UTextBlock> ModalDescription;
- 139:     UPROPERTY() TArray<TObjectPtr<UButton>> ChoiceButtons;
- 140:     UPROPERTY() TArray<TObjectPtr<UTextBlock>> ChoiceLabels;
- 141:     UPROPERTY() TObjectPtr<UButton> RetryButton;
- 142:     UPROPERTY() TObjectPtr<UButton> MenuButton;
- 143:     UPROPERTY() TObjectPtr<UButton> PauseButton;
- 144:     UPROPERTY() TObjectPtr<UProgressBar> XPBar;
- 145:     UPROPERTY() TObjectPtr<UTextBlock> XPText;
- 146:     UPROPERTY() TObjectPtr<UTextBlock> PauseLabel;
- 147: };
+   4: #pragma once
+   6: #include "CoreMinimal.h"
+   7: #include "GameFramework/Character.h"
+   8: #include "GameFramework/GameModeBase.h"
+   9: #include "Blueprint/UserWidget.h"
+  10: #include "HodgeSurvivor.generated.h"
+  12: class UInputAction;
+  13: class UInputMappingContext;
+  14: struct FInputActionValue;
+  15: class UAnimationAsset;
+  16: class UMaterialInterface;
+  17: class UStaticMesh;
+  18: class UCanvasPanel;
+  19: class UVerticalBox;
+  20: class UTextBlock;
+  21: class UButton;
+  22: class UProgressBar;
+  25: UCLASS()
+  26: class HODGEPODGE_API AHodgeSurvivorHero : public ACharacter
+  27: {
+  28:     GENERATED_BODY()
+  29: public:
+  31:     AHodgeSurvivorHero();
+  35:     virtual void Tick(float DeltaSeconds) override;
+  39:     virtual void SetupPlayerInputComponent(UInputComponent* Input) override;
+  43:     virtual void EndPlay(const EEndPlayReason::Type Reason) override;
+  45:     UFUNCTION(BlueprintCallable) void Dash();
+  47:     UPROPERTY(BlueprintReadOnly) float DashCooldown = 0;
+  49:     UPROPERTY(BlueprintReadOnly) float Invulnerability = 0;
+  50: private:
+  54:     void Forward(const FInputActionValue& Value);
+  58:     void Right(const FInputActionValue& Value);
+  60:     UPROPERTY() TObjectPtr<UInputMappingContext> Mapping;
+  62:     UPROPERTY() TObjectPtr<UInputAction> ForwardAction;
+  64:     UPROPERTY() TObjectPtr<UInputAction> RightAction;
+  66:     UPROPERTY() TObjectPtr<UAnimationAsset> Idle;
+  68:     UPROPERTY() TObjectPtr<UAnimationAsset> Run;
+  70:     bool bRunning = false;
+  71: };
+  74: UENUM(BlueprintType)
+  75: enum class EHodgeSurvivorState : uint8 {                  Playing,                  Upgrade,                 Paused,                 Defeat,                  Victory };
+  78: struct FHodgeSurvivorEnemy
+  79: {
+  81:     TWeakObjectPtr<AActor> Actor;
+  83:     float Health = 30;
+  85:     float Speed = 130;
+  87:     bool bElite = false;
+  88: };
+  91: struct FHodgeSurvivorOrb
+  92: {
+  94:     TWeakObjectPtr<AActor> Actor;
+  96:     int32 Value = 1;
+  97: };
+ 100: UCLASS()
+ 101: class HODGEPODGE_API AHodgeSurvivorMode : public AGameModeBase
+ 102: {
+ 103:     GENERATED_BODY()
+ 104: public:
+ 106:     AHodgeSurvivorMode();
+ 108:     virtual void StartPlay() override;
+ 112:     virtual void Tick(float DeltaSeconds) override;
+ 116:     virtual void EndPlay(const EEndPlayReason::Type Reason) override;
+ 120:     UFUNCTION(BlueprintCallable) void ChooseUpgrade(int32 Slot);
+ 122:     UFUNCTION(BlueprintCallable) void TogglePause();
+ 124:     UFUNCTION(BlueprintCallable) void RestartRun();
+ 126:     UFUNCTION(BlueprintCallable) void ReturnToMenu();
+ 130:     UFUNCTION(BlueprintCallable) void GrantExperience(int32 Amount);
+ 134:     UFUNCTION(BlueprintCallable) void DamageHero(float Amount);
+ 138:     UFUNCTION(BlueprintCallable) void SpawnEnemy(bool bElite = false);
+ 142:     UFUNCTION(BlueprintPure) int32 GetEnemyCount() const { return Enemies.Num(); }
+ 146:     UFUNCTION(BlueprintPure) int32 GetOrbCount() const { return Orbs.Num(); }
+ 151:     UFUNCTION(BlueprintPure) FString GetUpgradeText(int32 Slot) const;
+ 153:     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Survivor") float RoundDuration = 180;
+ 155:     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Survivor") float SpawnInterval = 1.15f;
+ 157:     UPROPERTY(EditDefaultsOnly, Category="Survivor") TSubclassOf<UUserWidget> InterfaceClass;
+ 159:     UPROPERTY(EditDefaultsOnly, Category="Survivor") TObjectPtr<UMaterialInterface> EnemyMaterial;
+ 161:     UPROPERTY(EditDefaultsOnly, Category="Survivor") TObjectPtr<UMaterialInterface> EliteMaterial;
+ 163:     UPROPERTY(EditDefaultsOnly, Category="Survivor") TObjectPtr<UMaterialInterface> EnergyMaterial;
+ 165:     UPROPERTY(BlueprintReadOnly) EHodgeSurvivorState State = EHodgeSurvivorState::Playing;
+ 167:     UPROPERTY(BlueprintReadOnly) float Health = 100;
+ 169:     UPROPERTY(BlueprintReadOnly) float MaxHealth = 100;
+ 171:     UPROPERTY(BlueprintReadOnly) float Elapsed = 0;
+ 173:     UPROPERTY(BlueprintReadOnly) int32 Kills = 0;
+ 175:     UPROPERTY(BlueprintReadOnly) int32 Level = 1;
+ 177:     UPROPERTY(BlueprintReadOnly) int32 Experience = 0;
+ 179:     UPROPERTY(BlueprintReadOnly) int32 NextLevelXP = 5;
+ 181:     UPROPERTY(BlueprintReadOnly) float Damage = 22;
+ 183:     UPROPERTY(BlueprintReadOnly) float AttackInterval = .65f;
+ 185:     UPROPERTY(BlueprintReadOnly) float PickupRadius = 320;
+ 187:     UPROPERTY(BlueprintReadOnly) int32 PulseLevel = 0;
+ 189:     UPROPERTY(BlueprintReadOnly) TObjectPtr<AHodgeSurvivorHero> Hero;
+ 191:     UPROPERTY(BlueprintReadOnly) TObjectPtr<UUserWidget> Interface;
+ 193:     TArray<int32> Choices;
+ 194: private:
+ 198:     void SetRunState(EHodgeSurvivorState NewState);
+ 203:     void HitEnemy(int32 Index, float Amount);
+ 211:     AActor* MakeShape(FVector Location, FVector Scale, UMaterialInterface* Material, float Life = 0);
+ 213:     UPROPERTY() TObjectPtr<UStaticMesh> Sphere;
+ 215:     UPROPERTY() TObjectPtr<USkeletalMesh> EnemyMesh;
+ 217:     UPROPERTY() TObjectPtr<UAnimationAsset> EnemyRun;
+ 219:     TArray<FHodgeSurvivorEnemy> Enemies;
+ 221:     TArray<FHodgeSurvivorOrb> Orbs;
+ 223:     float SpawnClock = 0;
+ 225:     float AttackClock = 0;
+ 227:     float HurtClock = 0;
+ 229:     float PulseClock = 0;
+ 231:     float InterfaceClock = 0;
+ 233:     int32 NextElite = 35;
+ 234: };
+ 237: UCLASS()
+ 238: class HODGEPODGE_API UHodgeSurvivorHUD : public UUserWidget
+ 239: {
+ 240:     GENERATED_BODY()
+ 241: public:
+ 243:     virtual void NativeConstruct() override;
+ 245:     virtual void NativeDestruct() override;
+ 249:     void Refresh(AHodgeSurvivorMode* Mode);
+ 251:     UFUNCTION() void ChooseOne();
+ 253:     UFUNCTION() void ChooseTwo();
+ 255:     UFUNCTION() void ChooseThree();
+ 257:     UFUNCTION() void Retry();
+ 259:     UFUNCTION() void Menu();
+ 261:     UFUNCTION() void Pause();
+ 262: private:
+ 266:     AHodgeSurvivorMode* Mode() const;
+ 271:     void Text(FName Name, const FString& Value);
+ 278:     UButton* AddButton(UVerticalBox* Box, const FString& Label, UTextBlock*& OutLabel);
+ 280:     UPROPERTY() TObjectPtr<UCanvasPanel> Modal;
+ 282:     UPROPERTY() TObjectPtr<UTextBlock> ModalTitle;
+ 284:     UPROPERTY() TObjectPtr<UTextBlock> ModalDescription;
+ 286:     UPROPERTY() TArray<TObjectPtr<UButton>> ChoiceButtons;
+ 288:     UPROPERTY() TArray<TObjectPtr<UTextBlock>> ChoiceLabels;
+ 290:     UPROPERTY() TObjectPtr<UButton> RetryButton;
+ 292:     UPROPERTY() TObjectPtr<UButton> MenuButton;
+ 294:     UPROPERTY() TObjectPtr<UButton> PauseButton;
+ 296:     UPROPERTY() TObjectPtr<UProgressBar> XPBar;
+ 298:     UPROPERTY() TObjectPtr<UTextBlock> XPText;
+ 300:     UPROPERTY() TObjectPtr<UTextBlock> PauseLabel;
+ 301: };
 ```

@@ -1,4 +1,5 @@
 > 2026-10-07 更新：本文中旧 Timeline／HitWindows 的字段与制作步骤仅保留为历史；当前攻击入口以 [通知配置手册](../Guides/attack-ability-configuration.md) 和 [通知迁移更新](27-update-2026-10-07-anim-notify.md) 为准。
+> **2026-10-15 更新**：新增 `UHodgeResonanceSet` / `UHodgeHavocSet`（共鸣能量、暗流燃料，资源挂在 PlayerState）、`HodgeCharacterStatProfile` / `HodgeAttributeCoordinator`（属性成长三层模型）、`UHodgeLockOnProfile`、`UHodgeSprintAbilityProfile`；Tag 注册改为按域拆分到 `Config/Tags/*.ini`（`ResonanceSkillTags` / `HavocTags` / `AbilityHUDTags`）。详见 [本轮更新](30-update-2026-10-15.md)。
 
 # 数据资产与 AssetManager
 

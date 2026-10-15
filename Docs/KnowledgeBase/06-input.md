@@ -1,10 +1,20 @@
 # Enhanced Input 与技能输入
 
-> 当前核对：2026-10-06。源码、配置与磁盘资产已复核；运行通过范围见本轮更新与验收页。
+> 当前核对：**2026-10-15**（HEAD `b702482`）。源码、配置与磁盘资产已复核；运行通过范围见 [本轮更新](30-update-2026-10-15.md) 与 [验收页](16-validation.md)。
 
 ## 普攻与镜头当前消费
 
 攻击意图交给统一 CombatComponent，选择 Definition 的预测激活；移动取消后保留连段记忆。Look 输入保持有效，RotationLock 过滤角色 Yaw。正式输入配置及玩法已验证，不再将可移动 Hero 一概列为未接入。下蹲绑定仍暂时屏蔽。
+
+**2026-10 新增的输入**：
+
+| 输入 | 归属 | 说明 |
+|---|---|---|
+| Shift（Started / Completed / Canceled） | `UHodgeHeroComponent` | Dash / Sprint：Started 建会话、Completed/Canceled 释放，`RequestSprintHandoff` 单次衔接 |
+| 鼠标中键 | `UHodgeLockOnComponent`（+ 短命令 GA） | 目标锁定获取／解除；鼠标左右甩动切换目标 |
+| E / R | 技能（AbilityInputTag） | 共鸣技能（8 秒 CD）／共鸣解放（满充）；经 `BindAbilityActions` + `ProcessAbilityInput` |
+
+> ⚠️ 移动**意图**信号（`HasMoveIntent` / `GetMoveIntent` / `OnMoveIntentChanged`；`Input_Move` 记意图、`Input_MoveStopped` 绑 `Completed`/`Canceled` 清零）仍是"移动取消后摇"与 Dash 中断的输入依据。
 
 [返回首页](README.md)
 
@@ -38,7 +48,8 @@ AbilityInputTagPressed 遍历已授予 Spec，用动态源标签精确匹配。P
 
 ## 当前实现与剩余条件
 
-- HeroComponent 已启用，绑定 Move、Look_Mouse、Look_Stick、Crouch、AutoRun 和 AbilityActions；AutoRun 回调的实际切换调用仍注释。
+- HeroComponent 已启用，绑定 Move、Look_Mouse、Look_Stick、Crouch、AutoRun、**Shift（Dash/Sprint 会话）** 和 AbilityActions；AutoRun 回调的实际切换调用仍注释。
+- **Crouch 仍是被屏蔽项**（`Input_Crouch` 函数体与 `ToggleCrouch` 保留，但 `BindNativeAction` 未接）。
 - PawnExtension::SetupPlayerInputComponent 只重新检查状态。
 - HodgeInputComponent::AddInputMappings / RemoveInputMappings 只有参数 check，没有实际映射工作。
 - DefaultInput.ini 已选择 HodgeInputComponent，LocalPlayerClassName 已选择 HodgeLocalPlayerBase。

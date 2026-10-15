@@ -16,22 +16,22 @@
 
 定义候选（多行签名仅展示首行）：
 
-- L11: `void UMaterialProgressBar::SynchronizeProperties()`
-- L80: `void UMaterialProgressBar::OnWidgetRebuilt()`
-- L139: `void UMaterialProgressBar::OnAnimationFinished_Implementation(const UWidgetAnimation* Animation)`
-- L149: `void UMaterialProgressBar::SetProgress(float Progress)`
-- L157: `void UMaterialProgressBar::SetStartProgress(float StartProgress)`
-- L165: `void UMaterialProgressBar::SetColorA(FLinearColor ColorA)`
-- L173: `void UMaterialProgressBar::SetColorB(FLinearColor ColorB)`
-- L181: `void UMaterialProgressBar::SetColorBackground(FLinearColor ColorBackground)`
-- L189: `void UMaterialProgressBar::AnimateProgressFromStart(float Start, float End, float AnimSpeed)`
-- L196: `void UMaterialProgressBar::AnimateProgressFromCurrent(float End, float AnimSpeed)`
-- L208: `void UMaterialProgressBar::SetProgress_Internal(float Progress)`
-- L217: `void UMaterialProgressBar::SetStartProgress_Internal(float StartProgress)`
-- L226: `void UMaterialProgressBar::SetColorA_Internal(FLinearColor ColorA)`
-- L235: `void UMaterialProgressBar::SetColorB_Internal(FLinearColor ColorB)`
-- L244: `void UMaterialProgressBar::SetColorBackground_Internal(FLinearColor ColorBackground)`
-- L253: `UMaterialInstanceDynamic* UMaterialProgressBar::GetBarDynamicMaterial() const`
+- L15: `void UMaterialProgressBar::SynchronizeProperties()`
+- L86: `void UMaterialProgressBar::OnWidgetRebuilt()`
+- L146: `void UMaterialProgressBar::OnAnimationFinished_Implementation(const UWidgetAnimation* Animation)`
+- L158: `void UMaterialProgressBar::SetProgress(float Progress)`
+- L167: `void UMaterialProgressBar::SetStartProgress(float StartProgress)`
+- L176: `void UMaterialProgressBar::SetColorA(FLinearColor ColorA)`
+- L185: `void UMaterialProgressBar::SetColorB(FLinearColor ColorB)`
+- L194: `void UMaterialProgressBar::SetColorBackground(FLinearColor ColorBackground)`
+- L203: `void UMaterialProgressBar::AnimateProgressFromStart(float Start, float End, float AnimSpeed)`
+- L211: `void UMaterialProgressBar::AnimateProgressFromCurrent(float End, float AnimSpeed)`
+- L224: `void UMaterialProgressBar::SetProgress_Internal(float Progress)`
+- L234: `void UMaterialProgressBar::SetStartProgress_Internal(float StartProgress)`
+- L244: `void UMaterialProgressBar::SetColorA_Internal(FLinearColor ColorA)`
+- L254: `void UMaterialProgressBar::SetColorB_Internal(FLinearColor ColorB)`
+- L264: `void UMaterialProgressBar::SetColorBackground_Internal(FLinearColor ColorBackground)`
+- L274: `UMaterialInstanceDynamic* UMaterialProgressBar::GetBarDynamicMaterial() const`
 
 ## HodgeBoundActionButton.cpp
 
@@ -43,8 +43,8 @@
 
 定义候选（多行签名仅展示首行）：
 
-- L12: `void UHodgeBoundActionButton::NativeConstruct()`
-- L23: `void UHodgeBoundActionButton::HandleInputMethodChanged(ECommonInputType NewInputMethod)`
+- L16: `void UHodgeBoundActionButton::NativeConstruct()`
+- L29: `void UHodgeBoundActionButton::HandleInputMethodChanged(ECommonInputType NewInputMethod)`
 
 ## HodgeListView.cpp
 
@@ -56,9 +56,9 @@
 
 定义候选（多行签名仅展示首行）：
 
-- L14: `UHodgeListView::UHodgeListView(const FObjectInitializer& ObjectInitializer)`
-- L21: `void UHodgeListView::ValidateCompiledDefaults(IWidgetCompilerLog& InCompileLog) const`
-- L35: `UUserWidget& UHodgeListView::OnGenerateEntryWidgetInternal(UObject* Item, TSubclassOf<UUserWidget> DesiredEntryClass,`
+- L18: `UHodgeListView::UHodgeListView(const FObjectInitializer& ObjectInitializer)`
+- L26: `void UHodgeListView::ValidateCompiledDefaults(IWidgetCompilerLog& InCompileLog) const`
+- L41: `UUserWidget& UHodgeListView::OnGenerateEntryWidgetInternal(UObject* Item, TSubclassOf<UUserWidget> DesiredEntryClass,`
 
 ## HodgeTabButtonBase.cpp
 
@@ -70,9 +70,9 @@
 
 定义候选（多行签名仅展示首行）：
 
-- L13: `void UHodgeTabButtonBase::SetIconFromLazyObject(TSoftObjectPtr<UObject> LazyObject)`
-- L21: `void UHodgeTabButtonBase::SetIconBrush(const FSlateBrush& Brush)`
-- L29: `void UHodgeTabButtonBase::SetTabLabelInfo_Implementation(const FHodgeTabDescriptor& TabLabelInfo)`
+- L17: `void UHodgeTabButtonBase::SetIconFromLazyObject(TSoftObjectPtr<UObject> LazyObject)`
+- L26: `void UHodgeTabButtonBase::SetIconBrush(const FSlateBrush& Brush)`
+- L35: `void UHodgeTabButtonBase::SetTabLabelInfo_Implementation(const FHodgeTabDescriptor& TabLabelInfo)`
 
 ## HodgeTabListWidgetBase.cpp
 
@@ -84,20 +84,20 @@
 
 定义候选（多行签名仅展示首行）：
 
-- L10: `void UHodgeTabListWidgetBase::NativeOnInitialized()`
-- L15: `void UHodgeTabListWidgetBase::NativeConstruct()`
-- L22: `void UHodgeTabListWidgetBase::NativeDestruct()`
-- L36: `bool UHodgeTabListWidgetBase::GetPreregisteredTabInfo(const FName TabNameId, FHodgeTabDescriptor& OutTabInfo)`
-- L53: `void UHodgeTabListWidgetBase::SetTabHiddenState(FName TabNameId, bool bHidden)`
-- L65: `bool UHodgeTabListWidgetBase::RegisterDynamicTab(const FHodgeTabDescriptor& TabDescriptor)`
-- L78: `void UHodgeTabListWidgetBase::HandlePreLinkedSwitcherChanged()`
-- L92: `void UHodgeTabListWidgetBase::HandlePostLinkedSwitcherChanged()`
-- L103: `void UHodgeTabListWidgetBase::HandleTabCreation_Implementation(FName TabId, UCommonButtonBase* TabButton)`
-- L132: `bool UHodgeTabListWidgetBase::IsFirstTabActive() const`
-- L142: `bool UHodgeTabListWidgetBase::IsLastTabActive() const`
-- L152: `bool UHodgeTabListWidgetBase::IsTabVisible(FName TabId)`
-- L165: `int32 UHodgeTabListWidgetBase::GetVisibleTabCount()`
-- L180: `void UHodgeTabListWidgetBase::SetupTabs()`
+- L14: `void UHodgeTabListWidgetBase::NativeOnInitialized()`
+- L20: `void UHodgeTabListWidgetBase::NativeConstruct()`
+- L28: `void UHodgeTabListWidgetBase::NativeDestruct()`
+- L43: `bool UHodgeTabListWidgetBase::GetPreregisteredTabInfo(const FName TabNameId, FHodgeTabDescriptor& OutTabInfo)`
+- L61: `void UHodgeTabListWidgetBase::SetTabHiddenState(FName TabNameId, bool bHidden)`
+- L74: `bool UHodgeTabListWidgetBase::RegisterDynamicTab(const FHodgeTabDescriptor& TabDescriptor)`
+- L88: `void UHodgeTabListWidgetBase::HandlePreLinkedSwitcherChanged()`
+- L103: `void UHodgeTabListWidgetBase::HandlePostLinkedSwitcherChanged()`
+- L116: `void UHodgeTabListWidgetBase::HandleTabCreation_Implementation(FName TabId, UCommonButtonBase* TabButton)`
+- L146: `bool UHodgeTabListWidgetBase::IsFirstTabActive() const`
+- L157: `bool UHodgeTabListWidgetBase::IsLastTabActive() const`
+- L168: `bool UHodgeTabListWidgetBase::IsTabVisible(FName TabId)`
+- L182: `int32 UHodgeTabListWidgetBase::GetVisibleTabCount()`
+- L198: `void UHodgeTabListWidgetBase::SetupTabs()`
 
 ## HodgeWidgetFactory.cpp
 
@@ -109,7 +109,7 @@
 
 定义候选（多行签名仅展示首行）：
 
-- L10: `TSubclassOf<UUserWidget> UHodgeWidgetFactory::FindWidgetClassForData_Implementation(const UObject* Data) const`
+- L14: `TSubclassOf<UUserWidget> UHodgeWidgetFactory::FindWidgetClassForData_Implementation(const UObject* Data) const`
 
 ## HodgeWidgetFactory_Class.cpp
 
@@ -121,7 +121,7 @@
 
 定义候选（多行签名仅展示首行）：
 
-- L9: `TSubclassOf<UUserWidget> UHodgeWidgetFactory_Class::FindWidgetClassForData_Implementation(const UObject* Data) const`
+- L12: `TSubclassOf<UUserWidget> UHodgeWidgetFactory_Class::FindWidgetClassForData_Implementation(const UObject* Data) const`
 
 ## HodgeGameplayUIDataSource.cpp
 
@@ -129,22 +129,24 @@
 
 源码：[Source/Hodgepodge/Private/UI/Data/HodgeGameplayUIDataSource.cpp](../../../Source/Hodgepodge/Private/UI/Data/HodgeGameplayUIDataSource.cpp)
 
-项目内直接 include（不是运行调用关系）：[UI/Data/HodgeGameplayUIDataSource.h](../../../Source/Hodgepodge/Public/UI/Data/HodgeGameplayUIDataSource.h)、[UI/Subsystem/HodgeUIManagerSubsystem.h](../../../Source/Hodgepodge/Public/UI/Subsystem/HodgeUIManagerSubsystem.h)、[Core/LocalPlayer/HodgeLocalPlayerBase.h](../../../Source/Hodgepodge/Public/Core/LocalPlayer/HodgeLocalPlayerBase.h)、[Core/PlayerController/HodgePlayerController.h](../../../Source/Hodgepodge/Public/Core/PlayerController/HodgePlayerController.h)、[Core/PlayState/HodgePlayerState.h](../../../Source/Hodgepodge/Public/Core/PlayState/HodgePlayerState.h)、[Component/HodgeHealthComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeHealthComponent.h)、[Component/HodgePawnExtensionComponent.h](../../../Source/Hodgepodge/Public/Component/HodgePawnExtensionComponent.h)、[Component/HodgeCombatComponentBase.h](../../../Source/Hodgepodge/Public/Component/HodgeCombatComponentBase.h)、[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)、[Data/HodgeComboDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeComboDefinition.h)
+项目内直接 include（不是运行调用关系）：[UI/Data/HodgeGameplayUIDataSource.h](../../../Source/Hodgepodge/Public/UI/Data/HodgeGameplayUIDataSource.h)、[UI/Subsystem/HodgeUIManagerSubsystem.h](../../../Source/Hodgepodge/Public/UI/Subsystem/HodgeUIManagerSubsystem.h)、[Core/LocalPlayer/HodgeLocalPlayerBase.h](../../../Source/Hodgepodge/Public/Core/LocalPlayer/HodgeLocalPlayerBase.h)、[Core/PlayerController/HodgePlayerController.h](../../../Source/Hodgepodge/Public/Core/PlayerController/HodgePlayerController.h)、[Core/PlayState/HodgePlayerState.h](../../../Source/Hodgepodge/Public/Core/PlayState/HodgePlayerState.h)、[Component/HodgeHealthComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeHealthComponent.h)、[Component/HodgePawnExtensionComponent.h](../../../Source/Hodgepodge/Public/Component/HodgePawnExtensionComponent.h)、[Component/HodgeCombatComponentBase.h](../../../Source/Hodgepodge/Public/Component/HodgeCombatComponentBase.h)、[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)、[AbilitySystem/AttributeSet/HodgeResonanceSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeResonanceSet.h)、[AbilitySystem/AttributeSet/HodgeHavocSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeHavocSet.h)、[Data/HodgeComboDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeComboDefinition.h)
 
 定义候选（多行签名仅展示首行）：
 
-- L18: `void UHodgeGameplayUIDataSource::Initialize(UHodgeLocalPlayerBase* Player, APlayerController* InController)`
-- L30: `void UHodgeGameplayUIDataSource::UnbindPawn()`
-- L41: `void UHodgeGameplayUIDataSource::UnbindState()`
-- L47: `void UHodgeGameplayUIDataSource::Shutdown()`
-- L60: `void UHodgeGameplayUIDataSource::StateChanged(UHodgeLocalPlayerBase* Player, APlayerState* State)`
-- L68: `void UHodgeGameplayUIDataSource::PawnChanged(UHodgeLocalPlayerBase* Player, APawn* Pawn)`
-- L90: `void UHodgeGameplayUIDataSource::Refresh()`
-- L105: `void UHodgeGameplayUIDataSource::AttributeChanged(UHodgeHealthComponent* Component, float Old, float New, AActor* Instigator) { Refresh(); }`
-- L106: `void UHodgeGameplayUIDataSource::DeathChanged(AActor* Actor) { Refresh(); }`
-- L108: `bool UHodgeGameplayUIDataSource::CanUseGameplay() const`
-- L115: `FHodgeUIAbilityDisplayState UHodgeGameplayUIDataSource::GetAbilityDisplayState(FGameplayTag InputTag) const`
-- L145: `bool UHodgeGameplayUIDataSource::SubmitInput(FGameplayTag InputTag)`
+- L24: `void UHodgeGameplayUIDataSource::Initialize(UHodgeLocalPlayerBase* Player, APlayerController* InController)`
+- L37: `void UHodgeGameplayUIDataSource::UnbindPawn()`
+- L50: `void UHodgeGameplayUIDataSource::UnbindState()`
+- L68: `void UHodgeGameplayUIDataSource::Shutdown()`
+- L84: `void UHodgeGameplayUIDataSource::StateChanged(UHodgeLocalPlayerBase* Player, APlayerState* State)`
+- L106: `void UHodgeGameplayUIDataSource::PawnChanged(UHodgeLocalPlayerBase* Player, APawn* Pawn)`
+- L130: `void UHodgeGameplayUIDataSource::Refresh()`
+- L165: `void UHodgeGameplayUIDataSource::ResonanceAttributeChanged(const FOnAttributeChangeData& Data) { Refresh(); }`
+- L167: `void UHodgeGameplayUIDataSource::HavocModeChanged(FGameplayTag Tag,int32 Count) { Refresh(); }`
+- L170: `void UHodgeGameplayUIDataSource::AttributeChanged(UHodgeHealthComponent* Component, float Old, float New, AActor* Instigator) { Refresh(); }`
+- L172: `void UHodgeGameplayUIDataSource::DeathChanged(AActor* Actor) { Refresh(); }`
+- L175: `bool UHodgeGameplayUIDataSource::CanUseGameplay() const`
+- L183: `FHodgeUIAbilityDisplayState UHodgeGameplayUIDataSource::GetAbilityDisplayState(FGameplayTag InputTag) const`
+- L222: `bool UHodgeGameplayUIDataSource::SubmitInput(FGameplayTag InputTag)`
 
 ## UIExtensionPointWidget.cpp
 
@@ -156,15 +158,15 @@
 
 定义候选（多行签名仅展示首行）：
 
-- L39: `UUIExtensionPointWidget::UUIExtensionPointWidget(const FObjectInitializer& ObjectInitializer)`
-- L44: `void UUIExtensionPointWidget::SetExtensionPointTag(FGameplayTag Tag)`
-- L50: `void UUIExtensionPointWidget::ReleaseSlateResources(bool bReleaseChildren)`
-- L61: `TSharedRef<SWidget> UUIExtensionPointWidget::RebuildWidget()`
-- L132: `void UUIExtensionPointWidget::ResetExtensionPoint()`
-- L156: `void UUIExtensionPointWidget::RegisterExtensionPoint()`
-- L200: `void UUIExtensionPointWidget::RegisterExtensionPointForPlayerState(UHodgeLocalPlayerBase* LocalPlayer,`
-- L230: `void UUIExtensionPointWidget::OnAddOrRemoveExtension(EUIExtensionAction Action, const FUIExtensionRequest& Request)`
-- L313: `void UUIExtensionPointWidget::ValidateCompiledDefaults(IWidgetCompilerLog& CompileLog) const`
+- L42: `UUIExtensionPointWidget::UUIExtensionPointWidget(const FObjectInitializer& ObjectInitializer)`
+- L48: `void UUIExtensionPointWidget::SetExtensionPointTag(FGameplayTag Tag)`
+- L55: `void UUIExtensionPointWidget::ReleaseSlateResources(bool bReleaseChildren)`
+- L66: `TSharedRef<SWidget> UUIExtensionPointWidget::RebuildWidget()`
+- L137: `void UUIExtensionPointWidget::ResetExtensionPoint()`
+- L162: `void UUIExtensionPointWidget::RegisterExtensionPoint()`
+- L206: `void UUIExtensionPointWidget::RegisterExtensionPointForPlayerState(UHodgeLocalPlayerBase* LocalPlayer,`
+- L236: `void UUIExtensionPointWidget::OnAddOrRemoveExtension(EUIExtensionAction Action, const FUIExtensionRequest& Request)`
+- L319: `void UUIExtensionPointWidget::ValidateCompiledDefaults(IWidgetCompilerLog& CompileLog) const`
 
 ## UIExtensionSystem.cpp
 
@@ -176,31 +178,31 @@
 
 定义候选（多行签名仅展示首行）：
 
-- L24: `void FUIExtensionPointHandle::Unregister()`
-- L38: `void FUIExtensionHandle::Unregister()`
-- L52: `bool FUIExtensionPoint::DoesExtensionPassContract(const FUIExtension* Extension) const`
-- L101: `void UUIExtensionSubsystem::AddReferencedObjects(UObject* InThis, FReferenceCollector& Collector)`
-- L136: `void UUIExtensionSubsystem::Initialize(FSubsystemCollectionBase& Collection)`
-- L143: `void UUIExtensionSubsystem::Deinitialize()`
-- L150: `FUIExtensionPointHandle UUIExtensionSubsystem::RegisterExtensionPoint(const FGameplayTag& ExtensionPointTag,`
-- L162: `FUIExtensionPointHandle UUIExtensionSubsystem::RegisterExtensionPointForContext(`
-- L225: `FUIExtensionHandle UUIExtensionSubsystem::RegisterExtensionAsWidget(const FGameplayTag& ExtensionPointTag,`
-- L235: `FUIExtensionHandle UUIExtensionSubsystem::RegisterExtensionAsWidgetForContext(`
-- L244: `FUIExtensionHandle UUIExtensionSubsystem::RegisterExtensionAsData(const FGameplayTag& ExtensionPointTag,`
-- L307: `void UUIExtensionSubsystem::NotifyExtensionPointOfExtensions(TSharedPtr<FUIExtensionPoint>& ExtensionPoint)`
-- L357: `void UUIExtensionSubsystem::NotifyExtensionPointsOfExtension(EUIExtensionAction Action,`
-- L412: `void UUIExtensionSubsystem::UnregisterExtension(const FUIExtensionHandle& ExtensionHandle)`
-- L466: `void UUIExtensionSubsystem::UnregisterExtensionPoint(const FUIExtensionPointHandle& ExtensionPointHandle)`
-- L502: `FUIExtensionRequest UUIExtensionSubsystem::CreateExtensionRequest(const TSharedPtr<FUIExtension>& Extension)`
-- L526: `FUIExtensionPointHandle UUIExtensionSubsystem::K2_RegisterExtensionPoint(`
-- L544: `FUIExtensionHandle UUIExtensionSubsystem::K2_RegisterExtensionAsWidget(FGameplayTag ExtensionPointTag,`
-- L553: `FUIExtensionHandle UUIExtensionSubsystem::K2_RegisterExtensionAsWidgetForContext(`
-- L572: `FUIExtensionHandle UUIExtensionSubsystem::K2_RegisterExtensionAsData(FGameplayTag ExtensionPointTag, UObject* Data,`
-- L580: `FUIExtensionHandle UUIExtensionSubsystem::K2_RegisterExtensionAsDataForContext(`
-- L600: `void UUIExtensionHandleFunctions::Unregister(FUIExtensionHandle& Handle)`
-- L606: `bool UUIExtensionHandleFunctions::IsValid(FUIExtensionHandle& Handle)`
-- L614: `void UUIExtensionPointHandleFunctions::Unregister(FUIExtensionPointHandle& Handle)`
-- L620: `bool UUIExtensionPointHandleFunctions::IsValid(FUIExtensionPointHandle& Handle)`
+- L27: `void FUIExtensionPointHandle::Unregister()`
+- L41: `void FUIExtensionHandle::Unregister()`
+- L55: `bool FUIExtensionPoint::DoesExtensionPassContract(const FUIExtension* Extension) const`
+- L104: `void UUIExtensionSubsystem::AddReferencedObjects(UObject* InThis, FReferenceCollector& Collector)`
+- L139: `void UUIExtensionSubsystem::Initialize(FSubsystemCollectionBase& Collection)`
+- L146: `void UUIExtensionSubsystem::Deinitialize()`
+- L153: `FUIExtensionPointHandle UUIExtensionSubsystem::RegisterExtensionPoint(const FGameplayTag& ExtensionPointTag,`
+- L165: `FUIExtensionPointHandle UUIExtensionSubsystem::RegisterExtensionPointForContext(`
+- L228: `FUIExtensionHandle UUIExtensionSubsystem::RegisterExtensionAsWidget(const FGameplayTag& ExtensionPointTag,`
+- L238: `FUIExtensionHandle UUIExtensionSubsystem::RegisterExtensionAsWidgetForContext(`
+- L247: `FUIExtensionHandle UUIExtensionSubsystem::RegisterExtensionAsData(const FGameplayTag& ExtensionPointTag,`
+- L310: `void UUIExtensionSubsystem::NotifyExtensionPointOfExtensions(TSharedPtr<FUIExtensionPoint>& ExtensionPoint)`
+- L360: `void UUIExtensionSubsystem::NotifyExtensionPointsOfExtension(EUIExtensionAction Action,`
+- L415: `void UUIExtensionSubsystem::UnregisterExtension(const FUIExtensionHandle& ExtensionHandle)`
+- L469: `void UUIExtensionSubsystem::UnregisterExtensionPoint(const FUIExtensionPointHandle& ExtensionPointHandle)`
+- L505: `FUIExtensionRequest UUIExtensionSubsystem::CreateExtensionRequest(const TSharedPtr<FUIExtension>& Extension)`
+- L529: `FUIExtensionPointHandle UUIExtensionSubsystem::K2_RegisterExtensionPoint(`
+- L547: `FUIExtensionHandle UUIExtensionSubsystem::K2_RegisterExtensionAsWidget(FGameplayTag ExtensionPointTag,`
+- L556: `FUIExtensionHandle UUIExtensionSubsystem::K2_RegisterExtensionAsWidgetForContext(`
+- L575: `FUIExtensionHandle UUIExtensionSubsystem::K2_RegisterExtensionAsData(FGameplayTag ExtensionPointTag, UObject* Data,`
+- L583: `FUIExtensionHandle UUIExtensionSubsystem::K2_RegisterExtensionAsDataForContext(`
+- L603: `void UUIExtensionHandleFunctions::Unregister(FUIExtensionHandle& Handle)`
+- L609: `bool UUIExtensionHandleFunctions::IsValid(FUIExtensionHandle& Handle)`
+- L617: `void UUIExtensionPointHandleFunctions::Unregister(FUIExtensionPointHandle& Handle)`
+- L623: `bool UUIExtensionPointHandleFunctions::IsValid(FUIExtensionPointHandle& Handle)`
 
 ## HodgeActionWidget.cpp
 
@@ -212,8 +214,8 @@
 
 定义候选（多行签名仅展示首行）：
 
-- L10: `FSlateBrush UHodgeActionWidget::GetIcon() const`
-- L35: `UEnhancedInputLocalPlayerSubsystem* UHodgeActionWidget::GetEnhancedInputSubsystem() const`
+- L14: `FSlateBrush UHodgeActionWidget::GetIcon() const`
+- L40: `UEnhancedInputLocalPlayerSubsystem* UHodgeActionWidget::GetEnhancedInputSubsystem() const`
 
 ## HodgeButtonBase.cpp
 
@@ -225,11 +227,11 @@
 
 定义候选（多行签名仅展示首行）：
 
-- L8: `void UHodgeButtonBase::NativePreConstruct()`
-- L16: `void UHodgeButtonBase::UpdateInputActionWidget()`
-- L24: `void UHodgeButtonBase::SetButtonText(const FText& InText)`
-- L31: `void UHodgeButtonBase::RefreshButtonText()`
-- L49: `void UHodgeButtonBase::OnInputMethodChanged(ECommonInputType CurrentInputType)`
+- L12: `void UHodgeButtonBase::NativePreConstruct()`
+- L21: `void UHodgeButtonBase::UpdateInputActionWidget()`
+- L30: `void UHodgeButtonBase::SetButtonText(const FText& InText)`
+- L38: `void UHodgeButtonBase::RefreshButtonText()`
+- L57: `void UHodgeButtonBase::OnInputMethodChanged(ECommonInputType CurrentInputType)`
 
 ## HodgeConfirmationScreen.cpp
 
@@ -249,11 +251,11 @@
 
 定义候选（多行签名仅展示首行）：
 
-- L23: `UHodgeControllerDisconnectedScreen::UHodgeControllerDisconnectedScreen(const FObjectInitializer& ObjectInitializer)`
-- L30: `void UHodgeControllerDisconnectedScreen::NativeOnActivated()`
-- L64: `bool UHodgeControllerDisconnectedScreen::ShouldDisplayChangeUserButton() const`
-- L79: `void UHodgeControllerDisconnectedScreen::HandleChangeUserClicked()`
-- L97: `void UHodgeControllerDisconnectedScreen::HandleChangeUserCompleted(const FPlatformUserSelectionCompleteParams& Params)`
+- L27: `UHodgeControllerDisconnectedScreen::UHodgeControllerDisconnectedScreen(const FObjectInitializer& ObjectInitializer)`
+- L35: `void UHodgeControllerDisconnectedScreen::NativeOnActivated()`
+- L71: `bool UHodgeControllerDisconnectedScreen::ShouldDisplayChangeUserButton() const`
+- L87: `void UHodgeControllerDisconnectedScreen::HandleChangeUserClicked()`
+- L106: `void UHodgeControllerDisconnectedScreen::HandleChangeUserCompleted(const FPlatformUserSelectionCompleteParams& Params)`
 
 ## HodgeLoadingScreenSubsystem.cpp
 
@@ -265,9 +267,9 @@
 
 定义候选（多行签名仅展示首行）：
 
-- L14: `UHodgeLoadingScreenSubsystem::UHodgeLoadingScreenSubsystem()`
-- L18: `void UHodgeLoadingScreenSubsystem::SetLoadingScreenContentWidget(TSubclassOf<UUserWidget> NewWidgetClass)`
-- L28: `TSubclassOf<UUserWidget> UHodgeLoadingScreenSubsystem::GetLoadingScreenContentWidget() const`
+- L18: `UHodgeLoadingScreenSubsystem::UHodgeLoadingScreenSubsystem()`
+- L23: `void UHodgeLoadingScreenSubsystem::SetLoadingScreenContentWidget(TSubclassOf<UUserWidget> NewWidgetClass)`
+- L35: `TSubclassOf<UUserWidget> UHodgeLoadingScreenSubsystem::GetLoadingScreenContentWidget() const`
 
 ## HodgePrimaryGameLayout.cpp
 
@@ -279,17 +281,17 @@
 
 定义候选（多行签名仅展示首行）：
 
-- L13: `void UHodgePrimaryGameLayout::NativeOnInitialized()`
-- L23: `void UHodgePrimaryGameLayout::RegisterLayer(FGameplayTag Tag, UCommonActivatableWidgetContainerBase* Container)`
-- L28: `UCommonActivatableWidgetContainerBase* UHodgePrimaryGameLayout::GetLayer(FGameplayTag Tag) const`
-- L34: `UCommonActivatableWidget* UHodgePrimaryGameLayout::Push(FGameplayTag Tag, TSubclassOf<UCommonActivatableWidget> WidgetClass)`
-- L43: `void UHodgePrimaryGameLayout::Pop(UCommonActivatableWidget* Widget)`
-- L52: `bool UHodgePrimaryGameLayout::HasBlockingPage() const`
-- L66: `FGuid UHodgePrimaryGameLayout::PushAsync(FGameplayTag Tag, TSoftClassPtr<UCommonActivatableWidget> WidgetClass,`
-- L85: `void UHodgePrimaryGameLayout::FinishPush(FGuid Id, FGameplayTag Tag, TSoftClassPtr<UCommonActivatableWidget> WidgetClass)`
-- L96: `void UHodgePrimaryGameLayout::CancelPush(FGuid Id)`
-- L106: `void UHodgePrimaryGameLayout::ReleaseLayout()`
-- L120: `void UHodgePrimaryGameLayout::NativeDestruct()`
+- L17: `void UHodgePrimaryGameLayout::NativeOnInitialized()`
+- L28: `void UHodgePrimaryGameLayout::RegisterLayer(FGameplayTag Tag, UCommonActivatableWidgetContainerBase* Container)`
+- L35: `UCommonActivatableWidgetContainerBase* UHodgePrimaryGameLayout::GetLayer(FGameplayTag Tag) const`
+- L42: `UCommonActivatableWidget* UHodgePrimaryGameLayout::Push(FGameplayTag Tag, TSubclassOf<UCommonActivatableWidget> WidgetClass)`
+- L52: `void UHodgePrimaryGameLayout::Pop(UCommonActivatableWidget* Widget)`
+- L62: `bool UHodgePrimaryGameLayout::HasBlockingPage() const`
+- L77: `FGuid UHodgePrimaryGameLayout::PushAsync(FGameplayTag Tag, TSoftClassPtr<UCommonActivatableWidget> WidgetClass,`
+- L98: `void UHodgePrimaryGameLayout::FinishPush(FGuid Id, FGameplayTag Tag, TSoftClassPtr<UCommonActivatableWidget> WidgetClass)`
+- L110: `void UHodgePrimaryGameLayout::CancelPush(FGuid Id)`
+- L121: `void UHodgePrimaryGameLayout::ReleaseLayout()`
+- L136: `void UHodgePrimaryGameLayout::NativeDestruct()`
 
 ## ApplyFrontendPerfSettingsAction.cpp
 
@@ -301,8 +303,8 @@
 
 定义候选（多行签名仅展示首行）：
 
-- L23: `void UApplyFrontendPerfSettingsAction::OnGameFeatureActivating(FGameFeatureActivatingContext& Context)`
-- L32: `void UApplyFrontendPerfSettingsAction::OnGameFeatureDeactivating(FGameFeatureDeactivatingContext& Context)`
+- L27: `void UApplyFrontendPerfSettingsAction::OnGameFeatureActivating(FGameFeatureActivatingContext& Context)`
+- L37: `void UApplyFrontendPerfSettingsAction::OnGameFeatureDeactivating(FGameFeatureDeactivatingContext& Context)`
 
 ## HodgeFrontendStateComponent.cpp
 
@@ -323,6 +325,25 @@
 定义候选（多行签名仅展示首行）：
 
 
+## HodgeAbilityIconWidget.cpp
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Private/UI/HodgeAbilityIconWidget.cpp](../../../Source/Hodgepodge/Private/UI/HodgeAbilityIconWidget.cpp)
+
+项目内直接 include（不是运行调用关系）：[UI/HodgeAbilityIconWidget.h](../../../Source/Hodgepodge/Public/UI/HodgeAbilityIconWidget.h)、[UI/Data/HodgeGameplayUIDataSource.h](../../../Source/Hodgepodge/Public/UI/Data/HodgeGameplayUIDataSource.h)、[UI/Subsystem/HodgeUIManagerSubsystem.h](../../../Source/Hodgepodge/Public/UI/Subsystem/HodgeUIManagerSubsystem.h)
+
+定义候选（多行签名仅展示首行）：
+
+- L12: `FHodgeAbilityIconVisualState UHodgeAbilityIconWidget::EvaluateState(const FHodgeUIAbilityDisplayState& Ability,const FHodgeUIResonanceSnapshot& Resource,bool bEnergy)`
+- L24: `void UHodgeAbilityIconWidget::NativeConstruct()`
+- L31: `void UHodgeAbilityIconWidget::SynchronizeProperties()`
+- L36: `void UHodgeAbilityIconWidget::ApplyStyle()`
+- L54: `void UHodgeAbilityIconWidget::NativeTick(const FGeometry& Geometry,float DeltaTime)`
+- L59: `void UHodgeAbilityIconWidget::RefreshDisplay()`
+- L89: `void UHodgeAbilityIconWidget::NativeDestruct()`
+- L95: `void UHodgeAbilityIconWidget::RequestAbility()`
+
 ## HodgeActivatableWidget.cpp
 
 模块或基础类型入口。
@@ -333,9 +354,9 @@
 
 定义候选（多行签名仅展示首行）：
 
-- L17: `UHodgeActivatableWidget::UHodgeActivatableWidget(const FObjectInitializer& ObjectInitializer)`
-- L24: `TOptional<FUIInputConfig> UHodgeActivatableWidget::GetDesiredInputConfig() const`
-- L62: `void UHodgeActivatableWidget::ValidateCompiledWidgetTree(const UWidgetTree& BlueprintWidgetTree,`
+- L20: `UHodgeActivatableWidget::UHodgeActivatableWidget(const FObjectInitializer& ObjectInitializer)`
+- L27: `TOptional<FUIInputConfig> UHodgeActivatableWidget::GetDesiredInputConfig() const`
+- L65: `void UHodgeActivatableWidget::ValidateCompiledWidgetTree(const UWidgetTree& BlueprintWidgetTree,`
 
 ## HodgeGameViewportClient.cpp
 
@@ -358,20 +379,21 @@
 
 定义候选（多行签名仅展示首行）：
 
-- L73: `UHodgeHUDLayout::UHodgeHUDLayout(const FObjectInitializer& ObjectInitializer)`
-- L86: `void UHodgeHUDLayout::NativeOnInitialized()`
-- L137: `void UHodgeHUDLayout::NativeDestruct()`
-- L168: `void UHodgeHUDLayout::CloseOwnedMenu()`
-- L176: `void UHodgeHUDLayout::NativeOnDeactivated()`
-- L184: `void UHodgeHUDLayout::EnsureMenuLayerStack()`
-- L193: `void UHodgeHUDLayout::HandleEscapeAction()`
-- L210: `void UHodgeHUDLayout::HandleInputDeviceConnectionChanged(EInputDeviceConnectionState NewConnectionState,`
-- L234: `void UHodgeHUDLayout::HandleInputDevicePairingChanged(FInputDeviceId InputDeviceId, FPlatformUserId NewUserPlatformId,`
-- L258: `bool UHodgeHUDLayout::ShouldPlatformDisplayControllerDisconnectScreen() const`
-- L291: `void UHodgeHUDLayout::NotifyControllerStateChangeForDisconnectScreen()`
-- L332: `void UHodgeHUDLayout::ProcessControllerDevicesHavingChangedForDisconnectScreen()`
-- L405: `void UHodgeHUDLayout::DisplayControllerDisconnectedMenu_Implementation()`
-- L444: `void UHodgeHUDLayout::HideControllerDisconnectedMenu_Implementation()`
+- L76: `UHodgeHUDLayout::UHodgeHUDLayout(const FObjectInitializer& ObjectInitializer)`
+- L89: `void UHodgeHUDLayout::NativeOnInitialized()`
+- L140: `void UHodgeHUDLayout::NativeDestruct()`
+- L172: `void UHodgeHUDLayout::CloseOwnedMenu()`
+- L181: `void UHodgeHUDLayout::NativeOnDeactivated()`
+- L189: `void UHodgeHUDLayout::EnsureMenuLayerStack()`
+- L198: `void UHodgeHUDLayout::ToggleHUDMenu()`
+- L204: `void UHodgeHUDLayout::HandleEscapeAction()`
+- L222: `void UHodgeHUDLayout::HandleInputDeviceConnectionChanged(EInputDeviceConnectionState NewConnectionState,`
+- L246: `void UHodgeHUDLayout::HandleInputDevicePairingChanged(FInputDeviceId InputDeviceId, FPlatformUserId NewUserPlatformId,`
+- L270: `bool UHodgeHUDLayout::ShouldPlatformDisplayControllerDisconnectScreen() const`
+- L303: `void UHodgeHUDLayout::NotifyControllerStateChangeForDisconnectScreen()`
+- L344: `void UHodgeHUDLayout::ProcessControllerDevicesHavingChangedForDisconnectScreen()`
+- L417: `void UHodgeHUDLayout::DisplayControllerDisconnectedMenu_Implementation()`
+- L456: `void UHodgeHUDLayout::HideControllerDisconnectedMenu_Implementation()`
 
 ## HodgeJoystickWidget.cpp
 
@@ -383,14 +405,26 @@
 
 定义候选（多行签名仅展示首行）：
 
-- L12: `UHodgeJoystickWidget::UHodgeJoystickWidget(const FObjectInitializer& ObjectInitializer)`
-- L18: `FReply UHodgeJoystickWidget::NativeOnTouchStarted(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent)`
-- L32: `FReply UHodgeJoystickWidget::NativeOnTouchMoved(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent)`
-- L45: `FReply UHodgeJoystickWidget::NativeOnTouchEnded(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent)`
-- L51: `void UHodgeJoystickWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)`
-- L57: `void UHodgeJoystickWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)`
-- L76: `void UHodgeJoystickWidget::HandleTouchDelta(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent)`
-- L101: `void UHodgeJoystickWidget::StopInputSimulation()`
+- L16: `UHodgeJoystickWidget::UHodgeJoystickWidget(const FObjectInitializer& ObjectInitializer)`
+- L23: `FReply UHodgeJoystickWidget::NativeOnTouchStarted(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent)`
+- L38: `FReply UHodgeJoystickWidget::NativeOnTouchMoved(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent)`
+- L52: `FReply UHodgeJoystickWidget::NativeOnTouchEnded(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent)`
+- L59: `void UHodgeJoystickWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)`
+- L66: `void UHodgeJoystickWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)`
+- L86: `void UHodgeJoystickWidget::HandleTouchDelta(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent)`
+- L112: `void UHodgeJoystickWidget::StopInputSimulation()`
+
+## HodgeResonanceEnergyWidget.cpp
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Private/UI/HodgeResonanceEnergyWidget.cpp](../../../Source/Hodgepodge/Private/UI/HodgeResonanceEnergyWidget.cpp)
+
+项目内直接 include（不是运行调用关系）：[UI/HodgeResonanceEnergyWidget.h](../../../Source/Hodgepodge/Public/UI/HodgeResonanceEnergyWidget.h)、[AbilitySystem/AttributeSet/HodgeResonanceSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeResonanceSet.h)
+
+定义候选（多行签名仅展示首行）：
+
+- L6: `UHodgeResonanceEnergyWidget::UHodgeResonanceEnergyWidget()`
 
 ## HodgeSettingScreen.cpp
 
@@ -410,18 +444,18 @@
 
 定义候选（多行签名仅展示首行）：
 
-- L11: `UHodgeSimulatedInputWidget::UHodgeSimulatedInputWidget(const FObjectInitializer& ObjectInitializer)`
-- L18: `const FText UHodgeSimulatedInputWidget::GetPaletteCategory()`
-- L24: `void UHodgeSimulatedInputWidget::NativeConstruct()`
-- L38: `void UHodgeSimulatedInputWidget::NativeDestruct()`
-- L48: `FReply UHodgeSimulatedInputWidget::NativeOnTouchEnded(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent)`
-- L55: `UEnhancedInputLocalPlayerSubsystem* UHodgeSimulatedInputWidget::GetEnhancedInputSubsystem() const`
-- L67: `UEnhancedPlayerInput* UHodgeSimulatedInputWidget::GetPlayerInput() const`
-- L76: `void UHodgeSimulatedInputWidget::InputKeyValue(const FVector& Value)`
-- L111: `void UHodgeSimulatedInputWidget::InputKeyValue2D(const FVector2D& Value)`
-- L116: `void UHodgeSimulatedInputWidget::FlushSimulatedInput()`
-- L124: `void UHodgeSimulatedInputWidget::QueryKeyToSimulate()`
-- L140: `void UHodgeSimulatedInputWidget::OnControlMappingsRebuilt()`
+- L15: `UHodgeSimulatedInputWidget::UHodgeSimulatedInputWidget(const FObjectInitializer& ObjectInitializer)`
+- L23: `const FText UHodgeSimulatedInputWidget::GetPaletteCategory()`
+- L30: `void UHodgeSimulatedInputWidget::NativeConstruct()`
+- L45: `void UHodgeSimulatedInputWidget::NativeDestruct()`
+- L57: `FReply UHodgeSimulatedInputWidget::NativeOnTouchEnded(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent)`
+- L65: `UEnhancedInputLocalPlayerSubsystem* UHodgeSimulatedInputWidget::GetEnhancedInputSubsystem() const`
+- L78: `UEnhancedPlayerInput* UHodgeSimulatedInputWidget::GetPlayerInput() const`
+- L88: `void UHodgeSimulatedInputWidget::InputKeyValue(const FVector& Value)`
+- L124: `void UHodgeSimulatedInputWidget::InputKeyValue2D(const FVector2D& Value)`
+- L130: `void UHodgeSimulatedInputWidget::FlushSimulatedInput()`
+- L139: `void UHodgeSimulatedInputWidget::QueryKeyToSimulate()`
+- L157: `void UHodgeSimulatedInputWidget::OnControlMappingsRebuilt()`
 
 ## HodgeTaggedWidget.cpp
 
@@ -433,11 +467,11 @@
 
 定义候选（多行签名仅展示首行）：
 
-- L13: `UHodgeTaggedWidget::UHodgeTaggedWidget(const FObjectInitializer& ObjectInitializer)`
-- L19: `void UHodgeTaggedWidget::NativeConstruct()`
-- L44: `void UHodgeTaggedWidget::NativeDestruct()`
-- L61: `void UHodgeTaggedWidget::SetVisibility(ESlateVisibility InVisibility)`
-- L120: `void UHodgeTaggedWidget::OnWatchedTagsChanged()`
+- L16: `UHodgeTaggedWidget::UHodgeTaggedWidget(const FObjectInitializer& ObjectInitializer)`
+- L22: `void UHodgeTaggedWidget::NativeConstruct()`
+- L47: `void UHodgeTaggedWidget::NativeDestruct()`
+- L64: `void UHodgeTaggedWidget::SetVisibility(ESlateVisibility InVisibility)`
+- L123: `void UHodgeTaggedWidget::OnWatchedTagsChanged()`
 
 ## HodgeTouchRegion.cpp
 
@@ -449,10 +483,10 @@
 
 定义候选（多行签名仅展示首行）：
 
-- L11: `FReply UHodgeTouchRegion::NativeOnTouchStarted(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent)`
-- L17: `FReply UHodgeTouchRegion::NativeOnTouchMoved(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent)`
-- L26: `FReply UHodgeTouchRegion::NativeOnTouchEnded(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent)`
-- L32: `void UHodgeTouchRegion::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)`
+- L15: `FReply UHodgeTouchRegion::NativeOnTouchStarted(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent)`
+- L22: `FReply UHodgeTouchRegion::NativeOnTouchMoved(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent)`
+- L32: `FReply UHodgeTouchRegion::NativeOnTouchEnded(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent)`
+- L39: `void UHodgeTouchRegion::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)`
 
 ## HodgeIndicatorManagerComponent.cpp
 
@@ -464,10 +498,10 @@
 
 定义候选（多行签名仅展示首行）：
 
-- L14: `UHodgeIndicatorManagerComponent::UHodgeIndicatorManagerComponent(const FObjectInitializer& ObjectInitializer)`
-- L28: `UHodgeIndicatorManagerComponent* UHodgeIndicatorManagerComponent::GetComponent(AController* Controller)`
-- L43: `void UHodgeIndicatorManagerComponent::AddIndicator(UIndicatorDescriptor* IndicatorDescriptor)`
-- L58: `void UHodgeIndicatorManagerComponent::RemoveIndicator(UIndicatorDescriptor* IndicatorDescriptor)`
+- L17: `UHodgeIndicatorManagerComponent::UHodgeIndicatorManagerComponent(const FObjectInitializer& ObjectInitializer)`
+- L31: `UHodgeIndicatorManagerComponent* UHodgeIndicatorManagerComponent::GetComponent(AController* Controller)`
+- L46: `void UHodgeIndicatorManagerComponent::AddIndicator(UIndicatorDescriptor* IndicatorDescriptor)`
+- L61: `void UHodgeIndicatorManagerComponent::RemoveIndicator(UIndicatorDescriptor* IndicatorDescriptor)`
 
 ## IndicatorDescriptor.cpp
 
@@ -479,9 +513,9 @@
 
 定义候选（多行签名仅展示首行）：
 
-- L21: `bool FIndicatorProjection::Project(const UIndicatorDescriptor& IndicatorDescriptor,`
-- L254: `void UIndicatorDescriptor::SetIndicatorManagerComponent(UHodgeIndicatorManagerComponent* InManager)`
-- L267: `void UIndicatorDescriptor::UnregisterIndicator()`
+- L24: `bool FIndicatorProjection::Project(const UIndicatorDescriptor& IndicatorDescriptor,`
+- L257: `void UIndicatorDescriptor::SetIndicatorManagerComponent(UHodgeIndicatorManagerComponent* InManager)`
+- L270: `void UIndicatorDescriptor::UnregisterIndicator()`
 
 ## IndicatorLayer.cpp
 
@@ -493,9 +527,9 @@
 
 定义候选（多行签名仅展示首行）：
 
-- L24: `UIndicatorLayer::UIndicatorLayer(const FObjectInitializer& ObjectInitializer)`
-- L37: `void UIndicatorLayer::ReleaseSlateResources(bool bReleaseChildren)`
-- L48: `TSharedRef<SWidget> UIndicatorLayer::RebuildWidget()`
+- L27: `UIndicatorLayer::UIndicatorLayer(const FObjectInitializer& ObjectInitializer)`
+- L40: `void UIndicatorLayer::ReleaseSlateResources(bool bReleaseChildren)`
+- L51: `TSharedRef<SWidget> UIndicatorLayer::RebuildWidget()`
 
 ## IndicatorLibrary.cpp
 
@@ -507,8 +541,8 @@
 
 定义候选（多行签名仅展示首行）：
 
-- L16: `UIndicatorLibrary::UIndicatorLibrary()`
-- L21: `UHodgeIndicatorManagerComponent* UIndicatorLibrary::GetIndicatorManagerComponent(AController* Controller)`
+- L19: `UIndicatorLibrary::UIndicatorLibrary()`
+- L24: `UHodgeIndicatorManagerComponent* UIndicatorLibrary::GetIndicatorManagerComponent(AController* Controller)`
 
 ## SActorCanvas.cpp
 
@@ -520,23 +554,23 @@
 
 定义候选（多行签名仅展示首行）：
 
-- L207: `void SActorCanvas::Construct(const FArguments& InArgs, const FLocalPlayerContext& InLocalPlayerContext,`
-- L253: `EActiveTimerReturnType SActorCanvas::UpdateCanvas(double InCurrentTime, float InDeltaTime)`
-- L484: `void SActorCanvas::SetShowAnyIndicators(bool bIndicators)`
-- L506: `void SActorCanvas::OnArrangeChildren(const FGeometry& AllottedGeometry, FArrangedChildren& ArrangedChildren) const`
-- L796: `int32 SActorCanvas::OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect,`
-- L858: `SActorCanvas::~SActorCanvas()`
-- L876: `FString SActorCanvas::GetReferencerName() const`
-- L882: `void SActorCanvas::AddReferencedObjects(FReferenceCollector& Collector)`
-- L890: `void SActorCanvas::OnIndicatorAdded(UIndicatorDescriptor* Indicator)`
-- L904: `void SActorCanvas::OnIndicatorRemoved(UIndicatorDescriptor* Indicator)`
-- L918: `void SActorCanvas::AddIndicatorForEntry(UIndicatorDescriptor* Indicator)`
-- L955: `void SActorCanvas::OnIndicatorClassLoaded(TWeakObjectPtr<UIndicatorDescriptor> IndicatorPtr)`
-- L1014: `void SActorCanvas::RemoveIndicatorForEntry(UIndicatorDescriptor* Indicator)`
-- L1047: `SActorCanvas::FScopedWidgetSlotArguments SActorCanvas::AddActorSlot(UIndicatorDescriptor* Indicator)`
-- L1068: `int32 SActorCanvas::RemoveActorSlot(const TSharedRef<SWidget>& SlotWidget)`
-- L1093: `void SActorCanvas::GetOffsetAndSize(const UIndicatorDescriptor* Indicator,`
-- L1170: `void SActorCanvas::UpdateActiveTimer()`
+- L211: `void SActorCanvas::Construct(const FArguments& InArgs, const FLocalPlayerContext& InLocalPlayerContext,`
+- L257: `EActiveTimerReturnType SActorCanvas::UpdateCanvas(double InCurrentTime, float InDeltaTime)`
+- L488: `void SActorCanvas::SetShowAnyIndicators(bool bIndicators)`
+- L510: `void SActorCanvas::OnArrangeChildren(const FGeometry& AllottedGeometry, FArrangedChildren& ArrangedChildren) const`
+- L800: `int32 SActorCanvas::OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect,`
+- L862: `SActorCanvas::~SActorCanvas()`
+- L880: `FString SActorCanvas::GetReferencerName() const`
+- L886: `void SActorCanvas::AddReferencedObjects(FReferenceCollector& Collector)`
+- L894: `void SActorCanvas::OnIndicatorAdded(UIndicatorDescriptor* Indicator)`
+- L910: `void SActorCanvas::OnIndicatorRemoved(UIndicatorDescriptor* Indicator)`
+- L924: `void SActorCanvas::AddIndicatorForEntry(UIndicatorDescriptor* Indicator)`
+- L961: `void SActorCanvas::OnIndicatorClassLoaded(TWeakObjectPtr<UIndicatorDescriptor> IndicatorPtr)`
+- L1020: `void SActorCanvas::RemoveIndicatorForEntry(UIndicatorDescriptor* Indicator)`
+- L1054: `SActorCanvas::FScopedWidgetSlotArguments SActorCanvas::AddActorSlot(UIndicatorDescriptor* Indicator)`
+- L1075: `int32 SActorCanvas::RemoveActorSlot(const TSharedRef<SWidget>& SlotWidget)`
+- L1100: `void SActorCanvas::GetOffsetAndSize(const UIndicatorDescriptor* Indicator,`
+- L1178: `void SActorCanvas::UpdateActiveTimer()`
 
 ## HodgePerfStatContainerBase.cpp
 
@@ -564,24 +598,24 @@ GameInstance 所属的本地玩家 UI 管理器：根布局、Controller 绑定�
 
 定义候选（多行签名仅展示首行）：
 
-- L16: `bool UHodgeUIManagerSubsystem::ShouldCreateSubsystem(UObject* Outer) const`
-- L22: `void UHodgeUIManagerSubsystem::Initialize(FSubsystemCollectionBase& Collection)`
-- L28: `void UHodgeUIManagerSubsystem::PlayerAdded(ULocalPlayer* Player)`
-- L45: `void UHodgeUIManagerSubsystem::ControllerChanged(ULocalPlayer* Player, APlayerController* Controller)`
-- L65: `void UHodgeUIManagerSubsystem::CreateRoot(ULocalPlayer* Player, TWeakObjectPtr<APlayerController> Controller)`
-- L77: `void UHodgeUIManagerSubsystem::DestroyRoot(ULocalPlayer* Player)`
-- L98: `void UHodgeUIManagerSubsystem::PlayerRemoved(ULocalPlayer* Player)`
-- L108: `void UHodgeUIManagerSubsystem::Deinitialize()`
-- L117: `UHodgePrimaryGameLayout* UHodgeUIManagerSubsystem::GetRootLayout(ULocalPlayer* Player) const`
-- L123: `bool UHodgeUIManagerSubsystem::IsGameInputAllowed(ULocalPlayer* Player) const`
-- L131: `bool UHodgeUIManagerSubsystem::AllowsGameplayInput(const APlayerController* Controller)`
-- L139: `void UHodgeUIManagerSubsystem::ClearGameplayInput(ULocalPlayer* Player)`
-- L149: `void UHodgeUIManagerSubsystem::RefreshInputState(ULocalPlayer* Player)`
-- L154: `void UHodgeUIManagerSubsystem::SuspendInput(ULocalPlayer* Player, FName Token)`
-- L167: `void UHodgeUIManagerSubsystem::ResumeInput(ULocalPlayer* Player, FName Token)`
-- L178: `UHodgeUIManagerSubsystem* UHodgeUIManagerSubsystem::GetUIManager(const UObject* WorldContextObject)`
-- L183: `UHodgePrimaryGameLayout* UHodgeUIManagerSubsystem::GetRootLayoutForController(APlayerController* Controller)`
-- L190: `UHodgeGameplayUIDataSource* UHodgeUIManagerSubsystem::GetGameplayDataForController(APlayerController* Controller)`
+- L20: `bool UHodgeUIManagerSubsystem::ShouldCreateSubsystem(UObject* Outer) const`
+- L27: `void UHodgeUIManagerSubsystem::Initialize(FSubsystemCollectionBase& Collection)`
+- L34: `void UHodgeUIManagerSubsystem::PlayerAdded(ULocalPlayer* Player)`
+- L52: `void UHodgeUIManagerSubsystem::ControllerChanged(ULocalPlayer* Player, APlayerController* Controller)`
+- L74: `void UHodgeUIManagerSubsystem::CreateRoot(ULocalPlayer* Player, TWeakObjectPtr<APlayerController> Controller)`
+- L89: `void UHodgeUIManagerSubsystem::DestroyRoot(ULocalPlayer* Player)`
+- L112: `void UHodgeUIManagerSubsystem::PlayerRemoved(ULocalPlayer* Player)`
+- L123: `void UHodgeUIManagerSubsystem::Deinitialize()`
+- L133: `UHodgePrimaryGameLayout* UHodgeUIManagerSubsystem::GetRootLayout(ULocalPlayer* Player) const`
+- L140: `bool UHodgeUIManagerSubsystem::IsGameInputAllowed(ULocalPlayer* Player) const`
+- L149: `bool UHodgeUIManagerSubsystem::AllowsGameplayInput(const APlayerController* Controller)`
+- L158: `void UHodgeUIManagerSubsystem::ClearGameplayInput(ULocalPlayer* Player)`
+- L170: `void UHodgeUIManagerSubsystem::RefreshInputState(ULocalPlayer* Player)`
+- L176: `void UHodgeUIManagerSubsystem::SuspendInput(ULocalPlayer* Player, FName Token)`
+- L190: `void UHodgeUIManagerSubsystem::ResumeInput(ULocalPlayer* Player, FName Token)`
+- L202: `UHodgeUIManagerSubsystem* UHodgeUIManagerSubsystem::GetUIManager(const UObject* WorldContextObject)`
+- L208: `UHodgePrimaryGameLayout* UHodgeUIManagerSubsystem::GetRootLayoutForController(APlayerController* Controller)`
+- L216: `UHodgeGameplayUIDataSource* UHodgeUIManagerSubsystem::GetGameplayDataForController(APlayerController* Controller)`
 
 ## HodgeUIMessaging.cpp
 
@@ -590,6 +624,18 @@ GameInstance 所属的本地玩家 UI 管理器：根布局、Controller 绑定�
 源码：[Source/Hodgepodge/Private/UI/Subsystem/HodgeUIMessaging.cpp](../../../Source/Hodgepodge/Private/UI/Subsystem/HodgeUIMessaging.cpp)
 
 **全部为注释或空白；无有效声明/实现。**
+
+## HodgeLockOnIndicatorWidget.cpp
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Private/UI/Targeting/HodgeLockOnIndicatorWidget.cpp](../../../Source/Hodgepodge/Private/UI/Targeting/HodgeLockOnIndicatorWidget.cpp)
+
+项目内直接 include（不是运行调用关系）：[UI/Targeting/HodgeLockOnIndicatorWidget.h](../../../Source/Hodgepodge/Public/UI/Targeting/HodgeLockOnIndicatorWidget.h)
+
+定义候选（多行签名仅展示首行）：
+
+- L7: `TSharedRef<SWidget> UHodgeLockOnIndicatorWidget::RebuildWidget()`
 
 ## CircumferenceMarkerWidget.cpp
 
@@ -601,11 +647,11 @@ GameInstance 所属的本地玩家 UI 管理器：根布局、Controller 绑定�
 
 定义候选（多行签名仅展示首行）：
 
-- L10: `UCircumferenceMarkerWidget::UCircumferenceMarkerWidget(const FObjectInitializer& ObjectInitializer)`
-- L17: `void UCircumferenceMarkerWidget::ReleaseSlateResources(bool bReleaseChildren)`
-- L24: `TSharedRef<SWidget> UCircumferenceMarkerWidget::RebuildWidget()`
-- L34: `void UCircumferenceMarkerWidget::SynchronizeProperties()`
-- L42: `void UCircumferenceMarkerWidget::SetRadius(float InRadius)`
+- L14: `UCircumferenceMarkerWidget::UCircumferenceMarkerWidget(const FObjectInitializer& ObjectInitializer)`
+- L22: `void UCircumferenceMarkerWidget::ReleaseSlateResources(bool bReleaseChildren)`
+- L30: `TSharedRef<SWidget> UCircumferenceMarkerWidget::RebuildWidget()`
+- L41: `void UCircumferenceMarkerWidget::SynchronizeProperties()`
+- L50: `void UCircumferenceMarkerWidget::SetRadius(float InRadius)`
 
 ## HitMarkerConfirmationWidget.cpp
 
@@ -641,13 +687,13 @@ GameInstance 所属的本地玩家 UI 管理器：根布局、Controller 绑定�
 
 定义候选（多行签名仅展示首行）：
 
-- L13: `SCircumferenceMarkerWidget::SCircumferenceMarkerWidget()`
-- L17: `void SCircumferenceMarkerWidget::Construct(const FArguments& InArgs)`
-- L26: `FSlateRenderTransform SCircumferenceMarkerWidget::GetMarkerRenderTransform(`
-- L55: `int32 SCircumferenceMarkerWidget::OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry,`
-- L92: `FVector2D SCircumferenceMarkerWidget::ComputeDesiredSize(float) const`
-- L100: `void SCircumferenceMarkerWidget::SetRadius(float NewRadius)`
-- L109: `void SCircumferenceMarkerWidget::SetMarkerList(TArray<FCircumferenceMarkerEntry>& NewMarkerList)`
+- L17: `SCircumferenceMarkerWidget::SCircumferenceMarkerWidget()`
+- L22: `void SCircumferenceMarkerWidget::Construct(const FArguments& InArgs)`
+- L32: `FSlateRenderTransform SCircumferenceMarkerWidget::GetMarkerRenderTransform(`
+- L62: `int32 SCircumferenceMarkerWidget::OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry,`
+- L100: `FVector2D SCircumferenceMarkerWidget::ComputeDesiredSize(float) const`
+- L109: `void SCircumferenceMarkerWidget::SetRadius(float NewRadius)`
+- L119: `void SCircumferenceMarkerWidget::SetMarkerList(TArray<FCircumferenceMarkerEntry>& NewMarkerList)`
 
 ## SHitMarkerConfirmationWidget.cpp
 
@@ -666,104 +712,104 @@ GameInstance 所属的本地玩家 UI 管理器：根布局、Controller 绑定�
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   3: #pragma once
-   5: #include "CommonUserWidget.h"
-   7: #include "MaterialProgressBar.generated.h"
-   9: class UImage;
-  10: class UMaterialInstanceDynamic;
-  11: class UMaterialInterface;
-  12: class UWidgetAnimation;
-  14: UCLASS(Abstract, meta = (DisableNativeTick))
-  15: class UMaterialProgressBar : public UCommonUserWidget
-  16: {
-  17: 	GENERATED_BODY()
-  19: protected:
-  20: 	virtual void SynchronizeProperties() override;
-  22: #if WITH_EDITOR
-  23: 	virtual void OnWidgetRebuilt() override;
-  24: #endif
-  26: 	virtual void OnAnimationFinished_Implementation(const UWidgetAnimation* Animation) override;
-  28: public:
-  29: 	UFUNCTION(BlueprintCallable)
-  30: 	void SetProgress(float Progress);
-  32: 	UFUNCTION(BlueprintCallable)
-  33: 	void SetStartProgress(float StartProgress);
-  35: 	UFUNCTION(BlueprintCallable)
-  36: 	void SetColorA(FLinearColor ColorA);
-  38: 	UFUNCTION(BlueprintCallable)
-  39: 	void SetColorB(FLinearColor ColorB);
+   6: #pragma once
+   8: #include "CommonUserWidget.h"
+  10: #include "MaterialProgressBar.generated.h"
+  12: class UImage;
+  13: class UMaterialInstanceDynamic;
+  14: class UMaterialInterface;
+  15: class UWidgetAnimation;
+  18: UCLASS(Abstract, meta = (DisableNativeTick))
+  19: class UMaterialProgressBar : public UCommonUserWidget
+  20: {
+  21: 	GENERATED_BODY()
+  23: protected:
+  25: 	virtual void SynchronizeProperties() override;
+  27: #if WITH_EDITOR
+  29: 	virtual void OnWidgetRebuilt() override;
+  30: #endif
+  35: 	virtual void OnAnimationFinished_Implementation(const UWidgetAnimation* Animation) override;
+  37: public:
   41: 	UFUNCTION(BlueprintCallable)
-  42: 	void SetColorBackground(FLinearColor ColorBackground);
-  44: 	UFUNCTION(BlueprintCallable)
-  45: 	void AnimateProgressFromStart(float Start, float End, float AnimSpeed = 1.0f);
+  42: 	void SetProgress(float Progress);
   47: 	UFUNCTION(BlueprintCallable)
-  48: 	void AnimateProgressFromCurrent(float End, float AnimSpeed = 1.0f);
-  50: 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnFillAnimationFinished);
-  52: 	UPROPERTY(BlueprintAssignable)
-  53: 	FOnFillAnimationFinished OnFillAnimationFinished;
-  55: private:
-  56: 	void SetProgress_Internal(float Progress);
-  57: 	void SetStartProgress_Internal(float StartProgress);
-  58: 	void SetColorA_Internal(FLinearColor ColorA);
-  59: 	void SetColorB_Internal(FLinearColor ColorB);
-  60: 	void SetColorBackground_Internal(FLinearColor ColorBackground);
-  62: 	UMaterialInstanceDynamic* GetBarDynamicMaterial() const;
-  64: 	UPROPERTY(EditAnywhere, meta = (InlineEditConditionToggle = "CachedColorA"))
-  65: 	bool bOverrideDefaultColorA = false;
-  67: 	UPROPERTY(EditAnywhere, meta = (DisplayName = "Color A", EditCondition = "bOverrideDefaultColorA"))
-  68: 	FLinearColor CachedColorA;
-  70: 	UPROPERTY(EditAnywhere, meta = (InlineEditConditionToggle = "CachedColorB"))
-  71: 	bool bOverrideDefaultColorB = false;
-  73: 	UPROPERTY(EditAnywhere, meta = (DisplayName = "Color B", EditCondition = "bOverrideDefaultColorB"))
-  74: 	FLinearColor CachedColorB;
-  76: 	UPROPERTY(EditAnywhere, meta = (InlineEditConditionToggle = "CachedColorBackground"))
-  77: 	bool bOverrideDefaultColorBackground;
-  79: 	UPROPERTY(EditAnywhere,
-  80: 		meta = (DisplayName = "Color Background", EditCondition = "bOverrideDefaultColorBackground"))
-  81: 	FLinearColor CachedColorBackground;
-  83: 	UPROPERTY(EditAnywhere, meta = (InlineEditConditionToggle = "Segments"))
-  84: 	bool bOverrideDefaultSegments = false;
-  86: 	UPROPERTY(EditAnywhere, meta = (EditCondition = "bOverrideDefaultSegments"))
-  87: 	int32 Segments;
-  89: 	UPROPERTY(EditAnywhere, meta = (InlineEditConditionToggle = "SegmentEdge"))
-  90: 	bool bOverrideDefaultSegmentEdge = false;
-  92: 	UPROPERTY(EditAnywhere, meta = (EditCondition = "bOverrideDefaultSegmentEdge"))
-  93: 	float SegmentEdge;
-  95: 	UPROPERTY(EditAnywhere, meta = (InlineEditConditionToggle = "FillEdgeSoftness"))
-  96: 	bool bOverrideDefaultFillEdgeSoftness;
-  98: 	UPROPERTY(EditAnywhere, meta = (EditCondition = "bOverrideDefaultFillEdgeSoftness"))
-  99: 	float FillEdgeSoftness;
- 101: 	UPROPERTY(EditAnywhere, meta = (InlineEditConditionToggle = "GlowEdge"))
- 102: 	bool bOverrideDefaultGlowEdge = false;
- 104: 	UPROPERTY(EditAnywhere, meta = (EditCondition = "bOverrideDefaultGlowEdge"))
- 105: 	float GlowEdge;
- 107: 	UPROPERTY(EditAnywhere, meta = (InlineEditConditionToggle = "GlowSoftness"))
- 108: 	bool bOverrideDefaultGlowSoftness = false;
- 110: 	UPROPERTY(EditAnywhere, meta = (EditCondition = "bOverrideDefaultGlowSoftness"))
- 111: 	float GlowSoftness;
- 113: 	UPROPERTY(EditAnywhere, meta = (InlineEditConditionToggle = "OutlineScale"))
- 114: 	bool bOverrideDefaultOutlineScale = false;
- 116: 	UPROPERTY(EditAnywhere, meta = (EditCondition = "bOverrideDefaultOutlineScale"))
- 117: 	float OutlineScale;
- 119: 	UPROPERTY(EditAnywhere)
- 120: 	bool bUseStroke = true;
- 122: 	UPROPERTY(EditDefaultsOnly)
- 123: 	TObjectPtr<UMaterialInterface> StrokeMaterial;
- 125: 	UPROPERTY(EditDefaultsOnly)
- 126: 	TObjectPtr<UMaterialInterface> NoStrokeMaterial;
- 128: #if WITH_EDITORONLY_DATA
- 129: 	UPROPERTY(EditAnywhere, meta = (DisplayName = "Design Time Progress"))
- 130: 	float DesignTime_Progress = 1.0f;
- 131: #endif
- 133: 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget, AllowPrivateAccess))
- 134: 	TObjectPtr<UImage> Image_Bar;
- 136: 	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidgetAnim, AllowPrivateAccess))
- 137: 	TObjectPtr<UWidgetAnimation> BoundAnim_FillBar;
- 139: 	UPROPERTY(Transient)
- 140: 	mutable TObjectPtr<UMaterialInstanceDynamic> CachedMID;
- 142: 	float CachedProgress = -1.0f;
- 143: 	float CachedStartProgress = -1.0f;
- 144: };
+  48: 	void SetStartProgress(float StartProgress);
+  53: 	UFUNCTION(BlueprintCallable)
+  54: 	void SetColorA(FLinearColor ColorA);
+  59: 	UFUNCTION(BlueprintCallable)
+  60: 	void SetColorB(FLinearColor ColorB);
+  65: 	UFUNCTION(BlueprintCallable)
+  66: 	void SetColorBackground(FLinearColor ColorBackground);
+  73: 	UFUNCTION(BlueprintCallable)
+  74: 	void AnimateProgressFromStart(float Start, float End, float AnimSpeed = 1.0f);
+  80: 	UFUNCTION(BlueprintCallable)
+  81: 	void AnimateProgressFromCurrent(float End, float AnimSpeed = 1.0f);
+  83: 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnFillAnimationFinished);
+  86: 	UPROPERTY(BlueprintAssignable)
+  87: 	FOnFillAnimationFinished OnFillAnimationFinished;
+  89: private:
+  93: 	void SetProgress_Internal(float Progress);
+  97: 	void SetStartProgress_Internal(float StartProgress);
+ 101: 	void SetColorA_Internal(FLinearColor ColorA);
+ 105: 	void SetColorB_Internal(FLinearColor ColorB);
+ 109: 	void SetColorBackground_Internal(FLinearColor ColorBackground);
+ 114: 	UMaterialInstanceDynamic* GetBarDynamicMaterial() const;
+ 117: 	UPROPERTY(EditAnywhere, meta = (InlineEditConditionToggle = "CachedColorA"))
+ 118: 	bool bOverrideDefaultColorA = false;
+ 121: 	UPROPERTY(EditAnywhere, meta = (DisplayName = "Color A", EditCondition = "bOverrideDefaultColorA"))
+ 122: 	FLinearColor CachedColorA;
+ 125: 	UPROPERTY(EditAnywhere, meta = (InlineEditConditionToggle = "CachedColorB"))
+ 126: 	bool bOverrideDefaultColorB = false;
+ 129: 	UPROPERTY(EditAnywhere, meta = (DisplayName = "Color B", EditCondition = "bOverrideDefaultColorB"))
+ 130: 	FLinearColor CachedColorB;
+ 133: 	UPROPERTY(EditAnywhere, meta = (InlineEditConditionToggle = "CachedColorBackground"))
+ 134: 	bool bOverrideDefaultColorBackground;
+ 136: 	UPROPERTY(EditAnywhere,
+ 137: 		meta = (DisplayName = "Color Background", EditCondition = "bOverrideDefaultColorBackground"))
+ 139: 	FLinearColor CachedColorBackground;
+ 142: 	UPROPERTY(EditAnywhere, meta = (InlineEditConditionToggle = "Segments"))
+ 143: 	bool bOverrideDefaultSegments = false;
+ 146: 	UPROPERTY(EditAnywhere, meta = (EditCondition = "bOverrideDefaultSegments"))
+ 147: 	int32 Segments;
+ 150: 	UPROPERTY(EditAnywhere, meta = (InlineEditConditionToggle = "SegmentEdge"))
+ 151: 	bool bOverrideDefaultSegmentEdge = false;
+ 154: 	UPROPERTY(EditAnywhere, meta = (EditCondition = "bOverrideDefaultSegmentEdge"))
+ 155: 	float SegmentEdge;
+ 158: 	UPROPERTY(EditAnywhere, meta = (InlineEditConditionToggle = "FillEdgeSoftness"))
+ 159: 	bool bOverrideDefaultFillEdgeSoftness;
+ 162: 	UPROPERTY(EditAnywhere, meta = (EditCondition = "bOverrideDefaultFillEdgeSoftness"))
+ 163: 	float FillEdgeSoftness;
+ 166: 	UPROPERTY(EditAnywhere, meta = (InlineEditConditionToggle = "GlowEdge"))
+ 167: 	bool bOverrideDefaultGlowEdge = false;
+ 170: 	UPROPERTY(EditAnywhere, meta = (EditCondition = "bOverrideDefaultGlowEdge"))
+ 171: 	float GlowEdge;
+ 174: 	UPROPERTY(EditAnywhere, meta = (InlineEditConditionToggle = "GlowSoftness"))
+ 175: 	bool bOverrideDefaultGlowSoftness = false;
+ 178: 	UPROPERTY(EditAnywhere, meta = (EditCondition = "bOverrideDefaultGlowSoftness"))
+ 179: 	float GlowSoftness;
+ 182: 	UPROPERTY(EditAnywhere, meta = (InlineEditConditionToggle = "OutlineScale"))
+ 183: 	bool bOverrideDefaultOutlineScale = false;
+ 186: 	UPROPERTY(EditAnywhere, meta = (EditCondition = "bOverrideDefaultOutlineScale"))
+ 187: 	float OutlineScale;
+ 190: 	UPROPERTY(EditAnywhere)
+ 191: 	bool bUseStroke = true;
+ 194: 	UPROPERTY(EditDefaultsOnly)
+ 195: 	TObjectPtr<UMaterialInterface> StrokeMaterial;
+ 198: 	UPROPERTY(EditDefaultsOnly)
+ 199: 	TObjectPtr<UMaterialInterface> NoStrokeMaterial;
+ 201: #if WITH_EDITORONLY_DATA
+ 202: 	UPROPERTY(EditAnywhere, meta = (DisplayName = "Design Time Progress"))
+ 203: 	float DesignTime_Progress = 1.0f;
+ 204: #endif
+ 207: 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget, AllowPrivateAccess))
+ 208: 	TObjectPtr<UImage> Image_Bar;
+ 211: 	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidgetAnim, AllowPrivateAccess))
+ 212: 	TObjectPtr<UWidgetAnimation> BoundAnim_FillBar;
+ 215: 	UPROPERTY(Transient)
+ 216: 	mutable TObjectPtr<UMaterialInstanceDynamic> CachedMID;
+ 219: 	float CachedProgress = -1.0f;
+ 221: 	float CachedStartProgress = -1.0f;
+ 222: };
 ```
 
 ## HodgeBoundActionButton.h
@@ -775,26 +821,26 @@ GameInstance 所属的本地玩家 UI 管理器：根布局、Controller 绑定�
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   3: #pragma once
-   5: #include "Input/CommonBoundActionButton.h"
-   7: #include "HodgeBoundActionButton.generated.h"
-   9: class UCommonButtonStyle;
-  10: class UObject;
-  15: UCLASS(Abstract, meta = (DisableNativeTick))
-  16: class HODGEPODGE_API UHodgeBoundActionButton : public UCommonBoundActionButton
-  17: {
-  18: 	GENERATED_BODY()
-  20: protected:
-  21: 	virtual void NativeConstruct() override;
-  23: private:
-  24: 	void HandleInputMethodChanged(ECommonInputType NewInputMethod);
-  26: 	UPROPERTY(EditAnywhere, Category = "Styles")
-  27: 	TSubclassOf<UCommonButtonStyle> KeyboardStyle;
-  29: 	UPROPERTY(EditAnywhere, Category = "Styles")
-  30: 	TSubclassOf<UCommonButtonStyle> GamepadStyle;
-  32: 	UPROPERTY(EditAnywhere, Category = "Styles")
-  33: 	TSubclassOf<UCommonButtonStyle> TouchStyle;
-  34: };
+   6: #pragma once
+   8: #include "Input/CommonBoundActionButton.h"
+  10: #include "HodgeBoundActionButton.generated.h"
+  12: class UCommonButtonStyle;
+  13: class UObject;
+  19: UCLASS(Abstract, meta = (DisableNativeTick))
+  20: class HODGEPODGE_API UHodgeBoundActionButton : public UCommonBoundActionButton
+  21: {
+  22: 	GENERATED_BODY()
+  24: protected:
+  26: 	virtual void NativeConstruct() override;
+  28: private:
+  32: 	void HandleInputMethodChanged(ECommonInputType NewInputMethod);
+  35: 	UPROPERTY(EditAnywhere, Category = "Styles")
+  36: 	TSubclassOf<UCommonButtonStyle> KeyboardStyle;
+  39: 	UPROPERTY(EditAnywhere, Category = "Styles")
+  40: 	TSubclassOf<UCommonButtonStyle> GamepadStyle;
+  43: 	UPROPERTY(EditAnywhere, Category = "Styles")
+  44: 	TSubclassOf<UCommonButtonStyle> TouchStyle;
+  45: };
 ```
 
 ## HodgeListView.h
@@ -806,28 +852,28 @@ GameInstance 所属的本地玩家 UI 管理器：根布局、Controller 绑定�
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   3: #pragma once
-   5: #include "CommonListView.h"
-   7: #include "HodgeListView.generated.h"
-   9: class UUserWidget;
-  10: class ULocalPlayer;
-  11: class UHodgeWidgetFactory;
-  13: UCLASS(meta = (DisableNativeTick))
-  14: class HODGEPODGE_API UHodgeListView : public UCommonListView
-  15: {
-  16: 	GENERATED_BODY()
-  18: public:
-  19: 	UHodgeListView(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-  21: #if WITH_EDITOR
-  22: 	virtual void ValidateCompiledDefaults(IWidgetCompilerLog& InCompileLog) const override;
-  23: #endif
-  25: protected:
-  26: 	virtual UUserWidget& OnGenerateEntryWidgetInternal(UObject* Item, TSubclassOf<UUserWidget> DesiredEntryClass,
-  27: 	                                                   const TSharedRef<STableViewBase>& OwnerTable) override;
-  30: protected:
-  31: 	UPROPERTY(EditAnywhere, Instanced, Category="Entry Creation")
-  32: 	TArray<TObjectPtr<UHodgeWidgetFactory>> FactoryRules;
-  33: };
+   6: #pragma once
+   8: #include "CommonListView.h"
+  10: #include "HodgeListView.generated.h"
+  12: class UUserWidget;
+  13: class ULocalPlayer;
+  14: class UHodgeWidgetFactory;
+  17: UCLASS(meta = (DisableNativeTick))
+  18: class HODGEPODGE_API UHodgeListView : public UCommonListView
+  19: {
+  20: 	GENERATED_BODY()
+  22: public:
+  26: 	UHodgeListView(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+  28: #if WITH_EDITOR
+  32: 	virtual void ValidateCompiledDefaults(IWidgetCompilerLog& InCompileLog) const override;
+  33: #endif
+  35: protected:
+  42: 	virtual UUserWidget& OnGenerateEntryWidgetInternal(UObject* Item, TSubclassOf<UUserWidget> DesiredEntryClass,
+  43: 	                                                   const TSharedRef<STableViewBase>& OwnerTable) override;
+  46: protected:
+  48: 	UPROPERTY(EditAnywhere, Instanced, Category="Entry Creation")
+  49: 	TArray<TObjectPtr<UHodgeWidgetFactory>> FactoryRules;
+  50: };
 ```
 
 ## HodgeTabButtonBase.h
@@ -841,28 +887,28 @@ GameInstance 所属的本地玩家 UI 管理器：根布局、Controller 绑定�
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   3: #pragma once
-   5: #include "HodgeTabListWidgetBase.h"
-   6: #include "UI/Foundation/HodgeButtonBase.h"
-   8: #include "HodgeTabButtonBase.generated.h"
-  10: class UCommonLazyImage;
-  11: class UObject;
-  12: struct FFrame;
-  13: struct FSlateBrush;
-  15: UCLASS(Abstract, Blueprintable, meta = (DisableNativeTick))
-  16: class HODGEPODGE_API UHodgeTabButtonBase : public UHodgeButtonBase, public IHodgeTabButtonInterface
-  17: {
-  18: 	GENERATED_BODY()
-  20: public:
-  21: 	void SetIconFromLazyObject(TSoftObjectPtr<UObject> LazyObject);
-  22: 	void SetIconBrush(const FSlateBrush& Brush);
-  24: protected:
-  25: 	UFUNCTION()
-  26: 	virtual void SetTabLabelInfo_Implementation(const FHodgeTabDescriptor& TabLabelInfo) override;
-  28: private:
-  29: 	UPROPERTY(meta = (BindWidgetOptional))
-  30: 	TObjectPtr<UCommonLazyImage> LazyImage_Icon;
-  31: };
+   6: #pragma once
+   8: #include "HodgeTabListWidgetBase.h"
+   9: #include "UI/Foundation/HodgeButtonBase.h"
+  11: #include "HodgeTabButtonBase.generated.h"
+  13: class UCommonLazyImage;
+  14: class UObject;
+  15: struct FFrame;
+  16: struct FSlateBrush;
+  19: UCLASS(Abstract, Blueprintable, meta = (DisableNativeTick))
+  20: class HODGEPODGE_API UHodgeTabButtonBase : public UHodgeButtonBase, public IHodgeTabButtonInterface
+  21: {
+  22: 	GENERATED_BODY()
+  24: public:
+  28: 	void SetIconFromLazyObject(TSoftObjectPtr<UObject> LazyObject);
+  32: 	void SetIconBrush(const FSlateBrush& Brush);
+  34: protected:
+  38: 	UFUNCTION()
+  39: 	virtual void SetTabLabelInfo_Implementation(const FHodgeTabDescriptor& TabLabelInfo) override;
+  41: private:
+  43: 	UPROPERTY(meta = (BindWidgetOptional))
+  44: 	TObjectPtr<UCommonLazyImage> LazyImage_Icon;
+  45: };
 ```
 
 ## HodgeTabListWidgetBase.h
@@ -874,91 +920,91 @@ GameInstance 所属的本地玩家 UI 管理器：根布局、Controller 绑定�
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   3: #pragma once
-   5: #include "CommonTabListWidgetBase.h"
-   7: #include "HodgeTabListWidgetBase.generated.h"
-   9: class UCommonButtonBase;
-  10: class UCommonUserWidget;
-  11: class UObject;
-  12: class UWidget;
-  13: struct FFrame;
-  15: USTRUCT(BlueprintType)
-  16: struct FHodgeTabDescriptor
-  17: {
-  18: 	GENERATED_BODY()
-  20: public:
-  21: 	FHodgeTabDescriptor()
-  22: 		: bHidden(false)
-  23: 		  , CreatedTabContentWidget(nullptr)
-  24: 	{
-  25: 	}
-  27: 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-  28: 	FName TabId;
-  30: 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-  31: 	FText TabText;
-  33: 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-  34: 	FSlateBrush IconBrush;
-  36: 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-  37: 	bool bHidden;
-  39: 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-  40: 	TSubclassOf<UCommonButtonBase> TabButtonType;
-  43: 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-  44: 	TSubclassOf<UCommonUserWidget> TabContentType;
-  46: 	UPROPERTY(Transient)
-  47: 	TObjectPtr<UWidget> CreatedTabContentWidget;
-  48: };
-  50: UINTERFACE(BlueprintType)
-  51: class UHodgeTabButtonInterface : public UInterface
-  52: {
-  53: 	GENERATED_BODY()
-  54: };
-  56: class IHodgeTabButtonInterface
-  57: {
-  58: 	GENERATED_BODY()
-  60: public:
-  61: 	UFUNCTION(BlueprintNativeEvent, Category = "Tab Button")
-  62: 	void SetTabLabelInfo(const FHodgeTabDescriptor& TabDescriptor);
-  63: };
-  65: UCLASS(Blueprintable, BlueprintType, Abstract, meta = (DisableNativeTick))
-  66: class HODGEPODGE_API UHodgeTabListWidgetBase : public UCommonTabListWidgetBase
-  67: {
-  68: 	GENERATED_BODY()
-  70: public:
-  71: 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Tab List")
-  72: 	bool GetPreregisteredTabInfo(const FName TabNameId, FHodgeTabDescriptor& OutTabInfo);
-  75: 	const TArray<FHodgeTabDescriptor>& GetAllPreregisteredTabInfos() { return PreregisteredTabInfoArray; }
-  78: 	UFUNCTION(BlueprintCallable, Category = "Tab List")
-  79: 	void SetTabHiddenState(FName TabNameId, bool bHidden);
-  81: 	UFUNCTION(BlueprintCallable, Category = "Tab List")
-  82: 	bool RegisterDynamicTab(const FHodgeTabDescriptor& TabDescriptor);
-  84: 	UFUNCTION(BlueprintCallable, Category = "Tab List")
-  85: 	bool IsFirstTabActive() const;
-  87: 	UFUNCTION(BlueprintCallable, Category = "Tab List")
-  88: 	bool IsLastTabActive() const;
-  90: 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Tab List")
-  91: 	bool IsTabVisible(FName TabId);
-  93: 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Tab List")
-  94: 	int32 GetVisibleTabCount();
-  97: 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTabContentCreated, FName, TabId, UCommonUserWidget*, TabWidget);
-  99: 	DECLARE_EVENT_TwoParams(UHodgeTabListWidgetBase, FOnTabContentCreatedNative, FName            ,
- 100: 	                        UCommonUserWidget*                );
- 103: 	UPROPERTY(BlueprintAssignable, Category = "Tab List")
- 104: 	FOnTabContentCreated OnTabContentCreated;
- 105: 	FOnTabContentCreatedNative OnTabContentCreatedNative;
- 107: protected:
- 109: 	virtual void NativeOnInitialized() override;
- 110: 	virtual void NativeConstruct() override;
- 111: 	virtual void NativeDestruct() override;
- 114: 	virtual void HandlePreLinkedSwitcherChanged() override;
- 115: 	virtual void HandlePostLinkedSwitcherChanged() override;
- 117: 	virtual void HandleTabCreation_Implementation(FName TabId, UCommonButtonBase* TabButton) override;
- 119: private:
- 120: 	void SetupTabs();
- 122: 	UPROPERTY(EditAnywhere, meta=(TitleProperty="TabId"))
- 123: 	TArray<FHodgeTabDescriptor> PreregisteredTabInfoArray;
- 129: 	UPROPERTY()
- 130: 	TMap<FName, FHodgeTabDescriptor> PendingTabLabelInfoMap;
- 131: };
+   6: #pragma once
+   8: #include "CommonTabListWidgetBase.h"
+  10: #include "HodgeTabListWidgetBase.generated.h"
+  12: class UCommonButtonBase;
+  13: class UCommonUserWidget;
+  14: class UObject;
+  15: class UWidget;
+  16: struct FFrame;
+  19: USTRUCT(BlueprintType)
+  20: struct FHodgeTabDescriptor
+  21: {
+  22: 	GENERATED_BODY()
+  24: public:
+  26: 	FHodgeTabDescriptor()
+  27: 		: bHidden(false)
+  28: 		  , CreatedTabContentWidget(nullptr)
+  29: 	{
+  30: 	}
+  33: 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+  34: 	FName TabId;
+  37: 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+  38: 	FText TabText;
+  41: 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+  42: 	FSlateBrush IconBrush;
+  45: 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+  46: 	bool bHidden;
+  49: 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+  50: 	TSubclassOf<UCommonButtonBase> TabButtonType;
+  54: 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+  55: 	TSubclassOf<UCommonUserWidget> TabContentType;
+  58: 	UPROPERTY(Transient)
+  59: 	TObjectPtr<UWidget> CreatedTabContentWidget;
+  60: };
+  63: UINTERFACE(BlueprintType)
+  64: class UHodgeTabButtonInterface : public UInterface
+  65: {
+  66: 	GENERATED_BODY()
+  67: };
+  70: class IHodgeTabButtonInterface
+  71: {
+  72: 	GENERATED_BODY()
+  74: public:
+  78: 	UFUNCTION(BlueprintNativeEvent, Category = "Tab Button")
+  79: 	void SetTabLabelInfo(const FHodgeTabDescriptor& TabDescriptor);
+  80: };
+  83: UCLASS(Blueprintable, BlueprintType, Abstract, meta = (DisableNativeTick))
+  84: class HODGEPODGE_API UHodgeTabListWidgetBase : public UCommonTabListWidgetBase
+  85: {
+  86: 	GENERATED_BODY()
+  88: public:
+  94: 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Tab List")
+  95: 	bool GetPreregisteredTabInfo(const FName TabNameId, FHodgeTabDescriptor& OutTabInfo);
+ 101: 	const TArray<FHodgeTabDescriptor>& GetAllPreregisteredTabInfos() { return PreregisteredTabInfoArray; }
+ 108: 	UFUNCTION(BlueprintCallable, Category = "Tab List")
+ 109: 	void SetTabHiddenState(FName TabNameId, bool bHidden);
+ 115: 	UFUNCTION(BlueprintCallable, Category = "Tab List")
+ 116: 	bool RegisterDynamicTab(const FHodgeTabDescriptor& TabDescriptor);
+ 121: 	UFUNCTION(BlueprintCallable, Category = "Tab List")
+ 122: 	bool IsFirstTabActive() const;
+ 127: 	UFUNCTION(BlueprintCallable, Category = "Tab List")
+ 128: 	bool IsLastTabActive() const;
+ 134: 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Tab List")
+ 135: 	bool IsTabVisible(FName TabId);
+ 140: 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Tab List")
+ 141: 	int32 GetVisibleTabCount();
+ 144: 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTabContentCreated, FName, TabId, UCommonUserWidget*, TabWidget);
+ 146: 	DECLARE_EVENT_TwoParams(UHodgeTabListWidgetBase, FOnTabContentCreatedNative, FName            ,
+ 147: 	                        UCommonUserWidget*                );
+ 151: 	UPROPERTY(BlueprintAssignable, Category = "Tab List")
+ 152: 	FOnTabContentCreated OnTabContentCreated;
+ 154: 	FOnTabContentCreatedNative OnTabContentCreatedNative;
+ 156: protected:
+ 159: 	virtual void NativeOnInitialized() override;
+ 161: 	virtual void NativeConstruct() override;
+ 163: 	virtual void NativeDestruct() override;
+ 167: 	virtual void HandlePreLinkedSwitcherChanged() override;
+ 169: 	virtual void HandlePostLinkedSwitcherChanged() override;
+ 175: 	virtual void HandleTabCreation_Implementation(FName TabId, UCommonButtonBase* TabButton) override;
+ 177: private:
+ 179: 	void SetupTabs();
+ 182: 	UPROPERTY(EditAnywhere, meta=(TitleProperty="TabId"))
+ 183: 	TArray<FHodgeTabDescriptor> PreregisteredTabInfoArray;
+ 190: 	UPROPERTY()
+ 191: 	TMap<FName, FHodgeTabDescriptor> PendingTabLabelInfoMap;
+ 192: };
 ```
 
 ## HodgeWidgetFactory.h
@@ -970,24 +1016,24 @@ GameInstance 所属的本地玩家 UI 管理器：根布局、Controller 绑定�
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   3: #pragma once
-   5: #include "UObject/Object.h"
-   7: #include "HodgeWidgetFactory.generated.h"
-   9: template <class TClass>
-  10: class TSubclassOf;
-  12: class UUserWidget;
-  13: struct FFrame;
-  15: UCLASS(Abstract, Blueprintable, BlueprintType, EditInlineNew)
-  16: class HODGEPODGE_API UHodgeWidgetFactory : public UObject
-  17: {
-  18: 	GENERATED_BODY()
-  20: public:
-  21: 	UHodgeWidgetFactory()
-  22: 	{
-  23: 	}
-  25: 	UFUNCTION(BlueprintNativeEvent)
-  26: 	TSubclassOf<UUserWidget> FindWidgetClassForData(const UObject* Data) const;
-  27: };
+   6: #pragma once
+   8: #include "UObject/Object.h"
+  10: #include "HodgeWidgetFactory.generated.h"
+  12: template <class TClass>
+  13: class TSubclassOf;
+  15: class UUserWidget;
+  16: struct FFrame;
+  19: UCLASS(Abstract, Blueprintable, BlueprintType, EditInlineNew)
+  20: class HODGEPODGE_API UHodgeWidgetFactory : public UObject
+  21: {
+  22: 	GENERATED_BODY()
+  24: public:
+  26: 	UHodgeWidgetFactory()
+  27: 	{
+  28: 	}
+  34: 	UFUNCTION(BlueprintNativeEvent)
+  35: 	TSubclassOf<UUserWidget> FindWidgetClassForData(const UObject* Data) const;
+  36: };
 ```
 
 ## HodgeWidgetFactory_Class.h
@@ -999,26 +1045,26 @@ GameInstance 所属的本地玩家 UI 管理器：根布局、Controller 绑定�
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   3: #pragma once
-   5: #include "HodgeWidgetFactory.h"
-   6: #include "Templates/SubclassOf.h"
-   7: #include "UObject/SoftObjectPtr.h"
-   9: #include "HodgeWidgetFactory_Class.generated.h"
-  11: class UObject;
-  12: class UUserWidget;
-  14: UCLASS()
-  15: class HODGEPODGE_API UHodgeWidgetFactory_Class : public UHodgeWidgetFactory
-  16: {
-  17: 	GENERATED_BODY()
-  19: public:
-  20: 	UHodgeWidgetFactory_Class()
-  21: 	{
-  22: 	}
-  24: 	virtual TSubclassOf<UUserWidget> FindWidgetClassForData_Implementation(const UObject* Data) const override;
-  26: protected:
-  27: 	UPROPERTY(EditAnywhere, Category = ListEntries, meta = (AllowAbstract))
-  28: 	TMap<TSoftClassPtr<UObject>, TSubclassOf<UUserWidget>> EntryWidgetForClass;
-  29: };
+   6: #pragma once
+   8: #include "HodgeWidgetFactory.h"
+   9: #include "Templates/SubclassOf.h"
+  10: #include "UObject/SoftObjectPtr.h"
+  12: #include "HodgeWidgetFactory_Class.generated.h"
+  14: class UObject;
+  15: class UUserWidget;
+  18: UCLASS()
+  19: class HODGEPODGE_API UHodgeWidgetFactory_Class : public UHodgeWidgetFactory
+  20: {
+  21: 	GENERATED_BODY()
+  23: public:
+  25: 	UHodgeWidgetFactory_Class()
+  26: 	{
+  27: 	}
+  33: 	virtual TSubclassOf<UUserWidget> FindWidgetClassForData_Implementation(const UObject* Data) const override;
+  35: protected:
+  37: 	UPROPERTY(EditAnywhere, Category = ListEntries, meta = (AllowAbstract))
+  38: 	TMap<TSoftClassPtr<UObject>, TSubclassOf<UUserWidget>> EntryWidgetForClass;
+  39: };
 ```
 
 ## HodgeGameplayUIDataSource.h
@@ -1030,76 +1076,115 @@ GameInstance 所属的本地玩家 UI 管理器：根布局、Controller 绑定�
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   1: #pragma once
-   2: #include "UObject/Object.h"
-   3: #include "GameplayTagContainer.h"
-   4: #include "HodgeGameplayUIDataSource.generated.h"
-   6: class UHodgeLocalPlayerBase;
-   7: class UHodgeHealthComponent;
-   8: class UHodgePawnExtensionComponent;
-   9: class AHodgePlayerState;
-  10: class APlayerController;
-  11: class APlayerState;
-  12: class APawn;
-  13: class AActor;
-  15: USTRUCT(BlueprintType)
-  16: struct FHodgeUIVitalsSnapshot
-  17: {
-  18: 	GENERATED_BODY()
-  19: 	UPROPERTY(BlueprintReadOnly) float Health = 0;
-  20: 	UPROPERTY(BlueprintReadOnly) float MaxHealth = 0;
-  21: 	UPROPERTY(BlueprintReadOnly) float Percent = 0;
-  22: 	UPROPERTY(BlueprintReadOnly) bool bReady = false;
-  23: 	UPROPERTY(BlueprintReadOnly) bool bDead = false;
-  24: };
-  26: USTRUCT(BlueprintType)
-  27: struct FHodgeUIAbilityDisplayState
-  28: {
-  29: 	GENERATED_BODY()
-  30: 	UPROPERTY(BlueprintReadOnly) bool bGranted = false;
-  31: 	UPROPERTY(BlueprintReadOnly) bool bInputAllowed = false;
-  32: 	UPROPERTY(BlueprintReadOnly) float CooldownRemaining = 0;
-  33: };
-  35: USTRUCT(BlueprintType)
-  36: struct FHodgeHUDAbilitySlot
-  37: {
-  38:     GENERATED_BODY()
-  40:     UPROPERTY(EditAnywhere, BlueprintReadWrite) FText Label;
-  42:     UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(Categories="InputTag")) FGameplayTag InputTag;
-  43: };
-  46: DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHodgeUIVitalsChanged, const FHodgeUIVitalsSnapshot&, Snapshot);
-  49: UCLASS(BlueprintType)
-  50: class HODGEPODGE_API UHodgeGameplayUIDataSource : public UObject
-  51: {
-  52: 	GENERATED_BODY()
-  53: public:
-  54: 	void Initialize(UHodgeLocalPlayerBase* Player, APlayerController* InController);
-  55: 	void Shutdown();
-  56: 	UPROPERTY(BlueprintAssignable, Category="Hodge|UI") FHodgeUIVitalsChanged OnVitalsChanged;
-  57: 	UFUNCTION(BlueprintPure, Category="Hodge|UI") FHodgeUIVitalsSnapshot GetVitals() const { return Vitals; }
-  58: 	UFUNCTION(BlueprintPure, Category="Hodge|UI") FHodgeUIAbilityDisplayState GetAbilityDisplayState(FGameplayTag InputTag) const;
-  59: 	UFUNCTION(BlueprintCallable, Category="Hodge|UI") bool SubmitInput(FGameplayTag InputTag);
-  60: private:
-  61: 	UPROPERTY(Transient) FHodgeUIVitalsSnapshot Vitals;
-  62: 	TWeakObjectPtr<UHodgeLocalPlayerBase> LocalPlayer;
-  63: 	TWeakObjectPtr<APlayerController> Controller;
-  64: 	TWeakObjectPtr<APawn> Avatar;
-  65: 	TWeakObjectPtr<UHodgeHealthComponent> Health;
-  66: 	TWeakObjectPtr<UHodgePawnExtensionComponent> Extension;
-  67: 	TWeakObjectPtr<AHodgePlayerState> PlayerState;
-  68: 	FDelegateHandle PawnDelegate;
-  69: 	FDelegateHandle PlayerStateDelegate;
-  70: 	FDelegateHandle ReadyDelegate;
-  71: 	bool bBound = false;
-  72: 	void PawnChanged(UHodgeLocalPlayerBase* Player, APawn* Pawn);
-  73: 	void StateChanged(UHodgeLocalPlayerBase* Player, APlayerState* State);
-  74: 	void UnbindPawn();
-  75: 	void UnbindState();
-  76: 	void Refresh();
-  77: 	bool CanUseGameplay() const;
-  78: 	UFUNCTION() void AttributeChanged(UHodgeHealthComponent* Component, float Old, float New, AActor* Instigator);
-  79: 	UFUNCTION() void DeathChanged(AActor* Actor);
-  80: };
+   4: #pragma once
+   5: #include "UObject/Object.h"
+   6: #include "GameplayTagContainer.h"
+   7: #include "HodgeGameplayUIDataSource.generated.h"
+   9: class UHodgeLocalPlayerBase;
+  10: class UHodgeHealthComponent;
+  11: class UHodgePawnExtensionComponent;
+  12: class AHodgePlayerState;
+  13: class APlayerController;
+  14: class APlayerState;
+  15: class APawn;
+  16: class AActor;
+  17: class UHodgeAbilitySystemComponent;
+  18: struct FOnAttributeChangeData;
+  21: USTRUCT(BlueprintType)
+  22: struct HODGEPODGE_API FHodgeHavocResourceSnapshot
+  23: {
+  24: 	GENERATED_BODY()
+  26: 	UPROPERTY(BlueprintReadOnly) float CurrentDarkFlow=0.f;
+  27: 	UPROPERTY(BlueprintReadOnly) float MaxDarkFlow=0.f;
+  28: 	UPROPERTY(BlueprintReadOnly) float Percent=0.f;
+  30: 	UPROPERTY(BlueprintReadOnly) bool bReady=false;
+  31: 	UPROPERTY(BlueprintReadOnly) bool bDarkSurge=false;
+  32: };
+  33: DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHodgeUIHavocChanged,const FHodgeHavocResourceSnapshot&,Snapshot);
+  36: USTRUCT(BlueprintType)
+  37: struct FHodgeUIResonanceSnapshot
+  38: {
+  39: 	GENERATED_BODY()
+  41: 	UPROPERTY(BlueprintReadOnly) float Energy = 0.f;
+  43: 	UPROPERTY(BlueprintReadOnly) float Capacity = 0.f;
+  45: 	UPROPERTY(BlueprintReadOnly) float Percent = 0.f;
+  47: 	UPROPERTY(BlueprintReadOnly) bool bReady = false;
+  48: };
+  49: DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHodgeUIResonanceChanged, const FHodgeUIResonanceSnapshot&, Snapshot);
+  52: USTRUCT(BlueprintType)
+  53: struct FHodgeUIVitalsSnapshot
+  54: {
+  55: 	GENERATED_BODY()
+  57: 	UPROPERTY(BlueprintReadOnly) float Health = 0;
+  59: 	UPROPERTY(BlueprintReadOnly) float MaxHealth = 0;
+  61: 	UPROPERTY(BlueprintReadOnly) float Percent = 0;
+  63: 	UPROPERTY(BlueprintReadOnly) int32 CharacterLevel = 0;
+  65: 	UPROPERTY(BlueprintReadOnly) bool bReady = false;
+  67: 	UPROPERTY(BlueprintReadOnly) bool bDead = false;
+  68: };
+  71: USTRUCT(BlueprintType)
+  72: struct FHodgeUIAbilityDisplayState
+  73: {
+  74: 	GENERATED_BODY()
+  76: 	UPROPERTY(BlueprintReadOnly) bool bGranted = false;
+  78: 	UPROPERTY(BlueprintReadOnly) bool bInputAllowed = false;
+  80: 	UPROPERTY(BlueprintReadOnly) float CooldownRemaining = 0;
+  82: 	UPROPERTY(BlueprintReadOnly) float CooldownDuration = 0;
+  83: };
+  86: USTRUCT(BlueprintType)
+  87: struct FHodgeHUDAbilitySlot
+  88: {
+  89:     GENERATED_BODY()
+  91:     UPROPERTY(EditAnywhere, BlueprintReadWrite) FText Label;
+  93:     UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(Categories="InputTag")) FGameplayTag InputTag;
+  94: };
+  97: DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHodgeUIVitalsChanged, const FHodgeUIVitalsSnapshot&, Snapshot);
+ 100: UCLASS(BlueprintType)
+ 101: class HODGEPODGE_API UHodgeGameplayUIDataSource : public UObject
+ 102: {
+ 103: 	GENERATED_BODY()
+ 104: public:
+ 109: 	void Initialize(UHodgeLocalPlayerBase* Player, APlayerController* InController);
+ 111: 	void Shutdown();
+ 113: 	UPROPERTY(BlueprintAssignable, Category="Hodge|UI") FHodgeUIVitalsChanged OnVitalsChanged;
+ 117: 	UFUNCTION(BlueprintPure, Category="Hodge|UI") FHodgeUIVitalsSnapshot GetVitals() const { return Vitals; }
+ 119: 	UFUNCTION(BlueprintPure, Category="Hodge|UI") FHodgeUIResonanceSnapshot GetResonance() const { return Resonance; }
+ 121: 	UFUNCTION(BlueprintPure, Category="Hodge|UI") FHodgeHavocResourceSnapshot GetHavocSnapshot() const { return Havoc; }
+ 122: 	UPROPERTY(BlueprintAssignable, Category="Hodge|UI") FHodgeUIHavocChanged OnHavocChanged;
+ 124: 	UPROPERTY(BlueprintAssignable, Category="Hodge|UI") FHodgeUIResonanceChanged OnResonanceChanged;
+ 129: 	UFUNCTION(BlueprintPure, Category="Hodge|UI") FHodgeUIAbilityDisplayState GetAbilityDisplayState(FGameplayTag InputTag) const;
+ 134: 	UFUNCTION(BlueprintCallable, Category="Hodge|UI") bool SubmitInput(FGameplayTag InputTag);
+ 135: private:
+ 137: 	UPROPERTY(Transient) FHodgeHavocResourceSnapshot Havoc;
+ 138: 	FDelegateHandle DarkFlowDelegate;
+ 139: 	FDelegateHandle MaxDarkFlowDelegate;
+ 140: 	FDelegateHandle DarkSurgeDelegate;
+ 142: 	void HavocModeChanged(FGameplayTag Tag,int32 Count);
+ 144: 	UPROPERTY(Transient) FHodgeUIVitalsSnapshot Vitals;
+ 146: 	UPROPERTY(Transient) FHodgeUIResonanceSnapshot Resonance;
+ 147: 	TWeakObjectPtr<UHodgeAbilitySystemComponent> ResonanceASC;
+ 148: 	FDelegateHandle EnergyDelegate;
+ 149: 	FDelegateHandle CapacityDelegate;
+ 151: 	void ResonanceAttributeChanged(const FOnAttributeChangeData& Data);
+ 153: 	TWeakObjectPtr<UHodgeLocalPlayerBase> LocalPlayer;
+ 155: 	TWeakObjectPtr<APlayerController> Controller;
+ 157: 	TWeakObjectPtr<APawn> Avatar;
+ 159: 	TWeakObjectPtr<UHodgeHealthComponent> Health;
+ 161: 	TWeakObjectPtr<UHodgePawnExtensionComponent> Extension;
+ 163: 	TWeakObjectPtr<AHodgePlayerState> PlayerState;
+ 165: 	FDelegateHandle PawnDelegate;
+ 167: 	FDelegateHandle PlayerStateDelegate;
+ 169: 	FDelegateHandle ReadyDelegate;
+ 171: 	bool bBound = false;
+ 176: 	void PawnChanged(UHodgeLocalPlayerBase* Player, APawn* Pawn);
+ 181: 	void StateChanged(UHodgeLocalPlayerBase* Player, APlayerState* State);
+ 183: 	void UnbindPawn();
+ 185: 	void UnbindState();
+ 187: 	void Refresh();
+ 191: 	bool CanUseGameplay() const;
+ 198: 	UFUNCTION() void AttributeChanged(UHodgeHealthComponent* Component, float Old, float New, AActor* Instigator);
+ 202: 	UFUNCTION() void DeathChanged(AActor* Actor);
+ 203: };
 ```
 
 ## UIExtensionPointWidget.h
@@ -1111,50 +1196,50 @@ GameInstance 所属的本地玩家 UI 管理器：根布局、Controller 绑定�
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   3: #pragma once
-   7: #include "Components/DynamicEntryBoxBase.h"
-  11: #include "UIExtensionSystem.h"
-  13: #include "UIExtensionPointWidget.generated.h"
-  17: class IWidgetCompilerLog;
-  21: class UHodgeLocalPlayerBase;
-  25: class APlayerState;
-  36: UCLASS()
-  37: class HODGEPODGE_API UUIExtensionPointWidget : public UDynamicEntryBoxBase
-  38: {
-  39: 	GENERATED_BODY()
-  41: public:
-  43: 	void SetExtensionPointTag(FGameplayTag Tag);
-  49: 	DECLARE_DYNAMIC_DELEGATE_RetVal_OneParam(TSubclassOf<UUserWidget>, FOnGetWidgetClassForData, UObject*, DataItem);
-  53: 	DECLARE_DYNAMIC_DELEGATE_TwoParams(FOnConfigureWidgetForData, UUserWidget*, Widget, UObject*, DataItem);
-  56: 	UUIExtensionPointWidget(const FObjectInitializer& ObjectInitializer);
-  62: 	virtual void ReleaseSlateResources(bool bReleaseChildren) override;
-  66: 	virtual TSharedRef<SWidget> RebuildWidget() override;
-  68: #if WITH_EDITOR
-  70: 	virtual void ValidateCompiledDefaults(IWidgetCompilerLog& CompileLog) const override;
-  71: #endif
-  75: private:
-  80: 	void ResetExtensionPoint();
-  84: 	void RegisterExtensionPoint();
-  90: 	void RegisterExtensionPointForPlayerState(UHodgeLocalPlayerBase* LocalPlayer, APlayerState* PlayerState);
- 101: 	void OnAddOrRemoveExtension(EUIExtensionAction Action, const FUIExtensionRequest& Request);
- 103: protected:
- 115: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI Extension")
- 116: 	FGameplayTag ExtensionPointTag;
- 127: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI Extension")
- 128: 	EUIExtensionPointMatch ExtensionPointTagMatch = EUIExtensionPointMatch::ExactMatch;
- 134: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI Extension")
- 135: 	TArray<TObjectPtr<UClass>> DataClasses;
- 144: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="UI Extension", meta=( IsBindableEvent="True" ))
- 145: 	FOnGetWidgetClassForData GetWidgetClassForData;
- 151: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="UI Extension", meta=( IsBindableEvent="True" ))
- 152: 	FOnConfigureWidgetForData ConfigureWidgetForData;
- 160: 	TArray<FUIExtensionPointHandle> ExtensionPointHandles;
- 172: 	UPROPERTY(Transient)
- 173: 	TMap<FUIExtensionHandle, TObjectPtr<UUserWidget>> ExtensionMapping;
- 174: 	TWeakObjectPtr<UHodgeLocalPlayerBase> BoundLocalPlayer;
- 175: 	FDelegateHandle PlayerStateDelegate;
- 176: 	FUIExtensionPointHandle PlayerStatePoint;
- 177: };
+   6: #pragma once
+  10: #include "Components/DynamicEntryBoxBase.h"
+  14: #include "UIExtensionSystem.h"
+  16: #include "UIExtensionPointWidget.generated.h"
+  20: class IWidgetCompilerLog;
+  24: class UHodgeLocalPlayerBase;
+  28: class APlayerState;
+  39: UCLASS()
+  40: class HODGEPODGE_API UUIExtensionPointWidget : public UDynamicEntryBoxBase
+  41: {
+  42: 	GENERATED_BODY()
+  44: public:
+  49: 	void SetExtensionPointTag(FGameplayTag Tag);
+  55: 	DECLARE_DYNAMIC_DELEGATE_RetVal_OneParam(TSubclassOf<UUserWidget>, FOnGetWidgetClassForData, UObject*, DataItem);
+  59: 	DECLARE_DYNAMIC_DELEGATE_TwoParams(FOnConfigureWidgetForData, UUserWidget*, Widget, UObject*, DataItem);
+  65: 	UUIExtensionPointWidget(const FObjectInitializer& ObjectInitializer);
+  74: 	virtual void ReleaseSlateResources(bool bReleaseChildren) override;
+  81: 	virtual TSharedRef<SWidget> RebuildWidget() override;
+  83: #if WITH_EDITOR
+  88: 	virtual void ValidateCompiledDefaults(IWidgetCompilerLog& CompileLog) const override;
+  89: #endif
+  93: private:
+  99: 	void ResetExtensionPoint();
+ 104: 	void RegisterExtensionPoint();
+ 114: 	void RegisterExtensionPointForPlayerState(UHodgeLocalPlayerBase* LocalPlayer, APlayerState* PlayerState);
+ 129: 	void OnAddOrRemoveExtension(EUIExtensionAction Action, const FUIExtensionRequest& Request);
+ 131: protected:
+ 143: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI Extension")
+ 144: 	FGameplayTag ExtensionPointTag;
+ 155: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI Extension")
+ 156: 	EUIExtensionPointMatch ExtensionPointTagMatch = EUIExtensionPointMatch::ExactMatch;
+ 162: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI Extension")
+ 163: 	TArray<TObjectPtr<UClass>> DataClasses;
+ 172: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="UI Extension", meta=( IsBindableEvent="True" ))
+ 173: 	FOnGetWidgetClassForData GetWidgetClassForData;
+ 179: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="UI Extension", meta=( IsBindableEvent="True" ))
+ 180: 	FOnConfigureWidgetForData ConfigureWidgetForData;
+ 188: 	TArray<FUIExtensionPointHandle> ExtensionPointHandles;
+ 200: 	UPROPERTY(Transient)
+ 201: 	TMap<FUIExtensionHandle, TObjectPtr<UUserWidget>> ExtensionMapping;
+ 203: 	TWeakObjectPtr<UHodgeLocalPlayerBase> BoundLocalPlayer;
+ 205: 	FDelegateHandle PlayerStateDelegate;
+ 207: 	FUIExtensionPointHandle PlayerStatePoint;
+ 208: };
 ```
 
 ## UIExtensionSystem.h
@@ -1166,225 +1251,225 @@ GameInstance 所属的本地玩家 UI 管理器：根布局、Controller 绑定�
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   3: #pragma once
-   7: #include "GameplayTagContainer.h"
-  11: #include "Kismet/BlueprintFunctionLibrary.h"
-  15: #include "Subsystems/WorldSubsystem.h"
-  17: #include "UIExtensionSystem.generated.h"
-  20: class UUIExtensionSubsystem;
-  23: struct FUIExtensionRequest;
-  25: template <typename T>
-  26: class TSubclassOf;
-  29: class FSubsystemCollectionBase;
-  33: class UUserWidget;
-  35: struct FFrame;
-  38: DECLARE_LOG_CATEGORY_EXTERN(LogUIExtension, Log, All);
-  42: UENUM(BlueprintType)
-  43: enum class EUIExtensionPointMatch : uint8
-  44: {
-  51: 	ExactMatch,
-  59: 	PartialMatch
-  60: };
-  64: UENUM(BlueprintType)
-  65: enum class EUIExtensionAction : uint8
-  66: {
-  68: 	Added,
-  71: 	Removed
-  72: };
-  77: DECLARE_DELEGATE_TwoParams(FExtendExtensionPointDelegate, EUIExtensionAction Action,
-  78:                            const FUIExtensionRequest& Request);
-  89: struct FUIExtension : TSharedFromThis<FUIExtension>
-  90: {
-  91: public:
-  96: 	FGameplayTag ExtensionPointTag;
- 100: 	int32 Priority = INDEX_NONE;
- 105: 	TWeakObjectPtr<UObject> ContextObject;
- 115: 	TObjectPtr<UObject> Data = nullptr;
- 116: };
- 125: struct FUIExtensionPoint : TSharedFromThis<FUIExtensionPoint>
- 126: {
- 127: public:
- 129: 	FGameplayTag ExtensionPointTag;
- 133: 	TWeakObjectPtr<UObject> ContextObject;
- 136: 	EUIExtensionPointMatch ExtensionPointTagMatchType = EUIExtensionPointMatch::ExactMatch;
- 140: 	TArray<TObjectPtr<UClass>> AllowedDataClasses;
- 143: 	FExtendExtensionPointDelegate Callback;
- 156: 	bool DoesExtensionPassContract(const FUIExtension* Extension) const;
- 157: };
- 167: USTRUCT(BlueprintType)
- 168: struct HODGEPODGE_API FUIExtensionPointHandle
- 169: {
- 170: 	GENERATED_BODY()
- 172: public:
- 174: 	FUIExtensionPointHandle()
- 175: 	{
- 176: 	}
- 179: 	void Unregister();
- 182: 	bool IsValid() const { return DataPtr.IsValid(); }
- 185: 	bool operator==(const FUIExtensionPointHandle& Other) const { return DataPtr == Other.DataPtr; }
- 188: 	bool operator!=(const FUIExtensionPointHandle& Other) const { return !operator==(Other); }
- 192: 	friend uint32 GetTypeHash(const FUIExtensionPointHandle& Handle)
- 193: 	{
- 194: 		return PointerHash(Handle.DataPtr.Get());
- 195: 	}
- 197: private:
- 200: 	TWeakObjectPtr<UUIExtensionSubsystem> ExtensionSource;
- 203: 	TSharedPtr<FUIExtensionPoint> DataPtr;
- 206: 	friend UUIExtensionSubsystem;
- 209: 	FUIExtensionPointHandle(UUIExtensionSubsystem* InExtensionSource,
- 210: 	                        const TSharedPtr<FUIExtensionPoint>& InDataPtr) : ExtensionSource(InExtensionSource),
- 211: 	                                                                          DataPtr(InDataPtr)
- 212: 	{
- 213: 	}
- 214: };
- 217: template <>
- 218: struct TStructOpsTypeTraits<FUIExtensionPointHandle> : public TStructOpsTypeTraitsBase2<FUIExtensionPointHandle>
- 219: {
- 220: 	enum
- 221: 	{
- 224: 		WithCopy = true,
- 227: 		WithIdenticalViaEquality = true,
- 228: 	};
- 229: };
- 238: USTRUCT(BlueprintType)
- 239: struct HODGEPODGE_API FUIExtensionHandle
- 240: {
- 241: 	GENERATED_BODY()
- 243: public:
- 245: 	FUIExtensionHandle()
- 246: 	{
- 247: 	}
- 250: 	void Unregister();
- 253: 	bool IsValid() const { return DataPtr.IsValid(); }
- 256: 	bool operator==(const FUIExtensionHandle& Other) const { return DataPtr == Other.DataPtr; }
- 259: 	bool operator!=(const FUIExtensionHandle& Other) const { return !operator==(Other); }
- 262: 	friend FORCEINLINE uint32 GetTypeHash(FUIExtensionHandle Handle)
- 263: 	{
- 264: 		return PointerHash(Handle.DataPtr.Get());
- 265: 	}
- 267: private:
- 269: 	TWeakObjectPtr<UUIExtensionSubsystem> ExtensionSource;
- 272: 	TSharedPtr<FUIExtension> DataPtr;
- 275: 	friend UUIExtensionSubsystem;
- 278: 	FUIExtensionHandle(UUIExtensionSubsystem* InExtensionSource,
- 279: 	                   const TSharedPtr<FUIExtension>& InDataPtr) : ExtensionSource(InExtensionSource),
- 280: 	                                                                DataPtr(InDataPtr)
- 281: 	{
- 282: 	}
- 283: };
- 286: template <>
- 287: struct TStructOpsTypeTraits<FUIExtensionHandle> : public TStructOpsTypeTraitsBase2<FUIExtensionHandle>
- 288: {
- 289: 	enum
- 290: 	{
- 293: 		WithCopy = true,
- 296: 		WithIdenticalViaEquality = true,
- 297: 	};
- 298: };
- 307: USTRUCT(BlueprintType)
- 308: struct FUIExtensionRequest
- 309: {
- 310: 	GENERATED_BODY()
- 312: public:
- 315: 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
- 316: 	FUIExtensionHandle ExtensionHandle;
- 319: 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
- 320: 	FGameplayTag ExtensionPointTag;
- 323: 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
- 324: 	int32 Priority = INDEX_NONE;
- 327: 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
- 328: 	TObjectPtr<UObject> Data = nullptr;
- 331: 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
- 332: 	TObjectPtr<UObject> ContextObject = nullptr;
+   6: #pragma once
+  10: #include "GameplayTagContainer.h"
+  14: #include "Kismet/BlueprintFunctionLibrary.h"
+  18: #include "Subsystems/WorldSubsystem.h"
+  20: #include "UIExtensionSystem.generated.h"
+  23: class UUIExtensionSubsystem;
+  26: struct FUIExtensionRequest;
+  28: template <typename T>
+  29: class TSubclassOf;
+  32: class FSubsystemCollectionBase;
+  36: class UUserWidget;
+  38: struct FFrame;
+  41: DECLARE_LOG_CATEGORY_EXTERN(LogUIExtension, Log, All);
+  45: UENUM(BlueprintType)
+  46: enum class EUIExtensionPointMatch : uint8
+  47: {
+  54: 	ExactMatch,
+  62: 	PartialMatch
+  63: };
+  67: UENUM(BlueprintType)
+  68: enum class EUIExtensionAction : uint8
+  69: {
+  71: 	Added,
+  74: 	Removed
+  75: };
+  80: DECLARE_DELEGATE_TwoParams(FExtendExtensionPointDelegate, EUIExtensionAction Action,
+  81:                            const FUIExtensionRequest& Request);
+  92: struct FUIExtension : TSharedFromThis<FUIExtension>
+  93: {
+  94: public:
+  99: 	FGameplayTag ExtensionPointTag;
+ 103: 	int32 Priority = INDEX_NONE;
+ 108: 	TWeakObjectPtr<UObject> ContextObject;
+ 118: 	TObjectPtr<UObject> Data = nullptr;
+ 119: };
+ 128: struct FUIExtensionPoint : TSharedFromThis<FUIExtensionPoint>
+ 129: {
+ 130: public:
+ 132: 	FGameplayTag ExtensionPointTag;
+ 136: 	TWeakObjectPtr<UObject> ContextObject;
+ 139: 	EUIExtensionPointMatch ExtensionPointTagMatchType = EUIExtensionPointMatch::ExactMatch;
+ 143: 	TArray<TObjectPtr<UClass>> AllowedDataClasses;
+ 146: 	FExtendExtensionPointDelegate Callback;
+ 163: 	bool DoesExtensionPassContract(const FUIExtension* Extension) const;
+ 164: };
+ 174: USTRUCT(BlueprintType)
+ 175: struct HODGEPODGE_API FUIExtensionPointHandle
+ 176: {
+ 177: 	GENERATED_BODY()
+ 179: public:
+ 182: 	FUIExtensionPointHandle()
+ 183: 	{
+ 184: 	}
+ 188: 	void Unregister();
+ 194: 	bool IsValid() const { return DataPtr.IsValid(); }
+ 201: 	bool operator==(const FUIExtensionPointHandle& Other) const { return DataPtr == Other.DataPtr; }
+ 208: 	bool operator!=(const FUIExtensionPointHandle& Other) const { return !operator==(Other); }
+ 216: 	friend uint32 GetTypeHash(const FUIExtensionPointHandle& Handle)
+ 217: 	{
+ 218: 		return PointerHash(Handle.DataPtr.Get());
+ 219: 	}
+ 221: private:
+ 224: 	TWeakObjectPtr<UUIExtensionSubsystem> ExtensionSource;
+ 227: 	TSharedPtr<FUIExtensionPoint> DataPtr;
+ 230: 	friend UUIExtensionSubsystem;
+ 237: 	FUIExtensionPointHandle(UUIExtensionSubsystem* InExtensionSource,
+ 238: 	                        const TSharedPtr<FUIExtensionPoint>& InDataPtr) : ExtensionSource(InExtensionSource),
+ 239: 	                                                                          DataPtr(InDataPtr)
+ 240: 	{
+ 241: 	}
+ 242: };
+ 245: template <>
+ 247: struct TStructOpsTypeTraits<FUIExtensionPointHandle> : public TStructOpsTypeTraitsBase2<FUIExtensionPointHandle>
+ 248: {
+ 249: 	enum
+ 250: 	{
+ 253: 		WithCopy = true,
+ 256: 		WithIdenticalViaEquality = true,
+ 257: 	};
+ 258: };
+ 267: USTRUCT(BlueprintType)
+ 268: struct HODGEPODGE_API FUIExtensionHandle
+ 269: {
+ 270: 	GENERATED_BODY()
+ 272: public:
+ 275: 	FUIExtensionHandle()
+ 276: 	{
+ 277: 	}
+ 281: 	void Unregister();
+ 287: 	bool IsValid() const { return DataPtr.IsValid(); }
+ 294: 	bool operator==(const FUIExtensionHandle& Other) const { return DataPtr == Other.DataPtr; }
+ 301: 	bool operator!=(const FUIExtensionHandle& Other) const { return !operator==(Other); }
+ 308: 	friend FORCEINLINE uint32 GetTypeHash(FUIExtensionHandle Handle)
+ 309: 	{
+ 310: 		return PointerHash(Handle.DataPtr.Get());
+ 311: 	}
+ 313: private:
+ 315: 	TWeakObjectPtr<UUIExtensionSubsystem> ExtensionSource;
+ 318: 	TSharedPtr<FUIExtension> DataPtr;
+ 321: 	friend UUIExtensionSubsystem;
+ 328: 	FUIExtensionHandle(UUIExtensionSubsystem* InExtensionSource,
+ 329: 	                   const TSharedPtr<FUIExtension>& InDataPtr) : ExtensionSource(InExtensionSource),
+ 330: 	                                                                DataPtr(InDataPtr)
+ 331: 	{
+ 332: 	}
  333: };
- 337: DECLARE_DYNAMIC_DELEGATE_TwoParams(FExtendExtensionPointDynamicDelegate, EUIExtensionAction, Action,
- 338:                                    const FUIExtensionRequest&, ExtensionRequest);
- 355: UCLASS()
- 356: class HODGEPODGE_API UUIExtensionSubsystem : public UWorldSubsystem
- 357: {
- 358: 	GENERATED_BODY()
- 360: public:
- 374: 	FUIExtensionPointHandle RegisterExtensionPoint(const FGameplayTag& ExtensionPointTag,
- 375: 	                                               EUIExtensionPointMatch ExtensionPointTagMatchType,
- 376: 	                                               const TArray<UClass*>& AllowedDataClasses,
- 377: 	                                               FExtendExtensionPointDelegate ExtensionCallback);
- 381: 	FUIExtensionPointHandle RegisterExtensionPointForContext(const FGameplayTag& ExtensionPointTag,
- 382: 	                                                         UObject* ContextObject,
- 383: 	                                                         EUIExtensionPointMatch ExtensionPointTagMatchType,
- 384: 	                                                         const TArray<UClass*>& AllowedDataClasses,
- 385: 	                                                         FExtendExtensionPointDelegate ExtensionCallback);
- 388: 	FUIExtensionHandle RegisterExtensionAsWidget(const FGameplayTag& ExtensionPointTag,
- 389: 	                                             TSubclassOf<UUserWidget> WidgetClass, int32 Priority);
- 392: 	FUIExtensionHandle RegisterExtensionAsWidgetForContext(const FGameplayTag& ExtensionPointTag,
- 393: 	                                                       UObject* ContextObject, TSubclassOf<UUserWidget> WidgetClass,
- 394: 	                                                       int32 Priority);
- 398: 	FUIExtensionHandle RegisterExtensionAsData(const FGameplayTag& ExtensionPointTag, UObject* ContextObject,
- 399: 	                                           UObject* Data, int32 Priority);
- 402: 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "UI Extension")
- 403: 	void UnregisterExtension(const FUIExtensionHandle& ExtensionHandle);
- 406: 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "UI Extension")
- 407: 	void UnregisterExtensionPoint(const FUIExtensionPointHandle& ExtensionPointHandle);
- 410: 	static void AddReferencedObjects(UObject* InThis, FReferenceCollector& Collector);
- 412: protected:
- 414: 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
- 417: 	virtual void Deinitialize() override;
- 422: 	void NotifyExtensionPointOfExtensions(TSharedPtr<FUIExtensionPoint>& ExtensionPoint);
- 427: 	void NotifyExtensionPointsOfExtension(EUIExtensionAction Action, TSharedPtr<FUIExtension>& Extension);
- 430: 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category="UI Extension",
- 431: 		meta = (DisplayName = "Register Extension Point"))
- 432: 	FUIExtensionPointHandle K2_RegisterExtensionPoint(FGameplayTag ExtensionPointTag,
- 433: 	                                                  EUIExtensionPointMatch ExtensionPointTagMatchType,
- 434: 	                                                  const TArray<UClass*>& AllowedDataClasses,
- 435: 	                                                  FExtendExtensionPointDynamicDelegate ExtensionCallback);
- 438: 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "UI Extension",
- 439: 		meta = (DisplayName = "Register Extension (Widget)"))
- 440: 	FUIExtensionHandle K2_RegisterExtensionAsWidget(FGameplayTag ExtensionPointTag,
- 441: 	                                                TSubclassOf<UUserWidget> WidgetClass, int32 Priority = -1);
- 452: 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "UI Extension",
- 453: 		meta = (DisplayName = "Register Extension (Widget For Context)"))
- 454: 	FUIExtensionHandle K2_RegisterExtensionAsWidgetForContext(FGameplayTag ExtensionPointTag,
- 455: 	                                                          TSubclassOf<UUserWidget> WidgetClass,
- 456: 	                                                          UObject* ContextObject, int32 Priority = -1);
- 463: 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category="UI Extension",
- 464: 		meta = (DisplayName = "Register Extension (Data)"))
- 465: 	FUIExtensionHandle K2_RegisterExtensionAsData(FGameplayTag ExtensionPointTag, UObject* Data, int32 Priority = -1);
- 471: 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category="UI Extension",
- 472: 		meta = (DisplayName = "Register Extension (Data For Context)"))
- 473: 	FUIExtensionHandle K2_RegisterExtensionAsDataForContext(FGameplayTag ExtensionPointTag, UObject* ContextObject,
- 474: 	                                                        UObject* Data, int32 Priority = -1);
- 477: 	FUIExtensionRequest CreateExtensionRequest(const TSharedPtr<FUIExtension>& Extension);
- 479: private:
- 481: 	typedef TArray<TSharedPtr<FUIExtensionPoint>> FExtensionPointList;
- 484: 	TMap<FGameplayTag, FExtensionPointList> ExtensionPointMap;
- 487: 	typedef TArray<TSharedPtr<FUIExtension>> FExtensionList;
- 490: 	TMap<FGameplayTag, FExtensionList> ExtensionMap;
- 491: };
- 496: UCLASS()
- 497: class HODGEPODGE_API UUIExtensionHandleFunctions : public UBlueprintFunctionLibrary
- 498: {
- 499: 	GENERATED_BODY()
- 501: public:
- 502: 	UUIExtensionHandleFunctions()
- 503: 	{
- 504: 	}
- 507: 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "UI Extension")
- 508: 	static void Unregister(UPARAM(ref) FUIExtensionHandle& Handle);
- 511: 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "UI Extension")
- 512: 	static bool IsValid(UPARAM(ref) FUIExtensionHandle& Handle);
- 513: };
- 517: UCLASS()
- 518: class HODGEPODGE_API UUIExtensionPointHandleFunctions : public UBlueprintFunctionLibrary
- 519: {
- 520: 	GENERATED_BODY()
- 522: public:
- 523: 	UUIExtensionPointHandleFunctions()
- 524: 	{
- 525: 	}
- 528: 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "UI Extension")
- 529: 	static void Unregister(UPARAM(ref) FUIExtensionPointHandle& Handle);
- 532: 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "UI Extension")
- 533: 	static bool IsValid(UPARAM(ref) FUIExtensionPointHandle& Handle);
- 534: };
+ 336: template <>
+ 338: struct TStructOpsTypeTraits<FUIExtensionHandle> : public TStructOpsTypeTraitsBase2<FUIExtensionHandle>
+ 339: {
+ 340: 	enum
+ 341: 	{
+ 344: 		WithCopy = true,
+ 347: 		WithIdenticalViaEquality = true,
+ 348: 	};
+ 349: };
+ 358: USTRUCT(BlueprintType)
+ 359: struct FUIExtensionRequest
+ 360: {
+ 361: 	GENERATED_BODY()
+ 363: public:
+ 366: 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+ 367: 	FUIExtensionHandle ExtensionHandle;
+ 370: 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+ 371: 	FGameplayTag ExtensionPointTag;
+ 374: 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+ 375: 	int32 Priority = INDEX_NONE;
+ 378: 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+ 379: 	TObjectPtr<UObject> Data = nullptr;
+ 382: 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+ 383: 	TObjectPtr<UObject> ContextObject = nullptr;
+ 384: };
+ 388: DECLARE_DYNAMIC_DELEGATE_TwoParams(FExtendExtensionPointDynamicDelegate, EUIExtensionAction, Action,
+ 389:                                    const FUIExtensionRequest&, ExtensionRequest);
+ 406: UCLASS()
+ 407: class HODGEPODGE_API UUIExtensionSubsystem : public UWorldSubsystem
+ 408: {
+ 409: 	GENERATED_BODY()
+ 411: public:
+ 432: 	FUIExtensionPointHandle RegisterExtensionPoint(const FGameplayTag& ExtensionPointTag,
+ 433: 	                                               EUIExtensionPointMatch ExtensionPointTagMatchType,
+ 434: 	                                               const TArray<UClass*>& AllowedDataClasses,
+ 435: 	                                               FExtendExtensionPointDelegate ExtensionCallback);
+ 447: 	FUIExtensionPointHandle RegisterExtensionPointForContext(const FGameplayTag& ExtensionPointTag,
+ 448: 	                                                         UObject* ContextObject,
+ 449: 	                                                         EUIExtensionPointMatch ExtensionPointTagMatchType,
+ 450: 	                                                         const TArray<UClass*>& AllowedDataClasses,
+ 451: 	                                                         FExtendExtensionPointDelegate ExtensionCallback);
+ 460: 	FUIExtensionHandle RegisterExtensionAsWidget(const FGameplayTag& ExtensionPointTag,
+ 461: 	                                             TSubclassOf<UUserWidget> WidgetClass, int32 Priority);
+ 471: 	FUIExtensionHandle RegisterExtensionAsWidgetForContext(const FGameplayTag& ExtensionPointTag,
+ 472: 	                                                       UObject* ContextObject, TSubclassOf<UUserWidget> WidgetClass,
+ 473: 	                                                       int32 Priority);
+ 484: 	FUIExtensionHandle RegisterExtensionAsData(const FGameplayTag& ExtensionPointTag, UObject* ContextObject,
+ 485: 	                                           UObject* Data, int32 Priority);
+ 491: 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "UI Extension")
+ 492: 	void UnregisterExtension(const FUIExtensionHandle& ExtensionHandle);
+ 498: 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "UI Extension")
+ 499: 	void UnregisterExtensionPoint(const FUIExtensionPointHandle& ExtensionPointHandle);
+ 506: 	static void AddReferencedObjects(UObject* InThis, FReferenceCollector& Collector);
+ 508: protected:
+ 513: 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+ 517: 	virtual void Deinitialize() override;
+ 525: 	void NotifyExtensionPointOfExtensions(TSharedPtr<FUIExtensionPoint>& ExtensionPoint);
+ 534: 	void NotifyExtensionPointsOfExtension(EUIExtensionAction Action, TSharedPtr<FUIExtension>& Extension);
+ 537: 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category="UI Extension",
+ 538: 		meta = (DisplayName = "Register Extension Point"))
+ 546: 	FUIExtensionPointHandle K2_RegisterExtensionPoint(FGameplayTag ExtensionPointTag,
+ 547: 	                                                  EUIExtensionPointMatch ExtensionPointTagMatchType,
+ 548: 	                                                  const TArray<UClass*>& AllowedDataClasses,
+ 549: 	                                                  FExtendExtensionPointDynamicDelegate ExtensionCallback);
+ 552: 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "UI Extension",
+ 553: 		meta = (DisplayName = "Register Extension (Widget)"))
+ 560: 	FUIExtensionHandle K2_RegisterExtensionAsWidget(FGameplayTag ExtensionPointTag,
+ 561: 	                                                TSubclassOf<UUserWidget> WidgetClass, int32 Priority = -1);
+ 572: 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "UI Extension",
+ 573: 		meta = (DisplayName = "Register Extension (Widget For Context)"))
+ 581: 	FUIExtensionHandle K2_RegisterExtensionAsWidgetForContext(FGameplayTag ExtensionPointTag,
+ 582: 	                                                          TSubclassOf<UUserWidget> WidgetClass,
+ 583: 	                                                          UObject* ContextObject, int32 Priority = -1);
+ 590: 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category="UI Extension",
+ 591: 		meta = (DisplayName = "Register Extension (Data)"))
+ 598: 	FUIExtensionHandle K2_RegisterExtensionAsData(FGameplayTag ExtensionPointTag, UObject* Data, int32 Priority = -1);
+ 604: 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category="UI Extension",
+ 605: 		meta = (DisplayName = "Register Extension (Data For Context)"))
+ 613: 	FUIExtensionHandle K2_RegisterExtensionAsDataForContext(FGameplayTag ExtensionPointTag, UObject* ContextObject,
+ 614: 	                                                        UObject* Data, int32 Priority = -1);
+ 621: 	FUIExtensionRequest CreateExtensionRequest(const TSharedPtr<FUIExtension>& Extension);
+ 623: private:
+ 625: 	typedef TArray<TSharedPtr<FUIExtensionPoint>> FExtensionPointList;
+ 628: 	TMap<FGameplayTag, FExtensionPointList> ExtensionPointMap;
+ 631: 	typedef TArray<TSharedPtr<FUIExtension>> FExtensionList;
+ 634: 	TMap<FGameplayTag, FExtensionList> ExtensionMap;
+ 635: };
+ 640: UCLASS()
+ 641: class HODGEPODGE_API UUIExtensionHandleFunctions : public UBlueprintFunctionLibrary
+ 642: {
+ 643: 	GENERATED_BODY()
+ 645: public:
+ 647: 	UUIExtensionHandleFunctions()
+ 648: 	{
+ 649: 	}
+ 655: 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "UI Extension")
+ 656: 	static void Unregister(UPARAM(ref) FUIExtensionHandle& Handle);
+ 663: 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "UI Extension")
+ 664: 	static bool IsValid(UPARAM(ref) FUIExtensionHandle& Handle);
+ 665: };
+ 669: UCLASS()
+ 670: class HODGEPODGE_API UUIExtensionPointHandleFunctions : public UBlueprintFunctionLibrary
+ 671: {
+ 672: 	GENERATED_BODY()
+ 674: public:
+ 676: 	UUIExtensionPointHandleFunctions()
+ 677: 	{
+ 678: 	}
+ 684: 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "UI Extension")
+ 685: 	static void Unregister(UPARAM(ref) FUIExtensionPointHandle& Handle);
+ 692: 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "UI Extension")
+ 693: 	static bool IsValid(UPARAM(ref) FUIExtensionPointHandle& Handle);
+ 694: };
 ```
 
 ## HodgeActionWidget.h
@@ -1396,22 +1481,22 @@ GameInstance 所属的本地玩家 UI 管理器：根布局、Controller 绑定�
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   3: #pragma once
-   5: #include "CommonActionWidget.h"
-   6: #include "HodgeActionWidget.generated.h"
-   8: class UEnhancedInputLocalPlayerSubsystem;
-   9: class UInputAction;
-  12: UCLASS(BlueprintType, Blueprintable)
-  13: class UHodgeActionWidget : public UCommonActionWidget
-  14: {
-  15: 	GENERATED_BODY()
-  17: public:
-  20: 	virtual FSlateBrush GetIcon() const override;
-  24: 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-  25: 	const TObjectPtr<UInputAction> AssociatedInputAction;
-  27: private:
-  29: 	UEnhancedInputLocalPlayerSubsystem* GetEnhancedInputSubsystem() const;
-  31: };
+   6: #pragma once
+   8: #include "CommonActionWidget.h"
+   9: #include "HodgeActionWidget.generated.h"
+  11: class UEnhancedInputLocalPlayerSubsystem;
+  12: class UInputAction;
+  16: UCLASS(BlueprintType, Blueprintable)
+  17: class UHodgeActionWidget : public UCommonActionWidget
+  18: {
+  19: 	GENERATED_BODY()
+  21: public:
+  27: 	virtual FSlateBrush GetIcon() const override;
+  32: 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+  33: 	const TObjectPtr<UInputAction> AssociatedInputAction;
+  35: private:
+  40: 	UEnhancedInputLocalPlayerSubsystem* GetEnhancedInputSubsystem() const;
+  42: };
 ```
 
 ## HodgeButtonBase.h
@@ -1423,33 +1508,33 @@ GameInstance 所属的本地玩家 UI 管理器：根布局、Controller 绑定�
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   3: #pragma once
-   5: #include "CommonButtonBase.h"
-   7: #include "HodgeButtonBase.generated.h"
-   9: class UObject;
-  10: struct FFrame;
-  12: UCLASS(Abstract, BlueprintType, Blueprintable)
-  13: class UHodgeButtonBase : public UCommonButtonBase
-  14: {
-  15: 	GENERATED_BODY()
-  17: public:
-  18: 	UFUNCTION(BlueprintCallable)
-  19: 	void SetButtonText(const FText& InText);
-  21: protected:
-  23: 	virtual void NativePreConstruct() override;
-  27: 	virtual void UpdateInputActionWidget() override;
-  28: 	virtual void OnInputMethodChanged(ECommonInputType CurrentInputType) override;
-  31: 	void RefreshButtonText();
-  33: 	UFUNCTION(BlueprintImplementableEvent)
-  34: 	void UpdateButtonText(const FText& InText);
-  36: 	UFUNCTION(BlueprintImplementableEvent)
-  37: 	void UpdateButtonStyle();
-  39: private:
-  40: 	UPROPERTY(EditAnywhere, Category="Button", meta=(InlineEditConditionToggle))
-  41: 	uint8 bOverride_ButtonText : 1;
-  43: 	UPROPERTY(EditAnywhere, Category="Button", meta=( editcondition="bOverride_ButtonText" ))
-  44: 	FText ButtonText;
-  45: };
+   6: #pragma once
+   8: #include "CommonButtonBase.h"
+  10: #include "HodgeButtonBase.generated.h"
+  12: class UObject;
+  13: struct FFrame;
+  16: UCLASS(Abstract, BlueprintType, Blueprintable)
+  17: class UHodgeButtonBase : public UCommonButtonBase
+  18: {
+  19: 	GENERATED_BODY()
+  21: public:
+  25: 	UFUNCTION(BlueprintCallable)
+  26: 	void SetButtonText(const FText& InText);
+  28: protected:
+  31: 	virtual void NativePreConstruct() override;
+  36: 	virtual void UpdateInputActionWidget() override;
+  40: 	virtual void OnInputMethodChanged(ECommonInputType CurrentInputType) override;
+  44: 	void RefreshButtonText();
+  49: 	UFUNCTION(BlueprintImplementableEvent)
+  50: 	void UpdateButtonText(const FText& InText);
+  53: 	UFUNCTION(BlueprintImplementableEvent)
+  54: 	void UpdateButtonStyle();
+  56: private:
+  58: 	UPROPERTY(EditAnywhere, Category="Button", meta=(InlineEditConditionToggle))
+  59: 	uint8 bOverride_ButtonText : 1;
+  62: 	UPROPERTY(EditAnywhere, Category="Button", meta=( editcondition="bOverride_ButtonText" ))
+  63: 	FText ButtonText;
+  64: };
 ```
 
 ## HodgeConfirmationScreen.h
@@ -1469,32 +1554,32 @@ GameInstance 所属的本地玩家 UI 管理器：根布局、Controller 绑定�
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   3: #pragma once
-   5: #include "CommonActivatableWidget.h"
-   6: #include "GameplayTagContainer.h"
-   8: #include "HodgeControllerDisconnectedScreen.generated.h"
-  10: class UHorizontalBox;
-  11: class UObject;
-  12: class UCommonButtonBase;
-  13: struct FPlatformUserSelectionCompleteParams;
-  19: UCLASS(Abstract, BlueprintType, Blueprintable)
-  20: class UHodgeControllerDisconnectedScreen : public UCommonActivatableWidget
-  21: {
-  22: 	GENERATED_BODY()
-  23: public:
-  24: 	UHodgeControllerDisconnectedScreen(const FObjectInitializer& ObjectInitializer);
-  26: protected:
-  27: 	virtual void NativeOnActivated() override;
-  29: 	virtual void HandleChangeUserClicked();
-  34: 	virtual void HandleChangeUserCompleted(const FPlatformUserSelectionCompleteParams& Params);
-  40: 	virtual bool ShouldDisplayChangeUserButton() const;
-  47: 	UPROPERTY(EditDefaultsOnly)
-  48: 	FGameplayTagContainer PlatformSupportsUserChangeTags;
-  57: 	UPROPERTY(meta = (BindWidget))
-  58: 	TObjectPtr<UHorizontalBox> HBox_SwitchUser;
-  65: 	UPROPERTY(meta = (BindWidget))
-  66: 	TObjectPtr<UCommonButtonBase> Button_ChangeUser;
-  67: };
+   6: #pragma once
+   8: #include "CommonActivatableWidget.h"
+   9: #include "GameplayTagContainer.h"
+  11: #include "HodgeControllerDisconnectedScreen.generated.h"
+  13: class UHorizontalBox;
+  14: class UObject;
+  15: class UCommonButtonBase;
+  16: struct FPlatformUserSelectionCompleteParams;
+  23: UCLASS(Abstract, BlueprintType, Blueprintable)
+  24: class UHodgeControllerDisconnectedScreen : public UCommonActivatableWidget
+  25: {
+  26: 	GENERATED_BODY()
+  27: public:
+  31: 	UHodgeControllerDisconnectedScreen(const FObjectInitializer& ObjectInitializer);
+  33: protected:
+  35: 	virtual void NativeOnActivated() override;
+  38: 	virtual void HandleChangeUserClicked();
+  46: 	virtual void HandleChangeUserCompleted(const FPlatformUserSelectionCompleteParams& Params);
+  55: 	virtual bool ShouldDisplayChangeUserButton() const;
+  63: 	UPROPERTY(EditDefaultsOnly)
+  64: 	FGameplayTagContainer PlatformSupportsUserChangeTags;
+  74: 	UPROPERTY(meta = (BindWidget))
+  75: 	TObjectPtr<UHorizontalBox> HBox_SwitchUser;
+  83: 	UPROPERTY(meta = (BindWidget))
+  84: 	TObjectPtr<UCommonButtonBase> Button_ChangeUser;
+  85: };
 ```
 
 ## HodgeLoadingScreenSubsystem.h
@@ -1506,31 +1591,31 @@ GameInstance 所属的本地玩家 UI 管理器：根布局、Controller 绑定�
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   3: #pragma once
-   5: #include "Subsystems/GameInstanceSubsystem.h"
-   6: #include "Templates/SubclassOf.h"
-   8: #include "UObject/WeakObjectPtr.h"
-   9: #include "HodgeLoadingScreenSubsystem.generated.h"
-  11: class UObject;
-  12: class UUserWidget;
-  13: struct FFrame;
-  15: DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FLoadingScreenWidgetChangedDelegate, TSubclassOf<UUserWidget>, NewWidgetClass);
-  21: UCLASS()
-  22: class HODGEPODGE_API UHodgeLoadingScreenSubsystem : public UGameInstanceSubsystem
-  23: {
-  24: 	GENERATED_BODY()
-  26: public:
-  27: 	UHodgeLoadingScreenSubsystem();
-  30: 	UFUNCTION(BlueprintCallable)
-  31: 	void SetLoadingScreenContentWidget(TSubclassOf<UUserWidget> NewWidgetClass);
-  34: 	UFUNCTION(BlueprintPure)
-  35: 	TSubclassOf<UUserWidget> GetLoadingScreenContentWidget() const;
-  37: private:
-  38: 	UPROPERTY(BlueprintAssignable, meta=(AllowPrivateAccess))
-  39: 	FLoadingScreenWidgetChangedDelegate OnLoadingScreenWidgetChanged;
-  41: 	UPROPERTY()
-  42: 	TSubclassOf<UUserWidget> LoadingScreenWidgetClass;
-  43: };
+   6: #pragma once
+   8: #include "Subsystems/GameInstanceSubsystem.h"
+   9: #include "Templates/SubclassOf.h"
+  11: #include "UObject/WeakObjectPtr.h"
+  12: #include "HodgeLoadingScreenSubsystem.generated.h"
+  14: class UObject;
+  15: class UUserWidget;
+  16: struct FFrame;
+  18: DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FLoadingScreenWidgetChangedDelegate, TSubclassOf<UUserWidget>, NewWidgetClass);
+  25: UCLASS()
+  26: class HODGEPODGE_API UHodgeLoadingScreenSubsystem : public UGameInstanceSubsystem
+  27: {
+  28: 	GENERATED_BODY()
+  30: public:
+  32: 	UHodgeLoadingScreenSubsystem();
+  38: 	UFUNCTION(BlueprintCallable)
+  39: 	void SetLoadingScreenContentWidget(TSubclassOf<UUserWidget> NewWidgetClass);
+  45: 	UFUNCTION(BlueprintPure)
+  46: 	TSubclassOf<UUserWidget> GetLoadingScreenContentWidget() const;
+  48: private:
+  50: 	UPROPERTY(BlueprintAssignable, meta=(AllowPrivateAccess))
+  51: 	FLoadingScreenWidgetChangedDelegate OnLoadingScreenWidgetChanged;
+  54: 	UPROPERTY()
+  55: 	TSubclassOf<UUserWidget> LoadingScreenWidgetClass;
+  56: };
 ```
 
 ## HodgePrimaryGameLayout.h
@@ -1542,54 +1627,54 @@ GameInstance 所属的本地玩家 UI 管理器：根布局、Controller 绑定�
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   1: #pragma once
-   2: #include "CommonUserWidget.h"
-   3: #include "GameplayTagContainer.h"
-   4: #include "HodgePrimaryGameLayout.generated.h"
-   6: class UCommonActivatableWidget;
-   7: class UCommonActivatableWidgetContainerBase;
-   8: struct FStreamableHandle;
-  11: UCLASS(Blueprintable)
-  12: class HODGEPODGE_API UHodgePrimaryGameLayout : public UCommonUserWidget
-  13: {
-  14: 	GENERATED_BODY()
-  16: public:
-  17: 	UFUNCTION(BlueprintCallable, Category="Hodge|UI")
-  18: 	void RegisterLayer(FGameplayTag Tag, UCommonActivatableWidgetContainerBase* Container);
-  19: 	UFUNCTION(BlueprintPure, Category="Hodge|UI")
-  20: 	UCommonActivatableWidgetContainerBase* GetLayer(FGameplayTag Tag) const;
-  21: 	UFUNCTION(BlueprintCallable, Category="Hodge|UI")
-  22: 	UCommonActivatableWidget* Push(FGameplayTag Tag, TSubclassOf<UCommonActivatableWidget> WidgetClass);
-  23: 	UFUNCTION(BlueprintCallable, Category="Hodge|UI")
-  24: 	void Pop(UCommonActivatableWidget* Widget);
-  25: 	UFUNCTION(BlueprintPure, Category="Hodge|UI")
-  26: 	bool HasBlockingPage() const;
-  27: 	FGuid PushAsync(FGameplayTag Tag, TSoftClassPtr<UCommonActivatableWidget> WidgetClass,
-  28: 	                TFunction<void(UCommonActivatableWidget*)> Completed, bool bSuspendInput = true);
-  29: 	void CancelPush(FGuid Request);
-  30: 	void ReleaseLayout();
-  31: 	int32 GetPendingRequestCount() const { return Requests.Num(); }
-  33: protected:
-  34:     UPROPERTY(meta=(BindWidget)) TObjectPtr<UCommonActivatableWidgetContainerBase> GameLayer;
-  35:     UPROPERTY(meta=(BindWidget)) TObjectPtr<UCommonActivatableWidgetContainerBase> GameMenuLayer;
-  36:     UPROPERTY(meta=(BindWidget)) TObjectPtr<UCommonActivatableWidgetContainerBase> MenuLayer;
-  37:     UPROPERTY(meta=(BindWidget)) TObjectPtr<UCommonActivatableWidgetContainerBase> ModalLayer;
-  38: 	virtual void NativeOnInitialized() override;
-  39: 	virtual void NativeDestruct() override;
-  41: private:
-  42: 	UPROPERTY(Transient)
-  43: 	TMap<FGameplayTag, TObjectPtr<UCommonActivatableWidgetContainerBase>> Layers;
-  45: 	struct FRequest
-  46: 	{
-  47: 		TSharedPtr<FStreamableHandle> Load;
-  48: 		TWeakObjectPtr<APlayerController> Controller;
-  49: 		TFunction<void(UCommonActivatableWidget*)> Completed;
-  50: 		FName InputToken;
-  51: 	};
-  53: 	TMap<FGuid, FRequest> Requests;
-  54: 	bool bReleased = false;
-  55: 	void FinishPush(FGuid Request, FGameplayTag Tag, TSoftClassPtr<UCommonActivatableWidget> WidgetClass);
-  56: };
+   4: #pragma once
+   5: #include "CommonUserWidget.h"
+   6: #include "GameplayTagContainer.h"
+   7: #include "HodgePrimaryGameLayout.generated.h"
+   9: class UCommonActivatableWidget;
+  10: class UCommonActivatableWidgetContainerBase;
+  11: struct FStreamableHandle;
+  14: UCLASS(Blueprintable)
+  15: class HODGEPODGE_API UHodgePrimaryGameLayout : public UCommonUserWidget
+  16: {
+  17: 	GENERATED_BODY()
+  19: public:
+  24: 	UFUNCTION(BlueprintCallable, Category="Hodge|UI")
+  25: 	void RegisterLayer(FGameplayTag Tag, UCommonActivatableWidgetContainerBase* Container);
+  30: 	UFUNCTION(BlueprintPure, Category="Hodge|UI")
+  31: 	UCommonActivatableWidgetContainerBase* GetLayer(FGameplayTag Tag) const;
+  37: 	UFUNCTION(BlueprintCallable, Category="Hodge|UI")
+  38: 	UCommonActivatableWidget* Push(FGameplayTag Tag, TSubclassOf<UCommonActivatableWidget> WidgetClass);
+  42: 	UFUNCTION(BlueprintCallable, Category="Hodge|UI")
+  43: 	void Pop(UCommonActivatableWidget* Widget);
+  47: 	UFUNCTION(BlueprintPure, Category="Hodge|UI")
+  48: 	bool HasBlockingPage() const;
+  56: 	FGuid PushAsync(FGameplayTag Tag, TSoftClassPtr<UCommonActivatableWidget> WidgetClass,
+  57: 	                TFunction<void(UCommonActivatableWidget*)> Completed, bool bSuspendInput = true);
+  61: 	void CancelPush(FGuid Request);
+  63: 	void ReleaseLayout();
+  67: 	int32 GetPendingRequestCount() const { return Requests.Num(); }
+  69: protected:
+  71:     UPROPERTY(meta=(BindWidget)) TObjectPtr<UCommonActivatableWidgetContainerBase> GameLayer;
+  73:     UPROPERTY(meta=(BindWidget)) TObjectPtr<UCommonActivatableWidgetContainerBase> GameMenuLayer;
+  75:     UPROPERTY(meta=(BindWidget)) TObjectPtr<UCommonActivatableWidgetContainerBase> MenuLayer;
+  77:     UPROPERTY(meta=(BindWidget)) TObjectPtr<UCommonActivatableWidgetContainerBase> ModalLayer;
+  79: 	virtual void NativeOnInitialized() override;
+  81: 	virtual void NativeDestruct() override;
+  83: private:
+  85: 	UPROPERTY(Transient)
+  86: 	TMap<FGameplayTag, TObjectPtr<UCommonActivatableWidgetContainerBase>> Layers;
+  89: 	struct FRequest
+  90: 	{
+  92: 		TSharedPtr<FStreamableHandle> Load;
+  94: 		TWeakObjectPtr<APlayerController> Controller;
+  96: 		TFunction<void(UCommonActivatableWidget*)> Completed;
+  98: 		FName InputToken;
+  99: 	};
+ 102: 	TMap<FGuid, FRequest> Requests;
+ 104: 	bool bReleased = false;
+ 110: 	void FinishPush(FGuid Request, FGameplayTag Tag, TSoftClassPtr<UCommonActivatableWidget> WidgetClass);
+ 111: };
 ```
 
 ## ApplyFrontendPerfSettingsAction.h
@@ -1601,22 +1686,22 @@ GameInstance 所属的本地玩家 UI 管理器：根布局、Controller 绑定�
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   3: #pragma once
-   5: #include "GameFeatureAction.h"
-   7: #include "ApplyFrontendPerfSettingsAction.generated.h"
-   9: class UObject;
-  10: struct FGameFeatureActivatingContext;
-  11: struct FGameFeatureDeactivatingContext;
-  19: UCLASS(MinimalAPI, meta = (DisplayName = "Use Frontend Perf Settings"))
-  20: class UApplyFrontendPerfSettingsAction final : public UGameFeatureAction
-  21: {
-  22: 	GENERATED_BODY()
-  24: public:
-  26: 	virtual void OnGameFeatureActivating(FGameFeatureActivatingContext& Context) override;
-  27: 	virtual void OnGameFeatureDeactivating(FGameFeatureDeactivatingContext& Context) override;
-  30: private:
-  31: 	static int32 ApplicationCounter;
-  32: };
+   6: #pragma once
+   8: #include "GameFeatureAction.h"
+  10: #include "ApplyFrontendPerfSettingsAction.generated.h"
+  12: class UObject;
+  13: struct FGameFeatureActivatingContext;
+  14: struct FGameFeatureDeactivatingContext;
+  23: UCLASS(MinimalAPI, meta = (DisplayName = "Use Frontend Perf Settings"))
+  24: class UApplyFrontendPerfSettingsAction final : public UGameFeatureAction
+  25: {
+  26: 	GENERATED_BODY()
+  28: public:
+  33: 	virtual void OnGameFeatureActivating(FGameFeatureActivatingContext& Context) override;
+  37: 	virtual void OnGameFeatureDeactivating(FGameFeatureDeactivatingContext& Context) override;
+  40: private:
+  42: 	static int32 ApplicationCounter;
+  43: };
 ```
 
 ## HodgeFrontendStateComponent.h
@@ -1636,19 +1721,93 @@ GameInstance 所属的本地玩家 UI 管理器：根布局、Controller 绑定�
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   3: #pragma once
-   5: #include "Engine/DataAsset.h"
-   7: #include "HodgeLobbyBackground.generated.h"
-   9: class UObject;
-  10: class UWorld;
-  15: UCLASS(config=EditorPerProjectUserSettings, MinimalAPI)
-  16: class UHodgeLobbyBackground : public UPrimaryDataAsset
-  17: {
-  18: 	GENERATED_BODY()
-  20: public:
-  22: 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-  23: 	TSoftObjectPtr<UWorld> BackgroundLevel;
-  24: };
+   6: #pragma once
+   8: #include "Engine/DataAsset.h"
+  10: #include "HodgeLobbyBackground.generated.h"
+  12: class UObject;
+  13: class UWorld;
+  19: UCLASS(config=EditorPerProjectUserSettings, MinimalAPI)
+  20: class UHodgeLobbyBackground : public UPrimaryDataAsset
+  21: {
+  22: 	GENERATED_BODY()
+  24: public:
+  27: 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+  28: 	TSoftObjectPtr<UWorld> BackgroundLevel;
+  29: };
+```
+
+## HodgeAbilityIconWidget.h
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Public/UI/HodgeAbilityIconWidget.h](../../../Source/Hodgepodge/Public/UI/HodgeAbilityIconWidget.h)
+
+有效头文件声明摘录（未展开宏，未求值预处理分支）：
+
+```cpp
+   2: #pragma once
+   3: #include "Blueprint/UserWidget.h"
+   4: #include "GameplayTagContainer.h"
+   5: #include "HodgeAbilityIconWidget.generated.h"
+   6: class UImage;
+   7: class UTextBlock;
+   8: class UButton;
+   9: class UTexture2D;
+  10: class UMaterialInterface;
+  11: class UMaterialInstanceDynamic;
+  12: class UHodgeGameplayUIDataSource;
+  13: struct FHodgeUIAbilityDisplayState;
+  14: struct FHodgeUIResonanceSnapshot;
+  17: USTRUCT(BlueprintType)
+  18: struct HODGEPODGE_API FHodgeAbilityIconVisualState
+  19: {
+  20: 	GENERATED_BODY()
+  22: 	UPROPERTY(BlueprintReadOnly) float CooldownRemaining=0.f;
+  24: 	UPROPERTY(BlueprintReadOnly) float CooldownReadyPercent=1.f;
+  26: 	UPROPERTY(BlueprintReadOnly) float EnergyPercent=0.f;
+  28: 	UPROPERTY(BlueprintReadOnly) bool bCoolingDown=false;
+  30: 	UPROPERTY(BlueprintReadOnly) bool bCanActivate=false;
+  32: 	UPROPERTY(BlueprintReadOnly) bool bReady=false;
+  33: };
+  36: UCLASS(Blueprintable)
+  37: class HODGEPODGE_API UHodgeAbilityIconWidget : public UUserWidget
+  38: {
+  39: 	GENERATED_BODY()
+  40: public:
+  42: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Ability") FGameplayTag InputTag;
+  44: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Ability") bool bShowEnergyRing=false;
+  46: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Style") TObjectPtr<UTexture2D> IconTexture;
+  47: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Style") TObjectPtr<UMaterialInterface> IconMaterial;
+  48: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Style") TObjectPtr<UMaterialInterface> EnergyRingMaterial;
+  50: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Style") FText Caption;
+  51: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Style") FText KeyLabel;
+  53: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Style") FLinearColor FillColor=FLinearColor(1.f,.85f,.35f,1.f);
+  54: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Style") int32 FontSize=22;
+  56: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Style", meta=(ClampMin="32",ClampMax="256")) float IconSize=72.f;
+  57: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Style", meta=(ClampMin="0",ClampMax="1")) float CooldownDarkness=.25f;
+  59: 	UPROPERTY(EditAnywhere, Category="Preview", meta=(ClampMin="0",ClampMax="1")) float PreviewEnergyPercent=.65f;
+  60: 	UPROPERTY(EditAnywhere, Category="Preview", meta=(ClampMin="0",ClampMax="1")) float PreviewCooldownReadyPercent=1.f;
+  62: 	UFUNCTION(BlueprintPure, Category="Hodge|UI") FHodgeAbilityIconVisualState GetVisualState() const { return VisualState; }
+  64: 	static FHodgeAbilityIconVisualState EvaluateState(const FHodgeUIAbilityDisplayState& Ability,const FHodgeUIResonanceSnapshot& Resource,bool bEnergy);
+  65: protected:
+  67: 	virtual void NativeConstruct() override;
+  69: 	virtual void SynchronizeProperties() override;
+  71: 	virtual void NativeTick(const FGeometry& Geometry,float DeltaTime) override;
+  73: 	virtual void NativeDestruct() override;
+  74: private:
+  76: 	UPROPERTY(meta=(BindWidgetOptional)) TObjectPtr<UImage> SkillIcon;
+  77: 	UPROPERTY(meta=(BindWidgetOptional)) TObjectPtr<UImage> EnergyRing;
+  78: 	UPROPERTY(meta=(BindWidgetOptional)) TObjectPtr<UTextBlock> CooldownText;
+  79: 	UPROPERTY(meta=(BindWidgetOptional)) TObjectPtr<UTextBlock> KeyText;
+  80: 	UPROPERTY(meta=(BindWidgetOptional)) TObjectPtr<UButton> AbilityButton;
+  81: 	UPROPERTY(Transient) TObjectPtr<UMaterialInstanceDynamic> IconMID;
+  82: 	UPROPERTY(Transient) TObjectPtr<UMaterialInstanceDynamic> RingMID;
+  83: 	UPROPERTY(Transient) TObjectPtr<UHodgeGameplayUIDataSource> Data;
+  84: 	FHodgeAbilityIconVisualState VisualState;
+  86: 	void ApplyStyle();
+  88: 	void RefreshDisplay();
+  90: 	UFUNCTION() void RequestAbility();
+  91: };
 ```
 
 ## HodgeActivatableWidget.h
@@ -1660,36 +1819,36 @@ GameInstance 所属的本地玩家 UI 管理器：根布局、Controller 绑定�
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   3: #pragma once
-   7: #include "CommonActivatableWidget.h"
-   9: #include "HodgeActivatableWidget.generated.h"
-  13: struct FUIInputConfig;
-  17: UENUM(BlueprintType)
-  18: enum class EHodgeWidgetInputMode : uint8
-  19: {
-  21: 	Default,
-  24: 	GameAndMenu,
-  27: 	Game,
-  30: 	Menu
-  31: };
-  37: UCLASS(Abstract, Blueprintable)
-  38: class HODGEPODGE_API UHodgeActivatableWidget : public UCommonActivatableWidget
-  39: {
-  40: 	GENERATED_BODY()
-  42: public:
-  44: 	UHodgeActivatableWidget(const FObjectInitializer& ObjectInitializer);
-  46: public:
-  51: 	virtual TOptional<FUIInputConfig> GetDesiredInputConfig() const override;
-  55: #if WITH_EDITOR
-  58: 	virtual void ValidateCompiledWidgetTree(const UWidgetTree& BlueprintWidgetTree,
-  59: 	                                        class IWidgetCompilerLog& CompileLog) const override;
-  60: #endif
-  62: protected:
-  67: 	UPROPERTY(EditDefaultsOnly, Category = Input)
-  68: 	EHodgeWidgetInputMode InputConfig = EHodgeWidgetInputMode::Default;
-  73: 	UPROPERTY(EditDefaultsOnly, Category = Input)
-  74: 	EMouseCaptureMode GameMouseCaptureMode = EMouseCaptureMode::CapturePermanently;
-  75: };
+   6: #pragma once
+  10: #include "CommonActivatableWidget.h"
+  12: #include "HodgeActivatableWidget.generated.h"
+  16: struct FUIInputConfig;
+  20: UENUM(BlueprintType)
+  21: enum class EHodgeWidgetInputMode : uint8
+  22: {
+  24: 	Default,
+  27: 	GameAndMenu,
+  30: 	Game,
+  33: 	Menu
+  34: };
+  40: UCLASS(Abstract, Blueprintable)
+  41: class HODGEPODGE_API UHodgeActivatableWidget : public UCommonActivatableWidget
+  42: {
+  43: 	GENERATED_BODY()
+  45: public:
+  50: 	UHodgeActivatableWidget(const FObjectInitializer& ObjectInitializer);
+  52: public:
+  60: 	virtual TOptional<FUIInputConfig> GetDesiredInputConfig() const override;
+  64: #if WITH_EDITOR
+  71: 	virtual void ValidateCompiledWidgetTree(const UWidgetTree& BlueprintWidgetTree,
+  72: 	                                        class IWidgetCompilerLog& CompileLog) const override;
+  73: #endif
+  75: protected:
+  80: 	UPROPERTY(EditDefaultsOnly, Category = Input)
+  81: 	EHodgeWidgetInputMode InputConfig = EHodgeWidgetInputMode::Default;
+  86: 	UPROPERTY(EditDefaultsOnly, Category = Input)
+  87: 	EMouseCaptureMode GameMouseCaptureMode = EMouseCaptureMode::CapturePermanently;
+  88: };
 ```
 
 ## HodgeGameViewportClient.h
@@ -1701,14 +1860,14 @@ GameInstance 所属的本地玩家 UI 管理器：根布局、Controller 绑定�
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   1: #pragma once
-   2: #include "CommonGameViewportClient.h"
-   3: #include "HodgeGameViewportClient.generated.h"
-   6: UCLASS()
-   7: class HODGEPODGE_API UHodgeGameViewportClient : public UCommonGameViewportClient
-   8: {
-   9:     GENERATED_BODY()
-  10: };
+   4: #pragma once
+   5: #include "CommonGameViewportClient.h"
+   6: #include "HodgeGameViewportClient.generated.h"
+   9: UCLASS()
+  10: class HODGEPODGE_API UHodgeGameViewportClient : public UCommonGameViewportClient
+  11: {
+  12:     GENERATED_BODY()
+  13: };
 ```
 
 ## HodgeHUDLayout.h
@@ -1720,53 +1879,55 @@ GameInstance 所属的本地玩家 UI 管理器：根布局、Controller 绑定�
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   3: #pragma once
-   7: #include "HodgeActivatableWidget.h"
-  11: #include "Containers/Ticker.h"
-  15: #include "GameplayTagContainer.h"
-  17: #include "HodgeHUDLayout.generated.h"
-  21: class UCommonActivatableWidget;
-  24: class UObject;
-  27: class UHodgeControllerDisconnectedScreen;
-  30: class UCommonActivatableWidgetStack;
-  45: UCLASS(Abstract, BlueprintType, Blueprintable, Meta = (DisplayName = "Hodge HUD Layout", Category = "Hodge|HUD"))
-  46: class HODGEPODGE_API UHodgeHUDLayout : public UHodgeActivatableWidget
-  47: {
-  48: 	GENERATED_BODY()
-  50: public:
-  52: 	UHodgeHUDLayout(const FObjectInitializer& ObjectInitializer);
-  58: 	virtual void NativeOnInitialized() override;
-  63: 	virtual void NativeDestruct() override;
-  64: 	virtual void NativeOnDeactivated() override;
-  66: protected:
-  71: 	void HandleEscapeAction();
-  72: 	void CloseOwnedMenu();
-  73: 	FGuid PendingEscapeMenu;
-  74: 	TWeakObjectPtr<UCommonActivatableWidget> EscapeMenuInstance;
-  77: 	void EnsureMenuLayerStack();
-  93: 	void HandleInputDeviceConnectionChanged(EInputDeviceConnectionState NewConnectionState,
-  94: 	                                        FPlatformUserId PlatformUserId, FInputDeviceId InputDeviceId);
- 108: 	void HandleInputDevicePairingChanged(FInputDeviceId InputDeviceId, FPlatformUserId NewUserPlatformId,
- 109: 	                                     FPlatformUserId OldUserPlatformId);
- 121: 	void NotifyControllerStateChangeForDisconnectScreen();
- 137: 	virtual void ProcessControllerDevicesHavingChangedForDisconnectScreen();
- 147: 	virtual bool ShouldPlatformDisplayControllerDisconnectScreen() const;
- 160: 	UFUNCTION(BlueprintNativeEvent, Category="Controller Disconnect Menu")
- 161: 	void DisplayControllerDisconnectedMenu();
- 170: 	UFUNCTION(BlueprintNativeEvent, Category="Controller Disconnect Menu")
- 171: 	void HideControllerDisconnectedMenu();
- 181: 	UPROPERTY(EditDefaultsOnly)
- 182: 	TSoftClassPtr<UCommonActivatableWidget> EscapeMenuClass;
- 189: 	UPROPERTY(EditDefaultsOnly, Category="Controller Disconnect Menu")
- 190: 	TSubclassOf<UHodgeControllerDisconnectedScreen> ControllerDisconnectedScreen;
- 206: 	UPROPERTY(EditDefaultsOnly, Category="Controller Disconnect Menu")
- 207: 	FGameplayTagContainer PlatformRequiresControllerDisconnectScreen;
- 215: 	UPROPERTY(Transient)
- 216: 	TObjectPtr<UCommonActivatableWidget> SpawnedControllerDisconnectScreen;
- 219: 	UPROPERTY(meta = (BindWidgetOptional))
- 220: 	TObjectPtr<UCommonActivatableWidgetStack> MenuLayerStack;
- 228: 	FTSTicker::FDelegateHandle RequestProcessControllerStateHandle;
- 229: };
+   6: #pragma once
+  10: #include "HodgeActivatableWidget.h"
+  14: #include "Containers/Ticker.h"
+  18: #include "GameplayTagContainer.h"
+  20: #include "HodgeHUDLayout.generated.h"
+  24: class UCommonActivatableWidget;
+  27: class UObject;
+  30: class UHodgeControllerDisconnectedScreen;
+  33: class UCommonActivatableWidgetStack;
+  48: UCLASS(Abstract, BlueprintType, Blueprintable, Meta = (DisplayName = "Hodge HUD Layout", Category = "Hodge|HUD"))
+  49: class HODGEPODGE_API UHodgeHUDLayout : public UHodgeActivatableWidget
+  50: {
+  51: 	GENERATED_BODY()
+  53: public:
+  58: 	UHodgeHUDLayout(const FObjectInitializer& ObjectInitializer);
+  65: 	virtual void NativeOnInitialized() override;
+  71: 	virtual void NativeDestruct() override;
+  73: 	virtual void NativeOnDeactivated() override;
+  77: 	UFUNCTION(BlueprintCallable, Category="Hodge|UI")
+  78: 	void ToggleHUDMenu();
+  80: protected:
+  86: 	void HandleEscapeAction();
+  88: 	void CloseOwnedMenu();
+  90: 	FGuid PendingEscapeMenu;
+  92: 	TWeakObjectPtr<UCommonActivatableWidget> EscapeMenuInstance;
+  96: 	void EnsureMenuLayerStack();
+ 117: 	void HandleInputDeviceConnectionChanged(EInputDeviceConnectionState NewConnectionState,
+ 118: 	                                        FPlatformUserId PlatformUserId, FInputDeviceId InputDeviceId);
+ 137: 	void HandleInputDevicePairingChanged(FInputDeviceId InputDeviceId, FPlatformUserId NewUserPlatformId,
+ 138: 	                                     FPlatformUserId OldUserPlatformId);
+ 151: 	void NotifyControllerStateChangeForDisconnectScreen();
+ 168: 	virtual void ProcessControllerDevicesHavingChangedForDisconnectScreen();
+ 181: 	virtual bool ShouldPlatformDisplayControllerDisconnectScreen() const;
+ 195: 	UFUNCTION(BlueprintNativeEvent, Category="Controller Disconnect Menu")
+ 196: 	void DisplayControllerDisconnectedMenu();
+ 206: 	UFUNCTION(BlueprintNativeEvent, Category="Controller Disconnect Menu")
+ 207: 	void HideControllerDisconnectedMenu();
+ 217: 	UPROPERTY(EditDefaultsOnly)
+ 218: 	TSoftClassPtr<UCommonActivatableWidget> EscapeMenuClass;
+ 225: 	UPROPERTY(EditDefaultsOnly, Category="Controller Disconnect Menu")
+ 226: 	TSubclassOf<UHodgeControllerDisconnectedScreen> ControllerDisconnectedScreen;
+ 242: 	UPROPERTY(EditDefaultsOnly, Category="Controller Disconnect Menu")
+ 243: 	FGameplayTagContainer PlatformRequiresControllerDisconnectScreen;
+ 251: 	UPROPERTY(Transient)
+ 252: 	TObjectPtr<UCommonActivatableWidget> SpawnedControllerDisconnectScreen;
+ 255: 	UPROPERTY(meta = (BindWidgetOptional))
+ 256: 	TObjectPtr<UCommonActivatableWidgetStack> MenuLayerStack;
+ 264: 	FTSTicker::FDelegateHandle RequestProcessControllerStateHandle;
+ 265: };
 ```
 
 ## HodgeJoystickWidget.h
@@ -1780,40 +1941,63 @@ GameInstance 所属的本地玩家 UI 管理器：根布局、Controller 绑定�
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   3: #pragma once
-   5: #include "UI/HodgeSimulatedInputWidget.h"
-   7: #include "HodgeJoystickWidget.generated.h"
-   9: class UImage;
-  10: class UObject;
-  11: struct FGeometry;
-  12: struct FPointerEvent;
-  22: UCLASS(meta=( DisplayName="Hodge Joystick" ))
-  23: class HODGEPODGE_API UHodgeJoystickWidget : public UHodgeSimulatedInputWidget
-  24: {
-  25: 	GENERATED_BODY()
-  27: public:
-  29: 	UHodgeJoystickWidget(const FObjectInitializer& ObjectInitializer);
-  32: 	virtual FReply NativeOnTouchStarted(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent) override;
-  33: 	virtual FReply NativeOnTouchMoved(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent) override;
-  34: 	virtual FReply NativeOnTouchEnded(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent) override;
-  35: 	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
-  36: 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
-  39: protected:
-  49: 	void HandleTouchDelta(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent);
-  52: 	void StopInputSimulation();
-  55: 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-  56: 	float StickRange = 50.0f;
-  59: 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-  60: 	TObjectPtr<UImage> JoystickBackground;
-  63: 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-  64: 	TObjectPtr<UImage> JoystickForeground;
-  67: 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-  68: 	bool bNegateYAxis = false;
-  71: 	UPROPERTY(Transient)
-  72: 	FVector2D TouchOrigin = FVector2D::ZeroVector;
-  74: 	UPROPERTY(Transient)
-  75: 	FVector2D StickVector = FVector2D::ZeroVector;
-  76: };
+   6: #pragma once
+   8: #include "UI/HodgeSimulatedInputWidget.h"
+  10: #include "HodgeJoystickWidget.generated.h"
+  12: class UImage;
+  13: class UObject;
+  14: struct FGeometry;
+  15: struct FPointerEvent;
+  26: UCLASS(meta=( DisplayName="Hodge Joystick" ))
+  27: class HODGEPODGE_API UHodgeJoystickWidget : public UHodgeSimulatedInputWidget
+  28: {
+  29: 	GENERATED_BODY()
+  31: public:
+  36: 	UHodgeJoystickWidget(const FObjectInitializer& ObjectInitializer);
+  44: 	virtual FReply NativeOnTouchStarted(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent) override;
+  50: 	virtual FReply NativeOnTouchMoved(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent) override;
+  56: 	virtual FReply NativeOnTouchEnded(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent) override;
+  60: 	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
+  65: 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+  68: protected:
+  82: 	void HandleTouchDelta(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent);
+  86: 	void StopInputSimulation();
+  90: 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+  91: 	float StickRange = 50.0f;
+  95: 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+  96: 	TObjectPtr<UImage> JoystickBackground;
+ 100: 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+ 101: 	TObjectPtr<UImage> JoystickForeground;
+ 105: 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+ 106: 	bool bNegateYAxis = false;
+ 110: 	UPROPERTY(Transient)
+ 111: 	FVector2D TouchOrigin = FVector2D::ZeroVector;
+ 114: 	UPROPERTY(Transient)
+ 115: 	FVector2D StickVector = FVector2D::ZeroVector;
+ 116: };
+```
+
+## HodgeResonanceEnergyWidget.h
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Public/UI/HodgeResonanceEnergyWidget.h](../../../Source/Hodgepodge/Public/UI/HodgeResonanceEnergyWidget.h)
+
+项目内直接 include（不是运行调用关系）：[UI/HodgeAbilityIconWidget.h](../../../Source/Hodgepodge/Public/UI/HodgeAbilityIconWidget.h)
+
+有效头文件声明摘录（未展开宏，未求值预处理分支）：
+
+```cpp
+   2: #pragma once
+   3: #include "UI/HodgeAbilityIconWidget.h"
+   4: #include "HodgeResonanceEnergyWidget.generated.h"
+   7: UCLASS(Blueprintable)
+   8: class HODGEPODGE_API UHodgeResonanceEnergyWidget : public UHodgeAbilityIconWidget
+   9: {
+  10: 	GENERATED_BODY()
+  11: public:
+  13: 	UHodgeResonanceEnergyWidget();
+  14: };
 ```
 
 ## HodgeSettingScreen.h
@@ -1833,50 +2017,50 @@ GameInstance 所属的本地玩家 UI 管理器：根布局、Controller 绑定�
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   3: #pragma once
-   5: #include "CommonUserWidget.h"
-   6: #include "HodgeSimulatedInputWidget.generated.h"
-   8: class UEnhancedInputLocalPlayerSubsystem;
-   9: class UInputAction;
-  10: class UCommonHardwareVisibilityBorder;
-  11: class UEnhancedPlayerInput;
-  17: UCLASS(meta=( DisplayName="Hodge Simulated Input Widget" ))
-  18: class HODGEPODGE_API UHodgeSimulatedInputWidget : public UCommonUserWidget
-  19: {
-  20: 	GENERATED_BODY()
-  22: public:
-  23: 	UHodgeSimulatedInputWidget(const FObjectInitializer& ObjectInitializer);
-  26: #if WITH_EDITOR
-  27: 	virtual const FText GetPaletteCategory() override;
-  28: #endif
-  32: 	virtual void NativeConstruct() override;
-  33: 	virtual void NativeDestruct() override;
-  34: 	virtual FReply NativeOnTouchEnded(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent) override;
-  38: 	UFUNCTION(BlueprintCallable)
-  39: 	UEnhancedInputLocalPlayerSubsystem* GetEnhancedInputSubsystem() const;
-  42: 	UEnhancedPlayerInput* GetPlayerInput() const;
-  45: 	UFUNCTION(BlueprintCallable)
-  46: 	const UInputAction* GetAssociatedAction() const { return AssociatedAction; }
-  49: 	UFUNCTION(BlueprintCallable)
-  50: 	FKey GetSimulatedKey() const { return KeyToSimulate; }
-  56: 	UFUNCTION(BlueprintCallable)
-  57: 	void InputKeyValue(const FVector& Value);
-  63: 	UFUNCTION(BlueprintCallable)
-  64: 	void InputKeyValue2D(const FVector2D& Value);
-  66: 	UFUNCTION(BlueprintCallable)
-  67: 	void FlushSimulatedInput();
-  69: protected:
-  71: 	void QueryKeyToSimulate();
-  74: 	UFUNCTION()
-  75: 	void OnControlMappingsRebuilt();
-  78: 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-  79: 	TObjectPtr<UCommonHardwareVisibilityBorder> CommonVisibilityBorder = nullptr;
-  82: 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-  83: 	TObjectPtr<const UInputAction> AssociatedAction = nullptr;
-  86: 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-  87: 	FKey FallbackBindingKey = EKeys::Gamepad_Right2D;
-  90: 	FKey KeyToSimulate;
-  91: };
+   6: #pragma once
+   8: #include "CommonUserWidget.h"
+   9: #include "HodgeSimulatedInputWidget.generated.h"
+  11: class UEnhancedInputLocalPlayerSubsystem;
+  12: class UInputAction;
+  13: class UCommonHardwareVisibilityBorder;
+  14: class UEnhancedPlayerInput;
+  21: UCLASS(meta=( DisplayName="Hodge Simulated Input Widget" ))
+  22: class HODGEPODGE_API UHodgeSimulatedInputWidget : public UCommonUserWidget
+  23: {
+  24: 	GENERATED_BODY()
+  26: public:
+  30: 	UHodgeSimulatedInputWidget(const FObjectInitializer& ObjectInitializer);
+  33: #if WITH_EDITOR
+  37: 	virtual const FText GetPaletteCategory() override;
+  38: #endif
+  43: 	virtual void NativeConstruct() override;
+  45: 	virtual void NativeDestruct() override;
+  51: 	virtual FReply NativeOnTouchEnded(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent) override;
+  58: 	UFUNCTION(BlueprintCallable)
+  59: 	UEnhancedInputLocalPlayerSubsystem* GetEnhancedInputSubsystem() const;
+  65: 	UEnhancedPlayerInput* GetPlayerInput() const;
+  71: 	UFUNCTION(BlueprintCallable)
+  72: 	const UInputAction* GetAssociatedAction() const { return AssociatedAction; }
+  78: 	UFUNCTION(BlueprintCallable)
+  79: 	FKey GetSimulatedKey() const { return KeyToSimulate; }
+  88: 	UFUNCTION(BlueprintCallable)
+  89: 	void InputKeyValue(const FVector& Value);
+  98: 	UFUNCTION(BlueprintCallable)
+  99: 	void InputKeyValue2D(const FVector2D& Value);
+ 102: 	UFUNCTION(BlueprintCallable)
+ 103: 	void FlushSimulatedInput();
+ 105: protected:
+ 108: 	void QueryKeyToSimulate();
+ 112: 	UFUNCTION()
+ 113: 	void OnControlMappingsRebuilt();
+ 117: 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+ 118: 	TObjectPtr<UCommonHardwareVisibilityBorder> CommonVisibilityBorder = nullptr;
+ 122: 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+ 123: 	TObjectPtr<const UInputAction> AssociatedAction = nullptr;
+ 127: 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+ 128: 	FKey FallbackBindingKey = EKeys::Gamepad_Right2D;
+ 132: 	FKey KeyToSimulate;
+ 133: };
 ```
 
 ## HodgeTaggedWidget.h
@@ -1888,31 +2072,31 @@ GameInstance 所属的本地玩家 UI 管理器：根布局、Controller 绑定�
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   3: #pragma once
-   7: #include "CommonUserWidget.h"
-  11: #include "GameplayTagContainer.h"
-  13: #include "HodgeTaggedWidget.generated.h"
-  15: class UObject;
-  29: UCLASS(Abstract, Blueprintable)
-  30: class UHodgeTaggedWidget : public UCommonUserWidget
-  31: {
-  32: 	GENERATED_BODY()
-  34: public:
-  36: 	UHodgeTaggedWidget(const FObjectInitializer& ObjectInitializer);
-  43: 	virtual void SetVisibility(ESlateVisibility InVisibility) override;
-  51: 	virtual void NativeConstruct() override;
-  55: 	virtual void NativeDestruct() override;
-  59: protected:
-  64: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "HUD")
-  65: 	FGameplayTagContainer HiddenByTags;
-  70: 	UPROPERTY(EditAnywhere, Category = "HUD")
-  71: 	ESlateVisibility ShownVisibility = ESlateVisibility::Visible;
-  76: 	UPROPERTY(EditAnywhere, Category = "HUD")
-  77: 	ESlateVisibility HiddenVisibility = ESlateVisibility::Collapsed;
-  84: 	bool bWantsToBeVisible = true;
-  86: private:
-  89: 	void OnWatchedTagsChanged();
-  90: };
+   6: #pragma once
+  10: #include "CommonUserWidget.h"
+  14: #include "GameplayTagContainer.h"
+  16: #include "HodgeTaggedWidget.generated.h"
+  18: class UObject;
+  32: UCLASS(Abstract, Blueprintable)
+  33: class UHodgeTaggedWidget : public UCommonUserWidget
+  34: {
+  35: 	GENERATED_BODY()
+  37: public:
+  42: 	UHodgeTaggedWidget(const FObjectInitializer& ObjectInitializer);
+  52: 	virtual void SetVisibility(ESlateVisibility InVisibility) override;
+  61: 	virtual void NativeConstruct() override;
+  66: 	virtual void NativeDestruct() override;
+  70: protected:
+  75: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "HUD")
+  76: 	FGameplayTagContainer HiddenByTags;
+  81: 	UPROPERTY(EditAnywhere, Category = "HUD")
+  82: 	ESlateVisibility ShownVisibility = ESlateVisibility::Visible;
+  87: 	UPROPERTY(EditAnywhere, Category = "HUD")
+  88: 	ESlateVisibility HiddenVisibility = ESlateVisibility::Collapsed;
+  95: 	bool bWantsToBeVisible = true;
+  97: private:
+ 101: 	void OnWatchedTagsChanged();
+ 102: };
 ```
 
 ## HodgeTouchRegion.h
@@ -1926,27 +2110,27 @@ GameInstance 所属的本地玩家 UI 管理器：根布局、Controller 绑定�
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   3: #pragma once
-   5: #include "UI/HodgeSimulatedInputWidget.h"
-   7: #include "HodgeTouchRegion.generated.h"
-   9: class UObject;
-  10: struct FFrame;
-  11: struct FGeometry;
-  12: struct FPointerEvent;
-  18: UCLASS(meta=( DisplayName="Hodge Touch Region" ))
-  19: class HODGEPODGE_API UHodgeTouchRegion : public UHodgeSimulatedInputWidget
-  20: {
-  21: 	GENERATED_BODY()
-  23: public:
-  25: 	virtual FReply NativeOnTouchStarted(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent) override;
-  26: 	virtual FReply NativeOnTouchMoved(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent) override;
-  27: 	virtual FReply NativeOnTouchEnded(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent) override;
-  28: 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
-  31: 	UFUNCTION(BlueprintCallable)
-  32: 	bool ShouldSimulateInput() const { return bShouldSimulateInput; }
-  34: protected:
-  36: 	bool bShouldSimulateInput = false;
-  37: };
+   6: #pragma once
+   8: #include "UI/HodgeSimulatedInputWidget.h"
+  10: #include "HodgeTouchRegion.generated.h"
+  12: class UObject;
+  13: struct FFrame;
+  14: struct FGeometry;
+  15: struct FPointerEvent;
+  22: UCLASS(meta=( DisplayName="Hodge Touch Region" ))
+  23: class HODGEPODGE_API UHodgeTouchRegion : public UHodgeSimulatedInputWidget
+  24: {
+  25: 	GENERATED_BODY()
+  27: public:
+  34: 	virtual FReply NativeOnTouchStarted(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent) override;
+  40: 	virtual FReply NativeOnTouchMoved(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent) override;
+  46: 	virtual FReply NativeOnTouchEnded(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent) override;
+  51: 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+  57: 	UFUNCTION(BlueprintCallable)
+  58: 	bool ShouldSimulateInput() const { return bShouldSimulateInput; }
+  60: protected:
+  63: 	bool bShouldSimulateInput = false;
+  64: };
 ```
 
 ## HodgeIndicatorManagerComponent.h
@@ -1958,32 +2142,32 @@ GameInstance 所属的本地玩家 UI 管理器：根布局、Controller 绑定�
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   3: #pragma once
-   7: #include "Components/ControllerComponent.h"
-   9: #include "HodgeIndicatorManagerComponent.generated.h"
-  13: class AController;
-  17: class UIndicatorDescriptor;
-  19: class UObject;
-  20: struct FFrame;
-  33: UCLASS(BlueprintType, Blueprintable)
-  34: class HODGEPODGE_API UHodgeIndicatorManagerComponent : public UControllerComponent
-  35: {
-  36: 	GENERATED_BODY()
-  38: public:
-  40: 	UHodgeIndicatorManagerComponent(const FObjectInitializer& ObjectInitializer);
-  44: 	static UHodgeIndicatorManagerComponent* GetComponent(AController* Controller);
-  49: 	UFUNCTION(BlueprintCallable, Category = Indicator)
-  50: 	void AddIndicator(UIndicatorDescriptor* IndicatorDescriptor);
-  54: 	UFUNCTION(BlueprintCallable, Category = Indicator)
-  55: 	void RemoveIndicator(UIndicatorDescriptor* IndicatorDescriptor);
-  59: 	DECLARE_EVENT_OneParam(UHodgeIndicatorManagerComponent, FIndicatorEvent, UIndicatorDescriptor* Descriptor)
-  62: 	FIndicatorEvent OnIndicatorAdded;
-  65: 	FIndicatorEvent OnIndicatorRemoved;
-  69: 	const TArray<UIndicatorDescriptor*>& GetIndicators() const { return Indicators; }
-  71: private:
-  75: 	UPROPERTY()
-  76: 	TArray<TObjectPtr<UIndicatorDescriptor>> Indicators;
-  77: };
+   6: #pragma once
+  10: #include "Components/ControllerComponent.h"
+  12: #include "HodgeIndicatorManagerComponent.generated.h"
+  16: class AController;
+  20: class UIndicatorDescriptor;
+  22: class UObject;
+  23: struct FFrame;
+  36: UCLASS(BlueprintType, Blueprintable)
+  37: class HODGEPODGE_API UHodgeIndicatorManagerComponent : public UControllerComponent
+  38: {
+  39: 	GENERATED_BODY()
+  41: public:
+  46: 	UHodgeIndicatorManagerComponent(const FObjectInitializer& ObjectInitializer);
+  54: 	static UHodgeIndicatorManagerComponent* GetComponent(AController* Controller);
+  62: 	UFUNCTION(BlueprintCallable, Category = Indicator)
+  63: 	void AddIndicator(UIndicatorDescriptor* IndicatorDescriptor);
+  70: 	UFUNCTION(BlueprintCallable, Category = Indicator)
+  71: 	void RemoveIndicator(UIndicatorDescriptor* IndicatorDescriptor);
+  75: 	DECLARE_EVENT_OneParam(UHodgeIndicatorManagerComponent, FIndicatorEvent, UIndicatorDescriptor* Descriptor)
+  78: 	FIndicatorEvent OnIndicatorAdded;
+  81: 	FIndicatorEvent OnIndicatorRemoved;
+  88: 	const TArray<UIndicatorDescriptor*>& GetIndicators() const { return Indicators; }
+  90: private:
+  94: 	UPROPERTY()
+  95: 	TArray<TObjectPtr<UIndicatorDescriptor>> Indicators;
+  96: };
 ```
 
 ## IActorIndicatorWidget.h
@@ -1995,27 +2179,27 @@ GameInstance 所属的本地玩家 UI 管理器：根布局、Controller 绑定�
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   3: #pragma once
-   6: #include "CoreMinimal.h"
-   9: #include "UObject/ObjectMacros.h"
-  12: #include "UObject/Interface.h"
-  14: #include "IActorIndicatorWidget.generated.h"
-  17: class AActor;
-  21: class UIndicatorDescriptor;
-  25: UINTERFACE(BlueprintType)
-  26: class HODGEPODGE_API UIndicatorWidgetInterface : public UInterface
-  27: {
-  28: 	GENERATED_BODY()
-  29: };
-  33: class IIndicatorWidgetInterface
-  34: {
-  35: 	GENERATED_BODY()
-  37: public:
-  44: 	UFUNCTION(BlueprintNativeEvent, Category = "Indicator")
-  45: 	void BindIndicator(UIndicatorDescriptor* Indicator);
-  52: 	UFUNCTION(BlueprintNativeEvent, Category = "Indicator")
-  53: 	void UnbindIndicator(const UIndicatorDescriptor* Indicator);
-  54: };
+   6: #pragma once
+   9: #include "CoreMinimal.h"
+  12: #include "UObject/ObjectMacros.h"
+  15: #include "UObject/Interface.h"
+  17: #include "IActorIndicatorWidget.generated.h"
+  20: class AActor;
+  24: class UIndicatorDescriptor;
+  28: UINTERFACE(BlueprintType)
+  29: class HODGEPODGE_API UIndicatorWidgetInterface : public UInterface
+  30: {
+  31: 	GENERATED_BODY()
+  32: };
+  36: class IIndicatorWidgetInterface
+  37: {
+  38: 	GENERATED_BODY()
+  40: public:
+  50: 	UFUNCTION(BlueprintNativeEvent, Category = "Indicator")
+  51: 	void BindIndicator(UIndicatorDescriptor* Indicator);
+  61: 	UFUNCTION(BlueprintNativeEvent, Category = "Indicator")
+  62: 	void UnbindIndicator(const UIndicatorDescriptor* Indicator);
+  63: };
 ```
 
 ## IndicatorDescriptor.h
@@ -2027,189 +2211,189 @@ GameInstance 所属的本地玩家 UI 管理器：根布局、Controller 绑定�
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   3: #pragma once
-   7: #include "Components/SceneComponent.h"
-  10: #include "Types/SlateEnums.h"
-  12: #include "IndicatorDescriptor.generated.h"
-  15: class SWidget;
-  18: class UIndicatorDescriptor;
-  21: class UHodgeIndicatorManagerComponent;
-  24: class UUserWidget;
-  26: struct FFrame;
-  30: struct FSceneViewProjectionData;
-  35: struct FIndicatorProjection
-  36: {
-  41: 	bool Project(const UIndicatorDescriptor& IndicatorDescriptor, const FSceneViewProjectionData& InProjectionData,
-  42: 	             const FVector2f& ScreenSize, FVector& ScreenPositionWithDepth);
-  43: };
-  47: UENUM(BlueprintType)
-  48: enum class EActorCanvasProjectionMode : uint8
-  49: {
-  51: 	ComponentPoint,
-  54: 	ComponentBoundingBox,
-  57: 	ComponentScreenBoundingBox,
-  60: 	ActorBoundingBox,
-  63: 	ActorScreenBoundingBox
-  64: };
-  87: UCLASS(BlueprintType)
-  88: class HODGEPODGE_API UIndicatorDescriptor : public UObject
-  89: {
-  90: 	GENERATED_BODY()
-  92: public:
-  94: 	UIndicatorDescriptor()
-  95: 	{
-  96: 	}
-  98: public:
- 102: 	UFUNCTION(BlueprintCallable)
- 103: 	UObject* GetDataObject() const { return DataObject; }
- 106: 	UFUNCTION(BlueprintCallable)
- 107: 	void SetDataObject(UObject* InDataObject) { DataObject = InDataObject; }
- 110: 	UFUNCTION(BlueprintCallable)
- 111: 	USceneComponent* GetSceneComponent() const { return Component; }
- 114: 	UFUNCTION(BlueprintCallable)
- 115: 	void SetSceneComponent(USceneComponent* InComponent) { Component = InComponent; }
- 119: 	UFUNCTION(BlueprintCallable)
- 120: 	FName GetComponentSocketName() const { return ComponentSocketName; }
+   6: #pragma once
+  10: #include "Components/SceneComponent.h"
+  13: #include "Types/SlateEnums.h"
+  15: #include "IndicatorDescriptor.generated.h"
+  18: class SWidget;
+  21: class UIndicatorDescriptor;
+  24: class UHodgeIndicatorManagerComponent;
+  27: class UUserWidget;
+  29: struct FFrame;
+  33: struct FSceneViewProjectionData;
+  38: struct FIndicatorProjection
+  39: {
+  51: 	bool Project(const UIndicatorDescriptor& IndicatorDescriptor, const FSceneViewProjectionData& InProjectionData,
+  52: 	             const FVector2f& ScreenSize, FVector& ScreenPositionWithDepth);
+  53: };
+  57: UENUM(BlueprintType)
+  58: enum class EActorCanvasProjectionMode : uint8
+  59: {
+  61: 	ComponentPoint,
+  64: 	ComponentBoundingBox,
+  67: 	ComponentScreenBoundingBox,
+  70: 	ActorBoundingBox,
+  73: 	ActorScreenBoundingBox
+  74: };
+  97: UCLASS(BlueprintType)
+  98: class HODGEPODGE_API UIndicatorDescriptor : public UObject
+  99: {
+ 100: 	GENERATED_BODY()
+ 102: public:
+ 105: 	UIndicatorDescriptor()
+ 106: 	{
+ 107: 	}
+ 109: public:
+ 116: 	UFUNCTION(BlueprintCallable)
+ 117: 	UObject* GetDataObject() const { return DataObject; }
  123: 	UFUNCTION(BlueprintCallable)
- 124: 	void SetComponentSocketName(FName SocketName) { ComponentSocketName = SocketName; }
- 128: 	UFUNCTION(BlueprintCallable)
- 129: 	TSoftClassPtr<UUserWidget> GetIndicatorClass() const { return IndicatorWidgetClass; }
- 132: 	UFUNCTION(BlueprintCallable)
- 133: 	void SetIndicatorClass(TSoftClassPtr<UUserWidget> InIndicatorWidgetClass)
- 134: 	{
- 135: 		IndicatorWidgetClass = InIndicatorWidgetClass;
- 136: 	}
- 138: public:
- 142: 	TWeakObjectPtr<UUserWidget> IndicatorWidget;
- 144: public:
- 146: 	UFUNCTION(BlueprintCallable)
- 147: 	void SetAutoRemoveWhenIndicatorComponentIsNull(bool CanAutomaticallyRemove)
- 148: 	{
- 149: 		bAutoRemoveWhenIndicatorComponentIsNull = CanAutomaticallyRemove;
- 150: 	}
- 153: 	UFUNCTION(BlueprintCallable)
- 154: 	bool GetAutoRemoveWhenIndicatorComponentIsNull() const { return bAutoRemoveWhenIndicatorComponentIsNull; }
- 157: 	bool CanAutomaticallyRemove() const
- 158: 	{
- 160: 		return bAutoRemoveWhenIndicatorComponentIsNull && !IsValid(GetSceneComponent());
- 161: 	}
- 163: public:
- 170: 	UFUNCTION(BlueprintCallable)
- 171: 	bool GetIsVisible() const { return IsValid(GetSceneComponent()) && bVisible; }
- 174: 	UFUNCTION(BlueprintCallable)
- 175: 	void SetDesiredVisibility(bool InVisible)
- 176: 	{
- 177: 		bVisible = InVisible;
- 178: 	}
- 181: 	UFUNCTION(BlueprintCallable)
- 182: 	EActorCanvasProjectionMode GetProjectionMode() const { return ProjectionMode; }
- 185: 	UFUNCTION(BlueprintCallable)
- 186: 	void SetProjectionMode(EActorCanvasProjectionMode InProjectionMode)
- 187: 	{
- 188: 		ProjectionMode = InProjectionMode;
- 189: 	}
- 193: 	UFUNCTION(BlueprintCallable)
- 194: 	EHorizontalAlignment GetHAlign() const { return HAlignment; }
- 197: 	UFUNCTION(BlueprintCallable)
- 198: 	void SetHAlign(EHorizontalAlignment InHAlignment)
- 199: 	{
- 200: 		HAlignment = InHAlignment;
- 201: 	}
- 205: 	UFUNCTION(BlueprintCallable)
- 206: 	EVerticalAlignment GetVAlign() const { return VAlignment; }
- 209: 	UFUNCTION(BlueprintCallable)
- 210: 	void SetVAlign(EVerticalAlignment InVAlignment)
- 211: 	{
- 212: 		VAlignment = InVAlignment;
- 213: 	}
+ 124: 	void SetDataObject(UObject* InDataObject) { DataObject = InDataObject; }
+ 130: 	UFUNCTION(BlueprintCallable)
+ 131: 	USceneComponent* GetSceneComponent() const { return Component; }
+ 137: 	UFUNCTION(BlueprintCallable)
+ 138: 	void SetSceneComponent(USceneComponent* InComponent) { Component = InComponent; }
+ 145: 	UFUNCTION(BlueprintCallable)
+ 146: 	FName GetComponentSocketName() const { return ComponentSocketName; }
+ 152: 	UFUNCTION(BlueprintCallable)
+ 153: 	void SetComponentSocketName(FName SocketName) { ComponentSocketName = SocketName; }
+ 160: 	UFUNCTION(BlueprintCallable)
+ 161: 	TSoftClassPtr<UUserWidget> GetIndicatorClass() const { return IndicatorWidgetClass; }
+ 167: 	UFUNCTION(BlueprintCallable)
+ 168: 	void SetIndicatorClass(TSoftClassPtr<UUserWidget> InIndicatorWidgetClass)
+ 169: 	{
+ 170: 		IndicatorWidgetClass = InIndicatorWidgetClass;
+ 171: 	}
+ 173: public:
+ 177: 	TWeakObjectPtr<UUserWidget> IndicatorWidget;
+ 179: public:
+ 184: 	UFUNCTION(BlueprintCallable)
+ 185: 	void SetAutoRemoveWhenIndicatorComponentIsNull(bool CanAutomaticallyRemove)
+ 186: 	{
+ 187: 		bAutoRemoveWhenIndicatorComponentIsNull = CanAutomaticallyRemove;
+ 188: 	}
+ 194: 	UFUNCTION(BlueprintCallable)
+ 195: 	bool GetAutoRemoveWhenIndicatorComponentIsNull() const { return bAutoRemoveWhenIndicatorComponentIsNull; }
+ 201: 	bool CanAutomaticallyRemove() const
+ 202: 	{
+ 204: 		return bAutoRemoveWhenIndicatorComponentIsNull && !IsValid(GetSceneComponent());
+ 205: 	}
+ 207: public:
  217: 	UFUNCTION(BlueprintCallable)
- 218: 	bool GetClampToScreen() const { return bClampToScreen; }
- 221: 	UFUNCTION(BlueprintCallable)
- 222: 	void SetClampToScreen(bool bValue)
- 223: 	{
- 224: 		bClampToScreen = bValue;
- 225: 	}
- 229: 	UFUNCTION(BlueprintCallable)
- 230: 	bool GetShowClampToScreenArrow() const { return bShowClampToScreenArrow; }
- 233: 	UFUNCTION(BlueprintCallable)
- 234: 	void SetShowClampToScreenArrow(bool bValue)
- 235: 	{
- 236: 		bShowClampToScreenArrow = bValue;
- 237: 	}
- 242: 	UFUNCTION(BlueprintCallable)
- 243: 	FVector GetWorldPositionOffset() const { return WorldPositionOffset; }
- 246: 	UFUNCTION(BlueprintCallable)
- 247: 	void SetWorldPositionOffset(FVector Offset)
- 248: 	{
- 249: 		WorldPositionOffset = Offset;
- 250: 	}
- 255: 	UFUNCTION(BlueprintCallable)
- 256: 	FVector2D GetScreenSpaceOffset() const { return ScreenSpaceOffset; }
+ 218: 	bool GetIsVisible() const { return IsValid(GetSceneComponent()) && bVisible; }
+ 224: 	UFUNCTION(BlueprintCallable)
+ 225: 	void SetDesiredVisibility(bool InVisible)
+ 226: 	{
+ 227: 		bVisible = InVisible;
+ 228: 	}
+ 234: 	UFUNCTION(BlueprintCallable)
+ 235: 	EActorCanvasProjectionMode GetProjectionMode() const { return ProjectionMode; }
+ 241: 	UFUNCTION(BlueprintCallable)
+ 242: 	void SetProjectionMode(EActorCanvasProjectionMode InProjectionMode)
+ 243: 	{
+ 244: 		ProjectionMode = InProjectionMode;
+ 245: 	}
+ 252: 	UFUNCTION(BlueprintCallable)
+ 253: 	EHorizontalAlignment GetHAlign() const { return HAlignment; }
  259: 	UFUNCTION(BlueprintCallable)
- 260: 	void SetScreenSpaceOffset(FVector2D Offset)
+ 260: 	void SetHAlign(EHorizontalAlignment InHAlignment)
  261: 	{
- 262: 		ScreenSpaceOffset = Offset;
+ 262: 		HAlignment = InHAlignment;
  263: 	}
- 268: 	UFUNCTION(BlueprintCallable)
- 269: 	FVector GetBoundingBoxAnchor() const { return BoundingBoxAnchor; }
- 272: 	UFUNCTION(BlueprintCallable)
- 273: 	void SetBoundingBoxAnchor(FVector InBoundingBoxAnchor)
- 274: 	{
- 275: 		BoundingBoxAnchor = InBoundingBoxAnchor;
- 276: 	}
- 278: public:
- 287: 	UFUNCTION(BlueprintCallable)
- 288: 	int32 GetPriority() const { return Priority; }
- 291: 	UFUNCTION(BlueprintCallable)
- 292: 	void SetPriority(int32 InPriority)
- 293: 	{
- 294: 		Priority = InPriority;
- 295: 	}
- 297: public:
- 299: 	UHodgeIndicatorManagerComponent* GetIndicatorManagerComponent() { return ManagerPtr.Get(); }
- 302: 	void SetIndicatorManagerComponent(UHodgeIndicatorManagerComponent* InManager);
- 305: 	UFUNCTION(BlueprintCallable)
- 306: 	void UnregisterIndicator();
- 308: private:
- 310: 	UPROPERTY()
- 311: 	bool bVisible = true;
- 314: 	UPROPERTY()
- 315: 	bool bClampToScreen = false;
- 318: 	UPROPERTY()
- 319: 	bool bShowClampToScreenArrow = false;
- 322: 	UPROPERTY()
- 323: 	bool bOverrideScreenPosition = false;
- 326: 	UPROPERTY()
- 327: 	bool bAutoRemoveWhenIndicatorComponentIsNull = false;
- 330: 	UPROPERTY()
- 331: 	EActorCanvasProjectionMode ProjectionMode = EActorCanvasProjectionMode::ComponentPoint;
- 334: 	UPROPERTY()
- 335: 	TEnumAsByte<EHorizontalAlignment> HAlignment = HAlign_Center;
- 338: 	UPROPERTY()
- 339: 	TEnumAsByte<EVerticalAlignment> VAlignment = VAlign_Center;
- 342: 	UPROPERTY()
- 343: 	int32 Priority = 0;
- 347: 	UPROPERTY()
- 348: 	FVector BoundingBoxAnchor = FVector(0.5, 0.5, 0.5);
- 351: 	UPROPERTY()
- 352: 	FVector2D ScreenSpaceOffset = FVector2D(0, 0);
- 355: 	UPROPERTY()
- 356: 	FVector WorldPositionOffset = FVector(0, 0, 0);
- 358: private:
- 361: 	friend class SActorCanvas;
- 365: 	UPROPERTY()
- 366: 	TObjectPtr<UObject> DataObject;
- 369: 	UPROPERTY()
- 370: 	TObjectPtr<USceneComponent> Component;
- 374: 	UPROPERTY()
- 375: 	FName ComponentSocketName = NAME_None;
- 379: 	UPROPERTY()
- 380: 	TSoftClassPtr<UUserWidget> IndicatorWidgetClass;
- 384: 	UPROPERTY()
- 385: 	TWeakObjectPtr<UHodgeIndicatorManagerComponent> ManagerPtr;
- 389: 	TWeakPtr<SWidget> Content;
- 393: 	TWeakPtr<SWidget> CanvasHost;
- 394: };
+ 270: 	UFUNCTION(BlueprintCallable)
+ 271: 	EVerticalAlignment GetVAlign() const { return VAlignment; }
+ 277: 	UFUNCTION(BlueprintCallable)
+ 278: 	void SetVAlign(EVerticalAlignment InVAlignment)
+ 279: 	{
+ 280: 		VAlignment = InVAlignment;
+ 281: 	}
+ 288: 	UFUNCTION(BlueprintCallable)
+ 289: 	bool GetClampToScreen() const { return bClampToScreen; }
+ 295: 	UFUNCTION(BlueprintCallable)
+ 296: 	void SetClampToScreen(bool bValue)
+ 297: 	{
+ 298: 		bClampToScreen = bValue;
+ 299: 	}
+ 306: 	UFUNCTION(BlueprintCallable)
+ 307: 	bool GetShowClampToScreenArrow() const { return bShowClampToScreenArrow; }
+ 313: 	UFUNCTION(BlueprintCallable)
+ 314: 	void SetShowClampToScreenArrow(bool bValue)
+ 315: 	{
+ 316: 		bShowClampToScreenArrow = bValue;
+ 317: 	}
+ 325: 	UFUNCTION(BlueprintCallable)
+ 326: 	FVector GetWorldPositionOffset() const { return WorldPositionOffset; }
+ 332: 	UFUNCTION(BlueprintCallable)
+ 333: 	void SetWorldPositionOffset(FVector Offset)
+ 334: 	{
+ 335: 		WorldPositionOffset = Offset;
+ 336: 	}
+ 344: 	UFUNCTION(BlueprintCallable)
+ 345: 	FVector2D GetScreenSpaceOffset() const { return ScreenSpaceOffset; }
+ 351: 	UFUNCTION(BlueprintCallable)
+ 352: 	void SetScreenSpaceOffset(FVector2D Offset)
+ 353: 	{
+ 354: 		ScreenSpaceOffset = Offset;
+ 355: 	}
+ 363: 	UFUNCTION(BlueprintCallable)
+ 364: 	FVector GetBoundingBoxAnchor() const { return BoundingBoxAnchor; }
+ 370: 	UFUNCTION(BlueprintCallable)
+ 371: 	void SetBoundingBoxAnchor(FVector InBoundingBoxAnchor)
+ 372: 	{
+ 373: 		BoundingBoxAnchor = InBoundingBoxAnchor;
+ 374: 	}
+ 376: public:
+ 388: 	UFUNCTION(BlueprintCallable)
+ 389: 	int32 GetPriority() const { return Priority; }
+ 395: 	UFUNCTION(BlueprintCallable)
+ 396: 	void SetPriority(int32 InPriority)
+ 397: 	{
+ 398: 		Priority = InPriority;
+ 399: 	}
+ 401: public:
+ 406: 	UHodgeIndicatorManagerComponent* GetIndicatorManagerComponent() { return ManagerPtr.Get(); }
+ 412: 	void SetIndicatorManagerComponent(UHodgeIndicatorManagerComponent* InManager);
+ 416: 	UFUNCTION(BlueprintCallable)
+ 417: 	void UnregisterIndicator();
+ 419: private:
+ 421: 	UPROPERTY()
+ 422: 	bool bVisible = true;
+ 425: 	UPROPERTY()
+ 426: 	bool bClampToScreen = false;
+ 429: 	UPROPERTY()
+ 430: 	bool bShowClampToScreenArrow = false;
+ 433: 	UPROPERTY()
+ 434: 	bool bOverrideScreenPosition = false;
+ 437: 	UPROPERTY()
+ 438: 	bool bAutoRemoveWhenIndicatorComponentIsNull = false;
+ 441: 	UPROPERTY()
+ 442: 	EActorCanvasProjectionMode ProjectionMode = EActorCanvasProjectionMode::ComponentPoint;
+ 445: 	UPROPERTY()
+ 446: 	TEnumAsByte<EHorizontalAlignment> HAlignment = HAlign_Center;
+ 449: 	UPROPERTY()
+ 450: 	TEnumAsByte<EVerticalAlignment> VAlignment = VAlign_Center;
+ 453: 	UPROPERTY()
+ 454: 	int32 Priority = 0;
+ 458: 	UPROPERTY()
+ 459: 	FVector BoundingBoxAnchor = FVector(0.5, 0.5, 0.5);
+ 462: 	UPROPERTY()
+ 463: 	FVector2D ScreenSpaceOffset = FVector2D(0, 0);
+ 466: 	UPROPERTY()
+ 467: 	FVector WorldPositionOffset = FVector(0, 0, 0);
+ 469: private:
+ 472: 	friend class SActorCanvas;
+ 476: 	UPROPERTY()
+ 477: 	TObjectPtr<UObject> DataObject;
+ 480: 	UPROPERTY()
+ 481: 	TObjectPtr<USceneComponent> Component;
+ 485: 	UPROPERTY()
+ 486: 	FName ComponentSocketName = NAME_None;
+ 490: 	UPROPERTY()
+ 491: 	TSoftClassPtr<UUserWidget> IndicatorWidgetClass;
+ 495: 	UPROPERTY()
+ 496: 	TWeakObjectPtr<UHodgeIndicatorManagerComponent> ManagerPtr;
+ 500: 	TWeakPtr<SWidget> Content;
+ 504: 	TWeakPtr<SWidget> CanvasHost;
+ 505: };
 ```
 
 ## IndicatorLayer.h
@@ -2221,25 +2405,25 @@ GameInstance 所属的本地玩家 UI 管理器：根布局、Controller 绑定�
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   3: #pragma once
-   7: #include "Components/Widget.h"
-   9: #include "IndicatorLayer.generated.h"
-  13: class SActorCanvas;
-  16: class SWidget;
-  18: class UObject;
-  23: UCLASS()
-  24: class UIndicatorLayer : public UWidget
-  25: {
-  26: 	GENERATED_UCLASS_BODY()
-  28: public:
-  31: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Appearance)
-  32: 	FSlateBrush ArrowBrush;
-  34: protected:
-  39: 	virtual void ReleaseSlateResources(bool bReleaseChildren) override;
-  43: 	virtual TSharedRef<SWidget> RebuildWidget() override;
-  47: protected:
-  51: 	TSharedPtr<SActorCanvas> MyActorCanvas;
-  52: };
+   6: #pragma once
+  10: #include "Components/Widget.h"
+  12: #include "IndicatorLayer.generated.h"
+  16: class SActorCanvas;
+  19: class SWidget;
+  21: class UObject;
+  26: UCLASS()
+  27: class HODGEPODGE_API UIndicatorLayer : public UWidget
+  28: {
+  29: 	GENERATED_UCLASS_BODY()
+  31: public:
+  34: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Appearance)
+  35: 	FSlateBrush ArrowBrush;
+  37: protected:
+  45: 	virtual void ReleaseSlateResources(bool bReleaseChildren) override;
+  52: 	virtual TSharedRef<SWidget> RebuildWidget() override;
+  56: protected:
+  60: 	TSharedPtr<SActorCanvas> MyActorCanvas;
+  61: };
 ```
 
 ## IndicatorLibrary.h
@@ -2251,22 +2435,22 @@ GameInstance 所属的本地玩家 UI 管理器：根布局、Controller 绑定�
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   3: #pragma once
-   7: #include "Kismet/BlueprintFunctionLibrary.h"
-   9: #include "IndicatorLibrary.generated.h"
-  13: class AController;
-  17: class UHodgeIndicatorManagerComponent;
-  19: class UObject;
-  20: struct FFrame;
-  24: UCLASS()
-  25: class HODGEPODGE_API UIndicatorLibrary : public UBlueprintFunctionLibrary
-  26: {
-  27: 	GENERATED_BODY()
-  29: public:
-  31: 	UIndicatorLibrary();
-  37: 	UFUNCTION(BlueprintCallable, Category = Indicator)
-  38: 	static UHodgeIndicatorManagerComponent* GetIndicatorManagerComponent(AController* Controller);
-  39: };
+   6: #pragma once
+  10: #include "Kismet/BlueprintFunctionLibrary.h"
+  12: #include "IndicatorLibrary.generated.h"
+  16: class AController;
+  20: class UHodgeIndicatorManagerComponent;
+  22: class UObject;
+  23: struct FFrame;
+  27: UCLASS()
+  28: class HODGEPODGE_API UIndicatorLibrary : public UBlueprintFunctionLibrary
+  29: {
+  30: 	GENERATED_BODY()
+  32: public:
+  35: 	UIndicatorLibrary();
+  45: 	UFUNCTION(BlueprintCallable, Category = Indicator)
+  46: 	static UHodgeIndicatorManagerComponent* GetIndicatorManagerComponent(AController* Controller);
+  47: };
 ```
 
 ## SActorCanvas.h
@@ -2278,203 +2462,203 @@ GameInstance 所属的本地玩家 UI 管理器：根布局、Controller 绑定�
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   3: #pragma once
-  10: #include "Blueprint/UserWidgetPool.h"
-  14: #include "Widgets/SPanel.h"
-  18: class FActiveTimerHandle;
-  21: class FArrangedChildren;
-  24: class FChildren;
-  27: class FPaintArgs;
-  31: class FReferenceCollector;
-  34: class FSlateRect;
-  37: class FSlateWindowElementList;
-  40: class FWidgetStyle;
-  44: struct FStreamableHandle;
-  47: class UIndicatorDescriptor;
-  50: class UHodgeIndicatorManagerComponent;
-  54: struct FSlateBrush;
-  65: class SActorCanvas : public SPanel, public FGCObject
-  66: {
-  67: public:
-  74: 	class FSlot : public TSlotBase<FSlot>
-  75: 	{
-  76: 	public:
-  78: 		FSlot(UIndicatorDescriptor* InIndicator)
-  79: 			: TSlotBase<FSlot>()
-  81: 			  , Indicator(InIndicator)
-  83: 			  , ScreenPosition(FVector2D::ZeroVector)
-  85: 			  , Depth(0)
-  87: 			  , Priority(0.f)
-  89: 			  , bIsIndicatorVisible(true)
-  91: 			  , bInFrontOfCamera(true)
-  93: 			  , bHasValidScreenPosition(false)
-  95: 			  , bDirty(true)
-  97: 			  , bWasIndicatorClamped(false)
-  99: 			  , bWasIndicatorClampedStatusChanged(false)
- 100: 		{
- 101: 		}
- 104: 		SLATE_SLOT_BEGIN_ARGS(FSlot, TSlotBase<FSlot>)
- 105: 		SLATE_SLOT_END_ARGS()
- 108: 		using TSlotBase<FSlot>::Construct;
- 111: 		bool GetIsIndicatorVisible() const { return bIsIndicatorVisible; }
- 114: 		void SetIsIndicatorVisible(bool bVisible)
- 115: 		{
- 117: 			if (bIsIndicatorVisible != bVisible)
- 118: 			{
- 119: 				bIsIndicatorVisible = bVisible;
- 120: 				bDirty = true;
- 121: 			}
- 124: 			RefreshVisibility();
- 125: 		}
- 128: 		FVector2D GetScreenPosition() const { return ScreenPosition; }
- 131: 		void SetScreenPosition(FVector2D InScreenPosition)
- 132: 		{
- 134: 			if (ScreenPosition != InScreenPosition)
- 135: 			{
- 136: 				ScreenPosition = InScreenPosition;
- 137: 				bDirty = true;
- 138: 			}
- 139: 		}
- 142: 		double GetDepth() const { return Depth; }
- 145: 		void SetDepth(double InDepth)
- 146: 		{
- 149: 			if (Depth != InDepth)
- 150: 			{
- 151: 				Depth = InDepth;
- 152: 				bDirty = true;
- 153: 			}
- 154: 		}
- 157: 		int32 GetPriority() const { return Priority; }
- 160: 		void SetPriority(int32 InPriority)
- 161: 		{
- 164: 			if (Priority != InPriority)
- 165: 			{
- 166: 				Priority = InPriority;
- 167: 				bDirty = true;
- 168: 			}
- 169: 		}
- 172: 		bool GetInFrontOfCamera() const { return bInFrontOfCamera; }
- 175: 		void SetInFrontOfCamera(bool bInFront)
- 176: 		{
- 178: 			if (bInFrontOfCamera != bInFront)
- 179: 			{
- 180: 				bInFrontOfCamera = bInFront;
- 181: 				bDirty = true;
- 182: 			}
- 185: 			RefreshVisibility();
- 186: 		}
- 189: 		bool HasValidScreenPosition() const { return bHasValidScreenPosition; }
- 192: 		void SetHasValidScreenPosition(bool bValidScreenPosition)
- 193: 		{
- 195: 			if (bHasValidScreenPosition != bValidScreenPosition)
- 196: 			{
- 197: 				bHasValidScreenPosition = bValidScreenPosition;
- 198: 				bDirty = true;
- 199: 			}
- 202: 			RefreshVisibility();
+   6: #pragma once
+  13: #include "Blueprint/UserWidgetPool.h"
+  17: #include "Widgets/SPanel.h"
+  21: class FActiveTimerHandle;
+  24: class FArrangedChildren;
+  27: class FChildren;
+  30: class FPaintArgs;
+  34: class FReferenceCollector;
+  37: class FSlateRect;
+  40: class FSlateWindowElementList;
+  43: class FWidgetStyle;
+  47: struct FStreamableHandle;
+  50: class UIndicatorDescriptor;
+  53: class UHodgeIndicatorManagerComponent;
+  57: struct FSlateBrush;
+  68: class SActorCanvas : public SPanel, public FGCObject
+  69: {
+  70: public:
+  81: 	class FSlot : public TSlotBase<FSlot>
+  82: 	{
+  83: 	public:
+  88: 		FSlot(UIndicatorDescriptor* InIndicator)
+  89: 			: TSlotBase<FSlot>()
+  91: 			  , Indicator(InIndicator)
+  93: 			  , ScreenPosition(FVector2D::ZeroVector)
+  95: 			  , Depth(0)
+  97: 			  , Priority(0.f)
+  99: 			  , bIsIndicatorVisible(true)
+ 101: 			  , bInFrontOfCamera(true)
+ 103: 			  , bHasValidScreenPosition(false)
+ 105: 			  , bDirty(true)
+ 107: 			  , bWasIndicatorClamped(false)
+ 109: 			  , bWasIndicatorClampedStatusChanged(false)
+ 110: 		{
+ 111: 		}
+ 114: 		SLATE_SLOT_BEGIN_ARGS(FSlot, TSlotBase<FSlot>)
+ 115: 		SLATE_SLOT_END_ARGS()
+ 118: 		using TSlotBase<FSlot>::Construct;
+ 124: 		bool GetIsIndicatorVisible() const { return bIsIndicatorVisible; }
+ 130: 		void SetIsIndicatorVisible(bool bVisible)
+ 131: 		{
+ 133: 			if (bIsIndicatorVisible != bVisible)
+ 134: 			{
+ 135: 				bIsIndicatorVisible = bVisible;
+ 136: 				bDirty = true;
+ 137: 			}
+ 140: 			RefreshVisibility();
+ 141: 		}
+ 147: 		FVector2D GetScreenPosition() const { return ScreenPosition; }
+ 153: 		void SetScreenPosition(FVector2D InScreenPosition)
+ 154: 		{
+ 156: 			if (ScreenPosition != InScreenPosition)
+ 157: 			{
+ 158: 				ScreenPosition = InScreenPosition;
+ 159: 				bDirty = true;
+ 160: 			}
+ 161: 		}
+ 167: 		double GetDepth() const { return Depth; }
+ 173: 		void SetDepth(double InDepth)
+ 174: 		{
+ 177: 			if (Depth != InDepth)
+ 178: 			{
+ 179: 				Depth = InDepth;
+ 180: 				bDirty = true;
+ 181: 			}
+ 182: 		}
+ 188: 		int32 GetPriority() const { return Priority; }
+ 194: 		void SetPriority(int32 InPriority)
+ 195: 		{
+ 198: 			if (Priority != InPriority)
+ 199: 			{
+ 200: 				Priority = InPriority;
+ 201: 				bDirty = true;
+ 202: 			}
  203: 		}
- 206: 		bool bIsDirty() const { return bDirty; }
- 209: 		void ClearDirtyFlag()
- 210: 		{
- 211: 			bDirty = false;
- 212: 		}
- 215: 		bool WasIndicatorClamped() const { return bWasIndicatorClamped; }
- 218: 		void SetWasIndicatorClamped(bool bWasClamped) const
- 219: 		{
- 221: 			if (bWasClamped != bWasIndicatorClamped)
- 222: 			{
- 223: 				bWasIndicatorClamped = bWasClamped;
- 224: 				bWasIndicatorClampedStatusChanged = true;
- 225: 			}
+ 209: 		bool GetInFrontOfCamera() const { return bInFrontOfCamera; }
+ 215: 		void SetInFrontOfCamera(bool bInFront)
+ 216: 		{
+ 218: 			if (bInFrontOfCamera != bInFront)
+ 219: 			{
+ 220: 				bInFrontOfCamera = bInFront;
+ 221: 				bDirty = true;
+ 222: 			}
+ 225: 			RefreshVisibility();
  226: 		}
- 229: 		bool WasIndicatorClampedStatusChanged() const { return bWasIndicatorClampedStatusChanged; }
- 232: 		void ClearIndicatorClampedStatusChangedFlag()
- 233: 		{
- 234: 			bWasIndicatorClampedStatusChanged = false;
- 235: 		}
- 237: 	private:
- 240: 		void RefreshVisibility()
- 241: 		{
- 244: 			const bool bIsVisible = bIsIndicatorVisible && bHasValidScreenPosition;
- 251: 			GetWidget()->SetVisibility(bIsVisible ? EVisibility::SelfHitTestInvisible : EVisibility::Collapsed);
- 252: 		}
- 258: 		UIndicatorDescriptor* Indicator;
- 261: 		FVector2D ScreenPosition;
- 264: 		double Depth;
- 267: 		int32 Priority;
- 270: 		uint8 bIsIndicatorVisible : 1;
- 273: 		uint8 bInFrontOfCamera : 1;
- 276: 		uint8 bHasValidScreenPosition : 1;
- 279: 		uint8 bDirty : 1;
- 289: 		mutable uint8 bWasIndicatorClamped : 1;
- 292: 		mutable uint8 bWasIndicatorClampedStatusChanged : 1;
- 295: 		friend class SActorCanvas;
- 296: 	};
- 301: 	class FArrowSlot : public TSlotBase<FArrowSlot>
- 302: 	{
- 303: 	};
- 307: 	SLATE_BEGIN_ARGS(SActorCanvas)
- 308: 		{
- 311: 			_Visibility = EVisibility::HitTestInvisible;
- 312: 		}
- 316: 		SLATE_SLOT_ARGUMENT(SActorCanvas::FSlot, Slots)
- 319: 	SLATE_END_ARGS()
- 322: 	SActorCanvas()
- 324: 		: CanvasChildren(this)
- 326: 		  , ArrowChildren(this)
- 328: 		  , AllChildren(this)
- 329: 	{
- 331: 		AllChildren.AddChildren(CanvasChildren);
- 334: 		AllChildren.AddChildren(ArrowChildren);
- 335: 	}
- 339: 	~SActorCanvas();
- 352: 	void Construct(const FArguments& InArgs, const FLocalPlayerContext& InCtx,
- 353: 	               const FSlateBrush* ActorCanvasArrowBrush);
- 359: 	virtual void
- 360: 	OnArrangeChildren(const FGeometry& AllottedGeometry, FArrangedChildren& ArrangedChildren) const override;
- 364: 	virtual FVector2D ComputeDesiredSize(float) const override { return FVector2D::ZeroVector; }
- 368: 	virtual FChildren* GetChildren() override { return &AllChildren; }
- 372: 	virtual int32 OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect,
- 373: 	                      FSlateWindowElementList& OutDrawElements, int32 LayerId, const FWidgetStyle& InWidgetStyle,
- 374: 	                      bool bParentEnabled) const;
- 380: 	void SetDrawElementsInOrder(bool bInDrawElementsInOrder) { bDrawElementsInOrder = bInDrawElementsInOrder; }
- 384: 	virtual FString GetReferencerName() const override;
- 389: 	virtual void AddReferencedObjects(FReferenceCollector& Collector) override;
- 391: private:
- 393: 	void OnIndicatorAdded(UIndicatorDescriptor* Indicator);
- 396: 	void OnIndicatorRemoved(UIndicatorDescriptor* Indicator);
- 400: 	void AddIndicatorForEntry(UIndicatorDescriptor* Indicator);
- 403: 	void RemoveIndicatorForEntry(UIndicatorDescriptor* Indicator);
- 407: 	void OnIndicatorClassLoaded(TWeakObjectPtr<UIndicatorDescriptor> IndicatorPtr);
- 410: 	using FScopedWidgetSlotArguments = TPanelChildren<FSlot>::FScopedWidgetSlotArguments;
- 413: 	FScopedWidgetSlotArguments AddActorSlot(UIndicatorDescriptor* Indicator);
- 416: 	int32 RemoveActorSlot(const TSharedRef<SWidget>& SlotWidget);
- 420: 	void SetShowAnyIndicators(bool bIndicators);
- 424: 	EActiveTimerReturnType UpdateCanvas(double InCurrentTime, float InDeltaTime);
- 429: 	void GetOffsetAndSize(const UIndicatorDescriptor* Indicator,
- 430: 	                      FVector2D& OutSize,
- 431: 	                      FVector2D& OutOffset,
- 432: 	                      FVector2D& OutPaddingMin,
- 433: 	                      FVector2D& OutPaddingMax) const;
- 437: 	void UpdateActiveTimer();
- 439: private:
- 442: 	TArray<TObjectPtr<UIndicatorDescriptor>> AllIndicators;
- 446: 	TArray<UIndicatorDescriptor*> InactiveIndicators;
- 450: 	FLocalPlayerContext LocalPlayerContext;
- 454: 	TWeakObjectPtr<UHodgeIndicatorManagerComponent> IndicatorComponentPtr;
- 458: 	TPanelChildren<FSlot> CanvasChildren;
- 462: 	mutable TPanelChildren<FArrowSlot> ArrowChildren;
- 466: 	FCombinedChildren AllChildren;
- 470: 	FUserWidgetPool IndicatorPool;
- 474: 	const FSlateBrush* ActorCanvasArrowBrush = nullptr;
- 478: 	mutable int32 NextArrowIndex = 0;
- 482: 	mutable int32 ArrowIndexLastUpdate = 0;
- 488: 	bool bDrawElementsInOrder = false;
- 492: 	bool bShowAnyIndicators = false;
- 496: 	mutable TOptional<FGeometry> OptionalPaintGeometry;
- 499: 	TSharedPtr<FActiveTimerHandle> TickHandle;
- 504: 	TArray<TSharedPtr<FStreamableHandle>> IndicatorLoadHandles;
- 505: };
+ 232: 		bool HasValidScreenPosition() const { return bHasValidScreenPosition; }
+ 238: 		void SetHasValidScreenPosition(bool bValidScreenPosition)
+ 239: 		{
+ 241: 			if (bHasValidScreenPosition != bValidScreenPosition)
+ 242: 			{
+ 243: 				bHasValidScreenPosition = bValidScreenPosition;
+ 244: 				bDirty = true;
+ 245: 			}
+ 248: 			RefreshVisibility();
+ 249: 		}
+ 255: 		bool bIsDirty() const { return bDirty; }
+ 259: 		void ClearDirtyFlag()
+ 260: 		{
+ 261: 			bDirty = false;
+ 262: 		}
+ 268: 		bool WasIndicatorClamped() const { return bWasIndicatorClamped; }
+ 274: 		void SetWasIndicatorClamped(bool bWasClamped) const
+ 275: 		{
+ 277: 			if (bWasClamped != bWasIndicatorClamped)
+ 278: 			{
+ 279: 				bWasIndicatorClamped = bWasClamped;
+ 280: 				bWasIndicatorClampedStatusChanged = true;
+ 281: 			}
+ 282: 		}
+ 288: 		bool WasIndicatorClampedStatusChanged() const { return bWasIndicatorClampedStatusChanged; }
+ 292: 		void ClearIndicatorClampedStatusChangedFlag()
+ 293: 		{
+ 294: 			bWasIndicatorClampedStatusChanged = false;
+ 295: 		}
+ 297: 	private:
+ 301: 		void RefreshVisibility()
+ 302: 		{
+ 305: 			const bool bIsVisible = bIsIndicatorVisible && bHasValidScreenPosition;
+ 312: 			GetWidget()->SetVisibility(bIsVisible ? EVisibility::SelfHitTestInvisible : EVisibility::Collapsed);
+ 313: 		}
+ 319: 		UIndicatorDescriptor* Indicator;
+ 322: 		FVector2D ScreenPosition;
+ 325: 		double Depth;
+ 328: 		int32 Priority;
+ 331: 		uint8 bIsIndicatorVisible : 1;
+ 334: 		uint8 bInFrontOfCamera : 1;
+ 337: 		uint8 bHasValidScreenPosition : 1;
+ 340: 		uint8 bDirty : 1;
+ 350: 		mutable uint8 bWasIndicatorClamped : 1;
+ 353: 		mutable uint8 bWasIndicatorClampedStatusChanged : 1;
+ 356: 		friend class SActorCanvas;
+ 357: 	};
+ 362: 	class FArrowSlot : public TSlotBase<FArrowSlot>
+ 363: 	{
+ 364: 	};
+ 368: 	SLATE_BEGIN_ARGS(SActorCanvas)
+ 369: 		{
+ 372: 			_Visibility = EVisibility::HitTestInvisible;
+ 373: 		}
+ 377: 		SLATE_SLOT_ARGUMENT(SActorCanvas::FSlot, Slots)
+ 380: 	SLATE_END_ARGS()
+ 384: 	SActorCanvas()
+ 386: 		: CanvasChildren(this)
+ 388: 		  , ArrowChildren(this)
+ 390: 		  , AllChildren(this)
+ 391: 	{
+ 393: 		AllChildren.AddChildren(CanvasChildren);
+ 396: 		AllChildren.AddChildren(ArrowChildren);
+ 397: 	}
+ 402: 	~SActorCanvas();
+ 420: 	void Construct(const FArguments& InArgs, const FLocalPlayerContext& InCtx,
+ 421: 	               const FSlateBrush* ActorCanvasArrowBrush);
+ 431: 	virtual void
+ 432: 	OnArrangeChildren(const FGeometry& AllottedGeometry, FArrangedChildren& ArrangedChildren) const override;
+ 440: 	virtual FVector2D ComputeDesiredSize(float) const override { return FVector2D::ZeroVector; }
+ 447: 	virtual FChildren* GetChildren() override { return &AllChildren; }
+ 461: 	virtual int32 OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect,
+ 462: 	                      FSlateWindowElementList& OutDrawElements, int32 LayerId, const FWidgetStyle& InWidgetStyle,
+ 463: 	                      bool bParentEnabled) const;
+ 472: 	void SetDrawElementsInOrder(bool bInDrawElementsInOrder) { bDrawElementsInOrder = bInDrawElementsInOrder; }
+ 479: 	virtual FString GetReferencerName() const override;
+ 487: 	virtual void AddReferencedObjects(FReferenceCollector& Collector) override;
+ 489: private:
+ 494: 	void OnIndicatorAdded(UIndicatorDescriptor* Indicator);
+ 500: 	void OnIndicatorRemoved(UIndicatorDescriptor* Indicator);
+ 507: 	void AddIndicatorForEntry(UIndicatorDescriptor* Indicator);
+ 513: 	void RemoveIndicatorForEntry(UIndicatorDescriptor* Indicator);
+ 520: 	void OnIndicatorClassLoaded(TWeakObjectPtr<UIndicatorDescriptor> IndicatorPtr);
+ 523: 	using FScopedWidgetSlotArguments = TPanelChildren<FSlot>::FScopedWidgetSlotArguments;
+ 530: 	FScopedWidgetSlotArguments AddActorSlot(UIndicatorDescriptor* Indicator);
+ 537: 	int32 RemoveActorSlot(const TSharedRef<SWidget>& SlotWidget);
+ 544: 	void SetShowAnyIndicators(bool bIndicators);
+ 553: 	EActiveTimerReturnType UpdateCanvas(double InCurrentTime, float InDeltaTime);
+ 565: 	void GetOffsetAndSize(const UIndicatorDescriptor* Indicator,
+ 566: 	                      FVector2D& OutSize,
+ 567: 	                      FVector2D& OutOffset,
+ 568: 	                      FVector2D& OutPaddingMin,
+ 569: 	                      FVector2D& OutPaddingMax) const;
+ 574: 	void UpdateActiveTimer();
+ 576: private:
+ 579: 	TArray<TObjectPtr<UIndicatorDescriptor>> AllIndicators;
+ 583: 	TArray<UIndicatorDescriptor*> InactiveIndicators;
+ 587: 	FLocalPlayerContext LocalPlayerContext;
+ 591: 	TWeakObjectPtr<UHodgeIndicatorManagerComponent> IndicatorComponentPtr;
+ 595: 	TPanelChildren<FSlot> CanvasChildren;
+ 599: 	mutable TPanelChildren<FArrowSlot> ArrowChildren;
+ 603: 	FCombinedChildren AllChildren;
+ 607: 	FUserWidgetPool IndicatorPool;
+ 611: 	const FSlateBrush* ActorCanvasArrowBrush = nullptr;
+ 615: 	mutable int32 NextArrowIndex = 0;
+ 619: 	mutable int32 ArrowIndexLastUpdate = 0;
+ 625: 	bool bDrawElementsInOrder = false;
+ 629: 	bool bShowAnyIndicators = false;
+ 633: 	mutable TOptional<FGeometry> OptionalPaintGeometry;
+ 636: 	TSharedPtr<FActiveTimerHandle> TickHandle;
+ 641: 	TArray<TSharedPtr<FStreamableHandle>> IndicatorLoadHandles;
+ 642: };
 ```
 
 ## HodgePerfStatContainerBase.h
@@ -2502,59 +2686,59 @@ GameInstance 所属的本地玩家 UI 管理器：根布局、Controller 绑定�
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   1: #pragma once
-   2: #include "Subsystems/GameInstanceSubsystem.h"
-   3: #include "UObject/SoftObjectPtr.h"
-   4: #include "HodgeUIManagerSubsystem.generated.h"
-   5: class UHodgePrimaryGameLayout;
-   6: class UHodgeGameplayUIDataSource;
-   7: class ULocalPlayer;
-   8: class APlayerController;
-   9: struct FStreamableHandle;
-  10: DECLARE_MULTICAST_DELEGATE_TwoParams(FHodgeRootLayoutChanged, ULocalPlayer*, UHodgePrimaryGameLayout*);
-  12: USTRUCT()
-  13: struct FHodgePlayerUILayout
-  14: {
-  15:     GENERATED_BODY()
-  16:     UPROPERTY(Transient) TObjectPtr<UHodgePrimaryGameLayout> Root;
-  17:     UPROPERTY(Transient) TObjectPtr<UHodgeGameplayUIDataSource> GameplayData;
-  18:     UPROPERTY(Transient) TWeakObjectPtr<APlayerController> Controller;
-  19:     FDelegateHandle ControllerDelegate;
-  20:     FDelegateHandle InputModeDelegate;
-  21:     TSet<FName> InputTokens;
-  22:     TSharedPtr<FStreamableHandle> RootLoad;
-  23: };
-  26: UCLASS(Config=Game)
-  27: class HODGEPODGE_API UHodgeUIManagerSubsystem : public UGameInstanceSubsystem
-  28: {
-  29:     GENERATED_BODY()
-  30: public:
-  31:     virtual bool ShouldCreateSubsystem(UObject* Outer) const override;
-  32:     virtual void Initialize(FSubsystemCollectionBase& Collection) override;
-  33:     virtual void Deinitialize() override;
-  34:     void PlayerAdded(ULocalPlayer* Player);
-  35:     void PlayerRemoved(ULocalPlayer* Player);
-  36:     UFUNCTION(BlueprintPure, Category="Hodge|UI") UHodgePrimaryGameLayout* GetRootLayout(ULocalPlayer* Player) const;
-  37:     UFUNCTION(BlueprintPure, Category="Hodge|UI") bool IsGameInputAllowed(ULocalPlayer* Player) const;
-  38:     UFUNCTION(BlueprintPure, Category="Hodge|UI", meta=(WorldContext="WorldContextObject"))
-  39:     static UHodgeUIManagerSubsystem* GetUIManager(const UObject* WorldContextObject);
-  40:     UFUNCTION(BlueprintPure, Category="Hodge|UI") static UHodgePrimaryGameLayout* GetRootLayoutForController(APlayerController* Controller);
-  41:     UFUNCTION(BlueprintPure, Category="Hodge|UI") static UHodgeGameplayUIDataSource* GetGameplayDataForController(APlayerController* Controller);
-  42:     static bool AllowsGameplayInput(const APlayerController* Controller);
-  43:     void SuspendInput(ULocalPlayer* Player, FName Token);
-  44:     void ResumeInput(ULocalPlayer* Player, FName Token);
-  45:     void RefreshInputState(ULocalPlayer* Player);
-  46:     FHodgeRootLayoutChanged OnRootLayoutChanged;
-  47:     int32 GetPlayerLayoutCount() const { return Players.Num(); }
-  48: protected:
-  50:     UPROPERTY(Config, EditDefaultsOnly, Category="UI") TSoftClassPtr<UHodgePrimaryGameLayout> RootLayoutClass;
-  51: private:
-  52:     UPROPERTY(Transient) TMap<TObjectPtr<ULocalPlayer>, FHodgePlayerUILayout> Players;
-  53:     void ControllerChanged(ULocalPlayer* Player, APlayerController* Controller);
-  54:     void CreateRoot(ULocalPlayer* Player, TWeakObjectPtr<APlayerController> Controller);
-  55:     void DestroyRoot(ULocalPlayer* Player);
-  56:     void ClearGameplayInput(ULocalPlayer* Player);
-  57: };
+   4: #pragma once
+   5: #include "Subsystems/GameInstanceSubsystem.h"
+   6: #include "UObject/SoftObjectPtr.h"
+   7: #include "HodgeUIManagerSubsystem.generated.h"
+   8: class UHodgePrimaryGameLayout;
+   9: class UHodgeGameplayUIDataSource;
+  10: class ULocalPlayer;
+  11: class APlayerController;
+  12: struct FStreamableHandle;
+  13: DECLARE_MULTICAST_DELEGATE_TwoParams(FHodgeRootLayoutChanged, ULocalPlayer*, UHodgePrimaryGameLayout*);
+  16: USTRUCT()
+  17: struct FHodgePlayerUILayout
+  18: {
+  19:     GENERATED_BODY()
+  21:     UPROPERTY(Transient) TObjectPtr<UHodgePrimaryGameLayout> Root;
+  23:     UPROPERTY(Transient) TObjectPtr<UHodgeGameplayUIDataSource> GameplayData;
+  25:     UPROPERTY(Transient) TWeakObjectPtr<APlayerController> Controller;
+  27:     FDelegateHandle ControllerDelegate;
+  29:     FDelegateHandle InputModeDelegate;
+  31:     TSet<FName> InputTokens;
+  33:     TSharedPtr<FStreamableHandle> RootLoad;
+  34: };
+  37: UCLASS(Config=Game)
+  38: class HODGEPODGE_API UHodgeUIManagerSubsystem : public UGameInstanceSubsystem
+  39: {
+  40:     GENERATED_BODY()
+  41: public:
+  46:     virtual bool ShouldCreateSubsystem(UObject* Outer) const override;
+  50:     virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+  52:     virtual void Deinitialize() override;
+  56:     void PlayerAdded(ULocalPlayer* Player);
+  60:     void PlayerRemoved(ULocalPlayer* Player);
+  65:     UFUNCTION(BlueprintPure, Category="Hodge|UI") UHodgePrimaryGameLayout* GetRootLayout(ULocalPlayer* Player) const;
+  70:     UFUNCTION(BlueprintPure, Category="Hodge|UI") bool IsGameInputAllowed(ULocalPlayer* Player) const;
+  75:     UFUNCTION(BlueprintPure, Category="Hodge|UI", meta=(WorldContext="WorldContextObject"))
+  76:     static UHodgeUIManagerSubsystem* GetUIManager(const UObject* WorldContextObject);
+  81:     UFUNCTION(BlueprintPure, Category="Hodge|UI") static UHodgePrimaryGameLayout* GetRootLayoutForController(APlayerController* Controller);
+  86:     UFUNCTION(BlueprintPure, Category="Hodge|UI") static UHodgeGameplayUIDataSource* GetGameplayDataForController(APlayerController* Controller);
+  91:     static bool AllowsGameplayInput(const APlayerController* Controller);
+  96:     void SuspendInput(ULocalPlayer* Player, FName Token);
+ 101:     void ResumeInput(ULocalPlayer* Player, FName Token);
+ 105:     void RefreshInputState(ULocalPlayer* Player);
+ 107:     FHodgeRootLayoutChanged OnRootLayoutChanged;
+ 111:     int32 GetPlayerLayoutCount() const { return Players.Num(); }
+ 112: protected:
+ 114:     UPROPERTY(Config, EditDefaultsOnly, Category="UI") TSoftClassPtr<UHodgePrimaryGameLayout> RootLayoutClass;
+ 115: private:
+ 117:     UPROPERTY(Transient) TMap<TObjectPtr<ULocalPlayer>, FHodgePlayerUILayout> Players;
+ 122:     void ControllerChanged(ULocalPlayer* Player, APlayerController* Controller);
+ 127:     void CreateRoot(ULocalPlayer* Player, TWeakObjectPtr<APlayerController> Controller);
+ 131:     void DestroyRoot(ULocalPlayer* Player);
+ 135:     void ClearGameplayInput(ULocalPlayer* Player);
+ 136: };
 ```
 
 ## HodgeUIMessaging.h
@@ -2564,6 +2748,27 @@ GameInstance 所属的本地玩家 UI 管理器：根布局、Controller 绑定�
 源码：[Source/Hodgepodge/Public/UI/Subsystem/HodgeUIMessaging.h](../../../Source/Hodgepodge/Public/UI/Subsystem/HodgeUIMessaging.h)
 
 **全部为注释或空白；无有效声明/实现。**
+
+## HodgeLockOnIndicatorWidget.h
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Public/UI/Targeting/HodgeLockOnIndicatorWidget.h](../../../Source/Hodgepodge/Public/UI/Targeting/HodgeLockOnIndicatorWidget.h)
+
+有效头文件声明摘录（未展开宏，未求值预处理分支）：
+
+```cpp
+   2: #pragma once
+   3: #include "Blueprint/UserWidget.h"
+   4: #include "HodgeLockOnIndicatorWidget.generated.h"
+   6: UCLASS()
+   7: class HODGEPODGE_API UHodgeLockOnIndicatorWidget : public UUserWidget
+   8: {
+   9: 	GENERATED_BODY()
+  10: protected:
+  11: 	virtual TSharedRef<SWidget> RebuildWidget() override;
+  12: };
+```
 
 ## CircumferenceMarkerWidget.h
 
@@ -2576,40 +2781,40 @@ GameInstance 所属的本地玩家 UI 管理器：根布局、Controller 绑定�
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   3: #pragma once
-   5: #include "Components/Widget.h"
-   6: #include "UI/Weapons/SCircumferenceMarkerWidget.h"
-   8: #include "CircumferenceMarkerWidget.generated.h"
-  10: class SWidget;
-  11: class UObject;
-  12: struct FFrame;
-  14: UCLASS()
-  15: class UCircumferenceMarkerWidget : public UWidget
-  16: {
-  17: 	GENERATED_BODY()
-  19: public:
-  20: 	UCircumferenceMarkerWidget(const FObjectInitializer& ObjectInitializer);
+   6: #pragma once
+   8: #include "Components/Widget.h"
+   9: #include "UI/Weapons/SCircumferenceMarkerWidget.h"
+  11: #include "CircumferenceMarkerWidget.generated.h"
+  13: class SWidget;
+  14: class UObject;
+  15: struct FFrame;
+  18: UCLASS()
+  19: class UCircumferenceMarkerWidget : public UWidget
+  20: {
+  21: 	GENERATED_BODY()
   23: public:
-  24: 	virtual void SynchronizeProperties() override;
-  25: protected:
-  26: 	virtual TSharedRef<SWidget> RebuildWidget() override;
+  27: 	UCircumferenceMarkerWidget(const FObjectInitializer& ObjectInitializer);
   30: public:
-  31: 	virtual void ReleaseSlateResources(bool bReleaseChildren) override;
-  34: public:
-  36: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Appearance)
-  37: 	TArray<FCircumferenceMarkerEntry> MarkerList;
-  40: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Appearance, meta=(ClampMin=0.0))
-  41: 	float Radius = 48.0f;
-  44: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Appearance)
-  45: 	FSlateBrush MarkerImage;
-  49: 	UPROPERTY(EditAnywhere, Category=Corner)
-  50: 	uint8 bReticleCornerOutsideSpreadRadius : 1;
-  52: public:
-  54: 	UFUNCTION(BlueprintCallable, Category = "Appearance")
-  55: 	void SetRadius(float InRadius);
-  57: private:
-  59: 	TSharedPtr<SCircumferenceMarkerWidget> MyMarkerWidget;
-  60: };
+  32: 	virtual void SynchronizeProperties() override;
+  33: protected:
+  37: 	virtual TSharedRef<SWidget> RebuildWidget() override;
+  41: public:
+  45: 	virtual void ReleaseSlateResources(bool bReleaseChildren) override;
+  48: public:
+  51: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Appearance)
+  52: 	TArray<FCircumferenceMarkerEntry> MarkerList;
+  56: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Appearance, meta=(ClampMin=0.0))
+  57: 	float Radius = 48.0f;
+  61: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Appearance)
+  62: 	FSlateBrush MarkerImage;
+  67: 	UPROPERTY(EditAnywhere, Category=Corner)
+  68: 	uint8 bReticleCornerOutsideSpreadRadius : 1;
+  70: public:
+  75: 	UFUNCTION(BlueprintCallable, Category = "Appearance")
+  76: 	void SetRadius(float InRadius);
+  78: private:
+  81: 	TSharedPtr<SCircumferenceMarkerWidget> MyMarkerWidget;
+  82: };
 ```
 
 ## HitMarkerConfirmationWidget.h
@@ -2645,57 +2850,57 @@ GameInstance 所属的本地玩家 UI 管理器：根布局、Controller 绑定�
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   3: #pragma once
-   5: #include "Styling/CoreStyle.h"
-   6: #include "Widgets/Accessibility/SlateWidgetAccessibleTypes.h"
-   7: #include "Widgets/DeclarativeSyntaxSupport.h"
-   8: #include "Widgets/SLeafWidget.h"
-  10: #include "SCircumferenceMarkerWidget.generated.h"
-  12: class FPaintArgs;
-  13: class FSlateRect;
-  14: class FSlateWindowElementList;
-  15: class FWidgetStyle;
-  16: struct FGeometry;
-  17: struct FSlateBrush;
-  19: USTRUCT(BlueprintType)
-  20: struct FCircumferenceMarkerEntry
-  21: {
-  22: 	GENERATED_BODY()
-  25: 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ForceUnits=deg))
-  26: 	float PositionAngle = 0.0f;
-  29: 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ForceUnits=deg))
-  30: 	float ImageRotationAngle = 0.0f;
-  31: };
-  33: class SCircumferenceMarkerWidget : public SLeafWidget
-  34: {
-  35: 	SLATE_BEGIN_ARGS(SCircumferenceMarkerWidget)
-  36: 		: _MarkerBrush(FCoreStyle::Get().GetBrush("Throbber.CircleChunk"))
-  37: 		, _Radius(48.0f)
-  38: 	{
-  39: 	}
-  41: 		SLATE_ARGUMENT(const FSlateBrush*, MarkerBrush)
-  43: 		SLATE_ARGUMENT(TArray<FCircumferenceMarkerEntry>, MarkerList)
-  45: 		SLATE_ATTRIBUTE(float, Radius)
-  47: 		SLATE_ATTRIBUTE(FSlateColor, ColorAndOpacity)
-  48: 	SLATE_END_ARGS()
-  50: public:
-  51: 	void Construct(const FArguments& InArgs);
-  53: 	SCircumferenceMarkerWidget();
-  56: 	virtual int32 OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const override;
-  57: 	virtual FVector2D ComputeDesiredSize(float) const override;
-  58: 	virtual bool ComputeVolatility() const override { return true; }
-  61: 	void SetRadius(float NewRadius);
-  62: 	void SetMarkerList(TArray<FCircumferenceMarkerEntry>& NewMarkerList);
-  64: private:
-  65: 	FSlateRenderTransform GetMarkerRenderTransform(const FCircumferenceMarkerEntry& Marker, const float BaseRadius, const float HUDScale) const;
-  67: private:
-  69: 	const FSlateBrush* MarkerBrush;
-  72: 	TArray<FCircumferenceMarkerEntry> MarkerList;
-  75: 	TAttribute<float> Radius;
-  78: 	TAttribute<FSlateColor> ColorAndOpacity;
-  79: 	bool bColorAndOpacitySet;
-  83: 	uint8 bReticleCornerOutsideSpreadRadius : 1;
-  84: };
+   6: #pragma once
+   8: #include "Styling/CoreStyle.h"
+   9: #include "Widgets/Accessibility/SlateWidgetAccessibleTypes.h"
+  10: #include "Widgets/DeclarativeSyntaxSupport.h"
+  11: #include "Widgets/SLeafWidget.h"
+  13: #include "SCircumferenceMarkerWidget.generated.h"
+  15: class FPaintArgs;
+  16: class FSlateRect;
+  17: class FSlateWindowElementList;
+  18: class FWidgetStyle;
+  19: struct FGeometry;
+  20: struct FSlateBrush;
+  23: USTRUCT(BlueprintType)
+  24: struct FCircumferenceMarkerEntry
+  25: {
+  26: 	GENERATED_BODY()
+  30: 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ForceUnits=deg))
+  31: 	float PositionAngle = 0.0f;
+  35: 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ForceUnits=deg))
+  36: 	float ImageRotationAngle = 0.0f;
+  37: };
+  40: class SCircumferenceMarkerWidget : public SLeafWidget
+  41: {
+  42: 	SLATE_BEGIN_ARGS(SCircumferenceMarkerWidget)
+  43: 		: _MarkerBrush(FCoreStyle::Get().GetBrush("Throbber.CircleChunk"))
+  44: 		, _Radius(48.0f)
+  45: 	{
+  46: 	}
+  48: 		SLATE_ARGUMENT(const FSlateBrush*, MarkerBrush)
+  50: 		SLATE_ARGUMENT(TArray<FCircumferenceMarkerEntry>, MarkerList)
+  52: 		SLATE_ATTRIBUTE(float, Radius)
+  54: 		SLATE_ATTRIBUTE(FSlateColor, ColorAndOpacity)
+  55: 	SLATE_END_ARGS()
+  57: public:
+  61: 	void Construct(const FArguments& InArgs);
+  64: 	SCircumferenceMarkerWidget();
+  77: 	virtual int32 OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const override;
+  82: 	virtual FVector2D ComputeDesiredSize(float) const override;
+  86: 	virtual bool ComputeVolatility() const override { return true; }
+  92: 	void SetRadius(float NewRadius);
+  96: 	void SetMarkerList(TArray<FCircumferenceMarkerEntry>& NewMarkerList);
+  98: private:
+ 105: 	FSlateRenderTransform GetMarkerRenderTransform(const FCircumferenceMarkerEntry& Marker, const float BaseRadius, const float HUDScale) const;
+ 107: private:
+ 110: 	const FSlateBrush* MarkerBrush;
+ 114: 	TArray<FCircumferenceMarkerEntry> MarkerList;
+ 118: 	TAttribute<float> Radius;
+ 122: 	TAttribute<FSlateColor> ColorAndOpacity;
+ 124: 	bool bColorAndOpacitySet;
+ 129: 	uint8 bReticleCornerOutsideSpreadRadius : 1;
+ 130: };
 ```
 
 ## SHitMarkerConfirmationWidget.h

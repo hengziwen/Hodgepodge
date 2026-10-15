@@ -16,9 +16,9 @@
 
 定义候选（多行签名仅展示首行）：
 
-- L21: `AHodgeActorBase::AHodgeActorBase()`
-- L34: `void AHodgeActorBase::BeginPlay()`
-- L45: `void AHodgeActorBase::Tick(float DeltaTime)`
+- L24: `AHodgeActorBase::AHodgeActorBase()`
+- L37: `void AHodgeActorBase::BeginPlay()`
+- L48: `void AHodgeActorBase::Tick(float DeltaTime)`
 
 ## HodgeActorBase.h
 
@@ -29,19 +29,19 @@
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   9: #pragma once
-  11: #include "CoreMinimal.h"
-  12: #include "GameFramework/Actor.h"
-  13: #include "HodgeActorBase.generated.h"
-  27: UCLASS()
-  28: class HODGEPODGE_API AHodgeActorBase : public AActor
-  29: {
-  30: 	GENERATED_BODY()
-  32: public:
-  39: 	AHodgeActorBase();
-  41: protected:
-  48: 	virtual void BeginPlay() override;
-  50: public:
-  59: 	virtual void Tick(float DeltaTime) override;
-  60: };
+  12: #pragma once
+  14: #include "CoreMinimal.h"
+  15: #include "GameFramework/Actor.h"
+  16: #include "HodgeActorBase.generated.h"
+  30: UCLASS()
+  31: class HODGEPODGE_API AHodgeActorBase : public AActor
+  32: {
+  33: 	GENERATED_BODY()
+  35: public:
+  43: 	AHodgeActorBase();
+  45: protected:
+  53: 	virtual void BeginPlay() override;
+  55: public:
+  67: 	virtual void Tick(float DeltaTime) override;
+  68: };
 ```

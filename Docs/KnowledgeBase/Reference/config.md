@@ -188,51 +188,52 @@
   12: ; 使用项目自定义 GAS 全局类，使 GAS 默认分配 FHodgeGameplayEffectContext。
   14: [/Script/GameplayAbilities.AbilitySystemGlobals]
   15: AbilitySystemGlobalsClassName=/Script/Hodgepodge.HodgeAbilitySystemGlobals
-  16: GlobalGameplayCueManagerClass=/Script/Hodgepodge.HodgeGameplayCueManager
-  17: ; Ability 激活失败原因 Tag，对应 HodgeGameplayTags.cpp 中的 Ability.ActivateFail.* 原生 Tag。
-  18: ActivateFailCooldownTag=(TagName="Ability.ActivateFail.Cooldown")
-  19: ActivateFailCostTag=(TagName="Ability.ActivateFail.Cost")
-  20: ActivateFailNetworkingTag=(TagName="Ability.ActivateFail.Networking")
-  21: ActivateFailTagsBlockedTag=(TagName="Ability.ActivateFail.TagsBlocked")
-  22: ActivateFailTagsMissingTag=(TagName="Ability.ActivateFail.TagsMissing")
-  23: ActivateFailCanActivateAbilityTag=(TagName="Ability.ActivateFail.CanActivateAbility")
-  25: ; ShowDebug AbilitySystem 使用 HUD 的调试目标（UE 5.5 中默认值为 False）。
-  26: bUseDebugTargetFromHud=True
-  28: ; 客户端不预测施加到他人目标上的 GameplayEffect（UE 5.5 默认值为 True，与 Lyra 行为不一致）。
-  29: PredictTargetGameplayEffects=False
-  31: ; 建立 GameplayCue 内容目录后，再取消下行注释并填写常驻加载路径。
-  32: ;+GameplayCueNotifyPaths=/Game/Main/GameplayCues
-  34: ; 使用项目自定义 GameFeature Policy。
-  36: [/Script/GameFeatures.GameFeaturesSubsystemSettings]
-  37: GameFeaturesManagerClassName=/Script/Hodgepodge.HodgeGameFeaturePolicy
-  39: [/Script/Engine.AssetManagerSettings]
-  40: -PrimaryAssetTypesToScan=(PrimaryAssetType="Map",AssetBaseClass=/Script/Engine.World,bHasBlueprintClasses=False,bIsEditorOnly=True,Directories=((Path="/Game/Maps")),SpecificAssets=,Rules=(Priority=-1,ChunkId=-1,bApplyRecursively=True,CookRule=Unknown))
-  41: -PrimaryAssetTypesToScan=(PrimaryAssetType="PrimaryAssetLabel",AssetBaseClass=/Script/Engine.PrimaryAssetLabel,bHasBlueprintClasses=False,bIsEditorOnly=True,Directories=((Path="/Game")),SpecificAssets=,Rules=(Priority=-1,ChunkId=-1,bApplyRecursively=True,CookRule=Unknown))
-  42: +PrimaryAssetTypesToScan=(PrimaryAssetType="Map",AssetBaseClass="/Script/Engine.World",bHasBlueprintClasses=False,bIsEditorOnly=True,Directories=((Path="/Game/Maps")),SpecificAssets=,Rules=(Priority=-1,ChunkId=-1,bApplyRecursively=True,CookRule=AlwaysCook))
-  43: +PrimaryAssetTypesToScan=(PrimaryAssetType="PrimaryAssetLabel",AssetBaseClass="/Script/Engine.PrimaryAssetLabel",bHasBlueprintClasses=False,bIsEditorOnly=True,Directories=((Path="/Game")),SpecificAssets=,Rules=(Priority=-1,ChunkId=-1,bApplyRecursively=True,CookRule=Unknown))
-  44: +PrimaryAssetTypesToScan=(PrimaryAssetType="HodgeGameData",AssetBaseClass="/Script/Hodgepodge.HodgeGameData",bHasBlueprintClasses=False,bIsEditorOnly=False,Directories=,SpecificAssets=("/Game/Main/Data/DA_Dafult_GameData.DA_Dafult_GameData"),Rules=(Priority=-1,ChunkId=-1,bApplyRecursively=True,CookRule=AlwaysCook))
-  45: +PrimaryAssetTypesToScan=(PrimaryAssetType="GameFeatureData",AssetBaseClass="/Script/GameFeatures.GameFeatureData",bHasBlueprintClasses=False,bIsEditorOnly=False,Directories=((Path="/Game/Unused")),SpecificAssets=,Rules=(Priority=-1,ChunkId=-1,bApplyRecursively=True,CookRule=AlwaysCook))
-  46: +PrimaryAssetTypesToScan=(PrimaryAssetType="HodgeExperienceDefinition",AssetBaseClass="/Script/Hodgepodge.HodgeExperienceDefinition",bHasBlueprintClasses=True,bIsEditorOnly=False,Directories=((Path="/Game/Main/Experiences")),SpecificAssets=,Rules=(Priority=-1,ChunkId=-1,bApplyRecursively=True,CookRule=AlwaysCook))
-  47: +PrimaryAssetTypesToScan=(PrimaryAssetType="HodgePawnData",AssetBaseClass="/Script/Hodgepodge.HodgePawnData",bHasBlueprintClasses=False,bIsEditorOnly=False,Directories=((Path="/Game/Main/Data")),SpecificAssets=,Rules=(Priority=-1,ChunkId=-1,bApplyRecursively=True,CookRule=AlwaysCook))
-  48: +PrimaryAssetTypesToScan=(PrimaryAssetType="HodgeExperienceActionSet",AssetBaseClass="/Script/Hodgepodge.HodgeExperienceActionSet",bHasBlueprintClasses=False,bIsEditorOnly=False,Directories=((Path="/Game/Main/Experiences"),(Path="/Game/Main/UI")),SpecificAssets=,Rules=(Priority=-1,ChunkId=-1,bApplyRecursively=True,CookRule=AlwaysCook))
-  49: bOnlyCookProductionAssets=False
-  50: bShouldManagerDetermineTypeAndName=False
-  51: bShouldGuessTypeAndNameInEditor=True
-  52: bShouldAcquireMissingChunksOnLoad=False
-  53: bShouldWarnAboutInvalidAssets=True
-  54: MetaDataTagsForAssetRegistry=()
-  56: [/Script/McpAutomationBridge.McpAutomationBridgeSettings]
-  57: bEnableNativeMCP=True
-  58: NativeMCPPort=3016
-  59: bLoadAllToolsOnStart=True
-  60: ListenPorts=8116
-  61: bMultiListen=False
-  62: bAllowNonLoopback=False
-  63: bRequireCapabilityToken=[REDACTED]
-  66: [/Script/Hodgepodge.HodgeUIManagerSubsystem]
-  67: RootLayoutClass=/Game/Main/UI/Foundation/WBP_HodgePrimaryLayout.WBP_HodgePrimaryLayout_C
-  69: [/Script/CommonInput.CommonInputSettings]
-  70: InputData=/Game/Main/UI/Foundation/B_HodgeUIInputData.B_HodgeUIInputData_C
+  16: +GameplayCueNotifyPaths=/Game/Main/GameplayCues/Movement
+  17: GlobalGameplayCueManagerClass=/Script/Hodgepodge.HodgeGameplayCueManager
+  18: ; Ability 激活失败原因 Tag，对应 HodgeGameplayTags.cpp 中的 Ability.ActivateFail.* 原生 Tag。
+  19: ActivateFailCooldownTag=(TagName="Ability.ActivateFail.Cooldown")
+  20: ActivateFailCostTag=(TagName="Ability.ActivateFail.Cost")
+  21: ActivateFailNetworkingTag=(TagName="Ability.ActivateFail.Networking")
+  22: ActivateFailTagsBlockedTag=(TagName="Ability.ActivateFail.TagsBlocked")
+  23: ActivateFailTagsMissingTag=(TagName="Ability.ActivateFail.TagsMissing")
+  24: ActivateFailCanActivateAbilityTag=(TagName="Ability.ActivateFail.CanActivateAbility")
+  26: ; ShowDebug AbilitySystem 使用 HUD 的调试目标（UE 5.5 中默认值为 False）。
+  27: bUseDebugTargetFromHud=True
+  29: ; 客户端不预测施加到他人目标上的 GameplayEffect（UE 5.5 默认值为 True，与 Lyra 行为不一致）。
+  30: PredictTargetGameplayEffects=False
+  32: ; 建立 GameplayCue 内容目录后，再取消下行注释并填写常驻加载路径。
+  33: ;+GameplayCueNotifyPaths=/Game/Main/GameplayCues
+  35: ; 使用项目自定义 GameFeature Policy。
+  37: [/Script/GameFeatures.GameFeaturesSubsystemSettings]
+  38: GameFeaturesManagerClassName=/Script/Hodgepodge.HodgeGameFeaturePolicy
+  40: [/Script/Engine.AssetManagerSettings]
+  41: -PrimaryAssetTypesToScan=(PrimaryAssetType="Map",AssetBaseClass=/Script/Engine.World,bHasBlueprintClasses=False,bIsEditorOnly=True,Directories=((Path="/Game/Maps")),SpecificAssets=,Rules=(Priority=-1,ChunkId=-1,bApplyRecursively=True,CookRule=Unknown))
+  42: -PrimaryAssetTypesToScan=(PrimaryAssetType="PrimaryAssetLabel",AssetBaseClass=/Script/Engine.PrimaryAssetLabel,bHasBlueprintClasses=False,bIsEditorOnly=True,Directories=((Path="/Game")),SpecificAssets=,Rules=(Priority=-1,ChunkId=-1,bApplyRecursively=True,CookRule=Unknown))
+  43: +PrimaryAssetTypesToScan=(PrimaryAssetType="Map",AssetBaseClass="/Script/Engine.World",bHasBlueprintClasses=False,bIsEditorOnly=True,Directories=((Path="/Game/Maps")),SpecificAssets=,Rules=(Priority=-1,ChunkId=-1,bApplyRecursively=True,CookRule=AlwaysCook))
+  44: +PrimaryAssetTypesToScan=(PrimaryAssetType="PrimaryAssetLabel",AssetBaseClass="/Script/Engine.PrimaryAssetLabel",bHasBlueprintClasses=False,bIsEditorOnly=True,Directories=((Path="/Game")),SpecificAssets=,Rules=(Priority=-1,ChunkId=-1,bApplyRecursively=True,CookRule=Unknown))
+  45: +PrimaryAssetTypesToScan=(PrimaryAssetType="HodgeGameData",AssetBaseClass="/Script/Hodgepodge.HodgeGameData",bHasBlueprintClasses=False,bIsEditorOnly=False,Directories=,SpecificAssets=("/Game/Main/Data/DA_Dafult_GameData.DA_Dafult_GameData"),Rules=(Priority=-1,ChunkId=-1,bApplyRecursively=True,CookRule=AlwaysCook))
+  46: +PrimaryAssetTypesToScan=(PrimaryAssetType="GameFeatureData",AssetBaseClass="/Script/GameFeatures.GameFeatureData",bHasBlueprintClasses=False,bIsEditorOnly=False,Directories=((Path="/Game/Unused")),SpecificAssets=,Rules=(Priority=-1,ChunkId=-1,bApplyRecursively=True,CookRule=AlwaysCook))
+  47: +PrimaryAssetTypesToScan=(PrimaryAssetType="HodgeExperienceDefinition",AssetBaseClass="/Script/Hodgepodge.HodgeExperienceDefinition",bHasBlueprintClasses=True,bIsEditorOnly=False,Directories=((Path="/Game/Main/Experiences")),SpecificAssets=,Rules=(Priority=-1,ChunkId=-1,bApplyRecursively=True,CookRule=AlwaysCook))
+  48: +PrimaryAssetTypesToScan=(PrimaryAssetType="HodgePawnData",AssetBaseClass="/Script/Hodgepodge.HodgePawnData",bHasBlueprintClasses=False,bIsEditorOnly=False,Directories=((Path="/Game/Main/Data")),SpecificAssets=,Rules=(Priority=-1,ChunkId=-1,bApplyRecursively=True,CookRule=AlwaysCook))
+  49: +PrimaryAssetTypesToScan=(PrimaryAssetType="HodgeExperienceActionSet",AssetBaseClass="/Script/Hodgepodge.HodgeExperienceActionSet",bHasBlueprintClasses=False,bIsEditorOnly=False,Directories=((Path="/Game/Main/Experiences"),(Path="/Game/Main/UI")),SpecificAssets=,Rules=(Priority=-1,ChunkId=-1,bApplyRecursively=True,CookRule=AlwaysCook))
+  50: bOnlyCookProductionAssets=False
+  51: bShouldManagerDetermineTypeAndName=False
+  52: bShouldGuessTypeAndNameInEditor=True
+  53: bShouldAcquireMissingChunksOnLoad=False
+  54: bShouldWarnAboutInvalidAssets=True
+  55: MetaDataTagsForAssetRegistry=()
+  57: [/Script/McpAutomationBridge.McpAutomationBridgeSettings]
+  58: bEnableNativeMCP=True
+  59: NativeMCPPort=3016
+  60: bLoadAllToolsOnStart=True
+  61: ListenPorts=8116
+  62: bMultiListen=False
+  63: bAllowNonLoopback=False
+  64: bRequireCapabilityToken=[REDACTED]
+  67: [/Script/Hodgepodge.HodgeUIManagerSubsystem]
+  68: RootLayoutClass=/Game/Main/UI/Foundation/WBP_HodgePrimaryLayout.WBP_HodgePrimaryLayout_C
+  70: [/Script/CommonInput.CommonInputSettings]
+  71: InputData=/Game/Main/UI/Foundation/B_HodgeUIInputData.B_HodgeUIInputData_C
 ```
 
 ## DefaultGameplayTags.ini

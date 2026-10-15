@@ -6,7 +6,9 @@
 
 [客户端连段／移动取消窗口修复](Validation/client-combo-window-2026-10-07.md)：首帧服务器授权竞态、现有输入缓存与正式连段客户端回归。
 
-2026-10-06 同步。先看 [项目 README](../README.md)、[本地知识库](KnowledgeBase/README.md)、[当前状态与待办](KnowledgeBase/12-integration-backlog.md)。精确代码与资产见 [参考索引](KnowledgeBase/Reference/README.md)。
+**2026-10-15 同步**。先看 [项目 README](../README.md)、[本地知识库](KnowledgeBase/README.md)、[当前任务与待办复核](KnowledgeBase/29-current-work-and-backlog.md)、[当前状态与待办](KnowledgeBase/12-integration-backlog.md)。精确代码与资产见 [参考索引](KnowledgeBase/Reference/README.md)。
+
+**本轮新增主线**：[共鸣／暗涌技能体系](Design/havoc-dark-surge.md)（[10-15 验收](Validation/havoc-dark-surge-2026-10-15.md)）、[共鸣解放](Design/resonance-liberation.md)（[10-15 验收](Validation/resonance-liberation-2026-10-15.md)）、[目标锁定](Design/lock-on-system.md)、[软锁定镜头](Validation/soft-lock-camera-2026-10-13.md)、[Dash／Sprint](Design/dash-sprint-system.md)、[角色朝向](Design/character-facing-modes.md)、[受击系统](Design/hit-reaction-system.md)、[敌人 AI](Design/enemy-ai-system.md)、[参考 HUD](Validation/main-hud-reference-2026-10-11.md)、[独立技能移动取消](Design/definition-move-cancel.md)；以及[架构审查](Design/architecture-refactor-review-2026-10-15.md)（**待实施**）。完整汇总见 [10-15 更新](KnowledgeBase/30-update-2026-10-15.md)。
 
 **攻击配置统一入口：[攻击能力配置手册](Guides/attack-ability-configuration.md)。** 查询 Definition、AnimNotify、HitCheck、Profile、连段表、能力授予和输入时，优先引用手册对应章节；设计文档作为背景。
 
@@ -85,7 +87,7 @@ Design 并非全是未实现草案：各篇开头区分当前实现、历史设�
 - [检测体与多段攻击验证](Validation/skill-hit-volumes-2026-10-06.md)：构建、原生、单人、100ms 联机、原技能保护与测试入口边界。
 - [跳跃衔接与死亡能力验证](Validation/jump-death-2026-10-06.md)：跳跃过渡修正；死亡事件/阶段已测试，互斥计数与 PIE 清理仍有错误。
 - [39 个正式资产迁入 Main](Validation/main-assets-migration-2026-10-06.md)：来源、目标、引用修正、备份与本次验证。
-- [实际验证范围](KnowledgeBase/16-validation.md)、[本轮状态](KnowledgeBase/26-update-2026-10-06.md)。
+- [实际验证范围](KnowledgeBase/16-validation.md)、[本轮状态](KnowledgeBase/30-update-2026-10-15.md)、[当前任务与待办](KnowledgeBase/29-current-work-and-backlog.md)。
 - Validation 和 Design 中带日期的验收记录保留当时结果；不得据此宣称当前正式伤害、重生或打包全部通过。
 - [开发流程](AI_DEVELOPMENT.md)、[开发约定](../AGENTS.md)、[评审标准](../CODE_REVIEW.md)。
 - [旧长版 README](History/README-before-20261006.md)、[旧扫描快照](KnowledgeBase/History/snapshot-before-20261006.json) 保留历史。

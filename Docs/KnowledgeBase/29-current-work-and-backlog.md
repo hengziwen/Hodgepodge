@@ -1,8 +1,19 @@
-# 当前任务与待办复核 · 更新至 2026-10-13
+# 当前任务与待办复核 · 更新至 2026-10-15
 
-以当前源码、配置和验收报告为准。旧接通待办中的敌人未初始化、攻击未命中、Dash 未制作和 UI 未接通描述已经过时。本记录区分执行、待验证与用户暂缓，不把所有规划功能算作本轮授权实现。
+以当前源码、配置和验收报告为准。旧接通待办中的敌人未初始化、攻击未命中、Dash 未制作、UI 未接通、**伤害恒 0、Timeline 为主链路** 等描述均已过时。本记录区分执行、待验证与用户暂缓，不把所有规划功能算作本轮授权实现。
 
-## 当前节点：锁定镜头获取与屏幕区域跟随（v0.5，2026-10-13）
+## 当前节点：共鸣／暗涌技能体系、技能配置工具与架构评审（2026-10-15）
+
+负责人：当前 Codex 任务。资源：UE 5.5.4、现有 Melee 模板／Definition／AnimNotify／GAS／CameraMode／HUD。
+
+- **P0 已完成：** 共鸣能量（`UHodgeResonanceSet`，资源在 PlayerState 的 ASC）、E 键共鸣技能（8 秒 CD）、R 键共鸣解放（满充消耗 / 12 秒 CD / 阶段回能 / 后半回能 / 前半段电影镜头 / 全程翼与金刚体固定 Box 命中）；暗流燃料与灭音、强化五段、破命共享 E 冷却、20% 湮灭增伤；能量环、技能图标、Layout 接入。
+- **P0 已完成：** 技能配置工具与**可追溯验证记录** —— `Docs/Validation/` 新增/更新大量 `*-results.json`，结论可回溯到原始数据。
+- **验证：** 共鸣解放原生 81（48 成功 + 33 警告、**0 失败**）+ 资产 35 + 四模式各 52 + 补充 17；暗涌原生 39 + 资产 30 + 核心四模式各 17（68）+ 命中 18 + E/R HUD 23。见 [`resonance-liberation-2026-10-15.md`](../Validation/resonance-liberation-2026-10-15.md) 与 [`havoc-dark-surge-2026-10-15.md`](../Validation/havoc-dark-surge-2026-10-15.md)。
+- ⚠️ **参数是原型初值**（非逐帧数据）；`HodgeFillResonance` / `HodgeFillDarkFlow` 属**调试填充**（`*-debug-fill-2026-10-15.md`），**不计正式获取途径**。
+- **待补：** 正式 Niagara／音效／震屏素材；E 换图标、重击与变奏暂缓。
+- **新增评审（未实施）：** [架构审查与分阶段重构方案](../Design/architecture-refactor-review-2026-10-15.md) —— 只读审查，优先 R1 把命中检测从 Combat 抽离（`HodgeCombatComponentBase.cpp` 已 1525 行）。
+
+## 历史节点：锁定镜头获取与屏幕区域跟随（v0.5，2026-10-13）
 
 - **P0 已完成：** 沿现有 CameraMode 加入 LockAcquire／LockTracking，实际 POV 种子、胸口取景、0.35 秒缓入缓出、屏幕死区／软区与分轴响应。
 - **P0 已完成：** 可调鼠标抑制／宽限／渐进恢复、近距防翻转、有限自动转速、真实视口投影和技能镜头中途返回连续性；角色朝向和移动仲裁保留。
@@ -53,15 +64,22 @@
 - Guardian 初始化、追击、GAS 攻击、受击与死亡：见 [实施报告](../Validation/enemy-ai-implementation-2026-10-11.md)。用户已修复装备版行走抽搐，不重复处理。
 - 玩家／AI 共享战斗请求：见 [实施报告](../Validation/combat-action-requests-2026-10-11.md)。
 - 受击、旋转、Dash／Sprint、Pivot 与同步：已有各自验证，不重复开发；体力按用户要求暂时移除。
-- UI 根布局、属性数据源与 LocalPlayer 隔离：已有 [UMG 验证](../Validation/umg-authoring-refactor-2026-10-08.md)，本轮只改参考 HUD。
-- 装备导入／材质修复已完成；旧 Pover 翅膀仍按[历史暂停](../Validation/pover-wing-disabled-2026-10-11.md)处理。后续授权的新 Anzhu 翅膀已完成[攻击限定表现](../Validation/attack-wing-presentation-2026-10-12.md)、[淡出](../Validation/wing-fade-2026-10-12.md)和[Box 判定](../Validation/wing-box-hit-2026-10-12.md)，不能再把所有翅膀写成禁用。
+- UI 根布局、属性数据源与 LocalPlayer 隔离：已有 [UMG 验证](../Validation/umg-authoring-refactor-2026-10-08.md)；参考 HUD 已交付。**方案明确不引入 CommonGame／CommonUser／ModularGameplayActors**。
+- 装备导入／材质修复已完成；旧 Pover 翅膀仍按[历史暂停](../Validation/pover-wing-disabled-2026-10-11.md)处理。后续授权的新 Anzhu 翅膀已完成[攻击限定表现](../Validation/attack-wing-presentation-2026-10-12.md)、[淡出](../Validation/wing-fade-2026-10-12.md)、[Box 判定](../Validation/wing-box-hit-2026-10-12.md) 与[通知蒙太奇改造](../Validation/wing-notify-montage-2026-10-14.md)，不能再把所有翅膀写成禁用。
 - 武器手持通知新增[回背／在手部淡出选择](../Validation/weapon-notify-end-behavior-2026-10-12.md)，默认保留旧策略，具体攻击由通知配置。
+- **独立技能移动取消**（非连段）已修复：见 [设计](../Design/definition-move-cancel.md) 与[验证](../Validation/definition-move-cancel-2026-10-14.md)（动作 12 + 连段 4、PIE 151 项）。
+- **攻击前摇 Motion Warping**：见[设计](../Design/attack-facing-motion-warp.md) 与[验证](../Validation/attack-facing-motion-warp-2026-10-13.md)；首版仅 `DA_Attack_1` 开启。
+- **伤害倍率恒 0 已修复**：`HodgeDamageExecution.cpp:186` 按 `FHodgeDamageRules::CanDamage` 取倍率，判敌我启用中。
+- **Timeline 已退役**：代码/资产迁入 `Archive/Timeline/`，攻击窗口改由 Montage 动画通知驱动，见 [30 号记录](30-update-2026-10-15.md)。
+- **`GetBlendInfo` 栈顶查询缺陷已修复**（2026-10-13 随软锁定镜头一并处理）。
 
 历史通过范围不自动覆盖新改动，也不等于 Cook／独立进程通过。
 
 ## 后续优先级与验收
 
 以下是后续计划，不是本轮自动开工清单；时间为粗略人日估算。
+
+**P1：结构重构阶段 0～1，约 14～24 人日（分阶段）。** 按 [架构审查与分阶段重构方案](../Design/architecture-refactor-review-2026-10-15.md) 推进；先做 R1（命中检测从 `CombatComponent` 抽成 `UHodgeHitDetectionComponent`），再按 R2 / R3 / R5 / R7 顺序。验收：行为不变（既有验证报告逐项回归）、公共层不再吸收角色专属规则。风险：抽取期间命中语义漂移，必须逐项回归而非只看编译通过。
 
 **P1：玩家生命周期与装备／能力归属，约 3～6 人日。** 追踪 PawnData AbilitySets、默认装备和属性协调器 → 明确来源句柄与重生保留策略 → 补换 Pawn／解绑测试 → 修复实际失败 → 双客户端回归。资源是现有属性、装备、战斗、UI 测试。验收：不重复授予／装备、不意外回血、旧回调不影响新 Pawn、UI 重绑正确。风险是误撤销跨 Pawn 保留能力，以来源记录与场景回归控制。
 
@@ -77,6 +95,8 @@
 
 ## 用户暂缓与完成边界
 
-- [Inventory 集成](../Design/inventory-equipment-integration.md)：草案完成，用户明确只设计，不实现；首版估算 6～10 人日，编码前确认归属和旧记录迁移。
-- 攻击吸附暂不启用；旧翅膀禁用不覆盖后续新 Anzhu 攻击限定方案；Guardian 行走问题按用户已修复闭环，本轮不改插槽。
-- 未指定全项目截止日，当前节点为锁定首版交付。其他项目按后续需求逐项推进；只有实际执行并完成对应验收才标记闭环，规划与待验证保持待办。
+- [Inventory 集成](../Design/inventory-equipment-integration.md)：草案完成，用户明确只设计，不实现；首版估算 6～10 人日，编码前确认归属和旧记录迁移。C++ 当前**无任何 `UHodgeInventory*`**。
+- 攻击吸附暂不启用（[草案](../Design/melee-attack-assist.md) 接口尚未创建）；旧翅膀禁用不覆盖后续新 Anzhu 攻击限定方案；Guardian 行走问题按用户已修复闭环，本轮不改插槽。
+- 下蹲（Crouch）绑定仍临时屏蔽；**体力系统按用户要求暂时移除**（不列为缺口）。
+- 共鸣／暗涌的 E 换图标、重击与变奏暂缓；正式 Niagara／音效／震屏素材待补。
+- 未指定全项目截止日。其他项目按后续需求逐项推进；只有实际执行并完成对应验收才标记闭环，规划与待验证保持待办。

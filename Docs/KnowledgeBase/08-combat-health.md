@@ -1,12 +1,13 @@
 > 2026-10-07 更新：本文中旧 Timeline／HitWindows 的字段与制作步骤仅保留为历史；当前攻击入口以 [通知配置手册](../Guides/attack-ability-configuration.md) 和 [通知迁移更新](27-update-2026-10-07-anim-notify.md) 为准。
+> **2026-10-15 更新：伤害交互倍率不再恒为零**（`HodgeDamageExecution.cpp:186` 按 `FHodgeDamageRules::CanDamage` 取 `1.f / 0.f`，判敌我已启用）；**受击系统**（`UHodgeHitReactionComponent`）与**属性成长/装备加成**已接入并有验证。详见 [本轮更新](30-update-2026-10-15.md)。
 
 # 属性、命中、装备与死亡
 
 攻击字段含义与配置步骤统一见[攻击能力配置手册](../Guides/attack-ability-configuration.md)；后续配置问答优先引用手册相应章节，本章说明系统职责和状态。
 
-[返回知识库](README.md) · [本轮更新](26-update-2026-10-06.md)
+[返回知识库](README.md) · [本轮更新](30-update-2026-10-15.md) · [接通清单](12-integration-backlog.md)
 
-> 当前核对：2026-10-06；运行结论仅限已记录范围。
+> 当前核对：**2026-10-15**（HEAD `b702482`）；运行结论仅限 `Docs/Validation/` 里对应日期报告的范围。
 
 ## 当前分工
 
@@ -22,9 +23,19 @@ Experience 通过 AddComponents 给 Pawn 添加 HodgeCombatComponentBase 与 Equ
 
 DamageExecution 捕获 Source CombatSet.BaseDamage，乘 SetByCaller.DamageMultiplier（缺省 1）、距离、物理材质及目标交互倍率。CanDamage 拒绝无效、自身、同一 ASC、死亡/零血目标；队伍和友伤标记决定合法性，未接队伍接口按无队伍处理。
 
-HealthSet 管 Health/MaxHealth、Damage/Healing 元属性与夹取/通知；CombatSet 管 BaseDamage/BaseHeal。HealthComponent 已挂角色，监听耗尽并推进 DeathState，角色禁移动/碰撞并执行销毁清理。完整击杀消息、敌人 ASC 与重生策略仍待补。
+HealthSet 管 Health/MaxHealth、Damage/Healing 元属性与夹取/通知；CombatSet 管 BaseDamage/BaseHeal。HealthComponent 已挂角色，监听耗尽并推进 DeathState，角色禁移动/碰撞并执行销毁清理。完整击杀消息与重生策略仍待补（**敌人 ASC 已补齐**，见下）。
 
-2026-10-01 夹具已验证真实攻击输入→Timeline→服务器检测→既有 GE→100 扣到 70，以及 Listen Server 路径。2026-10-06 本轮实际读取正式五段 Definition，用户已填写 HitWindows；本轮保留其配置，并验证真实第一段输入被独立技能打断时连段记忆保持。仍未完成五段实际刀刃覆盖的完整验收，测试例子通过不能代替所有正式动作接入。
+### 受击系统（2026-10-08 接入并验证）
+
+`UHodgeHitReactionComponent`（`UPawnComponent`）挂在 `AHodgeCombatCharacter`（支持 `OverrideProfile`）。链路：攻击方 Melee GA `BeginHit` → `HealthSet::RecordDamage` → **目标侧自己的** `UHodgeGameplayAbility_HitReaction` 执行（**动画通知驱动，非 Timeline**）。四级 Body / 独立判定 / Impact / 目标动画与恢复。验证 46 项 PIE/联机用例（[报告](../Validation/hit-reaction-pie-network-2026-10-08.md)）；正式动画与联机手感仍待调。
+
+### 属性成长与装备加成（首版已接入）
+
+PlayerState 持有属性协调器；三层职责 = 成长（Instant Override）/ 装备（Infinite Additive）/ 资源。正式资产 4 个：`DA_Pover_Stats` / `CT_Pover_Growth` / `DA_Sword_Stats` / `CT_Sword_Growth`（1~90 级）。API：`SetCharacterLevel` / `SetEquipmentLevel` / `InitializeCharacterProgression` / `RestoreCharacterHealth`。曲线是**示例数据**。见 [`character-attribute-growth.md`](../Design/character-attribute-growth.md) 与 [08 参考索引](Reference/source-abilitysystem.md)。
+
+2026-10-01 夹具已验证真实攻击输入→服务器检测→既有 GE→100 扣到 70，以及 Listen Server 路径（当时经 Timeline 派发，**Timeline 现已退役**）。2026-10-06 曾读取正式五段 Definition 的 HitWindows 配置；10-07 起命中改由 **Montage 动画通知**承载，旧字段结论不能直接沿用。
+
+⚠️ **仍待编辑器确认**：正式 `DA_Attack_1~5` 的 AnimNotify 命中配置是否逐段填全。夹具通过不能代替所有正式动作接入。共鸣解放 / 暗涌的验证报告（10-15）已含命中与伤害项。
 
 ## 默认装备与表现
 
@@ -34,6 +45,6 @@ WeaponInstance 持有手持请求、阶段、计时器和预测/权威状态。�
 
 ## 仍需验证
 
-正式伤害、完整敌人角色、死亡/重生、真实刀身覆盖、卸装/热卸载、相关性重新进入与独立专服。回背外观路径不是飞剑/投掷的伤害路径。
+真实刀身覆盖（正式五段的通知配置）、死亡/重生、卸装/热卸载、相关性重新进入、独立专服与 Cook/打包。**敌人角色已不再是缺口**（Guardian 已接入主流程，见 [敌人 AI 实施报告](../Validation/enemy-ai-implementation-2026-10-11.md)），**伤害交互倍率也已修复**。回背外观路径不是飞剑/投掷的伤害路径。
 
 参考：[命中接入](../Design/combat-hit-windows.md)、[Melee 实现](../Design/melee-detection-ga-effects.md)、[伤害夹具验收](../Design/melee-experience-ge-validation-20261001.md)、[武器表现](../Design/weapon-presentation.md)。

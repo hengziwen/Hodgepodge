@@ -16,12 +16,12 @@
 
 定义候选（多行签名仅展示首行）：
 
-- L19: `UHodgeGameInstanceBase::UHodgeGameInstanceBase(const FObjectInitializer& ObjectInitializer)`
-- L24: `AHodgePlayerController* UHodgeGameInstanceBase::GetPrimaryPlayerController() const`
-- L30: `void UHodgeGameInstanceBase::Shutdown()`
-- L36: `void UHodgeGameInstanceBase::Init()`
-- L85: `int32 UHodgeGameInstanceBase::AddLocalPlayer(ULocalPlayer* Player, FPlatformUserId UserId)`
-- L95: `bool UHodgeGameInstanceBase::RemoveLocalPlayer(ULocalPlayer* Player)`
+- L22: `UHodgeGameInstanceBase::UHodgeGameInstanceBase(const FObjectInitializer& ObjectInitializer)`
+- L27: `AHodgePlayerController* UHodgeGameInstanceBase::GetPrimaryPlayerController() const`
+- L33: `void UHodgeGameInstanceBase::Shutdown()`
+- L39: `void UHodgeGameInstanceBase::Init()`
+- L89: `int32 UHodgeGameInstanceBase::AddLocalPlayer(ULocalPlayer* Player, FPlatformUserId UserId)`
+- L100: `bool UHodgeGameInstanceBase::RemoveLocalPlayer(ULocalPlayer* Player)`
 
 ## HodgeGameModeBase.cpp
 
@@ -33,28 +33,28 @@
 
 定义候选（多行签名仅展示首行）：
 
-- L22: `AHodgeGameModeBase::AHodgeGameModeBase(const FObjectInitializer& ObjectInitializer)`
-- L47: `const UHodgePawnData* AHodgeGameModeBase::GetPawnDataForController(const AController* InController) const`
-- L88: `void AHodgeGameModeBase::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)`
-- L97: `void AHodgeGameModeBase::HandleMatchAssignmentIfNotExpectingOne()`
-- L194: `bool AHodgeGameModeBase::TryDedicatedServerLogin()`
-- L338: `void AHodgeGameModeBase::OnMatchAssignmentGiven(FPrimaryAssetId ExperienceId, const FString& ExperienceIdSource)`
-- L362: `void AHodgeGameModeBase::OnExperienceLoaded(const UHodgeExperienceDefinition* CurrentExperience)`
-- L383: `bool AHodgeGameModeBase::IsExperienceLoaded() const`
-- L397: `UClass* AHodgeGameModeBase::GetDefaultPawnClassForController_Implementation(AController* InController)`
-- L413: `APawn* AHodgeGameModeBase::SpawnDefaultPawnAtTransform_Implementation(AController* NewPlayer,`
-- L470: `bool AHodgeGameModeBase::ShouldSpawnAtStartSpot(AController* Player)`
-- L476: `void AHodgeGameModeBase::HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer)`
-- L486: `AActor* AHodgeGameModeBase::ChoosePlayerStart_Implementation(AController* Player)`
-- L499: `void AHodgeGameModeBase::FinishRestartPlayer(AController* NewPlayer, const FRotator& StartRotation)`
-- L512: `bool AHodgeGameModeBase::PlayerCanRestart_Implementation(APlayerController* Player)`
-- L518: `bool AHodgeGameModeBase::ControllerCanRestart(AController* Controller)`
-- L547: `void AHodgeGameModeBase::InitGameState()`
-- L562: `void AHodgeGameModeBase::GenericPlayerInitialization(AController* NewPlayer)`
-- L571: `void AHodgeGameModeBase::RequestPlayerRestartNextFrame(AController* Controller, bool bForceReset)`
-- L592: `bool AHodgeGameModeBase::UpdatePlayerStartSpot(AController* Player, const FString& Portal, FString& OutErrorMessage)`
-- L598: `void AHodgeGameModeBase::FailedToRestartPlayer(AController* NewPlayer)`
-- L637: `void AHodgeGameModeBase::RestartPlayer(AController* NewPlayer)`
+- L25: `AHodgeGameModeBase::AHodgeGameModeBase(const FObjectInitializer& ObjectInitializer)`
+- L51: `const UHodgePawnData* AHodgeGameModeBase::GetPawnDataForController(const AController* InController) const`
+- L93: `void AHodgeGameModeBase::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)`
+- L103: `void AHodgeGameModeBase::HandleMatchAssignmentIfNotExpectingOne()`
+- L201: `bool AHodgeGameModeBase::TryDedicatedServerLogin()`
+- L346: `void AHodgeGameModeBase::OnMatchAssignmentGiven(FPrimaryAssetId ExperienceId, const FString& ExperienceIdSource)`
+- L371: `void AHodgeGameModeBase::OnExperienceLoaded(const UHodgeExperienceDefinition* CurrentExperience)`
+- L393: `bool AHodgeGameModeBase::IsExperienceLoaded() const`
+- L408: `UClass* AHodgeGameModeBase::GetDefaultPawnClassForController_Implementation(AController* InController)`
+- L425: `APawn* AHodgeGameModeBase::SpawnDefaultPawnAtTransform_Implementation(AController* NewPlayer,`
+- L483: `bool AHodgeGameModeBase::ShouldSpawnAtStartSpot(AController* Player)`
+- L490: `void AHodgeGameModeBase::HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer)`
+- L501: `AActor* AHodgeGameModeBase::ChoosePlayerStart_Implementation(AController* Player)`
+- L515: `void AHodgeGameModeBase::FinishRestartPlayer(AController* NewPlayer, const FRotator& StartRotation)`
+- L529: `bool AHodgeGameModeBase::PlayerCanRestart_Implementation(APlayerController* Player)`
+- L536: `bool AHodgeGameModeBase::ControllerCanRestart(AController* Controller)`
+- L566: `void AHodgeGameModeBase::InitGameState()`
+- L582: `void AHodgeGameModeBase::GenericPlayerInitialization(AController* NewPlayer)`
+- L592: `void AHodgeGameModeBase::RequestPlayerRestartNextFrame(AController* Controller, bool bForceReset)`
+- L614: `bool AHodgeGameModeBase::UpdatePlayerStartSpot(AController* Player, const FString& Portal, FString& OutErrorMessage)`
+- L621: `void AHodgeGameModeBase::FailedToRestartPlayer(AController* NewPlayer)`
+- L661: `void AHodgeGameModeBase::RestartPlayer(AController* NewPlayer)`
 
 ## HodgeGameState.cpp
 
@@ -66,20 +66,20 @@
 
 定义候选（多行签名仅展示首行）：
 
-- L25: `AHodgeGameState::AHodgeGameState(const FObjectInitializer& ObjectInitializer)`
-- L50: `void AHodgeGameState::PreInitializeComponents()`
-- L56: `void AHodgeGameState::PostInitializeComponents()`
-- L67: `UAbilitySystemComponent* AHodgeGameState::GetAbilitySystemComponent() const`
-- L73: `void AHodgeGameState::EndPlay(const EEndPlayReason::Type EndPlayReason)`
-- L79: `void AHodgeGameState::AddPlayerState(APlayerState* PlayerState)`
-- L85: `void AHodgeGameState::RemovePlayerState(APlayerState* PlayerState)`
-- L92: `void AHodgeGameState::SeamlessTravelTransitionCheckpoint(bool bToTransitionMap)`
-- L108: `void AHodgeGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const`
-- L120: `void AHodgeGameState::Tick(float DeltaSeconds)`
-- L147: `float AHodgeGameState::GetServerFPS() const`
-- L153: `void AHodgeGameState::SetRecorderPlayerState(APlayerState* NewPlayerState)`
-- L172: `APlayerState* AHodgeGameState::GetRecorderPlayerState() const`
-- L178: `void AHodgeGameState::OnRep_RecorderPlayerState()`
+- L29: `AHodgeGameState::AHodgeGameState(const FObjectInitializer& ObjectInitializer)`
+- L55: `void AHodgeGameState::PreInitializeComponents()`
+- L62: `void AHodgeGameState::PostInitializeComponents()`
+- L74: `UAbilitySystemComponent* AHodgeGameState::GetAbilitySystemComponent() const`
+- L81: `void AHodgeGameState::EndPlay(const EEndPlayReason::Type EndPlayReason)`
+- L88: `void AHodgeGameState::AddPlayerState(APlayerState* PlayerState)`
+- L95: `void AHodgeGameState::RemovePlayerState(APlayerState* PlayerState)`
+- L103: `void AHodgeGameState::SeamlessTravelTransitionCheckpoint(bool bToTransitionMap)`
+- L120: `void AHodgeGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const`
+- L133: `void AHodgeGameState::Tick(float DeltaSeconds)`
+- L160: `float AHodgeGameState::GetServerFPS() const`
+- L167: `void AHodgeGameState::SetRecorderPlayerState(APlayerState* NewPlayerState)`
+- L187: `APlayerState* AHodgeGameState::GetRecorderPlayerState() const`
+- L194: `void AHodgeGameState::OnRep_RecorderPlayerState()`
 
 ## HodgeGameStateBase.cpp
 
@@ -91,10 +91,10 @@ GameState 基础扩展生命周期。
 
 定义候选（多行签名仅展示首行）：
 
-- L14: `AHodgeGameStateBase::AHodgeGameStateBase(const FObjectInitializer& ObjectInitializer)`
-- L19: `void AHodgeGameStateBase::PreInitializeComponents()`
-- L27: `void AHodgeGameStateBase::BeginPlay()`
-- L36: `void AHodgeGameStateBase::EndPlay(const EEndPlayReason::Type EndPlayReason)`
+- L17: `AHodgeGameStateBase::AHodgeGameStateBase(const FObjectInitializer& ObjectInitializer)`
+- L23: `void AHodgeGameStateBase::PreInitializeComponents()`
+- L32: `void AHodgeGameStateBase::BeginPlay()`
+- L42: `void AHodgeGameStateBase::EndPlay(const EEndPlayReason::Type EndPlayReason)`
 
 ## HodgeHUD.cpp
 
@@ -106,11 +106,11 @@ HUD Receiver 提供 Experience AddWidgets 的真实注入／撤销入口，同�
 
 定义候选（多行签名仅展示首行）：
 
-- L37: `AHodgeHUD::AHodgeHUD(const FObjectInitializer& ObjectInitializer)`
-- L46: `void AHodgeHUD::PreInitializeComponents()`
-- L59: `void AHodgeHUD::BeginPlay()`
-- L73: `void AHodgeHUD::EndPlay(const EEndPlayReason::Type EndPlayReason)`
-- L85: `void AHodgeHUD::GetDebugActorList(TArray<AActor*>& InOutList)`
+- L40: `AHodgeHUD::AHodgeHUD(const FObjectInitializer& ObjectInitializer)`
+- L49: `void AHodgeHUD::PreInitializeComponents()`
+- L62: `void AHodgeHUD::BeginPlay()`
+- L76: `void AHodgeHUD::EndPlay(const EEndPlayReason::Type EndPlayReason)`
+- L88: `void AHodgeHUD::GetDebugActorList(TArray<AActor*>& InOutList)`
 
 ## HodgeLocalPlayerBase.cpp
 
@@ -122,11 +122,11 @@ HUD Receiver 提供 Experience AddWidgets 的真实注入／撤销入口，同�
 
 定义候选（多行签名仅展示首行）：
 
-- L20: `UHodgeLocalPlayerBase::UHodgeLocalPlayerBase()`
-- L37: `FDelegateHandle UHodgeLocalPlayerBase::CallAndRegister_OnPlayerControllerSet(`
-- L63: `FDelegateHandle UHodgeLocalPlayerBase::CallAndRegister_OnPlayerStateSet(FPlayerStateSetDelegate::FDelegate Delegate)`
-- L88: `FDelegateHandle UHodgeLocalPlayerBase::CallAndRegister_OnPlayerPawnSet(FPlayerPawnSetDelegate::FDelegate Delegate)`
-- L120: `bool UHodgeLocalPlayerBase::GetProjectionData(FViewport* Viewport, FSceneViewProjectionData& ProjectionData,`
+- L23: `UHodgeLocalPlayerBase::UHodgeLocalPlayerBase()`
+- L40: `FDelegateHandle UHodgeLocalPlayerBase::CallAndRegister_OnPlayerControllerSet(`
+- L67: `FDelegateHandle UHodgeLocalPlayerBase::CallAndRegister_OnPlayerStateSet(FPlayerStateSetDelegate::FDelegate Delegate)`
+- L94: `FDelegateHandle UHodgeLocalPlayerBase::CallAndRegister_OnPlayerPawnSet(FPlayerPawnSetDelegate::FDelegate Delegate)`
+- L128: `bool UHodgeLocalPlayerBase::GetProjectionData(FViewport* Viewport, FSceneViewProjectionData& ProjectionData,`
 
 ## HodgePlayerController.cpp
 
@@ -134,50 +134,52 @@ HUD Receiver 提供 Experience AddWidgets 的真实注入／撤销入口，同�
 
 源码：[Source/Hodgepodge/Private/Core/PlayerController/HodgePlayerController.cpp](../../../Source/Hodgepodge/Private/Core/PlayerController/HodgePlayerController.cpp)
 
-项目内直接 include（不是运行调用关系）：[Core/PlayerController/HodgePlayerController.h](../../../Source/Hodgepodge/Public/Core/PlayerController/HodgePlayerController.h)、[Core/PlayState/HodgePlayerState.h](../../../Source/Hodgepodge/Public/Core/PlayState/HodgePlayerState.h)、[Camera/HodgePlayerCameraManager.h](../../../Source/Hodgepodge/Public/Camera/HodgePlayerCameraManager.h)、[Core/HUD/HodgeHUD.h](../../../Source/Hodgepodge/Public/Core/HUD/HodgeHUD.h)、[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)、[Core/LocalPlayer/HodgeLocalPlayerBase.h](../../../Source/Hodgepodge/Public/Core/LocalPlayer/HodgeLocalPlayerBase.h)、[Core/GameState/HodgeGameState.h](../../../Source/Hodgepodge/Public/Core/GameState/HodgeGameState.h)、[UI/Subsystem/HodgeUIManagerSubsystem.h](../../../Source/Hodgepodge/Public/UI/Subsystem/HodgeUIManagerSubsystem.h)
+项目内直接 include（不是运行调用关系）：[Core/PlayerController/HodgePlayerController.h](../../../Source/Hodgepodge/Public/Core/PlayerController/HodgePlayerController.h)、[Component/HodgeLockOnComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeLockOnComponent.h)、[UI/IndicatorSystem/HodgeIndicatorManagerComponent.h](../../../Source/Hodgepodge/Public/UI/IndicatorSystem/HodgeIndicatorManagerComponent.h)、[Core/PlayState/HodgePlayerState.h](../../../Source/Hodgepodge/Public/Core/PlayState/HodgePlayerState.h)、[Camera/HodgePlayerCameraManager.h](../../../Source/Hodgepodge/Public/Camera/HodgePlayerCameraManager.h)、[Core/HUD/HodgeHUD.h](../../../Source/Hodgepodge/Public/Core/HUD/HodgeHUD.h)、[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)、[AbilitySystem/AttributeSet/HodgeResonanceSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeResonanceSet.h)、[AbilitySystem/Effects/HodgeResonanceEnergyEffect.h](../../../Source/Hodgepodge/Public/AbilitySystem/Effects/HodgeResonanceEnergyEffect.h)、[AbilitySystem/AttributeSet/HodgeHavocSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeHavocSet.h)、[AbilitySystem/Effects/HodgeHavocEffects.h](../../../Source/Hodgepodge/Public/AbilitySystem/Effects/HodgeHavocEffects.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)、[Core/LocalPlayer/HodgeLocalPlayerBase.h](../../../Source/Hodgepodge/Public/Core/LocalPlayer/HodgeLocalPlayerBase.h)、[Core/GameState/HodgeGameState.h](../../../Source/Hodgepodge/Public/Core/GameState/HodgeGameState.h)、[UI/Subsystem/HodgeUIManagerSubsystem.h](../../../Source/Hodgepodge/Public/UI/Subsystem/HodgeUIManagerSubsystem.h)
 
 定义候选（多行签名仅展示首行）：
 
-- L98: `AHodgePlayerController::AHodgePlayerController(const FObjectInitializer& ObjectInitializer)`
-- L111: `void AHodgePlayerController::PreInitializeComponents()`
-- L118: `void AHodgePlayerController::BeginPlay()`
-- L143: `void AHodgePlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)`
-- L150: `void AHodgePlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const`
-- L173: `void AHodgePlayerController::ReceivedPlayer()`
-- L180: `void AHodgePlayerController::PlayerTick(float DeltaTime)`
-- L245: `AHodgePlayerState* AHodgePlayerController::GetHodgePlayerState() const`
-- L252: `UHodgeAbilitySystemComponent* AHodgePlayerController::GetHodgeAbilitySystemComponent() const`
-- L262: `AHodgeHUD* AHodgePlayerController::GetHodgeHUD() const`
-- L269: `bool AHodgePlayerController::TryToRecordClientReplay()`
-- L298: `bool AHodgePlayerController::ShouldRecordClientReplay()`
-- L365: `void AHodgePlayerController::OnPlayerStateChangedTeam(UObject* TeamAgent, int32 OldTeam, int32 NewTeam)`
-- L372: `void AHodgePlayerController::OnPlayerStateChanged()`
-- L379: `void AHodgePlayerController::BroadcastOnPlayerStateChanged()`
-- L424: `void AHodgePlayerController::InitPlayerState()`
-- L434: `void AHodgePlayerController::CleanupPlayerState()`
-- L444: `void AHodgePlayerController::OnRep_PlayerState()`
-- L454: `void AHodgePlayerController::SetPlayer(UPlayer* InPlayer)`
-- L477: `void AHodgePlayerController::AddCheats(bool bForce)`
-- L488: `void AHodgePlayerController::ServerCheat_Implementation(const FString& Msg)`
-- L501: `bool AHodgePlayerController::ServerCheat_Validate(const FString& Msg)`
-- L508: `void AHodgePlayerController::ServerCheatAll_Implementation(const FString& Msg)`
-- L528: `bool AHodgePlayerController::ServerCheatAll_Validate(const FString& Msg)`
-- L535: `void AHodgePlayerController::PreProcessInput(const float DeltaTime, const bool bGamePaused)`
-- L542: `void AHodgePlayerController::PostProcessInput(const float DeltaTime, const bool bGamePaused)`
-- L557: `void AHodgePlayerController::OnCameraPenetratingTarget()`
-- L564: `void AHodgePlayerController::OnPossess(APawn* InPawn)`
-- L589: `void AHodgePlayerController::SetIsAutoRunning(const bool bEnabled)`
-- L612: `bool AHodgePlayerController::GetIsAutoRunning() const`
-- L629: `void AHodgePlayerController::OnStartAutoRun()`
-- L643: `void AHodgePlayerController::OnEndAutoRun()`
-- L657: `void AHodgePlayerController::UpdateForceFeedback(IInputInterface* InputInterface, const int32 ControllerId)`
-- L680: `void AHodgePlayerController::UpdateHiddenComponents(const FVector& ViewLocation,`
-- L790: `void AHodgePlayerController::OnUnPossess()`
-- L819: `void AHodgeReplayPlayerController::Tick(float DeltaSeconds)`
-- L857: `void AHodgeReplayPlayerController::SmoothTargetViewRotation(APawn* TargetPawn, float DeltaSeconds)`
-- L867: `bool AHodgeReplayPlayerController::ShouldRecordClientReplay()`
-- L874: `void AHodgeReplayPlayerController::RecorderPlayerStateUpdated(APlayerState* NewRecorderPlayerState)`
-- L894: `void AHodgeReplayPlayerController::OnPlayerStatePawnSet(APlayerState* ChangedPlayerState, APawn* NewPlayerPawn,`
+- L107: `AHodgePlayerController::AHodgePlayerController(const FObjectInitializer& ObjectInitializer)`
+- L121: `void AHodgePlayerController::PreInitializeComponents()`
+- L128: `void AHodgePlayerController::BeginPlay()`
+- L153: `void AHodgePlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)`
+- L160: `void AHodgePlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const`
+- L183: `void AHodgePlayerController::ReceivedPlayer()`
+- L190: `void AHodgePlayerController::PlayerTick(float DeltaTime)`
+- L255: `AHodgePlayerState* AHodgePlayerController::GetHodgePlayerState() const`
+- L262: `UHodgeAbilitySystemComponent* AHodgePlayerController::GetHodgeAbilitySystemComponent() const`
+- L272: `AHodgeHUD* AHodgePlayerController::GetHodgeHUD() const`
+- L279: `bool AHodgePlayerController::TryToRecordClientReplay()`
+- L308: `bool AHodgePlayerController::ShouldRecordClientReplay()`
+- L375: `void AHodgePlayerController::OnPlayerStateChangedTeam(UObject* TeamAgent, int32 OldTeam, int32 NewTeam)`
+- L382: `void AHodgePlayerController::OnPlayerStateChanged()`
+- L389: `void AHodgePlayerController::BroadcastOnPlayerStateChanged()`
+- L434: `void AHodgePlayerController::InitPlayerState()`
+- L444: `void AHodgePlayerController::CleanupPlayerState()`
+- L454: `void AHodgePlayerController::OnRep_PlayerState()`
+- L464: `void AHodgePlayerController::SetPlayer(UPlayer* InPlayer)`
+- L487: `void AHodgePlayerController::AddCheats(bool bForce)`
+- L498: `void AHodgePlayerController::ServerCheat_Implementation(const FString& Msg)`
+- L507: `void AHodgePlayerController::HodgeFillResonance()`
+- L536: `void AHodgePlayerController::HodgeFillDarkFlow()`
+- L567: `bool AHodgePlayerController::ServerCheat_Validate(const FString& Msg)`
+- L574: `void AHodgePlayerController::ServerCheatAll_Implementation(const FString& Msg)`
+- L594: `bool AHodgePlayerController::ServerCheatAll_Validate(const FString& Msg)`
+- L601: `void AHodgePlayerController::PreProcessInput(const float DeltaTime, const bool bGamePaused)`
+- L608: `void AHodgePlayerController::PostProcessInput(const float DeltaTime, const bool bGamePaused)`
+- L623: `void AHodgePlayerController::OnCameraPenetratingTarget()`
+- L630: `void AHodgePlayerController::OnPossess(APawn* InPawn)`
+- L655: `void AHodgePlayerController::SetIsAutoRunning(const bool bEnabled)`
+- L678: `bool AHodgePlayerController::GetIsAutoRunning() const`
+- L695: `void AHodgePlayerController::OnStartAutoRun()`
+- L709: `void AHodgePlayerController::OnEndAutoRun()`
+- L723: `void AHodgePlayerController::UpdateForceFeedback(IInputInterface* InputInterface, const int32 ControllerId)`
+- L746: `void AHodgePlayerController::UpdateHiddenComponents(const FVector& ViewLocation,`
+- L856: `void AHodgePlayerController::OnUnPossess()`
+- L885: `void AHodgeReplayPlayerController::Tick(float DeltaSeconds)`
+- L923: `void AHodgeReplayPlayerController::SmoothTargetViewRotation(APawn* TargetPawn, float DeltaSeconds)`
+- L933: `bool AHodgeReplayPlayerController::ShouldRecordClientReplay()`
+- L940: `void AHodgeReplayPlayerController::RecorderPlayerStateUpdated(APlayerState* NewRecorderPlayerState)`
+- L960: `void AHodgeReplayPlayerController::OnPlayerStatePawnSet(APlayerState* ChangedPlayerState, APawn* NewPlayerPawn,`
 
 ## HodgePlayerControllerBase.cpp
 
@@ -189,12 +191,12 @@ HUD Receiver 提供 Experience AddWidgets 的真实注入／撤销入口，同�
 
 定义候选（多行签名仅展示首行）：
 
-- L22: `AHodgePlayerControllerBase::AHodgePlayerControllerBase(const FObjectInitializer& ObjectInitializer)`
-- L50: `void AHodgePlayerControllerBase::ReceivedPlayer()`
-- L81: `void AHodgePlayerControllerBase::SetPawn(APawn* InPawn)`
-- L116: `void AHodgePlayerControllerBase::OnPossess(class APawn* APawn)`
-- L147: `void AHodgePlayerControllerBase::OnUnPossess()`
-- L185: `void AHodgePlayerControllerBase::OnRep_PlayerState()`
+- L25: `AHodgePlayerControllerBase::AHodgePlayerControllerBase(const FObjectInitializer& ObjectInitializer)`
+- L53: `void AHodgePlayerControllerBase::ReceivedPlayer()`
+- L85: `void AHodgePlayerControllerBase::SetPawn(APawn* InPawn)`
+- L121: `void AHodgePlayerControllerBase::OnPossess(class APawn* APawn)`
+- L153: `void AHodgePlayerControllerBase::OnUnPossess()`
+- L192: `void AHodgePlayerControllerBase::OnRep_PlayerState()`
 
 ## HodgePlayerState.cpp
 
@@ -202,41 +204,41 @@ HUD Receiver 提供 Experience AddWidgets 的真实注入／撤销入口，同�
 
 源码：[Source/Hodgepodge/Private/Core/PlayState/HodgePlayerState.cpp](../../../Source/Hodgepodge/Private/Core/PlayState/HodgePlayerState.cpp)
 
-项目内直接 include（不是运行调用关系）：[Core/PlayState/HodgePlayerState.h](../../../Source/Hodgepodge/Public/Core/PlayState/HodgePlayerState.h)、[AbilitySystem/Stats/HodgeAttributeCoordinator.h](../../../Source/Hodgepodge/Public/AbilitySystem/Stats/HodgeAttributeCoordinator.h)、[Component/HodgeHeroComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeHeroComponent.h)、[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)、[AbilitySystem/AttributeSet/HodgeHealthSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeHealthSet.h)、[Component/HodgeExperienceManagerComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeExperienceManagerComponent.h)、[Core/GameMode/HodgeGameModeBase.h](../../../Source/Hodgepodge/Public/Core/GameMode/HodgeGameModeBase.h)、[Core/PlayerController/HodgePlayerController.h](../../../Source/Hodgepodge/Public/Core/PlayerController/HodgePlayerController.h)、[AbilitySystem/AttributeSet/HodgeCombatSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeCombatSet.h)、[Component/HodgePawnExtensionComponent.h](../../../Source/Hodgepodge/Public/Component/HodgePawnExtensionComponent.h)、[Data/HodgeAbilitySet.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilitySet.h)、[Data/HodgePawnData.h](../../../Source/Hodgepodge/Public/Data/HodgePawnData.h)
+项目内直接 include（不是运行调用关系）：[Core/PlayState/HodgePlayerState.h](../../../Source/Hodgepodge/Public/Core/PlayState/HodgePlayerState.h)、[AbilitySystem/Stats/HodgeAttributeCoordinator.h](../../../Source/Hodgepodge/Public/AbilitySystem/Stats/HodgeAttributeCoordinator.h)、[Component/HodgeHeroComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeHeroComponent.h)、[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)、[AbilitySystem/AttributeSet/HodgeHealthSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeHealthSet.h)、[Component/HodgeExperienceManagerComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeExperienceManagerComponent.h)、[Core/GameMode/HodgeGameModeBase.h](../../../Source/Hodgepodge/Public/Core/GameMode/HodgeGameModeBase.h)、[Core/PlayerController/HodgePlayerController.h](../../../Source/Hodgepodge/Public/Core/PlayerController/HodgePlayerController.h)、[AbilitySystem/AttributeSet/HodgeCombatSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeCombatSet.h)、[AbilitySystem/AttributeSet/HodgeResonanceSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeResonanceSet.h)、[AbilitySystem/AttributeSet/HodgeHavocSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeHavocSet.h)、[Component/HodgePawnExtensionComponent.h](../../../Source/Hodgepodge/Public/Component/HodgePawnExtensionComponent.h)、[Data/HodgeAbilitySet.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilitySet.h)、[Data/HodgePawnData.h](../../../Source/Hodgepodge/Public/Data/HodgePawnData.h)
 
 定义候选（多行签名仅展示首行）：
 
-- L38: `const FName AHodgePlayerState::NAME_HodgeAbilityReady("HodgeAbilitiesReady");`
-- L41: `AHodgePlayerState::AHodgePlayerState(const FObjectInitializer& ObjectInitializer)`
-- L71: `AHodgePlayerController* AHodgePlayerState::GetHodgePlayerController() const`
-- L78: `UAbilitySystemComponent* AHodgePlayerState::GetAbilitySystemComponent() const`
-- L85: `void AHodgePlayerState::SetPawnData(const UHodgePawnData* InPawnData)`
-- L130: `void AHodgePlayerState::PreInitializeComponents()`
-- L168: `void AHodgePlayerState::PostInitializeComponents()`
-- L175: `void AHodgePlayerState::Reset()`
-- L182: `void AHodgePlayerState::ClientInitialize(AController* C)`
-- L195: `void AHodgePlayerState::CopyProperties(APlayerState* PlayerState)`
-- L205: `void AHodgePlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const`
-- L242: `void AHodgePlayerState::OnDeactivated()`
-- L278: `void AHodgePlayerState::OnReactivated()`
-- L292: `void AHodgePlayerState::SetPlayerConnectionType(EHodgePlayerConnectionType NewType)`
-- L302: `void AHodgePlayerState::SetSquadID(int32 NewSquadID)`
-- L316: `void AHodgePlayerState::AddStatTagStack(FGameplayTag Tag, int32 StackCount)`
-- L323: `void AHodgePlayerState::RemoveStatTagStack(FGameplayTag Tag, int32 StackCount)`
-- L330: `int32 AHodgePlayerState::GetStatTagStackCount(FGameplayTag Tag) const`
-- L337: `bool AHodgePlayerState::HasStatTag(FGameplayTag Tag) const`
-- L344: `FRotator AHodgePlayerState::GetReplicatedViewRotation() const`
-- L351: `void AHodgePlayerState::SetReplicatedViewRotation(const FRotator& NewRotation)`
-- L365: `void AHodgePlayerState::OnExperienceLoaded(const UHodgeExperienceDefinition* CurrentExperience)`
-- L388: `void AHodgePlayerState::OnRep_PawnData()`
-- L394: `void AHodgePlayerState::OnRep_MyTeamID(FGenericTeamId OldTeamID)`
-- L401: `void AHodgePlayerState::OnRep_MySquadID()`
-- L407: `bool AHodgePlayerState::SetCharacterLevel(int32 Level)`
-- L412: `bool AHodgePlayerState::RestoreCharacterHealth(float Health)`
-- L417: `bool AHodgePlayerState::InitializeCharacterProgression(FGuid CharacterId, int32 Level, float SavedHealth)`
-- L428: `bool AHodgePlayerState::AreAttributesReadyFor(const APawn* Avatar) const`
-- L434: `void AHodgePlayerState::NotifyAttributeReadiness()`
-- L443: `void AHodgePlayerState::OnRep_AttributeReadyState()`
+- L43: `const FName AHodgePlayerState::NAME_HodgeAbilityReady("HodgeAbilitiesReady");`
+- L46: `AHodgePlayerState::AHodgePlayerState(const FObjectInitializer& ObjectInitializer)`
+- L80: `AHodgePlayerController* AHodgePlayerState::GetHodgePlayerController() const`
+- L87: `UAbilitySystemComponent* AHodgePlayerState::GetAbilitySystemComponent() const`
+- L94: `void AHodgePlayerState::SetPawnData(const UHodgePawnData* InPawnData)`
+- L139: `void AHodgePlayerState::PreInitializeComponents()`
+- L146: `void AHodgePlayerState::PostInitializeComponents()`
+- L182: `void AHodgePlayerState::Reset()`
+- L189: `void AHodgePlayerState::ClientInitialize(AController* C)`
+- L202: `void AHodgePlayerState::CopyProperties(APlayerState* PlayerState)`
+- L212: `void AHodgePlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const`
+- L249: `void AHodgePlayerState::OnDeactivated()`
+- L285: `void AHodgePlayerState::OnReactivated()`
+- L299: `void AHodgePlayerState::SetPlayerConnectionType(EHodgePlayerConnectionType NewType)`
+- L309: `void AHodgePlayerState::SetSquadID(int32 NewSquadID)`
+- L323: `void AHodgePlayerState::AddStatTagStack(FGameplayTag Tag, int32 StackCount)`
+- L330: `void AHodgePlayerState::RemoveStatTagStack(FGameplayTag Tag, int32 StackCount)`
+- L337: `int32 AHodgePlayerState::GetStatTagStackCount(FGameplayTag Tag) const`
+- L344: `bool AHodgePlayerState::HasStatTag(FGameplayTag Tag) const`
+- L351: `FRotator AHodgePlayerState::GetReplicatedViewRotation() const`
+- L358: `void AHodgePlayerState::SetReplicatedViewRotation(const FRotator& NewRotation)`
+- L372: `void AHodgePlayerState::OnExperienceLoaded(const UHodgeExperienceDefinition* CurrentExperience)`
+- L395: `void AHodgePlayerState::OnRep_PawnData()`
+- L401: `void AHodgePlayerState::OnRep_MyTeamID(FGenericTeamId OldTeamID)`
+- L408: `void AHodgePlayerState::OnRep_MySquadID()`
+- L415: `bool AHodgePlayerState::SetCharacterLevel(int32 Level)`
+- L421: `bool AHodgePlayerState::RestoreCharacterHealth(float Health)`
+- L427: `bool AHodgePlayerState::InitializeCharacterProgression(FGuid CharacterId, int32 Level, float SavedHealth)`
+- L440: `bool AHodgePlayerState::AreAttributesReadyFor(const APawn* Avatar) const`
+- L447: `void AHodgePlayerState::NotifyAttributeReadiness()`
+- L458: `void AHodgePlayerState::OnRep_AttributeReadyState()`
 
 ## HodgePlayerStateBase.cpp
 
@@ -248,11 +250,11 @@ PlayerState ModularGameplay Receiver 注册、注销及组件 Reset/CopyProperti
 
 定义候选（多行签名仅展示首行）：
 
-- L10: `void AHodgePlayerStateBase::PreInitializeComponents()`
-- L19: `void AHodgePlayerStateBase::BeginPlay()`
-- L29: `void AHodgePlayerStateBase::EndPlay(const EEndPlayReason::Type EndPlayReason)`
-- L38: `void AHodgePlayerStateBase::Reset()`
-- L55: `void AHodgePlayerStateBase::CopyProperties(APlayerState* PlayerState)`
+- L13: `void AHodgePlayerStateBase::PreInitializeComponents()`
+- L22: `void AHodgePlayerStateBase::BeginPlay()`
+- L32: `void AHodgePlayerStateBase::EndPlay(const EEndPlayReason::Type EndPlayReason)`
+- L41: `void AHodgePlayerStateBase::Reset()`
+- L58: `void AHodgePlayerStateBase::CopyProperties(APlayerState* PlayerState)`
 
 ## HodgeGameInstanceBase.h
 
@@ -263,25 +265,25 @@ PlayerState ModularGameplay Receiver 注册、注销及组件 Reset/CopyProperti
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   8: #pragma once
-  10: #include "CoreMinimal.h"
-  11: #include "Engine/GameInstance.h"
-  12: #include "HodgeGameInstanceBase.generated.h"
-  14: class AHodgePlayerController;
-  22: UCLASS()
-  23: class HODGEPODGE_API UHodgeGameInstanceBase : public UGameInstance
-  24: {
-  25: 	GENERATED_BODY()
-  27: public:
-  29: 	UHodgeGameInstanceBase(const FObjectInitializer& ObjectInitializer);
-  32: 	AHodgePlayerController* GetPrimaryPlayerController() const;
-  34:     virtual int32 AddLocalPlayer(ULocalPlayer* Player, FPlatformUserId UserId) override;
-  35:     virtual bool RemoveLocalPlayer(ULocalPlayer* Player) override;
-  37: protected:
-  39: 	virtual void Init() override;
-  42: 	virtual void Shutdown() override;
-  45: 	TArray<uint8> DebugTestEncryptionKey;
-  46: };
+  11: #pragma once
+  13: #include "CoreMinimal.h"
+  14: #include "Engine/GameInstance.h"
+  15: #include "HodgeGameInstanceBase.generated.h"
+  17: class AHodgePlayerController;
+  25: UCLASS()
+  26: class HODGEPODGE_API UHodgeGameInstanceBase : public UGameInstance
+  27: {
+  28: 	GENERATED_BODY()
+  30: public:
+  35: 	UHodgeGameInstanceBase(const FObjectInitializer& ObjectInitializer);
+  41: 	AHodgePlayerController* GetPrimaryPlayerController() const;
+  48:     virtual int32 AddLocalPlayer(ULocalPlayer* Player, FPlatformUserId UserId) override;
+  53:     virtual bool RemoveLocalPlayer(ULocalPlayer* Player) override;
+  55: protected:
+  58: 	virtual void Init() override;
+  62: 	virtual void Shutdown() override;
+  65: 	TArray<uint8> DebugTestEncryptionKey;
+  66: };
 ```
 
 ## HodgeGameModeBase.h
@@ -293,47 +295,47 @@ PlayerState ModularGameplay Receiver 注册、注销及组件 Reset/CopyProperti
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   8: #pragma once
-  10: #include "CoreMinimal.h"
-  11: #include "GameFramework/GameModeBase.h"
-  12: #include "HodgeGameModeBase.generated.h"
-  14: class UHodgeExperienceDefinition;
-  15: class UHodgePawnData;
-  21: DECLARE_MULTICAST_DELEGATE_TwoParams(FOnHodgeGameModePlayerInitialized, AGameModeBase*             ,
-  22:                                      AController*              );
-  24: UCLASS()
-  25: class HODGEPODGE_API AHodgeGameModeBase : public AGameModeBase
-  26: {
-  27: 	GENERATED_BODY()
-  29: public:
-  31: 	AHodgeGameModeBase(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-  34: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Pawn")
-  35: 	const UHodgePawnData* GetPawnDataForController(const AController* InController) const;
-  40: 	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
-  41: 	virtual void RestartPlayer(AController* NewPlayer) override;
-  44: 	virtual UClass* GetDefaultPawnClassForController_Implementation(AController* InController) override;
-  47: 	virtual APawn*
-  48: 	SpawnDefaultPawnAtTransform_Implementation(AController* NewPlayer, const FTransform& SpawnTransform) override;
-  51: 	virtual bool ShouldSpawnAtStartSpot(AController* Player) override;
-  54: 	virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
-  57: 	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
-  60: 	virtual void FinishRestartPlayer(AController* NewPlayer, const FRotator& StartRotation) override;
-  63: 	virtual bool PlayerCanRestart_Implementation(APlayerController* Player) override;
-  66: 	virtual void InitGameState() override;
-  69: 	virtual bool UpdatePlayerStartSpot(AController* Player, const FString& Portal, FString& OutErrorMessage) override;
-  72: 	virtual void GenericPlayerInitialization(AController* NewPlayer) override;
-  75: 	virtual void FailedToRestartPlayer(AController* NewPlayer) override;
-  81: 	UFUNCTION(BlueprintCallable)
-  82: 	void RequestPlayerRestartNextFrame(AController* Controller, bool bForceReset = false);
-  85: 	virtual bool ControllerCanRestart(AController* Controller);
-  88: 	FOnHodgeGameModePlayerInitialized OnGameModePlayerInitialized;
-  90: protected:
-  92: 	void OnExperienceLoaded(const UHodgeExperienceDefinition* CurrentExperience);
-  95: 	bool IsExperienceLoaded() const;
-  98: 	void OnMatchAssignmentGiven(FPrimaryAssetId ExperienceId, const FString& ExperienceIdSource);
- 101: 	void HandleMatchAssignmentIfNotExpectingOne();
- 104: 	bool TryDedicatedServerLogin();
- 112: };
+  11: #pragma once
+  13: #include "CoreMinimal.h"
+  14: #include "GameFramework/GameModeBase.h"
+  15: #include "HodgeGameModeBase.generated.h"
+  17: class UHodgeExperienceDefinition;
+  18: class UHodgePawnData;
+  24: DECLARE_MULTICAST_DELEGATE_TwoParams(FOnHodgeGameModePlayerInitialized, AGameModeBase*             ,
+  25:                                      AController*              );
+  28: UCLASS()
+  29: class HODGEPODGE_API AHodgeGameModeBase : public AGameModeBase
+  30: {
+  31: 	GENERATED_BODY()
+  33: public:
+  38: 	AHodgeGameModeBase(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+  45: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Pawn")
+  46: 	const UHodgePawnData* GetPawnDataForController(const AController* InController) const;
+  56: 	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
+  60: 	virtual void RestartPlayer(AController* NewPlayer) override;
+  67: 	virtual UClass* GetDefaultPawnClassForController_Implementation(AController* InController) override;
+  75: 	virtual APawn*
+  76: 	SpawnDefaultPawnAtTransform_Implementation(AController* NewPlayer, const FTransform& SpawnTransform) override;
+  83: 	virtual bool ShouldSpawnAtStartSpot(AController* Player) override;
+  89: 	virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
+  96: 	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
+ 103: 	virtual void FinishRestartPlayer(AController* NewPlayer, const FRotator& StartRotation) override;
+ 110: 	virtual bool PlayerCanRestart_Implementation(APlayerController* Player) override;
+ 114: 	virtual void InitGameState() override;
+ 123: 	virtual bool UpdatePlayerStartSpot(AController* Player, const FString& Portal, FString& OutErrorMessage) override;
+ 129: 	virtual void GenericPlayerInitialization(AController* NewPlayer) override;
+ 135: 	virtual void FailedToRestartPlayer(AController* NewPlayer) override;
+ 145: 	UFUNCTION(BlueprintCallable)
+ 146: 	void RequestPlayerRestartNextFrame(AController* Controller, bool bForceReset = false);
+ 153: 	virtual bool ControllerCanRestart(AController* Controller);
+ 156: 	FOnHodgeGameModePlayerInitialized OnGameModePlayerInitialized;
+ 158: protected:
+ 163: 	void OnExperienceLoaded(const UHodgeExperienceDefinition* CurrentExperience);
+ 169: 	bool IsExperienceLoaded() const;
+ 176: 	void OnMatchAssignmentGiven(FPrimaryAssetId ExperienceId, const FString& ExperienceIdSource);
+ 180: 	void HandleMatchAssignmentIfNotExpectingOne();
+ 186: 	bool TryDedicatedServerLogin();
+ 194: };
 ```
 
 ## HodgeGameState.h
@@ -345,47 +347,47 @@ PlayerState ModularGameplay Receiver 注册、注销及组件 Reset/CopyProperti
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   3: #pragma once
-   5: #include "CoreMinimal.h"
-   6: #include "AbilitySystemInterface.h"
-   7: #include "HodgeGameStateBase.h"
-   8: #include "HodgeGameState.generated.h"
-  10: class UHodgeExperienceManagerComponent;
-  11: class UHodgeAbilitySystemComponent;
-  18: UCLASS()
-  19: class HODGEPODGE_API AHodgeGameState : public AHodgeGameStateBase, public IAbilitySystemInterface
-  20: {
-  21: 	GENERATED_BODY()
-  23: public:
-  25: 	AHodgeGameState(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-  29: 	virtual void PreInitializeComponents() override;
-  32: 	virtual void PostInitializeComponents() override;
-  35: 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-  38: 	virtual void Tick(float DeltaSeconds) override;
-  43: 	virtual void AddPlayerState(APlayerState* PlayerState) override;
-  46: 	virtual void RemovePlayerState(APlayerState* PlayerState) override;
-  49: 	virtual void SeamlessTravelTransitionCheckpoint(bool bToTransitionMap) override;
-  54: 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-  58: 	UFUNCTION(BlueprintCallable, Category = "Hodge|GameState")
-  59: 	UHodgeAbilitySystemComponent* GetHodgeAbilitySystemComponent() const { return AbilitySystemComponent; }
-  70: 	float GetServerFPS() const;
-  73: 	void SetRecorderPlayerState(APlayerState* NewPlayerState);
-  76: 	APlayerState* GetRecorderPlayerState() const;
-  79: 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnRecorderPlayerStateChanged, APlayerState*);
-  80: 	FOnRecorderPlayerStateChanged OnRecorderPlayerStateChangedEvent;
-  82: private:
-  84: 	UPROPERTY()
-  85: 	TObjectPtr<UHodgeExperienceManagerComponent> ExperienceManagerComponent;
-  88: 	UPROPERTY(VisibleAnywhere, Category = "Hodge|GameState")
-  89: 	TObjectPtr<UHodgeAbilitySystemComponent> AbilitySystemComponent;
-  91: protected:
-  93: 	UPROPERTY(Replicated)
-  94: 	float ServerFPS;
-  98: 	UPROPERTY(Transient, ReplicatedUsing = OnRep_RecorderPlayerState)
-  99: 	TObjectPtr<APlayerState> RecorderPlayerState;
- 102: 	UFUNCTION()
- 103: 	void OnRep_RecorderPlayerState();
- 104: };
+   6: #pragma once
+   8: #include "CoreMinimal.h"
+   9: #include "AbilitySystemInterface.h"
+  10: #include "HodgeGameStateBase.h"
+  11: #include "HodgeGameState.generated.h"
+  13: class UHodgeExperienceManagerComponent;
+  14: class UHodgeAbilitySystemComponent;
+  21: UCLASS()
+  22: class HODGEPODGE_API AHodgeGameState : public AHodgeGameStateBase, public IAbilitySystemInterface
+  23: {
+  24: 	GENERATED_BODY()
+  26: public:
+  31: 	AHodgeGameState(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+  36: 	virtual void PreInitializeComponents() override;
+  40: 	virtual void PostInitializeComponents() override;
+  46: 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+  52: 	virtual void Tick(float DeltaSeconds) override;
+  60: 	virtual void AddPlayerState(APlayerState* PlayerState) override;
+  66: 	virtual void RemovePlayerState(APlayerState* PlayerState) override;
+  72: 	virtual void SeamlessTravelTransitionCheckpoint(bool bToTransitionMap) override;
+  80: 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+  87: 	UFUNCTION(BlueprintCallable, Category = "Hodge|GameState")
+  88: 	UHodgeAbilitySystemComponent* GetHodgeAbilitySystemComponent() const { return AbilitySystemComponent; }
+ 102: 	float GetServerFPS() const;
+ 108: 	void SetRecorderPlayerState(APlayerState* NewPlayerState);
+ 114: 	APlayerState* GetRecorderPlayerState() const;
+ 117: 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnRecorderPlayerStateChanged, APlayerState*);
+ 119: 	FOnRecorderPlayerStateChanged OnRecorderPlayerStateChangedEvent;
+ 121: private:
+ 123: 	UPROPERTY()
+ 124: 	TObjectPtr<UHodgeExperienceManagerComponent> ExperienceManagerComponent;
+ 127: 	UPROPERTY(VisibleAnywhere, Category = "Hodge|GameState")
+ 128: 	TObjectPtr<UHodgeAbilitySystemComponent> AbilitySystemComponent;
+ 130: protected:
+ 132: 	UPROPERTY(Replicated)
+ 133: 	float ServerFPS;
+ 137: 	UPROPERTY(Transient, ReplicatedUsing = OnRep_RecorderPlayerState)
+ 138: 	TObjectPtr<APlayerState> RecorderPlayerState;
+ 142: 	UFUNCTION()
+ 143: 	void OnRep_RecorderPlayerState();
+ 144: };
 ```
 
 ## HodgeGameStateBase.h
@@ -397,20 +399,20 @@ GameState 基础扩展生命周期。
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   8: #pragma once
-  10: #include "CoreMinimal.h"
-  11: #include "GameFramework/GameStateBase.h"
-  12: #include "HodgeGameStateBase.generated.h"
-  22: UCLASS()
-  23: class HODGEPODGE_API AHodgeGameStateBase : public AGameStateBase
-  24: {
-  25: 	GENERATED_BODY()
-  27: public:
-  29: 	AHodgeGameStateBase(const FObjectInitializer& ObjectInitializer);
-  33: 	virtual void PreInitializeComponents() override;
-  36: 	virtual void BeginPlay() override;
-  39: 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-  41: };
+  11: #pragma once
+  13: #include "CoreMinimal.h"
+  14: #include "GameFramework/GameStateBase.h"
+  15: #include "HodgeGameStateBase.generated.h"
+  25: UCLASS()
+  26: class HODGEPODGE_API AHodgeGameStateBase : public AGameStateBase
+  27: {
+  28: 	GENERATED_BODY()
+  30: public:
+  35: 	AHodgeGameStateBase(const FObjectInitializer& ObjectInitializer);
+  40: 	virtual void PreInitializeComponents() override;
+  44: 	virtual void BeginPlay() override;
+  50: 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+  52: };
 ```
 
 ## HodgeHUD.h
@@ -422,27 +424,27 @@ HUD Receiver 提供 Experience AddWidgets 的真实注入／撤销入口，同�
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   3: #pragma once
-   7: #include "GameFramework/HUD.h"
-   9: #include "HodgeHUD.generated.h"
-  13: namespace EEndPlayReason
-  14: {
-  15: 	enum Type : int;
-  16: }
-  20: class AActor;
-  23: class UObject;
-  45: UCLASS(Config = Game)
-  46: class HODGEPODGE_API AHodgeHUD : public AHUD
-  47: {
-  48: 	GENERATED_BODY()
-  50: public:
-  53: 	AHodgeHUD(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-  55: protected:
-  60: 	virtual void PreInitializeComponents() override;
-  67: 	virtual void BeginPlay() override;
-  71: 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-  81: 	virtual void GetDebugActorList(TArray<AActor*>& InOutList) override;
-  84: };
+   6: #pragma once
+  10: #include "GameFramework/HUD.h"
+  12: #include "HodgeHUD.generated.h"
+  16: namespace EEndPlayReason
+  17: {
+  18: 	enum Type : int;
+  19: }
+  23: class AActor;
+  26: class UObject;
+  48: UCLASS(Config = Game)
+  49: class HODGEPODGE_API AHodgeHUD : public AHUD
+  50: {
+  51: 	GENERATED_BODY()
+  53: public:
+  59: 	AHodgeHUD(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+  61: protected:
+  67: 	virtual void PreInitializeComponents() override;
+  75: 	virtual void BeginPlay() override;
+  82: 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+  95: 	virtual void GetDebugActorList(TArray<AActor*>& InOutList) override;
+  98: };
 ```
 
 ## HodgeLocalPlayerBase.h
@@ -454,35 +456,35 @@ HUD Receiver 提供 Experience AddWidgets 的真实注入／撤销入口，同�
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   9: #pragma once
-  11: #include "CoreMinimal.h"
-  12: #include "Engine/LocalPlayer.h"
-  13: #include "HodgeLocalPlayerBase.generated.h"
-  30: UCLASS()
-  31: class HODGEPODGE_API UHodgeLocalPlayerBase : public ULocalPlayer
-  32: {
-  33: 	GENERATED_BODY()
-  35: public:
-  42: 	UHodgeLocalPlayerBase();
-  52: 	DECLARE_MULTICAST_DELEGATE_TwoParams(FPlayerControllerSetDelegate, UHodgeLocalPlayerBase* LocalPlayer,
-  53: 	                                     APlayerController* PlayerController);
-  54: 	FPlayerControllerSetDelegate OnPlayerControllerSet;
-  63: 	DECLARE_MULTICAST_DELEGATE_TwoParams(FPlayerStateSetDelegate, UHodgeLocalPlayerBase* LocalPlayer,
-  64: 	                                     APlayerState* PlayerState);
-  65: 	FPlayerStateSetDelegate OnPlayerStateSet;
-  74: 	DECLARE_MULTICAST_DELEGATE_TwoParams(FPlayerPawnSetDelegate, UHodgeLocalPlayerBase* LocalPlayer, APawn* Pawn);
-  75: 	FPlayerPawnSetDelegate OnPlayerPawnSet;
-  87: 	FDelegateHandle CallAndRegister_OnPlayerControllerSet(FPlayerControllerSetDelegate::FDelegate Delegate);
-  98: 	FDelegateHandle CallAndRegister_OnPlayerStateSet(FPlayerStateSetDelegate::FDelegate Delegate);
- 109: 	FDelegateHandle CallAndRegister_OnPlayerPawnSet(FPlayerPawnSetDelegate::FDelegate Delegate);
- 111: public:
- 124: 	virtual bool GetProjectionData(FViewport* Viewport, FSceneViewProjectionData& ProjectionData,
- 125: 	                               int32 StereoViewIndex) const override;
- 131: 	bool IsPlayerViewEnabled() const { return bIsPlayerViewEnabled; }
- 141: 	void SetIsPlayerViewEnabled(bool bInIsPlayerViewEnabled) { bIsPlayerViewEnabled = bInIsPlayerViewEnabled; }
- 146: private:
- 153: 	bool bIsPlayerViewEnabled = true;
- 154: };
+  12: #pragma once
+  14: #include "CoreMinimal.h"
+  15: #include "Engine/LocalPlayer.h"
+  16: #include "HodgeLocalPlayerBase.generated.h"
+  33: UCLASS()
+  34: class HODGEPODGE_API UHodgeLocalPlayerBase : public ULocalPlayer
+  35: {
+  36: 	GENERATED_BODY()
+  38: public:
+  46: 	UHodgeLocalPlayerBase();
+  56: 	DECLARE_MULTICAST_DELEGATE_TwoParams(FPlayerControllerSetDelegate, UHodgeLocalPlayerBase* LocalPlayer,
+  57: 	                                     APlayerController* PlayerController);
+  59: 	FPlayerControllerSetDelegate OnPlayerControllerSet;
+  68: 	DECLARE_MULTICAST_DELEGATE_TwoParams(FPlayerStateSetDelegate, UHodgeLocalPlayerBase* LocalPlayer,
+  69: 	                                     APlayerState* PlayerState);
+  71: 	FPlayerStateSetDelegate OnPlayerStateSet;
+  80: 	DECLARE_MULTICAST_DELEGATE_TwoParams(FPlayerPawnSetDelegate, UHodgeLocalPlayerBase* LocalPlayer, APawn* Pawn);
+  82: 	FPlayerPawnSetDelegate OnPlayerPawnSet;
+  98: 	FDelegateHandle CallAndRegister_OnPlayerControllerSet(FPlayerControllerSetDelegate::FDelegate Delegate);
+ 113: 	FDelegateHandle CallAndRegister_OnPlayerStateSet(FPlayerStateSetDelegate::FDelegate Delegate);
+ 128: 	FDelegateHandle CallAndRegister_OnPlayerPawnSet(FPlayerPawnSetDelegate::FDelegate Delegate);
+ 130: public:
+ 149: 	virtual bool GetProjectionData(FViewport* Viewport, FSceneViewProjectionData& ProjectionData,
+ 150: 	                               int32 StereoViewIndex) const override;
+ 159: 	bool IsPlayerViewEnabled() const { return bIsPlayerViewEnabled; }
+ 172: 	void SetIsPlayerViewEnabled(bool bInIsPlayerViewEnabled) { bIsPlayerViewEnabled = bInIsPlayerViewEnabled; }
+ 177: private:
+ 184: 	bool bIsPlayerViewEnabled = true;
+ 185: };
 ```
 
 ## HodgePlayerController.h
@@ -496,88 +498,93 @@ HUD Receiver 提供 Experience AddWidgets 的真实注入／撤销入口，同�
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   3: #pragma once
-   6: #include "CoreMinimal.h"
-   9: #include "HodgePlayerControllerBase.h"
-  12: #include "Camera/HodgeCameraAssistInterface.h"
-  14: #include "HodgePlayerController.generated.h"
-  17: class UHodgeAbilitySystemComponent;
-  20: class AHodgePlayerState;
-  23: class AHodgeHUD;
-  31: UCLASS()
-  32: class HODGEPODGE_API AHodgePlayerController : public AHodgePlayerControllerBase, public IHodgeCameraAssistInterface
-  33: {
-  34: 	GENERATED_BODY()
-  36: public:
-  38: 	AHodgePlayerController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-  41: 	UFUNCTION(BlueprintCallable, Category = "Hodge|PlayerController")
-  42: 	AHodgePlayerState* GetHodgePlayerState() const;
-  45: 	UFUNCTION(BlueprintCallable, Category = "Hodge|PlayerController")
-  46: 	UHodgeAbilitySystemComponent* GetHodgeAbilitySystemComponent() const;
-  49: 	UFUNCTION(BlueprintCallable, Category = "Hodge|PlayerController")
-  50: 	AHodgeHUD* GetHodgeHUD() const;
-  54: 	UFUNCTION(BlueprintCallable, Category = "Hodge|PlayerController")
-  55: 	bool TryToRecordClientReplay();
-  59: 	virtual bool ShouldRecordClientReplay();
-  63: 	UFUNCTION(Reliable, Server, WithValidation)
-  64: 	void ServerCheat(const FString& Msg);
-  68: 	UFUNCTION(Reliable, Server, WithValidation)
-  69: 	void ServerCheatAll(const FString& Msg);
-  74: 	virtual void PreInitializeComponents() override;
-  77: 	virtual void BeginPlay() override;
-  80: 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-  83: 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-  90: 	virtual void OnPossess(APawn* InPawn) override;
-  93: 	virtual void OnUnPossess() override;
-  96: 	virtual void InitPlayerState() override;
-  99: 	virtual void CleanupPlayerState() override;
- 102: 	virtual void OnRep_PlayerState() override;
- 109: 	virtual void ReceivedPlayer() override;
- 112: 	virtual void PlayerTick(float DeltaTime) override;
- 115: 	virtual void SetPlayer(UPlayer* InPlayer) override;
- 118: 	virtual void AddCheats(bool bForce) override;
- 121: 	virtual void UpdateForceFeedback(IInputInterface* InputInterface, const int32 ControllerId) override;
- 124: 	virtual void
- 125: 	UpdateHiddenComponents(const FVector& ViewLocation, TSet<FPrimitiveComponentId>& OutHiddenComponents) override;
- 128: 	virtual void PreProcessInput(const float DeltaTime, const bool bGamePaused) override;
- 131: 	virtual void PostProcessInput(const float DeltaTime, const bool bGamePaused) override;
- 138: 	virtual void OnCameraPenetratingTarget() override;
- 156: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Character")
- 157: 	void SetIsAutoRunning(const bool bEnabled);
- 160: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Character")
- 161: 	bool GetIsAutoRunning() const;
- 163: private:
- 169: 	UPROPERTY()
- 170: 	TObjectPtr<APlayerState> LastSeenPlayerState;
- 172: private:
- 174: 	UFUNCTION()
- 175: 	void OnPlayerStateChangedTeam(UObject* TeamAgent, int32 OldTeam, int32 NewTeam);
- 177: protected:
- 180: 	virtual void OnPlayerStateChanged();
- 182: private:
- 184: 	void BroadcastOnPlayerStateChanged();
- 186: protected:
- 195: 	void OnStartAutoRun();
- 198: 	void OnEndAutoRun();
- 201: 	UFUNCTION(BlueprintImplementableEvent, meta=(DisplayName="OnStartAutoRun"))
- 202: 	void K2_OnStartAutoRun();
- 205: 	UFUNCTION(BlueprintImplementableEvent, meta=(DisplayName="OnEndAutoRun"))
- 206: 	void K2_OnEndAutoRun();
- 209: 	bool bHideViewTargetPawnNextFrame = false;
- 210: };
- 214: UCLASS()
- 215: class AHodgeReplayPlayerController : public AHodgePlayerController
- 216: {
- 217: 	GENERATED_BODY()
- 220: 	virtual void Tick(float DeltaSeconds) override;
- 223: 	virtual void SmoothTargetViewRotation(APawn* TargetPawn, float DeltaSeconds) override;
- 226: 	virtual bool ShouldRecordClientReplay() override;
- 230: 	void RecorderPlayerStateUpdated(APlayerState* NewRecorderPlayerState);
- 234: 	UFUNCTION()
- 235: 	void OnPlayerStatePawnSet(APlayerState* ChangedPlayerState, APawn* NewPlayerPawn, APawn* OldPlayerPawn);
- 239: 	UPROPERTY(Transient)
- 240: 	TObjectPtr<APlayerState> FollowedPlayerState;
- 241: };
+   6: #pragma once
+   9: #include "CoreMinimal.h"
+  12: #include "HodgePlayerControllerBase.h"
+  15: #include "Camera/HodgeCameraAssistInterface.h"
+  17: #include "HodgePlayerController.generated.h"
+  20: class UHodgeAbilitySystemComponent;
+  23: class AHodgePlayerState;
+  26: class AHodgeHUD;
+  34: UCLASS()
+  35: class HODGEPODGE_API AHodgePlayerController : public AHodgePlayerControllerBase, public IHodgeCameraAssistInterface
+  36: {
+  37: 	GENERATED_BODY()
+  39: public:
+  44: 	AHodgePlayerController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+  50: 	UFUNCTION(BlueprintCallable, Category = "Hodge|PlayerController")
+  51: 	AHodgePlayerState* GetHodgePlayerState() const;
+  57: 	UFUNCTION(BlueprintCallable, Category = "Hodge|PlayerController")
+  58: 	UHodgeAbilitySystemComponent* GetHodgeAbilitySystemComponent() const;
+  64: 	UFUNCTION(BlueprintCallable, Category = "Hodge|PlayerController")
+  65: 	AHodgeHUD* GetHodgeHUD() const;
+  72: 	UFUNCTION(BlueprintCallable, Category = "Hodge|PlayerController")
+  73: 	bool TryToRecordClientReplay();
+  76: 	UFUNCTION(Exec)
+  77: 	void HodgeFillResonance();
+  79: 	UFUNCTION(Exec)
+  80: 	void HodgeFillDarkFlow();
+  87: 	virtual bool ShouldRecordClientReplay();
+  94: 	UFUNCTION(Reliable, Server, WithValidation)
+  95: 	void ServerCheat(const FString& Msg);
+ 102: 	UFUNCTION(Reliable, Server, WithValidation)
+ 103: 	void ServerCheatAll(const FString& Msg);
+ 109: 	virtual void PreInitializeComponents() override;
+ 113: 	virtual void BeginPlay() override;
+ 119: 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+ 125: 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+ 135: 	virtual void OnPossess(APawn* InPawn) override;
+ 139: 	virtual void OnUnPossess() override;
+ 143: 	virtual void InitPlayerState() override;
+ 147: 	virtual void CleanupPlayerState() override;
+ 151: 	virtual void OnRep_PlayerState() override;
+ 159: 	virtual void ReceivedPlayer() override;
+ 165: 	virtual void PlayerTick(float DeltaTime) override;
+ 171: 	virtual void SetPlayer(UPlayer* InPlayer) override;
+ 177: 	virtual void AddCheats(bool bForce) override;
+ 184: 	virtual void UpdateForceFeedback(IInputInterface* InputInterface, const int32 ControllerId) override;
+ 191: 	virtual void
+ 192: 	UpdateHiddenComponents(const FVector& ViewLocation, TSet<FPrimitiveComponentId>& OutHiddenComponents) override;
+ 199: 	virtual void PreProcessInput(const float DeltaTime, const bool bGamePaused) override;
+ 206: 	virtual void PostProcessInput(const float DeltaTime, const bool bGamePaused) override;
+ 214: 	virtual void OnCameraPenetratingTarget() override;
+ 235: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Character")
+ 236: 	void SetIsAutoRunning(const bool bEnabled);
+ 242: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Character")
+ 243: 	bool GetIsAutoRunning() const;
+ 245: private:
+ 247: 	UPROPERTY(VisibleAnywhere, Category="Hodge|UI") TObjectPtr<class UHodgeIndicatorManagerComponent> IndicatorManager;
+ 253: 	UPROPERTY()
+ 254: 	TObjectPtr<APlayerState> LastSeenPlayerState;
+ 256: private:
+ 263: 	UFUNCTION()
+ 264: 	void OnPlayerStateChangedTeam(UObject* TeamAgent, int32 OldTeam, int32 NewTeam);
+ 266: protected:
+ 270: 	virtual void OnPlayerStateChanged();
+ 272: private:
+ 275: 	void BroadcastOnPlayerStateChanged();
+ 277: protected:
+ 287: 	void OnStartAutoRun();
+ 291: 	void OnEndAutoRun();
+ 295: 	UFUNCTION(BlueprintImplementableEvent, meta=(DisplayName="OnStartAutoRun"))
+ 296: 	void K2_OnStartAutoRun();
+ 300: 	UFUNCTION(BlueprintImplementableEvent, meta=(DisplayName="OnEndAutoRun"))
+ 301: 	void K2_OnEndAutoRun();
+ 304: 	bool bHideViewTargetPawnNextFrame = false;
+ 305: };
+ 309: UCLASS()
+ 310: class AHodgeReplayPlayerController : public AHodgePlayerController
+ 311: {
+ 312: 	GENERATED_BODY()
+ 318: 	virtual void Tick(float DeltaSeconds) override;
+ 325: 	virtual void SmoothTargetViewRotation(APawn* TargetPawn, float DeltaSeconds) override;
+ 331: 	virtual bool ShouldRecordClientReplay() override;
+ 338: 	void RecorderPlayerStateUpdated(APlayerState* NewRecorderPlayerState);
+ 347: 	UFUNCTION()
+ 348: 	void OnPlayerStatePawnSet(APlayerState* ChangedPlayerState, APawn* NewPlayerPawn, APawn* OldPlayerPawn);
+ 352: 	UPROPERTY(Transient)
+ 353: 	TObjectPtr<APlayerState> FollowedPlayerState;
+ 354: };
 ```
 
 ## HodgePlayerControllerBase.h
@@ -589,23 +596,23 @@ HUD Receiver 提供 Experience AddWidgets 的真实注入／撤销入口，同�
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   9: #pragma once
-  11: #include "CoreMinimal.h"
-  12: #include "GameFramework/PlayerController.h"
-  13: #include "HodgePlayerControllerBase.generated.h"
-  38: UCLASS()
-  39: class HODGEPODGE_API AHodgePlayerControllerBase : public APlayerController
-  40: {
-  41: 	GENERATED_BODY()
-  43: public:
-  50: 	AHodgePlayerControllerBase(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-  65: 	virtual void ReceivedPlayer() override;
-  78: 	virtual void SetPawn(APawn* InPawn) override;
-  95: 	virtual void OnPossess(class APawn* APawn) override;
- 109: 	virtual void OnUnPossess() override;
- 111: protected:
- 123: 	virtual void OnRep_PlayerState() override;
- 124: };
+  12: #pragma once
+  14: #include "CoreMinimal.h"
+  15: #include "GameFramework/PlayerController.h"
+  16: #include "HodgePlayerControllerBase.generated.h"
+  41: UCLASS()
+  42: class HODGEPODGE_API AHodgePlayerControllerBase : public APlayerController
+  43: {
+  44: 	GENERATED_BODY()
+  46: public:
+  56: 	AHodgePlayerControllerBase(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+  72: 	virtual void ReceivedPlayer() override;
+  88: 	virtual void SetPawn(APawn* InPawn) override;
+ 108: 	virtual void OnPossess(class APawn* APawn) override;
+ 123: 	virtual void OnUnPossess() override;
+ 125: protected:
+ 138: 	virtual void OnRep_PlayerState() override;
+ 139: };
 ```
 
 ## HodgePlayerState.h
@@ -619,112 +626,114 @@ HUD Receiver 提供 Experience AddWidgets 的真实注入／撤销入口，同�
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   3: #pragma once
-   5: #include "CoreMinimal.h"
-   6: #include "AbilitySystemInterface.h"
-   7: #include "GenericTeamAgentInterface.h"
-   8: #include "HodgePlayerStateBase.h"
-   9: #include "AbilitySystem/GameplayTagStack.h"
-  10: #include "AbilitySystem/Stats/HodgeAttributeTypes.h"
-  11: #include "HodgePlayerState.generated.h"
-  13: class UHodgeExperienceDefinition;
-  14: class UHodgePawnData;
-  15: class UHodgeAbilitySystemComponent;
-  16: class AHodgePlayerController;
-  17: class UHodgeAttributeCoordinator;
-  22: UENUM()
-  23: enum class EHodgePlayerConnectionType : uint8
-  24: {
-  26: 	Player = 0,
-  29: 	LiveSpectator,
-  32: 	ReplaySpectator,
-  35: 	InactivePlayer
-  36: };
-  44: UCLASS(Config = Game)
-  45: class AHodgePlayerState : public AHodgePlayerStateBase, public IAbilitySystemInterface
-  46: {
-  47: 	GENERATED_BODY()
-  49: public:
-  51: 	AHodgePlayerState(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-  54: 	UFUNCTION(BlueprintCallable, Category = "Hodge|PlayerState")
-  55: 	AHodgePlayerController* GetHodgePlayerController() const;
-  58: 	UFUNCTION(BlueprintCallable, Category = "Hodge|PlayerState")
-  59: 	UHodgeAbilitySystemComponent* GetHodgeAbilitySystemComponent() const { return AbilitySystemComponent; }
-  60: 	UFUNCTION(BlueprintPure, Category="Hodge|Attributes") int32 GetCharacterLevel() const { return CharacterProgression.Level; }
-  61: 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category="Hodge|Attributes") bool SetCharacterLevel(int32 Level);
-  62: 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category="Hodge|Attributes") bool RestoreCharacterHealth(float Health);
-  63: 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category="Hodge|Attributes") bool InitializeCharacterProgression(FGuid CharacterId, int32 Level, float SavedHealth = -1.f);
-  64: 	UFUNCTION(BlueprintPure, Category="Hodge|Attributes") FHodgeAttributeReadyState GetAttributeReadyState() const { return AttributeReadyState; }
-  65: 	UHodgeAttributeCoordinator* GetAttributeCoordinator() const { return AttributeCoordinator; }
-  66: 	bool AreAttributesReadyFor(const APawn* Avatar) const;
-  67: 	void NotifyAttributeReadiness();
-  69: 	FSimpleMulticastDelegate OnAttributeReadinessChanged;
-  72: 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-  75: 	template <class T>
-  76: 	const T* GetPawnData() const { return Cast<T>(PawnData); }
-  79: 	void SetPawnData(const UHodgePawnData* InPawnData);
-  84: 	virtual void PreInitializeComponents() override;
-  87: 	virtual void PostInitializeComponents() override;
-  94: 	virtual void Reset() override;
-  97: 	virtual void ClientInitialize(AController* C) override;
- 100: 	virtual void CopyProperties(APlayerState* PlayerState) override;
- 103: 	virtual void OnDeactivated() override;
- 106: 	virtual void OnReactivated() override;
- 124: 	static const FName NAME_HodgeAbilityReady;
- 127: 	void SetPlayerConnectionType(EHodgePlayerConnectionType NewType);
- 130: 	EHodgePlayerConnectionType GetPlayerConnectionType() const { return MyPlayerConnectionType; }
- 133: 	UFUNCTION(BlueprintCallable)
- 134: 	int32 GetSquadId() const
- 135: 	{
- 136: 		return MySquadID;
- 137: 	}
- 149: 	void SetSquadID(int32 NewSquadID);
- 152: 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category=Teams)
- 153: 	void AddStatTagStack(FGameplayTag Tag, int32 StackCount);
- 156: 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category=Teams)
- 157: 	void RemoveStatTagStack(FGameplayTag Tag, int32 StackCount);
- 160: 	UFUNCTION(BlueprintCallable, Category=Teams)
- 161: 	int32 GetStatTagStackCount(FGameplayTag Tag) const;
- 164: 	UFUNCTION(BlueprintCallable, Category=Teams)
- 165: 	bool HasStatTag(FGameplayTag Tag) const;
- 173: 	FRotator GetReplicatedViewRotation() const;
- 176: 	void SetReplicatedViewRotation(const FRotator& NewRotation);
- 178: private:
- 180: 	void OnExperienceLoaded(const UHodgeExperienceDefinition* CurrentExperience);
- 181: 	friend class UHodgeAttributeCoordinator;
- 182: 	UPROPERTY(VisibleAnywhere, Category="Hodge|Attributes") TObjectPtr<UHodgeAttributeCoordinator> AttributeCoordinator;
- 183: 	UPROPERTY(Replicated) FHodgeCharacterProgression CharacterProgression;
- 184: 	UPROPERTY(ReplicatedUsing=OnRep_AttributeReadyState) FHodgeAttributeReadyState AttributeReadyState;
- 185: 	UPROPERTY(Replicated) TArray<FHodgeOwnedEquipmentState> OwnedEquipmentStates;
- 186: 	UFUNCTION() void OnRep_AttributeReadyState();
- 188: protected:
- 190: 	UFUNCTION()
- 191: 	void OnRep_PawnData();
- 194: 	UPROPERTY(ReplicatedUsing = OnRep_PawnData)
- 195: 	TObjectPtr<const UHodgePawnData> PawnData;
- 197: private:
- 199: 	UPROPERTY(VisibleAnywhere, Category = "Hodge|PlayerState")
- 200: 	TObjectPtr<UHodgeAbilitySystemComponent> AbilitySystemComponent;
- 203: 	UPROPERTY()
- 204: 	TObjectPtr<const class UHodgeHealthSet> HealthSet;
- 207: 	UPROPERTY()
- 208: 	TObjectPtr<const class UHodgeCombatSet> CombatSet;
- 211: 	UPROPERTY(Replicated)
- 212: 	EHodgePlayerConnectionType MyPlayerConnectionType;
- 218: 	UPROPERTY(ReplicatedUsing=OnRep_MyTeamID)
- 219: 	FGenericTeamId MyTeamID;
- 222: 	UPROPERTY(ReplicatedUsing=OnRep_MySquadID)
- 223: 	int32 MySquadID;
- 226: 	UPROPERTY(Replicated)
- 227: 	FGameplayTagStackContainer StatTags;
- 230: 	UPROPERTY(Replicated)
- 231: 	FRotator ReplicatedViewRotation;
- 233: private:
- 235: 	UFUNCTION()
- 236: 	void OnRep_MyTeamID(FGenericTeamId OldTeamID);
- 239: 	UFUNCTION()
- 240: 	void OnRep_MySquadID();
- 241: };
+   6: #pragma once
+   8: #include "CoreMinimal.h"
+   9: #include "AbilitySystemInterface.h"
+  10: #include "GenericTeamAgentInterface.h"
+  11: #include "HodgePlayerStateBase.h"
+  12: #include "AbilitySystem/GameplayTagStack.h"
+  13: #include "AbilitySystem/Stats/HodgeAttributeTypes.h"
+  14: #include "HodgePlayerState.generated.h"
+  16: class UHodgeExperienceDefinition;
+  17: class UHodgePawnData;
+  18: class UHodgeAbilitySystemComponent;
+  19: class AHodgePlayerController;
+  20: class UHodgeAttributeCoordinator;
+  25: UENUM()
+  26: enum class EHodgePlayerConnectionType : uint8
+  27: {
+  29: 	Player = 0,
+  32: 	LiveSpectator,
+  35: 	ReplaySpectator,
+  38: 	InactivePlayer
+  39: };
+  47: UCLASS(Config = Game)
+  48: class AHodgePlayerState : public AHodgePlayerStateBase, public IAbilitySystemInterface
+  49: {
+  50: 	GENERATED_BODY()
+  52: public:
+  57: 	AHodgePlayerState(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+  63: 	UFUNCTION(BlueprintCallable, Category = "Hodge|PlayerState")
+  64: 	AHodgePlayerController* GetHodgePlayerController() const;
+  70: 	UFUNCTION(BlueprintCallable, Category = "Hodge|PlayerState")
+  71: 	UHodgeAbilitySystemComponent* GetHodgeAbilitySystemComponent() const { return AbilitySystemComponent; }
+  75: 	UFUNCTION(BlueprintPure, Category="Hodge|Attributes") int32 GetCharacterLevel() const { return CharacterProgression.Level; }
+  80: 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category="Hodge|Attributes") bool SetCharacterLevel(int32 Level);
+  85: 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category="Hodge|Attributes") bool RestoreCharacterHealth(float Health);
+  92: 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category="Hodge|Attributes") bool InitializeCharacterProgression(FGuid CharacterId, int32 Level, float SavedHealth = -1.f);
+  96: 	UFUNCTION(BlueprintPure, Category="Hodge|Attributes") FHodgeAttributeReadyState GetAttributeReadyState() const { return AttributeReadyState; }
+ 100: 	UHodgeAttributeCoordinator* GetAttributeCoordinator() const { return AttributeCoordinator; }
+ 105: 	bool AreAttributesReadyFor(const APawn* Avatar) const;
+ 107: 	void NotifyAttributeReadiness();
+ 109: 	FSimpleMulticastDelegate OnAttributeReadinessChanged;
+ 115: 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+ 118: 	template <class T>
+ 122: 	const T* GetPawnData() const { return Cast<T>(PawnData); }
+ 128: 	void SetPawnData(const UHodgePawnData* InPawnData);
+ 134: 	virtual void PreInitializeComponents() override;
+ 138: 	virtual void PostInitializeComponents() override;
+ 146: 	virtual void Reset() override;
+ 152: 	virtual void ClientInitialize(AController* C) override;
+ 158: 	virtual void CopyProperties(APlayerState* PlayerState) override;
+ 162: 	virtual void OnDeactivated() override;
+ 166: 	virtual void OnReactivated() override;
+ 184: 	static const FName NAME_HodgeAbilityReady;
+ 190: 	void SetPlayerConnectionType(EHodgePlayerConnectionType NewType);
+ 196: 	EHodgePlayerConnectionType GetPlayerConnectionType() const { return MyPlayerConnectionType; }
+ 202: 	UFUNCTION(BlueprintCallable)
+ 203: 	int32 GetSquadId() const
+ 204: 	{
+ 205: 		return MySquadID;
+ 206: 	}
+ 221: 	void SetSquadID(int32 NewSquadID);
+ 228: 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category=Teams)
+ 229: 	void AddStatTagStack(FGameplayTag Tag, int32 StackCount);
+ 236: 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category=Teams)
+ 237: 	void RemoveStatTagStack(FGameplayTag Tag, int32 StackCount);
+ 244: 	UFUNCTION(BlueprintCallable, Category=Teams)
+ 245: 	int32 GetStatTagStackCount(FGameplayTag Tag) const;
+ 252: 	UFUNCTION(BlueprintCallable, Category=Teams)
+ 253: 	bool HasStatTag(FGameplayTag Tag) const;
+ 264: 	FRotator GetReplicatedViewRotation() const;
+ 270: 	void SetReplicatedViewRotation(const FRotator& NewRotation);
+ 272: private:
+ 277: 	void OnExperienceLoaded(const UHodgeExperienceDefinition* CurrentExperience);
+ 278: 	friend class UHodgeAttributeCoordinator;
+ 280: 	UPROPERTY(VisibleAnywhere, Category="Hodge|Attributes") TObjectPtr<UHodgeAttributeCoordinator> AttributeCoordinator;
+ 282: 	UPROPERTY(Replicated) FHodgeCharacterProgression CharacterProgression;
+ 284: 	UPROPERTY(ReplicatedUsing=OnRep_AttributeReadyState) FHodgeAttributeReadyState AttributeReadyState;
+ 286: 	UPROPERTY(Replicated) TArray<FHodgeOwnedEquipmentState> OwnedEquipmentStates;
+ 288: 	UFUNCTION() void OnRep_AttributeReadyState();
+ 290: protected:
+ 293: 	UFUNCTION()
+ 294: 	void OnRep_PawnData();
+ 297: 	UPROPERTY(ReplicatedUsing = OnRep_PawnData)
+ 298: 	TObjectPtr<const UHodgePawnData> PawnData;
+ 300: private:
+ 302: 	UPROPERTY(VisibleAnywhere, Category = "Hodge|PlayerState")
+ 303: 	TObjectPtr<UHodgeAbilitySystemComponent> AbilitySystemComponent;
+ 306: 	UPROPERTY()
+ 307: 	TObjectPtr<const class UHodgeHealthSet> HealthSet;
+ 311: 	UPROPERTY()
+ 312: 	TObjectPtr<const class UHodgeCombatSet> CombatSet;
+ 314: 	UPROPERTY() TObjectPtr<const class UHodgeResonanceSet> ResonanceSet;
+ 316: 	UPROPERTY() TObjectPtr<const class UHodgeHavocSet> HavocSet;
+ 319: 	UPROPERTY(Replicated)
+ 320: 	EHodgePlayerConnectionType MyPlayerConnectionType;
+ 326: 	UPROPERTY(ReplicatedUsing=OnRep_MyTeamID)
+ 327: 	FGenericTeamId MyTeamID;
+ 330: 	UPROPERTY(ReplicatedUsing=OnRep_MySquadID)
+ 331: 	int32 MySquadID;
+ 334: 	UPROPERTY(Replicated)
+ 335: 	FGameplayTagStackContainer StatTags;
+ 338: 	UPROPERTY(Replicated)
+ 339: 	FRotator ReplicatedViewRotation;
+ 341: private:
+ 346: 	UFUNCTION()
+ 347: 	void OnRep_MyTeamID(FGenericTeamId OldTeamID);
+ 351: 	UFUNCTION()
+ 352: 	void OnRep_MySquadID();
+ 353: };
 ```
 
 ## HodgePlayerStateBase.h
@@ -736,20 +745,20 @@ PlayerState ModularGameplay Receiver 注册、注销及组件 Reset/CopyProperti
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   1: #pragma once
-   3: #include "CoreMinimal.h"
-   4: #include "GameFramework/PlayerState.h"
-   5: #include "HodgePlayerStateBase.generated.h"
-  11: UCLASS()
-  12: class HODGEPODGE_API AHodgePlayerStateBase : public APlayerState
-  13: {
-  14: 	GENERATED_BODY()
-  16: public:
-  20: 	virtual void PreInitializeComponents() override;
-  23: 	virtual void BeginPlay() override;
-  26: 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-  29: 	virtual void Reset() override;
-  33: protected:
-  37: 	virtual void CopyProperties(APlayerState* PlayerState);
-  40: };
+   4: #pragma once
+   6: #include "CoreMinimal.h"
+   7: #include "GameFramework/PlayerState.h"
+   8: #include "HodgePlayerStateBase.generated.h"
+  14: UCLASS()
+  15: class HODGEPODGE_API AHodgePlayerStateBase : public APlayerState
+  16: {
+  17: 	GENERATED_BODY()
+  19: public:
+  24: 	virtual void PreInitializeComponents() override;
+  28: 	virtual void BeginPlay() override;
+  34: 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+  38: 	virtual void Reset() override;
+  42: protected:
+  49: 	virtual void CopyProperties(APlayerState* PlayerState);
+  52: };
 ```

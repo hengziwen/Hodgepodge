@@ -16,7 +16,7 @@
 
 定义候选（多行签名仅展示首行）：
 
-- L7: `UHodgeAbilitySourceInterface::UHodgeAbilitySourceInterface(const FObjectInitializer& ObjectInitializer)`
+- L11: `UHodgeAbilitySourceInterface::UHodgeAbilitySourceInterface(const FObjectInitializer& ObjectInitializer)`
 
 ## LoadingProcessInterface.cpp
 
@@ -38,26 +38,50 @@
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   3: #pragma once
-   5: #include "UObject/Interface.h"
-   7: #include "HodgeAbilitySourceInterface.generated.h"
-   9: class UObject;
-  10: class UPhysicalMaterial;
-  11: struct FGameplayTagContainer;
-  17: UINTERFACE()
-  18: class UHodgeAbilitySourceInterface : public UInterface
-  19: {
-  20: 	GENERATED_UINTERFACE_BODY()
-  21: };
-  27: class IHodgeAbilitySourceInterface
-  28: {
-  29: 	GENERATED_IINTERFACE_BODY()
-  39: 	virtual float GetDistanceAttenuation(float Distance, const FGameplayTagContainer* SourceTags = nullptr,
-  40: 	                                     const FGameplayTagContainer* TargetTags = nullptr) const = 0;
-  51: 	virtual float GetPhysicalMaterialAttenuation(const UPhysicalMaterial* PhysicalMaterial,
-  52: 	                                             const FGameplayTagContainer* SourceTags = nullptr,
-  53: 	                                             const FGameplayTagContainer* TargetTags = nullptr) const = 0;
-  54: };
+   6: #pragma once
+   8: #include "UObject/Interface.h"
+  10: #include "HodgeAbilitySourceInterface.generated.h"
+  12: class UObject;
+  13: class UPhysicalMaterial;
+  14: struct FGameplayTagContainer;
+  20: UINTERFACE()
+  21: class UHodgeAbilitySourceInterface : public UInterface
+  22: {
+  23: 	GENERATED_UINTERFACE_BODY()
+  24: };
+  30: class IHodgeAbilitySourceInterface
+  31: {
+  32: 	GENERATED_IINTERFACE_BODY()
+  48: 	virtual float GetDistanceAttenuation(float Distance, const FGameplayTagContainer* SourceTags = nullptr,
+  49: 	                                     const FGameplayTagContainer* TargetTags = nullptr) const = 0;
+  66: 	virtual float GetPhysicalMaterialAttenuation(const UPhysicalMaterial* PhysicalMaterial,
+  67: 	                                             const FGameplayTagContainer* SourceTags = nullptr,
+  68: 	                                             const FGameplayTagContainer* TargetTags = nullptr) const = 0;
+  69: };
+```
+
+## HodgeLockOnTargetInterface.h
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Public/Interface/HodgeLockOnTargetInterface.h](../../../Source/Hodgepodge/Public/Interface/HodgeLockOnTargetInterface.h)
+
+有效头文件声明摘录（未展开宏，未求值预处理分支）：
+
+```cpp
+   2: #pragma once
+   3: #include "UObject/Interface.h"
+   4: #include "HodgeLockOnTargetInterface.generated.h"
+   5: UINTERFACE(BlueprintType)
+   6: class HODGEPODGE_API UHodgeLockOnTargetInterface : public UInterface { GENERATED_BODY() };
+   8: class HODGEPODGE_API IHodgeLockOnTargetInterface
+   9: {
+  10: 	GENERATED_BODY()
+  11: public:
+  13: 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="Hodge|LockOn") bool CanBeLockedBy(APawn* SourcePawn) const;
+  15: 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="Hodge|LockOn") bool GetLockPoint(FName LockPointId, FVector& OutLocation) const;
+  17: 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="Hodge|LockOn") float GetLockPriority() const;
+  18: };
 ```
 
 ## LoadingProcessInterface.h
@@ -69,23 +93,23 @@
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   3: #pragma once
-   5: #include "CoreMinimal.h"
-   6: #include "UObject/Interface.h"
-   7: #include "LoadingProcessInterface.generated.h"
-  10: UINTERFACE(MinimalAPI)
-  11: class ULoadingProcessInterface : public UInterface
-  12: {
-  13: 	GENERATED_BODY()
-  14: };
-  21: class HODGEPODGE_API ILoadingProcessInterface
-  22: {
-  23: 	GENERATED_BODY()
-  25: public:
-  27: 	static bool ShouldShowLoadingScreen(UObject* TestObject, FString& OutReason);
-  31: 	virtual bool ShouldShowLoadingScreen(FString& OutReason) const
-  32: 	{
-  34: 		return false;
-  35: 	}
-  36: };
+   6: #pragma once
+   8: #include "CoreMinimal.h"
+   9: #include "UObject/Interface.h"
+  10: #include "LoadingProcessInterface.generated.h"
+  13: UINTERFACE(MinimalAPI)
+  14: class ULoadingProcessInterface : public UInterface
+  15: {
+  16: 	GENERATED_BODY()
+  17: };
+  24: class HODGEPODGE_API ILoadingProcessInterface
+  25: {
+  26: 	GENERATED_BODY()
+  28: public:
+  35: 	static bool ShouldShowLoadingScreen(UObject* TestObject, FString& OutReason);
+  43: 	virtual bool ShouldShowLoadingScreen(FString& OutReason) const
+  44: 	{
+  46: 		return false;
+  47: 	}
+  48: };
 ```

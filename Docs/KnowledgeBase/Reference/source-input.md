@@ -16,7 +16,7 @@
 
 定义候选（多行签名仅展示首行）：
 
-- L12: `UHodgeAimSensitivityData::UHodgeAimSensitivityData(const FObjectInitializer& ObjectInitializer)`
+- L15: `UHodgeAimSensitivityData::UHodgeAimSensitivityData(const FObjectInitializer& ObjectInitializer)`
 
 ## HodgeInputComponent.cpp
 
@@ -28,10 +28,10 @@
 
 定义候选（多行签名仅展示首行）：
 
-- L23: `UHodgeInputComponent::UHodgeInputComponent()`
-- L39: `void UHodgeInputComponent::AddInputMappings(const UHodgeInputConfig* InputConfig,`
-- L59: `void UHodgeInputComponent::RemoveInputMappings(const UHodgeInputConfig* InputConfig,`
-- L81: `void UHodgeInputComponent::RemoveBinds(TArray<uint32>& BindHandles)`
+- L26: `UHodgeInputComponent::UHodgeInputComponent()`
+- L42: `void UHodgeInputComponent::AddInputMappings(const UHodgeInputConfig* InputConfig,`
+- L62: `void UHodgeInputComponent::RemoveInputMappings(const UHodgeInputConfig* InputConfig,`
+- L84: `void UHodgeInputComponent::RemoveBinds(TArray<uint32>& BindHandles)`
 
 ## HodgeInputConfig.cpp
 
@@ -43,9 +43,9 @@ NativeInputActions / AbilityInputActions 的 IA 与 Tag 数据配置及查询。
 
 定义候选（多行签名仅展示首行）：
 
-- L22: `UHodgeInputConfig::UHodgeInputConfig(const FObjectInitializer& ObjectInitializer)`
-- L37: `const UInputAction* UHodgeInputConfig::FindNativeInputActionForTag(const FGameplayTag& InputTag,`
-- L68: `const UInputAction* UHodgeInputConfig::FindAbilityInputActionForTag(const FGameplayTag& InputTag,`
+- L25: `UHodgeInputConfig::UHodgeInputConfig(const FObjectInitializer& ObjectInitializer)`
+- L40: `const UInputAction* UHodgeInputConfig::FindNativeInputActionForTag(const FGameplayTag& InputTag,`
+- L71: `const UInputAction* UHodgeInputConfig::FindAbilityInputActionForTag(const FGameplayTag& InputTag,`
 
 ## HodgeInputModifiers.cpp
 
@@ -57,11 +57,11 @@ NativeInputActions / AbilityInputActions 的 IA 与 Tag 数据配置及查询。
 
 定义候选（多行签名仅展示首行）：
 
-- L55: `FInputActionValue UHodgeSettingBasedScalar::ModifyRaw_Implementation(const UEnhancedPlayerInput* PlayerInput,`
-- L146: `FInputActionValue UHodgeInputModifierDeadZone::ModifyRaw_Implementation(const UEnhancedPlayerInput* PlayerInput,`
-- L231: `FLinearColor UHodgeInputModifierDeadZone::GetVisualizationColor_Implementation(`
-- L253: `FInputActionValue UHodgeInputModifierGamepadSensitivity::ModifyRaw_Implementation(`
-- L292: `FInputActionValue UHodgeInputModifierAimInversion::ModifyRaw_Implementation(`
+- L58: `FInputActionValue UHodgeSettingBasedScalar::ModifyRaw_Implementation(const UEnhancedPlayerInput* PlayerInput,`
+- L149: `FInputActionValue UHodgeInputModifierDeadZone::ModifyRaw_Implementation(const UEnhancedPlayerInput* PlayerInput,`
+- L234: `FLinearColor UHodgeInputModifierDeadZone::GetVisualizationColor_Implementation(`
+- L256: `FInputActionValue UHodgeInputModifierGamepadSensitivity::ModifyRaw_Implementation(`
+- L295: `FInputActionValue UHodgeInputModifierAimInversion::ModifyRaw_Implementation(`
 
 ## HodgeInputUserSettings.cpp
 
@@ -73,7 +73,7 @@ Enhanced Input 用户设置派生入口；须核对实际设置类配置。
 
 定义候选（多行签名仅展示首行）：
 
-- L9: `void UHodgeInputUserSettings::ApplySettings()`
+- L12: `void UHodgeInputUserSettings::ApplySettings()`
 
 ## HodgePlayerMappableKeyProfile.cpp
 
@@ -85,8 +85,8 @@ Enhanced Input 用户设置派生入口；须核对实际设置类配置。
 
 定义候选（多行签名仅展示首行）：
 
-- L9: `void UHodgePlayerMappableKeyProfile::EquipProfile()`
-- L19: `void UHodgePlayerMappableKeyProfile::UnEquipProfile()`
+- L12: `void UHodgePlayerMappableKeyProfile::EquipProfile()`
+- L22: `void UHodgePlayerMappableKeyProfile::UnEquipProfile()`
 
 ## HodgeAimSensitivityData.h
 
@@ -97,19 +97,19 @@ Enhanced Input 用户设置派生入口；须核对实际设置类配置。
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   4: #pragma once
-   7: #include "Engine/DataAsset.h"
-  10: #include "HodgeAimSensitivityData.generated.h"
-  16: class UObject;
-  20: UCLASS(BlueprintType, Const,
-  21: 	Meta = (DisplayName = "Hodge Aim Sensitivity Data", ShortTooltip =
-  22: 		"Data asset used to define a map of Gamepad Sensitivty to a float value."))
-  23: class HODGEPODGE_API UHodgeAimSensitivityData : public UPrimaryDataAsset
-  24: {
-  26: 	GENERATED_BODY()
-  28: public:
-  30: 	UHodgeAimSensitivityData(const FObjectInitializer& ObjectInitializer);
-  40: };
+   7: #pragma once
+  10: #include "Engine/DataAsset.h"
+  13: #include "HodgeAimSensitivityData.generated.h"
+  19: class UObject;
+  23: UCLASS(BlueprintType, Const,
+  24: 	Meta = (DisplayName = "Hodge Aim Sensitivity Data", ShortTooltip =
+  25: 		"Data asset used to define a map of Gamepad Sensitivty to a float value."))
+  27: class HODGEPODGE_API UHodgeAimSensitivityData : public UPrimaryDataAsset
+  28: {
+  30: 	GENERATED_BODY()
+  32: public:
+  37: 	UHodgeAimSensitivityData(const FObjectInitializer& ObjectInitializer);
+  47: };
 ```
 
 ## HodgeInputComponent.h
@@ -121,65 +121,71 @@ Enhanced Input 用户设置派生入口；须核对实际设置类配置。
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-  10: #pragma once
-  12: #include "CoreMinimal.h"
-  13: #include "EnhancedInputComponent.h"
-  14: #include "GameplayTagContainer.h"
-  15: #include "HodgeInputConfig.h"
-  16: #include "HodgeInputComponent.generated.h"
-  18: class UEnhancedInputLocalPlayerSubsystem;
-  44: UCLASS(Config = Input)
-  45: class HODGEPODGE_API UHodgeInputComponent : public UEnhancedInputComponent
-  46: {
-  47: 	GENERATED_BODY()
-  49: public:
-  55: 	UHodgeInputComponent();
-  67: 	void AddInputMappings(const UHodgeInputConfig* InputConfig,
-  68: 	                      UEnhancedInputLocalPlayerSubsystem* InputSubsystem) const;
-  79: 	void RemoveInputMappings(const UHodgeInputConfig* InputConfig,
-  80: 	                         UEnhancedInputLocalPlayerSubsystem* InputSubsystem) const;
-  99: 	template <class UserClass, typename FuncType>
- 100: 	void BindNativeAction(const UHodgeInputConfig* InputConfig, const FGameplayTag& InputTag,
- 101: 	                      ETriggerEvent TriggerEvent, UserClass* Object, FuncType Func, bool bLogIfNotFound);
- 121: 	template <class UserClass, typename PressedFuncType, typename ReleasedFuncType>
- 122: 	void BindAbilityActions(const UHodgeInputConfig* InputConfig, UserClass* Object, PressedFuncType PressedFunc,
- 123: 	                        ReleasedFuncType ReleasedFunc, TArray<uint32>& BindHandles);
- 133: 	void RemoveBinds(TArray<uint32>& BindHandles);
- 134: };
- 137: template <class UserClass, typename FuncType>
- 138: void UHodgeInputComponent::BindNativeAction(const UHodgeInputConfig* InputConfig, const FGameplayTag& InputTag,
- 139:                                             ETriggerEvent TriggerEvent, UserClass* Object, FuncType Func,
- 140:                                             bool bLogIfNotFound)
- 141: {
- 142: 	check(InputConfig);
- 143: 	if (const UInputAction* IA = InputConfig->FindNativeInputActionForTag(InputTag, bLogIfNotFound))
- 144: 	{
- 145: 		BindAction(IA, TriggerEvent, Object, Func);
- 146: 	}
- 147: }
- 149: template <class UserClass, typename PressedFuncType, typename ReleasedFuncType>
- 150: void UHodgeInputComponent::BindAbilityActions(const UHodgeInputConfig* InputConfig, UserClass* Object,
- 151:                                               PressedFuncType PressedFunc, ReleasedFuncType ReleasedFunc,
- 152:                                               TArray<uint32>& BindHandles)
- 153: {
- 154: 	check(InputConfig);
- 156: 	for (const FHodgeInputAction& Action : InputConfig->AbilityInputActions)
- 157: 	{
- 158: 		if (Action.InputAction && Action.InputTag.IsValid())
- 159: 		{
- 160: 			if (PressedFunc)
- 161: 			{
- 162: 				BindHandles.Add(BindAction(Action.InputAction, ETriggerEvent::Triggered, Object, PressedFunc,
- 163: 				                           Action.InputTag).GetHandle());
- 164: 			}
- 166: 			if (ReleasedFunc)
- 167: 			{
- 168: 				BindHandles.Add(BindAction(Action.InputAction, ETriggerEvent::Completed, Object, ReleasedFunc,
- 169: 				                           Action.InputTag).GetHandle());
- 170: 			}
- 171: 		}
- 172: 	}
- 173: }
+  13: #pragma once
+  15: #include "CoreMinimal.h"
+  16: #include "EnhancedInputComponent.h"
+  17: #include "GameplayTagContainer.h"
+  18: #include "HodgeInputConfig.h"
+  19: #include "HodgeInputComponent.generated.h"
+  21: class UEnhancedInputLocalPlayerSubsystem;
+  47: UCLASS(Config = Input)
+  48: class HODGEPODGE_API UHodgeInputComponent : public UEnhancedInputComponent
+  49: {
+  50: 	GENERATED_BODY()
+  52: public:
+  59: 	UHodgeInputComponent();
+  75: 	void AddInputMappings(const UHodgeInputConfig* InputConfig,
+  76: 	                      UEnhancedInputLocalPlayerSubsystem* InputSubsystem) const;
+  91: 	void RemoveInputMappings(const UHodgeInputConfig* InputConfig,
+  92: 	                         UEnhancedInputLocalPlayerSubsystem* InputSubsystem) const;
+ 111: 	template <class UserClass, typename FuncType>
+ 120: 	void BindNativeAction(const UHodgeInputConfig* InputConfig, const FGameplayTag& InputTag,
+ 121: 	                      ETriggerEvent TriggerEvent, UserClass* Object, FuncType Func, bool bLogIfNotFound);
+ 141: 	template <class UserClass, typename PressedFuncType, typename ReleasedFuncType>
+ 149: 	void BindAbilityActions(const UHodgeInputConfig* InputConfig, UserClass* Object, PressedFuncType PressedFunc,
+ 150: 	                        ReleasedFuncType ReleasedFunc, TArray<uint32>& BindHandles);
+ 163: 	void RemoveBinds(TArray<uint32>& BindHandles);
+ 164: };
+ 167: template <class UserClass, typename FuncType>
+ 176: void UHodgeInputComponent::BindNativeAction(const UHodgeInputConfig* InputConfig, const FGameplayTag& InputTag,
+ 177:                                             ETriggerEvent TriggerEvent, UserClass* Object, FuncType Func,
+ 178:                                             bool bLogIfNotFound)
+ 179: {
+ 180: 	check(InputConfig);
+ 181: 	if (const UInputAction* IA = InputConfig->FindNativeInputActionForTag(InputTag, bLogIfNotFound))
+ 182: 	{
+ 183: 		BindAction(IA, TriggerEvent, Object, Func);
+ 184: 	}
+ 185: }
+ 187: template <class UserClass, typename PressedFuncType, typename ReleasedFuncType>
+ 195: void UHodgeInputComponent::BindAbilityActions(const UHodgeInputConfig* InputConfig, UserClass* Object,
+ 196:                                               PressedFuncType PressedFunc, ReleasedFuncType ReleasedFunc,
+ 197:                                               TArray<uint32>& BindHandles)
+ 198: {
+ 199: 	check(InputConfig);
+ 201: 	for (const FHodgeInputAction& Action : InputConfig->AbilityInputActions)
+ 202: 	{
+ 203: 		if (Action.InputAction && Action.InputTag.IsValid())
+ 204: 		{
+ 205: 			if (PressedFunc)
+ 206: 			{
+ 207: 				const bool bPressOnce = Action.InputTag == FGameplayTag::RequestGameplayTag(TEXT("InputTag.Ability.Dash")) ||
+ 208: 					Action.InputTag == FGameplayTag::RequestGameplayTag(TEXT("InputTag.Sprint")) ||
+ 209: 					Action.InputTag == FGameplayTag::RequestGameplayTag(TEXT("InputTag.Ability.LockOn")) ||
+ 210: 					Action.InputTag == FGameplayTag::RequestGameplayTag(TEXT("InputTag.Ability.Melee"));
+ 212: 				BindHandles.Add(BindAction(Action.InputAction, bPressOnce ? ETriggerEvent::Started : ETriggerEvent::Triggered, Object, PressedFunc,
+ 213: 				                           Action.InputTag).GetHandle());
+ 214: 			}
+ 216: 			if (ReleasedFunc)
+ 217: 			{
+ 218: 				BindHandles.Add(BindAction(Action.InputAction, ETriggerEvent::Completed, Object, ReleasedFunc,
+ 219: 				                           Action.InputTag).GetHandle());
+ 220: 				BindHandles.Add(BindAction(Action.InputAction, ETriggerEvent::Canceled, Object, ReleasedFunc,
+ 221: 				                           Action.InputTag).GetHandle());
+ 222: 			}
+ 223: 		}
+ 224: 	}
+ 225: }
 ```
 
 ## HodgeInputConfig.h
@@ -191,38 +197,38 @@ NativeInputActions / AbilityInputActions 的 IA 与 Tag 数据配置及查询。
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-  10: #pragma once
-  12: #include "CoreMinimal.h"
-  13: #include "GameplayTagContainer.h"
-  14: #include "Engine/DataAsset.h"
-  15: #include "HodgeInputConfig.generated.h"
-  17: class UInputAction;
-  29: USTRUCT(BlueprintType)
-  30: struct FHodgeInputAction
-  31: {
-  32: 	GENERATED_BODY()
-  34: public:
-  41: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-  42: 	TObjectPtr<const UInputAction> InputAction = nullptr;
-  52: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (Categories = "InputTag"))
-  53: 	FGameplayTag InputTag;
-  54: };
-  71: UCLASS(BlueprintType, Blueprintable, Const)
-  72: class HODGEPODGE_API UHodgeInputConfig : public UDataAsset
-  73: {
-  74: 	GENERATED_BODY()
-  76: public:
-  82: 	UHodgeInputConfig(const FObjectInitializer& ObjectInitializer);
-  94: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Pawn")
-  95: 	const UInputAction* FindNativeInputActionForTag(const FGameplayTag& InputTag, bool bLogNotFound = true) const;
- 107: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Pawn")
- 108: 	const UInputAction* FindAbilityInputActionForTag(const FGameplayTag& InputTag, bool bLogNotFound = true) const;
- 110: public:
- 118: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (TitleProperty = "InputAction"))
- 119: 	TArray<FHodgeInputAction> NativeInputActions;
- 129: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (TitleProperty = "InputAction"))
- 130: 	TArray<FHodgeInputAction> AbilityInputActions;
- 131: };
+  13: #pragma once
+  15: #include "CoreMinimal.h"
+  16: #include "GameplayTagContainer.h"
+  17: #include "Engine/DataAsset.h"
+  18: #include "HodgeInputConfig.generated.h"
+  20: class UInputAction;
+  32: USTRUCT(BlueprintType)
+  33: struct FHodgeInputAction
+  34: {
+  35: 	GENERATED_BODY()
+  37: public:
+  44: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+  45: 	TObjectPtr<const UInputAction> InputAction = nullptr;
+  55: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (Categories = "InputTag"))
+  56: 	FGameplayTag InputTag;
+  57: };
+  74: UCLASS(BlueprintType, Blueprintable, Const)
+  75: class HODGEPODGE_API UHodgeInputConfig : public UDataAsset
+  76: {
+  77: 	GENERATED_BODY()
+  79: public:
+  88: 	UHodgeInputConfig(const FObjectInitializer& ObjectInitializer);
+ 105: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Pawn")
+ 106: 	const UInputAction* FindNativeInputActionForTag(const FGameplayTag& InputTag, bool bLogNotFound = true) const;
+ 123: 	UFUNCTION(BlueprintCallable, Category = "Hodge|Pawn")
+ 124: 	const UInputAction* FindAbilityInputActionForTag(const FGameplayTag& InputTag, bool bLogNotFound = true) const;
+ 126: public:
+ 134: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (TitleProperty = "InputAction"))
+ 135: 	TArray<FHodgeInputAction> NativeInputActions;
+ 145: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (TitleProperty = "InputAction"))
+ 146: 	TArray<FHodgeInputAction> AbilityInputActions;
+ 147: };
 ```
 
 ## HodgeInputModifiers.h
@@ -234,85 +240,85 @@ NativeInputActions / AbilityInputActions 的 IA 与 Tag 数据配置及查询。
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   5: #pragma once
-   8: #include "InputModifiers.h"
-  11: #include "UObject/UnrealType.h"
-  14: #include "HodgeInputModifiers.generated.h"
-  17: struct FInputActionValue;
-  20: class FProperty;
-  23: class UEnhancedPlayerInput;
-  26: class UHodgeAimSensitivityData;
-  29: class UObject;
-  35: UCLASS(NotBlueprintable, MinimalAPI, meta = (DisplayName = "Setting Based Scalar"))
-  36: class UHodgeSettingBasedScalar : public UInputModifier
-  37: {
-  38: 	GENERATED_BODY()
-  40: public:
-  43: 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category=Settings)
-  44: 	FName XAxisScalarSettingName = NAME_None;
-  48: 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category=Settings)
-  49: 	FName YAxisScalarSettingName = NAME_None;
-  53: 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category=Settings)
-  54: 	FName ZAxisScalarSettingName = NAME_None;
-  58: 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category=Settings)
-  59: 	FVector MaxValueClamp = FVector(10.0, 10.0, 10.0);
-  63: 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category=Settings)
-  64: 	FVector MinValueClamp = FVector::ZeroVector;
-  66: protected:
-  68: 	virtual FInputActionValue ModifyRaw_Implementation(const UEnhancedPlayerInput* PlayerInput,
-  69: 	                                                   FInputActionValue CurrentValue, float DeltaTime) override;
-  73: 	TArray<const FProperty*> PropertyCache;
-  74: };
-  78: UENUM()
-  79: enum class EDeadzoneStick : uint8
-  80: {
-  83: 	MoveStick = 0,
-  87: 	LookStick = 1,
-  88: };
-  94: UCLASS(NotBlueprintable, MinimalAPI, meta = (DisplayName = "Hodge Settings Driven Dead Zone"))
-  95: class UHodgeInputModifierDeadZone : public UInputModifier
-  96: {
-  97: 	GENERATED_BODY()
-  99: public:
- 101: 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category=Settings, Config)
- 102: 	EDeadZoneType Type = EDeadZoneType::Radial;
- 106: 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category=Settings, Config)
- 107: 	float UpperThreshold = 1.0f;
- 111: 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category=Settings, Config)
- 112: 	EDeadzoneStick DeadzoneStick = EDeadzoneStick::MoveStick;
- 114: protected:
- 116: 	virtual FInputActionValue ModifyRaw_Implementation(const UEnhancedPlayerInput* PlayerInput,
- 117: 	                                                   FInputActionValue CurrentValue, float DeltaTime) override;
- 122: 	virtual FLinearColor GetVisualizationColor_Implementation(FInputActionValue SampleValue,
- 123: 	                                                          FInputActionValue FinalValue) const override;
- 124: };
- 128: UENUM()
- 129: enum class EHodgeTargetingType : uint8
- 130: {
- 133: 	Normal = 0,
- 137: 	ADS = 1,
- 138: };
- 142: UCLASS(NotBlueprintable, MinimalAPI, meta = (DisplayName = "Hodge Gamepad Sensitivity"))
- 143: class UHodgeInputModifierGamepadSensitivity : public UInputModifier
- 144: {
- 145: 	GENERATED_BODY()
- 147: public:
- 150: 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category=Settings, Config)
- 151: 	EHodgeTargetingType TargetingType = EHodgeTargetingType::Normal;
- 155: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(AssetBundles="Client,Server"))
- 156: 	TObjectPtr<const UHodgeAimSensitivityData> SensitivityLevelTable;
- 158: protected:
- 160: 	virtual FInputActionValue ModifyRaw_Implementation(const UEnhancedPlayerInput* PlayerInput,
- 161: 	                                                   FInputActionValue CurrentValue, float DeltaTime) override;
- 162: };
- 166: UCLASS(NotBlueprintable, MinimalAPI, meta = (DisplayName = "Hodge Aim Inversion Setting"))
- 167: class UHodgeInputModifierAimInversion : public UInputModifier
- 168: {
- 169: 	GENERATED_BODY()
- 171: protected:
- 173: 	virtual FInputActionValue ModifyRaw_Implementation(const UEnhancedPlayerInput* PlayerInput,
- 174: 	                                                   FInputActionValue CurrentValue, float DeltaTime) override;
- 175: };
+   8: #pragma once
+  11: #include "InputModifiers.h"
+  14: #include "UObject/UnrealType.h"
+  17: #include "HodgeInputModifiers.generated.h"
+  20: struct FInputActionValue;
+  23: class FProperty;
+  26: class UEnhancedPlayerInput;
+  29: class UHodgeAimSensitivityData;
+  32: class UObject;
+  38: UCLASS(NotBlueprintable, MinimalAPI, meta = (DisplayName = "Setting Based Scalar"))
+  39: class UHodgeSettingBasedScalar : public UInputModifier
+  40: {
+  41: 	GENERATED_BODY()
+  43: public:
+  46: 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category=Settings)
+  47: 	FName XAxisScalarSettingName = NAME_None;
+  51: 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category=Settings)
+  52: 	FName YAxisScalarSettingName = NAME_None;
+  56: 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category=Settings)
+  57: 	FName ZAxisScalarSettingName = NAME_None;
+  61: 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category=Settings)
+  62: 	FVector MaxValueClamp = FVector(10.0, 10.0, 10.0);
+  66: 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category=Settings)
+  67: 	FVector MinValueClamp = FVector::ZeroVector;
+  69: protected:
+  77: 	virtual FInputActionValue ModifyRaw_Implementation(const UEnhancedPlayerInput* PlayerInput,
+  78: 	                                                   FInputActionValue CurrentValue, float DeltaTime) override;
+  82: 	TArray<const FProperty*> PropertyCache;
+  83: };
+  87: UENUM()
+  88: enum class EDeadzoneStick : uint8
+  89: {
+  92: 	MoveStick = 0,
+  96: 	LookStick = 1,
+  97: };
+ 103: UCLASS(NotBlueprintable, MinimalAPI, meta = (DisplayName = "Hodge Settings Driven Dead Zone"))
+ 104: class UHodgeInputModifierDeadZone : public UInputModifier
+ 105: {
+ 106: 	GENERATED_BODY()
+ 108: public:
+ 110: 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category=Settings, Config)
+ 111: 	EDeadZoneType Type = EDeadZoneType::Radial;
+ 115: 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category=Settings, Config)
+ 116: 	float UpperThreshold = 1.0f;
+ 120: 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category=Settings, Config)
+ 121: 	EDeadzoneStick DeadzoneStick = EDeadzoneStick::MoveStick;
+ 123: protected:
+ 131: 	virtual FInputActionValue ModifyRaw_Implementation(const UEnhancedPlayerInput* PlayerInput,
+ 132: 	                                                   FInputActionValue CurrentValue, float DeltaTime) override;
+ 142: 	virtual FLinearColor GetVisualizationColor_Implementation(FInputActionValue SampleValue,
+ 143: 	                                                          FInputActionValue FinalValue) const override;
+ 144: };
+ 148: UENUM()
+ 149: enum class EHodgeTargetingType : uint8
+ 150: {
+ 153: 	Normal = 0,
+ 157: 	ADS = 1,
+ 158: };
+ 162: UCLASS(NotBlueprintable, MinimalAPI, meta = (DisplayName = "Hodge Gamepad Sensitivity"))
+ 163: class UHodgeInputModifierGamepadSensitivity : public UInputModifier
+ 164: {
+ 165: 	GENERATED_BODY()
+ 167: public:
+ 170: 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category=Settings, Config)
+ 171: 	EHodgeTargetingType TargetingType = EHodgeTargetingType::Normal;
+ 175: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(AssetBundles="Client,Server"))
+ 176: 	TObjectPtr<const UHodgeAimSensitivityData> SensitivityLevelTable;
+ 178: protected:
+ 186: 	virtual FInputActionValue ModifyRaw_Implementation(const UEnhancedPlayerInput* PlayerInput,
+ 187: 	                                                   FInputActionValue CurrentValue, float DeltaTime) override;
+ 188: };
+ 192: UCLASS(NotBlueprintable, MinimalAPI, meta = (DisplayName = "Hodge Aim Inversion Setting"))
+ 193: class UHodgeInputModifierAimInversion : public UInputModifier
+ 194: {
+ 195: 	GENERATED_BODY()
+ 197: protected:
+ 205: 	virtual FInputActionValue ModifyRaw_Implementation(const UEnhancedPlayerInput* PlayerInput,
+ 206: 	                                                   FInputActionValue CurrentValue, float DeltaTime) override;
+ 207: };
 ```
 
 ## HodgeInputUserSettings.h
@@ -324,27 +330,27 @@ Enhanced Input 用户设置派生入口；须核对实际设置类配置。
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   4: #pragma once
-   7: #include "UserSettings/EnhancedInputUserSettings.h"
-  10: #include "PlayerMappableKeySettings.h"
-  13: #include "HodgeInputUserSettings.generated.h"
-  22: UCLASS()
-  23: class HODGEPODGE_API UHodgeInputUserSettings : public UEnhancedInputUserSettings
-  24: {
-  25: 	GENERATED_BODY()
-  27: public:
-  30: 	virtual void ApplySettings() override;
-  49: };
-  58: UCLASS()
-  59: class HODGEPODGE_API UHodgePlayerMappableKeySettings : public UPlayerMappableKeySettings
-  60: {
-  61: 	GENERATED_BODY()
-  63: public:
-  66: 	const FText& GetTooltipText() const;
-  68: protected:
-  71: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", meta=(AllowPrivateAccess=true))
-  72: 	FText Tooltip = FText::GetEmpty();
-  73: };
+   7: #pragma once
+  10: #include "UserSettings/EnhancedInputUserSettings.h"
+  13: #include "PlayerMappableKeySettings.h"
+  16: #include "HodgeInputUserSettings.generated.h"
+  25: UCLASS()
+  26: class HODGEPODGE_API UHodgeInputUserSettings : public UEnhancedInputUserSettings
+  27: {
+  28: 	GENERATED_BODY()
+  30: public:
+  34: 	virtual void ApplySettings() override;
+  53: };
+  62: UCLASS()
+  63: class HODGEPODGE_API UHodgePlayerMappableKeySettings : public UPlayerMappableKeySettings
+  64: {
+  65: 	GENERATED_BODY()
+  67: public:
+  73: 	const FText& GetTooltipText() const;
+  75: protected:
+  78: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", meta=(AllowPrivateAccess=true))
+  79: 	FText Tooltip = FText::GetEmpty();
+  80: };
 ```
 
 ## HodgePlayerMappableKeyProfile.h
@@ -356,15 +362,15 @@ Enhanced Input 用户设置派生入口；须核对实际设置类配置。
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   4: #pragma once
-   7: #include "UserSettings/EnhancedInputUserSettings.h"
-  10: #include "HodgePlayerMappableKeyProfile.generated.h"
-  13: UCLASS()
-  14: class HODGEPODGE_API UHodgePlayerMappableKeyProfile : public UEnhancedPlayerMappableKeyProfile
-  15: {
-  16: 	GENERATED_BODY()
-  18: protected:
-  21: 	virtual void EquipProfile() override;
-  24: 	virtual void UnEquipProfile() override;
-  26: };
+   7: #pragma once
+  10: #include "UserSettings/EnhancedInputUserSettings.h"
+  13: #include "HodgePlayerMappableKeyProfile.generated.h"
+  16: UCLASS()
+  17: class HODGEPODGE_API UHodgePlayerMappableKeyProfile : public UEnhancedPlayerMappableKeyProfile
+  18: {
+  19: 	GENERATED_BODY()
+  21: protected:
+  25: 	virtual void EquipProfile() override;
+  29: 	virtual void UnEquipProfile() override;
+  31: };
 ```

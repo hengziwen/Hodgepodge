@@ -16,7 +16,7 @@
 
 定义候选（多行签名仅展示首行）：
 
-- L11: `UHodgeEquipmentDefinition::UHodgeEquipmentDefinition(const FObjectInitializer& ObjectInitializer)`
+- L14: `UHodgeEquipmentDefinition::UHodgeEquipmentDefinition(const FObjectInitializer& ObjectInitializer)`
 
 ## HodgeEquipmentInstance.cpp
 
@@ -28,19 +28,20 @@ Pawn 所属复制 UObject、SpawnedActors RepNotify 和装备/卸装生命周期
 
 定义候选（多行签名仅展示首行）：
 
-- L32: `UHodgeEquipmentInstance::UHodgeEquipmentInstance(const FObjectInitializer& ObjectInitializer)`
-- L38: `UWorld* UHodgeEquipmentInstance::GetWorld() const`
-- L54: `void UHodgeEquipmentInstance::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const`
-- L72: `void UHodgeEquipmentInstance::RegisterReplicationFragments(UE::Net::FFragmentRegistrationContext& Context,`
-- L86: `APawn* UHodgeEquipmentInstance::GetPawn() const`
-- L92: `APawn* UHodgeEquipmentInstance::GetTypedPawn(TSubclassOf<APawn> PawnType) const`
-- L113: `void UHodgeEquipmentInstance::SpawnEquipmentActors(const TArray<FHodgeEquipmentActorToSpawn>& ActorsToSpawn)`
-- L152: `void UHodgeEquipmentInstance::DestroyEquipmentActors()`
-- L167: `void UHodgeEquipmentInstance::OnRep_SpawnedActors()`
-- L173: `void UHodgeEquipmentInstance::OnEquipped()`
-- L180: `void UHodgeEquipmentInstance::OnUnequipped()`
-- L187: `void UHodgeEquipmentInstance::OnRep_Instigator()`
-- L191: `void UHodgeEquipmentInstance::SetStatIdentity(FGuid Id, int32 Level, const UHodgeEquipmentStatProfile* Profile)`
+- L35: `UHodgeEquipmentInstance::UHodgeEquipmentInstance(const FObjectInitializer& ObjectInitializer)`
+- L41: `UWorld* UHodgeEquipmentInstance::GetWorld() const`
+- L57: `void UHodgeEquipmentInstance::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const`
+- L75: `void UHodgeEquipmentInstance::RegisterReplicationFragments(UE::Net::FFragmentRegistrationContext& Context,`
+- L89: `APawn* UHodgeEquipmentInstance::GetPawn() const`
+- L95: `APawn* UHodgeEquipmentInstance::GetTypedPawn(TSubclassOf<APawn> PawnType) const`
+- L116: `void UHodgeEquipmentInstance::SpawnEquipmentActors(const TArray<FHodgeEquipmentActorToSpawn>& ActorsToSpawn)`
+- L122: `bool UHodgeEquipmentInstance::TrySpawnEquipmentActors(const TArray<FHodgeEquipmentActorToSpawn>& ActorsToSpawn)`
+- L168: `void UHodgeEquipmentInstance::DestroyEquipmentActors()`
+- L184: `void UHodgeEquipmentInstance::OnRep_SpawnedActors()`
+- L190: `void UHodgeEquipmentInstance::OnEquipped()`
+- L197: `void UHodgeEquipmentInstance::OnUnequipped()`
+- L204: `void UHodgeEquipmentInstance::OnRep_Instigator()`
+- L209: `void UHodgeEquipmentInstance::SetStatIdentity(FGuid Id, int32 Level, const UHodgeEquipmentStatProfile* Profile)`
 
 ## HodgeEquipmentManagerComponent.cpp
 
@@ -48,30 +49,32 @@ Experience 注入 Pawn，ASC 就绪后装备默认剑，来源授予句柄精确
 
 源码：[Source/Hodgepodge/Private/Equipment/HodgeEquipmentManagerComponent.cpp](../../../Source/Hodgepodge/Private/Equipment/HodgeEquipmentManagerComponent.cpp)
 
-项目内直接 include（不是运行调用关系）：[Equipment/HodgeEquipmentManagerComponent.h](../../../Source/Hodgepodge/Public/Equipment/HodgeEquipmentManagerComponent.h)、[AbilitySystem/Stats/HodgeAttributeCoordinator.h](../../../Source/Hodgepodge/Public/AbilitySystem/Stats/HodgeAttributeCoordinator.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)、[Core/PlayState/HodgePlayerState.h](../../../Source/Hodgepodge/Public/Core/PlayState/HodgePlayerState.h)、[Data/HodgeEquipmentStatProfile.h](../../../Source/Hodgepodge/Public/Data/HodgeEquipmentStatProfile.h)、[Character/HodgeCombatCharacter.h](../../../Source/Hodgepodge/Public/Character/HodgeCombatCharacter.h)、[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)、[Equipment/HodgeEquipmentDefinition.h](../../../Source/Hodgepodge/Public/Equipment/HodgeEquipmentDefinition.h)、[Equipment/HodgeEquipmentInstance.h](../../../Source/Hodgepodge/Public/Equipment/HodgeEquipmentInstance.h)、[Equipment/HodgeWeaponInstance.h](../../../Source/Hodgepodge/Public/Equipment/HodgeWeaponInstance.h)
+项目内直接 include（不是运行调用关系）：[Equipment/HodgeEquipmentManagerComponent.h](../../../Source/Hodgepodge/Public/Equipment/HodgeEquipmentManagerComponent.h)、[Character/HodgeEnemyCharacter.h](../../../Source/Hodgepodge/Public/Character/HodgeEnemyCharacter.h)、[AbilitySystem/Stats/HodgeAttributeCoordinator.h](../../../Source/Hodgepodge/Public/AbilitySystem/Stats/HodgeAttributeCoordinator.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)、[Core/PlayState/HodgePlayerState.h](../../../Source/Hodgepodge/Public/Core/PlayState/HodgePlayerState.h)、[Data/HodgeEquipmentStatProfile.h](../../../Source/Hodgepodge/Public/Data/HodgeEquipmentStatProfile.h)、[Character/HodgeCombatCharacter.h](../../../Source/Hodgepodge/Public/Character/HodgeCombatCharacter.h)、[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)、[Equipment/HodgeEquipmentDefinition.h](../../../Source/Hodgepodge/Public/Equipment/HodgeEquipmentDefinition.h)、[Equipment/HodgeEquipmentInstance.h](../../../Source/Hodgepodge/Public/Equipment/HodgeEquipmentInstance.h)、[Equipment/HodgeWeaponInstance.h](../../../Source/Hodgepodge/Public/Equipment/HodgeWeaponInstance.h)
 
 定义候选（多行签名仅展示首行）：
 
-- L52: `FString FHodgeAppliedEquipmentEntry::GetDebugString() const`
-- L61: `void FHodgeEquipmentList::PreReplicatedRemove(const TArrayView<int32> RemovedIndices, int32 FinalSize)`
-- L78: `void FHodgeEquipmentList::PostReplicatedAdd(const TArrayView<int32> AddedIndices, int32 FinalSize)`
-- L95: `void FHodgeEquipmentList::PostReplicatedChange(const TArrayView<int32> ChangedIndices, int32 FinalSize)`
-- L110: `UHodgeAbilitySystemComponent* FHodgeEquipmentList::GetAbilitySystemComponent() const`
-- L123: `UHodgeEquipmentInstance* FHodgeEquipmentList::AddEntry(TSubclassOf<UHodgeEquipmentDefinition> EquipmentDefinition, FGuid Id, int32 Level)`
-- L212: `void FHodgeEquipmentList::RemoveEntry(UHodgeEquipmentInstance* Instance)`
-- L248: `UHodgeEquipmentManagerComponent::UHodgeEquipmentManagerComponent(const FObjectInitializer& ObjectInitializer)`
-- L260: `void UHodgeEquipmentManagerComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const`
-- L270: `UHodgeEquipmentInstance* UHodgeEquipmentManagerComponent::EquipItem(TSubclassOf<UHodgeEquipmentDefinition> EquipmentClass)`
-- L277: `UHodgeEquipmentInstance* UHodgeEquipmentManagerComponent::EquipItemWithState(TSubclassOf<UHodgeEquipmentDefinition> EquipmentClass, FGuid Id, int32 Level)`
-- L321: `void UHodgeEquipmentManagerComponent::UnequipItem(UHodgeEquipmentInstance* ItemInstance)`
-- L352: `bool UHodgeEquipmentManagerComponent::ReplicateSubobjects(UActorChannel* Channel, class FOutBunch* Bunch,`
-- L377: `void UHodgeEquipmentManagerComponent::InitializeComponent()`
-- L394: `void UHodgeEquipmentManagerComponent::UninitializeComponent()`
-- L419: `void UHodgeEquipmentManagerComponent::ReadyForReplication()`
-- L446: `UHodgeEquipmentInstance* UHodgeEquipmentManagerComponent::GetFirstInstanceOfType(`
-- L469: `TArray<UHodgeEquipmentInstance*> UHodgeEquipmentManagerComponent::GetEquipmentInstancesOfType(`
-- L494: `UHodgeEquipmentInstance* UHodgeEquipmentManagerComponent::FindInstanceOfDefinition(TSubclassOf<UHodgeEquipmentDefinition> Definition) const`
-- L500: `bool UHodgeEquipmentManagerComponent::SetEquipmentLevel(UHodgeEquipmentInstance* Instance, int32 Level)`
+- L63: `FString FHodgeAppliedEquipmentEntry::GetDebugString() const`
+- L72: `void FHodgeEquipmentList::PreReplicatedRemove(const TArrayView<int32> RemovedIndices, int32 FinalSize)`
+- L89: `void FHodgeEquipmentList::PostReplicatedAdd(const TArrayView<int32> AddedIndices, int32 FinalSize)`
+- L106: `void FHodgeEquipmentList::PostReplicatedChange(const TArrayView<int32> ChangedIndices, int32 FinalSize)`
+- L121: `UHodgeAbilitySystemComponent* FHodgeEquipmentList::GetAbilitySystemComponent() const`
+- L134: `UHodgeEquipmentInstance* FHodgeEquipmentList::AddEntry(TSubclassOf<UHodgeEquipmentDefinition> Definition, FGuid Id, int32 Level)`
+- L195: `void FHodgeEquipmentList::RemoveEntry(UHodgeEquipmentInstance* Instance)`
+- L231: `UHodgeEquipmentManagerComponent::UHodgeEquipmentManagerComponent(const FObjectInitializer& ObjectInitializer)`
+- L243: `void UHodgeEquipmentManagerComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const`
+- L253: `UHodgeEquipmentInstance* UHodgeEquipmentManagerComponent::EquipItem(TSubclassOf<UHodgeEquipmentDefinition> EquipmentClass)`
+- L262: `UHodgeEquipmentInstance* UHodgeEquipmentManagerComponent::EquipItemWithState(TSubclassOf<UHodgeEquipmentDefinition> EquipmentClass, FGuid Id, int32 Level)`
+- L310: `void UHodgeEquipmentManagerComponent::UnequipItem(UHodgeEquipmentInstance* ItemInstance)`
+- L344: `bool UHodgeEquipmentManagerComponent::ReplicateSubobjects(UActorChannel* Channel, class FOutBunch* Bunch,`
+- L369: `void UHodgeEquipmentManagerComponent::InitializeComponent()`
+- L386: `void UHodgeEquipmentManagerComponent::UninitializeComponent()`
+- L411: `void UHodgeEquipmentManagerComponent::ReadyForReplication()`
+- L438: `UHodgeEquipmentInstance* UHodgeEquipmentManagerComponent::GetFirstInstanceOfType(`
+- L461: `TArray<UHodgeEquipmentInstance*> UHodgeEquipmentManagerComponent::GetEquipmentInstancesOfType(`
+- L487: `UHodgeEquipmentInstance* UHodgeEquipmentManagerComponent::FindInstanceOfDefinition(TSubclassOf<UHodgeEquipmentDefinition> Definition) const`
+- L494: `bool UHodgeEquipmentManagerComponent::SetEquipmentLevel(UHodgeEquipmentInstance* Instance, int32 Level)`
+- L549: `bool UHodgeEquipmentManagerComponent::ValidateEquipmentForGrant(TSubclassOf<UHodgeEquipmentDefinition> Definition,`
+- L577: `bool UHodgeEquipmentManagerComponent::IsEquipmentReady(const UHodgeEquipmentInstance* Instance) const`
 
 ## HodgeWeaponInstance.cpp
 
@@ -83,36 +86,36 @@ Experience 注入 Pawn，ASC 就绪后装备默认剑，来源授予句柄精确
 
 定义候选（多行签名仅展示首行）：
 
-- L43: `UHodgeWeaponInstance::UHodgeWeaponInstance(const FObjectInitializer& ObjectInitializer)`
-- L68: `void UHodgeWeaponInstance::OnEquipped()`
-- L90: `void UHodgeWeaponInstance::OnUnequipped()`
-- L101: `void UHodgeWeaponInstance::UpdateFiringTime()`
-- L114: `float UHodgeWeaponInstance::GetTimeSinceLastInteractedWith() const`
-- L143: `TSubclassOf<UAnimInstance> UHodgeWeaponInstance::PickBestAnimLayer(bool bEquipped,`
-- L154: `const FPlatformUserId UHodgeWeaponInstance::GetOwningUserId() const`
-- L168: `void UHodgeWeaponInstance::ApplyDeviceProperties()`
-- L206: `void UHodgeWeaponInstance::RemoveDeviceProperties()`
-- L229: `void UHodgeWeaponInstance::OnDeathStarted(AActor* OwningActor)`
-- L244: `void UHodgeWeaponInstance::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const`
-- L250: `double UHodgeWeaponInstance::GetPresentationTime() const`
-- L257: `bool UHodgeWeaponInstance::CanDrivePresentation() const`
-- L265: `UHodgeWeaponInstance* UHodgeWeaponInstance::ResolvePresentationWeapon(APawn* Pawn, UObject* SourceObject)`
-- L291: `void UHodgeWeaponInstance::InitializePresentation()`
-- L311: `void UHodgeWeaponInstance::ClearPresentationTimer()`
-- L316: `void UHodgeWeaponInstance::ShutdownPresentation()`
-- L331: `FGuid UHodgeWeaponInstance::AcquireHandUse(FGuid ExecutionId, int32 OccurrenceId, int32 ActivationKey)`
-- L361: `void UHodgeWeaponInstance::ReleaseHandUse(FGuid Handle)`
-- L368: `void UHodgeWeaponInstance::ReleaseHandUsesForExecution(const FGuid& ExecutionId)`
-- L375: `void UHodgeWeaponInstance::BeginIdlePresentation()`
-- L381: `void UHodgeWeaponInstance::SchedulePresentationPhase(EHodgeWeaponPresentationPhase Phase, float Seconds)`
-- L399: `void UHodgeWeaponInstance::SetPresentationPhase(EHodgeWeaponPresentationPhase Phase, int32 ActivationKey)`
-- L443: `FHodgeWeaponPresentationState UHodgeWeaponInstance::GetPresentationState() const`
-- L451: `void UHodgeWeaponInstance::OnRep_PresentationState()`
-- L472: `void UHodgeWeaponInstance::RejectPredictedHandUse(int32 ActivationKey)`
-- L490: `void UHodgeWeaponInstance::RefreshPresentationActors()`
-- L499: `void UHodgeWeaponInstance::OnSpawnedActorsChanged()`
-- L505: `void UHodgeWeaponInstance::BeginDestroy()`
-- L512: `void UHodgeWeaponInstance::UpdateOwnerPosePolicy()`
+- L46: `UHodgeWeaponInstance::UHodgeWeaponInstance(const FObjectInitializer& ObjectInitializer)`
+- L71: `void UHodgeWeaponInstance::OnEquipped()`
+- L93: `void UHodgeWeaponInstance::OnUnequipped()`
+- L104: `void UHodgeWeaponInstance::UpdateFiringTime()`
+- L117: `float UHodgeWeaponInstance::GetTimeSinceLastInteractedWith() const`
+- L146: `TSubclassOf<UAnimInstance> UHodgeWeaponInstance::PickBestAnimLayer(bool bEquipped,`
+- L157: `const FPlatformUserId UHodgeWeaponInstance::GetOwningUserId() const`
+- L171: `void UHodgeWeaponInstance::ApplyDeviceProperties()`
+- L209: `void UHodgeWeaponInstance::RemoveDeviceProperties()`
+- L232: `void UHodgeWeaponInstance::OnDeathStarted(AActor* OwningActor)`
+- L248: `void UHodgeWeaponInstance::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const`
+- L255: `double UHodgeWeaponInstance::GetPresentationTime() const`
+- L264: `bool UHodgeWeaponInstance::CanDrivePresentation() const`
+- L274: `UHodgeWeaponInstance* UHodgeWeaponInstance::ResolvePresentationWeapon(APawn* Pawn, UObject* SourceObject)`
+- L302: `void UHodgeWeaponInstance::InitializePresentation()`
+- L325: `void UHodgeWeaponInstance::ClearPresentationTimer()`
+- L331: `void UHodgeWeaponInstance::ShutdownPresentation()`
+- L348: `FGuid UHodgeWeaponInstance::AcquireHandUse(FGuid ExecutionId, int32 OccurrenceId, int32 ActivationKey, EHodgeWeaponHandEndBehavior EndBehavior)`
+- L381: `void UHodgeWeaponInstance::ReleaseHandUse(FGuid Handle)`
+- L390: `void UHodgeWeaponInstance::ReleaseHandUsesForExecution(const FGuid& ExecutionId)`
+- L399: `void UHodgeWeaponInstance::BeginIdlePresentation(EHodgeWeaponHandEndBehavior EndBehavior)`
+- L410: `void UHodgeWeaponInstance::SchedulePresentationPhase(EHodgeWeaponPresentationPhase Phase, float Seconds, EHodgeWeaponHandEndBehavior EndBehavior)`
+- L429: `void UHodgeWeaponInstance::SetPresentationPhase(EHodgeWeaponPresentationPhase Phase, int32 ActivationKey, EHodgeWeaponHandEndBehavior EndBehavior)`
+- L485: `FHodgeWeaponPresentationState UHodgeWeaponInstance::GetPresentationState() const`
+- L494: `void UHodgeWeaponInstance::OnRep_PresentationState()`
+- L516: `void UHodgeWeaponInstance::RejectPredictedHandUse(int32 ActivationKey)`
+- L536: `void UHodgeWeaponInstance::RefreshPresentationActors()`
+- L546: `void UHodgeWeaponInstance::OnSpawnedActorsChanged()`
+- L553: `void UHodgeWeaponInstance::BeginDestroy()`
+- L561: `void UHodgeWeaponInstance::UpdateOwnerPosePolicy()`
 
 ## HodgeWeaponPresentationActor.cpp
 
@@ -124,16 +127,16 @@ Experience 注入 Pawn，ASC 就绪后装备默认剑，来源授予句柄精确
 
 定义候选（多行签名仅展示首行）：
 
-- L14: `AHodgeWeaponPresentationActor::AHodgeWeaponPresentationActor()`
-- L36: `void AHodgeWeaponPresentationActor::BeginPlay()`
-- L44: `void AHodgeWeaponPresentationActor::TryBindWeapon()`
-- L56: `void AHodgeWeaponPresentationActor::ConfigureProfile(const UHodgeWeaponPresentationProfile* Profile)`
-- L73: `void AHodgeWeaponPresentationActor::BindWeapon(UHodgeWeaponInstance* Instance)`
-- L97: `void AHodgeWeaponPresentationActor::RefreshPresentation()`
-- L105: `FTransform AHodgeWeaponPresentationActor::GetVisualTransform() const`
-- L110: `void AHodgeWeaponPresentationActor::EvaluatePresentation()`
-- L182: `void AHodgeWeaponPresentationActor::Tick(float DeltaSeconds)`
-- L188: `void AHodgeWeaponPresentationActor::EndPlay(const EEndPlayReason::Type Reason)`
+- L18: `AHodgeWeaponPresentationActor::AHodgeWeaponPresentationActor()`
+- L41: `void AHodgeWeaponPresentationActor::BeginPlay()`
+- L51: `void AHodgeWeaponPresentationActor::TryBindWeapon()`
+- L65: `void AHodgeWeaponPresentationActor::ConfigureProfile(const UHodgeWeaponPresentationProfile* Profile)`
+- L83: `void AHodgeWeaponPresentationActor::BindWeapon(UHodgeWeaponInstance* Instance)`
+- L108: `void AHodgeWeaponPresentationActor::RefreshPresentation()`
+- L118: `FTransform AHodgeWeaponPresentationActor::GetVisualTransform() const`
+- L124: `void AHodgeWeaponPresentationActor::EvaluatePresentation()`
+- L200: `void AHodgeWeaponPresentationActor::Tick(float DeltaSeconds)`
+- L207: `void AHodgeWeaponPresentationActor::EndPlay(const EEndPlayReason::Type Reason)`
 
 ## HodgeWeaponPresentationProfile.cpp
 
@@ -145,8 +148,8 @@ Experience 注入 Pawn，ASC 就绪后装备默认剑，来源授予句柄精确
 
 定义候选（多行签名仅展示首行）：
 
-- L8: `bool UHodgeWeaponPresentationProfile::Validate(TArray<FText>& Errors) const`
-- L25: `EDataValidationResult UHodgeWeaponPresentationProfile::IsDataValid(FDataValidationContext& Context) const`
+- L12: `bool UHodgeWeaponPresentationProfile::Validate(TArray<FText>& Errors) const`
+- L30: `EDataValidationResult UHodgeWeaponPresentationProfile::IsDataValid(FDataValidationContext& Context) const`
 
 ## HodgeEquipmentDefinition.h
 
@@ -157,42 +160,42 @@ Experience 注入 Pawn，ASC 就绪后装备默认剑，来源授予句柄精确
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   3: #pragma once
-   6: #include "Templates/SubclassOf.h"
-   8: #include "HodgeEquipmentDefinition.generated.h"
-  10: class AActor;
-  11: class UHodgeAbilitySet;
-  12: class UHodgeEquipmentInstance;
-  13: class UHodgeEquipmentStatProfile;
-  19: USTRUCT()
-  20: struct FHodgeEquipmentActorToSpawn
-  21: {
-  22: 	GENERATED_BODY()
-  25: 	FHodgeEquipmentActorToSpawn()
-  26: 	{
-  27: 	}
-  30: 	UPROPERTY(EditAnywhere, Category=Equipment)
-  31: 	TSubclassOf<AActor> ActorToSpawn;
+   6: #pragma once
+   9: #include "Templates/SubclassOf.h"
+  11: #include "HodgeEquipmentDefinition.generated.h"
+  13: class AActor;
+  14: class UHodgeAbilitySet;
+  15: class UHodgeEquipmentInstance;
+  16: class UHodgeEquipmentStatProfile;
+  22: USTRUCT()
+  23: struct FHodgeEquipmentActorToSpawn
+  24: {
+  25: 	GENERATED_BODY()
+  29: 	FHodgeEquipmentActorToSpawn()
+  30: 	{
+  31: 	}
   34: 	UPROPERTY(EditAnywhere, Category=Equipment)
-  35: 	FName AttachSocket;
+  35: 	TSubclassOf<AActor> ActorToSpawn;
   38: 	UPROPERTY(EditAnywhere, Category=Equipment)
-  39: 	FTransform AttachTransform;
-  40: };
-  51: UCLASS(Blueprintable, Const, Abstract, BlueprintType)
-  52: class UHodgeEquipmentDefinition : public UObject
-  53: {
-  54: 	GENERATED_BODY()
-  56: public:
-  58: 	UHodgeEquipmentDefinition(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-  63: 	UPROPERTY(EditDefaultsOnly, Category=Equipment)
-  64: 	TSubclassOf<UHodgeEquipmentInstance> InstanceType;
-  69: 	UPROPERTY(EditDefaultsOnly, Category=Equipment)
-  70: 	TArray<TObjectPtr<const UHodgeAbilitySet>> AbilitySetsToGrant;
-  71: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Attributes")
-  72: 	TObjectPtr<UHodgeEquipmentStatProfile> StatProfile;
-  77: 	UPROPERTY(EditDefaultsOnly, Category=Equipment)
-  78: 	TArray<FHodgeEquipmentActorToSpawn> ActorsToSpawn;
-  79: };
+  39: 	FName AttachSocket;
+  42: 	UPROPERTY(EditAnywhere, Category=Equipment)
+  43: 	FTransform AttachTransform;
+  44: };
+  55: UCLASS(Blueprintable, Const, Abstract, BlueprintType)
+  56: class UHodgeEquipmentDefinition : public UObject
+  57: {
+  58: 	GENERATED_BODY()
+  60: public:
+  65: 	UHodgeEquipmentDefinition(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+  70: 	UPROPERTY(EditDefaultsOnly, Category=Equipment)
+  71: 	TSubclassOf<UHodgeEquipmentInstance> InstanceType;
+  76: 	UPROPERTY(EditDefaultsOnly, Category=Equipment)
+  77: 	TArray<TObjectPtr<const UHodgeAbilitySet>> AbilitySetsToGrant;
+  79: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Attributes")
+  80: 	TObjectPtr<UHodgeEquipmentStatProfile> StatProfile;
+  85: 	UPROPERTY(EditDefaultsOnly, Category=Equipment)
+  86: 	TArray<FHodgeEquipmentActorToSpawn> ActorsToSpawn;
+  87: };
 ```
 
 ## HodgeEquipmentInstance.h
@@ -204,63 +207,64 @@ Pawn 所属复制 UObject、SpawnedActors RepNotify 和装备/卸装生命周期
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   3: #pragma once
-   6: #include "Engine/World.h"
-   8: #include "HodgeEquipmentInstance.generated.h"
-  10: class AActor;
-  11: class APawn;
-  12: struct FFrame;
-  13: struct FHodgeEquipmentActorToSpawn;
-  14: class UHodgeEquipmentStatProfile;
-  24: UCLASS(BlueprintType, Blueprintable)
-  25: class UHodgeEquipmentInstance : public UObject
-  26: {
-  27: 	GENERATED_BODY()
-  29: public:
-  31: 	UHodgeEquipmentInstance(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-  36: 	virtual bool IsSupportedForNetworking() const override { return true; }
-  39: 	virtual UWorld* GetWorld() const override final;
-  44: 	UFUNCTION(BlueprintPure, Category=Equipment)
-  45: 	UObject* GetInstigator() const { return Instigator; }
-  48: 	void SetInstigator(UObject* InInstigator) { Instigator = InInstigator; }
-  51: 	UFUNCTION(BlueprintPure, Category=Equipment)
-  52: 	APawn* GetPawn() const;
-  53: 	UFUNCTION(BlueprintPure, Category="Hodge|Attributes") int32 GetEquipmentLevel() const { return EquipmentLevel; }
-  54: 	UFUNCTION(BlueprintPure, Category="Hodge|Attributes") FGuid GetEquipmentId() const { return EquipmentId; }
-  55: 	void SetStatIdentity(FGuid Id, int32 Level, const UHodgeEquipmentStatProfile* Profile);
-  56: 	const UHodgeEquipmentStatProfile* GetStatProfile() const { return StatProfile; }
-  59: 	UFUNCTION(BlueprintPure, Category=Equipment, meta=(DeterminesOutputType=PawnType))
-  60: 	APawn* GetTypedPawn(TSubclassOf<APawn> PawnType) const;
-  63: 	UFUNCTION(BlueprintPure, Category=Equipment)
-  64: 	TArray<AActor*> GetSpawnedActors() const { return SpawnedActors; }
-  67: 	virtual void SpawnEquipmentActors(const TArray<FHodgeEquipmentActorToSpawn>& ActorsToSpawn);
-  70: 	virtual void DestroyEquipmentActors();
-  73: 	virtual void OnEquipped();
-  76: 	virtual void OnUnequipped();
-  78: protected:
-  79: 	virtual void OnSpawnedActorsChanged() {}
-  80: #if UE_WITH_IRIS
-  85: 	virtual void RegisterReplicationFragments(UE::Net::FFragmentRegistrationContext& Context,
-  86: 	                                          UE::Net::EFragmentRegistrationFlags RegistrationFlags) override;
-  88: #endif
-  91: 	UFUNCTION(BlueprintImplementableEvent, Category=Equipment, meta=(DisplayName="OnEquipped"))
-  92: 	void K2_OnEquipped();
-  95: 	UFUNCTION(BlueprintImplementableEvent, Category=Equipment, meta=(DisplayName="OnUnequipped"))
-  96: 	void K2_OnUnequipped();
-  98: private:
- 100: 	UFUNCTION()
- 101: 	void OnRep_Instigator();
- 102: 	UFUNCTION()
- 103: 	void OnRep_SpawnedActors();
- 105: private:
- 107: 	UPROPERTY(ReplicatedUsing=OnRep_Instigator)
- 108: 	TObjectPtr<UObject> Instigator;
- 109: 	UPROPERTY(Replicated) FGuid EquipmentId;
- 110: 	UPROPERTY(Replicated) int32 EquipmentLevel = 1;
- 111: 	UPROPERTY(Replicated) TObjectPtr<const UHodgeEquipmentStatProfile> StatProfile;
- 114: 	UPROPERTY(ReplicatedUsing=OnRep_SpawnedActors)
- 115: 	TArray<TObjectPtr<AActor>> SpawnedActors;
- 116: };
+   6: #pragma once
+   9: #include "Engine/World.h"
+  11: #include "HodgeEquipmentInstance.generated.h"
+  13: class AActor;
+  14: class APawn;
+  15: struct FFrame;
+  16: struct FHodgeEquipmentActorToSpawn;
+  17: class UHodgeEquipmentStatProfile;
+  27: UCLASS(BlueprintType, Blueprintable)
+  28: class UHodgeEquipmentInstance : public UObject
+  29: {
+  30: 	GENERATED_BODY()
+  32: public:
+  37: 	UHodgeEquipmentInstance(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+  45: 	virtual bool IsSupportedForNetworking() const override { return true; }
+  51: 	virtual UWorld* GetWorld() const override final;
+  59: 	UFUNCTION(BlueprintPure, Category=Equipment)
+  60: 	UObject* GetInstigator() const { return Instigator; }
+  66: 	void SetInstigator(UObject* InInstigator) { Instigator = InInstigator; }
+  72: 	UFUNCTION(BlueprintPure, Category=Equipment)
+  73: 	APawn* GetPawn() const;
+  77: 	UFUNCTION(BlueprintPure, Category="Hodge|Attributes") int32 GetEquipmentLevel() const { return EquipmentLevel; }
+  81: 	UFUNCTION(BlueprintPure, Category="Hodge|Attributes") FGuid GetEquipmentId() const { return EquipmentId; }
+  87: 	void SetStatIdentity(FGuid Id, int32 Level, const UHodgeEquipmentStatProfile* Profile);
+  91: 	const UHodgeEquipmentStatProfile* GetStatProfile() const { return StatProfile; }
+  98: 	UFUNCTION(BlueprintPure, Category=Equipment, meta=(DeterminesOutputType=PawnType))
+  99: 	APawn* GetTypedPawn(TSubclassOf<APawn> PawnType) const;
+ 105: 	UFUNCTION(BlueprintPure, Category=Equipment)
+ 106: 	TArray<AActor*> GetSpawnedActors() const { return SpawnedActors; }
+ 112: 	virtual void SpawnEquipmentActors(const TArray<FHodgeEquipmentActorToSpawn>& ActorsToSpawn);
+ 117: 	virtual bool TrySpawnEquipmentActors(const TArray<FHodgeEquipmentActorToSpawn>& ActorsToSpawn);
+ 121: 	virtual void DestroyEquipmentActors();
+ 125: 	virtual void OnEquipped();
+ 129: 	virtual void OnUnequipped();
+ 131: protected:
+ 133: 	virtual void OnSpawnedActorsChanged() {}
+ 134: #if UE_WITH_IRIS
+ 143: 	virtual void RegisterReplicationFragments(UE::Net::FFragmentRegistrationContext& Context,
+ 144: 	                                          UE::Net::EFragmentRegistrationFlags RegistrationFlags) override;
+ 146: #endif
+ 150: 	UFUNCTION(BlueprintImplementableEvent, Category=Equipment, meta=(DisplayName="OnEquipped"))
+ 151: 	void K2_OnEquipped();
+ 155: 	UFUNCTION(BlueprintImplementableEvent, Category=Equipment, meta=(DisplayName="OnUnequipped"))
+ 156: 	void K2_OnUnequipped();
+ 158: private:
+ 161: 	UFUNCTION()
+ 162: 	void OnRep_Instigator();
+ 164: 	UFUNCTION()
+ 165: 	void OnRep_SpawnedActors();
+ 167: private:
+ 169: 	UPROPERTY(ReplicatedUsing=OnRep_Instigator)
+ 170: 	TObjectPtr<UObject> Instigator;
+ 172: 	UPROPERTY(Replicated) FGuid EquipmentId;
+ 174: 	UPROPERTY(Replicated) int32 EquipmentLevel = 1;
+ 176: 	UPROPERTY(Replicated) TObjectPtr<const UHodgeEquipmentStatProfile> StatProfile;
+ 179: 	UPROPERTY(ReplicatedUsing=OnRep_SpawnedActors)
+ 180: 	TArray<TObjectPtr<AActor>> SpawnedActors;
+ 181: };
 ```
 
 ## HodgeEquipmentManagerComponent.h
@@ -274,114 +278,122 @@ Experience 注入 Pawn，ASC 就绪后装备默认剑，来源授予句柄精确
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   3: #pragma once
-   6: #include "Data/HodgeAbilitySet.h"
-   9: #include "Components/PawnComponent.h"
-  12: #include "Net/Serialization/FastArraySerializer.h"
-  14: #include "HodgeEquipmentManagerComponent.generated.h"
-  16: class UActorComponent;
-  17: class UHodgeAbilitySystemComponent;
-  18: class UHodgeEquipmentDefinition;
-  19: class UHodgeEquipmentInstance;
-  20: class UHodgeEquipmentManagerComponent;
-  21: class UObject;
-  22: struct FFrame;
-  23: struct FHodgeEquipmentList;
-  24: struct FNetDeltaSerializeInfo;
-  25: struct FReplicationFlags;
-  30: USTRUCT(BlueprintType)
-  31: struct FHodgeAppliedEquipmentEntry : public FFastArraySerializerItem
-  32: {
-  33: 	GENERATED_BODY()
-  36: 	FHodgeAppliedEquipmentEntry()
-  37: 	{
-  38: 	}
-  41: 	FString GetDebugString() const;
-  43: private:
-  45: 	friend FHodgeEquipmentList;
-  48: 	friend UHodgeEquipmentManagerComponent;
-  53: 	UPROPERTY()
-  54: 	TSubclassOf<UHodgeEquipmentDefinition> EquipmentDefinition;
-  57: 	UPROPERTY()
-  58: 	TObjectPtr<UHodgeEquipmentInstance> Instance = nullptr;
-  63: 	UPROPERTY(NotReplicated)
-  64: 	FHodgeAbilitySet_GrantedHandles GrantedHandles;
-  67: 	UPROPERTY(NotReplicated)
-  68: 	TWeakObjectPtr<UHodgeAbilitySystemComponent> GrantedAbilitySystem;
-  69: 	UPROPERTY(NotReplicated) FActiveGameplayEffectHandle AttributeHandle;
-  70: };
-  75: USTRUCT(BlueprintType)
-  76: struct FHodgeEquipmentList : public FFastArraySerializer
-  77: {
-  78: 	GENERATED_BODY()
-  81: 	FHodgeEquipmentList()
-  82: 		: OwnerComponent(nullptr)
-  83: 	{
-  84: 	}
-  87: 	FHodgeEquipmentList(UActorComponent* InOwnerComponent)
-  88: 		: OwnerComponent(InOwnerComponent)
-  89: 	{
-  90: 	}
-  92: public:
-  96: 	void PreReplicatedRemove(const TArrayView<int32> RemovedIndices, int32 FinalSize);
-  99: 	void PostReplicatedAdd(const TArrayView<int32> AddedIndices, int32 FinalSize);
- 102: 	void PostReplicatedChange(const TArrayView<int32> ChangedIndices, int32 FinalSize);
- 107: 	bool NetDeltaSerialize(FNetDeltaSerializeInfo& DeltaParms)
- 108: 	{
- 109: 		return FFastArraySerializer::FastArrayDeltaSerialize<FHodgeAppliedEquipmentEntry, FHodgeEquipmentList>(
- 110: 			Entries, DeltaParms, *this);
- 111: 	}
- 114: 	UHodgeEquipmentInstance* AddEntry(TSubclassOf<UHodgeEquipmentDefinition> EquipmentDefinition, FGuid Id, int32 Level);
- 117: 	void RemoveEntry(UHodgeEquipmentInstance* Instance);
- 119: private:
- 121: 	UHodgeAbilitySystemComponent* GetAbilitySystemComponent() const;
- 124: 	friend UHodgeEquipmentManagerComponent;
- 126: private:
- 130: 	UPROPERTY()
- 131: 	TArray<FHodgeAppliedEquipmentEntry> Entries;
- 134: 	UPROPERTY(NotReplicated)
- 135: 	TObjectPtr<UActorComponent> OwnerComponent;
- 136: };
- 139: template <>
- 140: struct TStructOpsTypeTraits<FHodgeEquipmentList> : public TStructOpsTypeTraitsBase2<FHodgeEquipmentList>
- 141: {
- 142: 	enum { WithNetDeltaSerializer = true };
- 143: };
- 152: UCLASS(BlueprintType, Const)
- 153: class HODGEPODGE_API UHodgeEquipmentManagerComponent : public UPawnComponent
- 154: {
- 155: 	GENERATED_BODY()
- 157: public:
- 159: 	UHodgeEquipmentManagerComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
- 162: 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
- 163: 	UHodgeEquipmentInstance* EquipItem(TSubclassOf<UHodgeEquipmentDefinition> EquipmentDefinition);
- 164: 	UHodgeEquipmentInstance* EquipItemWithState(TSubclassOf<UHodgeEquipmentDefinition> Definition, FGuid Id, int32 Level);
- 165: 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category="Hodge|Attributes") bool SetEquipmentLevel(UHodgeEquipmentInstance* Instance, int32 Level);
- 166: 	UHodgeEquipmentInstance* FindInstanceOfDefinition(TSubclassOf<UHodgeEquipmentDefinition> Definition) const;
- 169: 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
- 170: 	void UnequipItem(UHodgeEquipmentInstance* ItemInstance);
- 175: 	virtual bool ReplicateSubobjects(class UActorChannel* Channel, class FOutBunch* Bunch,
- 176: 	                                 FReplicationFlags* RepFlags) override;
- 185: 	virtual void InitializeComponent() override;
- 188: 	virtual void UninitializeComponent() override;
- 191: 	virtual void ReadyForReplication() override;
- 198: 	UFUNCTION(BlueprintCallable, BlueprintPure)
- 199: 	UHodgeEquipmentInstance* GetFirstInstanceOfType(TSubclassOf<UHodgeEquipmentInstance> InstanceType);
- 204: 	UFUNCTION(BlueprintCallable, BlueprintPure)
- 205: 	TArray<UHodgeEquipmentInstance*> GetEquipmentInstancesOfType(
- 206: 		TSubclassOf<UHodgeEquipmentInstance> InstanceType) const;
- 209: 	template <typename T>
- 210: 	T* GetFirstInstanceOfType()
- 211: 	{
- 212: 		return (T*)GetFirstInstanceOfType(T::StaticClass());
- 213: 	}
- 215: private:
- 217: 	friend struct FHodgeEquipmentMutationScope;
- 218: 	bool bEquipmentMutation = false;
- 219: 	bool bPendingUninitialize = false;
- 220: 	UPROPERTY(Replicated)
- 221: 	FHodgeEquipmentList EquipmentList;
- 222: };
+   6: #pragma once
+   9: #include "Data/HodgeAbilitySet.h"
+  12: #include "Components/PawnComponent.h"
+  15: #include "Net/Serialization/FastArraySerializer.h"
+  17: #include "HodgeEquipmentManagerComponent.generated.h"
+  19: class UActorComponent;
+  20: class UHodgeAbilitySystemComponent;
+  21: class UHodgeEquipmentDefinition;
+  22: class UHodgeEquipmentInstance;
+  23: class UHodgeEquipmentManagerComponent;
+  24: class UObject;
+  25: struct FFrame;
+  26: struct FHodgeEquipmentList;
+  27: struct FNetDeltaSerializeInfo;
+  28: struct FReplicationFlags;
+  33: USTRUCT(BlueprintType)
+  34: struct FHodgeAppliedEquipmentEntry : public FFastArraySerializerItem
+  35: {
+  36: 	GENERATED_BODY()
+  40: 	FHodgeAppliedEquipmentEntry()
+  41: 	{
+  42: 	}
+  48: 	FString GetDebugString() const;
+  50: private:
+  52: 	friend FHodgeEquipmentList;
+  55: 	friend UHodgeEquipmentManagerComponent;
+  60: 	UPROPERTY()
+  61: 	TSubclassOf<UHodgeEquipmentDefinition> EquipmentDefinition;
+  64: 	UPROPERTY()
+  65: 	TObjectPtr<UHodgeEquipmentInstance> Instance = nullptr;
+  70: 	UPROPERTY(NotReplicated)
+  71: 	FHodgeAbilitySet_GrantedHandles GrantedHandles;
+  74: 	UPROPERTY(NotReplicated)
+  75: 	TWeakObjectPtr<UHodgeAbilitySystemComponent> GrantedAbilitySystem;
+  77: 	UPROPERTY(NotReplicated) FActiveGameplayEffectHandle AttributeHandle;
+  78: };
+  83: USTRUCT(BlueprintType)
+  84: struct FHodgeEquipmentList : public FFastArraySerializer
+  85: {
+  86: 	GENERATED_BODY()
+  90: 	FHodgeEquipmentList()
+  91: 		: OwnerComponent(nullptr)
+  92: 	{
+  93: 	}
+  99: 	FHodgeEquipmentList(UActorComponent* InOwnerComponent)
+ 100: 		: OwnerComponent(InOwnerComponent)
+ 101: 	{
+ 102: 	}
+ 104: public:
+ 112: 	void PreReplicatedRemove(const TArrayView<int32> RemovedIndices, int32 FinalSize);
+ 119: 	void PostReplicatedAdd(const TArrayView<int32> AddedIndices, int32 FinalSize);
+ 126: 	void PostReplicatedChange(const TArrayView<int32> ChangedIndices, int32 FinalSize);
+ 135: 	bool NetDeltaSerialize(FNetDeltaSerializeInfo& DeltaParms)
+ 136: 	{
+ 137: 		return FFastArraySerializer::FastArrayDeltaSerialize<FHodgeAppliedEquipmentEntry, FHodgeEquipmentList>(
+ 138: 			Entries, DeltaParms, *this);
+ 139: 	}
+ 148: 	UHodgeEquipmentInstance* AddEntry(TSubclassOf<UHodgeEquipmentDefinition> EquipmentDefinition, FGuid Id, int32 Level);
+ 154: 	void RemoveEntry(UHodgeEquipmentInstance* Instance);
+ 156: private:
+ 161: 	UHodgeAbilitySystemComponent* GetAbilitySystemComponent() const;
+ 164: 	friend UHodgeEquipmentManagerComponent;
+ 166: private:
+ 170: 	UPROPERTY()
+ 171: 	TArray<FHodgeAppliedEquipmentEntry> Entries;
+ 174: 	UPROPERTY(NotReplicated)
+ 175: 	TObjectPtr<UActorComponent> OwnerComponent;
+ 176: };
+ 179: template <>
+ 181: struct TStructOpsTypeTraits<FHodgeEquipmentList> : public TStructOpsTypeTraitsBase2<FHodgeEquipmentList>
+ 182: {
+ 183: 	enum { WithNetDeltaSerializer = true };
+ 184: };
+ 193: UCLASS(BlueprintType, Const)
+ 194: class HODGEPODGE_API UHodgeEquipmentManagerComponent : public UPawnComponent
+ 195: {
+ 196: 	GENERATED_BODY()
+ 198: public:
+ 203: 	UHodgeEquipmentManagerComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+ 210: 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
+ 211: 	UHodgeEquipmentInstance* EquipItem(TSubclassOf<UHodgeEquipmentDefinition> EquipmentDefinition);
+ 218: 	UHodgeEquipmentInstance* EquipItemWithState(TSubclassOf<UHodgeEquipmentDefinition> Definition, FGuid Id, int32 Level);
+ 224: 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category="Hodge|Attributes") bool SetEquipmentLevel(UHodgeEquipmentInstance* Instance, int32 Level);
+ 229: 	UHodgeEquipmentInstance* FindInstanceOfDefinition(TSubclassOf<UHodgeEquipmentDefinition> Definition) const;
+ 238: 	static bool ValidateEquipmentForGrant(TSubclassOf<UHodgeEquipmentDefinition> Definition,
+ 239: 		const UHodgeAbilitySystemComponent* ASC, int32 Level, TArray<FText>& Errors, bool bForInitialization = false);
+ 244: 	bool IsEquipmentReady(const UHodgeEquipmentInstance* Instance) const;
+ 248: 	UFUNCTION(BlueprintPure, Category="Hodge|Equipment") FString GetLastEquipError() const { return LastEquipError; }
+ 252: 	bool DidEquipHaveIrreversibleEffects() const { return bEquipIrreversibleEffects; }
+ 258: 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
+ 259: 	void UnequipItem(UHodgeEquipmentInstance* ItemInstance);
+ 270: 	virtual bool ReplicateSubobjects(class UActorChannel* Channel, class FOutBunch* Bunch,
+ 271: 	                                 FReplicationFlags* RepFlags) override;
+ 281: 	virtual void InitializeComponent() override;
+ 285: 	virtual void UninitializeComponent() override;
+ 289: 	virtual void ReadyForReplication() override;
+ 300: 	UFUNCTION(BlueprintCallable, BlueprintPure)
+ 301: 	UHodgeEquipmentInstance* GetFirstInstanceOfType(TSubclassOf<UHodgeEquipmentInstance> InstanceType);
+ 310: 	UFUNCTION(BlueprintCallable, BlueprintPure)
+ 311: 	TArray<UHodgeEquipmentInstance*> GetEquipmentInstancesOfType(
+ 312: 		TSubclassOf<UHodgeEquipmentInstance> InstanceType) const;
+ 315: 	template <typename T>
+ 319: 	T* GetFirstInstanceOfType()
+ 320: 	{
+ 321: 		return (T*)GetFirstInstanceOfType(T::StaticClass());
+ 322: 	}
+ 324: private:
+ 326: 	friend struct FHodgeEquipmentMutationScope;
+ 327: 	friend struct FHodgeEquipmentList;
+ 329: 	UPROPERTY(Transient) FString LastEquipError;
+ 331: 	bool bEquipIrreversibleEffects = false;
+ 333: 	bool bEquipmentMutation = false;
+ 335: 	bool bPendingUninitialize = false;
+ 337: 	UPROPERTY(Replicated)
+ 338: 	FHodgeEquipmentList EquipmentList;
+ 339: };
 ```
 
 ## HodgeWeaponInstance.h
@@ -395,92 +407,100 @@ Experience 注入 Pawn，ASC 就绪后装备默认剑，来源授予句柄精确
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   3: #pragma once
-   9: #include "Equipment/HodgeEquipmentInstance.h"
-  10: #include "Combat/HodgeHitDetection.h"
-  11: #include "Equipment/HodgeWeaponPresentationTypes.h"
-  14: #include "GameFramework/InputDevicePropertyHandle.h"
-  16: #include "HodgeWeaponInstance.generated.h"
-  18: class UAnimInstance;
-  19: class UObject;
-  20: struct FFrame;
-  21: struct FGameplayTagContainer;
-  22: class UInputDeviceProperty;
-  23: class UHodgeWeaponPresentationProfile;
-  24: class USkeletalMeshComponent;
-  34: class UHodgeCombatComponentBase;
-  36: UCLASS()
-  37: class HODGEPODGE_API UHodgeWeaponInstance : public UHodgeEquipmentInstance
-  38: {
-  39: 	GENERATED_BODY()
-  41: public:
-  43: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Combat", meta=(TitleProperty="SourceTag"))
-  44: 	TArray<FHodgeHitSource> HitSources;
-  46: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Presentation")
-  47: 	TObjectPtr<UHodgeWeaponPresentationProfile> PresentationProfile;
-  48: 	UFUNCTION(BlueprintPure, Category="Hodge|Presentation")
-  49: 	UHodgeWeaponPresentationProfile* GetPresentationProfile() const { return PresentationProfile; }
-  50: 	UFUNCTION(BlueprintCallable, Category="Hodge|Presentation")
-  51: 	FGuid AcquireHandUse(FGuid ExecutionId, int32 OccurrenceId, int32 ActivationKey = 0);
-  52: 	UFUNCTION(BlueprintCallable, Category="Hodge|Presentation")
-  53: 	void ReleaseHandUse(FGuid Handle);
-  54: 	void ReleaseHandUsesForExecution(const FGuid& ExecutionId);
-  55: 	void RejectPredictedHandUse(int32 ActivationKey);
+   6: #pragma once
+  12: #include "Equipment/HodgeEquipmentInstance.h"
+  13: #include "Combat/HodgeHitDetection.h"
+  14: #include "Equipment/HodgeWeaponPresentationTypes.h"
+  17: #include "GameFramework/InputDevicePropertyHandle.h"
+  19: #include "HodgeWeaponInstance.generated.h"
+  21: class UAnimInstance;
+  22: class UObject;
+  23: struct FFrame;
+  24: struct FGameplayTagContainer;
+  25: class UInputDeviceProperty;
+  26: class UHodgeWeaponPresentationProfile;
+  27: class USkeletalMeshComponent;
+  37: class UHodgeCombatComponentBase;
+  40: UCLASS()
+  41: class HODGEPODGE_API UHodgeWeaponInstance : public UHodgeEquipmentInstance
+  42: {
+  43: 	GENERATED_BODY()
+  45: public:
+  47: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Combat", meta=(TitleProperty="SourceTag"))
+  48: 	TArray<FHodgeHitSource> HitSources;
+  51: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Presentation")
+  52: 	TObjectPtr<UHodgeWeaponPresentationProfile> PresentationProfile;
   56: 	UFUNCTION(BlueprintPure, Category="Hodge|Presentation")
-  57: 	int32 GetHandUseCount() const { return HandRequests.Num(); }
-  58: 	UFUNCTION(BlueprintPure, Category="Hodge|Presentation")
-  59: 	FHodgeWeaponPresentationState GetPresentationState() const;
-  60: 	double GetPresentationTime() const;
-  61: 	void RefreshPresentationActors();
-  62: 	static UHodgeWeaponInstance* ResolvePresentationWeapon(APawn* Pawn, UObject* SourceObject = nullptr);
-  65: 	UHodgeWeaponInstance(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-  66: 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-  71: 	virtual void OnEquipped() override;
-  74: 	virtual void OnUnequipped() override;
-  79: 	UFUNCTION(BlueprintCallable)
-  80: 	void UpdateFiringTime();
-  85: 	UFUNCTION(BlueprintPure)
-  86: 	float GetTimeSinceLastInteractedWith() const;
-  88: protected:
-  89: 	virtual void OnSpawnedActorsChanged() override;
-  90: 	virtual void BeginDestroy() override;
- 106: 	UPROPERTY(EditDefaultsOnly, Instanced, BlueprintReadOnly, Category = "Input Devices")
- 107: 	TArray<TObjectPtr<UInputDeviceProperty>> ApplicableDeviceProperties;
- 112: 	UFUNCTION(BlueprintCallable, BlueprintPure=false, Category=Animation)
- 113: 	TSubclassOf<UAnimInstance> PickBestAnimLayer(bool bEquipped, const FGameplayTagContainer& CosmeticTags) const;
- 118: 	UFUNCTION(BlueprintCallable)
- 119: 	const FPlatformUserId GetOwningUserId() const;
- 124: 	UFUNCTION()
- 125: 	void OnDeathStarted(AActor* OwningActor);
- 135: 	void ApplyDeviceProperties();
- 140: 	void RemoveDeviceProperties();
- 142: private:
- 143: 	friend struct FHodgeWeaponPresentationTestAccess;
- 144: 	struct FHandRequest { FGuid ExecutionId; int32 OccurrenceId = INDEX_NONE; int32 ActivationKey = 0; };
- 145: 	TMap<FGuid, FHandRequest> HandRequests;
- 146: 	FTimerHandle PresentationTimer;
- 147: 	bool bPresentationEquipped = false;
- 148: 	bool bPresentationDisabled = false;
- 149: 	bool bPredictedPresentation = false;
- 150: 	FHodgeWeaponPresentationState LocalPresentation;
- 151: 	UPROPERTY(ReplicatedUsing=OnRep_PresentationState)
- 152: 	FHodgeWeaponPresentationState ReplicatedPresentation;
- 153: 	UFUNCTION() void OnRep_PresentationState();
- 154: 	void InitializePresentation();
- 155: 	void ShutdownPresentation();
- 156: 	void SetPresentationPhase(EHodgeWeaponPresentationPhase Phase, int32 ActivationKey);
- 157: 	void SchedulePresentationPhase(EHodgeWeaponPresentationPhase Phase, float Seconds);
- 158: 	void BeginIdlePresentation();
- 159: 	bool CanDrivePresentation() const;
- 160: 	void ClearPresentationTimer();
- 161: 	FGuid CombatPoseLease;
- 162: 	TWeakObjectPtr<UHodgeCombatComponentBase> PoseCombat;
- 163: 	void UpdateOwnerPosePolicy();
- 167: 	UPROPERTY(Transient)
- 168: 	TSet<FInputDevicePropertyHandle> DevicePropertyHandles;
- 171: 	double TimeLastEquipped = 0.0;
- 174: 	double TimeLastFired = 0.0;
- 175: };
+  57: 	UHodgeWeaponPresentationProfile* GetPresentationProfile() const { return PresentationProfile; }
+  65: 	UFUNCTION(BlueprintCallable, Category="Hodge|Presentation")
+  66: 	FGuid AcquireHandUse(FGuid ExecutionId, int32 OccurrenceId, int32 ActivationKey = 0, EHodgeWeaponHandEndBehavior EndBehavior = EHodgeWeaponHandEndBehavior::ReturnToBack);
+  70: 	UFUNCTION(BlueprintCallable, Category="Hodge|Presentation")
+  71: 	void ReleaseHandUse(FGuid Handle);
+  75: 	void ReleaseHandUsesForExecution(const FGuid& ExecutionId);
+  79: 	void RejectPredictedHandUse(int32 ActivationKey);
+  83: 	UFUNCTION(BlueprintPure, Category="Hodge|Presentation")
+  84: 	int32 GetHandUseCount() const { return HandRequests.Num(); }
+  88: 	UFUNCTION(BlueprintPure, Category="Hodge|Presentation")
+  89: 	FHodgeWeaponPresentationState GetPresentationState() const;
+  93: 	double GetPresentationTime() const;
+  95: 	void RefreshPresentationActors();
+ 101: 	static UHodgeWeaponInstance* ResolvePresentationWeapon(APawn* Pawn, UObject* SourceObject = nullptr);
+ 107: 	UHodgeWeaponInstance(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+ 111: 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+ 117: 	virtual void OnEquipped() override;
+ 121: 	virtual void OnUnequipped() override;
+ 127: 	UFUNCTION(BlueprintCallable)
+ 128: 	void UpdateFiringTime();
+ 136: 	UFUNCTION(BlueprintPure)
+ 137: 	float GetTimeSinceLastInteractedWith() const;
+ 139: protected:
+ 141: 	virtual void OnSpawnedActorsChanged() override;
+ 143: 	virtual void BeginDestroy() override;
+ 159: 	UPROPERTY(EditDefaultsOnly, Instanced, BlueprintReadOnly, Category = "Input Devices")
+ 160: 	TArray<TObjectPtr<UInputDeviceProperty>> ApplicableDeviceProperties;
+ 170: 	UFUNCTION(BlueprintCallable, BlueprintPure=false, Category=Animation)
+ 171: 	TSubclassOf<UAnimInstance> PickBestAnimLayer(bool bEquipped, const FGameplayTagContainer& CosmeticTags) const;
+ 179: 	UFUNCTION(BlueprintCallable)
+ 180: 	const FPlatformUserId GetOwningUserId() const;
+ 188: 	UFUNCTION()
+ 189: 	void OnDeathStarted(AActor* OwningActor);
+ 200: 	void ApplyDeviceProperties();
+ 206: 	void RemoveDeviceProperties();
+ 208: private:
+ 209: 	friend struct FHodgeWeaponPresentationTestAccess;
+ 211: 	struct FHandRequest
+ 212: 	{
+ 214: 		FGuid ExecutionId;
+ 216: 		int32 OccurrenceId = INDEX_NONE;
+ 218: 		int32 ActivationKey = 0;
+ 220: 		EHodgeWeaponHandEndBehavior EndBehavior = EHodgeWeaponHandEndBehavior::ReturnToBack;
+ 222: 		uint64 Order = 0;
+ 223: 	};
+ 225: 	uint64 NextHandRequestOrder = 0;
+ 227: 	TMap<FGuid, FHandRequest> HandRequests;
+ 229: 	FTimerHandle PresentationTimer;
+ 231: 	bool bPresentationEquipped = false;
+ 233: 	bool bPresentationDisabled = false;
+ 235: 	bool bPredictedPresentation = false;
+ 237: 	FHodgeWeaponPresentationState LocalPresentation;
+ 239: 	UPROPERTY(ReplicatedUsing=OnRep_PresentationState)
+ 240: 	FHodgeWeaponPresentationState ReplicatedPresentation;
+ 242: 	UFUNCTION() void OnRep_PresentationState();
+ 244: 	void InitializePresentation();
+ 246: 	void ShutdownPresentation();
+ 251: 	void SetPresentationPhase(EHodgeWeaponPresentationPhase Phase, int32 ActivationKey, EHodgeWeaponHandEndBehavior EndBehavior = EHodgeWeaponHandEndBehavior::ReturnToBack);
+ 256: 	void SchedulePresentationPhase(EHodgeWeaponPresentationPhase Phase, float Seconds, EHodgeWeaponHandEndBehavior EndBehavior = EHodgeWeaponHandEndBehavior::ReturnToBack);
+ 258: 	void BeginIdlePresentation(EHodgeWeaponHandEndBehavior EndBehavior);
+ 262: 	bool CanDrivePresentation() const;
+ 264: 	void ClearPresentationTimer();
+ 266: 	FGuid CombatPoseLease;
+ 268: 	TWeakObjectPtr<UHodgeCombatComponentBase> PoseCombat;
+ 270: 	void UpdateOwnerPosePolicy();
+ 274: 	UPROPERTY(Transient)
+ 275: 	TSet<FInputDevicePropertyHandle> DevicePropertyHandles;
+ 278: 	double TimeLastEquipped = 0.0;
+ 281: 	double TimeLastFired = 0.0;
+ 282: };
 ```
 
 ## HodgeWeaponPresentationActor.h
@@ -494,48 +514,48 @@ Experience 注入 Pawn，ASC 就绪后装备默认剑，来源授予句柄精确
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   1: #pragma once
-   3: #include "CoreMinimal.h"
-   4: #include "GameFramework/Actor.h"
-   5: #include "Equipment/HodgeWeaponPresentationTypes.h"
-   6: #include "HodgeWeaponPresentationActor.generated.h"
-   8: class UHodgeWeaponInstance;
-   9: class UHodgeWeaponPresentationProfile;
-  10: class USkeletalMeshComponent;
-  11: class UMaterialInstanceDynamic;
-  12: class APawn;
-  15: UCLASS(Blueprintable)
-  16: class HODGEPODGE_API AHodgeWeaponPresentationActor : public AActor
-  17: {
-  18: 	GENERATED_BODY()
-  19: public:
-  20: 	AHodgeWeaponPresentationActor();
-  21: 	void BindWeapon(UHodgeWeaponInstance* Instance);
-  22: 	void RefreshPresentation();
-  23: 	UFUNCTION(BlueprintPure) USkeletalMeshComponent* GetDetectionMesh() const { return SkeletalMesh; }
-  24: 	UFUNCTION(BlueprintPure) USkeletalMeshComponent* GetVisualMesh() const { return WeaponVisualMesh; }
-  25: 	UFUNCTION(BlueprintPure) float GetVisibilityAmount() const { return VisibilityAmount; }
-  26: 	UFUNCTION(BlueprintPure) EHodgeWeaponPresentationPhase GetVisualPhase() const { return VisualPhase; }
-  27: 	FTransform GetVisualTransform() const;
-  28: 	virtual void Tick(float DeltaSeconds) override;
-  29: protected:
-  30: 	virtual void BeginPlay() override;
-  31: 	virtual void EndPlay(const EEndPlayReason::Type Reason) override;
-  32: 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TObjectPtr<USkeletalMeshComponent> SkeletalMesh;
-  33: 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TObjectPtr<USkeletalMeshComponent> WeaponVisualMesh;
-  34: 	UFUNCTION(BlueprintImplementableEvent) void OnPresentationPhaseChanged(EHodgeWeaponPresentationPhase Phase);
-  35: private:
-  36: 	void TryBindWeapon();
-  37: 	void ConfigureProfile(const UHodgeWeaponPresentationProfile* Profile);
-  38: 	void EvaluatePresentation();
-  39: 	UPROPERTY(Transient) TWeakObjectPtr<UHodgeWeaponInstance> Weapon;
-  40: 	UPROPERTY(Transient) TObjectPtr<const UHodgeWeaponPresentationProfile> AppliedProfile;
-  41: 	UPROPERTY(Transient) TArray<TObjectPtr<UMaterialInstanceDynamic>> DynamicMaterials;
-  42: 	FTimerHandle BindRetryTimer;
-  43: 	int32 BindAttempts = 0;
-  44: 	float VisibilityAmount = 0.f;
-  45: 	EHodgeWeaponPresentationPhase VisualPhase = EHodgeWeaponPresentationPhase::Hidden;
-  46: };
+   4: #pragma once
+   6: #include "CoreMinimal.h"
+   7: #include "GameFramework/Actor.h"
+   8: #include "Equipment/HodgeWeaponPresentationTypes.h"
+   9: #include "HodgeWeaponPresentationActor.generated.h"
+  11: class UHodgeWeaponInstance;
+  12: class UHodgeWeaponPresentationProfile;
+  13: class USkeletalMeshComponent;
+  14: class UMaterialInstanceDynamic;
+  15: class APawn;
+  18: UCLASS(Blueprintable)
+  19: class HODGEPODGE_API AHodgeWeaponPresentationActor : public AActor
+  20: {
+  21: 	GENERATED_BODY()
+  22: public:
+  24: 	AHodgeWeaponPresentationActor();
+  28: 	void BindWeapon(UHodgeWeaponInstance* Instance);
+  30: 	void RefreshPresentation();
+  34: 	UFUNCTION(BlueprintPure) USkeletalMeshComponent* GetDetectionMesh() const { return SkeletalMesh; }
+  38: 	UFUNCTION(BlueprintPure) USkeletalMeshComponent* GetVisualMesh() const { return WeaponVisualMesh; }
+  42: 	UFUNCTION(BlueprintPure) float GetVisibilityAmount() const { return VisibilityAmount; }
+  46: 	UFUNCTION(BlueprintPure) EHodgeWeaponPresentationPhase GetVisualPhase() const { return VisualPhase; }
+  50: 	FTransform GetVisualTransform() const;
+  54: 	virtual void Tick(float DeltaSeconds) override;
+  55: protected:
+  57: 	virtual void BeginPlay() override;
+  61: 	virtual void EndPlay(const EEndPlayReason::Type Reason) override;
+  63: 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TObjectPtr<USkeletalMeshComponent> SkeletalMesh;
+  65: 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TObjectPtr<USkeletalMeshComponent> WeaponVisualMesh;
+  69: 	UFUNCTION(BlueprintImplementableEvent) void OnPresentationPhaseChanged(EHodgeWeaponPresentationPhase Phase);
+  70: private:
+  72: 	void TryBindWeapon();
+  76: 	void ConfigureProfile(const UHodgeWeaponPresentationProfile* Profile);
+  78: 	void EvaluatePresentation();
+  80: 	UPROPERTY(Transient) TWeakObjectPtr<UHodgeWeaponInstance> Weapon;
+  82: 	UPROPERTY(Transient) TObjectPtr<const UHodgeWeaponPresentationProfile> AppliedProfile;
+  84: 	UPROPERTY(Transient) TArray<TObjectPtr<UMaterialInstanceDynamic>> DynamicMaterials;
+  86: 	FTimerHandle BindRetryTimer;
+  88: 	int32 BindAttempts = 0;
+  90: 	float VisibilityAmount = 0.f;
+  92: 	EHodgeWeaponPresentationPhase VisualPhase = EHodgeWeaponPresentationPhase::Hidden;
+  93: };
 ```
 
 ## HodgeWeaponPresentationProfile.h
@@ -547,40 +567,40 @@ Experience 注入 Pawn，ASC 就绪后装备默认剑，来源授予句柄精确
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   1: #pragma once
-   3: #include "CoreMinimal.h"
-   4: #include "Engine/DataAsset.h"
-   5: #include "HodgeWeaponPresentationProfile.generated.h"
-   7: class USkeletalMesh;
-   8: class UMaterialInterface;
-   9: class UCurveFloat;
-  12: UCLASS(BlueprintType, Const)
-  13: class HODGEPODGE_API UHodgeWeaponPresentationProfile : public UDataAsset
-  14: {
-  15: 	GENERATED_BODY()
-  16: public:
-  17: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) TObjectPtr<USkeletalMesh> WeaponMesh;
-  18: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) TArray<TObjectPtr<UMaterialInterface>> Materials;
-  19: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) FName HandSocket = TEXT("WeaponOnHand");
-  20: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) FTransform HandOffset = FTransform::Identity;
-  21: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) FName BackSocket = TEXT("WeaponOnBack");
-  22: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ToolTip="Offset relative to the character Mesh BackSocket, not the Pawn root."))
-  23: 	FTransform BackTransform = FTransform::Identity;
-  24: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) FVector ReturnArcOffset = FVector(0.f, 15.f, 10.f);
-  25: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) TObjectPtr<UCurveFloat> ReturnCurve;
-  26: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ClampMin="0")) float DrawSeconds = .08f;
-  27: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ClampMin="0")) float ReturnGraceSeconds = .06f;
-  28: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ClampMin="0.01")) float ReturnSeconds = .3f;
-  29: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ClampMin="0")) float HoverSeconds = 2.f;
-  30: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ClampMin="0.01")) float FadeSeconds = .35f;
-  31: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ClampMin="0")) float HoverAmplitude = 2.f;
-  32: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ClampMin="0")) float HoverFrequency = .8f;
-  33: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) FName VisibilityParameter = TEXT("WeaponVisibility");
-  34: 	bool Validate(TArray<FText>& Errors) const;
-  35: #if WITH_EDITOR
-  36: 	virtual EDataValidationResult IsDataValid(FDataValidationContext& Context) const override;
-  37: #endif
-  38: };
+   4: #pragma once
+   6: #include "CoreMinimal.h"
+   7: #include "Engine/DataAsset.h"
+   8: #include "HodgeWeaponPresentationProfile.generated.h"
+  10: class USkeletalMesh;
+  11: class UMaterialInterface;
+  12: class UCurveFloat;
+  15: UCLASS(BlueprintType, Const)
+  16: class HODGEPODGE_API UHodgeWeaponPresentationProfile : public UDataAsset
+  17: {
+  18: 	GENERATED_BODY()
+  19: public:
+  21: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) TObjectPtr<USkeletalMesh> WeaponMesh;
+  23: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) TArray<TObjectPtr<UMaterialInterface>> Materials;
+  25: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) FName HandSocket = TEXT("WeaponOnHand");
+  27: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) FTransform HandOffset = FTransform::Identity;
+  29: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) FName BackSocket = TEXT("WeaponOnBack");
+  31: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ToolTip="Offset relative to the character Mesh BackSocket, not the Pawn root."))
+  32: 	FTransform BackTransform = FTransform::Identity;
+  34: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) FVector ReturnArcOffset = FVector(0.f, 15.f, 10.f);
+  36: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) TObjectPtr<UCurveFloat> ReturnCurve;
+  38: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ClampMin="0")) float DrawSeconds = .08f;
+  40: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ClampMin="0")) float ReturnGraceSeconds = .06f;
+  42: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ClampMin="0.01")) float ReturnSeconds = .3f;
+  44: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ClampMin="0")) float HoverSeconds = 2.f;
+  46: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ClampMin="0.01")) float FadeSeconds = .35f;
+  48: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ClampMin="0")) float HoverAmplitude = 2.f;
+  50: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ClampMin="0")) float HoverFrequency = .8f;
+  52: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) FName VisibilityParameter = TEXT("WeaponVisibility");
+  57: 	bool Validate(TArray<FText>& Errors) const;
+  58: #if WITH_EDITOR
+  63: 	virtual EDataValidationResult IsDataValid(FDataValidationContext& Context) const override;
+  64: #endif
+  65: };
 ```
 
 ## HodgeWeaponPresentationTypes.h
@@ -592,27 +612,34 @@ Experience 注入 Pawn，ASC 就绪后装备默认剑，来源授予句柄精确
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
 ```cpp
-   1: #pragma once
-   3: #include "CoreMinimal.h"
-   4: #include "HodgeWeaponPresentationTypes.generated.h"
-   6: UENUM(BlueprintType)
-   7: enum class EHodgeWeaponPresentationPhase : uint8
-   8: {
-   9: 	Hidden,
-  10: 	Hand,
-  11: 	Returning,
-  12: 	Hovering,
-  13: 	Fading
-  14: };
-  17: USTRUCT(BlueprintType)
-  18: struct FHodgeWeaponPresentationState
-  19: {
-  20: 	GENERATED_BODY()
-  21: 	UPROPERTY(BlueprintReadOnly) EHodgeWeaponPresentationPhase Phase = EHodgeWeaponPresentationPhase::Hidden;
-  22: 	UPROPERTY(BlueprintReadOnly) double StartTime = 0;
-  23: 	UPROPERTY(BlueprintReadOnly) FTransform StartRelativeTransform = FTransform::Identity;
-  24: 	UPROPERTY(BlueprintReadOnly) float StartVisibility = 0.f;
-  25: 	UPROPERTY(BlueprintReadOnly) int32 Revision = 0;
-  26: 	UPROPERTY(BlueprintReadOnly) int32 ActivationKey = 0;
-  27: };
+   4: #pragma once
+   6: #include "CoreMinimal.h"
+   7: #include "HodgeWeaponPresentationTypes.generated.h"
+  10: UENUM(BlueprintType)
+  11: enum class EHodgeWeaponHandEndBehavior : uint8
+  12: {
+  13: 	ReturnToBack UMETA(DisplayName="回背部后延迟淡出"),
+  14: 	FadeAtHand UMETA(DisplayName="在手部直接淡出")
+  15: };
+  18: UENUM(BlueprintType)
+  19: enum class EHodgeWeaponPresentationPhase : uint8
+  20: {
+  22: 	Hidden,
+  24: 	Hand,
+  26: 	Returning,
+  28: 	Hovering,
+  30: 	Fading
+  31: };
+  34: USTRUCT(BlueprintType)
+  35: struct FHodgeWeaponPresentationState
+  36: {
+  37: 	GENERATED_BODY()
+  39: 	UPROPERTY(BlueprintReadOnly) EHodgeWeaponPresentationPhase Phase = EHodgeWeaponPresentationPhase::Hidden;
+  41: 	UPROPERTY(BlueprintReadOnly) EHodgeWeaponHandEndBehavior EndBehavior = EHodgeWeaponHandEndBehavior::ReturnToBack;
+  43: 	UPROPERTY(BlueprintReadOnly) double StartTime = 0;
+  45: 	UPROPERTY(BlueprintReadOnly) FTransform StartRelativeTransform = FTransform::Identity;
+  47: 	UPROPERTY(BlueprintReadOnly) float StartVisibility = 0.f;
+  49: 	UPROPERTY(BlueprintReadOnly) int32 Revision = 0;
+  51: 	UPROPERTY(BlueprintReadOnly) int32 ActivationKey = 0;
+  52: };
 ```

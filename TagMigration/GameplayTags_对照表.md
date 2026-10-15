@@ -1,6 +1,7 @@
 # Lyra GameplayTag 全量对照表
 
-> 2026-10-06 状态同步：Lyra 标签对照是上游学习材料；Hodge 实际注册清单由 Reference/gameplay-tags.md 生成，已含 Status.Rotation.Locked 和 Status.Weapon.Hand。 当前项目事实见 [本轮更新](../Docs/KnowledgeBase/26-update-2026-10-06.md)。
+> 2026-10-06 状态同步：Lyra 标签对照是上游学习材料；Hodge 实际注册清单由 Reference/gameplay-tags.md 生成，已含 Status.Rotation.Locked 和 Status.Weapon.Hand。
+> **2026-10-15 补充**：项目新标签已按域拆分注册到 `Config/Tags/*.ini`（`ResonanceSkillTags` / `HavocTags` / `AbilityHUDTags`），共鸣（Resonance）与暗涌（Havoc）相关标签**不在本表内**。当前项目事实见 [10-15 更新](../Docs/KnowledgeBase/30-update-2026-10-15.md)。
 
 > 由 `LyraStarterGame` (UE 5.5) 自动汇总，合并日期 2026-09-25。
 > 可直接导入的 ini 见同目录 `DefaultGameplayTags.ini`。
