@@ -6,6 +6,8 @@
 
 // UHodgeHealthComponent 类定义。
 #include "Component/HodgeHealthComponent.h"
+#include "AbilitySystem/AttributeSet/HodgeResonanceSet.h"
+#include "AbilitySystem/Effects/HodgeResonanceEnergyEffect.h"
 
 // 项目自定义 AbilitySystemComponent。
 #include "AbilitySystem/HodgeAbilitySystemComponent.h"
@@ -393,6 +395,15 @@ void UHodgeHealthComponent::StartDeath()
 
 	// 将死亡状态推进到 DeathStarted。
 	DeathState = EHodgeDeathState::DeathStarted;
+	// 死亡只由服务器清空当前能量，冷却和PlayerState资源归属保持不变。
+	if (GetOwner()->HasAuthority() && AbilitySystemComponent)
+	{
+		if (const auto* Resource=AbilitySystemComponent->GetSet<UHodgeResonanceSet>(); Resource && Resource->IsResourceReady())
+		{
+			auto Reset=AbilitySystemComponent->MakeOutgoingSpec(UHodgeResonanceEnergyEffect::StaticClass(),1.f,AbilitySystemComponent->MakeEffectContext());
+			if (Reset.IsValid()) { Reset.Data->SetSetByCallerMagnitude(HodgeResonanceTags::EnergyDelta,-Resource->GetResonanceEnergy()); AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*Reset.Data.Get()); }
+		}
+	}
 
 	// ASC 有效时同步 GAS 层的“正在死亡”状态。
 	if (AbilitySystemComponent)

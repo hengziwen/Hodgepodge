@@ -9,11 +9,22 @@
 #include "AnimNotifyState_MotionWarping.h"
 #include "Animation/HodgeRootMotionModifier_AttackFacing.h"
 #include "Animation/HodgeCombatAnimNotifies.h"
+#include "Animation/HodgeAnimNotifyState_CinematicCamera.h"
+#include "Data/HodgeCinematicCameraProfile.h"
+#include "AbilitySystem/Effects/HodgeResonanceEnergyEffect.h"
 #include "AbilitySystem/HodgeGameplayTags.h"
+#include "AbilitySystem/AttributeSet/HodgeHavocSet.h"
 #if WITH_EDITOR
 #include "Misc/DataValidation.h"
 #endif
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeAbilityDefinition)
+
+/** 标准窗口沿用现有通知标签，取消混合仍由 ExecutionConfig 决定。 */
+UHodgeAbilityDefinition::UHodgeAbilityDefinition()
+{
+	StandaloneMoveCancelWindowTag = HodgeGameplayTags::Status_Attack_Cancel_Move;
+	ResonanceEnergyGainEffect = UHodgeResonanceEnergyEffect::StaticClass();
+}
 
 /** 构造混合。 */
 FAlphaBlend FHodgeAbilityBlendSettings::MakeBlend() const
@@ -54,6 +65,20 @@ bool UHodgeAbilityDefinition::GetFacingWarpWindow(float& OutStart, float& OutEnd
 bool UHodgeAbilityDefinition::ValidateDefinition(TArray<FText>& Errors) const
 {
 	const int32 Before = Errors.Num();
+	if (!FMath::IsFinite(DarkFlowGainPerPhase) || DarkFlowGainPerPhase<0.f || !FMath::IsFinite(DarkFlowGainOnCast) || DarkFlowGainOnCast<0.f)
+	{ Errors.Add(FText::FromString(TEXT("DarkFlow gains must be finite and nonnegative"))); }
+	if (RequiredSourceTags.HasAny(BlockedSourceTags))
+	{ Errors.Add(FText::FromString(TEXT("Variant required and blocked tags conflict"))); }
+	if (DarkFlowGainOnCast>0.f)
+	{
+		int32 CommitCount=0;
+		if (ExecutionConfig.Montage) for (const auto& Event : ExecutionConfig.Montage->Notifies)
+		{ if (const auto* Notify=Cast<UHodgeAnimNotify_GameplayEvent>(Event.Notify); Notify && Notify->EventTag==HodgeHavocTags::CastCommitted) { ++CommitCount; } }
+		if (CommitCount!=1) { Errors.Add(FText::FromString(TEXT("Cast DarkFlow gain requires one GameplayEvent.Attack.CastCommitted notify"))); }
+	}
+	const float Gain=ResonanceEnergyGainPerPhase.GetValueAtLevel(1.f);
+	if (!FMath::IsFinite(Gain) || Gain<0.f || (Gain>0.f && (!ResonanceEnergyGainEffect || !ResonanceEnergyGainEffect->IsChildOf(UHodgeResonanceEnergyEffect::StaticClass()))))
+	{ Errors.Add(FText::FromString(TEXT("Resonance gain requires a finite nonnegative amount and compatible energy GE"))); }
 	auto Error = [&Errors](const FString& Message)
 	{
 		Errors.Add(FText::FromString(Message));
@@ -126,6 +151,10 @@ bool UHodgeAbilityDefinition::ValidateDefinition(TArray<FText>& Errors) const
 		}
 	}
 	if (ExecutionRoute == EHodgeAbilityExecutionRoute::ComboCoordinated && InputTag.IsValid()) { Error(TEXT("InputTag is for Standalone definitions only.")); }
+	// 非法阈值拒绝授予；空窗口标签是显式关闭，不是配置错误。
+	if (ExecutionRoute == EHodgeAbilityExecutionRoute::Standalone &&
+		(!FMath::IsFinite(StandaloneMoveIntentThreshold) || StandaloneMoveIntentThreshold <= 0.f || StandaloneMoveIntentThreshold > 1.f))
+	{ Error(TEXT("StandaloneMoveIntentThreshold must be finite and in (0, 1].")); }
 	// 能力自行校验效果契约，通用检测配置不限定 GE 的执行方式。
 	if (AbilityClass && AbilityClass->IsChildOf(UHodgeGameplayAbility_Definition::StaticClass()))
 	{
@@ -140,6 +169,23 @@ EDataValidationResult UHodgeAbilityDefinition::IsDataValid(FDataValidationContex
 	const auto Parent = Super::IsDataValid(Context);
 	TArray<FText> Errors;
 	ValidateDefinition(Errors);
+	// 编辑器报告电影配置错误，运行时镜头失败不替代正式技能和伤害权限。
+	int32 CameraWindows=0;
+	if (ExecutionConfig.Montage)
+	{
+		for (const auto& Event : ExecutionConfig.Montage->Notifies)
+		{
+			if (const auto* Window=Cast<UHodgeAnimNotifyState_CinematicCamera>(Event.NotifyStateClass))
+			{
+				++CameraWindows;
+				if (!Window->Profile) { Errors.Add(FText::FromString(TEXT("Cinematic window requires a profile"))); }
+				else { Window->Profile->Validate(Errors); }
+				if (Event.GetTriggerTime()<0.f || Event.GetEndTriggerTime()>ExecutionConfig.Montage->GetPlayLength()*.5f+UE_KINDA_SMALL_NUMBER || Event.GetDuration()<=0.f)
+				{ Errors.Add(FText::FromString(TEXT("Cinematic window must have positive duration within montage first half"))); }
+			}
+		}
+	}
+	if (CameraWindows>1) { Errors.Add(FText::FromString(TEXT("First cinematic version supports one continuous window per montage"))); }
 	for (const FText& Error : Errors)
 	{
 		Context.AddError(Error);

@@ -2,6 +2,11 @@
  * @brief 实现玩法能力Melee相关的类型、接口与现有处理流程。
  */
 #include "AbilitySystem/Abilities/HodgeGameplayAbility_Melee.h"
+#include "AbilitySystem/Abilities/HodgeGameplayAbility_HavocRules.h"
+#include "AbilitySystem/AttributeSet/HodgeHavocSet.h"
+#include "AbilitySystem/AttributeSet/HodgeResonanceSet.h"
+#include "AbilitySystem/AttributeSet/HodgeHealthSet.h"
+#include "UObject/StrongObjectPtr.h"
 #include "Component/HodgeDefenseComponent.h"
 #include "AbilitySystem/Abilities/HodgeAbilityTask_WaitHitResults.h"
 #include "AbilitySystem/AttributeSet/HodgeCombatSet.h"
@@ -133,8 +138,10 @@ void UHodgeGameplayAbility_Melee::ResetHitGeometryHistory()
 void UHodgeGameplayAbility_Melee::OnExecutionReady()
 {
 	Super::OnExecutionReady();
+	bDarkFlowCastCommitted=false;
 	HitStates.Reset();
 	HitGroups.Reset();
+	ResonancePhases.Reset(); DarkFlowPhases.Reset();
 	HitAnchors.Reset();
 	HitTargets.Reset();
 	// 当前操作使用的定义配置。
@@ -170,6 +177,7 @@ void UHodgeGameplayAbility_Melee::OnExecutionEnding(const FGuid& EndingExecution
 	}
 	HitStates.Reset();
 	HitGroups.Reset();
+	ResonancePhases.Reset(); DarkFlowPhases.Reset();
 	HitAnchors.Reset();
 	HitTargets.Reset();
 	Super::OnExecutionEnding(EndingExecutionId);
@@ -342,6 +350,7 @@ FGameplayEffectSpecHandle UHodgeGameplayAbility_Melee::BuildMeleeHitSpec(const F
 	if (AbilitySpec) { Spec.Data->SetByCallerTagMagnitudes = AbilitySpec->SetByCallerTagMagnitudes; }
 	Spec.Data->SetSetByCallerMagnitude(HodgeGameplayTags::SetByCaller_DamageMultiplier, Binding.DamageMultiplier);
 	if (Binding.DamageType.IsValid()) { Spec.Data->AddDynamicAssetTag(Binding.DamageType); }
+	if (Binding.DamageElement.IsValid()) { Spec.Data->AddDynamicAssetTag(Binding.DamageElement); }
 	if (Binding.bAllowFriendlyFire) { Spec.Data->AddDynamicAssetTag(HodgeGameplayTags::GameplayEffect_Damage_AllowFriendlyFire); }
 	return Spec;
 }
@@ -399,14 +408,66 @@ void UHodgeGameplayAbility_Melee::SubmitMeleeHitEffects(const FHodgeHitDetection
     const FGameplayEffectContextHandle SettlementContext = Spec.Data->GetContext();
     auto* Context = FHodgeGameplayEffectContext::ExtractEffectContext(SettlementContext);
     const FGuid PreviousId = Context ? Context->HitSettlementId : FGuid();
-    if (Context) { Context->HitSettlementId = Id; }
+    const FGuid SettlementId=Id.IsValid() ? Id : FGuid::NewGuid();
+    if (Context) { Context->HitSettlementId = SettlementId; }
+    float AcceptedDamage=0.f;
+    const auto* Definition=GetDefinition();
+    const auto* Resource=GetAbilitySystemComponentFromActorInfo()->GetSet<UHodgeResonanceSet>();
+    auto* HavocRules=UHodgeGameplayAbility_HavocRules::Find(GetAbilitySystemComponentFromActorInfo());
+    const bool bObserveHavoc=HavocRules && Definition && (Definition->DarkFlowGainPerPhase>0.f || Definition->bEnhancedNormalAttack);
+    const bool bObserveEnergy=bObserveHavoc || (Definition && Definition->ResonanceEnergyGainPerPhase.GetValueAtLevel(GetAbilityLevel())>0.f && Resource && Resource->IsResourceReady());
+    // 不回能的技能和没有玩家资源的NPC不创建临时属性观察者。
+    TStrongObjectPtr<UHodgeHealthSet> HealthSet(bObserveEnergy ? const_cast<UHodgeHealthSet*>(TargetASC->GetSet<UHodgeHealthSet>()) : nullptr);
+    FDelegateHandle Observer;
+    if (HealthSet.Get())
+    {
+        // 临时观察同一结算GUID的真实生命扣除，目标死亡仍可确认有效命中。
+        Observer=HealthSet->OnDamageAccepted.AddLambda([&AcceptedDamage,SettlementId](AActor*,AActor*,const FGameplayEffectSpec* EventSpec,float Amount,float,float)
+        {
+            const auto* EventContext=EventSpec ? FHodgeGameplayEffectContext::ExtractEffectContext(EventSpec->GetContext()) : nullptr;
+            if (EventContext && EventContext->HitSettlementId==SettlementId && FMath::IsFinite(Amount) && Amount>0.f) { AcceptedDamage+=Amount; }
+        });
+    }
     ApplyMeleeHitEffects(Batch, Hit, Binding, TargetASC, Spec);
+    if (HealthSet.Get()) { HealthSet->OnDamageAccepted.Remove(Observer); }
     if (Context) { Context->HitSettlementId = PreviousId; }
+    TryGrantResonanceEnergy(Batch,Binding,AcceptedDamage);
+    if (HavocRules && Definition && IsMeleeBatchCurrent(Batch))
+    {
+        if (!GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(HodgeHavocTags::DarkSurge) && Definition->DarkFlowGainPerPhase>0.f &&
+            DarkFlowPhases.TryReserve(Binding.HitGroup,Binding.AttackPhase,AcceptedDamage)) { HavocRules->ApplyDarkFlowGain(this,Definition->DarkFlowGainPerPhase); }
+        if (Definition->bEnhancedNormalAttack) { HavocRules->HandleEnhancedNormalHit(this,AcceptedDamage); }
+    }
     if (Reaction.IsValid() && Id.IsValid())
     {
         const FHodgeHitReactionResult Result = Reaction->FinishHit(Id);
         if (Avatar.IsValid() && IsMeleeBatchCurrent(Batch)) { OnMeleeReactionResolved(Avatar.Get(), Result); }
     }
+}
+
+bool FHodgeResonancePhaseLedger::TryReserve(FName Group, FName Phase, float AcceptedDamage)
+{
+	if (Group.IsNone() || Phase.IsNone() || !FMath::IsFinite(AcceptedDamage) || AcceptedDamage<=0.f) { return false; }
+	const FHodgeHitGroupKey Key{Group,Phase};
+	if (Phases.Contains(Key)) { return false; }
+	Phases.Add(Key); return true;
+}
+
+void UHodgeGameplayAbility_Melee::TryGrantResonanceEnergy(const FHodgeHitDetectionBatch& Batch,
+	const FHodgeHitEffectConfig& Binding, float AcceptedDamage)
+{
+	if (!IsMeleeBatchCurrent(Batch) || AcceptedDamage<=0.f) { return; }
+	auto* ASC=GetAbilitySystemComponentFromActorInfo(); const auto* Definition=GetDefinition();
+	const auto* Resource=ASC ? ASC->GetSet<UHodgeResonanceSet>() : nullptr;
+	const auto* Health=ASC ? ASC->GetSet<UHodgeHealthSet>() : nullptr;
+	if (!Resource || !Resource->IsResourceReady() || !Definition || ASC->HasMatchingGameplayTag(HodgeGameplayTags::Status_Death) || (Health && Health->GetHealth()<=0.f)) { return; }
+	const float Gain=Definition->ResonanceEnergyGainPerPhase.GetValueAtLevel(GetAbilityLevel());
+	if (!FMath::IsFinite(Gain) || Gain<=0.f || !Definition->ResonanceEnergyGainEffect) { return; }
+	auto Spec=ASC->MakeOutgoingSpec(Definition->ResonanceEnergyGainEffect,GetAbilityLevel(),ASC->MakeEffectContext());
+	if (!Spec.IsValid() || !ResonancePhases.TryReserve(Binding.HitGroup,Binding.AttackPhase,AcceptedDamage)) { return; }
+	// 占用阶段先于属性广播，重入不能重复提交本刀的回能。
+	Spec.Data->SetSetByCallerMagnitude(HodgeResonanceTags::EnergyDelta,Gain);
+	ASC->ApplyGameplayEffectSpecToSelf(*Spec.Data.Get());
 }
 
 /** 按命中配置提交伤害效果与附带反应。 */
@@ -425,4 +486,17 @@ void UHodgeGameplayAbility_Melee::ApplyMeleeHitEffects_Implementation(const FHod
 	FGameplayAbilityTargetDataHandle TargetData(Target);
 	// 将构造的效果规格提交给GAS执行属性更新。
 	ApplyGameplayEffectSpecToTarget(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, Spec, TargetData);
+}
+
+/** 成功施放和命中收益分离，通知前取消无收益，空挥仍合法。 */
+void UHodgeGameplayAbility_Melee::OnExecutionEvent(FGameplayTag Tag)
+{
+	Super::OnExecutionEvent(Tag);
+	if (Tag!=HodgeHavocTags::CastCommitted || bDarkFlowCastCommitted) { return; }
+	const auto* Data=GetDefinition();
+	if (Data && Data->DarkFlowGainOnCast>0.f)
+	{
+		if (auto* Rules=UHodgeGameplayAbility_HavocRules::Find(GetAbilitySystemComponentFromActorInfo()))
+		{ bDarkFlowCastCommitted=true; Rules->ApplyDarkFlowGain(this,Data->DarkFlowGainOnCast); }
+	}
 }

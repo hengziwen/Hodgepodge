@@ -261,10 +261,10 @@ void UHodgeCameraMode::SetBlendWeight(float Weight)
 void UHodgeCameraMode::UpdateBlending(float DeltaTime)
 {
 	// 有混合时间时，根据 DeltaTime 推进混合进度
-	if (BlendTime > 0.0f)
+	if (GetBlendTime() > 0.0f)
 	{
 		// 按照经过时间占总混合时间的比例增加混合进度
-		BlendAlpha += (DeltaTime / BlendTime);
+		BlendAlpha += (DeltaTime / GetBlendTime());
 
 		// 防止混合进度超过 1
 		BlendAlpha = FMath::Min(BlendAlpha, 1.0f);
@@ -379,7 +379,7 @@ void UHodgeCameraModeStack::DeactivateStack()
 }
 
 // 将指定的 CameraMode 压入栈顶
-void UHodgeCameraModeStack::PushCameraMode(TSubclassOf<UHodgeCameraMode> CameraModeClass)
+void UHodgeCameraModeStack::PushCameraMode(TSubclassOf<UHodgeCameraMode> CameraModeClass, float TransitionSeconds)
 {
 	// 没有指定 CameraMode 类型时直接返回
 	if (!CameraModeClass)
@@ -445,6 +445,7 @@ void UHodgeCameraModeStack::PushCameraMode(TSubclassOf<UHodgeCameraMode> CameraM
 
 	// 判断新 CameraMode 是否需要进行平滑混合
 	CameraMode->OnBecomeTop();
+	CameraMode->SetTransitionBlendTime(TransitionSeconds);
 	const bool bShouldBlend = ((CameraMode->GetBlendTime() > 0.0f) && (StackSize > 0));
 
 	// 如果需要混合，则继承原来的贡献权重，否则直接从 100% 开始
@@ -487,6 +488,12 @@ bool UHodgeCameraModeStack::EvaluateStack(float DeltaTime, FHodgeCameraModeView&
 }
 
 // 获取指定 CameraMode 类型对应的实例
+UHodgeCameraMode* UHodgeCameraModeStack::FindExistingMode(TSubclassOf<UHodgeCameraMode> Class) const
+{
+	for (UHodgeCameraMode* Mode : CameraModeInstances) { if (Mode && Mode->GetClass()==Class) { return Mode; } }
+	return nullptr;
+}
+
 UHodgeCameraMode* UHodgeCameraModeStack::GetCameraModeInstance(TSubclassOf<UHodgeCameraMode> CameraModeClass)
 {
 	// CameraModeClass 必须有效
@@ -542,7 +549,7 @@ void UHodgeCameraModeStack::UpdateStack(float DeltaTime)
 		CameraMode->UpdateCameraMode(DeltaTime);
 
 		// 当前 CameraMode 已经完全生效时，它下面的 CameraMode 都不再有意义
-		if (CameraMode->GetBlendWeight() >= 1.0f)
+		if (CameraMode->GetBlendWeight() >= 1.0f && !CameraMode->KeepUnderlyingModes())
 		{
 			// 从当前 CameraMode 下一层开始全部可以移除
 			RemoveIndex = (StackIndex + 1);

@@ -73,6 +73,18 @@ class HODGEABILITYEDITOR_API UHodgeCombatValidationLibrary : public UBlueprintFu
 {
 	GENERATED_BODY()
 public:
+	/** 暗流PIE夹具通过正式GE修改资源，只在权威游戏Tick执行。 */
+	UFUNCTION(BlueprintCallable, Category="Hodge|Editor|Validation") static bool QueueDarkFlowDelta(AActor* Avatar, float Delta);
+	/** 读取实际暗流与容量；缺少属性集明确返回负值。 */
+	UFUNCTION(BlueprintPure, Category="Hodge|Editor|Validation") static FVector2D InspectDarkFlow(AActor* Avatar);
+	/** 驱散当前会话自己的状态GE，验证配对清理，不影响其他技能效果。 */
+	UFUNCTION(BlueprintCallable, Category="Hodge|Editor|Validation") static bool QueueDarkSurgeDispel(AActor* Avatar);
+	/** PIE夹具只在权威游戏Tick通过正式GE增减能量，不供生产技能调用。 */
+	UFUNCTION(BlueprintCallable, Category="Hodge|Editor|Validation") static bool QueueResonanceEnergyDelta(AActor* Avatar, float Delta);
+	/** 读取真实ASC资源；缺属性集返回(-1,-1)，不伪装成零能量。 */
+	UFUNCTION(BlueprintPure, Category="Hodge|Editor|Validation") static FVector2D InspectResonanceEnergy(AActor* Avatar);
+	/** 按当前执行身份跳转或暂停蒙太奇，用于源时钟和迟到回调故障注入。 */
+	UFUNCTION(BlueprintCallable, Category="Hodge|Editor|Validation") static bool QueueCinematicSourceProbe(AActor* Avatar, float Position, float PlayRate = 1.f);
 	/** PIE 故障注入只在游戏 Tick 执行，验证预测暂停和权威拒绝后的恢复。 */
 	UFUNCTION(BlueprintCallable, Category="Hodge|Editor|Validation")
 	static bool QueueAttackFacingProbe(AActor* Avatar, FName Action);

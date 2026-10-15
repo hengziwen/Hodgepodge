@@ -22,6 +22,8 @@ class UAnimSequence;
 class UAnimSequenceBase;
 class UHodgeWingProfile;
 class USkeletalMesh;
+class UHodgeCinematicCameraProfile;
+class UHodgeHitDetectionProfile;
 class ANavMeshBoundsVolume;
 
 /** 为 CodexText 中的动画副本提供编辑器文本导入、引用修正和编译诊断。 */
@@ -32,6 +34,23 @@ class HODGEABILITYEDITOR_API UHodgeAnimationAuthoringLibrary : public UBlueprint
 	GENERATED_BODY()
 
 public:
+	/** 制作暗涌专属动作副本；时间均为源秒，命中与取消窗口由资产参数指定。 */
+	UFUNCTION(BlueprintCallable, Category="Hodge|Editor|Havoc")
+	static bool ConfigureHavocMontage(UAnimMontage* Montage, UAnimSequence* Source,
+		float HitStart, float HitEnd, float RecoveryStart, bool bCircuit, bool bSkill);
+	/** 普通E只补施放提交节点，保留用户已有命中、翅膀与移动取消配置。 */
+	UFUNCTION(BlueprintCallable, Category="Hodge|Editor|Havoc")
+	static bool ConfigureHavocCastCommit(UAnimMontage* Montage, float Time);
+	/** 只装配新大招资产：主动作、前半镜头、全程翼和一次固定Box。 */
+	UFUNCTION(BlueprintCallable, Category="Hodge|Editor|Liberation")
+	static bool ConfigureLiberationMontage(UAnimMontage* Montage, UAnimSequence* Source, UAnimMontage* WingMontage,
+		UHodgeCinematicCameraProfile* CameraProfile, UHodgeHitDetectionProfile* HitProfile, float HitTime);
+	/** 为独立翼 AnimBP 接入 DefaultSlot，仅修改明确的翼资产。 */
+	UFUNCTION(BlueprintCallable, Category="Hodge|Editor|Wing")
+	static bool ConfigureWingMontageGraph(UAnimBlueprint* Blueprint);
+	/** 将现有翼 Sequence 放入独立翼蒙太奇，不修改源动画。 */
+	UFUNCTION(BlueprintCallable, Category="Hodge|Editor|Wing")
+	static bool ConfigureWingMontageAsset(UAnimMontage* Montage, UAnimSequence* Sequence);
 	/** 为首版攻击添加原生 Warp 通知，不修改命中和恢复窗口。 */
 	UFUNCTION(BlueprintCallable, Category="Hodge|Editor|Facing")
 	static FString ConfigureAttackFacingWarp(UHodgeAbilityDefinition* Definition, float StartTime, float EndTime);

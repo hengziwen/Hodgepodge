@@ -814,7 +814,7 @@ void UHodgeGameplayAbility::SetCameraMode(TSubclassOf<UHodgeCameraMode> CameraMo
 	// 通过 HeroComponent 申请本 GA 的临时 CameraMode，结束时按 Spec 归属撤销。
 	if (UHodgeHeroComponent* HeroComponent = GetHeroComponentFromActorInfo())
 	{
-		HeroComponent->SetAbilityCameraMode(CameraMode, CurrentSpecHandle);
+		ActiveCameraHandle = HeroComponent->SetAbilityCameraMode(CameraMode, CurrentSpecHandle);
 		ActiveCameraMode = CameraMode;
 	}
 }
@@ -830,9 +830,10 @@ void UHodgeGameplayAbility::ClearCameraMode()
 	{
 		if (UHodgeHeroComponent* HeroComponent = GetHeroComponentFromActorInfo())
 		{
-			HeroComponent->ClearAbilityCameraMode(CurrentSpecHandle);
+			HeroComponent->ClearAbilityCameraMode(ActiveCameraHandle);
 		}
 
 		ActiveCameraMode = nullptr;
+		ActiveCameraHandle = FHodgeAbilityCameraHandle();
 	}
 }

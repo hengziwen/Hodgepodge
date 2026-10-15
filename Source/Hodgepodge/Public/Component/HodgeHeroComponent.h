@@ -18,6 +18,8 @@
 #include "GameplayAbilitySpecHandle.h"
 #include "Combat/HodgeCharacterFacingTypes.h"
 #include "Combat/HodgeMovementActionTypes.h"
+#include "Camera/HodgeCinematicCameraTypes.h"
+#include "Combat/HodgeHavocRules.h"
 
 #include "HodgeHeroComponent.generated.h"
 
@@ -36,6 +38,9 @@ class UInputComponent;
 
 // 项目自定义相机模式。
 class UHodgeCameraMode;
+class UHodgeCinematicCameraProfile;
+class UHodgeGameplayAbility_Definition;
+class UHodgeAnimNotifyState_CinematicCamera;
 
 // 项目自定义输入配置，负责 InputAction 与 GameplayTag 的映射。
 class UHodgeInputConfig;
@@ -99,8 +104,20 @@ public:
 	 * @param CameraMode 相机模式与混合栈，由调用方传入。
 	 * @param OwningSpecHandle 已授予能力的Spec句柄。
 	 */
-	void SetAbilityCameraMode(TSubclassOf<UHodgeCameraMode> CameraMode,
-	                          const FGameplayAbilitySpecHandle& OwningSpecHandle);
+	FHodgeAbilityCameraHandle SetAbilityCameraMode(TSubclassOf<UHodgeCameraMode> CameraMode,
+	                          const FGameplayAbilitySpecHandle& OwningSpecHandle, FGuid ExecutionId = FGuid());
+	/** 相机释放必须匹配完整申请，避免同一Spec的迟到清理。 */
+	bool ClearAbilityCameraMode(const FHodgeAbilityCameraHandle& Handle);
+	/** 查询精确主蒙太奇窗口，只有本地拥有者建立电影申请。 */
+	void RefreshCinematicCamera();
+	/** 只释放指定执行拥有的电影申请，供取消和换Pawn清理。 */
+	void EndCinematicCameraForExecution(FGuid ExecutionId);
+	/** 运行时源或安全检查失败后，本次实例不无限重新申请。 */
+	void AbortCinematicCamera(const FHodgeAbilityCameraHandle& Handle, const FString& Reason);
+	/** 当前Profile受GC保护，电影模式只读消费。 */
+	const UHodgeCinematicCameraProfile* GetCinematicProfile() const { return CinematicProfile; }
+	/** 暴露只读源时间和会话身份，不授权服务器伤害。 */
+	UFUNCTION(BlueprintPure, Category="Hodge|Camera") FHodgeCinematicCameraState GetCinematicCameraState() const { return CinematicState; }
 	/** 查询能力、锁定和默认配置仲裁后的期望镜头，实际混合栈另由相机组件查询。 */
 	UFUNCTION(BlueprintPure, Category="Hodge|Camera") TSubclassOf<UHodgeCameraMode> GetDesiredCameraMode() const { return DetermineCameraMode(); }
 
@@ -334,6 +351,12 @@ protected:
 
 protected:
 	// 默认输入 MappingContext 及其优先级配置。
+	/** 共鸣回路只观察长按，不推迟原普攻按下事件。 */
+	FHodgeHavocHoldSession CircuitHold;
+	FTimerHandle CircuitHoldTimer;
+	void BeginCircuitHold();
+	void UpdateCircuitHold();
+	void EndCircuitHold();
 	UPROPERTY(EditAnywhere)
 	TArray<FInputMappingContextAndPriority> DefaultInputMappings;
 
@@ -345,6 +368,21 @@ protected:
 	/** Spec handle for the last ability to set a camera mode. */
 	// 当前 AbilityCameraMode 对应的 AbilitySpecHandle，用于确认谁拥有这次相机覆盖。
 	FGameplayAbilitySpecHandle AbilityCameraModeOwningSpecHandle;
+	/** 完整能力相机身份是清理的唯一判据。 */
+	FHodgeAbilityCameraHandle AbilityCameraHandle;
+	/** 单调增长的申请代次，同类相机重复使用仍生成新会话。 */
+	int32 NextCameraGeneration = 0;
+	/** 当前电影配置引用，防止运行期间被GC回收。 */
+	UPROPERTY() TObjectPtr<UHodgeCinematicCameraProfile> CinematicProfile;
+	/** 本地电影事实来自实际Definition实例，而非通知对象中的变量。 */
+	UPROPERTY() TWeakObjectPtr<UHodgeGameplayAbility_Definition> CinematicSource;
+	UPROPERTY() TObjectPtr<UHodgeAnimNotifyState_CinematicCamera> CinematicWindow;
+	FHodgeCinematicCameraState CinematicState;
+	/** 失败执行仅报告一次，下一次激活可重新验证修复后的配置。 */
+	FGuid FailedCinematicExecution;
+	int32 FailedCinematicInstance = INDEX_NONE;
+	/** 查询和结束回调发生重入时不重复申请。 */
+	bool bRefreshingCinematic = false;
 
 	/** True when player input bindings have been applied, will never be true for non - players */
 	// 标记本地玩家输入绑定是否已经完成；非玩家控制 Pawn 永远不会为 true。

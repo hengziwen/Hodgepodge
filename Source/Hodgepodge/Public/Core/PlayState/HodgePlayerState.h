@@ -310,6 +310,10 @@ private:
 	// 战斗属性集的数据或对象引用。
 	UPROPERTY()
 	TObjectPtr<const class UHodgeCombatSet> CombatSet;
+	/** 共鸣解放资源只创建一次，随玩家ASC复制。 */
+	UPROPERTY() TObjectPtr<const class UHodgeResonanceSet> ResonanceSet;
+	/** 共鸣回路的独立个人资源，不复用大招能量。 */
+	UPROPERTY() TObjectPtr<const class UHodgeHavocSet> HavocSet;
 
 	// 玩家当前的连接状态，并同步到客户端。
 	UPROPERTY(Replicated)

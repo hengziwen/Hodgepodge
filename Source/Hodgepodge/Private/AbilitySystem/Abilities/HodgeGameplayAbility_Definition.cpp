@@ -7,6 +7,7 @@
 #include "AbilitySystem/HodgeGameplayTags.h"
 #include "Component/HodgeCombatComponentBase.h"
 #include "Data/HodgeAbilityDefinition.h"
+#include "Component/HodgeHeroComponent.h"
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimMontage.h"
 #include "Component/HodgeWingComponent.h"
@@ -83,6 +84,8 @@ bool UHodgeGameplayAbility_Definition::CanActivateAbility(FGameplayAbilitySpecHa
 	const auto* Definition = ASC ? ASC->FindAbilityDefinition(Handle) : nullptr;
 	return ASC && Definition && Combat && Combat->IsCombatReadyForActions() && Combat->GetOwner() == Info->AvatarActor.Get()
 		&& !ASC->HasMatchingGameplayTag(HodgeGameplayTags::Status_Death)
+		&& ASC->GetOwnedGameplayTags().HasAll(Definition->RequiredSourceTags)
+		&& !ASC->GetOwnedGameplayTags().HasAny(Definition->BlockedSourceTags)
 		&& (Definition->ExecutionRoute == EHodgeAbilityExecutionRoute::Standalone || Combat->IsAuthorized(Handle))
 		&& Super::CanActivateAbility(Handle, Info, SourceTags, TargetTags, RelevantTags);
 }
@@ -383,6 +386,8 @@ void UHodgeGameplayAbility_Definition::EndAbility(FGameplayAbilitySpecHandle Han
 	// 先失效旧身份，清理期间的回调不能消费上一段结果。
 	const FGuid EndingExecutionId = ExecutionId;
 	const int32 EndingMontageId = MontageInstanceId;
+	// 先释放本次电影镜头，不能等待已经失效的NotifyEnd。
+	if (auto* Hero = GetHeroComponentFromActorInfo()) { Hero->EndCinematicCameraForExecution(EndingExecutionId); }
 	ExecutionId.Invalidate();
 	OnExecutionEnding(EndingExecutionId);
 	if (const AActor* Avatar = GetAvatarActorFromActorInfo())
@@ -435,6 +440,19 @@ FGameplayTagContainer UHodgeGameplayAbility_Definition::GetExecutionWindows() co
 	FGameplayTagContainer Tags;
 	for (const auto& Pair : StateCounts) { if (Pair.Value > 0) { Tags.AddTag(Pair.Key); } }
 	return Tags;
+}
+
+bool UHodgeGameplayAbility_Definition::GetCinematicSource(UAnimMontage*& OutMontage, int32& OutInstanceId, float& OutPosition) const
+{
+	OutMontage = nullptr; OutInstanceId = INDEX_NONE; OutPosition = 0.f;
+	const auto* Data = GetDefinition();
+	auto* ASC = GetAbilitySystemComponentFromActorInfo();
+	auto* Anim = CurrentActorInfo ? CurrentActorInfo->GetAnimInstance() : nullptr;
+	const auto* Instance = Anim ? Anim->GetMontageInstanceForID(MontageInstanceId) : nullptr;
+	if (!IsActive() || bEnding || bPredictedMoveCancel || !ExecutionId.IsValid() || !Data || !Instance ||
+		!ASC || ASC->GetAnimatingAbility() != this || ASC->GetAvatarActor() != GetAvatarActorFromActorInfo() || Instance->Montage != Data->ExecutionConfig.Montage) { return false; }
+	OutMontage = Data->ExecutionConfig.Montage; OutInstanceId = MontageInstanceId; OutPosition = Instance->GetPosition();
+	return FMath::IsFinite(OutPosition);
 }
 
 /** 校验通知是否属于当前Avatar、蒙太奇实例与执行身份。 */
@@ -529,6 +547,8 @@ void UHodgeGameplayAbility_Definition::SendExecutionEvent(FGameplayTag Tag)
 	if (!Tag.IsValid() || !IsActive() || bEnding) { return; }
 	const FGuid Execution = ExecutionId;
 	FGameplayEventData Data;
+	OnExecutionEvent(Tag);
+	if (Execution!=ExecutionId || !IsActive() || bEnding) { return; }
 	Data.EventTag = Tag;
 	Data.Instigator = GetAvatarActorFromActorInfo();
 	if (auto* ASC = GetAbilitySystemComponentFromActorInfo()) { ASC->HandleGameplayEvent(Tag, &Data); }

@@ -33,7 +33,92 @@
 #include "Character/HodgeEnemyCharacter.h"
 #include "Engine/StaticMeshActor.h"
 #include "Animation/Skeleton.h"
+#include "AbilitySystem/AttributeSet/HodgeResonanceSet.h"
+#include "AbilitySystem/Effects/HodgeResonanceEnergyEffect.h"
+#include "AbilitySystem/AttributeSet/HodgeHavocSet.h"
+#include "AbilitySystem/Effects/HodgeHavocEffects.h"
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeCombatValidationLibrary)
+
+bool UHodgeCombatValidationLibrary::QueueDarkFlowDelta(AActor* Avatar, float Delta)
+{
+	if (!Avatar || !Avatar->HasAuthority() || !Avatar->GetWorld() || Avatar->GetWorld()->WorldType!=EWorldType::PIE || !FMath::IsFinite(Delta)) { return false; }
+	const TWeakObjectPtr<AActor> Weak=Avatar;
+	Avatar->GetWorld()->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateLambda([Weak,Delta]()
+	{
+		auto* ASC=Weak.IsValid() ? UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(Weak.Get()) : nullptr;
+		if (!ASC || ASC->GetAvatarActor()!=Weak.Get() || !ASC->GetSet<UHodgeHavocSet>()) { return; }
+		auto Spec=ASC->MakeOutgoingSpec(UHodgeDarkFlowEffect::StaticClass(),1.f,ASC->MakeEffectContext());
+		if (Spec.IsValid()) { Spec.Data->SetSetByCallerMagnitude(HodgeHavocTags::DarkFlowDelta,Delta); ASC->ApplyGameplayEffectSpecToSelf(*Spec.Data.Get()); }
+	}));
+	return true;
+}
+
+FVector2D UHodgeCombatValidationLibrary::InspectDarkFlow(AActor* Avatar)
+{
+	const auto* ASC=Avatar ? UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(Avatar) : nullptr;
+	const auto* Set=ASC ? ASC->GetSet<UHodgeHavocSet>() : nullptr;
+	return Set ? FVector2D(Set->GetDarkFlow(),Set->GetMaxDarkFlow()) : FVector2D(-1.,-1.);
+}
+
+bool UHodgeCombatValidationLibrary::QueueDarkSurgeDispel(AActor* Avatar)
+{
+	if (!Avatar || !Avatar->HasAuthority() || !Avatar->GetWorld() || Avatar->GetWorld()->WorldType!=EWorldType::PIE) { return false; }
+	const TWeakObjectPtr<AActor> Weak=Avatar;
+	Avatar->GetWorld()->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateLambda([Weak]()
+	{
+		auto* ASC=Weak.IsValid() ? UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(Weak.Get()) : nullptr;
+		if (!ASC || ASC->GetAvatarActor()!=Weak.Get()) { return; }
+		// 类型限定只撤销暗涌状态；生产移除委托负责配对清理与清空燃料。
+		for (const auto Handle : ASC->GetActiveEffects(FGameplayEffectQuery()))
+		{
+			const auto* Effect=ASC->GetActiveGameplayEffect(Handle);
+			if (Effect && Effect->Spec.Def && Effect->Spec.Def->IsA<UHodgeDarkSurgeEffect>()) { ASC->RemoveActiveGameplayEffect(Handle); }
+		}
+	}));
+	return true;
+}
+
+bool UHodgeCombatValidationLibrary::QueueResonanceEnergyDelta(AActor* Avatar, float Delta)
+{
+	if (!Avatar || !Avatar->HasAuthority() || !Avatar->GetWorld() || Avatar->GetWorld()->WorldType!=EWorldType::PIE || !FMath::IsFinite(Delta)) { return false; }
+	const TWeakObjectPtr<AActor> Weak=Avatar;
+	Avatar->GetWorld()->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateLambda([Weak,Delta]()
+	{
+		if (!Weak.IsValid()) { return; }
+		auto* ASC=UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(Weak.Get());
+		if (!ASC || ASC->GetAvatarActor()!=Weak.Get() || !ASC->GetSet<UHodgeResonanceSet>()) { return; }
+		auto Spec=ASC->MakeOutgoingSpec(UHodgeResonanceEnergyEffect::StaticClass(),1.f,ASC->MakeEffectContext());
+		if (Spec.IsValid()) { Spec.Data->SetSetByCallerMagnitude(HodgeResonanceTags::EnergyDelta,Delta); ASC->ApplyGameplayEffectSpecToSelf(*Spec.Data.Get()); }
+	}));
+	return true;
+}
+
+FVector2D UHodgeCombatValidationLibrary::InspectResonanceEnergy(AActor* Avatar)
+{
+	const auto* ASC=Avatar ? UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(Avatar) : nullptr;
+	const auto* Set=ASC ? ASC->GetSet<UHodgeResonanceSet>() : nullptr;
+	return Set ? FVector2D(Set->GetResonanceEnergy(),Set->GetMaxResonanceEnergy()) : FVector2D(-1.,-1.);
+}
+
+bool UHodgeCombatValidationLibrary::QueueCinematicSourceProbe(AActor* Avatar, float Position, float PlayRate)
+{
+	if (!Avatar || !Avatar->GetWorld() || Avatar->GetWorld()->WorldType!=EWorldType::PIE || !FMath::IsFinite(Position) || !FMath::IsFinite(PlayRate) || Position<0.f || PlayRate<0.f) { return false; }
+	auto* ASC=UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(Avatar);
+	auto* Ability=ASC ? Cast<UHodgeGameplayAbility_Definition>(ASC->GetAnimatingAbility()) : nullptr;
+	if (!Ability) { return false; }
+	const FGuid Execution=Ability->GetExecutionId(); const TWeakObjectPtr<AActor> Weak=Avatar;
+	Avatar->GetWorld()->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateLambda([Weak,Execution,Position,PlayRate]()
+	{
+		if (!Weak.IsValid()) { return; }
+		auto* CurrentASC=UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(Weak.Get());
+		auto* Current=CurrentASC ? Cast<UHodgeGameplayAbility_Definition>(CurrentASC->GetAnimatingAbility()) : nullptr;
+		UAnimMontage* Montage=nullptr; int32 Id=INDEX_NONE; float CurrentPosition=0.f;
+		if (!Current || Current->GetExecutionId()!=Execution || !Current->GetCinematicSource(Montage,Id,CurrentPosition)) { return; }
+		auto* Anim=CurrentASC->AbilityActorInfo->GetAnimInstance(); auto* Instance=Anim ? Anim->GetMontageInstanceForID(Id) : nullptr;
+		if (Instance) { Instance->SetPosition(FMath::Min(Position,Montage->GetPlayLength()-.001f)); Instance->SetPlayRate(PlayRate); }
+	}));
+	return true;
+}
 
 /** 把验证用战斗输入排入后续游戏Tick。 */
 bool UHodgeCombatValidationLibrary::QueueCombatInput(AActor* Avatar, FGameplayTag InputTag)

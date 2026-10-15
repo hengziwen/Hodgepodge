@@ -26,6 +26,10 @@
 
 // 项目自定义 AbilitySystemComponent。
 #include "AbilitySystem/HodgeAbilitySystemComponent.h"
+#include "AbilitySystem/AttributeSet/HodgeResonanceSet.h"
+#include "AbilitySystem/Effects/HodgeResonanceEnergyEffect.h"
+#include "AbilitySystem/AttributeSet/HodgeHavocSet.h"
+#include "AbilitySystem/Effects/HodgeHavocEffects.h"
 
 // Actor 遍历工具，例如 TActorIterator。
 #include "EngineUtils.h"
@@ -493,14 +497,70 @@ void AHodgePlayerController::AddCheats(bool bForce)
 // ServerCheat 服务端 RPC 实现。
 void AHodgePlayerController::ServerCheat_Implementation(const FString& Msg)
 {
-	// 在启用 CheatManager 时由服务器执行控制台作弊命令，当前暂未启用。
-	// #if USING_CHEAT_MANAGER
-	//     if (CheatManager)
-	//     {
-	//        UE_LOG(LogHodge, Warning, TEXT("ServerCheat: %s"), *Msg);
-	//        ClientMessage(ConsoleCommand(Msg));
-	//     }
-	// #endif // #if USING_CHEAT_MANAGER
+	// 复用Lyra的客户端转发入口，只开放本次开发命令，不执行任意远端控制台文本。
+#if !UE_BUILD_SHIPPING && !UE_BUILD_TEST
+	if (Msg.Equals(TEXT("HodgeFillResonance"), ESearchCase::IgnoreCase)) { HodgeFillResonance(); }
+	else if (Msg.Equals(TEXT("HodgeFillDarkFlow"), ESearchCase::IgnoreCase)) { HodgeFillDarkFlow(); }
+#endif
+}
+
+void AHodgePlayerController::HodgeFillResonance()
+{
+#if !UE_BUILD_SHIPPING && !UE_BUILD_TEST
+	// 与Lyra God命令一致，属性修改只在权威端通过正式SetByCaller GE执行。
+	if (!HasAuthority())
+	{
+		if (IsLocalController()) { ServerCheat(TEXT("HodgeFillResonance")); }
+		return;
+	}
+	auto* ASC = GetHodgeAbilitySystemComponent();
+	const auto* Resource = ASC ? ASC->GetSet<UHodgeResonanceSet>() : nullptr;
+	if (!Resource || !Resource->IsResourceReady() || ASC->HasMatchingGameplayTag(HodgeGameplayTags::Status_Death))
+	{
+		ClientMessage(TEXT("HodgeFillResonance: resource not ready or player is dead."));
+		return;
+	}
+	const float Delta = Resource->GetMaxResonanceEnergy() - Resource->GetResonanceEnergy();
+	if (Delta > 0.f)
+	{
+		auto Spec = ASC->MakeOutgoingSpec(UHodgeResonanceEnergyEffect::StaticClass(), 1.f, ASC->MakeEffectContext());
+		if (!Spec.IsValid()) { ClientMessage(TEXT("HodgeFillResonance: unable to create energy effect.")); return; }
+		Spec.Data->SetSetByCallerMagnitude(HodgeResonanceTags::EnergyDelta, Delta);
+		if (!ASC->ApplyGameplayEffectSpecToSelf(*Spec.Data.Get()).WasSuccessfullyApplied())
+		{ ClientMessage(TEXT("HodgeFillResonance: energy effect was rejected.")); return; }
+	}
+	ClientMessage(FString::Printf(TEXT("Resonance Energy: %.0f/%.0f (cooldown unchanged)"), Resource->GetResonanceEnergy(), Resource->GetMaxResonanceEnergy()));
+#endif
+}
+
+void AHodgePlayerController::HodgeFillDarkFlow()
+{
+#if !UE_BUILD_SHIPPING && !UE_BUILD_TEST
+	// 沿用既有精确白名单RPC，客户端只申请服务器修改自己的PlayerState资源。
+	if (!HasAuthority())
+	{
+		if (IsLocalController()) { ServerCheat(TEXT("HodgeFillDarkFlow")); }
+		return;
+	}
+	auto* ASC = GetHodgeAbilitySystemComponent();
+	const auto* Resource = ASC ? ASC->GetSet<UHodgeHavocSet>() : nullptr;
+	if (!Resource || !Resource->IsResourceReady() || ASC->HasMatchingGameplayTag(HodgeGameplayTags::Status_Death))
+	{
+		ClientMessage(TEXT("HodgeFillDarkFlow: resource not ready or player is dead."));
+		return;
+	}
+	const float Delta = Resource->GetMaxDarkFlow() - Resource->GetDarkFlow();
+	if (Delta > 0.f)
+	{
+		// 通过正式增量GE触发属性复制与HUD通知，不直接改UI或重新施加状态GE。
+		auto Spec = ASC->MakeOutgoingSpec(UHodgeDarkFlowEffect::StaticClass(), 1.f, ASC->MakeEffectContext());
+		if (!Spec.IsValid()) { ClientMessage(TEXT("HodgeFillDarkFlow: unable to create resource effect.")); return; }
+		Spec.Data->SetSetByCallerMagnitude(HodgeHavocTags::DarkFlowDelta, Delta);
+		if (!ASC->ApplyGameplayEffectSpecToSelf(*Spec.Data.Get()).WasSuccessfullyApplied())
+		{ ClientMessage(TEXT("HodgeFillDarkFlow: resource effect was rejected.")); return; }
+	}
+	ClientMessage(FString::Printf(TEXT("Dark Flow: %.0f/%.0f (cooldown and mode unchanged)"), Resource->GetDarkFlow(), Resource->GetMaxDarkFlow()));
+#endif
 }
 
 // ServerCheat RPC 参数验证。

@@ -30,6 +30,8 @@
 
 // 网络属性复制相关宏与类型。
 #include "AbilitySystem/AttributeSet/HodgeCombatSet.h"
+#include "AbilitySystem/AttributeSet/HodgeResonanceSet.h"
+#include "AbilitySystem/AttributeSet/HodgeHavocSet.h"
 #include "Component/HodgePawnExtensionComponent.h"
 #include "Data/HodgeAbilitySet.h"
 #include "Data/HodgePawnData.h"
@@ -57,6 +59,10 @@ AHodgePlayerState::AHodgePlayerState(const FObjectInitializer& ObjectInitializer
 	// 创建 HealthSet，并保留强引用，确保 ASC 初始化发现 AttributeSet 之前不会被 GC 回收。
 	HealthSet = CreateDefaultSubobject<UHodgeHealthSet>(TEXT("HealthSet"));
 	CombatSet = CreateDefaultSubobject<UHodgeCombatSet>(TEXT("CombatSet"));
+	// 资源跟随PlayerState而非Pawn，重绑定角色不能重复创建或补满。
+	ResonanceSet = CreateDefaultSubobject<UHodgeResonanceSet>(TEXT("ResonanceSet"));
+	// ASC沿用PlayerState持久Owner，Pawn更换不创建第二份暗流属性集。
+	HavocSet = CreateDefaultSubobject<UHodgeHavocSet>(TEXT("HavocSet"));
 	AttributeCoordinator = CreateDefaultSubobject<UHodgeAttributeCoordinator>(TEXT("AttributeCoordinator"));
 
 	// AbilitySystemComponent needs to be updated at a high frequency.
@@ -134,12 +140,17 @@ void AHodgePlayerState::PreInitializeComponents()
 {
 	// 执行父类初始化逻辑。
 	Super::PreInitializeComponents();
+}
+
+// ASC完成属性集发现后才能注册可能立即执行的Experience授予回调。
+void AHodgePlayerState::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
 
 	// ASC 必须已经由构造函数创建。
 	check(AbilitySystemComponent);
 
-	// 第一次初始化 ASC 的 ActorInfo。
-	// OwnerActor 为 PlayerState，AvatarActor 当前使用 GetPawn()，后续 PawnExtension 可以重新绑定真正 Avatar。
+	// 沿用Lyra在PostInitialize绑定持久Owner，后续PawnExtension负责真正Avatar。
 	AbilitySystemComponent->InitAbilityActorInfo(this, GetPawn());
 
 	// 获取当前 World。
@@ -165,13 +176,6 @@ void AHodgePlayerState::PreInitializeComponents()
 		ExperienceComponent->CallOrRegister_OnExperienceLoaded(
 			FOnHodgeExperienceLoaded::FDelegate::CreateUObject(this, &ThisClass::OnExperienceLoaded));
 	}
-}
-
-// Actor 组件初始化完成后调用。
-void AHodgePlayerState::PostInitializeComponents()
-{
-	// 当前仅执行父类默认逻辑。
-	Super::PostInitializeComponents();
 }
 
 // 重置 PlayerState。

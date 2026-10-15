@@ -206,7 +206,9 @@ void UHodgeInputComponent::BindAbilityActions(const UHodgeInputConfig* InputConf
 			{
 				const bool bPressOnce = Action.InputTag == FGameplayTag::RequestGameplayTag(TEXT("InputTag.Ability.Dash")) ||
 					Action.InputTag == FGameplayTag::RequestGameplayTag(TEXT("InputTag.Sprint")) ||
-					Action.InputTag == FGameplayTag::RequestGameplayTag(TEXT("InputTag.Ability.LockOn"));
+					Action.InputTag == FGameplayTag::RequestGameplayTag(TEXT("InputTag.Ability.LockOn")) ||
+					Action.InputTag == FGameplayTag::RequestGameplayTag(TEXT("InputTag.Ability.Melee"));
+				// 普攻按下只提交一次，保留持续按住到真实松开之间的长按会话。
 				BindHandles.Add(BindAction(Action.InputAction, bPressOnce ? ETriggerEvent::Started : ETriggerEvent::Triggered, Object, PressedFunc,
 				                           Action.InputTag).GetHandle());
 			}

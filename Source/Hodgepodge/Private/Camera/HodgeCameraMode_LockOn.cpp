@@ -16,6 +16,8 @@ void UHodgeCameraMode_LockOn::OnBecomeTop()
 	Super::OnBecomeTop(); LookRotation = Super::GetPivotRotation();
 	FHodgeCameraModeView PreviousView;
 	if (GetHodgeCameraComponent()->GetLastCameraModeView(PreviousView)) { LookRotation = PreviousView.Rotation; }
+	// 电影正面特写不能作为锁定恢复方向，只有对应退出切换使用游戏旋转种子。
+	GetHodgeCameraComponent()->GetGameplayReturnRotation(LookRotation);
 	const auto* Extension = UHodgePawnExtensionComponent::FindPawnExtensionComponent(GetTargetActor());
 	const auto* Data = Extension ? Extension->GetPawnData<UHodgePawnData>() : nullptr;
 	if (Data && Data->DefaultCameraMode && Data->DefaultCameraMode->IsChildOf(UHodgeCameraMode_ThirdPerson::StaticClass()))

@@ -25,6 +25,12 @@
 #include "Animation/HodgeEnemyAnimInstance.h"
 #include "Animation/HodgeWingAnimInstance.h"
 #include "Animation/HodgeAnimNotifyState_WingAction.h"
+#include "Animation/HodgeAnimNotifyState_CinematicCamera.h"
+#include "Animation/HodgeCombatAnimNotifies.h"
+#include "Animation/HodgeAnimNotify_DarkSurgeCommit.h"
+#include "AbilitySystem/AttributeSet/HodgeHavocSet.h"
+#include "Data/HodgeCinematicCameraProfile.h"
+#include "AbilitySystem/HodgeGameplayTags.h"
 #include "Engine/SCS_Node.h"
 #include "Engine/SimpleConstructionScript.h"
 #include "GameFramework/Character.h"
@@ -101,9 +107,8 @@ FString UHodgeAnimationAuthoringLibrary::ConfigureWingBoxHit(UAnimMontage* Monta
 		!FMath::IsFinite(Margin) || Margin < 0.f || Profile->PlaybackMode != EHodgeWingPlaybackMode::AnimationAsset ||
 		!Montage->GetOutermost()->GetName().StartsWith(TEXT("/Game/Main/Character/Hero/Anim/Montages/")) ||
 		!Profile->GetOutermost()->GetName().StartsWith(TEXT("/Game/Main/Character/Hero/Wing/"))) { return TEXT("Invalid wing box authoring context"); }
-	const auto* Binding = Profile->AnimationBindings.FindByPredicate([Montage](const auto& Item) { return Item.SourceAnimation == Montage; });
-	if (!Binding || !Binding->WingAnimation || Profile->Mesh->GetRefSkeleton().FindBoneIndex(AnchorBone) == INDEX_NONE)
-	{ return TEXT("Missing mapped wing animation or anchor bone"); }
+	if (!Profile->AnimClass || Profile->Mesh->GetRefSkeleton().FindBoneIndex(AnchorBone) == INDEX_NONE)
+	{ return TEXT("Missing wing AnimBP or anchor bone"); }
 	FAnimNotifyEvent* WingEvent = nullptr;
 	UHodgeAnimNotifyState_HitCheck* Primary = nullptr;
 	for (auto& Event : Montage->Notifies)
@@ -117,30 +122,44 @@ FString UHodgeAnimationAuthoringLibrary::ConfigureWingBoxHit(UAnimMontage* Monta
 		}
 		else if (Hit->Hit.Source == EHodgeAnimHitSource::CharacterMeshSocket) { Primary = Hit; }
 	}
-	if (!WingEvent || !Primary) { return TEXT("Expected one existing wing window and a shared primary strike"); }
+	if (!WingEvent) { return TEXT("Expected one existing wing hit window"); }
 	const float Start = WingEvent->GetTime();
 	const float End = Start + WingEvent->GetDuration();
-	if (Start < 0.f || End <= Start || End > Montage->GetPlayLength() || !Binding->IsWindowOpen(Start) || !Binding->IsWindowOpen(End - .0001f))
-	{ return TEXT("Wing damage window must be inside its presentation window"); }
+	const UHodgeAnimNotifyState_WingAction* Window = nullptr;
+	float WindowStart = 0.f;
+	for (const auto& Event : Montage->Notifies)
+	{
+		const auto* Candidate = Cast<UHodgeAnimNotifyState_WingAction>(Event.NotifyStateClass);
+		if (Candidate && Event.GetTime() <= Start && Event.GetTime() + Event.GetDuration() >= End)
+		{ Window = Candidate; WindowStart = Event.GetTime(); }
+	}
+	TArray<FText> WindowErrors;
+	if (Start < 0.f || End <= Start || End > Montage->GetPlayLength() || !Window || !Window->Validate(Profile->Mesh, WindowErrors))
+	{ return TEXT("Wing damage window requires a valid containing montage notification window"); }
 	const auto* RenderData = Profile->Mesh->GetResourceForRendering();
 	if (!RenderData || RenderData->LODRenderData.IsEmpty()) { return TEXT("Wing LOD0 render data unavailable"); }
 	TStrongObjectPtr<USkeletalMeshComponent> Mesh(NewObject<USkeletalMeshComponent>(GetTransientPackage()));
 	Mesh->SetSkeletalMeshAsset(Profile->Mesh);
-	Mesh->SetAnimationMode(EAnimationMode::AnimationSingleNode);
+	Mesh->SetAnimInstanceClass(Profile->AnimClass);
 	Mesh->SetWorldTransform(Profile->MeshOffset);
 	Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	Mesh->SetVisibility(false);
 	Mesh->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
 	Mesh->RegisterComponentWithWorld(GEditor->GetEditorWorldContext().World());
 	ON_SCOPE_EXIT { Mesh->DestroyComponent(); };
-	Mesh->SetAnimation(Binding->WingAnimation);
+	auto* Anim = Mesh->GetAnimInstance();
+	if (!Anim || Anim->Montage_Play(Window->WingMontage) <= 0.f) { return TEXT("Wing montage could not initialize for measurement"); }
+	auto* Instance = Anim->GetActiveInstanceForMontage(Window->WingMontage);
+	if (!Instance) { return TEXT("Wing montage instance missing for measurement"); }
+	Instance->Pause();
+	Instance->SetWeight(1.f);
 	const int32 Samples = FMath::Clamp(FMath::CeilToInt((End - Start) * 60.f) + 1, 2, 241);
 	FBox Bounds(ForceInit);
 	int64 VertexSamples = 0;
 	for (int32 Sample = 0; Sample < Samples; ++Sample)
 	{
 		const float Time = FMath::Lerp(Start, End, float(Sample) / (Samples - 1));
-		Mesh->SetPosition(Binding->EvaluateWingTime(Time), false);
+		Instance->SetPosition(Window->EvaluateWingTime(Time, WindowStart));
 		Mesh->TickAnimation(0.f, false);
 		Mesh->RefreshBoneTransforms();
 		TArray<FMatrix44f> RefToLocal;
@@ -177,15 +196,16 @@ FString UHodgeAnimationAuthoringLibrary::ConfigureWingBoxHit(UAnimMontage* Monta
 	Config.BoxHalfExtent = Extent;
 	Config.LocalTransform = FTransform(FQuat::Identity, Center);
 	Config.TransformPolicy = EHodgeHitTransformPolicy::Follow;
-	Config.HitGroup = Primary->Hit.HitGroup.IsNone() ? FName(TEXT("PoverWingFinisher")) : Primary->Hit.HitGroup;
-	Config.AttackPhase = Primary->Hit.AttackPhase.IsNone() ? FName(TEXT("Strike")) : Primary->Hit.AttackPhase;
+	// 仅翼攻击保留自己的阶段；存在手部来源时才共享同刀去重配置。
+	const auto& Shared = Primary ? Primary->Hit : Config;
+	Config.HitGroup = Shared.HitGroup.IsNone() ? FName(TEXT("PoverWingFinisher")) : Shared.HitGroup;
+	Config.AttackPhase = Shared.AttackPhase.IsNone() ? FName(TEXT("Strike")) : Shared.AttackPhase;
 	TArray<FText> Errors;
 	if (!Config.Validate(Errors)) { return TEXT("Measured wing box configuration failed validation"); }
 	// 测量与预校验全部成功后再提交，避免失败留下一半资产配置。
-	Montage->Modify(); Notify->Modify(); Primary->Modify(); Profile->Modify();
+	Montage->Modify(); Notify->Modify(); Profile->Modify();
 	Notify->Hit = Config;
-	Primary->Hit.HitGroup = Config.HitGroup;
-	Primary->Hit.AttackPhase = Config.AttackPhase;
+	if (Primary) { Primary->Modify(); Primary->Hit.HitGroup = Config.HitGroup; Primary->Hit.AttackPhase = Config.AttackPhase; }
 	Profile->bEnableAuthorityHitSampling = true;
 	Montage->RefreshCacheData(); Montage->MarkPackageDirty(); Profile->MarkPackageDirty();
 	return FString::Printf(TEXT("{\"begin\":%.6f,\"end\":%.6f,\"samples\":%d,\"vertices\":%lld,\"center\":[%.6f,%.6f,%.6f],\"half_extent\":[%.6f,%.6f,%.6f],\"margin\":%.6f}"),
@@ -328,6 +348,165 @@ bool UHodgeAnimationAuthoringLibrary::ConfigureWingActionWindow(UAnimSequenceBas
 	Source->Notifies.Add(Event);
 	Source->RefreshCacheData();
 	return true;
+}
+
+bool UHodgeAnimationAuthoringLibrary::ConfigureWingMontageGraph(UAnimBlueprint* Blueprint)
+{
+	if (!Blueprint || !Blueprint->GetOutermost()->GetName().StartsWith(TEXT("/Game/Main/Character/Hero/Wing/")) ||
+		(GEditor && GEditor->PlayWorld)) { return false; }
+	UEdGraph* Graph = nullptr;
+	for (UEdGraph* Candidate : Blueprint->FunctionGraphs)
+	{ if (Candidate && Candidate->GetFName() == TEXT("AnimGraph")) { Graph = Candidate; break; } }
+	if (!Graph) { return false; }
+	Blueprint->Modify();
+	using namespace HodgeAnimationAuthoring;
+	auto* Root = FindOrAddPoseNode<UAnimGraphNode_Root>(Graph, TEXT("WingOutput"), 600, 0);
+	for (UEdGraphNode* Node : TArray<UEdGraphNode*>(Graph->Nodes))
+	{ if (Node != Root && Node->IsA<UAnimGraphNode_Root>()) { FBlueprintEditorUtils::RemoveNode(Blueprint, Node, true); } }
+	auto* Ref = FindOrAddPoseNode<UAnimGraphNode_LocalRefPose>(Graph, TEXT("WingReference"), 0, 0);
+	auto* Slot = FindOrAddPoseNode<UAnimGraphNode_Slot>(Graph, TEXT("WingMontageSlot"), 300, 0);
+	Slot->Node.SlotName = TEXT("DefaultSlot");
+	Slot->Node.bAlwaysUpdateSourcePose = true;
+	const auto* Schema = Graph->GetSchema();
+	Schema->BreakPinLinks(*Root->FindPin(TEXT("Result")), true);
+	const bool bOK = Schema->TryCreateConnection(Ref->FindPin(TEXT("Pose")), Slot->FindPin(TEXT("Source"))) &&
+		Schema->TryCreateConnection(Slot->FindPin(TEXT("Pose")), Root->FindPin(TEXT("Result")));
+	Root->NodeComment = TEXT("翅膀独立蒙太奇输出，由角色攻击通知定义显示窗口");
+	FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(Blueprint);
+	return bOK;
+}
+
+bool UHodgeAnimationAuthoringLibrary::ConfigureWingMontageAsset(UAnimMontage* Montage, UAnimSequence* Sequence)
+{
+	if (!Montage || !Sequence || (GEditor && GEditor->PlayWorld) ||
+		!Montage->GetOutermost()->GetName().StartsWith(TEXT("/Game/Main/Character/Hero/Wing/"))) { return false; }
+	Montage->Modify();
+	Montage->SetSkeleton(Sequence->GetSkeleton());
+	Montage->SlotAnimTracks.Reset();
+	FSlotAnimationTrack Track;
+	Track.SlotName = TEXT("DefaultSlot");
+	FAnimSegment Segment;
+	Segment.SetAnimReference(Sequence);
+	Segment.AnimStartTime = 0.f;
+	Segment.AnimEndTime = Sequence->GetPlayLength();
+	Segment.AnimPlayRate = 1.f;
+	Segment.LoopingCount = 1;
+	Track.AnimTrack.AnimSegments.Add(Segment);
+	Montage->SlotAnimTracks.Add(Track);
+	Montage->SetCompositeLength(Sequence->GetPlayLength());
+	// 导入动画的根位置与参考姿势不同，首版零混入避免显现时拉回参考姿势。
+	Montage->BlendIn.SetBlendTime(0.f);
+	Montage->BlendOut.SetBlendTime(0.f);
+	Montage->bEnableAutoBlendOut = false;
+	Montage->RefreshCacheData();
+	Montage->MarkPackageDirty();
+	return true;
+}
+
+bool UHodgeAnimationAuthoringLibrary::ConfigureHavocMontage(UAnimMontage* Montage, UAnimSequence* Source,
+	float HitStart, float HitEnd, float RecoveryStart, bool bCircuit, bool bSkill)
+{
+	if (!Montage || !Source || (GEditor && GEditor->PlayWorld) ||
+		!Montage->GetOutermost()->GetName().StartsWith(TEXT("/Game/Main/Character/Hero/Ability/Havoc/")) ||
+		!FMath::IsFinite(HitStart) || !FMath::IsFinite(HitEnd) || !FMath::IsFinite(RecoveryStart) ||
+		HitStart<=.02f || HitEnd<HitStart || RecoveryStart<=HitEnd || RecoveryStart>=Source->GetPlayLength()-.02f) { return false; }
+	Montage->Modify(); Montage->SetSkeleton(Source->GetSkeleton()); Montage->SlotAnimTracks.Reset();
+	FSlotAnimationTrack Track; Track.SlotName=TEXT("FullBody");
+	FAnimSegment Segment; Segment.SetAnimReference(Source); Segment.AnimStartTime=0.f; Segment.AnimEndTime=Source->GetPlayLength(); Segment.AnimPlayRate=1.f; Segment.LoopingCount=1;
+	Track.AnimTrack.AnimSegments.Add(Segment); Montage->SlotAnimTracks.Add(Track); Montage->SetCompositeLength(Source->GetPlayLength());
+	Montage->Notifies.Reset(); Montage->AnimNotifyTracks.Reset(); Montage->CompositeSections.Reset();
+	FAnimNotifyTrack NotifyTrack; NotifyTrack.TrackName=TEXT("Havoc"); Montage->AnimNotifyTracks.Add(NotifyTrack);
+	FCompositeSection Section; Section.SectionName=TEXT("Default"); Section.Link(Montage,0.f); Montage->CompositeSections.Add(Section);
+	Montage->BlendIn.SetBlendTime(.1f); Montage->BlendOut.SetBlendTime(.15f); Montage->BlendOutTriggerTime=0.f; Montage->bEnableAutoBlendOut=true;
+	const float End=Source->GetPlayLength()-.005f;
+	auto AddWindow=[Montage](UAnimNotifyState* State,float Start,float Finish)
+	{
+		FAnimNotifyEvent Event; Event.NotifyStateClass=State; Event.NotifyName=FName(*State->GetNotifyName());
+		Event.Link(Montage,Start); Event.SetDuration(Finish-Start); Event.EndLink.Link(Montage,Finish);
+		Event.bTriggerOnDedicatedServer=true; State->OnAnimNotifyCreatedInEditor(Event); Montage->Notifies.Add(Event);
+	};
+	auto AddTag=[Montage,&AddWindow](FGameplayTag Tag,float Start,float Finish)
+	{
+		auto* State=NewObject<UHodgeAnimNotifyState_GameplayTag>(Montage); State->StateTag=Tag; AddWindow(State,Start,Finish);
+	};
+	// 分支点错开微小源时间，避免同一帧标记完全重叠而被引擎忽略。
+	AddTag(HodgeGameplayTags::Status_Attack,.002f,RecoveryStart);
+	AddWindow(NewObject<UHodgeAnimNotifyState_WeaponHand>(Montage),.004f,End);
+	AddTag(HodgeGameplayTags::Status_Attack_Recovery,RecoveryStart+.001f,End-.001f);
+	AddTag(HodgeGameplayTags::Status_Attack_Cancel_Move,RecoveryStart+.003f,End-.002f);
+	AddTag(HodgeGameplayTags::Status_Attack_Cancel_NextAttack,RecoveryStart+.005f,End-.003f);
+	FHodgeAnimHitConfig Hit; Hit.Source=EHodgeAnimHitSource::AvatarRoot; Hit.Shape=EHodgeHitShape::Box;
+	Hit.LocalTransform=FTransform(FVector(bCircuit ? 0.f : 140.f,0.f,0.f));
+	Hit.BoxHalfExtent=bCircuit ? FVector(350.f,350.f,150.f) : FVector(200.f,150.f,130.f);
+	Hit.HitGroup=bCircuit ? TEXT("MieYin") : Montage->GetFName(); Hit.AttackPhase=TEXT("Strike");
+	Hit.TransformPolicy=bCircuit ? EHodgeHitTransformPolicy::SnapshotOnEventEnter : EHodgeHitTransformPolicy::Follow;
+	if (bCircuit)
+	{
+		auto* Notify=NewObject<UHodgeAnimNotify_DarkSurgeCommit>(Montage); Notify->Burst=Hit;
+		FAnimNotifyEvent Event; Event.Notify=Notify; Event.NotifyName=TEXT("MieYin Commit"); Event.Link(Montage,HitStart);
+		Event.bTriggerOnDedicatedServer=true; Notify->OnAnimNotifyCreatedInEditor(Event); Montage->Notifies.Add(Event);
+	}
+	else
+	{
+		auto* State=NewObject<UHodgeAnimNotifyState_HitCheck>(Montage); State->Hit=Hit; AddWindow(State,HitStart,HitEnd);
+		if (bSkill && !ConfigureHavocCastCommit(Montage,HitStart-.005f)) { return false; }
+	}
+	Montage->RefreshCacheData(); Montage->MarkPackageDirty(); return true;
+}
+
+bool UHodgeAnimationAuthoringLibrary::ConfigureHavocCastCommit(UAnimMontage* Montage, float Time)
+{
+	if (!Montage || (GEditor && GEditor->PlayWorld) || !FMath::IsFinite(Time) || Time<=0.f || Time>=Montage->GetPlayLength()) { return false; }
+	const FString Path=Montage->GetOutermost()->GetName();
+	if (!Path.StartsWith(TEXT("/Game/Main/Character/Hero/Ability/Havoc/")) && !Path.StartsWith(TEXT("/Game/Main/Character/Hero/Ability/ResonanceSkill/"))) { return false; }
+	Montage->Modify();
+	// 幂等替换本功能自己的提交节点，保留其他通知与用户已调的窗口。
+	Montage->Notifies.RemoveAll([](const FAnimNotifyEvent& Event)
+	{ const auto* Notify=Cast<UHodgeAnimNotify_GameplayEvent>(Event.Notify); return Notify && Notify->EventTag==HodgeHavocTags::CastCommitted; });
+	auto* Notify=NewObject<UHodgeAnimNotify_GameplayEvent>(Montage); Notify->EventTag=HodgeHavocTags::CastCommitted;
+	FAnimNotifyEvent Event; Event.Notify=Notify; Event.NotifyName=TEXT("Havoc Cast Commit"); Event.Link(Montage,Time);
+	Event.bTriggerOnDedicatedServer=true; Notify->OnAnimNotifyCreatedInEditor(Event); Montage->Notifies.Add(Event);
+	Montage->RefreshCacheData(); Montage->MarkPackageDirty(); return true;
+}
+
+bool UHodgeAnimationAuthoringLibrary::ConfigureLiberationMontage(UAnimMontage* Montage, UAnimSequence* Source,
+	UAnimMontage* WingMontage, UHodgeCinematicCameraProfile* CameraProfile, UHodgeHitDetectionProfile* HitProfile, float HitTime)
+{
+	if (!Montage || !Source || !WingMontage || !CameraProfile || !HitProfile || (GEditor && GEditor->PlayWorld) ||
+		!Montage->GetOutermost()->GetName().StartsWith(TEXT("/Game/Main/Character/Hero/Ability/ResonanceLiberation/")) ||
+		!FMath::IsFinite(HitTime) || HitTime<=0.f || HitTime>=Source->GetPlayLength()) { return false; }
+	TArray<FText> Errors; if (!CameraProfile->Validate(Errors)) { return false; }
+	const FName Slot=Montage->SlotAnimTracks.IsEmpty() ? TEXT("FullBody") : Montage->SlotAnimTracks[0].SlotName;
+	Montage->Modify(); Montage->SetSkeleton(Source->GetSkeleton()); Montage->SlotAnimTracks.Reset();
+	FSlotAnimationTrack Track; Track.SlotName=Slot;
+	FAnimSegment Segment; Segment.SetAnimReference(Source); Segment.AnimStartTime=0.f; Segment.AnimEndTime=Source->GetPlayLength(); Segment.AnimPlayRate=1.f; Segment.LoopingCount=1;
+	Track.AnimTrack.AnimSegments.Add(Segment); Montage->SlotAnimTracks.Add(Track); Montage->SetCompositeLength(Source->GetPlayLength());
+	Montage->Notifies.Reset(); Montage->CompositeSections.Reset();
+	FCompositeSection Section; Section.SectionName=TEXT("Burst"); Section.Link(Montage,0.f); Montage->CompositeSections.Add(Section);
+	Montage->BlendIn.SetBlendTime(.1f); Montage->BlendOut.SetBlendTime(.1f); Montage->BlendOutTriggerTime=0.f; Montage->bEnableAutoBlendOut=true;
+	const float Length=Source->GetPlayLength();
+	// 首版仅写入新蒙太奇，不修改源序列及普攻通知轨。
+	auto AddWindow=[Montage](UAnimNotifyState* Notify,float Start,float End)
+	{
+		FAnimNotifyEvent Event; Event.NotifyStateClass=Notify; Event.NotifyName=FName(*Notify->GetNotifyName());
+		Event.Link(Montage,Start); Event.SetDuration(End-Start); Event.EndLink.Link(Montage,End); Montage->Notifies.Add(Event);
+	};
+	auto* Camera=NewObject<UHodgeAnimNotifyState_CinematicCamera>(Montage); Camera->Profile=CameraProfile; AddWindow(Camera,0.f,Length*.5f);
+	auto* Wing=NewObject<UHodgeAnimNotifyState_WingAction>(Montage); Wing->WingMontage=WingMontage; AddWindow(Wing,0.f,Length);
+	auto* Hand=NewObject<UHodgeAnimNotifyState_WeaponHand>(Montage); Hand->EndBehavior=EHodgeWeaponHandEndBehavior::FadeAtHand; AddWindow(Hand,0.f,Length);
+	auto AddTag=[Montage,&AddWindow](FGameplayTag Tag,float Start,float End)
+	{ auto* State=NewObject<UHodgeAnimNotifyState_GameplayTag>(Montage); State->StateTag=Tag; AddWindow(State,Start,End); };
+	AddTag(HodgeGameplayTags::Status_Attack,0.f,Length*.82f);
+	AddTag(HodgeGameplayTags::Status_Attack_Recovery,Length*.82f,Length);
+	AddTag(HodgeGameplayTags::Status_Attack_Cancel_Move,Length*.82f,Length);
+	auto* Notify=NewObject<UHodgeAnimNotify_Hit>(Montage);
+	Notify->Hit.Source=EHodgeAnimHitSource::AvatarRoot; Notify->Hit.Shape=EHodgeHitShape::Box;
+	Notify->Hit.TransformPolicy=EHodgeHitTransformPolicy::SnapshotOnEventEnter; Notify->Hit.Profile=HitProfile;
+	Notify->Hit.BoxHalfExtent=FVector(600.f,450.f,200.f); Notify->Hit.LocalTransform=FTransform(FVector(400.f,0.f,0.f));
+	Notify->Hit.HitGroup=TEXT("ResonanceLiberation"); Notify->Hit.AttackPhase=TEXT("Burst");
+	Notify->Hit.bUseDefaultDamage=true; Notify->Hit.bUseDefaultReaction=true; Notify->Hit.RepeatHitInterval=0.f;
+	FAnimNotifyEvent HitEvent; HitEvent.Notify=Notify; HitEvent.NotifyName=TEXT("Liberation Box"); HitEvent.Link(Montage,HitTime); Montage->Notifies.Add(HitEvent);
+	Montage->RefreshCacheData(); Montage->MarkPackageDirty(); return true;
 }
 
 bool UHodgeAnimationAuthoringLibrary::ConfigureWingAttackPreview(UBlueprint* Blueprint, UHodgeWingProfile* Profile)
@@ -603,7 +782,13 @@ bool UHodgeAnimationAuthoringLibrary::RemapAnimationReferences(UBlueprint* Bluep
 /** 编译当前动画蓝图并返回诊断结果。 */
 FString UHodgeAnimationAuthoringLibrary::CompileAnimationBlueprint(UBlueprint* Blueprint)
 {
-	if (!HodgeAnimationAuthoring::IsWorkAsset(Blueprint)) { return TEXT("ERRORS=1\nAsset is outside the animation work directory."); }
+	const FString Path=GetPathNameSafe(Blueprint);
+	const bool bLiberationAsset=Path.StartsWith(TEXT("/Game/Main/Character/Hero/Ability/ResonanceLiberation/")) ||
+		Path.StartsWith(TEXT("/Game/Main/Character/Hero/Ability/Havoc/")) ||
+		Path.StartsWith(TEXT("/Game/Main/UI/HUD/WBP_DarkFlow.")) ||
+		Path.StartsWith(TEXT("/Game/Main/UI/HUD/WBP_Resonance_Energy.")) || Path.StartsWith(TEXT("/Game/Main/UI/HUD/WBP_Resonance_Skill.")) || Path.StartsWith(TEXT("/Game/Main/UI/HUD/WBP_HodgeHUD."));
+	// 大招制作流程仅扩展明确拥有的蓝图范围，不放开任意工程资产。
+	if (!HodgeAnimationAuthoring::IsWorkAsset(Blueprint) && !bLiberationAsset) { return TEXT("ERRORS=1\nAsset is outside the animation work directory."); }
 	if (UAnimBlueprint* AnimBlueprint = Cast<UAnimBlueprint>(Blueprint))
 	{
 		UAnimBlueprintExtension::RefreshExtensions(AnimBlueprint);

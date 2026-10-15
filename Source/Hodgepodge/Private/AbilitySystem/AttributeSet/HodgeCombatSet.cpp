@@ -9,6 +9,7 @@
 
 // UE 网络属性复制相关宏与类型。
 #include "Net/UnrealNetwork.h"
+#include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeCombatSet)
 
 // 初始化战斗属性集的默认属性值。
 UHodgeCombatSet::UHodgeCombatSet()
@@ -17,6 +18,7 @@ UHodgeCombatSet::UHodgeCombatSet()
 	  // 默认基础治疗量为 0。
 	  , BaseHeal(0.0f)
 {
+	InitHavocDamageBonus(0.f);
 }
 
 // 注册 CombatSet 中需要进行网络复制的属性。
@@ -30,6 +32,12 @@ void UHodgeCombatSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 
 	// BaseHeal 只复制给该 Actor 的拥有者，并且每次收到复制数据时都触发 OnRep_BaseHeal。
 	DOREPLIFETIME_CONDITION_NOTIFY(UHodgeCombatSet, BaseHeal, COND_OwnerOnly, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UHodgeCombatSet, HavocDamageBonus, COND_OwnerOnly, REPNOTIFY_Always);
+}
+
+void UHodgeCombatSet::OnRep_HavocDamageBonus(const FGameplayAttributeData& OldValue)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UHodgeCombatSet,HavocDamageBonus,OldValue);
 }
 
 // BaseDamage 从服务器复制到拥有者客户端后触发。

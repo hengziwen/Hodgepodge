@@ -1,4 +1,4 @@
-/** @file HodgeCombatActionRequestTests.cpp
+﻿/** @file HodgeCombatActionRequestTests.cpp
  * @brief 实现共享战斗请求数据自动化测试相关的类型、接口与现有处理流程。
  */
 #if WITH_DEV_AUTOMATION_TESTS
@@ -22,6 +22,7 @@
 #include "Animation/AnimMontage.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Engine/SkeletalMesh.h"
+#include <limits>
 
 /** 保存战斗动作测试Access的数据和接口契约。 */
 struct FHodgeCombatActionTestAccess
@@ -44,12 +45,47 @@ struct FHodgeCombatActionTestAccess
 	{
 		Ability->bPredictedMoveCancel = true; Combat->bMoveRequestPending = true;
 		Combat->PredictedMoveCancelAbility = Ability; Combat->PendingMoveHandle = Ability->GetCurrentAbilitySpecHandle(); Combat->PendingMoveKey = Combat->ExecutionKey();
-		Combat->ClientMoveCancelResult_Implementation(Combat->GetOwner(), Combat->PendingMoveHandle, Combat->PendingMoveKey, true, 0.f, 0.f, 1.f);
+		Combat->PendingMoveRequest = FGuid::NewGuid(); Combat->PendingMoveExecution = Ability->GetExecutionId();
+		Combat->ClientMoveCancelResult_Implementation(Combat->GetOwner(), Combat->PendingMoveHandle, Combat->PendingMoveKey, Combat->PendingMoveRequest, true, 0.f, 0.f, 1.f);
 	}
 	/** 推进当前对象的随帧更新。
 	 * @param Combat 统一战斗组件。
 	 */
 	static void Tick(UHodgeCombatComponentBase* Combat) { Combat->TickComponent(0.f, LEVELTICK_All, nullptr); }
+	/** 查询生产取消候选，不将独立技能塞进连段状态。 */
+	static UHodgeGameplayAbility_Definition* Candidate(UHodgeCombatComponentBase* Combat) { return Combat->GetMoveCancelAbility(); }
+	/** 读取路由策略，验证独立技能与连段配置互不串用。 */
+	static bool Policy(UHodgeCombatComponentBase* Combat, UHodgeGameplayAbility_Definition* Ability, FGameplayTag& Tag, float& Threshold)
+	{ return Combat->GetMoveCancelPolicy(Ability, Tag, Threshold); }
+	/** 只修改测试连段数据，验证兼容原有零阈值配置。 */
+	static void ComboThreshold(UHodgeCombatComponentBase* Combat, float Threshold)
+	{
+		auto* Combo = const_cast<UHodgeComboDefinition*>(Combat->Definition.Get());
+		Combo->MoveIntentThreshold = Threshold; Combo->MoveCancelWindowTag = HodgeGameplayTags::Status_Attack_Cancel_Move;
+	}
+
+	/** 注入测试窗口许可，服务器处理仍调用完整生产验证与 EndAbility。 */
+	static void Window(UHodgeGameplayAbility_Definition* Ability, FGameplayTag Tag)
+	{ Ability->StateCounts.Add(Tag, 1); Ability->GetAbilitySystemComponentFromActorInfo()->AddLooseGameplayTag(Tag); }
+	/** 模拟已经到达服务器的请求，允许单独验证非法身份和输入。 */
+	static void Request(UHodgeCombatComponentBase* Combat, UHodgeGameplayAbility_Definition* Ability, FVector2D Intent,
+		AActor* Avatar = nullptr, FGuid Execution = FGuid())
+	{
+		const auto Prediction = Ability->GetCurrentActivationInfo().GetActivationPredictionKey();
+		Combat->ProcessServerMoveCancel(Avatar ? Avatar : Combat->GetOwner(), Ability->GetCurrentAbilitySpecHandle(),
+			Prediction.IsServerInitiatedKey() ? -Prediction.Current : Prediction.Current, FGuid::NewGuid(),
+			Execution.IsValid() ? Execution : Ability->GetExecutionId(), Intent);
+	}
+	/** 过期回执不得结束或清理新的待确认请求。 */
+	static bool IgnoreOldResult(UHodgeCombatComponentBase* Combat, UHodgeGameplayAbility_Definition* Ability)
+	{
+		Combat->bMoveRequestPending = true; Combat->PredictedMoveCancelAbility = Ability;
+		Combat->PendingMoveHandle = Ability->GetCurrentAbilitySpecHandle(); Combat->PendingMoveKey = 0;
+		Combat->PendingMoveRequest = FGuid::NewGuid(); Combat->PendingMoveExecution = Ability->GetExecutionId();
+		Combat->ClientMoveCancelResult_Implementation(Combat->GetOwner(), Combat->PendingMoveHandle, 0, FGuid::NewGuid(), true, 0.f, 0.f, 1.f);
+		return Combat->bMoveRequestPending && Ability->IsActive();
+	}
+
 };
 
 namespace HodgeActionTests
@@ -151,6 +187,94 @@ bool FHodgeActionLifecycleTest::RunTest(const FString&)
 	TestTrue(TEXT("New execution remains active"), F.Ability()->IsActive());
 	TestTrue(TEXT("Current request can cancel its own execution"), F.Combat->CancelCombatActionRequest(Second.RequestId));
 	TestEqual(TEXT("Cancellation delivered"), F.State(Second.RequestId).Status, HodgeActionTests::EStatus::Cancelled);
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeStandaloneMovePolicyTest, "Hodge.ActionRequests.MoveCancel.RouteAndPolicy", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 验证没有连段配置的独立技能及可调窗口、阈值。 */
+bool FHodgeStandaloneMovePolicyTest::RunTest(const FString&)
+{
+	HodgeActionTests::FFixture F; if (!TestTrue(TEXT("场景就绪"), F.bReady)) { return false; }
+	F.Combat->Configure(F.ASC, nullptr);
+	F.Combat->RequestStandaloneAbility(F.Definition->AbilityTag);
+	TestTrue(TEXT("无 Combo 配置仍开启取消更新"), F.Combat->IsComponentTickEnabled());
+	TestEqual(TEXT("独立执行从 ASC 解析"), FHodgeCombatActionTestAccess::Candidate(F.Combat), F.Ability());
+	FGameplayTag Tag; float Threshold = 0.f;
+	TestTrue(TEXT("独立策略可用"), FHodgeCombatActionTestAccess::Policy(F.Combat, F.Ability(), Tag, Threshold));
+	TestTrue(TEXT("标准通知窗口"), Tag == HodgeGameplayTags::Status_Attack_Cancel_Move);
+	TestEqual(TEXT("默认输入阈值"), Threshold, .1f);
+	F.Definition->StandaloneMoveIntentThreshold = .4f;
+	FHodgeCombatActionTestAccess::Policy(F.Combat, F.Ability(), Tag, Threshold);
+	TestEqual(TEXT("独立配置不依赖 Combo"), Threshold, .4f);
+	F.Definition->StandaloneMoveCancelWindowTag = {};
+	TestFalse(TEXT("空标签关闭取消"), FHodgeCombatActionTestAccess::Policy(F.Combat, F.Ability(), Tag, Threshold));
+	F.ASC->InitAbilityActorInfo(F.Pawn, nullptr);
+	TestNull(TEXT("解绑后旧执行不能取得预测权限"), FHodgeCombatActionTestAccess::Candidate(F.Combat));
+	HodgeActionTests::FFixture ComboFixture; ComboFixture.ConfigureCombo();
+	ComboFixture.Definition->StandaloneMoveCancelWindowTag = {};
+	ComboFixture.Combat->SubmitCombatIntent(HodgeGameplayTags::Status_Attack_Cancel_NextAttack);
+	FHodgeCombatActionTestAccess::ComboThreshold(ComboFixture.Combat, 0.f);
+	TestTrue(TEXT("连段仍兼容零阈值"), FHodgeCombatActionTestAccess::Policy(ComboFixture.Combat, ComboFixture.Ability(), Tag, Threshold));
+	TestEqual(TEXT("连段不读取独立窗口配置"), Threshold, 0.f);
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeStandaloneMoveValidationTest, "Hodge.ActionRequests.MoveCancel.AuthorityValidation", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 正常请求走完整结束链路，窗口、输入和执行身份均由服务器验证。 */
+bool FHodgeStandaloneMoveValidationTest::RunTest(const FString&)
+{
+	HodgeActionTests::FFixture F; if (!TestTrue(TEXT("场景就绪"), F.bReady)) { return false; }
+	const auto Request = F.Combat->RequestStandaloneAbility(F.Definition->AbilityTag);
+	FHodgeCombatActionTestAccess::Request(F.Combat, F.Ability(), FVector2D(0.f, 1.f));
+	TestTrue(TEXT("前摇没有窗口时拒绝"), F.Ability()->IsActive());
+	FHodgeCombatActionTestAccess::Window(F.Ability(), HodgeGameplayTags::Status_Attack_Cancel_Move);
+	for (const FVector2D Intent : {FVector2D::ZeroVector, FVector2D(.099f, 0.f), FVector2D(2.f, 2.f), FVector2D(std::numeric_limits<float>::quiet_NaN(), 0.f)})
+	{
+		FHodgeCombatActionTestAccess::Request(F.Combat, F.Ability(), Intent);
+		TestTrue(TEXT("非法或未达阈值输入不结束能力"), F.Ability()->IsActive());
+	}
+	FHodgeCombatActionTestAccess::Request(F.Combat, F.Ability(), FVector2D(0.f, 1.f), F.World->SpawnActor<AActor>());
+	TestTrue(TEXT("错误 Avatar 拒绝"), F.Ability()->IsActive());
+	FHodgeCombatActionTestAccess::Request(F.Combat, F.Ability(), FVector2D(0.f, 1.f), nullptr, FGuid::NewGuid());
+	TestTrue(TEXT("旧执行的延迟处理拒绝"), F.Ability()->IsActive());
+	F.ASC->AddLooseGameplayTag(TAG_Gameplay_AbilityInputBlocked);
+	FHodgeCombatActionTestAccess::Request(F.Combat, F.Ability(), FVector2D(0.f, 1.f));
+	TestTrue(TEXT("禁止输入时不能取消"), F.Ability()->IsActive());
+	F.ASC->RemoveLooseGameplayTag(TAG_Gameplay_AbilityInputBlocked);
+	FHodgeCombatActionTestAccess::Request(F.Combat, F.Ability(), FVector2D(.1f, 0.f));
+	TestFalse(TEXT("窗口内阈值边界允许取消"), F.Ability()->IsActive());
+	TestEqual(TEXT("请求记录正确取消"), F.State(Request.RequestId).Status, HodgeActionTests::EStatus::Cancelled);
+	TestFalse(TEXT("结束清理通知标签"), F.ASC->HasMatchingGameplayTag(HodgeGameplayTags::Status_Attack_Cancel_Move));
+	TestEqual(TEXT("结束清理姿势占用"), F.Combat->GetPoseLeaseCount(), 0);
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeStandaloneMoveIdentityTest, "Hodge.ActionRequests.MoveCancel.LateResultAndDeath", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 检查旧确认与死亡优先级，避免结束新动作或放开死亡移动。 */
+bool FHodgeStandaloneMoveIdentityTest::RunTest(const FString&)
+{
+	HodgeActionTests::FFixture F; if (!TestTrue(TEXT("场景就绪"), F.bReady)) { return false; }
+	F.Combat->RequestStandaloneAbility(F.Definition->AbilityTag);
+	TestTrue(TEXT("旧请求回执不影响新请求"), FHodgeCombatActionTestAccess::IgnoreOldResult(F.Combat, F.Ability()));
+	F.ASC->AddLooseGameplayTag(HodgeGameplayTags::Status_Death);
+	TestNull(TEXT("死亡时无取消候选"), FHodgeCombatActionTestAccess::Candidate(F.Combat));
+	TestFalse(TEXT("死亡不拥有预测移动权限"), F.Combat->IsMoveCancelPredicted());
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeStandaloneMoveConfigTest, "Hodge.ActionRequests.MoveCancel.InvalidConfiguration", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 配置验证拒绝非法阈值，显式关闭窗口不会被视为错误。 */
+bool FHodgeStandaloneMoveConfigTest::RunTest(const FString&)
+{
+	HodgeActionTests::FFixture F; if (!TestTrue(TEXT("场景就绪"), F.bReady)) { return false; }
+	for (float Value : {0.f, -1.f, 1.1f, std::numeric_limits<float>::infinity(), std::numeric_limits<float>::quiet_NaN()})
+	{
+		F.Definition->StandaloneMoveIntentThreshold = Value; TArray<FText> Errors;
+		TestFalse(TEXT("非法阈值拒绝配置"), F.Definition->ValidateDefinition(Errors));
+	}
+	F.Definition->StandaloneMoveIntentThreshold = 1.f; F.Definition->StandaloneMoveCancelWindowTag = {};
+	TArray<FText> Errors;
+	TestTrue(TEXT("合法阈值且空窗口可关闭取消"), F.Definition->ValidateDefinition(Errors));
 	return true;
 }
 

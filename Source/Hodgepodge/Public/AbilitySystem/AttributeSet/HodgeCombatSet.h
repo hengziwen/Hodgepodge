@@ -43,6 +43,8 @@ public:
 
 	// 生成 BaseHeal 对应的 GAS Attribute 访问函数。
 	ATTRIBUTE_ACCESSORS(UHodgeCombatSet, BaseHeal);
+	/** 元素加成独立于基础攻击力，0.20表示湮灭伤害增加20%。 */
+	ATTRIBUTE_ACCESSORS(UHodgeCombatSet, HavocDamageBonus);
 
 protected:
 	// BaseDamage 从服务器复制到客户端后触发，用于通知 GAS 属性系统完成网络同步。
@@ -60,6 +62,11 @@ protected:
 	void OnRep_BaseHeal(const FGameplayAttributeData& OldValue);
 
 private:
+	/** 持续GE聚合增伤，效果移除后自动还原。 */
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_HavocDamageBonus, Category="Hodge|Combat", meta=(AllowPrivateAccess=true))
+	FGameplayAttributeData HavocDamageBonus;
+	/** 沿用GAS属性复制通知，不复制另一份增伤状态。 */
+	UFUNCTION() void OnRep_HavocDamageBonus(const FGameplayAttributeData& OldValue);
 	// The base amount of damage to apply in the damage execution.
 	// 基础伤害值，通常作为伤害 ExecutionCalculation 计算最终伤害时的基础输入。
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_BaseDamage, Category = "Hodge|Combat",

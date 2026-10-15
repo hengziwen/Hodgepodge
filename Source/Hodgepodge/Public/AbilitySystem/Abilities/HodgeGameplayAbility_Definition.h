@@ -97,6 +97,8 @@ public:
 	 * @return 执行标识的当前值或引用。
 	 */
 	FGuid GetExecutionId() const { return ExecutionId; }
+	/** 精确读取当前主实例；预测取消、结束或旧Avatar时返回false。 */
+	bool GetCinematicSource(UAnimMontage*& OutMontage, int32& OutInstanceId, float& OutPosition) const;
 	/** 判断连段Coordinated。
 	 * @return true表示满足该查询条件，false表示不满足。
 	 */
@@ -135,6 +137,8 @@ protected:
 	// 播放蒙太奇前准备执行任务，原生通知可以直接消费本次请求。
 	/** 处理执行就绪。 */
 	virtual void OnExecutionReady() {}
+	/** 合法动画通知的语义扩展，不另建不带执行身份的全局事件总线。 */
+	virtual void OnExecutionEvent(FGameplayTag Tag) {}
 	/** 处理执行Ending。
 	 * @param EndingExecutionId Ending执行标识，由调用方传入。
 	 */

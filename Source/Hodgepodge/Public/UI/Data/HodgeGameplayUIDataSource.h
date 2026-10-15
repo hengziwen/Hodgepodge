@@ -14,6 +14,39 @@ class APlayerController;
 class APlayerState;
 class APawn;
 class AActor;
+class UHodgeAbilitySystemComponent;
+struct FOnAttributeChangeData;
+
+/** 同一个资源条常态显示积攒、暗涌显示实际燃料，不创建独立Buff倒计时。 */
+USTRUCT(BlueprintType)
+struct HODGEPODGE_API FHodgeHavocResourceSnapshot
+{
+	GENERATED_BODY()
+	/** 当前拥有者的真实资源与容量。 */
+	UPROPERTY(BlueprintReadOnly) float CurrentDarkFlow=0.f;
+	UPROPERTY(BlueprintReadOnly) float MaxDarkFlow=0.f;
+	UPROPERTY(BlueprintReadOnly) float Percent=0.f;
+	/** 就绪依赖当前Avatar匹配；模式从GE授予标签推导。 */
+	UPROPERTY(BlueprintReadOnly) bool bReady=false;
+	UPROPERTY(BlueprintReadOnly) bool bDarkSurge=false;
+};
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHodgeUIHavocChanged,const FHodgeHavocResourceSnapshot&,Snapshot);
+
+/** 独立充能快照不把满充当成冷却完成或允许释放。 */
+USTRUCT(BlueprintType)
+struct FHodgeUIResonanceSnapshot
+{
+	GENERATED_BODY()
+	/** 服务器属性／拥有者预测提供的当前能量。 */
+	UPROPERTY(BlueprintReadOnly) float Energy = 0.f;
+	/** 当前配置容量，未初始化时为零。 */
+	UPROPERTY(BlueprintReadOnly) float Capacity = 0.f;
+	/** 安全归一化显示值，不用于直接扣除能量。 */
+	UPROPERTY(BlueprintReadOnly) float Percent = 0.f;
+	/** 本地玩家与ASC／Avatar链路准备完成。 */
+	UPROPERTY(BlueprintReadOnly) bool bReady = false;
+};
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHodgeUIResonanceChanged, const FHodgeUIResonanceSnapshot&, Snapshot);
 
 /** 当前LocalPlayer的只读生命与等级快照，不拥有服务器属性权威。 */
 USTRUCT(BlueprintType)
@@ -45,6 +78,8 @@ struct FHodgeUIAbilityDisplayState
 	UPROPERTY(BlueprintReadOnly) bool bInputAllowed = false;
 	// 冷却Remaining的数值或阈值。
 	UPROPERTY(BlueprintReadOnly) float CooldownRemaining = 0;
+	/** 与最长剩余冷却来自同一GE实例的总时长，单位秒。 */
+	UPROPERTY(BlueprintReadOnly) float CooldownDuration = 0;
 };
 
 /** 保存HUD界面能力槽位的数据和接口契约。 */
@@ -80,6 +115,13 @@ public:
 	 * @return 生命显示的当前值或引用。
 	 */
 	UFUNCTION(BlueprintPure, Category="Hodge|UI") FHodgeUIVitalsSnapshot GetVitals() const { return Vitals; }
+	/** 当前拥有者充能数据，冷却另由GetAbilityDisplayState查询。 */
+	UFUNCTION(BlueprintPure, Category="Hodge|UI") FHodgeUIResonanceSnapshot GetResonance() const { return Resonance; }
+	/** 不提供UI修改燃料入口，只返回当前本地玩家快照。 */
+	UFUNCTION(BlueprintPure, Category="Hodge|UI") FHodgeHavocResourceSnapshot GetHavocSnapshot() const { return Havoc; }
+	UPROPERTY(BlueprintAssignable, Category="Hodge|UI") FHodgeUIHavocChanged OnHavocChanged;
+	/** 只在能量、容量或可用性实际变化时广播。 */
+	UPROPERTY(BlueprintAssignable, Category="Hodge|UI") FHodgeUIResonanceChanged OnResonanceChanged;
 	/** 获取能力显示状态。
 	 * @param InputTag 输入动作对应的GameplayTag。
 	 * @return 能力显示状态的当前值或引用。
@@ -91,8 +133,22 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category="Hodge|UI") bool SubmitInput(FGameplayTag InputTag);
 private:
+	/** 暗流与现有数据源共用PlayerState及Pawn绑定链路。 */
+	UPROPERTY(Transient) FHodgeHavocResourceSnapshot Havoc;
+	FDelegateHandle DarkFlowDelegate;
+	FDelegateHandle MaxDarkFlowDelegate;
+	FDelegateHandle DarkSurgeDelegate;
+	/** 标签变化只刷新表现，不控制状态生效或结束。 */
+	void HavocModeChanged(FGameplayTag Tag,int32 Count);
 	// 生命显示的数据或对象引用。
 	UPROPERTY(Transient) FHodgeUIVitalsSnapshot Vitals;
+	/** 充能快照只读玩法属性，不拥有回能计时或成本。 */
+	UPROPERTY(Transient) FHodgeUIResonanceSnapshot Resonance;
+	TWeakObjectPtr<UHodgeAbilitySystemComponent> ResonanceASC;
+	FDelegateHandle EnergyDelegate;
+	FDelegateHandle CapacityDelegate;
+	/** ASC属性变化复用现有数据源刷新，换PlayerState时配对解绑。 */
+	void ResonanceAttributeChanged(const FOnAttributeChangeData& Data);
 	// 本地玩家的弱引用，不延长目标对象生命周期。
 	TWeakObjectPtr<UHodgeLocalPlayerBase> LocalPlayer;
 	// 当前角色使用的控制器。

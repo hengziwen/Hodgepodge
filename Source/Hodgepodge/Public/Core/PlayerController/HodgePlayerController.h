@@ -72,6 +72,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Hodge|PlayerController")
 	bool TryToRecordClientReplay();
 
+	/** 开发控制台回满当前玩家的大招能量；客户端交给服务器执行，不清除冷却。 */
+	UFUNCTION(Exec)
+	void HodgeFillResonance();
+	/** 开发控制台回满当前玩家暗流；不自动灭音、不改变Buff消耗或技能冷却。 */
+	UFUNCTION(Exec)
+	void HodgeFillDarkFlow();
+
 	// Call to see if we should record a replay, subclasses could change this
 	// 判断当前 PlayerController 是否应该录制客户端 Replay，子类可以重写策略。
 	/** 判断是否应记录客户端回放。

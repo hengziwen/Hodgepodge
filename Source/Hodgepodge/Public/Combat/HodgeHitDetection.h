@@ -286,6 +286,8 @@ struct HODGEPODGE_API FHodgeHitEffectConfig
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(ClampMin="0")) float DamageMultiplier = 1.f;
 	// 写入伤害 Spec 的分类标签，不会增加一笔独立伤害。
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(Categories="GameplayEffect.DamageType")) FGameplayTag DamageType;
+	/** 元素与普攻／重击等类型独立，缺省不享受元素专属增伤。 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(Categories="GameplayEffect.DamageElement")) FGameplayTag DamageElement;
 	// 以下字段是通知进入时生成的运行快照，不是 Definition 上的重复配置。
 	UPROPERTY(BlueprintReadOnly) EHodgeHitTargetPolicy TargetPolicy = EHodgeHitTargetPolicy::AnyInVolume;
 	// 0 表示本记录内每目标一次，正数允许按世界秒重复命中。

@@ -2,6 +2,7 @@
  * @brief 实现统一战斗组件相关的类型、接口与现有处理流程。
  */
 #include "Component/HodgeCombatComponentBase.h"
+#include "AbilitySystem/AttributeSet/HodgeHavocSet.h"
 #include "Component/HodgeEnemyInitComponent.h"
 #include "AbilitySystem/AttributeSet/HodgeHealthSet.h"
 #include "Character/HodgeHeroCharacter.h"
@@ -483,11 +484,12 @@ void UHodgeCombatComponentBase::Configure(UHodgeAbilitySystemComponent* InASC,
 	ASC = InASC;
 	// 按当前对象生命周期建立状态监听。
 	if (ASC) { ActionEndedHandle = ASC->OnAbilityEnded.AddUObject(this, &ThisClass::HandleActionAbilityEnded); }
+	if (ASC) { CombatModeChangedHandle=ASC->RegisterGameplayTagEvent(HodgeHavocTags::DarkSurge).AddUObject(this,&ThisClass::HandleCombatModeChanged); }
 	TArray<FText> Errors;
 	if (InDefinition && InDefinition->ValidateDefinition(Errors)) { Definition = InDefinition; }
 	for (const FText& Error : Errors) { UE_LOG(LogTemp, Error, TEXT("[Hodge] Combo: %s"), *Error.ToString()); }
 	CurrentComboTag = Definition ? Definition->EntryComboTag : FGameplayTag();
-	SetComponentTickEnabled(ASC && Definition && ASC->AbilityActorInfo.IsValid() &&
+	SetComponentTickEnabled(ASC && ASC->AbilityActorInfo.IsValid() &&
 		(GetOwner()->HasAuthority() || ASC->AbilityActorInfo->IsLocallyControlled()));
 	// 观察者标签可能先于 Pawn 的 ASC 绑定到达，绑定完成后补应用缓存状态。
 	if (GetOwner()->GetLocalRole() == ROLE_SimulatedProxy) { OnRep_ObserverTags({}); }
@@ -511,6 +513,8 @@ void UHodgeCombatComponentBase::Shutdown()
 	ResetSession(true);
 	SetNode(FGameplayTag());
 	if (ASC) { ASC->RemoveLooseGameplayTags(AppliedObserverTags); }
+	if (ASC) { ASC->RegisterGameplayTagEvent(HodgeHavocTags::DarkSurge).Remove(CombatModeChangedHandle); }
+	CombatModeChangedHandle.Reset(); bModeContinuationInvalidated=false;
 	AppliedObserverTags.Reset();
 	EndAllDetectionSessions();
 	const TArray<FGuid> Leases = PoseLeases.Array();
@@ -520,12 +524,10 @@ void UHodgeCombatComponentBase::Shutdown()
 	Definition = nullptr;
 	ASC = nullptr;
 	CurrentComboTag = FGameplayTag();
-	bMoveRequestPending = false;
-	PredictedMoveCancelAbility.Reset();
-	PendingMoveHandle = {};
-	PendingMoveKey = 0;
+	ClearMoveCancelRequest();
 	RejectedMoveHandle = {};
 	RejectedMoveKey = 0;
+	RejectedMoveExecution.Invalidate();
 	bSwitching = false;
 	bMemoryCorrectionPending = false;
 	PreviousComboMemory = {};
@@ -591,12 +593,80 @@ bool UHodgeCombatComponentBase::IsAuthorized(FGameplayAbilitySpecHandle Handle) 
 	return IsComboReady() && Handle.IsValid() && AuthorizedHandle == Handle;
 }
 
-/** 判断移动取消Predicted。 */
+/** 预测权限只属于仍在当前 Avatar 上执行的同一技能。 */
 bool UHodgeCombatComponentBase::IsMoveCancelPredicted() const
 {
-	return bMoveRequestPending && PredictedMoveCancelAbility.IsValid() && CurrentAbility == PredictedMoveCancelAbility.Get()
-		&& CurrentAbility->IsActive() && CurrentAbility->GetCurrentAbilitySpecHandle() == PendingMoveHandle
-		&& ExecutionKey() == PendingMoveKey;
+	const auto* Ability = PredictedMoveCancelAbility.Get();
+	if (!bMoveRequestPending || !Ability || GetMoveCancelAbility() != Ability ||
+		Ability->GetCurrentAbilitySpecHandle() != PendingMoveHandle || Ability->GetExecutionId() != PendingMoveExecution) { return false; }
+	const auto Key = Ability->GetCurrentActivationInfo().GetActivationPredictionKey();
+	return (Key.IsServerInitiatedKey() ? -Key.Current : Key.Current) == PendingMoveKey;
+}
+
+/** 沿用 Lyra 的实际实例校验，当前动画能力由 ASC 唯一确定。 */
+UHodgeGameplayAbility_Definition* UHodgeCombatComponentBase::GetMoveCancelAbility() const
+{
+	if (bShuttingDown || !IsCombatReadyForActions()) { return nullptr; }
+	auto* Ability = Cast<UHodgeGameplayAbility_Definition>(ASC->GetAnimatingAbility());
+	if (!IsValid(Ability) || !Ability->IsActive() || Ability->IsExecutionEnding() ||
+		Ability->GetAvatarActorFromActorInfo() != GetOwner() || !Ability->GetExecutionId().IsValid()) { return nullptr; }
+	const auto* Spec = ASC->FindAbilitySpecFromHandle(Ability->GetCurrentAbilitySpecHandle());
+	return Spec && Spec->IsActive() && Spec->GetPrimaryInstance() == Ability && Ability->GetDefinition() ? Ability : nullptr;
+}
+
+/** 独立技能不读取 Combo 配置，连段仍要求协调器授权的当前实例。 */
+bool UHodgeCombatComponentBase::GetMoveCancelPolicy(const UHodgeGameplayAbility_Definition* Ability,
+	FGameplayTag& Window, float& Threshold) const
+{
+	const auto* Data = Ability ? Ability->GetDefinition() : nullptr;
+	if (!Data) { return false; }
+	if (Data->ExecutionRoute == EHodgeAbilityExecutionRoute::ComboCoordinated)
+	{
+		if (!IsComboReady() || CurrentAbility != Ability) { return false; }
+		Window = Definition->MoveCancelWindowTag; Threshold = Definition->MoveIntentThreshold;
+	}
+	else
+	{
+		Window = Data->StandaloneMoveCancelWindowTag; Threshold = Data->StandaloneMoveIntentThreshold;
+	}
+	// 连段保留原有非负阈值契约，独立技能使用新的 (0,1] 配置范围。
+	return Window.IsValid() && FMath::IsFinite(Threshold) &&
+		(Data->ExecutionRoute == EHodgeAbilityExecutionRoute::ComboCoordinated ? Threshold >= 0.f : Threshold > 0.f && Threshold <= 1.f);
+}
+
+/** 清理请求不操作 GE，移动取消不会退还独立技能的冷却。 */
+void UHodgeCombatComponentBase::ClearMoveCancelRequest()
+{
+	bMoveRequestPending = false; PredictedMoveCancelAbility.Reset(); PendingMoveHandle = {}; PendingMoveKey = 0;
+	PendingMoveRequest.Invalidate(); PendingMoveExecution.Invalidate();
+}
+
+/** 每帧消费原始移动意图，不依赖角色已被攻击锁住的速度或加速度。 */
+void UHodgeCombatComponentBase::UpdateMoveCancel()
+{
+	auto* Ability = GetMoveCancelAbility();
+	// 换技能或结束后立即废弃旧预测；同实例的新执行也不能继承权限。
+	if (bMoveRequestPending && (!Ability || Ability->GetExecutionId() != PendingMoveExecution ||
+		Ability->GetCurrentAbilitySpecHandle() != PendingMoveHandle)) { ClearMoveCancelRequest(); }
+	if (!Ability || bMoveRequestPending || bSwitching || !ASC->AbilityActorInfo->IsLocallyControlled()) { return; }
+	FGameplayTag Window; float Threshold = 0.f;
+	if (!GetMoveCancelPolicy(Ability, Window, Threshold)) { return; }
+	const auto* Hero = GetOwner()->FindComponentByClass<UHodgeHeroComponent>();
+	const bool bHasIntent = Hero && !Hero->GetMoveIntent().ContainsNaN() &&
+		(Ability->IsComboCoordinated() ? Hero->HasMoveIntent(Threshold) :
+			Hero->GetMoveIntent().SizeSquared() >= FMath::Square(static_cast<double>(Threshold)));
+	if (!bHasIntent)
+	{ RejectedMoveHandle = {}; RejectedMoveKey = 0; RejectedMoveExecution.Invalidate(); return; }
+	const auto Prediction = Ability->GetCurrentActivationInfo().GetActivationPredictionKey();
+	const int32 Key = Prediction.IsServerInitiatedKey() ? -Prediction.Current : Prediction.Current;
+	if (RejectedMoveHandle == Ability->GetCurrentAbilitySpecHandle() && RejectedMoveKey == Key &&
+		RejectedMoveExecution == Ability->GetExecutionId()) { return; }
+	if (!Ability->CanBeCanceled() || ASC->HasMatchingGameplayTag(TAG_Gameplay_AbilityInputBlocked) ||
+		!Ability->GetExecutionWindows().HasTag(Window)) { return; }
+	bMoveRequestPending = true; PendingMoveHandle = Ability->GetCurrentAbilitySpecHandle(); PendingMoveKey = Key;
+	PendingMoveRequest = FGuid::NewGuid(); PendingMoveExecution = Ability->GetExecutionId();
+	if (Ability->BeginPredictedMoveCancel()) { PredictedMoveCancelAbility = Ability; }
+	ServerMoveCancel(GetOwner(), PendingMoveHandle, PendingMoveKey, PendingMoveRequest, Hero->GetMoveIntent());
 }
 
 /** 读取当前动作与网络确认使用的激活键。 */
@@ -815,6 +885,7 @@ void UHodgeCombatComponentBase::ExecutionStarted(UHodgeGameplayAbility_Definitio
 {
 	if (!Ability || !IsAuthorized(Ability->GetCurrentAbilitySpecHandle())) { return; }
 	CurrentAbility = Ability;
+	bModeContinuationInvalidated=false;
 	SetNode(PendingNode);
 	bTransitionStarted = true;
 	ComboMemory.Node = CurrentComboTag;
@@ -830,7 +901,8 @@ void UHodgeCombatComponentBase::ExecutionEnded(UHodgeGameplayAbility_Definition*
 	// 按服务器权限区分本次处理分支。
 	if (!bSwitching)
 	{
-		RetainComboMemory();
+		if (!bModeContinuationInvalidated) { RetainComboMemory(); }
+		bModeContinuationInvalidated=false;
 		QueuedEvents.Reset();
 		ClearInput();
 		SetNode(Definition ? Definition->EntryComboTag : FGameplayTag());
@@ -1030,104 +1102,79 @@ void UHodgeCombatComponentBase::ClientCorrectComboMemory_Implementation(FHodgeCo
 	if (IsComboReady() && !CurrentAbility && !bSwitching) { ComboMemory = State; }
 }
 
-/** 更新组件。 */
+/** 保留连段转换优先级，移动取消单独覆盖所有 Definition 路由。 */
 void UHodgeCombatComponentBase::TickComponent(float Delta, ELevelTick Type, FActorComponentTickFunction* Tick)
 {
 	Super::TickComponent(Delta, Type, Tick);
 	DrainEvents();
 	ExpireComboMemory();
-	// 按服务器权限区分本次处理分支。
-	if (!IsComboReady() || (!GetOwner()->HasAuthority() && !ASC->AbilityActorInfo->IsLocallyControlled()))
+	if (IsComboReady() && (GetOwner()->HasAuthority() || ASC->AbilityActorInfo->IsLocallyControlled()))
 	{
-		return;
+		if (ASC->HasMatchingGameplayTag(TAG_Gameplay_AbilityInputBlocked)) { ClearInput(); }
+		else
+		{
+			if (BufferedInput.IsValid() && GetWorld()->GetTimeSeconds() >= InputExpiresAt)
+			{
+				const FGuid Expired = BufferedActionRequest;
+				ConsumeBufferedInput();
+				SetActionRequestStatus(Expired, EHodgeCombatActionRequestStatus::Expired, TEXT("Combo input buffer expired"));
+			}
+			if (!bMoveRequestPending && BufferedInput.IsValid() && TryTransition(BufferedInput, false)) { return; }
+		}
 	}
-	if (ASC->HasMatchingGameplayTag(TAG_Gameplay_AbilityInputBlocked))
-	{
-		ClearInput();
-		return;
-	}
-	// 先检查对象与上下文，避免在依赖失效后继续处理。
-	if (BufferedInput.IsValid() && GetWorld()->GetTimeSeconds() >= InputExpiresAt)
-	{
-		const FGuid Expired = BufferedActionRequest;
-		ConsumeBufferedInput();
-		SetActionRequestStatus(Expired, EHodgeCombatActionRequestStatus::Expired, TEXT("Combo input buffer expired"));
-	}
-	if (bMoveRequestPending) { return; }
-	if (BufferedInput.IsValid() && TryTransition(BufferedInput, false)) { return; }
-	if (!CurrentAbility || bSwitching || !ASC->AbilityActorInfo->IsLocallyControlled()) { return; }
-	const auto* Avatar = ASC->GetAvatarActor();
-	const auto* Hero = Avatar ? Avatar->FindComponentByClass<UHodgeHeroComponent>() : nullptr;
-	if (!Hero || !Hero->HasMoveIntent(Definition->MoveIntentThreshold))
-	{ RejectedMoveHandle = {}; RejectedMoveKey = 0; return; }
-	if (RejectedMoveHandle == CurrentAbility->GetCurrentAbilitySpecHandle() && RejectedMoveKey == ExecutionKey()) { return; }
-	if (Hero && Hero->HasMoveIntent(Definition->MoveIntentThreshold) && CurrentAbility->CanBeCanceled()
-		&& CurrentAbility->GetExecutionWindows().HasTag(Definition->MoveCancelWindowTag))
-	{
-		bMoveRequestPending = true;
-		PendingMoveHandle = CurrentAbility->GetCurrentAbilitySpecHandle();
-		PendingMoveKey = ExecutionKey();
-		if (CurrentAbility->BeginPredictedMoveCancel()) { PredictedMoveCancelAbility = CurrentAbility; }
-		ServerMoveCancel(ASC->GetAvatarActor(), PendingMoveHandle, PendingMoveKey, Hero->GetMoveIntent());
-	}
+	UpdateMoveCancel();
 }
 
-/** 处理服务器侧的移动取消消息，沿用当前身份与权限校验。 */
+/** 延后一帧等待本帧通知更新，同时记录服务器本地执行身份。 */
 void UHodgeCombatComponentBase::ServerMoveCancel_Implementation(AActor* Avatar, FGameplayAbilitySpecHandle Handle,
-                                                                int32 Key, FVector2D Intent)
+	int32 Key, FGuid RequestId, FVector2D Intent)
 {
-	if (!GetWorld())
-	{
-		ClientMoveCancelResult(Avatar, Handle, Key, true, 0.f, 0.f, 0.f);
-		return;
-	}
-	TWeakObjectPtr<AActor> WeakAvatar = Avatar;
+	if (!GetWorld()) { return; }
+	const auto* Ability = GetMoveCancelAbility();
+	const FGuid ServerExecution = Ability ? Ability->GetExecutionId() : FGuid();
+	const TWeakObjectPtr<AActor> WeakAvatar = Avatar;
 	GetWorld()->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateWeakLambda(this,
-		[this, WeakAvatar, Handle, Key, Intent]() { ProcessServerMoveCancel(WeakAvatar, Handle, Key, Intent); }));
+		[this, WeakAvatar, Handle, Key, RequestId, ServerExecution, Intent]()
+		{ ProcessServerMoveCancel(WeakAvatar, Handle, Key, RequestId, ServerExecution, Intent); }));
 }
 
-/** 处理服务器移动取消。 */
+/** 服务器验证实际执行、通知窗口与 RPC 输入，不读取远端 Hero 的本地输入缓存。 */
 void UHodgeCombatComponentBase::ProcessServerMoveCancel(TWeakObjectPtr<AActor> Avatar,
-                                                        FGameplayAbilitySpecHandle Handle, int32 Key, FVector2D Intent)
+	FGameplayAbilitySpecHandle Handle, int32 Key, FGuid RequestId, FGuid ServerExecution, FVector2D Intent)
 {
-	// RPC 可能早于本帧 NotifyBegin 到达；等动画更新完成后再检查，不能提前授予取消权限。
-	const bool bSameExecution = Avatar.IsValid() && IsComboReady() && CurrentAbility && Avatar.Get() == GetOwner()
-		&& Handle == CurrentAbility->GetCurrentAbilitySpecHandle() && Key == ExecutionKey();
-	// 先检查对象与上下文，避免在依赖失效后继续处理。
-	if (bSameExecution && !Intent.ContainsNaN() && Intent.SizeSquared() <= 2.01f
-		&& Intent.SizeSquared() >= FMath::Square(Definition->MoveIntentThreshold) && CurrentAbility->CanBeCanceled()
-		&& !ASC->HasMatchingGameplayTag(TAG_Gameplay_AbilityInputBlocked)
-		&& CurrentAbility->GetExecutionWindows().HasTag(Definition->MoveCancelWindowTag))
-	{
-		EndCurrentExecution();
-	}
-	const bool bStillExecuting = bSameExecution && CurrentAbility &&
-		CurrentAbility->GetCurrentAbilitySpecHandle() == Handle && ExecutionKey() == Key;
-	// 当前网格使用的动画实例。
-	UAnimInstance* Anim = bStillExecuting && ASC->AbilityActorInfo.IsValid() ? ASC->AbilityActorInfo->GetAnimInstance() : nullptr;
-	UAnimMontage* Montage = bStillExecuting ? CurrentAbility->GetDefinition()->ExecutionConfig.Montage.Get() : nullptr;
-	ClientMoveCancelResult(Avatar.Get(), Handle, Key, !bStillExecuting,
+	auto* Ability = GetMoveCancelAbility();
+	const auto Prediction = Ability ? Ability->GetCurrentActivationInfo().GetActivationPredictionKey() : FPredictionKey();
+	const int32 ActualKey = Prediction.IsServerInitiatedKey() ? -Prediction.Current : Prediction.Current;
+	const bool bSameExecution = RequestId.IsValid() && Avatar.IsValid() && Avatar.Get() == GetOwner() && Ability &&
+		Handle == Ability->GetCurrentAbilitySpecHandle() && Key == ActualKey && ServerExecution == Ability->GetExecutionId();
+	FGameplayTag Window; float Threshold = 0.f;
+	// FVector2D 使用双精度，阈值先提升精度再平方，避免恰好达到阈值仍被拒绝。
+	if (bSameExecution && GetMoveCancelPolicy(Ability, Window, Threshold) && !Intent.ContainsNaN() &&
+		Intent.SizeSquared() <= 2.01f && Intent.SizeSquared() >= FMath::Square(static_cast<double>(Threshold)) && Ability->CanBeCanceled() &&
+		!ASC->HasMatchingGameplayTag(TAG_Gameplay_AbilityInputBlocked) && Ability->GetExecutionWindows().HasTag(Window))
+	{ Ability->FinishExecution(true, true); }
+	const bool bStillExecuting = bSameExecution && GetMoveCancelAbility() == Ability && Ability->GetExecutionId() == ServerExecution;
+	UAnimInstance* Anim = bStillExecuting ? ASC->AbilityActorInfo->GetAnimInstance() : nullptr;
+	UAnimMontage* Montage = bStillExecuting ? Ability->GetDefinition()->ExecutionConfig.Montage.Get() : nullptr;
+	ClientMoveCancelResult(Avatar.Get(), Handle, Key, RequestId, !bStillExecuting,
 		Anim && Montage ? Anim->Montage_GetPosition(Montage) : 0.f, ComboTime(),
 		Anim && Montage ? Anim->Montage_GetPlayRate(Montage) : 0.f);
 }
 
-/** 处理客户端侧的移动取消结果消息，沿用当前身份与权限校验。 */
+/** 请求、Avatar 和本地执行全部匹配才处理确认，旧回执不能影响新技能。 */
 void UHodgeCombatComponentBase::ClientMoveCancelResult_Implementation(AActor* Avatar, FGameplayAbilitySpecHandle Handle,
-	int32 Key, bool bEnd, float ServerPosition, float ServerTime, float ServerPlayRate)
+	int32 Key, FGuid RequestId, bool bEnd, float ServerPosition, float ServerTime, float ServerPlayRate)
 {
-	if (!bMoveRequestPending || Avatar != GetOwner() || Handle != PendingMoveHandle || Key != PendingMoveKey) { return; }
+	if (!bMoveRequestPending || Avatar != GetOwner() || Handle != PendingMoveHandle || Key != PendingMoveKey ||
+		RequestId != PendingMoveRequest) { return; }
 	const TWeakObjectPtr<UHodgeGameplayAbility_Definition> Predicted = PredictedMoveCancelAbility;
-	const FGameplayTag Input = BufferedInput;
-	const double Expires = InputExpiresAt;
+	const FGuid Execution = PendingMoveExecution;
+	const FGameplayTag Input = BufferedInput; const double Expires = InputExpiresAt;
 	const FGuid InputRequest = BufferedActionRequest;
 	ConsumeBufferedInput();
-	if (!bEnd) { RejectedMoveHandle = Handle; RejectedMoveKey = Key; }
-	bMoveRequestPending = false;
-	PredictedMoveCancelAbility.Reset();
-	PendingMoveHandle = {};
-	PendingMoveKey = 0;
-	// 先检查对象与上下文，避免在依赖失效后继续处理。
-	if (Predicted.IsValid() && Predicted->IsActive() && CurrentAbility == Predicted.Get() && ExecutionKey() == Key)
+	if (!bEnd) { RejectedMoveHandle = Handle; RejectedMoveKey = Key; RejectedMoveExecution = Execution; }
+	ClearMoveCancelRequest();
+	if (Predicted.IsValid() && GetMoveCancelAbility() == Predicted.Get() && Predicted->GetExecutionId() == Execution)
 	{ Predicted->ResolvePredictedMoveCancel(bEnd, ServerPosition, ServerTime, ServerPlayRate); }
 	FHodgeCombatActionRequestState Saved;
 	const bool bRequestQueued = !InputRequest.IsValid() || (GetCombatActionRequest(InputRequest, Saved) && Saved.Status == EHodgeCombatActionRequestStatus::Queued);
@@ -1452,4 +1499,27 @@ void UHodgeCombatComponentBase::CloseActionRequests()
 		CancelCombatActionRequest(Id);
 		SetActionRequestStatus(Id, EHodgeCombatActionRequestStatus::Cancelled, TEXT("Combat binding ended"));
 	}
+}
+
+/** 退态清除续接记忆，但当前动作继续由其原有生命周期结束。 */
+void UHodgeCombatComponentBase::InvalidateModeContinuation(FGuid ModeSessionId)
+{
+	if (!ModeSessionId.IsValid()) { return; }
+	ClearModeContinuation();
+}
+
+void UHodgeCombatComponentBase::HandleCombatModeChanged(FGameplayTag Tag,int32 Count)
+{
+	if (!ASC || ASC->GetAvatarActor()!=GetOwner() || !ASC->AbilityActorInfo.IsValid() ||
+		(!GetOwner()->HasAuthority() && !ASC->AbilityActorInfo->IsLocallyControlled())) { return; }
+	ClearModeContinuation();
+}
+
+/** 标签变化本身不结束当前动画，只让下一次续接重新选路。 */
+void UHodgeCombatComponentBase::ClearModeContinuation()
+{
+	ClearInput(); QueuedEvents.Reset(); ComboMemory={}; PreviousComboMemory={};
+	bModeContinuationInvalidated=CurrentAbility!=nullptr;
+	if (!CurrentAbility) { SetNode(Definition ? Definition->EntryComboTag : FGameplayTag()); }
+	PublishComboMemory();
 }

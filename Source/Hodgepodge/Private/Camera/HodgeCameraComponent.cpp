@@ -8,6 +8,11 @@
 
 #include "Camera/HodgeCameraMode.h"
 #include "Engine/Canvas.h"
+#include "Component/HodgeHeroComponent.h"
+#include "Data/HodgeCinematicCameraProfile.h"
+#include "Camera/PlayerCameraManager.h"
+#include "Camera/HodgeCameraMode_Cinematic.h"
+#include "UI/Subsystem/HodgeUIManagerSubsystem.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeCameraComponent)
 
@@ -43,6 +48,8 @@ void UHodgeCameraComponent::GetCameraView(float DeltaTime, FMinimalViewInfo& Des
 {
 	// 相机模式栈必须存在。
 	check(CameraModeStack);
+	// 求值前查询实际蒙太奇窗口，跳段或丢失通知也能配对恢复。
+	if (auto* Hero = UHodgeHeroComponent::FindHeroComponent(GetTargetActor())) { Hero->RefreshCinematicCamera(); }
 
 	// 根据当前游戏状态决定并更新需要使用的 CameraMode。
 	UpdateCameraModes();
@@ -105,6 +112,14 @@ void UHodgeCameraComponent::GetCameraView(float DeltaTime, FMinimalViewInfo& Des
 	{
 		DesiredView.PostProcessSettings = PostProcessSettings;
 	}
+	// PCM每帧清理缓存；电影退出后不再提交，保留场景和其他相机的后处理。
+	if (const auto* Hero=UHodgeHeroComponent::FindHeroComponent(GetTargetActor()))
+	{
+		const auto State=Hero->GetCinematicCameraState(); const auto* Profile=Hero->GetCinematicProfile();
+		const auto* Pawn=Cast<APawn>(GetTargetActor()); const auto* PC=Pawn ? Pawn->GetController<APlayerController>() : nullptr;
+		if (State.bActive && Profile && Profile->PostProcessWeight>0.f && PC && PC->IsLocalController() && PC->PlayerCameraManager && UHodgeUIManagerSubsystem::AllowsGameplayInput(PC))
+		{ FPostProcessSettings Settings=Profile->PostProcess; PC->PlayerCameraManager->AddCachedPPBlend(Settings,Profile->PostProcessWeight*State.Weight,VTBlendOrder_Override); }
+	}
 
 
 	// XR 头戴设备相机需要使用父类额外处理。
@@ -125,6 +140,27 @@ bool UHodgeCameraComponent::GetLastCameraModeView(FHodgeCameraModeView& OutView)
 	OutView = LastCameraModeView; return true;
 }
 
+void UHodgeCameraComponent::QueueCinematicReturn(float Seconds, FRotator GameplayRotation)
+{
+	PendingReturnSeconds = FMath::Max(0.f, Seconds);
+	PendingGameplayRotation = GameplayRotation;
+}
+
+bool UHodgeCameraComponent::GetGameplayReturnRotation(FRotator& Out) const
+{
+	if (PendingReturnSeconds < 0.f) { return false; }
+	Out = PendingGameplayRotation;
+	return true;
+}
+
+void UHodgeCameraComponent::EndCinematicPresentation(const FHodgeAbilityCameraHandle& Handle)
+{
+	if (CameraModeStack)
+	{
+		if (auto* Mode=Cast<UHodgeCameraMode_Cinematic>(CameraModeStack->FindExistingMode(UHodgeCameraMode_Cinematic::StaticClass()))) { Mode->EndPresentation(Handle); }
+	}
+}
+
 /** 更新相机Modes。 */
 void UHodgeCameraComponent::UpdateCameraModes()
 {
@@ -141,7 +177,8 @@ void UHodgeCameraComponent::UpdateCameraModes()
 			if (const TSubclassOf<UHodgeCameraMode> CameraMode = DetermineCameraModeDelegate.Execute())
 			{
 				// 将查询到的 CameraMode 推入相机模式栈。
-				CameraModeStack->PushCameraMode(CameraMode);
+				CameraModeStack->PushCameraMode(CameraMode, PendingReturnSeconds);
+				PendingReturnSeconds = -1.f;
 			}
 		}
 	}

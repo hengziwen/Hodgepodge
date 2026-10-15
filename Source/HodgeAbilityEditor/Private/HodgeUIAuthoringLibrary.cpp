@@ -2,6 +2,7 @@
  * @brief 实现UMG编辑器制作与验证函数库相关的类型、接口与现有处理流程。
  */
 #include "HodgeUIAuthoringLibrary.h"
+#include "UI/HodgeResonanceEnergyWidget.h"
 #include "GameFramework/PlayerInput.h"
 #include "InputCoreTypes.h"
 #include "UI/IndicatorSystem/IndicatorLayer.h"
@@ -272,7 +273,42 @@ FString UHodgeUIAuthoringLibrary::InspectPlayerUI(APlayerController* Player)
             };
             RecordPosition(HUD->WidgetTree->FindWidget(TEXT("PlayerVitalsPoint")), TEXT("vitals_center"));
             RecordPosition(HUD->WidgetTree->FindWidget(TEXT("EndButton")), TEXT("end_center"));
+            RecordPosition(HUD->WidgetTree->FindWidget(TEXT("ResonanceEnergy")), TEXT("resonance_center"));
+            RecordPosition(HUD->WidgetTree->FindWidget(TEXT("ResonanceSkill")), TEXT("skill_center"));
         }
+    }
+    // 读取运行时实际子树，避免资产存在但空Canvas或绑定失败被误认为UI通过。
+    auto FindIcon=[HUD](FName Name)->UHodgeAbilityIconWidget*
+    {
+        auto* Widget=HUD && HUD->WidgetTree ? HUD->WidgetTree->FindWidget(Name) : nullptr;
+        if (auto* Point=Cast<UUIExtensionPointWidget>(Widget))
+        {
+            for (auto* Entry : Point->GetAllEntries()) { if (auto* Icon=Cast<UHodgeAbilityIconWidget>(Entry)) { return Icon; } }
+        }
+        return Cast<UHodgeAbilityIconWidget>(Widget);
+    };
+    auto* ResonanceWidget = Cast<UHodgeResonanceEnergyWidget>(FindIcon(TEXT("ResonanceEnergy")));
+    Data->SetBoolField(TEXT("ability_extension_slots"),HUD && HUD->WidgetTree && Cast<UUIExtensionPointWidget>(HUD->WidgetTree->FindWidget(TEXT("ResonanceEnergy"))) && Cast<UUIExtensionPointWidget>(HUD->WidgetTree->FindWidget(TEXT("ResonanceSkill"))));
+    Data->SetBoolField(TEXT("resonance_widget"), ResonanceWidget && ResonanceWidget->WidgetTree);
+    if (ResonanceWidget && ResonanceWidget->WidgetTree)
+    {
+        const auto State=ResonanceWidget->GetVisualState();
+        const auto* Source=UHodgeUIManagerSubsystem::GetGameplayDataForController(Player);
+        const auto Resource=Source ? Source->GetResonance() : FHodgeUIResonanceSnapshot();
+        Data->SetNumberField(TEXT("resonance_percent"),State.EnergyPercent);
+        Data->SetNumberField(TEXT("resonance_cooldown"),State.CooldownRemaining);
+        Data->SetNumberField(TEXT("resonance_cooldown_progress"),State.CooldownReadyPercent);
+        Data->SetStringField(TEXT("resonance_text"),FString::Printf(TEXT("%.0f/%.0f%s"),Resource.Energy,Resource.Capacity,State.bCoolingDown ? TEXT(" CD s") : TEXT("")));
+        Data->SetBoolField(TEXT("resonance_enabled"),State.bCanActivate);
+        Data->SetNumberField(TEXT("resonance_opacity"), ResonanceWidget->GetRenderOpacity());
+    }
+    if (auto* Skill=FindIcon(TEXT("ResonanceSkill")))
+    {
+        const auto State=Skill->GetVisualState();
+        Data->SetNumberField(TEXT("skill_cooldown"),State.CooldownRemaining);
+        Data->SetNumberField(TEXT("skill_cooldown_progress"),State.CooldownReadyPercent);
+        Data->SetBoolField(TEXT("skill_enabled"),State.bCanActivate);
+        Data->SetBoolField(TEXT("skill_icon_ready"),State.bReady);
     }
     int32 Entries = 0;
     if (HUD && HUD->WidgetTree)
@@ -348,6 +384,18 @@ bool UHodgeUIAuthoringLibrary::QueueUIAction(APlayerController* Player, FName Ac
         auto* Instance = LP ? LP->GetGameInstance() : nullptr;
     auto* Manager = Instance ? Instance->GetSubsystem<UHodgeUIManagerSubsystem>() : nullptr;
         auto* Root = Manager ? Manager->GetRootLayout(LP) : nullptr;
+        // 只在下一游戏Tick从当前玩家控制台执行正式命令，验证远端RPC而非夹具直接改属性。
+        if (Action == TEXT("ResonanceFill"))
+        {
+            if (PC->IsLocalController()) { PC->ConsoleCommand(TEXT("HodgeFillResonance")); }
+            return;
+        }
+        // 暗流测试同样执行真实控制台命令，不能由夹具直接设置属性冒充RPC成功。
+        if (Action == TEXT("DarkFlowFill"))
+        {
+            if (PC->IsLocalController()) { PC->ConsoleCommand(TEXT("HodgeFillDarkFlow")); }
+            return;
+        }
         // 从按键入口验证 IMC，而非绕过映射直接注入 InputAction。
         if (Action == TEXT("LockOnKey"))
         {
@@ -1245,6 +1293,87 @@ FString UHodgeUIAuthoringLibrary::MigrateDesignerAssets()
 }
 
 /** 配置引用HUD界面。 */
+bool UHodgeUIAuthoringLibrary::ConfigureResonanceHUD(UWidgetBlueprint* Blueprint, TSubclassOf<UUserWidget> WidgetClass)
+{
+	if (!Blueprint || !Blueprint->WidgetTree || !WidgetClass || !WidgetClass->IsChildOf(UHodgeResonanceEnergyWidget::StaticClass()) || (GEditor && GEditor->PlayWorld)) { return false; }
+	auto* Canvas=Cast<UCanvasPanel>(Blueprint->WidgetTree->FindWidget(TEXT("ReferenceHUDCanvas")));
+	if (!Canvas) { return false; }
+	// 已有充能控件保留用户布局与样式，只补充尚未创建的首版实例。
+	if (Blueprint->WidgetTree->FindWidget(TEXT("ResonanceEnergy"))) { return true; }
+	Blueprint->Modify();
+	auto* Widget=Blueprint->WidgetTree->ConstructWidget<UUserWidget>(WidgetClass,TEXT("ResonanceEnergy"));
+	auto* Slot=Canvas->AddChildToCanvas(Widget); Slot->SetAnchors(FAnchors(1.f,1.f)); Slot->SetAlignment(FVector2D(1.f,1.f));
+	Slot->SetPosition(FVector2D(-40.f,-70.f)); Slot->SetSize(FVector2D(250.f,48.f)); Slot->SetZOrder(2);
+	FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(Blueprint); return true;
+}
+
+bool UHodgeUIAuthoringLibrary::ConfigureAbilityIconHUD(UWidgetBlueprint* Blueprint,TSubclassOf<UUserWidget> SkillClass)
+{
+	if (!Blueprint || !Blueprint->WidgetTree || !SkillClass || !SkillClass->IsChildOf(UHodgeAbilityIconWidget::StaticClass()) || (GEditor && GEditor->PlayWorld)) { return false; }
+	auto* Canvas=Cast<UCanvasPanel>(Blueprint->WidgetTree->FindWidget(TEXT("ReferenceHUDCanvas")));
+	const FGameplayTag SkillTag=FGameplayTag::RequestGameplayTag(TEXT("UI.Slot.ResonanceSkill"),false);
+	const FGameplayTag LiberationTag=FGameplayTag::RequestGameplayTag(TEXT("UI.Slot.ResonanceLiberation"),false);
+	if (!Canvas || !SkillTag.IsValid() || !LiberationTag.IsValid()) { return false; }
+	Blueprint->Modify();
+	auto ConfigurePoint=[&](FName Name,FGameplayTag Tag,FVector2D DefaultPosition)
+	{
+		auto* Existing=Blueprint->WidgetTree->FindWidget(Name);
+		if (auto* Point=Cast<UUIExtensionPointWidget>(Existing)) { Point->SetExtensionPointTag(Tag); return Point->GetParent()==Canvas; }
+		if (Existing && (!Existing->IsA<UHodgeAbilityIconWidget>() || Existing->GetParent()!=Canvas)) { return false; }
+		FAnchors Anchors(1.f,1.f); FVector2D Alignment(1.f,1.f); FMargin Offsets(DefaultPosition.X,DefaultPosition.Y,76.f,100.f); int32 ZOrder=2; bool bAutoSize=false;
+		if (Existing)
+		{
+			// 迁移只替换挂载方式，保留用户已调整的Canvas布局。
+			auto* OldSlot=Cast<UCanvasPanelSlot>(Existing->Slot); if (!OldSlot) { return false; }
+			Anchors=OldSlot->GetAnchors(); Alignment=OldSlot->GetAlignment(); Offsets=OldSlot->GetOffsets(); ZOrder=OldSlot->GetZOrder(); bAutoSize=OldSlot->GetAutoSize();
+			Blueprint->WidgetTree->RemoveWidget(Existing);
+			Existing->Rename(nullptr,GetTransientPackage(),REN_DontCreateRedirectors|REN_NonTransactional);
+		}
+		auto* Point=Blueprint->WidgetTree->ConstructWidget<UUIExtensionPointWidget>(UUIExtensionPointWidget::StaticClass(),Name);
+		Point->SetExtensionPointTag(Tag);
+		auto* Slot=Canvas->AddChildToCanvas(Point); Slot->SetAnchors(Anchors); Slot->SetAlignment(Alignment); Slot->SetOffsets(Offsets); Slot->SetZOrder(ZOrder); Slot->SetAutoSize(bAutoSize);
+		return true;
+	};
+	if (!ConfigurePoint(TEXT("ResonanceSkill"),SkillTag,{-196.f,-24.f}) || !ConfigurePoint(TEXT("ResonanceEnergy"),LiberationTag,{-48.f,-24.f})) { return false; }
+	FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(Blueprint); return true;
+}
+
+bool UHodgeUIAuthoringLibrary::ConfigureAbilityIconDesigner(UWidgetBlueprint* Blueprint)
+{
+	if (!Blueprint || !Blueprint->WidgetTree || !Blueprint->GeneratedClass || !Blueprint->ParentClass || !Blueprint->ParentClass->IsChildOf(UHodgeAbilityIconWidget::StaticClass()) || (GEditor && GEditor->PlayWorld)) { return false; }
+	auto* Tree=Blueprint->WidgetTree.Get();
+	auto* Root=Cast<UPanelWidget>(Tree->RootWidget);
+	if (Tree->RootWidget && (!Root || Root->GetChildrenCount()>0))
+	{
+		// 不覆盖非空Designer；已制作的控件只确认必要绑定存在。
+		return Tree->FindWidget(TEXT("SkillIcon")) && Tree->FindWidget(TEXT("CooldownText")) && Tree->FindWidget(TEXT("AbilityButton"));
+	}
+	Blueprint->Modify();
+	if (Tree->RootWidget) { Tree->RootWidget->Rename(nullptr,GetTransientPackage(),REN_DontCreateRedirectors|REN_NonTransactional); Tree->RootWidget=nullptr; }
+	const auto* Defaults=Blueprint->GeneratedClass->GetDefaultObject<UHodgeAbilityIconWidget>();
+	const float Size=Defaults->IconSize;
+	auto* Box=Tree->ConstructWidget<USizeBox>(USizeBox::StaticClass(),TEXT("IconSize")); Box->SetWidthOverride(Size); Box->SetHeightOverride(Size+24.f); Tree->RootWidget=Box;
+	auto* Canvas=Tree->ConstructWidget<UCanvasPanel>(UCanvasPanel::StaticClass(),TEXT("IconCanvas")); Box->AddChild(Canvas);
+	auto Add=[Canvas](UWidget* Widget,FVector2D Position,FVector2D Dimensions)
+	{ auto* Slot=Canvas->AddChildToCanvas(Widget); Slot->SetPosition(Position); Slot->SetSize(Dimensions); };
+	auto* Icon=Tree->ConstructWidget<UImage>(UImage::StaticClass(),TEXT("SkillIcon")); Add(Icon,{4.f,4.f},{Size-8.f,Size-8.f});
+	auto* Ring=Tree->ConstructWidget<UImage>(UImage::StaticClass(),TEXT("EnergyRing")); Add(Ring,{0.f,0.f},{Size,Size});
+	auto* Cooldown=Tree->ConstructWidget<UTextBlock>(UTextBlock::StaticClass(),TEXT("CooldownText")); Add(Cooldown,{0.f,(Size-32.f)*.5f},{Size,32.f}); Cooldown->SetJustification(ETextJustify::Center);
+	// 使用TextBlock自带的持久字体资产，Slate临时CompositeFont不能保存到WBP。
+	auto Font=Cooldown->GetFont(); Font.Size=Defaults->FontSize; Font.TypefaceFontName=TEXT("Bold"); Cooldown->SetFont(Font); Cooldown->SetShadowColorAndOpacity(FLinearColor(0,0,0,.9f)); Cooldown->SetShadowOffset({1.f,1.f});
+	auto* Key=Tree->ConstructWidget<UBorder>(UBorder::StaticClass(),TEXT("KeyBackground")); Key->SetBrushColor(FLinearColor(.93f,.94f,.9f,.95f)); Key->SetPadding(FMargin(1.f)); Add(Key,{(Size-18.f)*.5f,Size+2.f},{18.f,20.f});
+	auto* Label=Tree->ConstructWidget<UTextBlock>(UTextBlock::StaticClass(),TEXT("KeyText")); Label->SetJustification(ETextJustify::Center); Label->SetColorAndOpacity(FSlateColor(FLinearColor(.08f,.09f,.08f,1.f))); Key->AddChild(Label);
+	Font=Label->GetFont(); Font.Size=14; Font.TypefaceFontName=TEXT("Bold"); Label->SetFont(Font); Label->SetText(Defaults->KeyLabel);
+	// 点击层不包含图像，禁用技能时仍保持金色充能环的独立颜色。
+	auto* Button=Tree->ConstructWidget<UButton>(UButton::StaticClass(),TEXT("AbilityButton")); Add(Button,{0.f,0.f},{Size,Size+24.f});
+	FButtonStyle Style=Button->GetStyle(); for (auto* Brush : {&Style.Normal,&Style.Hovered,&Style.Pressed,&Style.Disabled}) { Brush->DrawAs=ESlateBrushDrawType::NoDrawType; } Button->SetStyle(Style);
+	PRAGMA_DISABLE_DEPRECATION_WARNINGS
+	Button->IsFocusable=false;
+	PRAGMA_ENABLE_DEPRECATION_WARNINGS
+	for (auto* Child : {static_cast<UWidget*>(Icon),static_cast<UWidget*>(Ring),static_cast<UWidget*>(Cooldown),static_cast<UWidget*>(Key)}) { Child->SetVisibility(ESlateVisibility::HitTestInvisible); }
+	FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(Blueprint); return true;
+}
+
 FString UHodgeUIAuthoringLibrary::ConfigureReferenceHUD()
 {
     auto Report = MakeShared<FJsonObject>();
@@ -1445,4 +1574,81 @@ bool UHodgeUIAuthoringLibrary::ConfigureLockOnIndicator(UWidgetBlueprint* Bluepr
     Blueprint->WidgetTree->RootWidget = Box;
     FCompilerResultsLog Results; FKismetEditorUtilities::CompileBlueprint(Blueprint,EBlueprintCompileOptions::None,&Results);
     Blueprint->MarkPackageDirty(); return Results.NumErrors == 0;
+}
+
+/** 控件树与图均保存到Designer，运行时只订阅本地玩家数据源。 */
+FString UHodgeUIAuthoringLibrary::ConfigureDarkFlowHUD()
+{
+    TArray<FString> Errors;
+    auto Report=MakeShared<FJsonObject>();
+    if (GEditor && GEditor->PlayWorld) { Errors.Add(TEXT("Stop PIE before editing DarkFlow HUD")); }
+    auto* HUD=LoadObject<UWidgetBlueprint>(nullptr,TEXT("/Game/Main/UI/HUD/WBP_HodgeHUD.WBP_HodgeHUD"));
+    auto* Canvas=HUD && HUD->WidgetTree ? Cast<UCanvasPanel>(HUD->WidgetTree->FindWidget(TEXT("ReferenceHUDCanvas"))) : nullptr;
+    auto* Vitals=Canvas ? HUD->WidgetTree->FindWidget(TEXT("PlayerVitalsPoint")) : nullptr;
+    auto* VitalsSlot=Vitals ? Cast<UCanvasPanelSlot>(Vitals->Slot) : nullptr;
+    const auto SlotTag=FGameplayTag::RequestGameplayTag(TEXT("UI.Slot.DarkFlow"),false);
+    if (!Canvas || !VitalsSlot || !SlotTag.IsValid()) { Errors.Add(TEXT("Missing formal HUD canvas, vitals slot or DarkFlow tag")); }
+    auto* BP=Errors.IsEmpty() ? DesignerBlueprint(TEXT("/Game/Main/UI/HUD/WBP_DarkFlow"),UCommonUserWidget::StaticClass(),Errors) : nullptr;
+    if (BP && !BP->WidgetTree->RootWidget)
+    {
+		auto* Tree=BP->WidgetTree.Get();
+        auto* Size=Tree->ConstructWidget<USizeBox>(USizeBox::StaticClass(),TEXT("DarkFlowSize"));
+        Size->SetWidthOverride(320.f); Size->SetHeightOverride(22.f); Tree->RootWidget=Size;
+        auto* Overlay=Tree->ConstructWidget<UOverlay>(UOverlay::StaticClass(),TEXT("DarkFlowContent")); Size->AddChild(Overlay);
+        auto* Bar=Tree->ConstructWidget<UProgressBar>(UProgressBar::StaticClass(),TEXT("DarkFlowBar")); Bar->bIsVariable=true;
+        Bar->SetPercent(.65f); Bar->SetFillColorAndOpacity(FLinearColor(.78f,.89f,.42f));
+        FProgressBarStyle Style=Bar->GetWidgetStyle(); Style.EnableFillAnimation=false;
+        Style.BackgroundImage.DrawAs=ESlateBrushDrawType::Box; Style.BackgroundImage.TintColor=FSlateColor(FLinearColor(.035f,.045f,.035f,.8f));
+        Style.FillImage.DrawAs=ESlateBrushDrawType::Box; Style.FillImage.TintColor=FSlateColor(FLinearColor::White); Bar->SetWidgetStyle(Style);
+        auto* BarSlot=Overlay->AddChildToOverlay(Bar); BarSlot->SetPadding(FMargin(0.f,3.f)); BarSlot->SetHorizontalAlignment(HAlign_Fill); BarSlot->SetVerticalAlignment(VAlign_Fill);
+        auto* Label=DesignerText(Tree,TEXT("DarkFlowLabel"),TEXT("暗流 · 长按普攻"),10);
+        Label->SetJustification(ETextJustify::Center); Label->SetShadowColorAndOpacity(FLinearColor::Black); Label->SetShadowOffset(FVector2D(1.f,1.f));
+        auto* TextSlot=Overlay->AddChildToOverlay(Label); TextSlot->SetHorizontalAlignment(HAlign_Fill); TextSlot->SetVerticalAlignment(VAlign_Center);
+        CompileDesigner(BP,Errors);
+        FDesignerGraph G(BP,Errors);
+        G.Variable(TEXT("GameplayData"),G.Type(UEdGraphSchema_K2::PC_Object,UHodgeGameplayUIDataSource::StaticClass()));
+        auto Snapshot=G.Type(UEdGraphSchema_K2::PC_Struct,FHodgeHavocResourceSnapshot::StaticStruct()); Snapshot.bIsReference=true; Snapshot.bIsConst=true;
+        auto* Apply=G.Custom(TEXT("ApplyHavoc"),{{TEXT("Snapshot"),Snapshot}});
+        Apply->NodeComment=TEXT("只显示服务器复制的真实暗流；模式来自GE标签，不根据条长推测变身。"); Apply->bCommentBubbleVisible=true;
+        auto* Refresh=G.Custom(TEXT("RefreshHavoc")); G.Skeleton();
+        auto* Break=G.Break(FHodgeHavocResourceSnapshot::StaticStruct(),G.Pin(Apply,TEXT("Snapshot")));
+        auto* Progress=G.Call(UProgressBar::StaticClass(),TEXT("SetPercent"),G.Get(TEXT("DarkFlowBar")));
+        G.Link(G.Pin(Break,TEXT("Percent")),G.Pin(Progress,TEXT("InPercent"))); G.Exec(Apply,Progress);
+        auto* Mode=G.Branch(Progress,G.Pin(Break,TEXT("bDarkSurge")));
+        for (bool Active : {true,false})
+        {
+            auto* Text=G.Call(UTextBlock::StaticClass(),TEXT("SetText"),G.Get(TEXT("DarkFlowLabel")));
+            G.Schema->TrySetDefaultText(*G.Pin(Text,TEXT("InText")),FText::FromString(Active ? TEXT("暗涌") : TEXT("暗流 · 长按普攻")));
+            G.Link(G.Pin(Mode,Active ? UEdGraphSchema_K2::PN_Then : UEdGraphSchema_K2::PN_Else),G.Pin(Text,UEdGraphSchema_K2::PN_Execute));
+        }
+        auto* Valid=G.Valid(Refresh,G.Get(TEXT("GameplayData")));
+        auto* Read=G.Call(UHodgeGameplayUIDataSource::StaticClass(),TEXT("GetHavocSnapshot"),G.Get(TEXT("GameplayData")));
+        auto* Update=G.CallSelf(TEXT("ApplyHavoc")); G.Link(G.Return(Read),G.Pin(Update,TEXT("Snapshot")));
+        G.Link(G.Pin(Valid,UEdGraphSchema_K2::PN_Then),G.Pin(Update,UEdGraphSchema_K2::PN_Execute));
+        auto* Construct=G.Event(UUserWidget::StaticClass(),TEXT("Construct")); auto* Data=G.Set(TEXT("GameplayData"),G.Data()); G.Exec(Construct,Data);
+        auto* HasData=G.Valid(Data,G.Get(TEXT("GameplayData")));
+        auto* Bind=G.Bind<UK2Node_AddDelegate>(UHodgeGameplayUIDataSource::StaticClass(),TEXT("OnHavocChanged"),G.Get(TEXT("GameplayData")),TEXT("ApplyHavoc"));
+        G.Link(G.Pin(HasData,UEdGraphSchema_K2::PN_Then),G.Pin(Bind,UEdGraphSchema_K2::PN_Execute)); G.Exec(Bind,G.CallSelf(TEXT("RefreshHavoc")));
+        auto* Destruct=G.Event(UUserWidget::StaticClass(),TEXT("Destruct")); auto* HasOld=G.Valid(Destruct,G.Get(TEXT("GameplayData")));
+        auto* Unbind=G.Bind<UK2Node_RemoveDelegate>(UHodgeGameplayUIDataSource::StaticClass(),TEXT("OnHavocChanged"),G.Get(TEXT("GameplayData")),TEXT("ApplyHavoc"));
+        G.Link(G.Pin(HasOld,UEdGraphSchema_K2::PN_Then),G.Pin(Unbind,UEdGraphSchema_K2::PN_Execute)); G.Exec(Unbind,G.Set(TEXT("GameplayData")));
+        CompileDesigner(BP,Errors);
+        BP->GetOutermost()->GetMetaData()->SetValue(BP,TEXT("HodgeUMGVersion"),TEXT("1"));
+    }
+    if (BP && Errors.IsEmpty())
+    {
+        auto* Existing=HUD->WidgetTree->FindWidget(TEXT("DarkFlowPoint"));
+        if (!Existing)
+        {
+            HUD->Modify();
+            auto* Point=HUD->WidgetTree->ConstructWidget<UUIExtensionPointWidget>(UUIExtensionPointWidget::StaticClass(),TEXT("DarkFlowPoint")); Point->SetExtensionPointTag(SlotTag);
+            auto* Slot=Canvas->AddChildToCanvas(Point); Slot->SetAnchors(VitalsSlot->GetAnchors()); Slot->SetAlignment(VitalsSlot->GetAlignment());
+            Slot->SetPosition(VitalsSlot->GetPosition()+FVector2D(0.f,-26.f)); Slot->SetSize(FVector2D(320.f,22.f)); Slot->SetZOrder(2);
+            FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(HUD); CompileDesigner(HUD,Errors);
+        }
+        else if (!Existing->IsA<UUIExtensionPointWidget>()) { Errors.Add(TEXT("Existing DarkFlowPoint is not an extension point")); }
+        if (Errors.IsEmpty() && (!Save(BP) || !Save(HUD))) { Errors.Add(TEXT("Saving DarkFlow HUD failed")); }
+    }
+    TArray<TSharedPtr<FJsonValue>> Messages; for (const auto& Error : Errors) { Messages.Add(MakeShared<FJsonValueString>(Error)); }
+    Report->SetArrayField(TEXT("errors"),Messages); Report->SetBoolField(TEXT("success"),Errors.IsEmpty()); return Json(Report);
 }

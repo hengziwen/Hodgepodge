@@ -83,6 +83,12 @@ public:
 	UFUNCTION(BlueprintPure, Category="Hodge|Camera") TSubclassOf<UHodgeCameraMode> GetActiveCameraModeClass() const;
 	/** 返回上一帧已混合输出；切换镜头以此作为连续起点。 */
 	bool GetLastCameraModeView(FHodgeCameraModeView& OutView) const;
+	/** 异常退出从当前视觉视图混合，但恢复方向使用游戏操作朝向。 */
+	void QueueCinematicReturn(float Seconds, FRotator GameplayRotation);
+	/** 仅在电影返回切换这一帧提供操作旋转种子。 */
+	bool GetGameplayReturnRotation(FRotator& Out) const;
+	/** 只清理对应句柄启动的电影音效和震屏。 */
+	void EndCinematicPresentation(const struct FHodgeAbilityCameraHandle& Handle);
 
 protected:
 	// 注册相机组件时执行初始化。
@@ -109,4 +115,7 @@ protected:
 	float FieldOfViewOffset;
 	FHodgeCameraModeView LastCameraModeView;
 	bool bHasCameraModeView = false;
+	/** 下一次真实模式切换消费这份退出配置，不保留到其他技能。 */
+	float PendingReturnSeconds = -1.f;
+	FRotator PendingGameplayRotation = FRotator::ZeroRotator;
 };

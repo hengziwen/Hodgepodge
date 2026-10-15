@@ -10,6 +10,8 @@
 #include "Component/HodgePawnExtensionComponent.h"
 #include "Component/HodgeCombatComponentBase.h"
 #include "AbilitySystem/HodgeAbilitySystemComponent.h"
+#include "AbilitySystem/AttributeSet/HodgeResonanceSet.h"
+#include "AbilitySystem/AttributeSet/HodgeHavocSet.h"
 #include "Data/HodgeComboDefinition.h"
 #include "Abilities/GameplayAbility.h"
 #include "NativeGameplayTags.h"
@@ -17,6 +19,7 @@
 
 UE_DEFINE_GAMEPLAY_TAG_STATIC(TAG_UI_SLOT_VITALS, "UI.Slot.PlayerVitals");
 UE_DEFINE_GAMEPLAY_TAG_STATIC(TAG_UI_SLOT_ABILITIES, "UI.Slot.AbilityBar");
+UE_DEFINE_GAMEPLAY_TAG_STATIC(TAG_UI_SLOT_DARKFLOW, "UI.Slot.DarkFlow");
 
 void UHodgeGameplayUIDataSource::Initialize(UHodgeLocalPlayerBase* Player, APlayerController* InController)
 {
@@ -46,6 +49,16 @@ void UHodgeGameplayUIDataSource::UnbindPawn()
 /** 解绑状态。 */
 void UHodgeGameplayUIDataSource::UnbindState()
 {
+	if (ResonanceASC.IsValid())
+	{
+		ResonanceASC->GetGameplayAttributeValueChangeDelegate(UHodgeResonanceSet::GetResonanceEnergyAttribute()).Remove(EnergyDelegate);
+		ResonanceASC->GetGameplayAttributeValueChangeDelegate(UHodgeResonanceSet::GetMaxResonanceEnergyAttribute()).Remove(CapacityDelegate);
+		ResonanceASC->GetGameplayAttributeValueChangeDelegate(UHodgeHavocSet::GetDarkFlowAttribute()).Remove(DarkFlowDelegate);
+		ResonanceASC->GetGameplayAttributeValueChangeDelegate(UHodgeHavocSet::GetMaxDarkFlowAttribute()).Remove(MaxDarkFlowDelegate);
+		ResonanceASC->RegisterGameplayTagEvent(HodgeHavocTags::DarkSurge).Remove(DarkSurgeDelegate);
+	}
+	EnergyDelegate.Reset(); CapacityDelegate.Reset(); ResonanceASC.Reset();
+	DarkFlowDelegate.Reset(); MaxDarkFlowDelegate.Reset(); DarkSurgeDelegate.Reset();
 	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (PlayerState.IsValid()) { PlayerState->OnAttributeReadinessChanged.Remove(ReadyDelegate); }
 	ReadyDelegate.Reset(); PlayerState.Reset();
@@ -63,7 +76,8 @@ void UHodgeGameplayUIDataSource::Shutdown()
 	}
 	PawnDelegate.Reset(); PlayerStateDelegate.Reset();
 	UnbindPawn(); UnbindState(); LocalPlayer.Reset(); Controller.Reset();
-	Refresh(); OnVitalsChanged.Clear();
+	Refresh(); OnVitalsChanged.Clear(); OnResonanceChanged.Clear();
+	OnHavocChanged.Clear();
 }
 
 /** 在本地玩家切换PlayerState时更新数据监听。 */
@@ -73,6 +87,18 @@ void UHodgeGameplayUIDataSource::StateChanged(UHodgeLocalPlayerBase* Player, APl
 	PlayerState = Cast<AHodgePlayerState>(State);
 	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (PlayerState.IsValid()) { ReadyDelegate = PlayerState->OnAttributeReadinessChanged.AddUObject(this, &ThisClass::Refresh); }
+	if (PlayerState.IsValid())
+	{
+		ResonanceASC=PlayerState->GetHodgeAbilitySystemComponent();
+		if (ResonanceASC.IsValid())
+		{
+			EnergyDelegate=ResonanceASC->GetGameplayAttributeValueChangeDelegate(UHodgeResonanceSet::GetResonanceEnergyAttribute()).AddUObject(this,&ThisClass::ResonanceAttributeChanged);
+			CapacityDelegate=ResonanceASC->GetGameplayAttributeValueChangeDelegate(UHodgeResonanceSet::GetMaxResonanceEnergyAttribute()).AddUObject(this,&ThisClass::ResonanceAttributeChanged);
+			DarkFlowDelegate=ResonanceASC->GetGameplayAttributeValueChangeDelegate(UHodgeHavocSet::GetDarkFlowAttribute()).AddUObject(this,&ThisClass::ResonanceAttributeChanged);
+			MaxDarkFlowDelegate=ResonanceASC->GetGameplayAttributeValueChangeDelegate(UHodgeHavocSet::GetMaxDarkFlowAttribute()).AddUObject(this,&ThisClass::ResonanceAttributeChanged);
+			DarkSurgeDelegate=ResonanceASC->RegisterGameplayTagEvent(HodgeHavocTags::DarkSurge).AddUObject(this,&ThisClass::HavocModeChanged);
+		}
+	}
 	Refresh();
 }
 
@@ -103,6 +129,24 @@ void UHodgeGameplayUIDataSource::PawnChanged(UHodgeLocalPlayerBase* Player, APaw
 /** 重新采集当前依赖的数据并更新缓存状态。 */
 void UHodgeGameplayUIDataSource::Refresh()
 {
+	FHodgeHavocResourceSnapshot NextHavoc;
+	const auto* Fuel=ResonanceASC.IsValid() ? ResonanceASC->GetSet<UHodgeHavocSet>() : nullptr;
+	NextHavoc.bReady=bBound && Fuel && Fuel->IsResourceReady() && Avatar.IsValid() && ResonanceASC->GetAvatarActor()==Avatar.Get();
+	if (NextHavoc.bReady)
+	{
+		NextHavoc.CurrentDarkFlow=Fuel->GetDarkFlow(); NextHavoc.MaxDarkFlow=Fuel->GetMaxDarkFlow();
+		NextHavoc.Percent=FMath::Clamp(NextHavoc.CurrentDarkFlow/NextHavoc.MaxDarkFlow,0.f,1.f);
+		NextHavoc.bDarkSurge=ResonanceASC->HasMatchingGameplayTag(HodgeHavocTags::DarkSurge);
+	}
+	if (NextHavoc.bReady!=Havoc.bReady || NextHavoc.CurrentDarkFlow!=Havoc.CurrentDarkFlow || NextHavoc.MaxDarkFlow!=Havoc.MaxDarkFlow || NextHavoc.bDarkSurge!=Havoc.bDarkSurge)
+	{ Havoc=NextHavoc; OnHavocChanged.Broadcast(Havoc); }
+	FHodgeUIResonanceSnapshot NextResource;
+	const auto* Set=ResonanceASC.IsValid() ? ResonanceASC->GetSet<UHodgeResonanceSet>() : nullptr;
+	NextResource.bReady=bBound && Set && Set->IsResourceReady() && Avatar.IsValid() && ResonanceASC->GetAvatarActor()==Avatar.Get();
+	if (NextResource.bReady)
+	{ NextResource.Energy=Set->GetResonanceEnergy(); NextResource.Capacity=Set->GetMaxResonanceEnergy(); NextResource.Percent=FMath::Clamp(NextResource.Energy/NextResource.Capacity,0.f,1.f); }
+	if (NextResource.bReady!=Resonance.bReady || NextResource.Energy!=Resonance.Energy || NextResource.Capacity!=Resonance.Capacity)
+	{ Resonance=NextResource; OnResonanceChanged.Broadcast(Resonance); }
 	FHodgeUIVitalsSnapshot Next;
 	Next.bReady = bBound && Controller.IsValid() && Avatar.IsValid() && Controller->GetPawn() == Avatar.Get()
 		&& PlayerState.IsValid() && PlayerState->AreAttributesReadyFor(Avatar.Get()) && Health.IsValid() && Health->GetMaxHealth() > 0;
@@ -117,6 +161,10 @@ void UHodgeGameplayUIDataSource::Refresh()
 	if (Next.bReady != Vitals.bReady || Next.bDead != Vitals.bDead || Next.Health != Vitals.Health || Next.MaxHealth != Vitals.MaxHealth || Next.CharacterLevel != Vitals.CharacterLevel)
 	{ Vitals = Next; OnVitalsChanged.Broadcast(Vitals); }
 }
+
+void UHodgeGameplayUIDataSource::ResonanceAttributeChanged(const FOnAttributeChangeData& Data) { Refresh(); }
+
+void UHodgeGameplayUIDataSource::HavocModeChanged(FGameplayTag Tag,int32 Count) { Refresh(); }
 
 /** 收到属性变化后刷新当前数据快照。 */
 void UHodgeGameplayUIDataSource::AttributeChanged(UHodgeHealthComponent* Component, float Old, float New, AActor* Instigator) { Refresh(); }
@@ -147,16 +195,21 @@ FHodgeUIAbilityDisplayState UHodgeGameplayUIDataSource::GetAbilityDisplayState(F
 		{ for (const auto& Binding : Combo->InputBindings) { if (Binding.InputTag == InputTag) { State.bGranted = true; } } }
 	}
 	bool bCanActivate = State.bGranted;
+	const auto Variant=ASC->ResolveAbilityVariant(InputTag);
 	FScopedAbilityListLock Lock(*ASC);
 	for (const auto& Spec : ASC->GetActivatableAbilities())
 	{
-		if (!Spec.GetDynamicSpecSourceTags().HasTagExact(InputTag) || !Spec.Ability) { continue; }
+		if (Spec.Handle!=Variant || !Spec.Ability) { continue; }
 		State.bGranted = true;
 		bCanActivate = Spec.Ability->CanActivateAbility(Spec.Handle, ASC->AbilityActorInfo.Get());
 		if (const auto* Tags = Spec.Ability->GetCooldownTags(); Tags && !Tags->IsEmpty())
 		{
-			for (float Remaining : ASC->GetActiveEffectsTimeRemaining(FGameplayEffectQuery::MakeQuery_MatchAnyOwningTags(*Tags)))
-			{ State.CooldownRemaining = FMath::Max(State.CooldownRemaining, Remaining); }
+			// 成对读取，防止多个冷却效果的剩余时间和总时长错配。
+			for (const auto& Times : ASC->GetActiveEffectsTimeRemainingAndDuration(FGameplayEffectQuery::MakeQuery_MatchAnyOwningTags(*Tags)))
+			{
+				if (FMath::IsFinite(Times.Key) && FMath::IsFinite(Times.Value) && Times.Key>State.CooldownRemaining && Times.Value>0.f)
+				{ State.CooldownRemaining=Times.Key; State.CooldownDuration=Times.Value; }
+			}
 		}
 		break;
 	}

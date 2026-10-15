@@ -8,6 +8,7 @@
 #include "CoreMinimal.h"
 #include "Abilities/GameplayAbility.h"
 #include "Core/PlayerController/HodgePlayerController.h"
+#include "Camera/HodgeCinematicCameraTypes.h"
 #include "HodgeGameplayAbility.generated.h"
 
 
@@ -396,6 +397,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Advanced")
 	bool bLogCancelation;
 
+	/** 相机申请的完整身份，结束时不能仅凭Spec清理新会话。 */
+	FHodgeAbilityCameraHandle ActiveCameraHandle;
 	// 当前 Ability 设置的 CameraMode。
 	TSubclassOf<UHodgeCameraMode> ActiveCameraMode;
 };

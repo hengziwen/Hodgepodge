@@ -49,6 +49,17 @@ struct FHodgeHitGroupKey
 	friend uint32 GetTypeHash(const FHodgeHitGroupKey& Key) { return HashCombine(GetTypeHash(Key.Group), GetTypeHash(Key.Phase)); }
 };
 
+/** 回能与伤害的每目标去重分开，同一刀命中多个敌人也只回一次。 */
+struct HODGEPODGE_API FHodgeResonancePhaseLedger
+{
+	/** 只有正的实际生命伤害才占用阶段；返回本阶段是否首次占用。 */
+	bool TryReserve(FName Group, FName Phase, float AcceptedDamage);
+	/** 新执行和结束时释放全部阶段，不能携带到下一次激活。 */
+	void Reset() { Phases.Reset(); }
+private:
+	TSet<FHodgeHitGroupKey> Phases;
+};
+
 /** 保存Melee命中状态的数据和接口契约。 */
 USTRUCT()
 struct FHodgeMeleeHitState
@@ -107,6 +118,8 @@ public:
 protected:
 	/** 处理执行就绪。 */
 	virtual void OnExecutionReady() override;
+	/** 成功施放节点复用原生事件通知，提交前取消不回能。 */
+	virtual void OnExecutionEvent(FGameplayTag Tag) override;
 	/** 处理执行Ending。
 	 * @param EndingExecutionId Ending执行标识，由调用方传入。
 	 */
@@ -228,6 +241,14 @@ private:
 	UPROPERTY(Transient) TMap<int32, FHodgeMeleeHitState> HitStates;
 	// 共享组记录保留到 GA 执行结束，允许相邻或不相邻窗口共用次数。
 	TMap<FHodgeHitGroupKey, TSharedPtr<FHodgeMeleeHitHistory>> HitGroups;
+	/** 本次执行已经提交回能的阶段，不包含目标ASC。 */
+	FHodgeResonancePhaseLedger ResonancePhases;
+	/** 暗流与R收益独立去重，不能互相占用机会。 */
+	FHodgeResonancePhaseLedger DarkFlowPhases;
+	/** 每次执行最多成功施放回能一次，不受重复通知影响。 */
+	bool bDarkFlowCastCommitted=false;
+	/** 服务器按实际接受的生命伤害回能，不依赖受击是否成功控制。 */
+	void TryGrantResonanceEnergy(const FHodgeHitDetectionBatch& Batch, const FHodgeHitEffectConfig& Binding, float AcceptedDamage);
 	// 命中Anchors的记录集合。
 	UPROPERTY(Transient) TMap<FName, FTransform> HitAnchors;
 	// 命中目标集合的弱引用，不延长目标对象生命周期。

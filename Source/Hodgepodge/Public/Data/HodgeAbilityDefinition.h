@@ -10,6 +10,7 @@
 #include "GameplayTagContainer.h"
 #include "Combat/HodgeHitDetection.h"
 #include "Combat/HodgeAttackFacingTypes.h"
+#include "ScalableFloat.h"
 #include "HodgeAbilityDefinition.generated.h"
 
 class UHodgeGameplayAbility;
@@ -65,6 +66,8 @@ class HODGEPODGE_API UHodgeAbilityDefinition : public UPrimaryDataAsset
 {
 	GENERATED_BODY()
 public:
+	/** 为独立技能设置标准移动取消窗口，既有资产无需重新配置。 */
+	UHodgeAbilityDefinition();
 	// 此 Definition 的技能身份；连段节点通过这个标签查找已授予的技能。
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) FGameplayTag AbilityTag;
 	// 只声明本动作的体状态，不作为输出攻击判定。
@@ -78,12 +81,31 @@ public:
 	// 仅独立 Definition 使用；授予时写入 Spec 的输入标签。
 	// Standalone 授予时写入 Spec 的输入标签，不会自动创建输入动作或按键映射。
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(Categories="InputTag")) FGameplayTag InputTag;
+	/** 形态资格先于冷却判断，不因分支冷却而回退其他形态。 */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Variant") FGameplayTagContainer RequiredSourceTags;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Variant") FGameplayTagContainer BlockedSourceTags;
+	/** 常态普攻实际生命伤害按阶段回暗流，默认零保持原技能。 */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Havoc", meta=(ClampMin="0")) float DarkFlowGainPerPhase=0.f;
+	/** 成功施放通知提交后回暗流，空挥有效，提交前取消无收益。 */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Havoc", meta=(ClampMin="0")) float DarkFlowGainOnCast=0.f;
+	/** 只有强化普攻参与角色级拢音限流。 */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Havoc") bool bEnhancedNormalAttack=false;
+	// 独立技能的移动取消通知标签；留空关闭，连段技能仍由 ComboDefinition 配置。
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|MoveCancel", meta=(EditCondition="ExecutionRoute == EHodgeAbilityExecutionRoute::Standalone", Categories="Status.Attack.Cancel"))
+	FGameplayTag StandaloneMoveCancelWindowTag;
+	// 独立技能取消所需的原始移动输入长度，范围 (0, 1]，不是角色实际速度。
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|MoveCancel", meta=(EditCondition="ExecutionRoute == EHodgeAbilityExecutionRoute::Standalone", ClampMin="0.01", ClampMax="1"))
+	float StandaloneMoveIntentThreshold = .1f;
 	// 攻击旋转 Warp 默认关闭，不改变现有 Dash 或伤害时间轴。
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Facing") FHodgeAttackFacingConfig FacingWarp;
 	/** 获取唯一 Warp 窗口的源时间，失败时不输出隐式窗口。 */
 	bool GetFacingWarpWindow(float& OutStart, float& OutEnd) const;
 	// 当前动作的默认伤害参数，命中通知可继承或显式覆盖。
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Combat") FHodgeHitEffectConfig DefaultHitConfig;
+	/** 每个真正造成生命伤害的阶段回能一次，默认零不改变现有攻击。 */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Resonance") FScalableFloat ResonanceEnergyGainPerPhase = 0.f;
+	/** 使用Instant增量GE，NPC没有资源Set时不额外创建玩家资源。 */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Resonance") TSubclassOf<UGameplayEffect> ResonanceEnergyGainEffect;
 	/** 根据当前配置计算动作持续时间。
 	 * @return 持续时间的当前值或引用。
 	 */

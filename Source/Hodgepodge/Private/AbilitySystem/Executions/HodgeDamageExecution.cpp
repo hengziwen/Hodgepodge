@@ -19,6 +19,8 @@
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/HodgeGameplayTags.h"
 #include "Combat/HodgeDamageRules.h"
+#include "Combat/HodgeHavocRules.h"
+#include "AbilitySystem/AttributeSet/HodgeHavocSet.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeDamageExecution)
 
@@ -27,6 +29,8 @@ struct FDamageStatics
 {
 	// BaseDamage 的 Attribute 捕获定义。
 	FGameplayEffectAttributeCaptureDefinition BaseDamageDef;
+	/** 与每次伤害Spec同一时刻快照，不能在整段技能开始时冻结所有后续刀数。 */
+	FGameplayEffectAttributeCaptureDefinition HavocBonusDef;
 
 	/** 构造伤害静态计算辅助并初始化其默认状态。 */
 	FDamageStatics()
@@ -36,6 +40,7 @@ struct FDamageStatics
 		// 最后的 true 表示使用 Snapshot，在 GameplayEffectSpec 创建时捕获并固定该属性值。
 		BaseDamageDef = FGameplayEffectAttributeCaptureDefinition(UHodgeCombatSet::GetBaseDamageAttribute(),
 		                                                          EGameplayEffectAttributeCaptureSource::Source, true);
+		HavocBonusDef=FGameplayEffectAttributeCaptureDefinition(UHodgeCombatSet::GetHavocDamageBonusAttribute(),EGameplayEffectAttributeCaptureSource::Source,true);
 	}
 };
 
@@ -55,6 +60,7 @@ UHodgeDamageExecution::UHodgeDamageExecution()
 {
 	// 告诉 GAS 当前 ExecutionCalculation 需要捕获 BaseDamage 属性。
 	RelevantAttributesToCapture.Add(DamageStatics().BaseDamageDef);
+	RelevantAttributesToCapture.Add(DamageStatics().HavocBonusDef);
 }
 
 // 执行实际的伤害数值计算。
@@ -181,6 +187,9 @@ void UHodgeDamageExecution::Execute_Implementation(const FGameplayEffectCustomEx
 
 	// 缺省倍率为 1，已有使用本 Execution 的 GE 无需补填新参数。
 	const float DamageMultiplier = Spec.GetSetByCallerMagnitude(HodgeGameplayTags::SetByCaller_DamageMultiplier, false, 1.f);
+	float HavocBonus=0.f;
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().HavocBonusDef,EvaluateParameters,HavocBonus);
+	const float ElementMultiplier=FHodgeHavocDamageRules::GetMultiplier(Spec.GetDynamicAssetTags().HasTagExact(HodgeHavocTags::HavocElement),HavocBonus);
 	if (!FMath::IsFinite(DamageMultiplier) || DamageMultiplier < 0.f || !FMath::IsFinite(BaseDamage)) { return; }
 
 	// Determine distance
@@ -241,7 +250,7 @@ void UHodgeDamageExecution::Execute_Implementation(const FGameplayEffectCustomEx
 	// 根据基础伤害、距离倍率、物理材质倍率以及伤害交互倍率计算最终伤害。
 	// 最终 Health 的上下限 Clamp 会在 HealthSet 将 Damage 转换为 -Health 时统一处理。
 	const float DamageDone = FMath::Max(
-		BaseDamage * DamageMultiplier * DistanceAttenuation * PhysicalMaterialAttenuation * DamageInteractionAllowedMultiplier, 0.0f);
+		BaseDamage * DamageMultiplier * ElementMultiplier * DistanceAttenuation * PhysicalMaterialAttenuation * DamageInteractionAllowedMultiplier, 0.0f);
 
 	// 只有最终伤害大于 0 时才向 ExecutionOutput 写入伤害结果。
 	if (FMath::IsFinite(DamageDone) && DamageDone > 0.0f)

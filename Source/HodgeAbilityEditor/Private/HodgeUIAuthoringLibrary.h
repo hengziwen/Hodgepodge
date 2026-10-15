@@ -12,6 +12,14 @@ class UHodgeUIAuthoringLibrary : public UBlueprintFunctionLibrary
 {
     GENERATED_BODY()
 public:
+	/** 为共鸣回路生成可编辑Designer条并挂载血条上方；不改动其他HUD区域。 */
+	UFUNCTION(BlueprintCallable, Category="Hodge|Editor|UI") static FString ConfigureDarkFlowHUD();
+	/** 仅向既有HUD添加右下方可编辑充能控件，不重建血条和终焉按钮。 */
+	UFUNCTION(BlueprintCallable, Category="Hodge|Editor|UI") static bool ConfigureResonanceHUD(class UWidgetBlueprint* Blueprint, TSubclassOf<class UUserWidget> WidgetClass);
+	/** 将旧技能子控件迁为UIExtension插槽，保留原布局和其他HUD内容。 */
+	UFUNCTION(BlueprintCallable, Category="Hodge|Editor|UI") static bool ConfigureAbilityIconHUD(class UWidgetBlueprint* Blueprint, TSubclassOf<class UUserWidget> SkillClass);
+	/** 仅为空原型资产创建序列化Designer树，非空用户布局只校验、不覆盖。 */
+	UFUNCTION(BlueprintCallable, Category="Hodge|Editor|UI") static bool ConfigureAbilityIconDesigner(class UWidgetBlueprint* Blueprint);
     /** 将锁定投影层接到已有 HUD；不重建血条或菜单。 */
     UFUNCTION(BlueprintCallable, Category="Hodge|Editor|UI") static bool ConfigureLockOnHUD(class UWidgetBlueprint* Blueprint);
     /** 创建FoundationAssets。

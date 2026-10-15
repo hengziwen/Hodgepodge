@@ -150,6 +150,8 @@ public:
 	bool IsMoveCancelPredicted() const;
 	/** 清空输入。 */
 	void ClearInput();
+	/** 形态结束只废弃续接与缓冲，不停止当前攻击、R或重新配置Combat。 */
+	void InvalidateModeContinuation(FGuid ModeSessionId);
 	/** 记录当前动作开始并更新连段执行状态。
 	 * @param Ability 能力，由调用方传入。
 	 */
@@ -452,6 +454,14 @@ private:
 	 * @return 本次计算、查询或创建得到的整数16。
 	 */
 	int16 ExecutionKey() const;
+	/** 查询 ASC 实际播放的活动 Definition 实例，不占用连段 CurrentAbility。 */
+	UHodgeGameplayAbility_Definition* GetMoveCancelAbility() const;
+	/** 根据执行路由取取消窗口及输入阈值，返回 false 表示未配置或不合法。 */
+	bool GetMoveCancelPolicy(const UHodgeGameplayAbility_Definition* Ability, FGameplayTag& Window, float& Threshold) const;
+	/** 独立检查持续移动输入，支持窗口开启前已按住移动。 */
+	void UpdateMoveCancel();
+	/** 清除当前请求身份，不结束能力或修改技能冷却。 */
+	void ClearMoveCancelRequest();
 	/** 处理服务器侧的移动取消消息，沿用当前身份与权限校验。
 	 * @param Avatar 表现角色，由调用方传入。
 	 * @param Handle 对应操作或能力的句柄。
@@ -459,7 +469,7 @@ private:
 	 * @param Intent 意图，由调用方传入。
 	 */
 	UFUNCTION(Server, Reliable)
-	void ServerMoveCancel(AActor* Avatar, FGameplayAbilitySpecHandle Handle, int32 Key, FVector2D Intent);
+	void ServerMoveCancel(AActor* Avatar, FGameplayAbilitySpecHandle Handle, int32 Key, FGuid RequestId, FVector2D Intent);
 	/** 处理服务器侧的返回目标条目消息，沿用当前身份与权限校验。
 	 * @param Avatar 表现角色，由调用方传入。
 	 * @param SourceNode 来源节点，用于对应标签查询或匹配。
@@ -478,7 +488,7 @@ private:
 	 * @param ServerPlayRate 服务器Play速率，由调用方传入。
 	 */
 	UFUNCTION(Client, Reliable)
-	void ClientMoveCancelResult(AActor* Avatar, FGameplayAbilitySpecHandle Handle, int32 Key, bool bEnd,
+	void ClientMoveCancelResult(AActor* Avatar, FGameplayAbilitySpecHandle Handle, int32 Key, FGuid RequestId, bool bEnd,
 		float ServerPosition, float ServerTime, float ServerPlayRate);
 	/** 校验服务器请求身份。
 	 * @param Payload 动画通知或玩法事件携带的数据。
@@ -491,7 +501,8 @@ private:
 	 * @param Key 键，由调用方传入。
 	 * @param Intent 意图，由调用方传入。
 	 */
-	void ProcessServerMoveCancel(TWeakObjectPtr<AActor> Avatar, FGameplayAbilitySpecHandle Handle, int32 Key, FVector2D Intent);
+	void ProcessServerMoveCancel(TWeakObjectPtr<AActor> Avatar, FGameplayAbilitySpecHandle Handle, int32 Key,
+		FGuid RequestId, FGuid ServerExecution, FVector2D Intent);
 	/** 处理服务器侧的同步连段记忆消息，沿用当前身份与权限校验。 */
 	UFUNCTION(Server, Reliable)
 	void ServerSynchronizeComboMemory();
@@ -527,6 +538,12 @@ private:
 	FHodgeComboMemoryState ComboMemory;
 	// 前次连段记忆的数据或对象引用。
 	FHodgeComboMemoryState PreviousComboMemory;
+	/** 形态变化后当前刀允许结束，但不再保留其旧形态续接。 */
+	bool bModeContinuationInvalidated=false;
+	/** 服务器与拥有者共同监听真实状态标签，客户端不运行服务器规则被动。 */
+	FDelegateHandle CombatModeChangedHandle;
+	void HandleCombatModeChanged(FGameplayTag Tag,int32 Count);
+	void ClearModeContinuation();
 	// 观察者标签的数据或对象引用。
 	UPROPERTY(ReplicatedUsing=OnRep_ObserverTags)
 	FGameplayTagContainer ObserverTags;
@@ -554,10 +571,16 @@ private:
 	FGameplayAbilitySpecHandle PendingMoveHandle;
 	// 待处理移动键的数值或阈值。
 	int32 PendingMoveKey = 0;
+	// 客户端请求唯一身份随 RPC 回传，旧回执不能确认新请求。
+	FGuid PendingMoveRequest;
+	// 仅本地使用的执行身份；服务器和客户端的 ExecutionId 不是同一个 GUID。
+	FGuid PendingMoveExecution;
 	// Rejected移动句柄对应操作的配对句柄。
 	FGameplayAbilitySpecHandle RejectedMoveHandle;
 	// Rejected移动键的数值或阈值。
 	int32 RejectedMoveKey = 0;
+	// 拒绝仅抑制本次执行的持续输入，松键或换执行后允许重试。
+	FGuid RejectedMoveExecution;
 	// 控制是否Evaluating的状态标记。
 	bool bEvaluating = false;
 	// 正在解绑或关闭，阻止重入执行。
