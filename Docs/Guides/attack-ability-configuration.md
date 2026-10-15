@@ -1,5 +1,7 @@
 # 攻击能力配置手册：动画通知驱动
 
+> 翅膀动作配置已收敛为角色 Wing 通知中的蒙太奇、倍率、起播位置和淡出时间；不再填写 Profile 动画映射。见[翅膀通知与蒙太奇配置](wing-notify-montage-configuration.md)。
+
 本手册适用于 dev-AN。旧自建 Timeline 已退役；动画相关时机在 Montage 原生通知轨编辑。设计与迁移结果见 [迁移设计](../Design/anim-notify-combat-migration.md)，旧文件恢复见 [归档说明](../../Archive/Timeline/README.md)。
 
 ## 1. 正式资产入口与制作步骤
@@ -218,3 +220,11 @@ GA 播放前租用角色骨骼更新，身体攻击即使没有手持请求也�
 GAS 方向载荷只发送一次；等待期间服务器保留当前姿态，方向确认后开始本次 Montage。预测移动取消暂停本地占用但保留执行数据，拒绝后按权威动画位置恢复；窗口之后不重播 Warp。旧执行只能清理自己的请求和目标。
 
 首版不启用平移吸附、自动搜敌、攻击旋转锁或空中追击，不改变 Dash RMS／Sprint／锁定镜头。完整契约见[设计](../Design/attack-facing-motion-warp.md)。
+
+## 独立攻击的移动取消（2026-10-14）
+
+Standalone Definition 的后摇取消使用自身 `StandaloneMoveCancelWindowTag`（默认 Status.Attack.Cancel.Move，空值关闭）和 `StandaloneMoveIntentThreshold`（默认 0.1，范围 (0,1]）。窗口由蒙太奇 Hodge GameplayTag 通知状态给出，取消退出仍使用 ExecutionConfig.StopBlendOut。
+
+ComboCoordinated 继续使用 ComboDefinition.MoveCancelWindowTag／MoveIntentThreshold，不共享独立技能调参。两条路由都从 ASC 的实际执行实例校验取消，Standalone 不注册到连段 CurrentAbility。移动取消不退款 CommitAbility 已提交的冷却。
+
+具体 Skill1 配置见 [Resonance Skill 第6节](resonance-skill-configuration.md#6-当前-skill1-的移动取消2026-10-14)，职责与协议见 [设计](../Design/definition-move-cancel.md)。

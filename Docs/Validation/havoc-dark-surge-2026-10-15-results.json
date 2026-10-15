@@ -1,0 +1,2770 @@
+{
+  "design": "Docs/Design/havoc-dark-surge.md",
+  "implementation_status": "native_and_formal_assets_integrated",
+  "engine": "UE 5.5.4",
+  "report_created_on": "2026.10.15-07.40.59",
+  "source_report": "E:\\Project\\Git\\Hodgepodge\\Saved\\Havoc\\AutomationGEFinal\\index.json",
+  "native_tests_passed": true,
+  "total": 39,
+  "havoc_tests": 8,
+  "succeeded_without_warnings": 24,
+  "succeeded_with_warnings": 15,
+  "failed": 0,
+  "not_run": 0,
+  "tests": [
+    {
+      "name": "Hodge.ActionRequests.MoveCancel.AuthorityValidation",
+      "state": "Success",
+      "duration_seconds": 0.05243989825248718,
+      "diagnostics": []
+    },
+    {
+      "name": "Hodge.ActionRequests.MoveCancel.InvalidConfiguration",
+      "state": "Success",
+      "duration_seconds": 0.01728379726409912,
+      "diagnostics": []
+    },
+    {
+      "name": "Hodge.ActionRequests.MoveCancel.LateResultAndDeath",
+      "state": "Success",
+      "duration_seconds": 0.016804199665784836,
+      "diagnostics": []
+    },
+    {
+      "name": "Hodge.ActionRequests.MoveCancel.RouteAndPolicy",
+      "state": "Success",
+      "duration_seconds": 0.018108099699020386,
+      "diagnostics": []
+    },
+    {
+      "name": "Hodge.ActionRequests.AIIntentWithoutInputBinding",
+      "state": "Success",
+      "duration_seconds": 0.062352702021598816,
+      "diagnostics": []
+    },
+    {
+      "name": "Hodge.ActionRequests.BoundedHistoryAndShutdown",
+      "state": "Success",
+      "duration_seconds": 0.02059900015592575,
+      "diagnostics": []
+    },
+    {
+      "name": "Hodge.ActionRequests.BufferedIdentityAcrossMoveResolution",
+      "state": "Success",
+      "duration_seconds": 0.01747490093111992,
+      "diagnostics": []
+    },
+    {
+      "name": "Hodge.ActionRequests.HeldDeathPoseCompatibility",
+      "state": "Success",
+      "duration_seconds": 0.2275024950504303,
+      "diagnostics": []
+    },
+    {
+      "name": "Hodge.ActionRequests.IntentMappingAndBuffer",
+      "state": "Success",
+      "duration_seconds": 0.01712089776992798,
+      "diagnostics": []
+    },
+    {
+      "name": "Hodge.ActionRequests.StandaloneLifecycle",
+      "state": "Success",
+      "duration_seconds": 0.016760800033807755,
+      "diagnostics": []
+    },
+    {
+      "name": "Hodge.ActionRequests.SynchronousEndAndReentrancy",
+      "state": "Success",
+      "duration_seconds": 0.018952198326587677,
+      "diagnostics": []
+    },
+    {
+      "name": "Hodge.ActionRequests.ValidationAndRevocation",
+      "state": "Success",
+      "duration_seconds": 0.016980499029159546,
+      "diagnostics": []
+    },
+    {
+      "name": "Hodge.Combat.DetectionRouting",
+      "state": "Success",
+      "duration_seconds": 0.017063099890947342,
+      "diagnostics": []
+    },
+    {
+      "name": "Hodge.Combat.HitGeometry",
+      "state": "Success",
+      "duration_seconds": 0.016344301402568817,
+      "diagnostics": []
+    },
+    {
+      "name": "Hodge.Combat.HitProfileValidation",
+      "state": "Success",
+      "duration_seconds": 0.01703380048274994,
+      "diagnostics": []
+    },
+    {
+      "name": "Hodge.Combat.MeleeHitHistory",
+      "state": "Success",
+      "duration_seconds": 0.01661369949579239,
+      "diagnostics": []
+    },
+    {
+      "name": "Hodge.Combat.MeleeSpecContext",
+      "state": "Success",
+      "duration_seconds": 0.017447099089622498,
+      "diagnostics": []
+    },
+    {
+      "name": "Hodge.Combo.DefinitionGrant",
+      "state": "Success",
+      "duration_seconds": 0.016794100403785706,
+      "diagnostics": []
+    },
+    {
+      "name": "Hodge.Combo.GraphValidation",
+      "state": "Success",
+      "duration_seconds": 0.016451898962259293,
+      "diagnostics": []
+    },
+    {
+      "name": "Hodge.Combo.Retention",
+      "state": "Success",
+      "duration_seconds": 0.016562700271606445,
+      "diagnostics": []
+    },
+    {
+      "name": "Hodge.Combo.SessionRules",
+      "state": "Success",
+      "duration_seconds": 0.016817700117826462,
+      "diagnostics": []
+    },
+    {
+      "name": "Hodge.Havoc.AssetConfiguration",
+      "state": "Success",
+      "duration_seconds": 0.12158729881048203,
+      "diagnostics": []
+    },
+    {
+      "name": "Hodge.Havoc.FuelClock",
+      "state": "Success",
+      "duration_seconds": 0.015880398452281952,
+      "diagnostics": []
+    },
+    {
+      "name": "Hodge.Havoc.GlobalProcGate",
+      "state": "Success",
+      "duration_seconds": 0.016582898795604706,
+      "diagnostics": []
+    },
+    {
+      "name": "Hodge.Havoc.HoldInput",
+      "state": "Success",
+      "duration_seconds": 0.016661297529935837,
+      "diagnostics": []
+    },
+    {
+      "name": "Hodge.Havoc.Resource",
+      "state": "Success",
+      "duration_seconds": 0.016553200781345367,
+      "diagnostics": []
+    },
+    {
+      "name": "Hodge.Havoc.SessionIntegration",
+      "state": "Success",
+      "duration_seconds": 0.016743697226047516,
+      "diagnostics": [
+        {
+          "type": "Info",
+          "message": "Fuel integration: world elapsed=0.550000, actual fuel=94.500008, rate=10.00",
+          "context": "",
+          "artifact": "00000000000000000000000000000000"
+        }
+      ]
+    },
+    {
+      "name": "Hodge.Havoc.StateEffect",
+      "state": "Success",
+      "duration_seconds": 0.01608460023999214,
+      "diagnostics": []
+    },
+    {
+      "name": "Hodge.Havoc.VariantSelection",
+      "state": "Success",
+      "duration_seconds": 0.017110001295804977,
+      "diagnostics": []
+    },
+    {
+      "name": "Hodge.Resonance.DebugFill",
+      "state": "Success",
+      "duration_seconds": 0.016910500824451447,
+      "diagnostics": []
+    },
+    {
+      "name": "Hodge.Resonance.PhaseLedger",
+      "state": "Success",
+      "duration_seconds": 0.016379401087760925,
+      "diagnostics": []
+    },
+    {
+      "name": "Hodge.Resonance.PlayerStateBeforePawn",
+      "state": "Success",
+      "duration_seconds": 0.01701049879193306,
+      "diagnostics": []
+    },
+    {
+      "name": "Hodge.Resonance.ResourceAndCost",
+      "state": "Success",
+      "duration_seconds": 0.016534000635147095,
+      "diagnostics": []
+    },
+    {
+      "name": "Hodge.UI.AbilityIcon.Cooldown",
+      "state": "Success",
+      "duration_seconds": 0.016425002366304398,
+      "diagnostics": []
+    },
+    {
+      "name": "Hodge.UI.AbilityIcon.EnergyIndependent",
+      "state": "Success",
+      "duration_seconds": 0.01647239923477173,
+      "diagnostics": []
+    },
+    {
+      "name": "Hodge.UI.ClosedRootAndInvalidRequests",
+      "state": "Success",
+      "duration_seconds": 0.016570601612329483,
+      "diagnostics": []
+    },
+    {
+      "name": "Hodge.UI.DataSourceInactive",
+      "state": "Success",
+      "duration_seconds": 0.01610489934682846,
+      "diagnostics": []
+    },
+    {
+      "name": "Hodge.UI.LockOnIndicatorDesigner",
+      "state": "Success",
+      "duration_seconds": 0.016012299805879593,
+      "diagnostics": []
+    },
+    {
+      "name": "Hodge.UI.ManagerScope",
+      "state": "Success",
+      "duration_seconds": 0.016787901520729065,
+      "diagnostics": []
+    }
+  ],
+  "not_validated": [
+    "新动作通知帧与Box范围的逐帧美术校准",
+    "Buff期间R、真实死亡重生及换Pawn的组合PIE场景",
+    "HUD多分辨率适配及视觉验收",
+    "Cook、打包与独立服务器可执行文件"
+  ],
+  "coverage_note": "记录模块及需求用例覆盖；未生成源码行覆盖率，原生通过不代表蓝图或PIE通过。",
+  "designer_validation": {
+    "asset": "/Game/Main/UI/HUD/WBP_DarkFlow.WBP_DarkFlow",
+    "widget_types": {
+      "bar": "ProgressBar",
+      "label": "TextBlock",
+      "point": "UIExtensionPointWidget"
+    },
+    "point_position": [
+      0.0,
+      -38.0
+    ],
+    "vitals_position": [
+      0.0,
+      -12.0
+    ],
+    "extension_point_tag": "(TagName=\"UI.Slot.DarkFlow\")",
+    "designer_structure_passed": true,
+    "runtime_injection": "本脚本只验证Designer结构；运行时注入结果另见PIE报告"
+  },
+  "runtime_reports": [
+    {
+      "source": "E:\\Project\\Git\\Hodgepodge\\Saved\\Havoc\\single-havoc-e2e.json",
+      "mode": "single",
+      "passed": true,
+      "checks": [
+        {
+          "case": "HDS-01 正式能力集初始化100容量且初始0",
+          "passed": true,
+          "detail": {
+            "time": 2.090703010559082,
+            "phase": "warmup",
+            "authority_fuel": 0.0,
+            "local_fuel": 0.0,
+            "mode": false,
+            "e_cd": 0.0
+          }
+        },
+        {
+          "case": "HDS-07 Experience注入四个扩展，暗流数据源就绪",
+          "passed": true,
+          "detail": {
+            "root": true,
+            "pawn": "/Game/Main/Maps/UEDPIE_0_L_EnemyAIValidation.L_EnemyAIValidation:PersistentLevel.BP_Hero_Pover_C_0",
+            "managed_players": 1,
+            "platform_user": 0,
+            "input_device": 0,
+            "own_viewport": true,
+            "game_input": true,
+            "pending": 0,
+            "game_count": 1,
+            "game_active": true,
+            "menu_count": 0,
+            "menu_active": false,
+            "modal_count": 0,
+            "modal_active": false,
+            "vitals_center_x": 0.5000000357400901,
+            "vitals_center_y": 0.9782973424662368,
+            "end_center_x": 0.9830186680497605,
+            "end_center_y": 0.0542564933092469,
+            "resonance_center_x": 0.9748206776721364,
+            "resonance_center_y": 0.9270004146667141,
+            "skill_center_x": 0.9314888921229699,
+            "skill_center_y": 0.9270004146667141,
+            "ability_extension_slots": true,
+            "resonance_widget": true,
+            "resonance_percent": 0,
+            "resonance_cooldown": 0,
+            "resonance_cooldown_progress": 1,
+            "resonance_text": "0/100",
+            "resonance_enabled": false,
+            "resonance_opacity": 1,
+            "skill_cooldown": 0,
+            "skill_cooldown_progress": 1,
+            "skill_enabled": true,
+            "skill_icon_ready": true,
+            "display_percent": 1,
+            "display_text": "150/150",
+            "display_level": "Lv. 1",
+            "health": 150,
+            "max_health": 150,
+            "vitals_ready": true,
+            "entries": 4,
+            "indicators": 0,
+            "indicator_widgets": [],
+            "move_intent": false
+          }
+        },
+        {
+          "case": "HDS-06 普通E空挥成功施放回20点",
+          "passed": true,
+          "detail": {
+            "time": 2.2767979130148888,
+            "phase": "normalE",
+            "authority_fuel": 20.0,
+            "local_fuel": 20.0,
+            "mode": false,
+            "e_cd": 7.830572128295898
+          }
+        },
+        {
+          "case": "HDS-01 真实长按普攻切入灭音Montage",
+          "passed": true,
+          "detail": {
+            "time": 7.410325013101101,
+            "phase": "hold",
+            "authority_fuel": 100.0,
+            "local_fuel": 100.0,
+            "mode": false,
+            "e_cd": 2.697044849395752
+          }
+        },
+        {
+          "case": "HDS-02 空挥提交可入态且不一次扣空100",
+          "passed": true,
+          "detail": {
+            "time": 7.810329210013151,
+            "phase": "enter",
+            "authority_fuel": 100.0,
+            "local_fuel": 100.0,
+            "mode": true,
+            "e_cd": 2.2970404624938965
+          }
+        },
+        {
+          "case": "HDS-05 入态继承普通E未结束的8秒CD",
+          "passed": true,
+          "detail": {
+            "time": 8.010331012308598,
+            "phase": "shared_cd",
+            "authority_fuel": 97.99998474121094,
+            "local_fuel": 97.99998474121094,
+            "mode": true,
+            "e_cd": 2.097038745880127
+          }
+        },
+        {
+          "case": "HDS-05 强化普攻第1段正确",
+          "passed": true,
+          "detail": {
+            "time": 10.843717813491821,
+            "phase": "enhanced",
+            "authority_fuel": 69.99944305419922,
+            "local_fuel": 69.99944305419922,
+            "mode": true,
+            "e_cd": 0.0
+          }
+        },
+        {
+          "case": "HDS-05 强化普攻第2段正确",
+          "passed": true,
+          "detail": {
+            "time": 11.977062311023474,
+            "phase": "enhanced",
+            "authority_fuel": 58.999332427978516,
+            "local_fuel": 58.999332427978516,
+            "mode": true,
+            "e_cd": 0.0
+          }
+        },
+        {
+          "case": "HDS-05 强化普攻第3段正确",
+          "passed": true,
+          "detail": {
+            "time": 12.96045621111989,
+            "phase": "enhanced",
+            "authority_fuel": 48.99872589111328,
+            "local_fuel": 48.99872589111328,
+            "mode": true,
+            "e_cd": 0.0
+          }
+        },
+        {
+          "case": "HDS-05 强化普攻第4段正确",
+          "passed": true,
+          "detail": {
+            "time": 14.093819212168455,
+            "phase": "enhanced",
+            "authority_fuel": 37.99842834472656,
+            "local_fuel": 37.99842834472656,
+            "mode": true,
+            "e_cd": 0.0
+          }
+        },
+        {
+          "case": "HDS-05 强化普攻第5段正确",
+          "passed": true,
+          "detail": {
+            "time": 15.677164312452078,
+            "phase": "enhanced",
+            "authority_fuel": 21.998302459716797,
+            "local_fuel": 21.998302459716797,
+            "mode": true,
+            "e_cd": 0.0
+          }
+        },
+        {
+          "case": "HDS-05/06 破命使用新动作并成功施放回能",
+          "passed": true,
+          "detail": {
+            "time": 16.977174412459135,
+            "phase": "po_ming",
+            "authority_fuel": 28.998205184936523,
+            "local_fuel": 28.998205184936523,
+            "mode": true,
+            "e_cd": 7.8166656494140625
+          }
+        },
+        {
+          "case": "HDS-05 破命重新建立共享8秒CD",
+          "passed": true,
+          "detail": {
+            "time": 16.977174412459135,
+            "phase": "po_ming",
+            "authority_fuel": 28.998205184936523,
+            "local_fuel": 28.998205184936523,
+            "mode": true,
+            "e_cd": 7.8166656494140625
+          }
+        },
+        {
+          "case": "HDS-02 超过基础10秒仍由燃料维持，无额外时长上限",
+          "passed": true,
+          "detail": {
+            "time": 18.810522712767124,
+            "phase": "extended",
+            "authority_fuel": 80.99984741210938,
+            "local_fuel": 80.99984741210938,
+            "mode": true,
+            "e_cd": 5.983318328857422
+          }
+        },
+        {
+          "case": "生命周期 驱散清空暗流并退态",
+          "passed": true,
+          "detail": {
+            "time": 19.31054161116481,
+            "phase": "dispel",
+            "authority_fuel": 0.0,
+            "local_fuel": 0.0,
+            "mode": false,
+            "e_cd": 5.483299255371094
+          }
+        },
+        {
+          "case": "HDS-05 退态不刷新E冷却",
+          "passed": true,
+          "detail": {
+            "time": 19.31054161116481,
+            "phase": "dispel",
+            "authority_fuel": 0.0,
+            "local_fuel": 0.0,
+            "mode": false,
+            "e_cd": 5.483299255371094
+          }
+        },
+        {
+          "case": "HDS-05 退态后下一次输入从普通第一段开始",
+          "passed": true,
+          "detail": {
+            "time": 19.327208511531353,
+            "phase": "normal_again",
+            "authority_fuel": 0.0,
+            "local_fuel": 0.0,
+            "mode": false,
+            "e_cd": 5.466632843017578
+          }
+        }
+      ],
+      "error": null
+    },
+    {
+      "source": "E:\\Project\\Git\\Hodgepodge\\Saved\\Havoc\\listen-havoc-e2e.json",
+      "mode": "listen",
+      "passed": true,
+      "checks": [
+        {
+          "case": "HDS-01 正式能力集初始化100容量且初始0",
+          "passed": true,
+          "detail": {
+            "time": 3.050876911729574,
+            "phase": "warmup",
+            "authority_fuel": 0.0,
+            "local_fuel": 0.0,
+            "mode": false,
+            "e_cd": 0.0
+          }
+        },
+        {
+          "case": "HDS-07 Experience注入四个扩展，暗流数据源就绪",
+          "passed": true,
+          "detail": {
+            "root": true,
+            "pawn": "/Game/Main/Maps/UEDPIE_1_L_EnemyAIValidation.L_EnemyAIValidation:PersistentLevel.BP_Hero_Pover_C_0",
+            "managed_players": 1,
+            "platform_user": 0,
+            "input_device": 0,
+            "own_viewport": true,
+            "game_input": true,
+            "pending": 0,
+            "game_count": 1,
+            "game_active": true,
+            "menu_count": 0,
+            "menu_active": false,
+            "modal_count": 0,
+            "modal_active": false,
+            "vitals_center_x": 0.500000042486374,
+            "vitals_center_y": 0.979671200508313,
+            "end_center_x": 0.959626388422837,
+            "end_center_y": 0.050822287774171124,
+            "resonance_center_x": 0.9401357643583338,
+            "resonance_center_y": 0.9316209313891315,
+            "skill_center_x": 0.837113445161435,
+            "skill_center_y": 0.9316209313891315,
+            "ability_extension_slots": true,
+            "resonance_widget": true,
+            "resonance_percent": 0,
+            "resonance_cooldown": 0,
+            "resonance_cooldown_progress": 1,
+            "resonance_text": "0/100",
+            "resonance_enabled": false,
+            "resonance_opacity": 1,
+            "skill_cooldown": 0,
+            "skill_cooldown_progress": 1,
+            "skill_enabled": true,
+            "skill_icon_ready": true,
+            "display_percent": 1,
+            "display_text": "150/150",
+            "display_level": "Lv. 1",
+            "health": 150,
+            "max_health": 150,
+            "vitals_ready": true,
+            "entries": 4,
+            "indicators": 0,
+            "indicator_widgets": [],
+            "move_intent": false
+          }
+        },
+        {
+          "case": "HDS-06 普通E空挥成功施放回20点",
+          "passed": true,
+          "detail": {
+            "time": 3.2508788108825684,
+            "phase": "normalE",
+            "authority_fuel": 20.0,
+            "local_fuel": 0.0,
+            "mode": false,
+            "e_cd": 7.836457252502441
+          }
+        },
+        {
+          "case": "HDS-01 真实长按普攻切入灭音Montage",
+          "passed": true,
+          "detail": {
+            "time": 8.405260611325502,
+            "phase": "hold",
+            "authority_fuel": 100.0,
+            "local_fuel": 100.0,
+            "mode": false,
+            "e_cd": 2.6820755004882812
+          }
+        },
+        {
+          "case": "HDS-02 空挥提交可入态且不一次扣空100",
+          "passed": true,
+          "detail": {
+            "time": 8.83868021145463,
+            "phase": "enter",
+            "authority_fuel": 100.0,
+            "local_fuel": 100.0,
+            "mode": true,
+            "e_cd": 2.248655319213867
+          }
+        },
+        {
+          "case": "HDS-05 入态继承普通E未结束的8秒CD",
+          "passed": true,
+          "detail": {
+            "time": 9.038685709238052,
+            "phase": "shared_cd",
+            "authority_fuel": 97.99994659423828,
+            "local_fuel": 97.99994659423828,
+            "mode": true,
+            "e_cd": 2.048649787902832
+          }
+        },
+        {
+          "case": "HDS-05 强化普攻第1段正确",
+          "passed": true,
+          "detail": {
+            "time": 11.86146641150117,
+            "phase": "enhanced",
+            "authority_fuel": 69.95735168457031,
+            "local_fuel": 69.95735168457031,
+            "mode": true,
+            "e_cd": 0.0
+          }
+        },
+        {
+          "case": "HDS-05 强化普攻第2段正确",
+          "passed": true,
+          "detail": {
+            "time": 12.999499708414078,
+            "phase": "enhanced",
+            "authority_fuel": 58.89203643798828,
+            "local_fuel": 58.89203643798828,
+            "mode": true,
+            "e_cd": 0.0
+          }
+        },
+        {
+          "case": "HDS-05 强化普攻第3段正确",
+          "passed": true,
+          "detail": {
+            "time": 13.982959110289812,
+            "phase": "enhanced",
+            "authority_fuel": 48.89058303833008,
+            "local_fuel": 48.89058303833008,
+            "mode": true,
+            "e_cd": 0.0
+          }
+        },
+        {
+          "case": "HDS-05 强化普攻第4段正确",
+          "passed": true,
+          "detail": {
+            "time": 15.116372011601925,
+            "phase": "enhanced",
+            "authority_fuel": 37.88979721069336,
+            "local_fuel": 37.88979721069336,
+            "mode": true,
+            "e_cd": 0.0
+          }
+        },
+        {
+          "case": "HDS-05 强化普攻第5段正确",
+          "passed": true,
+          "detail": {
+            "time": 16.708328809589148,
+            "phase": "enhanced",
+            "authority_fuel": 21.970232009887695,
+            "local_fuel": 21.970232009887695,
+            "mode": true,
+            "e_cd": 0.0
+          }
+        },
+        {
+          "case": "HDS-05/06 破命使用新动作并成功施放回能",
+          "passed": true,
+          "detail": {
+            "time": 18.026913311332464,
+            "phase": "po_ming",
+            "authority_fuel": 27.951045989990234,
+            "local_fuel": 8.951056480407715,
+            "mode": true,
+            "e_cd": 7.824851989746094
+          }
+        },
+        {
+          "case": "HDS-05 破命重新建立共享8秒CD",
+          "passed": true,
+          "detail": {
+            "time": 18.026913311332464,
+            "phase": "po_ming",
+            "authority_fuel": 27.951045989990234,
+            "local_fuel": 8.951056480407715,
+            "mode": true,
+            "e_cd": 7.824851989746094
+          }
+        },
+        {
+          "case": "HDS-02 超过基础10秒仍由燃料维持，无额外时长上限",
+          "passed": true,
+          "detail": {
+            "time": 19.844031810760498,
+            "phase": "extended",
+            "authority_fuel": 81.9954833984375,
+            "local_fuel": 81.9954833984375,
+            "mode": true,
+            "e_cd": 6.007734298706055
+          }
+        },
+        {
+          "case": "生命周期 驱散清空暗流并退态",
+          "passed": true,
+          "detail": {
+            "time": 20.344081308692694,
+            "phase": "dispel",
+            "authority_fuel": 0.0,
+            "local_fuel": 0.0,
+            "mode": false,
+            "e_cd": 5.507684707641602
+          }
+        },
+        {
+          "case": "HDS-05 退态不刷新E冷却",
+          "passed": true,
+          "detail": {
+            "time": 20.344081308692694,
+            "phase": "dispel",
+            "authority_fuel": 0.0,
+            "local_fuel": 0.0,
+            "mode": false,
+            "e_cd": 5.507684707641602
+          }
+        },
+        {
+          "case": "HDS-05 退态后下一次输入从普通第一段开始",
+          "passed": true,
+          "detail": {
+            "time": 20.3607481084764,
+            "phase": "normal_again",
+            "authority_fuel": 0.0,
+            "local_fuel": 0.0,
+            "mode": false,
+            "e_cd": 5.491018295288086
+          }
+        }
+      ],
+      "error": null
+    },
+    {
+      "source": "E:\\Project\\Git\\Hodgepodge\\Saved\\Havoc\\dedicated-havoc-e2e.json",
+      "mode": "dedicated",
+      "passed": true,
+      "checks": [
+        {
+          "case": "HDS-01 正式能力集初始化100容量且初始0",
+          "passed": true,
+          "detail": {
+            "time": 3.0750270038843155,
+            "phase": "warmup",
+            "authority_fuel": 0.0,
+            "local_fuel": 0.0,
+            "mode": false,
+            "e_cd": 0.0
+          }
+        },
+        {
+          "case": "HDS-07 Experience注入四个扩展，暗流数据源就绪",
+          "passed": true,
+          "detail": {
+            "root": true,
+            "pawn": "/Game/Main/Maps/UEDPIE_1_L_EnemyAIValidation.L_EnemyAIValidation:PersistentLevel.BP_Hero_Pover_C_0",
+            "managed_players": 1,
+            "platform_user": 0,
+            "input_device": 0,
+            "own_viewport": true,
+            "game_input": true,
+            "pending": 0,
+            "game_count": 1,
+            "game_active": true,
+            "menu_count": 0,
+            "menu_active": false,
+            "modal_count": 0,
+            "modal_active": false,
+            "vitals_center_x": 0.5000000357400901,
+            "vitals_center_y": 0.9782973424662368,
+            "end_center_x": 0.9830186680497605,
+            "end_center_y": 0.0542564933092469,
+            "resonance_center_x": 0.9748206776721364,
+            "resonance_center_y": 0.9270004146667141,
+            "skill_center_x": 0.9314888921229699,
+            "skill_center_y": 0.9270004146667141,
+            "ability_extension_slots": true,
+            "resonance_widget": true,
+            "resonance_percent": 0,
+            "resonance_cooldown": 0,
+            "resonance_cooldown_progress": 1,
+            "resonance_text": "0/100",
+            "resonance_enabled": false,
+            "resonance_opacity": 1,
+            "skill_cooldown": 0,
+            "skill_cooldown_progress": 1,
+            "skill_enabled": true,
+            "skill_icon_ready": true,
+            "display_percent": 1,
+            "display_text": "150/150",
+            "display_level": "Lv. 1",
+            "health": 150,
+            "max_health": 150,
+            "vitals_ready": true,
+            "entries": 4,
+            "indicators": 0,
+            "indicator_widgets": [],
+            "move_intent": false
+          }
+        },
+        {
+          "case": "HDS-06 普通E空挥成功施放回20点",
+          "passed": true,
+          "detail": {
+            "time": 3.2776095010340214,
+            "phase": "normalE",
+            "authority_fuel": 20.0,
+            "local_fuel": 20.0,
+            "mode": false,
+            "e_cd": 7.829395294189453
+          }
+        },
+        {
+          "case": "HDS-01 真实长按普攻切入灭音Montage",
+          "passed": true,
+          "detail": {
+            "time": 8.428684800863266,
+            "phase": "hold",
+            "authority_fuel": 100.0,
+            "local_fuel": 100.0,
+            "mode": false,
+            "e_cd": 2.6783199310302734
+          }
+        },
+        {
+          "case": "HDS-02 空挥提交可入态且不一次扣空100",
+          "passed": true,
+          "detail": {
+            "time": 8.86290730163455,
+            "phase": "enter",
+            "authority_fuel": 100.0,
+            "local_fuel": 100.0,
+            "mode": true,
+            "e_cd": 2.2440972328186035
+          }
+        },
+        {
+          "case": "HDS-05 入态继承普通E未结束的8秒CD",
+          "passed": true,
+          "detail": {
+            "time": 9.062954504042864,
+            "phase": "shared_cd",
+            "authority_fuel": 97.99952697753906,
+            "local_fuel": 97.99952697753906,
+            "mode": true,
+            "e_cd": 2.0440502166748047
+          }
+        },
+        {
+          "case": "HDS-05 强化普攻第1段正确",
+          "passed": true,
+          "detail": {
+            "time": 11.909106403589249,
+            "phase": "enhanced",
+            "authority_fuel": 69.87134552001953,
+            "local_fuel": 69.87134552001953,
+            "mode": true,
+            "e_cd": 0.0
+          }
+        },
+        {
+          "case": "HDS-05 强化普攻第2段正确",
+          "passed": true,
+          "detail": {
+            "time": 13.051105603575706,
+            "phase": "enhanced",
+            "authority_fuel": 57.951351165771484,
+            "local_fuel": 57.951351165771484,
+            "mode": true,
+            "e_cd": 0.0
+          }
+        },
+        {
+          "case": "HDS-05 强化普攻第3段正确",
+          "passed": true,
+          "detail": {
+            "time": 14.038797702640295,
+            "phase": "enhanced",
+            "authority_fuel": 48.9129638671875,
+            "local_fuel": 48.9129638671875,
+            "mode": true,
+            "e_cd": 0.0
+          }
+        },
+        {
+          "case": "HDS-05 强化普攻第4段正确",
+          "passed": true,
+          "detail": {
+            "time": 15.17824150249362,
+            "phase": "enhanced",
+            "authority_fuel": 36.86073303222656,
+            "local_fuel": 36.86073303222656,
+            "mode": true,
+            "e_cd": 0.0
+          }
+        },
+        {
+          "case": "HDS-05 强化普攻第5段正确",
+          "passed": true,
+          "detail": {
+            "time": 16.77238480374217,
+            "phase": "enhanced",
+            "authority_fuel": 20.90522003173828,
+            "local_fuel": 20.90522003173828,
+            "mode": true,
+            "e_cd": 0.0
+          }
+        },
+        {
+          "case": "HDS-05/06 破命使用新动作并成功施放回能",
+          "passed": true,
+          "detail": {
+            "time": 18.092805203050375,
+            "phase": "po_ming",
+            "authority_fuel": 27.87884521484375,
+            "local_fuel": 27.87884521484375,
+            "mode": true,
+            "e_cd": 7.81962776184082
+          }
+        },
+        {
+          "case": "HDS-05 破命重新建立共享8秒CD",
+          "passed": true,
+          "detail": {
+            "time": 18.092805203050375,
+            "phase": "po_ming",
+            "authority_fuel": 27.87884521484375,
+            "local_fuel": 27.87884521484375,
+            "mode": true,
+            "e_cd": 7.81962776184082
+          }
+        },
+        {
+          "case": "HDS-02 超过基础10秒仍由燃料维持，无额外时长上限",
+          "passed": true,
+          "detail": {
+            "time": 19.864001903682947,
+            "phase": "extended",
+            "authority_fuel": 81.94354248046875,
+            "local_fuel": 83.09505462646484,
+            "mode": true,
+            "e_cd": 6.048431396484375
+          }
+        },
+        {
+          "case": "生命周期 驱散清空暗流并退态",
+          "passed": true,
+          "detail": {
+            "time": 20.373701602220535,
+            "phase": "dispel",
+            "authority_fuel": 0.0,
+            "local_fuel": 0.0,
+            "mode": false,
+            "e_cd": 5.538732528686523
+          }
+        },
+        {
+          "case": "HDS-05 退态不刷新E冷却",
+          "passed": true,
+          "detail": {
+            "time": 20.373701602220535,
+            "phase": "dispel",
+            "authority_fuel": 0.0,
+            "local_fuel": 0.0,
+            "mode": false,
+            "e_cd": 5.538732528686523
+          }
+        },
+        {
+          "case": "HDS-05 退态后下一次输入从普通第一段开始",
+          "passed": true,
+          "detail": {
+            "time": 20.391665801405907,
+            "phase": "normal_again",
+            "authority_fuel": 0.0,
+            "local_fuel": 0.0,
+            "mode": false,
+            "e_cd": 5.5207672119140625
+          }
+        }
+      ],
+      "error": null
+    },
+    {
+      "source": "E:\\Project\\Git\\Hodgepodge\\Saved\\Havoc\\listen-lag-havoc-e2e.json",
+      "mode": "listen-lag",
+      "passed": true,
+      "checks": [
+        {
+          "case": "HDS-01 正式能力集初始化100容量且初始0",
+          "passed": true,
+          "detail": {
+            "time": 3.021877996623516,
+            "phase": "warmup",
+            "authority_fuel": 0.0,
+            "local_fuel": 0.0,
+            "mode": false,
+            "e_cd": 0.0
+          }
+        },
+        {
+          "case": "HDS-07 Experience注入四个扩展，暗流数据源就绪",
+          "passed": true,
+          "detail": {
+            "root": true,
+            "pawn": "/Game/Main/Maps/UEDPIE_1_L_EnemyAIValidation.L_EnemyAIValidation:PersistentLevel.BP_Hero_Pover_C_0",
+            "managed_players": 1,
+            "platform_user": 0,
+            "input_device": 0,
+            "own_viewport": true,
+            "game_input": true,
+            "pending": 0,
+            "game_count": 1,
+            "game_active": true,
+            "menu_count": 0,
+            "menu_active": false,
+            "modal_count": 0,
+            "modal_active": false,
+            "vitals_center_x": 0.500000042486374,
+            "vitals_center_y": 0.979671200508313,
+            "end_center_x": 0.959626388422837,
+            "end_center_y": 0.050822287774171124,
+            "resonance_center_x": 0.9401357643583338,
+            "resonance_center_y": 0.9316209313891315,
+            "skill_center_x": 0.837113445161435,
+            "skill_center_y": 0.9316209313891315,
+            "ability_extension_slots": true,
+            "resonance_widget": true,
+            "resonance_percent": 0,
+            "resonance_cooldown": 0,
+            "resonance_cooldown_progress": 1,
+            "resonance_text": "0/100",
+            "resonance_enabled": false,
+            "resonance_opacity": 1,
+            "skill_cooldown": 0,
+            "skill_cooldown_progress": 1,
+            "skill_enabled": true,
+            "skill_icon_ready": true,
+            "display_percent": 1,
+            "display_text": "150/150",
+            "display_level": "Lv. 1",
+            "health": 150,
+            "max_health": 150,
+            "vitals_ready": true,
+            "entries": 4,
+            "indicators": 0,
+            "indicator_widgets": [],
+            "move_intent": false
+          }
+        },
+        {
+          "case": "HDS-06 普通E空挥成功施放回20点",
+          "passed": true,
+          "detail": {
+            "time": 3.338547296822071,
+            "phase": "normalE",
+            "authority_fuel": 20.0,
+            "local_fuel": 0.0,
+            "mode": false,
+            "e_cd": 7.9027509689331055
+          }
+        },
+        {
+          "case": "HDS-01 真实长按普攻切入灭音Montage",
+          "passed": true,
+          "detail": {
+            "time": 8.615873098373413,
+            "phase": "hold",
+            "authority_fuel": 100.0,
+            "local_fuel": 100.0,
+            "mode": false,
+            "e_cd": 2.625425338745117
+          }
+        },
+        {
+          "case": "HDS-02 空挥提交可入态且不一次扣空100",
+          "passed": true,
+          "detail": {
+            "time": 9.250664595514536,
+            "phase": "enter",
+            "authority_fuel": 98.99999237060547,
+            "local_fuel": 100.0,
+            "mode": true,
+            "e_cd": 1.9906339645385742
+          }
+        },
+        {
+          "case": "HDS-05 入态继承普通E未结束的8秒CD",
+          "passed": true,
+          "detail": {
+            "time": 9.450665697455406,
+            "phase": "shared_cd",
+            "authority_fuel": 96.9999771118164,
+            "local_fuel": 97.99998474121094,
+            "mode": true,
+            "e_cd": 1.7906322479248047
+          }
+        },
+        {
+          "case": "HDS-05 强化普攻第1段正确",
+          "passed": true,
+          "detail": {
+            "time": 12.28956139832735,
+            "phase": "enhanced",
+            "authority_fuel": 68.94436645507812,
+            "local_fuel": 69.96305847167969,
+            "mode": true,
+            "e_cd": 0.0
+          }
+        },
+        {
+          "case": "HDS-05 强化普攻第2段正确",
+          "passed": true,
+          "detail": {
+            "time": 13.423056796193123,
+            "phase": "enhanced",
+            "authority_fuel": 57.9427490234375,
+            "local_fuel": 58.9427604675293,
+            "mode": true,
+            "e_cd": 0.0
+          }
+        },
+        {
+          "case": "HDS-05 强化普攻第3段正确",
+          "passed": true,
+          "detail": {
+            "time": 14.406480297446251,
+            "phase": "enhanced",
+            "authority_fuel": 47.94184875488281,
+            "local_fuel": 48.94186019897461,
+            "mode": true,
+            "e_cd": 0.0
+          }
+        },
+        {
+          "case": "HDS-05 强化普攻第4段正确",
+          "passed": true,
+          "detail": {
+            "time": 15.53991699591279,
+            "phase": "enhanced",
+            "authority_fuel": 35.940799713134766,
+            "local_fuel": 37.940818786621094,
+            "mode": true,
+            "e_cd": 0.0
+          }
+        },
+        {
+          "case": "HDS-05 强化普攻第5段正确",
+          "passed": true,
+          "detail": {
+            "time": 17.126279298216105,
+            "phase": "enhanced",
+            "authority_fuel": 20.910526275634766,
+            "local_fuel": 21.910537719726562,
+            "mode": true,
+            "e_cd": 0.0
+          }
+        },
+        {
+          "case": "HDS-05/06 破命使用新动作并成功施放回能",
+          "passed": true,
+          "detail": {
+            "time": 18.543061196804047,
+            "phase": "po_ming",
+            "authority_fuel": 25.909358978271484,
+            "local_fuel": 6.909379959106445,
+            "mode": true,
+            "e_cd": 7.9449920654296875
+          }
+        },
+        {
+          "case": "HDS-05 破命重新建立共享8秒CD",
+          "passed": true,
+          "detail": {
+            "time": 18.543061196804047,
+            "phase": "po_ming",
+            "authority_fuel": 25.909358978271484,
+            "local_fuel": 6.909379959106445,
+            "mode": true,
+            "e_cd": 7.9449920654296875
+          }
+        },
+        {
+          "case": "HDS-02 超过基础10秒仍由燃料维持，无额外时长上限",
+          "passed": true,
+          "detail": {
+            "time": 20.254335295408964,
+            "phase": "extended",
+            "authority_fuel": 83.0539321899414,
+            "local_fuel": 84.054443359375,
+            "mode": true,
+            "e_cd": 6.2337188720703125
+          }
+        },
+        {
+          "case": "生命周期 驱散清空暗流并退态",
+          "passed": true,
+          "detail": {
+            "time": 20.75433959811926,
+            "phase": "dispel",
+            "authority_fuel": 0.0,
+            "local_fuel": 0.0,
+            "mode": false,
+            "e_cd": 5.733715057373047
+          }
+        },
+        {
+          "case": "HDS-05 退态不刷新E冷却",
+          "passed": true,
+          "detail": {
+            "time": 20.75433959811926,
+            "phase": "dispel",
+            "authority_fuel": 0.0,
+            "local_fuel": 0.0,
+            "mode": false,
+            "e_cd": 5.733715057373047
+          }
+        },
+        {
+          "case": "HDS-05 退态后下一次输入从普通第一段开始",
+          "passed": true,
+          "detail": {
+            "time": 20.771006498485804,
+            "phase": "normal_again",
+            "authority_fuel": 0.0,
+            "local_fuel": 0.0,
+            "mode": false,
+            "e_cd": 5.717046737670898
+          }
+        }
+      ],
+      "error": null
+    },
+    {
+      "source": "E:\\Project\\Git\\Hodgepodge\\Saved\\Havoc\\single-havoc-hits-e2e.json",
+      "mode": "single",
+      "passed": true,
+      "checks": [
+        {
+          "case": "HDS-06 常态普攻受检生命伤害只回5点暗流",
+          "passed": true,
+          "detail": {
+            "time": 1.536793202161789,
+            "phase": "normal_hit",
+            "flow": 5.0,
+            "energy": 5.0,
+            "hp": [
+              319.0,
+              319.0
+            ]
+          }
+        },
+        {
+          "case": "HDS-06 强化普攻多目标共享阶段回能和拢音，R只增加6",
+          "passed": true,
+          "detail": {
+            "time": 10.270418904721737,
+            "phase": "enhanced_1",
+            "flow": 69.99962615966797,
+            "energy": 6.0,
+            "hp": [
+              281.79998779296875,
+              281.79998779296875
+            ]
+          }
+        },
+        {
+          "case": "HDS-04 两个目标都收到实际强化攻击伤害",
+          "passed": true,
+          "detail": {
+            "time": 10.270418904721737,
+            "phase": "enhanced_1",
+            "flow": 69.99962615966797,
+            "energy": 6.0,
+            "hp": [
+              281.79998779296875,
+              281.79998779296875
+            ]
+          }
+        },
+        {
+          "case": "HDS-04 相同伤害配置湮灭增伤20%",
+          "passed": true,
+          "detail": {
+            "normal": 31.0,
+            "enhanced": 37.20001220703125
+          }
+        },
+        {
+          "case": "HDS-06 换段未满一秒不重复拢音，R累计11",
+          "passed": true,
+          "detail": {
+            "time": 10.753755401819944,
+            "phase": "enhanced_2",
+            "flow": 65.99959564208984,
+            "energy": 11.0,
+            "hp": [
+              244.59999084472656,
+              244.59999084472656
+            ]
+          }
+        },
+        {
+          "case": "网络收益只作用于施法者ASC",
+          "passed": true,
+          "detail": []
+        }
+      ],
+      "error": null
+    },
+    {
+      "source": "E:\\Project\\Git\\Hodgepodge\\Saved\\Havoc\\listen-havoc-hits-e2e.json",
+      "mode": "listen",
+      "passed": true,
+      "checks": [
+        {
+          "case": "HDS-06 常态普攻受检生命伤害只回5点暗流",
+          "passed": true,
+          "detail": {
+            "time": 3.5415044054389,
+            "phase": "normal_hit",
+            "flow": 5.0,
+            "energy": 5.0,
+            "hp": [
+              319.0,
+              319.0
+            ]
+          }
+        },
+        {
+          "case": "HDS-06 强化普攻多目标共享阶段回能和拢音，R只增加6",
+          "passed": true,
+          "detail": {
+            "time": 12.317619305104017,
+            "phase": "enhanced_1",
+            "flow": 69.98407745361328,
+            "energy": 6.0,
+            "hp": [
+              281.79998779296875,
+              281.79998779296875
+            ]
+          }
+        },
+        {
+          "case": "HDS-04 两个目标都收到实际强化攻击伤害",
+          "passed": true,
+          "detail": {
+            "time": 12.317619305104017,
+            "phase": "enhanced_1",
+            "flow": 69.98407745361328,
+            "energy": 6.0,
+            "hp": [
+              281.79998779296875,
+              281.79998779296875
+            ]
+          }
+        },
+        {
+          "case": "HDS-04 相同伤害配置湮灭增伤20%",
+          "passed": true,
+          "detail": {
+            "normal": 31.0,
+            "enhanced": 37.20001220703125
+          }
+        },
+        {
+          "case": "HDS-06 换段未满一秒不重复拢音，R累计11",
+          "passed": true,
+          "detail": {
+            "time": 12.834946006536484,
+            "phase": "enhanced_2",
+            "flow": 64.97904968261719,
+            "energy": 11.0,
+            "hp": [
+              244.59999084472656,
+              244.59999084472656
+            ]
+          }
+        },
+        {
+          "case": "网络收益只作用于施法者ASC",
+          "passed": true,
+          "detail": [
+            0.0
+          ]
+        }
+      ],
+      "error": null
+    },
+    {
+      "source": "E:\\Project\\Git\\Hodgepodge\\Saved\\Havoc\\dedicated-havoc-hits-e2e.json",
+      "mode": "dedicated",
+      "passed": true,
+      "checks": [
+        {
+          "case": "HDS-06 常态普攻受检生命伤害只回5点暗流",
+          "passed": true,
+          "detail": {
+            "time": 3.6422277987003326,
+            "phase": "normal_hit",
+            "flow": 5.0,
+            "energy": 5.0,
+            "hp": [
+              319.0,
+              319.0
+            ]
+          }
+        },
+        {
+          "case": "HDS-06 强化普攻多目标共享阶段回能和拢音，R只增加6",
+          "passed": true,
+          "detail": {
+            "time": 12.452745195478201,
+            "phase": "enhanced_1",
+            "flow": 69.85747528076172,
+            "energy": 6.0,
+            "hp": [
+              281.79998779296875,
+              281.79998779296875
+            ]
+          }
+        },
+        {
+          "case": "HDS-04 两个目标都收到实际强化攻击伤害",
+          "passed": true,
+          "detail": {
+            "time": 12.452745195478201,
+            "phase": "enhanced_1",
+            "flow": 69.85747528076172,
+            "energy": 6.0,
+            "hp": [
+              281.79998779296875,
+              281.79998779296875
+            ]
+          }
+        },
+        {
+          "case": "HDS-04 相同伤害配置湮灭增伤20%",
+          "passed": true,
+          "detail": {
+            "normal": 31.0,
+            "enhanced": 37.20001220703125
+          }
+        },
+        {
+          "case": "HDS-06 换段未满一秒不重复拢音，R累计11",
+          "passed": true,
+          "detail": {
+            "time": 12.942774798721075,
+            "phase": "enhanced_2",
+            "flow": 64.95718383789062,
+            "energy": 11.0,
+            "hp": [
+              244.59999084472656,
+              244.59999084472656
+            ]
+          }
+        },
+        {
+          "case": "网络收益只作用于施法者ASC",
+          "passed": true,
+          "detail": [
+            0.0
+          ]
+        }
+      ],
+      "error": null
+    },
+    {
+      "source": "E:\\Project\\Git\\Hodgepodge\\Saved\\Havoc\\UIRegression\\single-e2e.json",
+      "mode": "single",
+      "passed": true,
+      "checks": [
+        {
+          "case": "E/R由Experience注入Layout扩展点",
+          "passed": true,
+          "detail": {
+            "root": true,
+            "pawn": "/Game/Main/Maps/UEDPIE_0_L_EnemyAIValidation.L_EnemyAIValidation:PersistentLevel.BP_Hero_Pover_C_0",
+            "managed_players": 1,
+            "platform_user": 0,
+            "input_device": 0,
+            "own_viewport": true,
+            "game_input": true,
+            "pending": 0,
+            "game_count": 1,
+            "game_active": true,
+            "menu_count": 0,
+            "menu_active": false,
+            "modal_count": 0,
+            "modal_active": false,
+            "vitals_center_x": 0.5000000357400901,
+            "vitals_center_y": 0.9782973424662368,
+            "end_center_x": 0.9830186680497605,
+            "end_center_y": 0.0542564933092469,
+            "resonance_center_x": 0.9748206776721364,
+            "resonance_center_y": 0.9270004146667141,
+            "skill_center_x": 0.9314888921229699,
+            "skill_center_y": 0.9270004146667141,
+            "ability_extension_slots": true,
+            "resonance_widget": true,
+            "resonance_percent": 0,
+            "resonance_cooldown": 0,
+            "resonance_cooldown_progress": 1,
+            "resonance_text": "0/100",
+            "resonance_enabled": false,
+            "resonance_opacity": 1,
+            "skill_cooldown": 0,
+            "skill_cooldown_progress": 1,
+            "skill_enabled": true,
+            "skill_icon_ready": true,
+            "display_percent": 1,
+            "display_text": "150/150",
+            "display_level": "Lv. 1",
+            "health": 150,
+            "max_health": 150,
+            "vitals_ready": true,
+            "entries": 4,
+            "indicators": 0,
+            "indicator_widgets": [],
+            "move_intent": false
+          }
+        },
+        {
+          "case": "初始E可用，R零能量不可用",
+          "passed": true,
+          "detail": {
+            "root": true,
+            "pawn": "/Game/Main/Maps/UEDPIE_0_L_EnemyAIValidation.L_EnemyAIValidation:PersistentLevel.BP_Hero_Pover_C_0",
+            "managed_players": 1,
+            "platform_user": 0,
+            "input_device": 0,
+            "own_viewport": true,
+            "game_input": true,
+            "pending": 0,
+            "game_count": 1,
+            "game_active": true,
+            "menu_count": 0,
+            "menu_active": false,
+            "modal_count": 0,
+            "modal_active": false,
+            "vitals_center_x": 0.5000000357400901,
+            "vitals_center_y": 0.9782973424662368,
+            "end_center_x": 0.9830186680497605,
+            "end_center_y": 0.0542564933092469,
+            "resonance_center_x": 0.9748206776721364,
+            "resonance_center_y": 0.9270004146667141,
+            "skill_center_x": 0.9314888921229699,
+            "skill_center_y": 0.9270004146667141,
+            "ability_extension_slots": true,
+            "resonance_widget": true,
+            "resonance_percent": 0,
+            "resonance_cooldown": 0,
+            "resonance_cooldown_progress": 1,
+            "resonance_text": "0/100",
+            "resonance_enabled": false,
+            "resonance_opacity": 1,
+            "skill_cooldown": 0,
+            "skill_cooldown_progress": 1,
+            "skill_enabled": true,
+            "skill_icon_ready": true,
+            "display_percent": 1,
+            "display_text": "150/150",
+            "display_level": "Lv. 1",
+            "health": 150,
+            "max_health": 150,
+            "vitals_ready": true,
+            "entries": 4,
+            "indicators": 0,
+            "indicator_widgets": [],
+            "move_intent": false
+          }
+        },
+        {
+          "case": "R位于E右侧且二者接近底边",
+          "passed": true,
+          "detail": {
+            "root": true,
+            "pawn": "/Game/Main/Maps/UEDPIE_0_L_EnemyAIValidation.L_EnemyAIValidation:PersistentLevel.BP_Hero_Pover_C_0",
+            "managed_players": 1,
+            "platform_user": 0,
+            "input_device": 0,
+            "own_viewport": true,
+            "game_input": true,
+            "pending": 0,
+            "game_count": 1,
+            "game_active": true,
+            "menu_count": 0,
+            "menu_active": false,
+            "modal_count": 0,
+            "modal_active": false,
+            "vitals_center_x": 0.5000000357400901,
+            "vitals_center_y": 0.9782973424662368,
+            "end_center_x": 0.9830186680497605,
+            "end_center_y": 0.0542564933092469,
+            "resonance_center_x": 0.9748206776721364,
+            "resonance_center_y": 0.9270004146667141,
+            "skill_center_x": 0.9314888921229699,
+            "skill_center_y": 0.9270004146667141,
+            "ability_extension_slots": true,
+            "resonance_widget": true,
+            "resonance_percent": 0,
+            "resonance_cooldown": 0,
+            "resonance_cooldown_progress": 1,
+            "resonance_text": "0/100",
+            "resonance_enabled": false,
+            "resonance_opacity": 1,
+            "skill_cooldown": 0,
+            "skill_cooldown_progress": 1,
+            "skill_enabled": true,
+            "skill_icon_ready": true,
+            "display_percent": 1,
+            "display_text": "150/150",
+            "display_level": "Lv. 1",
+            "health": 150,
+            "max_health": 150,
+            "vitals_ready": true,
+            "entries": 4,
+            "indicators": 0,
+            "indicator_widgets": [],
+            "move_intent": false
+          }
+        },
+        {
+          "case": "真实能量环25%",
+          "passed": true,
+          "detail": {
+            "root": true,
+            "pawn": "/Game/Main/Maps/UEDPIE_0_L_EnemyAIValidation.L_EnemyAIValidation:PersistentLevel.BP_Hero_Pover_C_0",
+            "managed_players": 1,
+            "platform_user": 0,
+            "input_device": 0,
+            "own_viewport": true,
+            "game_input": true,
+            "pending": 0,
+            "game_count": 1,
+            "game_active": true,
+            "menu_count": 0,
+            "menu_active": false,
+            "modal_count": 0,
+            "modal_active": false,
+            "vitals_center_x": 0.5000000357400901,
+            "vitals_center_y": 0.9782973424662368,
+            "end_center_x": 0.9830186680497605,
+            "end_center_y": 0.0542564933092469,
+            "resonance_center_x": 0.9748206776721364,
+            "resonance_center_y": 0.9270004146667141,
+            "skill_center_x": 0.9314888921229699,
+            "skill_center_y": 0.9270004146667141,
+            "ability_extension_slots": true,
+            "resonance_widget": true,
+            "resonance_percent": 0.25,
+            "resonance_cooldown": 0,
+            "resonance_cooldown_progress": 1,
+            "resonance_text": "25/100",
+            "resonance_enabled": false,
+            "resonance_opacity": 1,
+            "skill_cooldown": 0,
+            "skill_cooldown_progress": 1,
+            "skill_enabled": true,
+            "skill_icon_ready": true,
+            "display_percent": 1,
+            "display_text": "150/150",
+            "display_level": "Lv. 1",
+            "health": 150,
+            "max_health": 150,
+            "vitals_ready": true,
+            "entries": 4,
+            "indicators": 0,
+            "indicator_widgets": [],
+            "move_intent": false
+          }
+        },
+        {
+          "case": "真实能量环50%",
+          "passed": true,
+          "detail": {
+            "root": true,
+            "pawn": "/Game/Main/Maps/UEDPIE_0_L_EnemyAIValidation.L_EnemyAIValidation:PersistentLevel.BP_Hero_Pover_C_0",
+            "managed_players": 1,
+            "platform_user": 0,
+            "input_device": 0,
+            "own_viewport": true,
+            "game_input": true,
+            "pending": 0,
+            "game_count": 1,
+            "game_active": true,
+            "menu_count": 0,
+            "menu_active": false,
+            "modal_count": 0,
+            "modal_active": false,
+            "vitals_center_x": 0.5000000357400901,
+            "vitals_center_y": 0.9782973424662368,
+            "end_center_x": 0.9830186680497605,
+            "end_center_y": 0.0542564933092469,
+            "resonance_center_x": 0.9748206776721364,
+            "resonance_center_y": 0.9270004146667141,
+            "skill_center_x": 0.9314888921229699,
+            "skill_center_y": 0.9270004146667141,
+            "ability_extension_slots": true,
+            "resonance_widget": true,
+            "resonance_percent": 0.5,
+            "resonance_cooldown": 0,
+            "resonance_cooldown_progress": 1,
+            "resonance_text": "50/100",
+            "resonance_enabled": false,
+            "resonance_opacity": 1,
+            "skill_cooldown": 0,
+            "skill_cooldown_progress": 1,
+            "skill_enabled": true,
+            "skill_icon_ready": true,
+            "display_percent": 1,
+            "display_text": "150/150",
+            "display_level": "Lv. 1",
+            "health": 150,
+            "max_health": 150,
+            "vitals_ready": true,
+            "entries": 4,
+            "indicators": 0,
+            "indicator_widgets": [],
+            "move_intent": false
+          }
+        },
+        {
+          "case": "真实能量环75%",
+          "passed": true,
+          "detail": {
+            "root": true,
+            "pawn": "/Game/Main/Maps/UEDPIE_0_L_EnemyAIValidation.L_EnemyAIValidation:PersistentLevel.BP_Hero_Pover_C_0",
+            "managed_players": 1,
+            "platform_user": 0,
+            "input_device": 0,
+            "own_viewport": true,
+            "game_input": true,
+            "pending": 0,
+            "game_count": 1,
+            "game_active": true,
+            "menu_count": 0,
+            "menu_active": false,
+            "modal_count": 0,
+            "modal_active": false,
+            "vitals_center_x": 0.5000000357400901,
+            "vitals_center_y": 0.9782973424662368,
+            "end_center_x": 0.9830186680497605,
+            "end_center_y": 0.0542564933092469,
+            "resonance_center_x": 0.9748206776721364,
+            "resonance_center_y": 0.9270004146667141,
+            "skill_center_x": 0.9314888921229699,
+            "skill_center_y": 0.9270004146667141,
+            "ability_extension_slots": true,
+            "resonance_widget": true,
+            "resonance_percent": 0.75,
+            "resonance_cooldown": 0,
+            "resonance_cooldown_progress": 1,
+            "resonance_text": "75/100",
+            "resonance_enabled": false,
+            "resonance_opacity": 1,
+            "skill_cooldown": 0,
+            "skill_cooldown_progress": 1,
+            "skill_enabled": true,
+            "skill_icon_ready": true,
+            "display_percent": 1,
+            "display_text": "150/150",
+            "display_level": "Lv. 1",
+            "health": 150,
+            "max_health": 150,
+            "vitals_ready": true,
+            "entries": 4,
+            "indicators": 0,
+            "indicator_widgets": [],
+            "move_intent": false
+          }
+        },
+        {
+          "case": "真实能量环100%",
+          "passed": true,
+          "detail": {
+            "root": true,
+            "pawn": "/Game/Main/Maps/UEDPIE_0_L_EnemyAIValidation.L_EnemyAIValidation:PersistentLevel.BP_Hero_Pover_C_0",
+            "managed_players": 1,
+            "platform_user": 0,
+            "input_device": 0,
+            "own_viewport": true,
+            "game_input": true,
+            "pending": 0,
+            "game_count": 1,
+            "game_active": true,
+            "menu_count": 0,
+            "menu_active": false,
+            "modal_count": 0,
+            "modal_active": false,
+            "vitals_center_x": 0.5000000357400901,
+            "vitals_center_y": 0.9782973424662368,
+            "end_center_x": 0.9830186680497605,
+            "end_center_y": 0.0542564933092469,
+            "resonance_center_x": 0.9748206776721364,
+            "resonance_center_y": 0.9270004146667141,
+            "skill_center_x": 0.9314888921229699,
+            "skill_center_y": 0.9270004146667141,
+            "ability_extension_slots": true,
+            "resonance_widget": true,
+            "resonance_percent": 1,
+            "resonance_cooldown": 0,
+            "resonance_cooldown_progress": 1,
+            "resonance_text": "100/100",
+            "resonance_enabled": true,
+            "resonance_opacity": 1,
+            "skill_cooldown": 0,
+            "skill_cooldown_progress": 1,
+            "skill_enabled": true,
+            "skill_icon_ready": true,
+            "display_percent": 1,
+            "display_text": "150/150",
+            "display_level": "Lv. 1",
+            "health": 150,
+            "max_health": 150,
+            "vitals_ready": true,
+            "entries": 4,
+            "indicators": 0,
+            "indicator_widgets": [],
+            "move_intent": false
+          }
+        },
+        {
+          "case": "满充能且无CD时R可用",
+          "passed": true,
+          "detail": {
+            "root": true,
+            "pawn": "/Game/Main/Maps/UEDPIE_0_L_EnemyAIValidation.L_EnemyAIValidation:PersistentLevel.BP_Hero_Pover_C_0",
+            "managed_players": 1,
+            "platform_user": 0,
+            "input_device": 0,
+            "own_viewport": true,
+            "game_input": true,
+            "pending": 0,
+            "game_count": 1,
+            "game_active": true,
+            "menu_count": 0,
+            "menu_active": false,
+            "modal_count": 0,
+            "modal_active": false,
+            "vitals_center_x": 0.5000000357400901,
+            "vitals_center_y": 0.9782973424662368,
+            "end_center_x": 0.9830186680497605,
+            "end_center_y": 0.0542564933092469,
+            "resonance_center_x": 0.9748206776721364,
+            "resonance_center_y": 0.9270004146667141,
+            "skill_center_x": 0.9314888921229699,
+            "skill_center_y": 0.9270004146667141,
+            "ability_extension_slots": true,
+            "resonance_widget": true,
+            "resonance_percent": 1,
+            "resonance_cooldown": 0,
+            "resonance_cooldown_progress": 1,
+            "resonance_text": "100/100",
+            "resonance_enabled": true,
+            "resonance_opacity": 1,
+            "skill_cooldown": 0,
+            "skill_cooldown_progress": 1,
+            "skill_enabled": true,
+            "skill_icon_ready": true,
+            "display_percent": 1,
+            "display_text": "150/150",
+            "display_level": "Lv. 1",
+            "health": 150,
+            "max_health": 150,
+            "vitals_ready": true,
+            "entries": 4,
+            "indicators": 0,
+            "indicator_widgets": [],
+            "move_intent": false
+          }
+        },
+        {
+          "case": "E真实释放进入8秒CD",
+          "passed": true,
+          "detail": {
+            "root": true,
+            "pawn": "/Game/Main/Maps/UEDPIE_0_L_EnemyAIValidation.L_EnemyAIValidation:PersistentLevel.BP_Hero_Pover_C_0",
+            "managed_players": 1,
+            "platform_user": 0,
+            "input_device": 0,
+            "own_viewport": true,
+            "game_input": true,
+            "pending": 0,
+            "game_count": 1,
+            "game_active": true,
+            "menu_count": 0,
+            "menu_active": false,
+            "modal_count": 0,
+            "modal_active": false,
+            "vitals_center_x": 0.5000000357400901,
+            "vitals_center_y": 0.9782973424662368,
+            "end_center_x": 0.9830186680497605,
+            "end_center_y": 0.0542564933092469,
+            "resonance_center_x": 0.9748206776721364,
+            "resonance_center_y": 0.9270004146667141,
+            "skill_center_x": 0.9314888921229699,
+            "skill_center_y": 0.9270004146667141,
+            "ability_extension_slots": true,
+            "resonance_widget": true,
+            "resonance_percent": 1,
+            "resonance_cooldown": 0,
+            "resonance_cooldown_progress": 1,
+            "resonance_text": "100/100",
+            "resonance_enabled": true,
+            "resonance_opacity": 1,
+            "skill_cooldown": 8,
+            "skill_cooldown_progress": 0,
+            "skill_enabled": false,
+            "skill_icon_ready": true,
+            "display_percent": 1,
+            "display_text": "150/150",
+            "display_level": "Lv. 1",
+            "health": 150,
+            "max_health": 150,
+            "vitals_ready": true,
+            "entries": 4,
+            "indicators": 0,
+            "indicator_widgets": [],
+            "move_intent": false
+          }
+        },
+        {
+          "case": "E的CD不影响R满能量环",
+          "passed": true,
+          "detail": {
+            "root": true,
+            "pawn": "/Game/Main/Maps/UEDPIE_0_L_EnemyAIValidation.L_EnemyAIValidation:PersistentLevel.BP_Hero_Pover_C_0",
+            "managed_players": 1,
+            "platform_user": 0,
+            "input_device": 0,
+            "own_viewport": true,
+            "game_input": true,
+            "pending": 0,
+            "game_count": 1,
+            "game_active": true,
+            "menu_count": 0,
+            "menu_active": false,
+            "modal_count": 0,
+            "modal_active": false,
+            "vitals_center_x": 0.5000000357400901,
+            "vitals_center_y": 0.9782973424662368,
+            "end_center_x": 0.9830186680497605,
+            "end_center_y": 0.0542564933092469,
+            "resonance_center_x": 0.9748206776721364,
+            "resonance_center_y": 0.9270004146667141,
+            "skill_center_x": 0.9314888921229699,
+            "skill_center_y": 0.9270004146667141,
+            "ability_extension_slots": true,
+            "resonance_widget": true,
+            "resonance_percent": 1,
+            "resonance_cooldown": 0,
+            "resonance_cooldown_progress": 1,
+            "resonance_text": "100/100",
+            "resonance_enabled": true,
+            "resonance_opacity": 1,
+            "skill_cooldown": 8,
+            "skill_cooldown_progress": 0,
+            "skill_enabled": false,
+            "skill_icon_ready": true,
+            "display_percent": 1,
+            "display_text": "150/150",
+            "display_level": "Lv. 1",
+            "health": 150,
+            "max_health": 150,
+            "vitals_ready": true,
+            "entries": 4,
+            "indicators": 0,
+            "indicator_widgets": [],
+            "move_intent": false
+          }
+        },
+        {
+          "case": "CD开始亮色接近底部",
+          "passed": true,
+          "detail": {
+            "root": true,
+            "pawn": "/Game/Main/Maps/UEDPIE_0_L_EnemyAIValidation.L_EnemyAIValidation:PersistentLevel.BP_Hero_Pover_C_0",
+            "managed_players": 1,
+            "platform_user": 0,
+            "input_device": 0,
+            "own_viewport": true,
+            "game_input": true,
+            "pending": 0,
+            "game_count": 1,
+            "game_active": true,
+            "menu_count": 0,
+            "menu_active": false,
+            "modal_count": 0,
+            "modal_active": false,
+            "vitals_center_x": 0.5000000357400901,
+            "vitals_center_y": 0.9782973424662368,
+            "end_center_x": 0.9830186680497605,
+            "end_center_y": 0.0542564933092469,
+            "resonance_center_x": 0.9748206776721364,
+            "resonance_center_y": 0.9270004146667141,
+            "skill_center_x": 0.9314888921229699,
+            "skill_center_y": 0.9270004146667141,
+            "ability_extension_slots": true,
+            "resonance_widget": true,
+            "resonance_percent": 1,
+            "resonance_cooldown": 0,
+            "resonance_cooldown_progress": 1,
+            "resonance_text": "100/100",
+            "resonance_enabled": true,
+            "resonance_opacity": 1,
+            "skill_cooldown": 8,
+            "skill_cooldown_progress": 0,
+            "skill_enabled": false,
+            "skill_icon_ready": true,
+            "display_percent": 1,
+            "display_text": "150/150",
+            "display_level": "Lv. 1",
+            "health": 150,
+            "max_health": 150,
+            "vitals_ready": true,
+            "entries": 4,
+            "indicators": 0,
+            "indicator_widgets": [],
+            "move_intent": false
+          }
+        },
+        {
+          "case": "E冷却亮色自下向上连续恢复",
+          "passed": true,
+          "detail": {
+            "root": true,
+            "pawn": "/Game/Main/Maps/UEDPIE_0_L_EnemyAIValidation.L_EnemyAIValidation:PersistentLevel.BP_Hero_Pover_C_0",
+            "managed_players": 1,
+            "platform_user": 0,
+            "input_device": 0,
+            "own_viewport": true,
+            "game_input": true,
+            "pending": 0,
+            "game_count": 1,
+            "game_active": true,
+            "menu_count": 0,
+            "menu_active": false,
+            "modal_count": 0,
+            "modal_active": false,
+            "vitals_center_x": 0.5000000357400901,
+            "vitals_center_y": 0.9782973424662368,
+            "end_center_x": 0.9830186680497605,
+            "end_center_y": 0.0542564933092469,
+            "resonance_center_x": 0.9748206776721364,
+            "resonance_center_y": 0.9270004146667141,
+            "skill_center_x": 0.9314888921229699,
+            "skill_center_y": 0.9270004146667141,
+            "ability_extension_slots": true,
+            "resonance_widget": true,
+            "resonance_percent": 1,
+            "resonance_cooldown": 0,
+            "resonance_cooldown_progress": 1,
+            "resonance_text": "100/100",
+            "resonance_enabled": true,
+            "resonance_opacity": 1,
+            "skill_cooldown": 4.489566326141357,
+            "skill_cooldown_progress": 0.4388042092323303,
+            "skill_enabled": false,
+            "skill_icon_ready": true,
+            "display_percent": 1,
+            "display_text": "150/150",
+            "display_level": "Lv. 1",
+            "health": 150,
+            "max_health": 150,
+            "vitals_ready": true,
+            "entries": 4,
+            "indicators": 0,
+            "indicator_widgets": [],
+            "move_intent": false
+          }
+        },
+        {
+          "case": "E冷却完成恢复白色并允许释放",
+          "passed": true,
+          "detail": {
+            "root": true,
+            "pawn": "/Game/Main/Maps/UEDPIE_0_L_EnemyAIValidation.L_EnemyAIValidation:PersistentLevel.BP_Hero_Pover_C_0",
+            "managed_players": 1,
+            "platform_user": 0,
+            "input_device": 0,
+            "own_viewport": true,
+            "game_input": true,
+            "pending": 0,
+            "game_count": 1,
+            "game_active": true,
+            "menu_count": 0,
+            "menu_active": false,
+            "modal_count": 0,
+            "modal_active": false,
+            "vitals_center_x": 0.5000000357400901,
+            "vitals_center_y": 0.9782973424662368,
+            "end_center_x": 0.9830186680497605,
+            "end_center_y": 0.0542564933092469,
+            "resonance_center_x": 0.9748206776721364,
+            "resonance_center_y": 0.9270004146667141,
+            "skill_center_x": 0.9314888921229699,
+            "skill_center_y": 0.9270004146667141,
+            "ability_extension_slots": true,
+            "resonance_widget": true,
+            "resonance_percent": 1,
+            "resonance_cooldown": 0,
+            "resonance_cooldown_progress": 1,
+            "resonance_text": "100/100",
+            "resonance_enabled": true,
+            "resonance_opacity": 1,
+            "skill_cooldown": 0,
+            "skill_cooldown_progress": 1,
+            "skill_enabled": true,
+            "skill_icon_ready": true,
+            "display_percent": 1,
+            "display_text": "150/150",
+            "display_level": "Lv. 1",
+            "health": 150,
+            "max_health": 150,
+            "vitals_ready": true,
+            "entries": 4,
+            "indicators": 0,
+            "indicator_widgets": [],
+            "move_intent": false
+          }
+        },
+        {
+          "case": "R真实释放消耗100并进入12秒CD",
+          "passed": true,
+          "detail": {
+            "root": true,
+            "pawn": "/Game/Main/Maps/UEDPIE_0_L_EnemyAIValidation.L_EnemyAIValidation:PersistentLevel.BP_Hero_Pover_C_0",
+            "managed_players": 1,
+            "platform_user": 0,
+            "input_device": 0,
+            "own_viewport": true,
+            "game_input": true,
+            "pending": 0,
+            "game_count": 1,
+            "game_active": true,
+            "menu_count": 0,
+            "menu_active": false,
+            "modal_count": 0,
+            "modal_active": false,
+            "vitals_center_x": 0.5000000357400901,
+            "vitals_center_y": 0.9782973424662368,
+            "end_center_x": 0.9830186680497605,
+            "end_center_y": 0.0542564933092469,
+            "resonance_center_x": 0.9748206776721364,
+            "resonance_center_y": 0.9270004146667141,
+            "skill_center_x": 0.9314888921229699,
+            "skill_center_y": 0.9270004146667141,
+            "ability_extension_slots": true,
+            "resonance_widget": true,
+            "resonance_percent": 0,
+            "resonance_cooldown": 12,
+            "resonance_cooldown_progress": 0,
+            "resonance_text": "0/100 CD s",
+            "resonance_enabled": false,
+            "resonance_opacity": 1,
+            "skill_cooldown": 0,
+            "skill_cooldown_progress": 1,
+            "skill_enabled": true,
+            "skill_icon_ready": true,
+            "display_percent": 1,
+            "display_text": "150/150",
+            "display_level": "Lv. 1",
+            "health": 150,
+            "max_health": 150,
+            "vitals_ready": true,
+            "entries": 4,
+            "indicators": 0,
+            "indicator_widgets": [],
+            "move_intent": false
+          }
+        },
+        {
+          "case": "R不进入E的CD",
+          "passed": true,
+          "detail": {
+            "root": true,
+            "pawn": "/Game/Main/Maps/UEDPIE_0_L_EnemyAIValidation.L_EnemyAIValidation:PersistentLevel.BP_Hero_Pover_C_0",
+            "managed_players": 1,
+            "platform_user": 0,
+            "input_device": 0,
+            "own_viewport": true,
+            "game_input": true,
+            "pending": 0,
+            "game_count": 1,
+            "game_active": true,
+            "menu_count": 0,
+            "menu_active": false,
+            "modal_count": 0,
+            "modal_active": false,
+            "vitals_center_x": 0.5000000357400901,
+            "vitals_center_y": 0.9782973424662368,
+            "end_center_x": 0.9830186680497605,
+            "end_center_y": 0.0542564933092469,
+            "resonance_center_x": 0.9748206776721364,
+            "resonance_center_y": 0.9270004146667141,
+            "skill_center_x": 0.9314888921229699,
+            "skill_center_y": 0.9270004146667141,
+            "ability_extension_slots": true,
+            "resonance_widget": true,
+            "resonance_percent": 0,
+            "resonance_cooldown": 12,
+            "resonance_cooldown_progress": 0,
+            "resonance_text": "0/100 CD s",
+            "resonance_enabled": false,
+            "resonance_opacity": 1,
+            "skill_cooldown": 0,
+            "skill_cooldown_progress": 1,
+            "skill_enabled": true,
+            "skill_icon_ready": true,
+            "display_percent": 1,
+            "display_text": "150/150",
+            "display_level": "Lv. 1",
+            "health": 150,
+            "max_health": 150,
+            "vitals_ready": true,
+            "entries": 4,
+            "indicators": 0,
+            "indicator_widgets": [],
+            "move_intent": false
+          }
+        },
+        {
+          "case": "冷却中满能量环与CD独立显示",
+          "passed": true,
+          "detail": {
+            "root": true,
+            "pawn": "/Game/Main/Maps/UEDPIE_0_L_EnemyAIValidation.L_EnemyAIValidation:PersistentLevel.BP_Hero_Pover_C_0",
+            "managed_players": 1,
+            "platform_user": 0,
+            "input_device": 0,
+            "own_viewport": true,
+            "game_input": true,
+            "pending": 0,
+            "game_count": 1,
+            "game_active": true,
+            "menu_count": 0,
+            "menu_active": false,
+            "modal_count": 0,
+            "modal_active": false,
+            "vitals_center_x": 0.5000000357400901,
+            "vitals_center_y": 0.9782973424662368,
+            "end_center_x": 0.9830186680497605,
+            "end_center_y": 0.0542564933092469,
+            "resonance_center_x": 0.9748206776721364,
+            "resonance_center_y": 0.9270004146667141,
+            "skill_center_x": 0.9314888921229699,
+            "skill_center_y": 0.9270004146667141,
+            "ability_extension_slots": true,
+            "resonance_widget": true,
+            "resonance_percent": 1,
+            "resonance_cooldown": 11.4959135055542,
+            "resonance_cooldown_progress": 0.0420072078704834,
+            "resonance_text": "100/100 CD s",
+            "resonance_enabled": false,
+            "resonance_opacity": 1,
+            "skill_cooldown": 0,
+            "skill_cooldown_progress": 1,
+            "skill_enabled": true,
+            "skill_icon_ready": true,
+            "display_percent": 1,
+            "display_text": "150/150",
+            "display_level": "Lv. 1",
+            "health": 150,
+            "max_health": 150,
+            "vitals_ready": true,
+            "entries": 4,
+            "indicators": 0,
+            "indicator_widgets": [],
+            "move_intent": false
+          }
+        },
+        {
+          "case": "其他玩家未被回能",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "case": "R同样自下向上显示CD恢复",
+          "passed": true,
+          "detail": {
+            "root": true,
+            "pawn": "/Game/Main/Maps/UEDPIE_0_L_EnemyAIValidation.L_EnemyAIValidation:PersistentLevel.BP_Hero_Pover_C_0",
+            "managed_players": 1,
+            "platform_user": 0,
+            "input_device": 0,
+            "own_viewport": true,
+            "game_input": true,
+            "pending": 0,
+            "game_count": 1,
+            "game_active": true,
+            "menu_count": 0,
+            "menu_active": false,
+            "modal_count": 0,
+            "modal_active": false,
+            "vitals_center_x": 0.5000000357400901,
+            "vitals_center_y": 0.9782973424662368,
+            "end_center_x": 0.9830186680497605,
+            "end_center_y": 0.0542564933092469,
+            "resonance_center_x": 0.9748206776721364,
+            "resonance_center_y": 0.9270004146667141,
+            "skill_center_x": 0.9314888921229699,
+            "skill_center_y": 0.9270004146667141,
+            "ability_extension_slots": true,
+            "resonance_widget": true,
+            "resonance_percent": 1,
+            "resonance_cooldown": 7.190452575683594,
+            "resonance_cooldown_progress": 0.4007956385612488,
+            "resonance_text": "100/100 CD s",
+            "resonance_enabled": false,
+            "resonance_opacity": 1,
+            "skill_cooldown": 0,
+            "skill_cooldown_progress": 1,
+            "skill_enabled": true,
+            "skill_icon_ready": true,
+            "display_percent": 1,
+            "display_text": "150/150",
+            "display_level": "Lv. 1",
+            "health": 150,
+            "max_health": 150,
+            "vitals_ready": true,
+            "entries": 4,
+            "indicators": 0,
+            "indicator_widgets": [],
+            "move_intent": false
+          }
+        },
+        {
+          "case": "R满能量且CD结束时可释放",
+          "passed": true,
+          "detail": {
+            "root": true,
+            "pawn": "/Game/Main/Maps/UEDPIE_0_L_EnemyAIValidation.L_EnemyAIValidation:PersistentLevel.BP_Hero_Pover_C_0",
+            "managed_players": 1,
+            "platform_user": 0,
+            "input_device": 0,
+            "own_viewport": true,
+            "game_input": true,
+            "pending": 0,
+            "game_count": 1,
+            "game_active": true,
+            "menu_count": 0,
+            "menu_active": false,
+            "modal_count": 0,
+            "modal_active": false,
+            "vitals_center_x": 0.5000000357400901,
+            "vitals_center_y": 0.9782973424662368,
+            "end_center_x": 0.9830186680497605,
+            "end_center_y": 0.0542564933092469,
+            "resonance_center_x": 0.9748206776721364,
+            "resonance_center_y": 0.9270004146667141,
+            "skill_center_x": 0.9314888921229699,
+            "skill_center_y": 0.9270004146667141,
+            "ability_extension_slots": true,
+            "resonance_widget": true,
+            "resonance_percent": 1,
+            "resonance_cooldown": 0,
+            "resonance_cooldown_progress": 1,
+            "resonance_text": "100/100",
+            "resonance_enabled": true,
+            "resonance_opacity": 1,
+            "skill_cooldown": 0,
+            "skill_cooldown_progress": 1,
+            "skill_enabled": true,
+            "skill_icon_ready": true,
+            "display_percent": 1,
+            "display_text": "150/150",
+            "display_level": "Lv. 1",
+            "health": 150,
+            "max_health": 150,
+            "vitals_ready": true,
+            "entries": 4,
+            "indicators": 0,
+            "indicator_widgets": [],
+            "move_intent": false
+          }
+        },
+        {
+          "case": "重建HUD后扩展重新注入且没有重复层",
+          "passed": true,
+          "detail": {
+            "root": true,
+            "pawn": "/Game/Main/Maps/UEDPIE_0_L_EnemyAIValidation.L_EnemyAIValidation:PersistentLevel.BP_Hero_Pover_C_0",
+            "managed_players": 1,
+            "platform_user": 0,
+            "input_device": 0,
+            "own_viewport": true,
+            "game_input": true,
+            "pending": 0,
+            "game_count": 1,
+            "game_active": true,
+            "menu_count": 0,
+            "menu_active": false,
+            "modal_count": 0,
+            "modal_active": false,
+            "vitals_center_x": 0.5000000357400901,
+            "vitals_center_y": 0.9782973424662368,
+            "end_center_x": 0.9830186680497605,
+            "end_center_y": 0.0542564933092469,
+            "resonance_center_x": 0.9748206776721364,
+            "resonance_center_y": 0.9270004146667141,
+            "skill_center_x": 0.9314888921229699,
+            "skill_center_y": 0.9270004146667141,
+            "ability_extension_slots": true,
+            "resonance_widget": true,
+            "resonance_percent": 1,
+            "resonance_cooldown": 0,
+            "resonance_cooldown_progress": 1,
+            "resonance_text": "100/100",
+            "resonance_enabled": true,
+            "resonance_opacity": 1,
+            "skill_cooldown": 0,
+            "skill_cooldown_progress": 1,
+            "skill_enabled": true,
+            "skill_icon_ready": true,
+            "display_percent": 1,
+            "display_text": "150/150",
+            "display_level": "Lv. 1",
+            "health": 150,
+            "max_health": 150,
+            "vitals_ready": true,
+            "entries": 4,
+            "indicators": 0,
+            "indicator_widgets": [],
+            "move_intent": false
+          }
+        },
+        {
+          "case": "生命条和终焉入口保留原有布局",
+          "passed": true,
+          "detail": {
+            "root": true,
+            "pawn": "/Game/Main/Maps/UEDPIE_0_L_EnemyAIValidation.L_EnemyAIValidation:PersistentLevel.BP_Hero_Pover_C_0",
+            "managed_players": 1,
+            "platform_user": 0,
+            "input_device": 0,
+            "own_viewport": true,
+            "game_input": true,
+            "pending": 0,
+            "game_count": 1,
+            "game_active": true,
+            "menu_count": 0,
+            "menu_active": false,
+            "modal_count": 0,
+            "modal_active": false,
+            "vitals_center_x": 0.5000000357400901,
+            "vitals_center_y": 0.9782973424662368,
+            "end_center_x": 0.9830186680497605,
+            "end_center_y": 0.0542564933092469,
+            "resonance_center_x": 0.9748206776721364,
+            "resonance_center_y": 0.9270004146667141,
+            "skill_center_x": 0.9314888921229699,
+            "skill_center_y": 0.9270004146667141,
+            "ability_extension_slots": true,
+            "resonance_widget": true,
+            "resonance_percent": 1,
+            "resonance_cooldown": 0,
+            "resonance_cooldown_progress": 1,
+            "resonance_text": "100/100",
+            "resonance_enabled": true,
+            "resonance_opacity": 1,
+            "skill_cooldown": 0,
+            "skill_cooldown_progress": 1,
+            "skill_enabled": true,
+            "skill_icon_ready": true,
+            "display_percent": 1,
+            "display_text": "150/150",
+            "display_level": "Lv. 1",
+            "health": 150,
+            "max_health": 150,
+            "vitals_ready": true,
+            "entries": 4,
+            "indicators": 0,
+            "indicator_widgets": [],
+            "move_intent": false
+          }
+        },
+        {
+          "case": "停用Experience UI时所属扩展全部撤销",
+          "passed": true,
+          "detail": {
+            "root": true,
+            "pawn": "/Game/Main/Maps/UEDPIE_0_L_EnemyAIValidation.L_EnemyAIValidation:PersistentLevel.BP_Hero_Pover_C_0",
+            "managed_players": 1,
+            "platform_user": 0,
+            "input_device": 0,
+            "own_viewport": true,
+            "game_input": true,
+            "pending": 0,
+            "game_count": 0,
+            "game_active": false,
+            "menu_count": 0,
+            "menu_active": false,
+            "modal_count": 0,
+            "modal_active": false,
+            "ability_extension_slots": false,
+            "resonance_widget": false,
+            "health": 150,
+            "max_health": 150,
+            "vitals_ready": true,
+            "entries": 0,
+            "indicators": 0,
+            "indicator_widgets": [],
+            "move_intent": false
+          }
+        },
+        {
+          "case": "恢复Experience重新注入已配置扩展且资源不重置",
+          "passed": true,
+          "detail": {
+            "root": true,
+            "pawn": "/Game/Main/Maps/UEDPIE_0_L_EnemyAIValidation.L_EnemyAIValidation:PersistentLevel.BP_Hero_Pover_C_0",
+            "managed_players": 1,
+            "platform_user": 0,
+            "input_device": 0,
+            "own_viewport": true,
+            "game_input": true,
+            "pending": 0,
+            "game_count": 1,
+            "game_active": true,
+            "menu_count": 0,
+            "menu_active": false,
+            "modal_count": 0,
+            "modal_active": false,
+            "vitals_center_x": 0.5000000357400901,
+            "vitals_center_y": 0.9782973424662368,
+            "end_center_x": 0.9830186680497605,
+            "end_center_y": 0.0542564933092469,
+            "resonance_center_x": 0.9748206776721364,
+            "resonance_center_y": 0.9270004146667141,
+            "skill_center_x": 0.9314888921229699,
+            "skill_center_y": 0.9270004146667141,
+            "ability_extension_slots": true,
+            "resonance_widget": true,
+            "resonance_percent": 1,
+            "resonance_cooldown": 0,
+            "resonance_cooldown_progress": 1,
+            "resonance_text": "100/100",
+            "resonance_enabled": true,
+            "resonance_opacity": 1,
+            "skill_cooldown": 0,
+            "skill_cooldown_progress": 1,
+            "skill_enabled": true,
+            "skill_icon_ready": true,
+            "display_percent": 1,
+            "display_text": "150/150",
+            "display_level": "Lv. 1",
+            "health": 150,
+            "max_health": 150,
+            "vitals_ready": true,
+            "entries": 4,
+            "indicators": 0,
+            "indicator_widgets": [],
+            "move_intent": false
+          }
+        }
+      ],
+      "error": null
+    }
+  ],
+  "runtime_assertions": 109,
+  "runtime_reports_all_passed": true,
+  "asset_validation": {
+    "passed": true,
+    "checks": [
+      {
+        "case": "HDS-01 PawnData只引用一次AS_Havoc",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-01 不重复授予原生属性集",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-05 提前授予七个新攻击",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-05 两种E使用同一份8秒冷却GE",
+        "passed": true,
+        "detail": "/Game/Main/Character/Hero/Ability/ResonanceSkill/GE_Resonance_Skill_Cooldown.GE_Resonance_Skill_Cooldown_C"
+      },
+      {
+        "case": "HDS-09 AM_Ex_Skill01_01链接指定源动画",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-09 AM_Ex_Skill01_01正式通知存在",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-09 AM_Ex_Skill02链接指定源动画",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-09 AM_Ex_Skill02正式通知存在",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-09 AM_Ex_Attack01链接指定源动画",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-09 AM_Ex_Attack01正式通知存在",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-09 AM_Ex_Attack02链接指定源动画",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-09 AM_Ex_Attack02正式通知存在",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-09 AM_Ex_Attack03链接指定源动画",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-09 AM_Ex_Attack03正式通知存在",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-09 AM_Ex_Attack04链接指定源动画",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-09 AM_Ex_Attack04正式通知存在",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-09 AM_Ex_Attack05链接指定源动画",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-09 AM_Ex_Attack05正式通知存在",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-06 常态第1段每阶段5点",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-05/06 强化第1段资格和拢音分类",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-06 常态第2段每阶段5点",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-05/06 强化第2段资格和拢音分类",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-06 常态第3段每阶段5点",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-05/06 强化第3段资格和拢音分类",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-06 常态第4段每阶段5点",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-05/06 强化第4段资格和拢音分类",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-06 常态第5段每阶段5点",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-05/06 强化第5段资格和拢音分类",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-07 EAS只注入一次WBP_DarkFlow",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-01 普攻不再使用提前Completed的Pressed触发器",
+        "passed": true,
+        "detail": null
+      }
+    ]
+  },
+  "all_implemented_checks_passed": true
+}

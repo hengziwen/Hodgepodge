@@ -1,0 +1,93 @@
+{
+  "date": "2026-10-13",
+  "new_assets": 7,
+  "modified_assets": 3,
+  "key": "E",
+  "cooldown_seconds": 8,
+  "asset_checks": 16,
+  "blueprint_status": [
+    {
+      "asset": "GA_Resonance_Skill",
+      "status": "BS_UpToDate"
+    },
+    {
+      "asset": "GE_Resonance_Skill_Cooldown",
+      "status": "BS_UpToDate"
+    },
+    {
+      "asset": "GE_Resonance_Skill_Damage",
+      "status": "BS_UpToDate"
+    }
+  ],
+  "pie": {
+    "single": {
+      "passed": true,
+      "checks": 11,
+      "report": "Saved\\ResonanceSkill\\single-resonance-e2e.json"
+    },
+    "listen": {
+      "passed": true,
+      "checks": 11,
+      "report": "Saved\\ResonanceSkill\\listen-resonance-e2e.json"
+    },
+    "dedicated": {
+      "passed": true,
+      "checks": 11,
+      "report": "Saved\\ResonanceSkill\\dedicated-resonance-e2e.json"
+    },
+    "listen-lag": {
+      "passed": true,
+      "checks": 11,
+      "report": "Saved\\ResonanceSkill\\listen-lag-resonance-e2e.json"
+    }
+  },
+  "cpp_changed_this_task": false,
+  "new_cpp_build": false,
+  "standalone_server_build": false,
+  "restore": {
+    "map": "/Game/ThirdPerson/Maps/ThirdPersonMap",
+    "dirty_maps": [],
+    "dirty_content": [],
+    "pie": 0,
+    "performance": {
+      "throttle": false,
+      "slate": 1,
+      "idle": 0
+    },
+    "play_settings": "single standalone baseline; original PIE settings were not recorded"
+  },
+  "files": [
+    {
+      "path": "Content/Main/Character/Hero/Ability/ResonanceSkill/AM_Resonance_Skill.uasset",
+      "sha256": "f32211369e6e9f89e555240187b98046f57e51623e1a677316db43dc7937213d"
+    },
+    {
+      "path": "Content/Main/Character/Hero/Ability/ResonanceSkill/AS_Resonance_Skill.uasset",
+      "sha256": "632f037d3de7458eb2f0d94702dc41ee86399ccc44e8970a87c88ff3977db91d"
+    },
+    {
+      "path": "Content/Main/Character/Hero/Ability/ResonanceSkill/DA_Resonance_Skill.uasset",
+      "sha256": "3c2a702685f5dc6a20fb2a84ec90c743cc06970f924013487eea56f8874b9ecf"
+    },
+    {
+      "path": "Content/Main/Character/Hero/Ability/ResonanceSkill/GA_Resonance_Skill.uasset",
+      "sha256": "c1f57f339873afa3b3621d7067c19639e2ea2c6a39a15cbc714cc63b2b005d4f"
+    },
+    {
+      "path": "Content/Main/Character/Hero/Ability/ResonanceSkill/GE_Resonance_Skill_Cooldown.uasset",
+      "sha256": "6635113bb58842e41733cd324c236900914733da1e0f4d3f1ea8ce56f2fe5c0f"
+    },
+    {
+      "path": "Content/Main/Character/Hero/Ability/ResonanceSkill/GE_Resonance_Skill_Damage.uasset",
+      "sha256": "b2aeb01564ee95c78e70b8ddf4bc3b19920eb251e0c5624bab9e891b7a7ff419"
+    },
+    {
+      "path": "Content/Main/Input/InputAction/IA_Resonance_Skill.uasset",
+      "sha256": "7442e29b18b0a5aa7cb5e95eae7d00f5046be4a1673e1a70c98671509f94f5d8"
+    },
+    {
+      "path": "Config/Tags/ResonanceSkillTags.ini",
+      "sha256": "640e84bc551a9d970026415fab14da5d863c8b1188721538e75143ec7b1a0c2c"
+    }
+  ]
+}

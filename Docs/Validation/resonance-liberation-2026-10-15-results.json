@@ -1,0 +1,5030 @@
+{
+  "date": "2026-10-15",
+  "timezone": "Asia/Shanghai",
+  "engine": "UE 5.5.4",
+  "builds": [
+    {
+      "target": "HodgepodgeEditor",
+      "platform": "Win64",
+      "configuration": "Development",
+      "exit_code": 0,
+      "log": "Saved/CinematicUltimate/editor-lifecycle-final.log"
+    },
+    {
+      "target": "Hodgepodge",
+      "platform": "Win64",
+      "configuration": "Development",
+      "exit_code": 0,
+      "log": "Saved/CinematicUltimate/game-lifecycle-final.log"
+    }
+  ],
+  "native": {
+    "passed": 81,
+    "failed": 0,
+    "with_warnings": 33,
+    "tests": [
+      {
+        "name": "Hodge.ActionRequests.MoveCancel.AuthorityValidation",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.ActionRequests.MoveCancel.InvalidConfiguration",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.ActionRequests.MoveCancel.LateResultAndDeath",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.ActionRequests.MoveCancel.RouteAndPolicy",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.ActionRequests.AIIntentWithoutInputBinding",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.ActionRequests.BoundedHistoryAndShutdown",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.ActionRequests.BufferedIdentityAcrossMoveResolution",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.ActionRequests.HeldDeathPoseCompatibility",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.ActionRequests.IntentMappingAndBuffer",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.ActionRequests.StandaloneLifecycle",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.ActionRequests.SynchronousEndAndReentrancy",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.ActionRequests.ValidationAndRevocation",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.AttackWarp.ConfigBounds",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.AttackWarp.FixedYaw",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.AttackWarp.LateAuthorityDoesNotRevive",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.AttackWarp.LeaseAndSuspension",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.AttackWarp.PayloadValidation",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.AttackWarp.ReplayAndOwnership",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.AttackWarp.RootExecutor",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.AttackWarp.TargetDataRetirement",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.AttackWarp.WindowContract",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.Cinematic.Ownership.HeroLease",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.Cinematic.Ownership.Identity",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.Cinematic.Profile.Schema",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.Cinematic.Profile.SourceClock",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.Combat.DetectionRouting",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.Combat.HitGeometry",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.Combat.HitProfileValidation",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.Combat.MeleeHitHistory",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.Combat.MeleeSpecContext",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.HitReaction.CancellationAndInput",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.HitReaction.DamageAndBodySnapshot",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.HitReaction.EnemyPawnDataInitialization",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.HitReaction.FallbackAndEmptyImpact",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.HitReaction.ImmunityNoOutputAndDeath",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.HitReaction.MotionAndDownedRecovery",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.HitReaction.RanksAndValidation",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.HitReaction.UpdateExpiryAndDetach",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.LockOn.AuthorityIdentityAndVersions",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.LockOn.CameraAcquireEase",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.LockOn.CameraInputRecoveryAndFrameRate",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.LockOn.CameraModePriorityAndContinuity",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.LockOn.CameraScreenZones",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.LockOn.ControlAndMotionLifecycle",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.LockOn.DeathClearsAndDoesNotReacquire",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.LockOn.GASShortCommand",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.LockOn.MouseGesture",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.LockOn.PredictionReconciliation",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.LockOn.ProfileValidation",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.LockOn.RangeGraceAndInvalidTarget",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.LockOn.SoftCameraManualAndAssist",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.LockOn.TargetDataEarlyAndRetired",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.Movement.DashAir.Constraints",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.Movement.DashAir.Eligibility",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.Movement.DashAir.FinishPolicy",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.Movement.DashAir.Physics",
+        "state": "Success",
+        "entries": [
+          {
+            "event": {
+              "type": "Info",
+              "message": "清理前 Z=-409.800，清理后 Z=-419.600，模式=3",
+              "context": "",
+              "artifact": "00000000000000000000000000000000"
+            },
+            "filename": "",
+            "lineNumber": -1,
+            "timestamp": "2026.10.14-18.51.08"
+          }
+        ]
+      },
+      {
+        "name": "Hodge.Movement.DashDirections",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.Movement.DashFootIKContinuity",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.Movement.DefenseWindows",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.Movement.InputSessions",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.Movement.PolicyAndAuthorization",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.Movement.RootMotionPivot",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.Movement.TargetDataSerialization",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.Movement.TimingAndPivot",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.Relationship.ActualCancellation",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.Relationship.PriorityAndHierarchy",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.Resonance.PhaseLedger",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.Resonance.PlayerStateBeforePawn",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.Resonance.ResourceAndCost",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.UI.ClosedRootAndInvalidRequests",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.UI.DataSourceInactive",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.UI.LockOnIndicatorDesigner",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.UI.ManagerScope",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.Wing.AssetContract",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.Wing.AttackPresentationIntegration",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.Wing.BoxHitGeometry",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.Wing.CancellationAndClock",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.Wing.Envelope",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.Wing.FadeState",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.Wing.NotifyMontage",
+        "state": "Success",
+        "entries": []
+      },
+      {
+        "name": "Hodge.Wing.PresentationSession",
+        "state": "Success",
+        "entries": []
+      }
+    ],
+    "raw_report": "Saved/CinematicUltimate/FinalAutomationFixed/index.json"
+  },
+  "asset_checks": {
+    "passed": true,
+    "checks": [
+      {
+        "requirement": "CIN-01",
+        "case": "已有序列包装为正式蒙太奇",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "requirement": "CIN-01",
+        "case": "Definition引用指定蒙太奇",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "requirement": "CIN-01",
+        "case": "Standalone复用Melee",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "requirement": "CIN-01",
+        "case": "三个不同构图",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "requirement": "CIN-04",
+        "case": "单一电影窗口",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "requirement": "CIN-04",
+        "case": "窗口仅覆盖前半段",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "requirement": "CIN-04",
+        "case": "翼窗口覆盖全程",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "requirement": "CIN-04",
+        "case": "正确翼蒙太奇",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "requirement": "CIN-05",
+        "case": "仅一个正式伤害点",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "requirement": "CIN-05",
+        "case": "Box取角色根位置快照",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "requirement": "CIN-05",
+        "case": "查询仅执行一次",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "requirement": "CIN-05",
+        "case": "每目标去重且继承金刚判定",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "requirement": "CIN-05",
+        "case": "自身金刚体",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "requirement": "CIN-05",
+        "case": "输出金刚体",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "requirement": "RES-01",
+        "case": "大招不回能",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "requirement": "RES-01",
+        "case": "DA_Attack_1_阶段回能资产配置",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "requirement": "RES-01",
+        "case": "DA_Attack_2_阶段回能资产配置",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "requirement": "RES-01",
+        "case": "DA_Attack_3_阶段回能资产配置",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "requirement": "RES-01",
+        "case": "DA_Attack_4_阶段回能资产配置",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "requirement": "RES-01",
+        "case": "DA_Attack_5_阶段回能资产配置",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "requirement": "RES-01",
+        "case": "DA_Resonance_Skill_阶段回能资产配置",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "requirement": "RES-02",
+        "case": "只有一份额外资源成本",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "requirement": "RES-02",
+        "case": "没有第二条原生成本路径",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "requirement": "RES-02",
+        "case": "独立12秒冷却",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "requirement": "RES-01",
+        "case": "PawnData授予且不重复资源Set",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "requirement": "RES-03",
+        "case": "R键输入唯一",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "requirement": "RES-03",
+        "case": "大招输入Tag只绑定一次",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "requirement": "CIN-07",
+        "case": "GE_ResonanceEnergy_Gain_原生编译诊断",
+        "passed": true,
+        "detail": "ERRORS=0 WARNINGS=0\n"
+      },
+      {
+        "requirement": "CIN-07",
+        "case": "GE_ResonanceEnergy_Cost_原生编译诊断",
+        "passed": true,
+        "detail": "ERRORS=0 WARNINGS=0\n"
+      },
+      {
+        "requirement": "CIN-07",
+        "case": "GE_ResonanceEnergy_Init_原生编译诊断",
+        "passed": true,
+        "detail": "ERRORS=0 WARNINGS=0\n"
+      },
+      {
+        "requirement": "CIN-07",
+        "case": "GE_Resonance_Liberation_Cooldown_原生编译诊断",
+        "passed": true,
+        "detail": "ERRORS=0 WARNINGS=0\n"
+      },
+      {
+        "requirement": "CIN-07",
+        "case": "GE_Resonance_Liberation_Damage_原生编译诊断",
+        "passed": true,
+        "detail": "ERRORS=0 WARNINGS=0\n"
+      },
+      {
+        "requirement": "CIN-07",
+        "case": "GA_Resonance_Liberation_原生编译诊断",
+        "passed": true,
+        "detail": "ERRORS=0 WARNINGS=0\n"
+      },
+      {
+        "requirement": "RES-04",
+        "case": "WBP_Resonance_Energy_原生编译诊断",
+        "passed": true,
+        "detail": "ERRORS=0 WARNINGS=0\n类型为 进度条 的可选控件绑定“EnergyFill”可用。\n类型为 文本 的可选控件绑定“EnergyLabel”可用。\n类型为 按钮 的可选控件绑定“LiberationButton”可用。\n类型为 进度条 的可选控件绑定“EnergyFill”可用。\n类型为 文本 的可选控件绑定“EnergyLabel”可用。\n类型为 按钮 的可选控件绑定“LiberationButton”可用。\n"
+      },
+      {
+        "requirement": "RES-04",
+        "case": "WBP_HodgeHUD_原生编译诊断",
+        "passed": true,
+        "detail": "ERRORS=0 WARNINGS=0\n类型为 通用可激活控件堆栈 的可选控件绑定“MenuLayerStack”可用。\n类型为 通用可激活控件堆栈 的可选控件绑定“MenuLayerStack”可用。\nGetDesiredFocusTarget wasn't implemented, you're going to have trouble using gamepads on this screen.  If it was implemented in the native base class you can ignore this message.\n"
+      }
+    ]
+  },
+  "e2e": [
+    {
+      "mode": "single",
+      "passed": true,
+      "checks": [
+        {
+          "requirement": "RES-01",
+          "case": "拥有者与服务器容量初始化100",
+          "passed": true,
+          "detail": [
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.0,
+              "instance": -1,
+              "montage_weight": 0.0,
+              "cooldown": 0,
+              "body": false,
+              "wing": false,
+              "control_yaw": 0.0
+            },
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.0,
+              "instance": -1,
+              "montage_weight": 0.0,
+              "cooldown": 0,
+              "body": false,
+              "wing": false,
+              "control_yaw": 0.0
+            }
+          ]
+        },
+        {
+          "requirement": "RES-01",
+          "case": "新玩家零充能",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "RES-04",
+          "case": "右下方充能Widget存在且显示真实0/100",
+          "passed": true,
+          "detail": {
+            "root": true,
+            "pawn": "/Game/Main/Maps/UEDPIE_0_L_EnemyAIValidation.L_EnemyAIValidation:PersistentLevel.BP_Hero_Pover_C_0",
+            "managed_players": 1,
+            "platform_user": 0,
+            "input_device": 0,
+            "own_viewport": true,
+            "game_input": true,
+            "pending": 0,
+            "game_count": 1,
+            "game_active": true,
+            "menu_count": 0,
+            "menu_active": false,
+            "modal_count": 0,
+            "modal_active": false,
+            "vitals_center_x": 0.5000000357400901,
+            "vitals_center_y": 0.9782973424662368,
+            "end_center_x": 0.9830186680497605,
+            "end_center_y": 0.0542564933092469,
+            "resonance_center_x": 0.9516908350686338,
+            "resonance_center_y": 0.9072707807360789,
+            "resonance_widget": true,
+            "resonance_percent": 0,
+            "resonance_text": "共鸣解放 R  0/100",
+            "resonance_enabled": false,
+            "resonance_opacity": 1,
+            "display_percent": 1,
+            "display_text": "150/150",
+            "display_level": "Lv. 1",
+            "health": 150,
+            "max_health": 150,
+            "vitals_ready": true,
+            "entries": 1,
+            "indicators": 0,
+            "indicator_widgets": [],
+            "move_intent": false
+          }
+        },
+        {
+          "requirement": "RES-04",
+          "case": "零充能按钮禁用",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "RES-04",
+          "case": "充能条位于屏幕右下区域",
+          "passed": true,
+          "detail": {
+            "root": true,
+            "pawn": "/Game/Main/Maps/UEDPIE_0_L_EnemyAIValidation.L_EnemyAIValidation:PersistentLevel.BP_Hero_Pover_C_0",
+            "managed_players": 1,
+            "platform_user": 0,
+            "input_device": 0,
+            "own_viewport": true,
+            "game_input": true,
+            "pending": 0,
+            "game_count": 1,
+            "game_active": true,
+            "menu_count": 0,
+            "menu_active": false,
+            "modal_count": 0,
+            "modal_active": false,
+            "vitals_center_x": 0.5000000357400901,
+            "vitals_center_y": 0.9782973424662368,
+            "end_center_x": 0.9830186680497605,
+            "end_center_y": 0.0542564933092469,
+            "resonance_center_x": 0.9516908350686338,
+            "resonance_center_y": 0.9072707807360789,
+            "resonance_widget": true,
+            "resonance_percent": 0,
+            "resonance_text": "共鸣解放 R  0/100",
+            "resonance_enabled": false,
+            "resonance_opacity": 1,
+            "display_percent": 1,
+            "display_text": "150/150",
+            "display_level": "Lv. 1",
+            "health": 150,
+            "max_health": 150,
+            "vitals_ready": true,
+            "entries": 1,
+            "indicators": 0,
+            "indicator_widgets": [],
+            "move_intent": false
+          }
+        },
+        {
+          "requirement": "RES-01",
+          "case": "真实普攻伤害按阶段回能5",
+          "passed": true,
+          "detail": {
+            "health_before": 350.0,
+            "health": 319.0,
+            "resource": {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 5.0,
+              "capacity": 100.0,
+              "position": 0.0,
+              "instance": -1,
+              "montage_weight": 0.0,
+              "cooldown": 0,
+              "body": false,
+              "wing": false,
+              "control_yaw": 0.0
+            }
+          }
+        },
+        {
+          "requirement": "RES-02",
+          "case": "99能量R键不激活且不产生CD",
+          "passed": true,
+          "detail": [
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 99.0,
+              "capacity": 100.0,
+              "position": 0.0,
+              "instance": -1,
+              "montage_weight": 0.0,
+              "cooldown": 0,
+              "body": false,
+              "wing": false,
+              "control_yaw": 0.0
+            },
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 99.0,
+              "capacity": 100.0,
+              "position": 0.0,
+              "instance": -1,
+              "montage_weight": 0.0,
+              "cooldown": 0,
+              "body": false,
+              "wing": false,
+              "control_yaw": 0.0
+            }
+          ]
+        },
+        {
+          "requirement": "RES-02",
+          "case": "free_只消耗一次满充并产生CD",
+          "passed": true,
+          "detail": [
+            {
+              "active": true,
+              "camera": true,
+              "shot": "Acquire",
+              "camera_position": 0.016666699200868607,
+              "generation": 1,
+              "weight": 0.006141740828752518,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.016666699200868607,
+              "instance": 90,
+              "montage_weight": 0.16666698455810547,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": 0.0
+            },
+            {
+              "active": true,
+              "camera": true,
+              "shot": "Acquire",
+              "camera_position": 0.016666699200868607,
+              "generation": 1,
+              "weight": 0.006141740828752518,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.016666699200868607,
+              "instance": 90,
+              "montage_weight": 0.16666698455810547,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": 0.0
+            }
+          ]
+        },
+        {
+          "requirement": "CIN-05",
+          "case": "free_自身金刚体存在",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-03",
+          "case": "free_结束清理电影与金刚体",
+          "passed": true,
+          "detail": [
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 4.533283233642578,
+              "instance": 90,
+              "montage_weight": 1.0,
+              "cooldown": 1,
+              "body": false,
+              "wing": true,
+              "control_yaw": 0.0
+            },
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 4.533283233642578,
+              "instance": 90,
+              "montage_weight": 1.0,
+              "cooldown": 1,
+              "body": false,
+              "wing": true,
+              "control_yaw": 0.0
+            }
+          ]
+        },
+        {
+          "requirement": "RES-02",
+          "case": "free_打断或打空不返还能量与CD",
+          "passed": true,
+          "detail": {
+            "active": false,
+            "camera": false,
+            "shot": "None",
+            "camera_position": 0.0,
+            "generation": 0,
+            "weight": 0.0,
+            "energy": 0.0,
+            "capacity": 100.0,
+            "position": 4.533283233642578,
+            "instance": 90,
+            "montage_weight": 1.0,
+            "cooldown": 1,
+            "body": false,
+            "wing": true,
+            "control_yaw": 0.0
+          }
+        },
+        {
+          "requirement": "CIN-02",
+          "case": "free_电影Yaw不写回游戏方向",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "requirement": "CIN-07",
+          "case": "free_其他玩家和专服没有电影相机",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-04",
+          "case": "free_后半技能继续且翼仍显示",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-01",
+          "case": "正常播放覆盖三个分镜",
+          "passed": true,
+          "detail": [
+            "Acquire",
+            "FaceHands",
+            "WingReveal"
+          ]
+        },
+        {
+          "requirement": "CIN-02",
+          "case": "真实中键选目标完成锁定",
+          "passed": true,
+          "detail": "<Object '/Game/Main/Maps/UEDPIE_0_L_EnemyAIValidation.L_EnemyAIValidation:PersistentLevel.BP_Enemy_Guardian_C_0' (0x00000AE718D55A00) Class 'BP_Enemy_Guardian_C'>"
+        },
+        {
+          "requirement": "RES-02",
+          "case": "lock_只消耗一次满充并产生CD",
+          "passed": true,
+          "detail": [
+            {
+              "active": true,
+              "camera": true,
+              "shot": "Acquire",
+              "camera_position": 0.016666699200868607,
+              "generation": 2,
+              "weight": 0.006141740828752518,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.016666699200868607,
+              "instance": 92,
+              "montage_weight": 0.16666698455810547,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": -6.4827430737885265
+            },
+            {
+              "active": true,
+              "camera": true,
+              "shot": "Acquire",
+              "camera_position": 0.016666699200868607,
+              "generation": 2,
+              "weight": 0.006141740828752518,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.016666699200868607,
+              "instance": 92,
+              "montage_weight": 0.16666698455810547,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": -6.4827430737885265
+            }
+          ]
+        },
+        {
+          "requirement": "CIN-05",
+          "case": "lock_自身金刚体存在",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-03",
+          "case": "lock_结束清理电影与金刚体",
+          "passed": true,
+          "detail": [
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 4.533283233642578,
+              "instance": 92,
+              "montage_weight": 1.0,
+              "cooldown": 1,
+              "body": false,
+              "wing": true,
+              "control_yaw": -6.4827430737885265
+            },
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 4.533283233642578,
+              "instance": 92,
+              "montage_weight": 1.0,
+              "cooldown": 1,
+              "body": false,
+              "wing": true,
+              "control_yaw": -6.4827430737885265
+            }
+          ]
+        },
+        {
+          "requirement": "RES-02",
+          "case": "lock_打断或打空不返还能量与CD",
+          "passed": true,
+          "detail": {
+            "active": false,
+            "camera": false,
+            "shot": "None",
+            "camera_position": 0.0,
+            "generation": 0,
+            "weight": 0.0,
+            "energy": 0.0,
+            "capacity": 100.0,
+            "position": 4.533283233642578,
+            "instance": 92,
+            "montage_weight": 1.0,
+            "cooldown": 1,
+            "body": false,
+            "wing": true,
+            "control_yaw": -6.4827430737885265
+          }
+        },
+        {
+          "requirement": "CIN-02",
+          "case": "lock_电影Yaw不写回游戏方向",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "requirement": "CIN-07",
+          "case": "lock_其他玩家和专服没有电影相机",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-04",
+          "case": "lock_后半技能继续且翼仍显示",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-02",
+          "case": "电影结束恢复仍有效的锁定CameraMode",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "RES-05",
+          "case": "大范围世界快照Box只结算一次实际伤害且大招不回能",
+          "passed": true,
+          "detail": 1
+        },
+        {
+          "requirement": "RES-02",
+          "case": "pause_只消耗一次满充并产生CD",
+          "passed": true,
+          "detail": [
+            {
+              "active": true,
+              "camera": true,
+              "shot": "Acquire",
+              "camera_position": 0.016666900366544724,
+              "generation": 3,
+              "weight": 0.006141886580735445,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.016666900366544724,
+              "instance": 95,
+              "montage_weight": 0.16666901111602783,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": -4.482727099743727
+            },
+            {
+              "active": true,
+              "camera": true,
+              "shot": "Acquire",
+              "camera_position": 0.016666900366544724,
+              "generation": 3,
+              "weight": 0.006141886580735445,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.016666900366544724,
+              "instance": 95,
+              "montage_weight": 0.16666901111602783,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": -4.482727099743727
+            }
+          ]
+        },
+        {
+          "requirement": "CIN-05",
+          "case": "pause_自身金刚体存在",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-04",
+          "case": "暂停精确源实例后电影位置停止",
+          "passed": true,
+          "detail": {
+            "active": true,
+            "camera": true,
+            "shot": "FaceHands",
+            "camera_position": 1.0,
+            "generation": 3,
+            "weight": 1.0,
+            "energy": 0.0,
+            "capacity": 100.0,
+            "position": 1.0,
+            "instance": 95,
+            "montage_weight": 1.0,
+            "cooldown": 1,
+            "body": true,
+            "wing": true,
+            "control_yaw": -4.482727099743727
+          }
+        },
+        {
+          "requirement": "CIN-03",
+          "case": "pause_结束清理电影与金刚体",
+          "passed": true,
+          "detail": [
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 4.533283233642578,
+              "instance": 95,
+              "montage_weight": 1.0,
+              "cooldown": 1,
+              "body": false,
+              "wing": true,
+              "control_yaw": -4.482727099743727
+            },
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 4.533283233642578,
+              "instance": 95,
+              "montage_weight": 1.0,
+              "cooldown": 1,
+              "body": false,
+              "wing": true,
+              "control_yaw": -4.482727099743727
+            }
+          ]
+        },
+        {
+          "requirement": "RES-02",
+          "case": "pause_打断或打空不返还能量与CD",
+          "passed": true,
+          "detail": {
+            "active": false,
+            "camera": false,
+            "shot": "None",
+            "camera_position": 0.0,
+            "generation": 0,
+            "weight": 0.0,
+            "energy": 0.0,
+            "capacity": 100.0,
+            "position": 4.533283233642578,
+            "instance": 95,
+            "montage_weight": 1.0,
+            "cooldown": 1,
+            "body": false,
+            "wing": true,
+            "control_yaw": -4.482727099743727
+          }
+        },
+        {
+          "requirement": "CIN-02",
+          "case": "pause_电影Yaw不写回游戏方向",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "requirement": "CIN-07",
+          "case": "pause_其他玩家和专服没有电影相机",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-04",
+          "case": "pause_后半技能继续且翼仍显示",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "RES-02",
+          "case": "dash_只消耗一次满充并产生CD",
+          "passed": true,
+          "detail": [
+            {
+              "active": true,
+              "camera": true,
+              "shot": "Acquire",
+              "camera_position": 0.016672302037477493,
+              "generation": 4,
+              "weight": 0.006145806051790714,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.016672302037477493,
+              "instance": 97,
+              "montage_weight": 0.16672301292419434,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": -4.482727099743727
+            },
+            {
+              "active": true,
+              "camera": true,
+              "shot": "Acquire",
+              "camera_position": 0.016672302037477493,
+              "generation": 4,
+              "weight": 0.006145806051790714,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.016672302037477493,
+              "instance": 97,
+              "montage_weight": 0.16672301292419434,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": -4.482727099743727
+            }
+          ]
+        },
+        {
+          "requirement": "CIN-05",
+          "case": "dash_自身金刚体存在",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-03",
+          "case": "dash_结束清理电影与金刚体",
+          "passed": true,
+          "detail": [
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.5166764259338379,
+              "instance": 97,
+              "montage_weight": 0.7222199440002441,
+              "cooldown": 1,
+              "body": false,
+              "wing": true,
+              "control_yaw": -4.482727099743727
+            },
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.5166764259338379,
+              "instance": 97,
+              "montage_weight": 0.7222199440002441,
+              "cooldown": 1,
+              "body": false,
+              "wing": true,
+              "control_yaw": -4.482727099743727
+            }
+          ]
+        },
+        {
+          "requirement": "RES-02",
+          "case": "dash_打断或打空不返还能量与CD",
+          "passed": true,
+          "detail": {
+            "active": false,
+            "camera": false,
+            "shot": "None",
+            "camera_position": 0.0,
+            "generation": 0,
+            "weight": 0.0,
+            "energy": 0.0,
+            "capacity": 100.0,
+            "position": 0.5166764259338379,
+            "instance": 97,
+            "montage_weight": 0.7222199440002441,
+            "cooldown": 1,
+            "body": false,
+            "wing": true,
+            "control_yaw": -4.482727099743727
+          }
+        },
+        {
+          "requirement": "CIN-02",
+          "case": "dash_电影Yaw不写回游戏方向",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "requirement": "CIN-07",
+          "case": "dash_其他玩家和专服没有电影相机",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-03",
+          "case": "实际Dash在电影阶段取消大招",
+          "passed": true,
+          "detail": {
+            "active": false,
+            "camera": false,
+            "shot": "None",
+            "camera_position": 0.0,
+            "generation": 0,
+            "weight": 0.0,
+            "energy": 0.0,
+            "capacity": 100.0,
+            "position": 0.5166764259338379,
+            "instance": 97,
+            "montage_weight": 0.7222199440002441,
+            "cooldown": 1,
+            "body": false,
+            "wing": true,
+            "control_yaw": -4.482727099743727
+          }
+        },
+        {
+          "requirement": "RES-02",
+          "case": "replay_只消耗一次满充并产生CD",
+          "passed": true,
+          "detail": [
+            {
+              "active": true,
+              "camera": true,
+              "shot": "Acquire",
+              "camera_position": 0.016666900366544724,
+              "generation": 5,
+              "weight": 0.006141886580735445,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.016666900366544724,
+              "instance": 100,
+              "montage_weight": 0.16666901111602783,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": -4.482727099743727
+            },
+            {
+              "active": true,
+              "camera": true,
+              "shot": "Acquire",
+              "camera_position": 0.016666900366544724,
+              "generation": 5,
+              "weight": 0.006141886580735445,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.016666900366544724,
+              "instance": 100,
+              "montage_weight": 0.16666901111602783,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": -4.482727099743727
+            }
+          ]
+        },
+        {
+          "requirement": "CIN-05",
+          "case": "replay_自身金刚体存在",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-03",
+          "case": "replay_结束清理电影与金刚体",
+          "passed": true,
+          "detail": [
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 4.533283233642578,
+              "instance": 100,
+              "montage_weight": 1.0,
+              "cooldown": 1,
+              "body": false,
+              "wing": true,
+              "control_yaw": -4.482727099743727
+            },
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 4.533283233642578,
+              "instance": 100,
+              "montage_weight": 1.0,
+              "cooldown": 1,
+              "body": false,
+              "wing": true,
+              "control_yaw": -4.482727099743727
+            }
+          ]
+        },
+        {
+          "requirement": "RES-02",
+          "case": "replay_打断或打空不返还能量与CD",
+          "passed": true,
+          "detail": {
+            "active": false,
+            "camera": false,
+            "shot": "None",
+            "camera_position": 0.0,
+            "generation": 0,
+            "weight": 0.0,
+            "energy": 0.0,
+            "capacity": 100.0,
+            "position": 4.533283233642578,
+            "instance": 100,
+            "montage_weight": 1.0,
+            "cooldown": 1,
+            "body": false,
+            "wing": true,
+            "control_yaw": -4.482727099743727
+          }
+        },
+        {
+          "requirement": "CIN-02",
+          "case": "replay_电影Yaw不写回游戏方向",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "requirement": "CIN-07",
+          "case": "replay_其他玩家和专服没有电影相机",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-04",
+          "case": "replay_后半技能继续且翼仍显示",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-03",
+          "case": "重复释放生成新的相机会话",
+          "passed": true,
+          "detail": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "requirement": "RES-02",
+          "case": "death_只消耗一次满充并产生CD",
+          "passed": true,
+          "detail": [
+            {
+              "active": true,
+              "camera": true,
+              "shot": "Acquire",
+              "camera_position": 0.016666900366544724,
+              "generation": 6,
+              "weight": 0.006141886580735445,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.016666900366544724,
+              "instance": 102,
+              "montage_weight": 0.16666901111602783,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": -4.482727099743727
+            },
+            {
+              "active": true,
+              "camera": true,
+              "shot": "Acquire",
+              "camera_position": 0.016666900366544724,
+              "generation": 6,
+              "weight": 0.006141886580735445,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.016666900366544724,
+              "instance": 102,
+              "montage_weight": 0.16666901111602783,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": -4.482727099743727
+            }
+          ]
+        },
+        {
+          "requirement": "CIN-05",
+          "case": "death_自身金刚体存在",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-03",
+          "case": "死亡清理拥有者电影相机",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "RES-03",
+          "case": "死亡清空充能且保留PlayerState冷却",
+          "passed": true,
+          "detail": null
+        }
+      ],
+      "raw_report": "Saved/CinematicUltimate/single-e2e.json"
+    },
+    {
+      "mode": "listen",
+      "passed": true,
+      "checks": [
+        {
+          "requirement": "RES-01",
+          "case": "拥有者与服务器容量初始化100",
+          "passed": true,
+          "detail": [
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.0,
+              "instance": -1,
+              "montage_weight": 0.0,
+              "cooldown": 0,
+              "body": false,
+              "wing": false,
+              "control_yaw": 0.0
+            },
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.0,
+              "instance": -1,
+              "montage_weight": 0.0,
+              "cooldown": 0,
+              "body": false,
+              "wing": false,
+              "control_yaw": 0.0
+            }
+          ]
+        },
+        {
+          "requirement": "RES-01",
+          "case": "新玩家零充能",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "RES-04",
+          "case": "右下方充能Widget存在且显示真实0/100",
+          "passed": true,
+          "detail": {
+            "root": true,
+            "pawn": "/Game/Main/Maps/UEDPIE_1_L_EnemyAIValidation.L_EnemyAIValidation:PersistentLevel.BP_Hero_Pover_C_0",
+            "managed_players": 1,
+            "platform_user": 0,
+            "input_device": 0,
+            "own_viewport": true,
+            "game_input": true,
+            "pending": 0,
+            "game_count": 1,
+            "game_active": true,
+            "menu_count": 0,
+            "menu_active": false,
+            "modal_count": 0,
+            "modal_active": false,
+            "vitals_center_x": 0.500000042486374,
+            "vitals_center_y": 0.979671200508313,
+            "end_center_x": 0.959626388422837,
+            "end_center_y": 0.050822287774171124,
+            "resonance_center_x": 0.8851440360304845,
+            "resonance_center_y": 0.9131401020348426,
+            "resonance_widget": true,
+            "resonance_percent": 0,
+            "resonance_text": "共鸣解放 R  0/100",
+            "resonance_enabled": false,
+            "resonance_opacity": 1,
+            "display_percent": 1,
+            "display_text": "150/150",
+            "display_level": "Lv. 1",
+            "health": 150,
+            "max_health": 150,
+            "vitals_ready": true,
+            "entries": 1,
+            "indicators": 0,
+            "indicator_widgets": [],
+            "move_intent": false
+          }
+        },
+        {
+          "requirement": "RES-04",
+          "case": "零充能按钮禁用",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "RES-04",
+          "case": "充能条位于屏幕右下区域",
+          "passed": true,
+          "detail": {
+            "root": true,
+            "pawn": "/Game/Main/Maps/UEDPIE_1_L_EnemyAIValidation.L_EnemyAIValidation:PersistentLevel.BP_Hero_Pover_C_0",
+            "managed_players": 1,
+            "platform_user": 0,
+            "input_device": 0,
+            "own_viewport": true,
+            "game_input": true,
+            "pending": 0,
+            "game_count": 1,
+            "game_active": true,
+            "menu_count": 0,
+            "menu_active": false,
+            "modal_count": 0,
+            "modal_active": false,
+            "vitals_center_x": 0.500000042486374,
+            "vitals_center_y": 0.979671200508313,
+            "end_center_x": 0.959626388422837,
+            "end_center_y": 0.050822287774171124,
+            "resonance_center_x": 0.8851440360304845,
+            "resonance_center_y": 0.9131401020348426,
+            "resonance_widget": true,
+            "resonance_percent": 0,
+            "resonance_text": "共鸣解放 R  0/100",
+            "resonance_enabled": false,
+            "resonance_opacity": 1,
+            "display_percent": 1,
+            "display_text": "150/150",
+            "display_level": "Lv. 1",
+            "health": 150,
+            "max_health": 150,
+            "vitals_ready": true,
+            "entries": 1,
+            "indicators": 0,
+            "indicator_widgets": [],
+            "move_intent": false
+          }
+        },
+        {
+          "requirement": "RES-01",
+          "case": "真实普攻伤害按阶段回能5",
+          "passed": true,
+          "detail": {
+            "health_before": 350.0,
+            "health": 319.0,
+            "resource": {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 5.0,
+              "capacity": 100.0,
+              "position": 0.0,
+              "instance": -1,
+              "montage_weight": 0.0,
+              "cooldown": 0,
+              "body": false,
+              "wing": false,
+              "control_yaw": 0.0
+            }
+          }
+        },
+        {
+          "requirement": "RES-02",
+          "case": "99能量R键不激活且不产生CD",
+          "passed": true,
+          "detail": [
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 99.0,
+              "capacity": 100.0,
+              "position": 0.0,
+              "instance": -1,
+              "montage_weight": 0.0,
+              "cooldown": 0,
+              "body": false,
+              "wing": false,
+              "control_yaw": 0.0
+            },
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 99.0,
+              "capacity": 100.0,
+              "position": 0.0,
+              "instance": -1,
+              "montage_weight": 0.0,
+              "cooldown": 0,
+              "body": false,
+              "wing": false,
+              "control_yaw": 0.0
+            }
+          ]
+        },
+        {
+          "requirement": "RES-02",
+          "case": "free_只消耗一次满充并产生CD",
+          "passed": true,
+          "detail": [
+            {
+              "active": true,
+              "camera": true,
+              "shot": "Acquire",
+              "camera_position": 0.037275075912475586,
+              "generation": 1,
+              "weight": 0.029520004987716675,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.037275075912475586,
+              "instance": 4,
+              "montage_weight": 0.37275075912475586,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": 0.0
+            },
+            {
+              "active": true,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.016666889190673828,
+              "instance": 6,
+              "montage_weight": 0.16666889190673828,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": 0.0
+            }
+          ]
+        },
+        {
+          "requirement": "CIN-05",
+          "case": "free_自身金刚体存在",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-03",
+          "case": "free_结束清理电影与金刚体",
+          "passed": true,
+          "detail": [
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 4.533283233642578,
+              "instance": 4,
+              "montage_weight": 0.8333320021629333,
+              "cooldown": 1,
+              "body": false,
+              "wing": true,
+              "control_yaw": 0.0
+            },
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 4.533283233642578,
+              "instance": 6,
+              "montage_weight": 1.0,
+              "cooldown": 1,
+              "body": false,
+              "wing": true,
+              "control_yaw": 0.0
+            }
+          ]
+        },
+        {
+          "requirement": "RES-02",
+          "case": "free_打断或打空不返还能量与CD",
+          "passed": true,
+          "detail": {
+            "active": false,
+            "camera": false,
+            "shot": "None",
+            "camera_position": 0.0,
+            "generation": 0,
+            "weight": 0.0,
+            "energy": 0.0,
+            "capacity": 100.0,
+            "position": 4.533283233642578,
+            "instance": 6,
+            "montage_weight": 1.0,
+            "cooldown": 1,
+            "body": false,
+            "wing": true,
+            "control_yaw": 0.0
+          }
+        },
+        {
+          "requirement": "CIN-02",
+          "case": "free_电影Yaw不写回游戏方向",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "requirement": "CIN-07",
+          "case": "free_其他玩家和专服没有电影相机",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-04",
+          "case": "free_后半技能继续且翼仍显示",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-01",
+          "case": "正常播放覆盖三个分镜",
+          "passed": true,
+          "detail": [
+            "Acquire",
+            "FaceHands",
+            "WingReveal"
+          ]
+        },
+        {
+          "requirement": "CIN-02",
+          "case": "真实中键选目标完成锁定",
+          "passed": true,
+          "detail": "<Object '/Game/Main/Maps/UEDPIE_1_L_EnemyAIValidation.L_EnemyAIValidation:PersistentLevel.BP_Enemy_Guardian_C_0' (0x00000AE71ED72800) Class 'BP_Enemy_Guardian_C'>"
+        },
+        {
+          "requirement": "RES-02",
+          "case": "lock_只消耗一次满充并产生CD",
+          "passed": true,
+          "detail": [
+            {
+              "active": true,
+              "camera": true,
+              "shot": "Acquire",
+              "camera_position": 0.03333311155438423,
+              "generation": 2,
+              "weight": 0.023790113627910614,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.03333311155438423,
+              "instance": 8,
+              "montage_weight": 0.3333311080932617,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": -6.516134669739358
+            },
+            {
+              "active": true,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.016666412353515625,
+              "instance": 10,
+              "montage_weight": 0.16666412353515625,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": 353.485107421875
+            }
+          ]
+        },
+        {
+          "requirement": "CIN-05",
+          "case": "lock_自身金刚体存在",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-03",
+          "case": "lock_结束清理电影与金刚体",
+          "passed": true,
+          "detail": [
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 4.533283233642578,
+              "instance": 8,
+              "montage_weight": 0.8333320021629333,
+              "cooldown": 1,
+              "body": false,
+              "wing": true,
+              "control_yaw": -6.516134669739358
+            },
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 4.533283233642578,
+              "instance": 10,
+              "montage_weight": 1.0,
+              "cooldown": 1,
+              "body": false,
+              "wing": true,
+              "control_yaw": 353.485107421875
+            }
+          ]
+        },
+        {
+          "requirement": "RES-02",
+          "case": "lock_打断或打空不返还能量与CD",
+          "passed": true,
+          "detail": {
+            "active": false,
+            "camera": false,
+            "shot": "None",
+            "camera_position": 0.0,
+            "generation": 0,
+            "weight": 0.0,
+            "energy": 0.0,
+            "capacity": 100.0,
+            "position": 4.533283233642578,
+            "instance": 10,
+            "montage_weight": 1.0,
+            "cooldown": 1,
+            "body": false,
+            "wing": true,
+            "control_yaw": 353.485107421875
+          }
+        },
+        {
+          "requirement": "CIN-02",
+          "case": "lock_电影Yaw不写回游戏方向",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "requirement": "CIN-07",
+          "case": "lock_其他玩家和专服没有电影相机",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-04",
+          "case": "lock_后半技能继续且翼仍显示",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-02",
+          "case": "电影结束恢复仍有效的锁定CameraMode",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "RES-05",
+          "case": "大范围世界快照Box只结算一次实际伤害且大招不回能",
+          "passed": true,
+          "detail": 1
+        },
+        {
+          "requirement": "RES-02",
+          "case": "pause_只消耗一次满充并产生CD",
+          "passed": true,
+          "detail": [
+            {
+              "active": true,
+              "camera": true,
+              "shot": "Acquire",
+              "camera_position": 0.03333282470703125,
+              "generation": 3,
+              "weight": 0.023789716884493828,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.03333282470703125,
+              "instance": 14,
+              "montage_weight": 0.3333282470703125,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": -4.516130855042093
+            },
+            {
+              "active": true,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.016666412353515625,
+              "instance": 16,
+              "montage_weight": 0.16666412353515625,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": 355.484619140625
+            }
+          ]
+        },
+        {
+          "requirement": "CIN-05",
+          "case": "pause_自身金刚体存在",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-04",
+          "case": "暂停精确源实例后电影位置停止",
+          "passed": true,
+          "detail": {
+            "active": true,
+            "camera": true,
+            "shot": "FaceHands",
+            "camera_position": 1.0,
+            "generation": 3,
+            "weight": 1.0,
+            "energy": 0.0,
+            "capacity": 100.0,
+            "position": 1.0,
+            "instance": 14,
+            "montage_weight": 1.0,
+            "cooldown": 1,
+            "body": true,
+            "wing": true,
+            "control_yaw": -4.516130855042093
+          }
+        },
+        {
+          "requirement": "CIN-03",
+          "case": "pause_结束清理电影与金刚体",
+          "passed": true,
+          "detail": [
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 4.533283233642578,
+              "instance": 14,
+              "montage_weight": 0.8333320021629333,
+              "cooldown": 1,
+              "body": false,
+              "wing": true,
+              "control_yaw": -4.516130855042093
+            },
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 4.533283233642578,
+              "instance": 16,
+              "montage_weight": 1.0,
+              "cooldown": 1,
+              "body": false,
+              "wing": true,
+              "control_yaw": 355.484619140625
+            }
+          ]
+        },
+        {
+          "requirement": "RES-02",
+          "case": "pause_打断或打空不返还能量与CD",
+          "passed": true,
+          "detail": {
+            "active": false,
+            "camera": false,
+            "shot": "None",
+            "camera_position": 0.0,
+            "generation": 0,
+            "weight": 0.0,
+            "energy": 0.0,
+            "capacity": 100.0,
+            "position": 4.533283233642578,
+            "instance": 16,
+            "montage_weight": 1.0,
+            "cooldown": 1,
+            "body": false,
+            "wing": true,
+            "control_yaw": 355.484619140625
+          }
+        },
+        {
+          "requirement": "CIN-02",
+          "case": "pause_电影Yaw不写回游戏方向",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "requirement": "CIN-07",
+          "case": "pause_其他玩家和专服没有电影相机",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-04",
+          "case": "pause_后半技能继续且翼仍显示",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "RES-02",
+          "case": "dash_只消耗一次满充并产生CD",
+          "passed": true,
+          "detail": [
+            {
+              "active": true,
+              "camera": true,
+              "shot": "Acquire",
+              "camera_position": 0.03333321213722229,
+              "generation": 5,
+              "weight": 0.023790253326296806,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.03333321213722229,
+              "instance": 18,
+              "montage_weight": 0.3333321213722229,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": -4.516130855042093
+            },
+            {
+              "active": true,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.016666412353515625,
+              "instance": 20,
+              "montage_weight": 0.16666412353515625,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": 355.484619140625
+            }
+          ]
+        },
+        {
+          "requirement": "CIN-05",
+          "case": "dash_自身金刚体存在",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-03",
+          "case": "dash_结束清理电影与金刚体",
+          "passed": true,
+          "detail": [
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.5689036846160889,
+              "instance": 18,
+              "montage_weight": 0.12928330898284912,
+              "cooldown": 1,
+              "body": false,
+              "wing": true,
+              "control_yaw": -4.516130855042093
+            },
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.5333251953125,
+              "instance": 20,
+              "montage_weight": 0.7222264409065247,
+              "cooldown": 1,
+              "body": false,
+              "wing": true,
+              "control_yaw": 355.484619140625
+            }
+          ]
+        },
+        {
+          "requirement": "RES-02",
+          "case": "dash_打断或打空不返还能量与CD",
+          "passed": true,
+          "detail": {
+            "active": false,
+            "camera": false,
+            "shot": "None",
+            "camera_position": 0.0,
+            "generation": 0,
+            "weight": 0.0,
+            "energy": 0.0,
+            "capacity": 100.0,
+            "position": 0.5333251953125,
+            "instance": 20,
+            "montage_weight": 0.7222264409065247,
+            "cooldown": 1,
+            "body": false,
+            "wing": true,
+            "control_yaw": 355.484619140625
+          }
+        },
+        {
+          "requirement": "CIN-02",
+          "case": "dash_电影Yaw不写回游戏方向",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "requirement": "CIN-07",
+          "case": "dash_其他玩家和专服没有电影相机",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-03",
+          "case": "实际Dash在电影阶段取消大招",
+          "passed": true,
+          "detail": {
+            "active": false,
+            "camera": false,
+            "shot": "None",
+            "camera_position": 0.0,
+            "generation": 0,
+            "weight": 0.0,
+            "energy": 0.0,
+            "capacity": 100.0,
+            "position": 0.5689036846160889,
+            "instance": 18,
+            "montage_weight": 0.12928330898284912,
+            "cooldown": 1,
+            "body": false,
+            "wing": true,
+            "control_yaw": -4.516130855042093
+          }
+        },
+        {
+          "requirement": "RES-02",
+          "case": "replay_只消耗一次满充并产生CD",
+          "passed": true,
+          "detail": [
+            {
+              "active": true,
+              "camera": true,
+              "shot": "Acquire",
+              "camera_position": 0.03333282470703125,
+              "generation": 6,
+              "weight": 0.023789716884493828,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.03333282470703125,
+              "instance": 24,
+              "montage_weight": 0.3333282470703125,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": -4.516130855042093
+            },
+            {
+              "active": true,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.016666412353515625,
+              "instance": 26,
+              "montage_weight": 0.16666412353515625,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": 355.484619140625
+            }
+          ]
+        },
+        {
+          "requirement": "CIN-05",
+          "case": "replay_自身金刚体存在",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-03",
+          "case": "replay_结束清理电影与金刚体",
+          "passed": true,
+          "detail": [
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 4.533283233642578,
+              "instance": 24,
+              "montage_weight": 0.8333309888839722,
+              "cooldown": 1,
+              "body": false,
+              "wing": true,
+              "control_yaw": -4.516130855042093
+            },
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 4.533283233642578,
+              "instance": 26,
+              "montage_weight": 1.0,
+              "cooldown": 1,
+              "body": false,
+              "wing": true,
+              "control_yaw": 355.484619140625
+            }
+          ]
+        },
+        {
+          "requirement": "RES-02",
+          "case": "replay_打断或打空不返还能量与CD",
+          "passed": true,
+          "detail": {
+            "active": false,
+            "camera": false,
+            "shot": "None",
+            "camera_position": 0.0,
+            "generation": 0,
+            "weight": 0.0,
+            "energy": 0.0,
+            "capacity": 100.0,
+            "position": 4.533283233642578,
+            "instance": 26,
+            "montage_weight": 1.0,
+            "cooldown": 1,
+            "body": false,
+            "wing": true,
+            "control_yaw": 355.484619140625
+          }
+        },
+        {
+          "requirement": "CIN-02",
+          "case": "replay_电影Yaw不写回游戏方向",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "requirement": "CIN-07",
+          "case": "replay_其他玩家和专服没有电影相机",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-04",
+          "case": "replay_后半技能继续且翼仍显示",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-03",
+          "case": "重复释放生成新的相机会话",
+          "passed": true,
+          "detail": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        },
+        {
+          "requirement": "RES-02",
+          "case": "death_只消耗一次满充并产生CD",
+          "passed": true,
+          "detail": [
+            {
+              "active": true,
+              "camera": true,
+              "shot": "Acquire",
+              "camera_position": 0.0333404541015625,
+              "generation": 7,
+              "weight": 0.023800253868103027,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.0333404541015625,
+              "instance": 28,
+              "montage_weight": 0.333404541015625,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": -4.516130855042093
+            },
+            {
+              "active": true,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.01667022705078125,
+              "instance": 30,
+              "montage_weight": 0.1667022705078125,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": 355.484619140625
+            }
+          ]
+        },
+        {
+          "requirement": "CIN-05",
+          "case": "death_自身金刚体存在",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-03",
+          "case": "死亡清理拥有者电影相机",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "RES-03",
+          "case": "死亡清空充能且保留PlayerState冷却",
+          "passed": true,
+          "detail": null
+        }
+      ],
+      "raw_report": "Saved/CinematicUltimate/listen-e2e.json"
+    },
+    {
+      "mode": "dedicated",
+      "passed": true,
+      "checks": [
+        {
+          "requirement": "RES-01",
+          "case": "拥有者与服务器容量初始化100",
+          "passed": true,
+          "detail": [
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.0,
+              "instance": -1,
+              "montage_weight": 0.0,
+              "cooldown": 0,
+              "body": false,
+              "wing": false,
+              "control_yaw": 0.0
+            },
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.0,
+              "instance": -1,
+              "montage_weight": 0.0,
+              "cooldown": 0,
+              "body": false,
+              "wing": false,
+              "control_yaw": 0.0
+            }
+          ]
+        },
+        {
+          "requirement": "RES-01",
+          "case": "新玩家零充能",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "RES-04",
+          "case": "右下方充能Widget存在且显示真实0/100",
+          "passed": true,
+          "detail": {
+            "root": true,
+            "pawn": "/Game/Main/Maps/UEDPIE_1_L_EnemyAIValidation.L_EnemyAIValidation:PersistentLevel.BP_Hero_Pover_C_0",
+            "managed_players": 1,
+            "platform_user": 0,
+            "input_device": 0,
+            "own_viewport": true,
+            "game_input": true,
+            "pending": 0,
+            "game_count": 1,
+            "game_active": true,
+            "menu_count": 0,
+            "menu_active": false,
+            "modal_count": 0,
+            "modal_active": false,
+            "vitals_center_x": 0.5000000357400901,
+            "vitals_center_y": 0.9782973424662368,
+            "end_center_x": 0.9830186680497605,
+            "end_center_y": 0.0542564933092469,
+            "resonance_center_x": 0.9516908350686338,
+            "resonance_center_y": 0.9072707807360789,
+            "resonance_widget": true,
+            "resonance_percent": 0,
+            "resonance_text": "共鸣解放 R  0/100",
+            "resonance_enabled": false,
+            "resonance_opacity": 1,
+            "display_percent": 1,
+            "display_text": "150/150",
+            "display_level": "Lv. 1",
+            "health": 150,
+            "max_health": 150,
+            "vitals_ready": true,
+            "entries": 1,
+            "indicators": 0,
+            "indicator_widgets": [],
+            "move_intent": false
+          }
+        },
+        {
+          "requirement": "RES-04",
+          "case": "零充能按钮禁用",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "RES-04",
+          "case": "充能条位于屏幕右下区域",
+          "passed": true,
+          "detail": {
+            "root": true,
+            "pawn": "/Game/Main/Maps/UEDPIE_1_L_EnemyAIValidation.L_EnemyAIValidation:PersistentLevel.BP_Hero_Pover_C_0",
+            "managed_players": 1,
+            "platform_user": 0,
+            "input_device": 0,
+            "own_viewport": true,
+            "game_input": true,
+            "pending": 0,
+            "game_count": 1,
+            "game_active": true,
+            "menu_count": 0,
+            "menu_active": false,
+            "modal_count": 0,
+            "modal_active": false,
+            "vitals_center_x": 0.5000000357400901,
+            "vitals_center_y": 0.9782973424662368,
+            "end_center_x": 0.9830186680497605,
+            "end_center_y": 0.0542564933092469,
+            "resonance_center_x": 0.9516908350686338,
+            "resonance_center_y": 0.9072707807360789,
+            "resonance_widget": true,
+            "resonance_percent": 0,
+            "resonance_text": "共鸣解放 R  0/100",
+            "resonance_enabled": false,
+            "resonance_opacity": 1,
+            "display_percent": 1,
+            "display_text": "150/150",
+            "display_level": "Lv. 1",
+            "health": 150,
+            "max_health": 150,
+            "vitals_ready": true,
+            "entries": 1,
+            "indicators": 0,
+            "indicator_widgets": [],
+            "move_intent": false
+          }
+        },
+        {
+          "requirement": "RES-01",
+          "case": "真实普攻伤害按阶段回能5",
+          "passed": true,
+          "detail": {
+            "health_before": 350.0,
+            "health": 319.0,
+            "resource": {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 5.0,
+              "capacity": 100.0,
+              "position": 0.0,
+              "instance": -1,
+              "montage_weight": 0.0,
+              "cooldown": 0,
+              "body": false,
+              "wing": false,
+              "control_yaw": 0.0
+            }
+          }
+        },
+        {
+          "requirement": "RES-02",
+          "case": "99能量R键不激活且不产生CD",
+          "passed": true,
+          "detail": [
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 99.0,
+              "capacity": 100.0,
+              "position": 0.0,
+              "instance": -1,
+              "montage_weight": 0.0,
+              "cooldown": 0,
+              "body": false,
+              "wing": false,
+              "control_yaw": 0.0
+            },
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 99.0,
+              "capacity": 100.0,
+              "position": 0.0,
+              "instance": -1,
+              "montage_weight": 0.0,
+              "cooldown": 0,
+              "body": false,
+              "wing": false,
+              "control_yaw": 0.0
+            }
+          ]
+        },
+        {
+          "requirement": "RES-02",
+          "case": "free_只消耗一次满充并产生CD",
+          "passed": true,
+          "detail": [
+            {
+              "active": true,
+              "camera": true,
+              "shot": "Acquire",
+              "camera_position": 0.033333588391542435,
+              "generation": 1,
+              "weight": 0.023790771141648293,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.033333588391542435,
+              "instance": 40,
+              "montage_weight": 0.33333587646484375,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": 0.0
+            },
+            {
+              "active": true,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.016666650772094727,
+              "instance": 42,
+              "montage_weight": 0.16666650772094727,
+              "cooldown": 1,
+              "body": true,
+              "wing": false,
+              "control_yaw": 0.0
+            }
+          ]
+        },
+        {
+          "requirement": "CIN-05",
+          "case": "free_自身金刚体存在",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-03",
+          "case": "free_结束清理电影与金刚体",
+          "passed": true,
+          "detail": [
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 4.533283233642578,
+              "instance": 40,
+              "montage_weight": 0.8333319425582886,
+              "cooldown": 1,
+              "body": false,
+              "wing": true,
+              "control_yaw": 0.0
+            },
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 4.533283233642578,
+              "instance": 42,
+              "montage_weight": 1.0,
+              "cooldown": 1,
+              "body": false,
+              "wing": false,
+              "control_yaw": 0.0
+            }
+          ]
+        },
+        {
+          "requirement": "RES-02",
+          "case": "free_打断或打空不返还能量与CD",
+          "passed": true,
+          "detail": {
+            "active": false,
+            "camera": false,
+            "shot": "None",
+            "camera_position": 0.0,
+            "generation": 0,
+            "weight": 0.0,
+            "energy": 0.0,
+            "capacity": 100.0,
+            "position": 4.533283233642578,
+            "instance": 42,
+            "montage_weight": 1.0,
+            "cooldown": 1,
+            "body": false,
+            "wing": false,
+            "control_yaw": 0.0
+          }
+        },
+        {
+          "requirement": "CIN-02",
+          "case": "free_电影Yaw不写回游戏方向",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "requirement": "CIN-07",
+          "case": "free_其他玩家和专服没有电影相机",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-04",
+          "case": "free_后半技能继续且翼仍显示",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-01",
+          "case": "正常播放覆盖三个分镜",
+          "passed": true,
+          "detail": [
+            "Acquire",
+            "FaceHands",
+            "WingReveal"
+          ]
+        },
+        {
+          "requirement": "CIN-02",
+          "case": "真实中键选目标完成锁定",
+          "passed": true,
+          "detail": "<Object '/Game/Main/Maps/UEDPIE_1_L_EnemyAIValidation.L_EnemyAIValidation:PersistentLevel.BP_Enemy_Guardian_C_0' (0x00000AE755776400) Class 'BP_Enemy_Guardian_C'>"
+        },
+        {
+          "requirement": "RES-02",
+          "case": "lock_只消耗一次满充并产生CD",
+          "passed": true,
+          "detail": [
+            {
+              "active": true,
+              "camera": true,
+              "shot": "Acquire",
+              "camera_position": 0.03333282470703125,
+              "generation": 2,
+              "weight": 0.023789716884493828,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.03333282470703125,
+              "instance": 45,
+              "montage_weight": 0.3333282470703125,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": -6.480524156502895
+            },
+            {
+              "active": true,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.016666412353515625,
+              "instance": 47,
+              "montage_weight": 0.16666412353515625,
+              "cooldown": 1,
+              "body": true,
+              "wing": false,
+              "control_yaw": 353.51806640625
+            }
+          ]
+        },
+        {
+          "requirement": "CIN-05",
+          "case": "lock_自身金刚体存在",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-03",
+          "case": "lock_结束清理电影与金刚体",
+          "passed": true,
+          "detail": [
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 4.533283233642578,
+              "instance": 45,
+              "montage_weight": 0.8333320021629333,
+              "cooldown": 1,
+              "body": false,
+              "wing": true,
+              "control_yaw": -6.480524156502895
+            },
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 4.533266067504883,
+              "instance": 47,
+              "montage_weight": 1.0,
+              "cooldown": 1,
+              "body": false,
+              "wing": false,
+              "control_yaw": 353.51806640625
+            }
+          ]
+        },
+        {
+          "requirement": "RES-02",
+          "case": "lock_打断或打空不返还能量与CD",
+          "passed": true,
+          "detail": {
+            "active": false,
+            "camera": false,
+            "shot": "None",
+            "camera_position": 0.0,
+            "generation": 0,
+            "weight": 0.0,
+            "energy": 0.0,
+            "capacity": 100.0,
+            "position": 4.533266067504883,
+            "instance": 47,
+            "montage_weight": 1.0,
+            "cooldown": 1,
+            "body": false,
+            "wing": false,
+            "control_yaw": 353.51806640625
+          }
+        },
+        {
+          "requirement": "CIN-02",
+          "case": "lock_电影Yaw不写回游戏方向",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "requirement": "CIN-07",
+          "case": "lock_其他玩家和专服没有电影相机",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-04",
+          "case": "lock_后半技能继续且翼仍显示",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-02",
+          "case": "电影结束恢复仍有效的锁定CameraMode",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "RES-05",
+          "case": "大范围世界快照Box只结算一次实际伤害且大招不回能",
+          "passed": true,
+          "detail": 1
+        },
+        {
+          "requirement": "RES-02",
+          "case": "pause_只消耗一次满充并产生CD",
+          "passed": true,
+          "detail": [
+            {
+              "active": true,
+              "camera": true,
+              "shot": "Acquire",
+              "camera_position": 0.03333282470703125,
+              "generation": 3,
+              "weight": 0.023789716884493828,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.03333282470703125,
+              "instance": 53,
+              "montage_weight": 0.3333282470703125,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": -6.480524156502895
+            },
+            {
+              "active": true,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.016666412353515625,
+              "instance": 55,
+              "montage_weight": 0.16666412353515625,
+              "cooldown": 1,
+              "body": true,
+              "wing": false,
+              "control_yaw": 353.51806640625
+            }
+          ]
+        },
+        {
+          "requirement": "CIN-05",
+          "case": "pause_自身金刚体存在",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-04",
+          "case": "暂停精确源实例后电影位置停止",
+          "passed": true,
+          "detail": {
+            "active": true,
+            "camera": true,
+            "shot": "FaceHands",
+            "camera_position": 1.0,
+            "generation": 3,
+            "weight": 1.0,
+            "energy": 0.0,
+            "capacity": 100.0,
+            "position": 1.0,
+            "instance": 53,
+            "montage_weight": 1.0,
+            "cooldown": 1,
+            "body": true,
+            "wing": true,
+            "control_yaw": -6.480524156502895
+          }
+        },
+        {
+          "requirement": "CIN-03",
+          "case": "pause_结束清理电影与金刚体",
+          "passed": true,
+          "detail": [
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 4.533283233642578,
+              "instance": 53,
+              "montage_weight": 0.8333309888839722,
+              "cooldown": 1,
+              "body": false,
+              "wing": true,
+              "control_yaw": -6.480524156502895
+            },
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 4.533283233642578,
+              "instance": 55,
+              "montage_weight": 1.0,
+              "cooldown": 1,
+              "body": false,
+              "wing": false,
+              "control_yaw": 353.51806640625
+            }
+          ]
+        },
+        {
+          "requirement": "RES-02",
+          "case": "pause_打断或打空不返还能量与CD",
+          "passed": true,
+          "detail": {
+            "active": false,
+            "camera": false,
+            "shot": "None",
+            "camera_position": 0.0,
+            "generation": 0,
+            "weight": 0.0,
+            "energy": 0.0,
+            "capacity": 100.0,
+            "position": 4.533283233642578,
+            "instance": 55,
+            "montage_weight": 1.0,
+            "cooldown": 1,
+            "body": false,
+            "wing": false,
+            "control_yaw": 353.51806640625
+          }
+        },
+        {
+          "requirement": "CIN-02",
+          "case": "pause_电影Yaw不写回游戏方向",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "requirement": "CIN-07",
+          "case": "pause_其他玩家和专服没有电影相机",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-04",
+          "case": "pause_后半技能继续且翼仍显示",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "RES-02",
+          "case": "dash_只消耗一次满充并产生CD",
+          "passed": true,
+          "detail": [
+            {
+              "active": true,
+              "camera": true,
+              "shot": "Acquire",
+              "camera_position": 0.03333282470703125,
+              "generation": 5,
+              "weight": 0.023789716884493828,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.03333282470703125,
+              "instance": 58,
+              "montage_weight": 0.3333282470703125,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": -6.480524156502895
+            },
+            {
+              "active": true,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.016666412353515625,
+              "instance": 60,
+              "montage_weight": 0.16666412353515625,
+              "cooldown": 1,
+              "body": true,
+              "wing": false,
+              "control_yaw": 353.51806640625
+            }
+          ]
+        },
+        {
+          "requirement": "CIN-05",
+          "case": "dash_自身金刚体存在",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-03",
+          "case": "dash_结束清理电影与金刚体",
+          "passed": true,
+          "detail": [
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.549994170665741,
+              "instance": 58,
+              "montage_weight": 0.44444161653518677,
+              "cooldown": 1,
+              "body": false,
+              "wing": true,
+              "control_yaw": -6.480524156502895
+            },
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.5333251953125,
+              "instance": 60,
+              "montage_weight": 0.7222264409065247,
+              "cooldown": 1,
+              "body": false,
+              "wing": false,
+              "control_yaw": 353.51806640625
+            }
+          ]
+        },
+        {
+          "requirement": "RES-02",
+          "case": "dash_打断或打空不返还能量与CD",
+          "passed": true,
+          "detail": {
+            "active": false,
+            "camera": false,
+            "shot": "None",
+            "camera_position": 0.0,
+            "generation": 0,
+            "weight": 0.0,
+            "energy": 0.0,
+            "capacity": 100.0,
+            "position": 0.5333251953125,
+            "instance": 60,
+            "montage_weight": 0.7222264409065247,
+            "cooldown": 1,
+            "body": false,
+            "wing": false,
+            "control_yaw": 353.51806640625
+          }
+        },
+        {
+          "requirement": "CIN-02",
+          "case": "dash_电影Yaw不写回游戏方向",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "requirement": "CIN-07",
+          "case": "dash_其他玩家和专服没有电影相机",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-03",
+          "case": "实际Dash在电影阶段取消大招",
+          "passed": true,
+          "detail": {
+            "active": false,
+            "camera": false,
+            "shot": "None",
+            "camera_position": 0.0,
+            "generation": 0,
+            "weight": 0.0,
+            "energy": 0.0,
+            "capacity": 100.0,
+            "position": 0.549994170665741,
+            "instance": 58,
+            "montage_weight": 0.44444161653518677,
+            "cooldown": 1,
+            "body": false,
+            "wing": true,
+            "control_yaw": -6.480524156502895
+          }
+        },
+        {
+          "requirement": "RES-02",
+          "case": "replay_只消耗一次满充并产生CD",
+          "passed": true,
+          "detail": [
+            {
+              "active": true,
+              "camera": true,
+              "shot": "Acquire",
+              "camera_position": 0.03333282470703125,
+              "generation": 6,
+              "weight": 0.023789716884493828,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.03333282470703125,
+              "instance": 66,
+              "montage_weight": 0.3333282470703125,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": -6.480524156502895
+            },
+            {
+              "active": true,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.016666412353515625,
+              "instance": 68,
+              "montage_weight": 0.16666412353515625,
+              "cooldown": 1,
+              "body": true,
+              "wing": false,
+              "control_yaw": 353.51806640625
+            }
+          ]
+        },
+        {
+          "requirement": "CIN-05",
+          "case": "replay_自身金刚体存在",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-03",
+          "case": "replay_结束清理电影与金刚体",
+          "passed": true,
+          "detail": [
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 4.533283233642578,
+              "instance": 66,
+              "montage_weight": 0.8333309888839722,
+              "cooldown": 1,
+              "body": false,
+              "wing": true,
+              "control_yaw": -6.480524156502895
+            },
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 4.533283233642578,
+              "instance": 68,
+              "montage_weight": 1.0,
+              "cooldown": 1,
+              "body": false,
+              "wing": false,
+              "control_yaw": 353.51806640625
+            }
+          ]
+        },
+        {
+          "requirement": "RES-02",
+          "case": "replay_打断或打空不返还能量与CD",
+          "passed": true,
+          "detail": {
+            "active": false,
+            "camera": false,
+            "shot": "None",
+            "camera_position": 0.0,
+            "generation": 0,
+            "weight": 0.0,
+            "energy": 0.0,
+            "capacity": 100.0,
+            "position": 4.533283233642578,
+            "instance": 68,
+            "montage_weight": 1.0,
+            "cooldown": 1,
+            "body": false,
+            "wing": false,
+            "control_yaw": 353.51806640625
+          }
+        },
+        {
+          "requirement": "CIN-02",
+          "case": "replay_电影Yaw不写回游戏方向",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "requirement": "CIN-07",
+          "case": "replay_其他玩家和专服没有电影相机",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-04",
+          "case": "replay_后半技能继续且翼仍显示",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-03",
+          "case": "重复释放生成新的相机会话",
+          "passed": true,
+          "detail": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        },
+        {
+          "requirement": "RES-02",
+          "case": "death_只消耗一次满充并产生CD",
+          "passed": true,
+          "detail": [
+            {
+              "active": true,
+              "camera": true,
+              "shot": "Acquire",
+              "camera_position": 0.0333404541015625,
+              "generation": 7,
+              "weight": 0.023800253868103027,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.0333404541015625,
+              "instance": 71,
+              "montage_weight": 0.333404541015625,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": -6.480524156502895
+            },
+            {
+              "active": true,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.01667022705078125,
+              "instance": 73,
+              "montage_weight": 0.1667022705078125,
+              "cooldown": 1,
+              "body": true,
+              "wing": false,
+              "control_yaw": 353.51806640625
+            }
+          ]
+        },
+        {
+          "requirement": "CIN-05",
+          "case": "death_自身金刚体存在",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-03",
+          "case": "死亡清理拥有者电影相机",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "RES-03",
+          "case": "死亡清空充能且保留PlayerState冷却",
+          "passed": true,
+          "detail": null
+        }
+      ],
+      "raw_report": "Saved/CinematicUltimate/dedicated-e2e.json"
+    },
+    {
+      "mode": "listen-lag",
+      "passed": true,
+      "checks": [
+        {
+          "requirement": "RES-01",
+          "case": "拥有者与服务器容量初始化100",
+          "passed": true,
+          "detail": [
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.0,
+              "instance": -1,
+              "montage_weight": 0.0,
+              "cooldown": 0,
+              "body": false,
+              "wing": false,
+              "control_yaw": 0.0
+            },
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.0,
+              "instance": -1,
+              "montage_weight": 0.0,
+              "cooldown": 0,
+              "body": false,
+              "wing": false,
+              "control_yaw": 0.0
+            }
+          ]
+        },
+        {
+          "requirement": "RES-01",
+          "case": "新玩家零充能",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "RES-04",
+          "case": "右下方充能Widget存在且显示真实0/100",
+          "passed": true,
+          "detail": {
+            "root": true,
+            "pawn": "/Game/Main/Maps/UEDPIE_1_L_EnemyAIValidation.L_EnemyAIValidation:PersistentLevel.BP_Hero_Pover_C_0",
+            "managed_players": 1,
+            "platform_user": 0,
+            "input_device": 0,
+            "own_viewport": true,
+            "game_input": true,
+            "pending": 0,
+            "game_count": 1,
+            "game_active": true,
+            "menu_count": 0,
+            "menu_active": false,
+            "modal_count": 0,
+            "modal_active": false,
+            "vitals_center_x": 0.500000042486374,
+            "vitals_center_y": 0.979671200508313,
+            "end_center_x": 0.959626388422837,
+            "end_center_y": 0.050822287774171124,
+            "resonance_center_x": 0.8851440360304845,
+            "resonance_center_y": 0.9131401020348426,
+            "resonance_widget": true,
+            "resonance_percent": 0,
+            "resonance_text": "共鸣解放 R  0/100",
+            "resonance_enabled": false,
+            "resonance_opacity": 1,
+            "display_percent": 1,
+            "display_text": "150/150",
+            "display_level": "Lv. 1",
+            "health": 150,
+            "max_health": 150,
+            "vitals_ready": true,
+            "entries": 1,
+            "indicators": 0,
+            "indicator_widgets": [],
+            "move_intent": false
+          }
+        },
+        {
+          "requirement": "RES-04",
+          "case": "零充能按钮禁用",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "RES-04",
+          "case": "充能条位于屏幕右下区域",
+          "passed": true,
+          "detail": {
+            "root": true,
+            "pawn": "/Game/Main/Maps/UEDPIE_1_L_EnemyAIValidation.L_EnemyAIValidation:PersistentLevel.BP_Hero_Pover_C_0",
+            "managed_players": 1,
+            "platform_user": 0,
+            "input_device": 0,
+            "own_viewport": true,
+            "game_input": true,
+            "pending": 0,
+            "game_count": 1,
+            "game_active": true,
+            "menu_count": 0,
+            "menu_active": false,
+            "modal_count": 0,
+            "modal_active": false,
+            "vitals_center_x": 0.500000042486374,
+            "vitals_center_y": 0.979671200508313,
+            "end_center_x": 0.959626388422837,
+            "end_center_y": 0.050822287774171124,
+            "resonance_center_x": 0.8851440360304845,
+            "resonance_center_y": 0.9131401020348426,
+            "resonance_widget": true,
+            "resonance_percent": 0,
+            "resonance_text": "共鸣解放 R  0/100",
+            "resonance_enabled": false,
+            "resonance_opacity": 1,
+            "display_percent": 1,
+            "display_text": "150/150",
+            "display_level": "Lv. 1",
+            "health": 150,
+            "max_health": 150,
+            "vitals_ready": true,
+            "entries": 1,
+            "indicators": 0,
+            "indicator_widgets": [],
+            "move_intent": false
+          }
+        },
+        {
+          "requirement": "RES-01",
+          "case": "真实普攻伤害按阶段回能5",
+          "passed": true,
+          "detail": {
+            "health_before": 350.0,
+            "health": 319.0,
+            "resource": {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 5.0,
+              "capacity": 100.0,
+              "position": 0.0,
+              "instance": -1,
+              "montage_weight": 0.0,
+              "cooldown": 0,
+              "body": false,
+              "wing": false,
+              "control_yaw": 0.0
+            }
+          }
+        },
+        {
+          "requirement": "RES-02",
+          "case": "99能量R键不激活且不产生CD",
+          "passed": true,
+          "detail": [
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 99.0,
+              "capacity": 100.0,
+              "position": 0.0,
+              "instance": -1,
+              "montage_weight": 0.0,
+              "cooldown": 0,
+              "body": false,
+              "wing": false,
+              "control_yaw": 0.0
+            },
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 99.0,
+              "capacity": 100.0,
+              "position": 0.0,
+              "instance": -1,
+              "montage_weight": 0.0,
+              "cooldown": 0,
+              "body": false,
+              "wing": false,
+              "control_yaw": 0.0
+            }
+          ]
+        },
+        {
+          "requirement": "RES-02",
+          "case": "free_只消耗一次满充并产生CD",
+          "passed": true,
+          "detail": [
+            {
+              "active": true,
+              "camera": true,
+              "shot": "Acquire",
+              "camera_position": 0.15000128746032715,
+              "generation": 1,
+              "weight": 0.37169942259788513,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.15000128746032715,
+              "instance": 109,
+              "montage_weight": 1.0,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": 0.0
+            },
+            {
+              "active": true,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.016666889190673828,
+              "instance": 111,
+              "montage_weight": 0.16666889190673828,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": 0.0
+            }
+          ]
+        },
+        {
+          "requirement": "CIN-05",
+          "case": "free_自身金刚体存在",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-03",
+          "case": "free_结束清理电影与金刚体",
+          "passed": true,
+          "detail": [
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.0,
+              "instance": -1,
+              "montage_weight": 0.0,
+              "cooldown": 1,
+              "body": false,
+              "wing": true,
+              "control_yaw": 0.0
+            },
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 4.533283233642578,
+              "instance": 111,
+              "montage_weight": 0.8333358764648438,
+              "cooldown": 1,
+              "body": false,
+              "wing": true,
+              "control_yaw": 0.0
+            }
+          ]
+        },
+        {
+          "requirement": "RES-02",
+          "case": "free_打断或打空不返还能量与CD",
+          "passed": true,
+          "detail": {
+            "active": false,
+            "camera": false,
+            "shot": "None",
+            "camera_position": 0.0,
+            "generation": 0,
+            "weight": 0.0,
+            "energy": 0.0,
+            "capacity": 100.0,
+            "position": 4.533283233642578,
+            "instance": 111,
+            "montage_weight": 0.8333358764648438,
+            "cooldown": 1,
+            "body": false,
+            "wing": true,
+            "control_yaw": 0.0
+          }
+        },
+        {
+          "requirement": "CIN-02",
+          "case": "free_电影Yaw不写回游戏方向",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "requirement": "CIN-07",
+          "case": "free_其他玩家和专服没有电影相机",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-04",
+          "case": "free_后半技能继续且翼仍显示",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-01",
+          "case": "正常播放覆盖三个分镜",
+          "passed": true,
+          "detail": [
+            "Acquire",
+            "FaceHands",
+            "WingReveal"
+          ]
+        },
+        {
+          "requirement": "CIN-02",
+          "case": "真实中键选目标完成锁定",
+          "passed": true,
+          "detail": "<Object '/Game/Main/Maps/UEDPIE_1_L_EnemyAIValidation.L_EnemyAIValidation:PersistentLevel.BP_Enemy_Guardian_C_0' (0x00000AE755771400) Class 'BP_Enemy_Guardian_C'>"
+        },
+        {
+          "requirement": "RES-02",
+          "case": "lock_只消耗一次满充并产生CD",
+          "passed": true,
+          "detail": [
+            {
+              "active": true,
+              "camera": true,
+              "shot": "Acquire",
+              "camera_position": 0.15118789672851562,
+              "generation": 2,
+              "weight": 0.37646621465682983,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.15118789672851562,
+              "instance": 113,
+              "montage_weight": 1.0,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": -6.568062363210402
+            },
+            {
+              "active": true,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.03452301025390625,
+              "instance": 115,
+              "montage_weight": 0.3452301025390625,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": 353.43017578125
+            }
+          ]
+        },
+        {
+          "requirement": "CIN-05",
+          "case": "lock_自身金刚体存在",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-03",
+          "case": "lock_结束清理电影与金刚体",
+          "passed": true,
+          "detail": [
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.0,
+              "instance": -1,
+              "montage_weight": 0.0,
+              "cooldown": 1,
+              "body": false,
+              "wing": true,
+              "control_yaw": -6.568062363210402
+            },
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 4.533283233642578,
+              "instance": 115,
+              "montage_weight": 1.0,
+              "cooldown": 1,
+              "body": false,
+              "wing": true,
+              "control_yaw": 353.43017578125
+            }
+          ]
+        },
+        {
+          "requirement": "RES-02",
+          "case": "lock_打断或打空不返还能量与CD",
+          "passed": true,
+          "detail": {
+            "active": false,
+            "camera": false,
+            "shot": "None",
+            "camera_position": 0.0,
+            "generation": 0,
+            "weight": 0.0,
+            "energy": 0.0,
+            "capacity": 100.0,
+            "position": 4.533283233642578,
+            "instance": 115,
+            "montage_weight": 1.0,
+            "cooldown": 1,
+            "body": false,
+            "wing": true,
+            "control_yaw": 353.43017578125
+          }
+        },
+        {
+          "requirement": "CIN-02",
+          "case": "lock_电影Yaw不写回游戏方向",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "requirement": "CIN-07",
+          "case": "lock_其他玩家和专服没有电影相机",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-04",
+          "case": "lock_后半技能继续且翼仍显示",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-02",
+          "case": "电影结束恢复仍有效的锁定CameraMode",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "RES-05",
+          "case": "大范围世界快照Box只结算一次实际伤害且大招不回能",
+          "passed": true,
+          "detail": 1
+        },
+        {
+          "requirement": "RES-02",
+          "case": "pause_只消耗一次满充并产生CD",
+          "passed": true,
+          "detail": [
+            {
+              "active": true,
+              "camera": true,
+              "shot": "Acquire",
+              "camera_position": 0.14999771118164062,
+              "generation": 3,
+              "weight": 0.3716850280761719,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.14999771118164062,
+              "instance": 119,
+              "montage_weight": 1.0,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": -6.568062363210402
+            },
+            {
+              "active": true,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.016666412353515625,
+              "instance": 121,
+              "montage_weight": 0.16666412353515625,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": 353.43017578125
+            }
+          ]
+        },
+        {
+          "requirement": "CIN-05",
+          "case": "pause_自身金刚体存在",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-04",
+          "case": "暂停精确源实例后电影位置停止",
+          "passed": true,
+          "detail": {
+            "active": true,
+            "camera": true,
+            "shot": "FaceHands",
+            "camera_position": 1.0,
+            "generation": 3,
+            "weight": 1.0,
+            "energy": 0.0,
+            "capacity": 100.0,
+            "position": 1.0,
+            "instance": 119,
+            "montage_weight": 1.0,
+            "cooldown": 1,
+            "body": true,
+            "wing": true,
+            "control_yaw": -6.568062363210402
+          }
+        },
+        {
+          "requirement": "CIN-03",
+          "case": "pause_结束清理电影与金刚体",
+          "passed": true,
+          "detail": [
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.0,
+              "instance": -1,
+              "montage_weight": 0.0,
+              "cooldown": 1,
+              "body": false,
+              "wing": true,
+              "control_yaw": -6.568062363210402
+            },
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 4.533283233642578,
+              "instance": 121,
+              "montage_weight": 1.0,
+              "cooldown": 1,
+              "body": false,
+              "wing": true,
+              "control_yaw": 353.43017578125
+            }
+          ]
+        },
+        {
+          "requirement": "RES-02",
+          "case": "pause_打断或打空不返还能量与CD",
+          "passed": true,
+          "detail": {
+            "active": false,
+            "camera": false,
+            "shot": "None",
+            "camera_position": 0.0,
+            "generation": 0,
+            "weight": 0.0,
+            "energy": 0.0,
+            "capacity": 100.0,
+            "position": 4.533283233642578,
+            "instance": 121,
+            "montage_weight": 1.0,
+            "cooldown": 1,
+            "body": false,
+            "wing": true,
+            "control_yaw": 353.43017578125
+          }
+        },
+        {
+          "requirement": "CIN-02",
+          "case": "pause_电影Yaw不写回游戏方向",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "requirement": "CIN-07",
+          "case": "pause_其他玩家和专服没有电影相机",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-04",
+          "case": "pause_后半技能继续且翼仍显示",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "RES-02",
+          "case": "dash_只消耗一次满充并产生CD",
+          "passed": true,
+          "detail": [
+            {
+              "active": true,
+              "camera": true,
+              "shot": "Acquire",
+              "camera_position": 0.14999771118164062,
+              "generation": 4,
+              "weight": 0.3716850280761719,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.14999771118164062,
+              "instance": 123,
+              "montage_weight": 1.0,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": -6.568062363210402
+            },
+            {
+              "active": true,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.016666412353515625,
+              "instance": 125,
+              "montage_weight": 0.16666412353515625,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": 353.43017578125
+            }
+          ]
+        },
+        {
+          "requirement": "CIN-05",
+          "case": "dash_自身金刚体存在",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-03",
+          "case": "dash_结束清理电影与金刚体",
+          "passed": true,
+          "detail": [
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.0,
+              "instance": -1,
+              "montage_weight": 0.0,
+              "cooldown": 1,
+              "body": false,
+              "wing": true,
+              "control_yaw": -6.568062363210402
+            },
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.5333251953125,
+              "instance": 125,
+              "montage_weight": 0.7222264409065247,
+              "cooldown": 1,
+              "body": false,
+              "wing": true,
+              "control_yaw": 353.43017578125
+            }
+          ]
+        },
+        {
+          "requirement": "RES-02",
+          "case": "dash_打断或打空不返还能量与CD",
+          "passed": true,
+          "detail": {
+            "active": false,
+            "camera": false,
+            "shot": "None",
+            "camera_position": 0.0,
+            "generation": 0,
+            "weight": 0.0,
+            "energy": 0.0,
+            "capacity": 100.0,
+            "position": 0.5333251953125,
+            "instance": 125,
+            "montage_weight": 0.7222264409065247,
+            "cooldown": 1,
+            "body": false,
+            "wing": true,
+            "control_yaw": 353.43017578125
+          }
+        },
+        {
+          "requirement": "CIN-02",
+          "case": "dash_电影Yaw不写回游戏方向",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "requirement": "CIN-07",
+          "case": "dash_其他玩家和专服没有电影相机",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-03",
+          "case": "实际Dash在电影阶段取消大招",
+          "passed": true,
+          "detail": {
+            "active": false,
+            "camera": false,
+            "shot": "None",
+            "camera_position": 0.0,
+            "generation": 0,
+            "weight": 0.0,
+            "energy": 0.0,
+            "capacity": 100.0,
+            "position": 0.0,
+            "instance": -1,
+            "montage_weight": 0.0,
+            "cooldown": 1,
+            "body": false,
+            "wing": true,
+            "control_yaw": -6.568062363210402
+          }
+        },
+        {
+          "requirement": "RES-02",
+          "case": "replay_只消耗一次满充并产生CD",
+          "passed": true,
+          "detail": [
+            {
+              "active": true,
+              "camera": true,
+              "shot": "Acquire",
+              "camera_position": 0.14999771118164062,
+              "generation": 5,
+              "weight": 0.3716850280761719,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.14999771118164062,
+              "instance": 129,
+              "montage_weight": 1.0,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": -6.568062363210402
+            },
+            {
+              "active": true,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.016666412353515625,
+              "instance": 131,
+              "montage_weight": 0.16666412353515625,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": 353.43017578125
+            }
+          ]
+        },
+        {
+          "requirement": "CIN-05",
+          "case": "replay_自身金刚体存在",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-03",
+          "case": "replay_结束清理电影与金刚体",
+          "passed": true,
+          "detail": [
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.0,
+              "instance": -1,
+              "montage_weight": 0.0,
+              "cooldown": 1,
+              "body": false,
+              "wing": true,
+              "control_yaw": -6.568062363210402
+            },
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 4.533283233642578,
+              "instance": 131,
+              "montage_weight": 0.8333358764648438,
+              "cooldown": 1,
+              "body": false,
+              "wing": true,
+              "control_yaw": 353.43017578125
+            }
+          ]
+        },
+        {
+          "requirement": "RES-02",
+          "case": "replay_打断或打空不返还能量与CD",
+          "passed": true,
+          "detail": {
+            "active": false,
+            "camera": false,
+            "shot": "None",
+            "camera_position": 0.0,
+            "generation": 0,
+            "weight": 0.0,
+            "energy": 0.0,
+            "capacity": 100.0,
+            "position": 4.533283233642578,
+            "instance": 131,
+            "montage_weight": 0.8333358764648438,
+            "cooldown": 1,
+            "body": false,
+            "wing": true,
+            "control_yaw": 353.43017578125
+          }
+        },
+        {
+          "requirement": "CIN-02",
+          "case": "replay_电影Yaw不写回游戏方向",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "requirement": "CIN-07",
+          "case": "replay_其他玩家和专服没有电影相机",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-04",
+          "case": "replay_后半技能继续且翼仍显示",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-03",
+          "case": "重复释放生成新的相机会话",
+          "passed": true,
+          "detail": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "requirement": "RES-02",
+          "case": "death_只消耗一次满充并产生CD",
+          "passed": true,
+          "detail": [
+            {
+              "active": true,
+              "camera": true,
+              "shot": "Acquire",
+              "camera_position": 0.15003204345703125,
+              "generation": 6,
+              "weight": 0.37182286381721497,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.15003204345703125,
+              "instance": 133,
+              "montage_weight": 1.0,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": -6.568062363210402
+            },
+            {
+              "active": true,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.01667022705078125,
+              "instance": 135,
+              "montage_weight": 0.1667022705078125,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": 353.43017578125
+            }
+          ]
+        },
+        {
+          "requirement": "CIN-05",
+          "case": "death_自身金刚体存在",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-03",
+          "case": "死亡清理拥有者电影相机",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "RES-03",
+          "case": "死亡清空充能且保留PlayerState冷却",
+          "passed": true,
+          "detail": null
+        }
+      ],
+      "raw_report": "Saved/CinematicUltimate/listen-lag-e2e.json"
+    },
+    {
+      "mode": "capture",
+      "passed": true,
+      "checks": [
+        {
+          "requirement": "RES-01",
+          "case": "拥有者与服务器容量初始化100",
+          "passed": true,
+          "detail": [
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.0,
+              "instance": -1,
+              "montage_weight": 0.0,
+              "cooldown": 0,
+              "body": false,
+              "wing": false,
+              "control_yaw": 0.0
+            },
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.0,
+              "instance": -1,
+              "montage_weight": 0.0,
+              "cooldown": 0,
+              "body": false,
+              "wing": false,
+              "control_yaw": 0.0
+            }
+          ]
+        },
+        {
+          "requirement": "RES-01",
+          "case": "新玩家零充能",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "RES-04",
+          "case": "右下方充能Widget存在且显示真实0/100",
+          "passed": true,
+          "detail": {
+            "root": true,
+            "pawn": "/Game/Main/Maps/UEDPIE_0_L_EnemyAIValidation.L_EnemyAIValidation:PersistentLevel.BP_Hero_Pover_C_0",
+            "managed_players": 1,
+            "platform_user": 0,
+            "input_device": 0,
+            "own_viewport": true,
+            "game_input": true,
+            "pending": 0,
+            "game_count": 1,
+            "game_active": true,
+            "menu_count": 0,
+            "menu_active": false,
+            "modal_count": 0,
+            "modal_active": false,
+            "vitals_center_x": 0.5000000357400901,
+            "vitals_center_y": 0.9782973424662368,
+            "end_center_x": 0.9830186680497605,
+            "end_center_y": 0.0542564933092469,
+            "resonance_center_x": 0.9516908350686338,
+            "resonance_center_y": 0.9072707807360789,
+            "resonance_widget": true,
+            "resonance_percent": 0,
+            "resonance_text": "共鸣解放 R  0/100",
+            "resonance_enabled": false,
+            "resonance_opacity": 1,
+            "display_percent": 1,
+            "display_text": "150/150",
+            "display_level": "Lv. 1",
+            "health": 150,
+            "max_health": 150,
+            "vitals_ready": true,
+            "entries": 1,
+            "indicators": 0,
+            "indicator_widgets": [],
+            "move_intent": false
+          }
+        },
+        {
+          "requirement": "RES-04",
+          "case": "零充能按钮禁用",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "RES-04",
+          "case": "充能条位于屏幕右下区域",
+          "passed": true,
+          "detail": {
+            "root": true,
+            "pawn": "/Game/Main/Maps/UEDPIE_0_L_EnemyAIValidation.L_EnemyAIValidation:PersistentLevel.BP_Hero_Pover_C_0",
+            "managed_players": 1,
+            "platform_user": 0,
+            "input_device": 0,
+            "own_viewport": true,
+            "game_input": true,
+            "pending": 0,
+            "game_count": 1,
+            "game_active": true,
+            "menu_count": 0,
+            "menu_active": false,
+            "modal_count": 0,
+            "modal_active": false,
+            "vitals_center_x": 0.5000000357400901,
+            "vitals_center_y": 0.9782973424662368,
+            "end_center_x": 0.9830186680497605,
+            "end_center_y": 0.0542564933092469,
+            "resonance_center_x": 0.9516908350686338,
+            "resonance_center_y": 0.9072707807360789,
+            "resonance_widget": true,
+            "resonance_percent": 0,
+            "resonance_text": "共鸣解放 R  0/100",
+            "resonance_enabled": false,
+            "resonance_opacity": 1,
+            "display_percent": 1,
+            "display_text": "150/150",
+            "display_level": "Lv. 1",
+            "health": 150,
+            "max_health": 150,
+            "vitals_ready": true,
+            "entries": 1,
+            "indicators": 0,
+            "indicator_widgets": [],
+            "move_intent": false
+          }
+        },
+        {
+          "requirement": "RES-01",
+          "case": "真实普攻伤害按阶段回能5",
+          "passed": true,
+          "detail": {
+            "health_before": 350.0,
+            "health": 319.0,
+            "resource": {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 5.0,
+              "capacity": 100.0,
+              "position": 0.0,
+              "instance": -1,
+              "montage_weight": 0.0,
+              "cooldown": 0,
+              "body": false,
+              "wing": false,
+              "control_yaw": 0.0
+            }
+          }
+        },
+        {
+          "requirement": "RES-02",
+          "case": "99能量R键不激活且不产生CD",
+          "passed": true,
+          "detail": [
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 99.0,
+              "capacity": 100.0,
+              "position": 0.0,
+              "instance": -1,
+              "montage_weight": 0.0,
+              "cooldown": 0,
+              "body": false,
+              "wing": false,
+              "control_yaw": 0.0
+            },
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 99.0,
+              "capacity": 100.0,
+              "position": 0.0,
+              "instance": -1,
+              "montage_weight": 0.0,
+              "cooldown": 0,
+              "body": false,
+              "wing": false,
+              "control_yaw": 0.0
+            }
+          ]
+        },
+        {
+          "requirement": "RES-02",
+          "case": "free_只消耗一次满充并产生CD",
+          "passed": true,
+          "detail": [
+            {
+              "active": true,
+              "camera": true,
+              "shot": "Acquire",
+              "camera_position": 0.016666799783706665,
+              "generation": 1,
+              "weight": 0.006141813937574625,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.016666799783706665,
+              "instance": 149,
+              "montage_weight": 0.16666799783706665,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": 0.0
+            },
+            {
+              "active": true,
+              "camera": true,
+              "shot": "Acquire",
+              "camera_position": 0.016666799783706665,
+              "generation": 1,
+              "weight": 0.006141813937574625,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 0.016666799783706665,
+              "instance": 149,
+              "montage_weight": 0.16666799783706665,
+              "cooldown": 1,
+              "body": true,
+              "wing": true,
+              "control_yaw": 0.0
+            }
+          ]
+        },
+        {
+          "requirement": "CIN-05",
+          "case": "free_自身金刚体存在",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-02",
+          "case": "电影退出后真实鼠标输入恢复",
+          "passed": true,
+          "detail": 8.0
+        },
+        {
+          "requirement": "CIN-03",
+          "case": "free_结束清理电影与金刚体",
+          "passed": true,
+          "detail": [
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 4.533283233642578,
+              "instance": 149,
+              "montage_weight": 1.0,
+              "cooldown": 1,
+              "body": false,
+              "wing": true,
+              "control_yaw": 8.0
+            },
+            {
+              "active": false,
+              "camera": false,
+              "shot": "None",
+              "camera_position": 0.0,
+              "generation": 0,
+              "weight": 0.0,
+              "energy": 0.0,
+              "capacity": 100.0,
+              "position": 4.533283233642578,
+              "instance": 149,
+              "montage_weight": 1.0,
+              "cooldown": 1,
+              "body": false,
+              "wing": true,
+              "control_yaw": 8.0
+            }
+          ]
+        },
+        {
+          "requirement": "RES-02",
+          "case": "free_打断或打空不返还能量与CD",
+          "passed": true,
+          "detail": {
+            "active": false,
+            "camera": false,
+            "shot": "None",
+            "camera_position": 0.0,
+            "generation": 0,
+            "weight": 0.0,
+            "energy": 0.0,
+            "capacity": 100.0,
+            "position": 4.533283233642578,
+            "instance": 149,
+            "montage_weight": 1.0,
+            "cooldown": 1,
+            "body": false,
+            "wing": true,
+            "control_yaw": 8.0
+          }
+        },
+        {
+          "requirement": "CIN-02",
+          "case": "free_电影Yaw不写回游戏方向",
+          "passed": true,
+          "detail": 0.0
+        },
+        {
+          "requirement": "CIN-07",
+          "case": "free_其他玩家和专服没有电影相机",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-04",
+          "case": "free_后半技能继续且翼仍显示",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "requirement": "CIN-01",
+          "case": "正常播放覆盖三个分镜",
+          "passed": true,
+          "detail": [
+            "Acquire",
+            "FaceHands",
+            "WingReveal"
+          ]
+        },
+        {
+          "requirement": "CIN-02",
+          "case": "电影Look占用完整释放",
+          "passed": true,
+          "detail": null
+        }
+      ],
+      "raw_report": "Saved/CinematicUltimate/capture-e2e.json"
+    }
+  ],
+  "coverage": {
+    "kind": "需求与用例映射；没有Clang/MSVC行或分支覆盖率采集",
+    "partial": [
+      "CIN-06：本地PP和音效/震屏事件接口已实现，正式Niagara、音效、震屏素材未制作",
+      "CIN-03/04：旧句柄、重放、Dash取消、死亡已测；换Pawn和服务器拒绝后的实例恢复未逐项E2E注入",
+      "CIN-08：81项相关原生回归，未重新跑完整Dash/Sprint/普攻Warp的全部实机矩阵"
+    ]
+  },
+  "issues_fixed": [
+    {
+      "issue": "远端晚加入玩家拥有技能但充能容量为0",
+      "cause": "PreInitializeComponents中已加载Experience立即回调，早于ASC发现原生AttributeSet",
+      "fix": "按Lyra将ASC绑定和Experience注册迁移到PostInitializeComponents",
+      "proof": "Hodge.Resonance.PlayerStateBeforePawn和Listen/Dedicated真实容量、回能、R输入"
+    },
+    {
+      "issue": "资产重试重复添加大招输入Tag",
+      "cause": "Python反射GameplayTag对象比较未按标签名称匹配",
+      "fix": "按TagName去重本技能入口",
+      "proof": "大招输入Tag只绑定一次"
+    },
+    {
+      "issue": "WidgetBlueprintFactory空Canvas可能不生成默认充能控件",
+      "cause": "只有RootWidget为空的判断不能识别空Canvas",
+      "fix": "RebuildWidget在Slate前处理空容器；真实子树与显示断言",
+      "proof": "RES-04各模式0/100、按钮禁用、位置"
+    },
+    {
+      "issue": "Game构建中ATTRIBUTE_ACCESSORS依赖不完整ASC类型",
+      "fix": "公共ResonanceSet头显式包含ASC，Game常规构建通过"
+    },
+    {
+      "issue": "PIE脚本死亡后访问已解绑ASC、锁定夹具未等待位置复制、Python受保护字段读取",
+      "fix": "从持久PlayerState读资源、先等目标位置复制、使用限定原生只读UI诊断",
+      "proof": "死亡与100ms PktLag模式、UI断言复跑通过"
+    }
+  ],
+  "remaining": [
+    "T_Hit=0.68T、Box尺寸、伤害倍率2、5/20回能与三分镜偏移仍为资产中的原型初值，需按实际动画和战斗手感调参",
+    "Impacts留空，未批准擅自加入控制或无敌；金刚体不自动禁止Dash",
+    "独立Server Target/专服可执行程序、Cook、打包未执行；PIE Dedicated已执行",
+    "正式地图灯光、近墙、多画幅、UI相机覆盖、其他CameraModifier叠加及全部网络拒绝场景需后续实机矩阵",
+    "主蒙太奇同帧Branching Point重叠产生引擎警告；现有Definition源位置扫描保障本次状态窗口，已通过翼/后半/取消断言；后续统一通知轨警告处理",
+    "没有逐帧读取原作视频，不声称逐帧复刻《鸣潮》"
+  ],
+  "screenshots": [
+    "Saved/CinematicUltimate/Screenshots/acquire.png",
+    "Saved/CinematicUltimate/Screenshots/facehands.png",
+    "Saved/CinematicUltimate/Screenshots/wingreveal.png",
+    "Saved/CinematicUltimate/Screenshots/hud.png"
+  ],
+  "committed": false
+}

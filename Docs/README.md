@@ -1,5 +1,7 @@
 # 项目文档
 
+**开发入口：[项目开发准则](Development/development-standards.md)**。新增代码必须有简洁中文注释；讨论或设计具体实现前核查本机 Lyra，已有成熟详细实现直接复用。任务启动同时阅读 [AGENTS.md](../AGENTS.md) 与 [AI 开发与验证流程](AI_DEVELOPMENT.md)。
+
 **dev-AN 通知驱动迁移：[彻底弃用自建 Timeline，迁移到动画通知](Design/anim-notify-combat-migration.md)。** 旧文件集中归档，当前配置参阅通知驱动手册；实际验证见迁移报告。
 
 [客户端连段／移动取消窗口修复](Validation/client-combo-window-2026-10-07.md)：首帧服务器授权竞态、现有输入缓存与正式连段客户端回归。
@@ -17,6 +19,10 @@
 
 ## 已实施方案与配置
 
+- [翅膀通知与蒙太奇配置](Guides/wing-notify-montage-configuration.md)：通知内直接选择翼蒙太奇，窗口控制显隐，保留淡出、取消和 Box 采样；[现行设计](Design/attack-wing-presentation.md)、[本轮验证](Validation/wing-notify-montage-2026-10-14.md)。
+
+- [Resonance Skill 配置](Guides/resonance-skill-configuration.md)：独立 Melee 技能模板，E 键、8 秒冷却、动画／伤害／输入调参入口；[创建与验证](Validation/resonance-skill-setup-2026-10-13.md)。当前 Skill1 后摇移动取消见 [设计](Design/definition-move-cancel.md) 与 [修复验证](Validation/definition-move-cancel-2026-10-14.md)。
+- [共鸣解放设计与当前实现](Design/resonance-liberation.md)：R键满充消耗、12秒CD、阶段回能、右下充能HUD、前半段电影镜头、全程翼与金刚体固定Box；[配置指南](Guides/resonance-liberation-configuration.md)说明实际资产／调参，[2026-10-15实施验收](Validation/resonance-liberation-2026-10-15.md)记录81项原生测试、35项资产检查及四种PIE模式结果。正式Niagara／音效／震屏素材仍待补齐；[相机原评审](Design/resonance-liberation-cinematic-review-2026-10-14.md)保留历史取舍依据。
 - [攻击前摇旋转 Motion Warping](Design/attack-facing-motion-warp.md)：首招立即播放、固定方向 TargetData、前摇根运动旋转、Recovery 释放与预测取消恢复；[实现和验证结果](Validation/attack-facing-motion-warp-2026-10-13.md)。
 - [配置检测体与多段独立技能](Design/skill-hit-volumes-usage.md)：形状、锚点、Window／Point、命中组、指定目标、输入授予和示例资产；[设计与后续 Actor 范围](Design/skill-hit-volumes-proposal.md)。
 - [命中检测调试绘制](Design/hit-detection-debug-draw.md)：Weapon、Body、HitBox 默认绘制 5 秒，控制台开关与验证范围。
@@ -50,8 +56,11 @@ Design 并非全是未实现草案：各篇开头区分当前实现、历史设�
 - [软锁定镜头调研与修正](Design/soft-lock-camera-research-2026-10-13.md)、[新验收](Validation/soft-lock-camera-2026-10-13.md)：取消八度限制／横向缓存，手动环绕、停手宽限与柔和构图；修正 CameraMode 栈顶诊断、技能优先及混合期间输入。31 项原生回归、四模式镜头专项各 24 项、原锁定回归各 20 项通过；真实物理设备和复杂地形仍待验证。
 - [锁定标记 WBP 与 Dash 即时起手](Validation/lock-on-indicator-dash-start-2026-10-13.md)：Designer 可编辑标记、画布恢复计时，正式 Profile 即时朝向；33 项原生、四模式九方向各 36 项及单人原流程 20 项验证。
 
-## 战斗后续设计（尚未实施）
+## 战斗扩展与后续设计
 
+- [灭音与暗涌／共鸣回路技能系统](Design/havoc-dark-surge.md)、[首版实施验证](Validation/havoc-dark-surge-2026-10-15.md)：已接入暗流燃料、灭音、强化五段、破命共享E冷却、20%湮灭增伤和HUD；[暗流回满调试命令](Validation/havoc-debug-fill-2026-10-15.md)。E换图标、重击和变奏仍暂缓，完整限制以验证报告为准。
+- [共鸣解放设计](Design/resonance-liberation.md)、[配置指南](Guides/resonance-liberation-configuration.md)、[实施验证](Validation/resonance-liberation-2026-10-15.md)：R键、充能与独立冷却、金刚体、固定范围命中和前半段电影镜头。
+- [共鸣技能配置](Guides/resonance-skill-configuration.md)、[共鸣图标与Layout接入](Guides/resonance-ability-icons.md)：E技能及E／R冷却、能量环与Experience扩展点配置。
 - [近战索敌与攻击吸附](Design/melee-attack-assist.md)：软索敌、手动锁定、起手转向、有限接近、真实命中边界、预测与空中追击衔接。
 
 攻击吸附仍为设计草案，相关接口尚未创建；受击核心的当前字段见受击配置手册，削韧仍只预留数值。
@@ -71,6 +80,8 @@ Design 并非全是未实现草案：各篇开头区分当前实现、历史设�
 
 ## 验证与维护
 
+- [架构审查与分阶段重构方案](Design/architecture-refactor-review-2026-10-15.md)：本机Lyra对照、维护热点、目标依赖图、R1～R8问题和阶段0～5验收；仅完成评审，尚未实施结构重构。
+- [项目开发准则](Development/development-standards.md)：中文注释、Lyra优先复用、单Runtime模块、生命周期、验证与提交约定。
 - [检测体与多段攻击验证](Validation/skill-hit-volumes-2026-10-06.md)：构建、原生、单人、100ms 联机、原技能保护与测试入口边界。
 - [跳跃衔接与死亡能力验证](Validation/jump-death-2026-10-06.md)：跳跃过渡修正；死亡事件/阶段已测试，互斥计数与 PIE 清理仍有错误。
 - [39 个正式资产迁入 Main](Validation/main-assets-migration-2026-10-06.md)：来源、目标、引用修正、备份与本次验证。

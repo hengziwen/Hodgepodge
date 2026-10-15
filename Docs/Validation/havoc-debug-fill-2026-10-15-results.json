@@ -1,0 +1,377 @@
+{
+  "command": "HodgeFillDarkFlow",
+  "date": "2026-10-15",
+  "native_tests": [
+    {
+      "name": "Hodge.ActionRequests.MoveCancel.AuthorityValidation",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.ActionRequests.MoveCancel.InvalidConfiguration",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.ActionRequests.MoveCancel.LateResultAndDeath",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.ActionRequests.MoveCancel.RouteAndPolicy",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.ActionRequests.AIIntentWithoutInputBinding",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.ActionRequests.BoundedHistoryAndShutdown",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.ActionRequests.BufferedIdentityAcrossMoveResolution",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.ActionRequests.HeldDeathPoseCompatibility",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.ActionRequests.IntentMappingAndBuffer",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.ActionRequests.StandaloneLifecycle",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.ActionRequests.SynchronousEndAndReentrancy",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.ActionRequests.ValidationAndRevocation",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.Combat.DetectionRouting",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.Combat.HitGeometry",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.Combat.HitProfileValidation",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.Combat.MeleeHitHistory",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.Combat.MeleeSpecContext",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.Combo.DefinitionGrant",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.Combo.GraphValidation",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.Combo.Retention",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.Combo.SessionRules",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.Havoc.AssetConfiguration",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.Havoc.DebugFill",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.Havoc.FuelClock",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.Havoc.GlobalProcGate",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.Havoc.HoldInput",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.Havoc.Resource",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.Havoc.SessionIntegration",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.Havoc.StateEffect",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.Havoc.VariantSelection",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.Resonance.DebugFill",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.Resonance.PhaseLedger",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.Resonance.PlayerStateBeforePawn",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.Resonance.ResourceAndCost",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.UI.AbilityIcon.Cooldown",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.UI.AbilityIcon.EnergyIndependent",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.UI.ClosedRootAndInvalidRequests",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.UI.DataSourceInactive",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.UI.LockOnIndicatorDesigner",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.UI.ManagerScope",
+      "state": "Success"
+    }
+  ],
+  "native_total": 40,
+  "succeeded_without_warnings": 25,
+  "succeeded_with_warnings": 15,
+  "failed": 0,
+  "runtime_suites": [
+    {
+      "mode": "single",
+      "passed": true,
+      "checks": [
+        {
+          "case": "正式初始化容量100且暗流0",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "case": "实际控制台使服务器与拥有者回满",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "case": "HUD同步满条且不自动入态",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "case": "只补当前玩家暗流",
+          "passed": true,
+          "detail": []
+        },
+        {
+          "case": "不会补充R能量",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "case": "重复回满不溢出",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "case": "E冷却未重置或清除",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "case": "正式灭音后暗流正在消耗",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "case": "暗涌中命令补满燃料",
+          "passed": true,
+          "detail": {
+            "server": 98.99999237060547,
+            "owner": 98.99999237060547
+          }
+        },
+        {
+          "case": "补能不重复施加Buff",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "case": "补满后仍按正常速率继续消耗",
+          "passed": true,
+          "detail": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "mode": "listen",
+      "passed": true,
+      "checks": [
+        {
+          "case": "正式初始化容量100且暗流0",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "case": "实际控制台使服务器与拥有者回满",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "case": "HUD同步满条且不自动入态",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "case": "只补当前玩家暗流",
+          "passed": true,
+          "detail": [
+            0.0
+          ]
+        },
+        {
+          "case": "不会补充R能量",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "case": "重复回满不溢出",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "case": "E冷却未重置或清除",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "case": "正式灭音后暗流正在消耗",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "case": "暗涌中命令补满燃料",
+          "passed": true,
+          "detail": {
+            "server": 98.96674346923828,
+            "owner": 98.96674346923828
+          }
+        },
+        {
+          "case": "补能不重复施加Buff",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "case": "补满后仍按正常速率继续消耗",
+          "passed": true,
+          "detail": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "mode": "dedicated",
+      "passed": true,
+      "checks": [
+        {
+          "case": "正式初始化容量100且暗流0",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "case": "实际控制台使服务器与拥有者回满",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "case": "HUD同步满条且不自动入态",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "case": "只补当前玩家暗流",
+          "passed": true,
+          "detail": [
+            0.0
+          ]
+        },
+        {
+          "case": "不会补充R能量",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "case": "重复回满不溢出",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "case": "E冷却未重置或清除",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "case": "正式灭音后暗流正在消耗",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "case": "暗涌中命令补满燃料",
+          "passed": true,
+          "detail": {
+            "server": 99.08770751953125,
+            "owner": 99.08770751953125
+          }
+        },
+        {
+          "case": "补能不重复施加Buff",
+          "passed": true,
+          "detail": null
+        },
+        {
+          "case": "补满后仍按正常速率继续消耗",
+          "passed": true,
+          "detail": null
+        }
+      ],
+      "error": null
+    }
+  ],
+  "runtime_assertions": 33,
+  "coverage": "用例覆盖；未生成源码行覆盖率",
+  "not_validated": [
+    "Shipping/Test构建宏关闭的实际编译验证",
+    "Cook、打包及独立专服"
+  ]
+}
