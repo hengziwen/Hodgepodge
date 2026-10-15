@@ -1,0 +1,2292 @@
+{
+  "schema": 1,
+  "installed_on": "2026-10-15",
+  "engine": "5.5.4",
+  "engine_root": "E:/UE/UE_5.5/Engine",
+  "lyra_root": "E:/Project/UProject/study/Epic/LyraStarterGame",
+  "adaptation": "source-guided-workflows",
+  "validation_scope": "local source anchors and adapted workflows; upstream code examples not ported or compile-certified",
+  "sources": [
+    {
+      "vendor": "quodsoler",
+      "repo": "quodsoler/unreal-engine-skills",
+      "branch": "main",
+      "commit": "f3742d7b688690810df369802b90430324e380b9",
+      "count": 31,
+      "files": {
+        "LICENSE": "5ab97d29a2c68d17b1a9400283b85836b5e3759dd893f377b6622dc732a3f357",
+        "README.md": "145845f92d160eef15d79687e8f642c923b2d32c9102776d1cf2dc999e80691e",
+        "skills/ue-actor-component-architecture/SKILL.md": "ba94a6cd2d456bc267ddf3d962b6f29c5a0ed0e76b1992931731da0ffaa635b5",
+        "skills/ue-actor-component-architecture/references/actor-lifecycle.md": "b1e35ef1a61ca1a4483d4cf2ca779e63e20e45a267538acf1b6724ba8fe26d0a",
+        "skills/ue-actor-component-architecture/references/component-types.md": "a069b8911a0125b5f0904f985c866fe2bf4a9b77440d28fcff94a31f564c1480",
+        "skills/ue-ai-navigation/SKILL.md": "6fbd18a43272d5b64724bd9572ad27166742c19a002f01fe0897d9849578aba1",
+        "skills/ue-ai-navigation/references/behavior-tree-patterns.md": "cd020ce5a8064e4e21cff85a588783ab096b4ddab43406124e26688ba121f5f2",
+        "skills/ue-ai-navigation/references/eqs-reference.md": "0bd1ad967ed48423a5d5c9154996e8903a9819bce16e738b27f5ede26fa849ea",
+        "skills/ue-animation-system/SKILL.md": "908909e0d765382ae496741c9e1b9a8980c19ef089c0a2f879f5ecb87b57ac26",
+        "skills/ue-animation-system/references/anim-notify-reference.md": "b30556683e592477a8f1edb7bfbbdc11b3e3c4c41117e9b38612da5b7c00aa24",
+        "skills/ue-animation-system/references/locomotion-setup.md": "e881c4f0b862315846bb43e4f885cce9a7e86e42b4b6675fc44f86e2e057593f",
+        "skills/ue-async-threading/SKILL.md": "8e728f4f68bb6d4b6cee2775da4fac672cdcd989213cdb1140315403b83aee05",
+        "skills/ue-async-threading/references/thread-safety-guide.md": "3b2be7cfe4d593ae42ff774e1d9d27c1f315d53d6379ef19cd1b5b65997d5c7c",
+        "skills/ue-async-threading/references/threading-patterns.md": "6a5a8d914685ab372e916934496f95893b7167d91cc7476298ad457a67a80306",
+        "skills/ue-audio-system/SKILL.md": "cea23f6254c0b1672c585aa9136b1b2317a988eaa0deae167634fb243318cd78",
+        "skills/ue-audio-system/references/audio-component-reference.md": "7dcf9b8b8f81c5e371eb61f3ca20c7b19e1efcfca37fa591956536ed3b6638a8",
+        "skills/ue-audio-system/references/audio-setup-patterns.md": "c6984b405c10b54ec5ee2d6168c64d81178fd43bea5968e5ad880ccdd4ebc8eb",
+        "skills/ue-blueprint-cpp-interop/SKILL.md": "c9e28acdfd39ea5c91d2f41f2bbf96c65b90d1273fd3f40c620828713f1486d6",
+        "skills/ue-blueprint-cpp-interop/references/blueprint-meta-specifiers.md": "60b70bbd0e65a5b3ee7b66dac927f7c759b12892b28eb121529e1f6282e950f7",
+        "skills/ue-blueprint-cpp-interop/references/blueprint-node-patterns.md": "58133517119af6378f4f480d8ea6f2cf8a8ca9429743f86cac5a7a196aa8007a",
+        "skills/ue-character-movement/SKILL.md": "e4d91fb3739f4aeb7f0c86809caeb5dc64e47bacebe0fb39c49248f364bd775f",
+        "skills/ue-character-movement/references/cmc-extension-patterns.md": "02ba149f7c0047cf3cf128654ba812c834f1b22db55d8eb756d7b485911c5dc0",
+        "skills/ue-character-movement/references/movement-pipeline.md": "fc4dfe308e53fca49dc533db4743dc7a5a49bc596d143c3539146ac961a68ab7",
+        "skills/ue-cpp-foundations/SKILL.md": "7d6c5cfd389172b23ff966a6b2025a0ec23529a59a2fbab6e56c0568e9c6b550",
+        "skills/ue-cpp-foundations/references/container-patterns.md": "6fc61761fc158888195efb8a8ee1f41542e8f3a4fc1d3a6cdc8ca549c9affa9a",
+        "skills/ue-cpp-foundations/references/delegate-patterns.md": "385f95a187d4ec6bcd559a325895afbd7f12a25b4743c211f6f108f78454683e",
+        "skills/ue-cpp-foundations/references/property-specifiers.md": "531d5f9723bf7d062ce98485af433eb6701fd1de47392dda358ded655bcc8c47",
+        "skills/ue-data-assets-tables/SKILL.md": "a5e88905b48e8e09a488488e2f45e3dbb25f9c476f6417e33be57b388fb0ab47",
+        "skills/ue-data-assets-tables/references/asset-loading-patterns.md": "1987def83d5c5352c10ec58a6a46c14d5364394319e1be184d7d4f1f5285096c",
+        "skills/ue-data-assets-tables/references/data-driven-design.md": "f876f33d4ec92ebcce961b63cddaecd0079bb127df29359b3e63bf8abf86c8b8",
+        "skills/ue-editor-tools/SKILL.md": "6e8b27bfc7081af3de8481e8a77877e27a39c411db8ac80fcfd712d6a7189d11",
+        "skills/ue-editor-tools/references/detail-customization-patterns.md": "6c42a871317fd5225519e03d7fd72021dba84b59f660388d7d3fd72ae183d1b6",
+        "skills/ue-editor-tools/references/editor-module-setup.md": "d2ba24e9cda66e1e3d3ce259b0157fc12bb0c714dc353f5bd6572886a8f9ebbf",
+        "skills/ue-game-features/SKILL.md": "d588fefcb5c9a0efa0c86d2d79375727722d62e7563ac6a8c4048d2f66b6ff8e",
+        "skills/ue-game-features/references/experience-system.md": "a6149a333d67a24382fc3b784bbc9940cadb1dd02ec82f5c525cf1e54b44413e",
+        "skills/ue-game-features/references/game-feature-patterns.md": "4ffe2ca6ebc19f6f9939f9660d8d6a031cd841c9311771ee874067318efc9a51",
+        "skills/ue-gameplay-abilities/SKILL.md": "212a0ab0730570ef86fb115efba0925afd26ed4a8b652204a1c519dbf07dab0e",
+        "skills/ue-gameplay-abilities/references/ability-task-reference.md": "c744ec6daa3d35b6c89db2671a6ec9ebba713d3517f6d472f92e7db0a36896e0",
+        "skills/ue-gameplay-abilities/references/gameplay-effect-reference.md": "f91a2dfb901e43eadaf3258f6687a726cf23ccefdb847e74c83b2dc2f964b158",
+        "skills/ue-gameplay-abilities/references/gas-setup-patterns.md": "f1effda479fb0fc965ed0a238c2648a5891ef927e553fa4626402c24e747839a",
+        "skills/ue-gameplay-cameras/SKILL.md": "a1a5add9dc1e1f9107fb300dde91c3d3067c1bdcaa855d6e3a0c70459c21b96a",
+        "skills/ue-gameplay-cameras/references/classic-camera-stack.md": "2d4376b3e80566ce21ed6b8617760747f2c31b11c1a7f4307754bbf0ca6c1f63",
+        "skills/ue-gameplay-cameras/references/gameplay-camera-system.md": "3661102b64081d60c69638c6b55bc0af82c9a046f6611f01b2131091626eed16",
+        "skills/ue-gameplay-framework/SKILL.md": "6c9b3d21c4a5692640599a59bf7d16e64792ee22f75b100eddec6f5283980413",
+        "skills/ue-gameplay-framework/references/framework-class-map.md": "e8a9206ad6fdf4a744e8057a1b93cd5e07cb6595ecb583dfc313f25cfb260714",
+        "skills/ue-gameplay-tags-messaging/SKILL.md": "236c774aa5ff5e9b85db9692e458c8295f9d75c517afc42a074e0457d2cc99f8",
+        "skills/ue-gameplay-tags-messaging/references/gameplay-messaging.md": "01e47c7696e42b421a5e6721d0733751e45de60ed78f8829754e0b1929ecd872",
+        "skills/ue-gameplay-tags-messaging/references/gameplay-tag-reference.md": "85248b0a1bfcebb8749af1d295d5ff042762d646db1fc8106268d11fdc4d4a2f",
+        "skills/ue-input-system/SKILL.md": "548f4d898751a7dee7a09437c040f67f9bb3bfe6893ebe4d87e797875d4a34bb",
+        "skills/ue-input-system/references/input-action-reference.md": "178eafafc566744252db22a74dbabb476abd482c3a3fe91d3b57704bead17f90",
+        "skills/ue-mass-entity/SKILL.md": "c89c4f26840a349034a15b19e7089edb6b3cd32f4009dd0d5971502c074bc20f",
+        "skills/ue-mass-entity/references/mass-entity-patterns.md": "c39bf5e072665d4364351d98325adf4592a0108dd2e7a159b5736d911bf3b33e",
+        "skills/ue-mass-entity/references/mass-fragment-reference.md": "c859ef21b5c0b979b8fa7db3505df135b82fa610dc5f2636c538fc5f338723fa",
+        "skills/ue-materials-rendering/SKILL.md": "ff708688124bffa3d92f4cd849255bc956f3da23ae96566f44c67b6491bbf0f6",
+        "skills/ue-materials-rendering/references/global-shaders-rdg.md": "70687c70a274641ced3f892e8bfa9c13ce921d9b2ed99d7e6fb3d42f62a9ac9e",
+        "skills/ue-materials-rendering/references/material-parameter-reference.md": "5d711f377adad1d5de2ea117532c829d5b4e853a5d40d0ecbd39d841cbcf59fa",
+        "skills/ue-materials-rendering/references/post-process-settings.md": "27c89c34e9555616bed60d28a9c4f22fdd4b72f834021947de4aee2b5ce78452",
+        "skills/ue-module-build-system/SKILL.md": "f73d2d5fdb0fae31012b7aa2633f4cee55e119b4ea19978df6c13f1395b8f1be",
+        "skills/ue-module-build-system/references/build-cs-reference.md": "bc5531f195c1ddf0d63c249462bf76d2845d959ca3365d752c7bd6520e3dbfb7",
+        "skills/ue-module-build-system/references/common-build-errors.md": "bf1ff10a9054e6c1f6b70058aff10f3b9e802c753ccb3466340092e5b1942cf5",
+        "skills/ue-mover/SKILL.md": "66514eea2001bd5012a0957143500632d324e08964d19d0992a7583cd0b5eb2a",
+        "skills/ue-mover/references/mover-recipes.md": "adde9bb624945035f9fad21e0c1ff95a8383f366aed708b9537e46fd52aadad7",
+        "skills/ue-mover/references/mover-reference.md": "dc2a99bb9e23bafffd1e4173e4d376a6d67c38a09935160bd74c02a1eb64f212",
+        "skills/ue-networking-replication/SKILL.md": "fb9bb8192da0da19a56507a2a91fa97378a5350266145083374c9bca27e6cd55",
+        "skills/ue-networking-replication/references/replication-patterns.md": "0b0d543c657663439edc81ed4b85bf00e1ec4ea5f598ecc14021d4fd08f7526e",
+        "skills/ue-networking-replication/references/rpc-decision-guide.md": "3310873d471ce039ca21e822d829778555e516014e194acbc03841cb5bb62948",
+        "skills/ue-niagara-effects/SKILL.md": "e42ef34b9fd1a29be4b0326d9a4878143585cfbc2b902ad98deee70751888b2d",
+        "skills/ue-niagara-effects/references/niagara-data-interfaces.md": "22949681b5ed59ee606bd62882a3c5e05aa4b14731247c929fbbf7b0eddbb1e9",
+        "skills/ue-niagara-effects/references/niagara-parameter-types.md": "eaed3449031a6dc34774480f5e841d66330f6fde202948fcdb44f81698743227",
+        "skills/ue-physics-collision/SKILL.md": "f1acd3813365d3e3d7e98ee0d280c7798b5873ba96d72d3d466c0a3506470f08",
+        "skills/ue-physics-collision/references/collision-channel-setup.md": "e949b9fb0162095d0dcbdde8256595c263bf211cabaf2a246bc921c354a953a8",
+        "skills/ue-physics-collision/references/trace-patterns.md": "b3c139b0cb90854b4f75f87ea9b1baf3ce6bd36972f14a03a42935d5e1faf595",
+        "skills/ue-procedural-generation/SKILL.md": "128b7a49d8288922aa2c636d9aa85553fd50f79d0a7446e01f8f356ca82f9d1e",
+        "skills/ue-procedural-generation/references/pcg-node-reference.md": "c4a37e886cf349ddf71e1167081f21508e106fc1a015cf8e82b170a5e7503ccb",
+        "skills/ue-procedural-generation/references/procedural-mesh-patterns.md": "8e26768f84a97ac6c1b1550f0a6a5bfd401db050fb6e694a41a02d7da5513be8",
+        "skills/ue-project-context/SKILL.md": "69766ff96f466fdeb86ce1708361afdb2de8ffd8113c83b672be599e875f6b7c",
+        "skills/ue-sequencer-cinematics/SKILL.md": "2ecbf1d71d741725493f56576a1f1e9cb68b2cc2449b176b9002fd7a608a2661",
+        "skills/ue-sequencer-cinematics/references/sequencer-patterns.md": "a923274040110b8c62ff4bab3825f572552c1966784d9831567f6213e63e6592",
+        "skills/ue-serialization-savegames/SKILL.md": "2b17e7e40d6038c379c08f25247cd8cc18b04c87f36ddf240fca8bd7eb337718",
+        "skills/ue-serialization-savegames/references/save-system-architecture.md": "671876fa579ce878252e7a91afcf2c64cb25808180da3bc9e45381692b52bdda",
+        "skills/ue-state-trees/SKILL.md": "715a9fac48da6610ca91f5dc0ef0e2462d0c23ea1f24ac8c454049e0e2f0148f",
+        "skills/ue-state-trees/references/state-tree-mass-integration.md": "9e0df84985ffa1cbeb7a20fdd7de541fa2f14ce5acaa4ba823c1425c5beeac85",
+        "skills/ue-state-trees/references/state-tree-patterns.md": "3f32927617120364620d0233ade0f92031381a39fe665f36d28d09a1670b46b6",
+        "skills/ue-testing-debugging/SKILL.md": "a486848b5f88095f4b1e649ad1ffb73f17ab80b51f9a3afa4886629c0e7cfdd6",
+        "skills/ue-testing-debugging/references/automation-test-patterns.md": "9dc8d33090d60db1350ac7f756b948500a602126d46979ba56827994818dc7de",
+        "skills/ue-testing-debugging/references/profiling-commands.md": "ebd53693a9fabb0012f22ec62a220f0ff7a7d83af5b52504160875cf9d64d506",
+        "skills/ue-ui-umg-slate/SKILL.md": "db75a03feda52407bf099e37e4e5363e36e331f5faf3cf820071f15b44a16b06",
+        "skills/ue-ui-umg-slate/references/common-ui-setup.md": "5c8674e430fb06ea7b31772d91ba5d294ad0493afcdd0aa8fb4b493750af0e89",
+        "skills/ue-ui-umg-slate/references/slate-patterns.md": "073a1e7d61ffedfddd828002564eef689add5f283541ed373404165319ad7392",
+        "skills/ue-ui-umg-slate/references/widget-types.md": "44a27000bd36ab2c503e9c2382ed93b3121f51b11c0859c02ec51ba405ac17f5",
+        "skills/ue-world-level-streaming/SKILL.md": "a62f671000c79391d61c6f5b4d3d3c0049e9d71a7d1be8060f2b73b86bcc179f",
+        "skills/ue-world-level-streaming/references/streaming-patterns.md": "1c2c3439140c95860739fc62f61e125a49d7481bcad6ef7fb4b0a6209ebbdce9"
+      },
+      "licenses": [
+        "LICENSE"
+      ]
+    },
+    {
+      "vendor": "kevinpbuckley",
+      "repo": "kevinpbuckley/unreal-engine-skills",
+      "branch": "master",
+      "commit": "b22b11d0a46bac2d55eae8d3273d2ef22c08a95d",
+      "count": 74,
+      "files": {
+        "README.md": "ccd6aed6640b251a81f66aee5e3831d65e75bb575dd79092221dadda8a74d0e0",
+        "skills/core/ue-actors-and-components/SKILL.md": "c90944d6272848ffc2d4eb06bb18f914560bb9826cee50f8fad3c91fe7e69bf7",
+        "skills/core/ue-actors-and-components/references/actor-lifecycle.md": "ca4a820f8a158147966f4f253ff93c6f06db46ae0e73a97daef37e3e6e6f6e0e",
+        "skills/core/ue-actors-and-components/references/attachment-and-transforms.md": "4b6abbf358e8ad0262707173154ae614bd8caa549583a92e3c7b567aac29d04b",
+        "skills/core/ue-actors-and-components/references/components-and-registration.md": "8eb86ac4290aaaef41108b1593fb3563e9902dcc86dcf5ccae6d8787e5506cc9",
+        "skills/core/ue-actors-and-components/references/spawning-and-destroying.md": "2e29f71f443ed5124df17a5492c24ced68c23a3b12acb63896b34855339dcd27",
+        "skills/core/ue-ai-and-navigation/SKILL.md": "bf7f3db0dfc80fcd4e8334bc1dc982ec1944555a7b74e23b482f9d8687d6d0b3",
+        "skills/core/ue-ai-and-navigation/references/behavior-tree-deep-dive.md": "42f7b86f1304756b75479798cc3d690186f91ab0f2d25e98ab3bf89189de656f",
+        "skills/core/ue-ai-and-navigation/references/eqs-deep-dive.md": "b7e8e3d0c995f37a0bb9982f0eec5fd765b64ac2ac7bbc3c76599fac1b4f8695",
+        "skills/core/ue-ai-and-navigation/references/navigation-deep-dive.md": "9808c94657ad959bc42baa3b9828024dbb63b0cc75547549e6da9d39abffcca0",
+        "skills/core/ue-ai-and-navigation/references/perception-and-statetree.md": "9250f64411426b38b0c3d610d8bd999704fb100fd7e87fb37727ac6f0d1a9416",
+        "skills/core/ue-animation-system/SKILL.md": "3a24c72f8b764fb02181940cd283b73b46ea9bfdbcd22e83201b0ad9524e417a",
+        "skills/core/ue-animation-system/references/anim-instance-and-update.md": "20ecba1d947ade1a7a347c6af17f9a98ca3d1658397d30ac399da24cff52ea05",
+        "skills/core/ue-animation-system/references/montages-and-slots.md": "94d7277b04954e0b4a3f24986cfba12d5bf823910b885d5d6ba6068a22532d2d",
+        "skills/core/ue-animation-system/references/motion-matching-and-warping.md": "08dc18d3e434ff0c3ed10bffdc51c12e6e74cabd282ca0753c3cde38990fbeb6",
+        "skills/core/ue-animation-system/references/state-machines-and-blending.md": "8d3b3ac510aa046ccab2349bd0c92905278011e141120b0618e61872bd02451f",
+        "skills/core/ue-asset-management/SKILL.md": "f1f5b200fe3320901465805b760d1aa294667b4a009e9335b9b542378e662f51",
+        "skills/core/ue-asset-management/references/asset-manager-and-bundles.md": "49696282a76e47db3ee7c9212b41e775c838ebeb2129e0c8580a812a83e58916",
+        "skills/core/ue-asset-management/references/asset-registry.md": "f590ba204939f7e1e212e1dc95b37688e49c1cc6788741c30312875d7d9a1953",
+        "skills/core/ue-asset-management/references/streamable-manager.md": "7035be7ebc1b89e8103c6d701a2f851cda351ac965e9bfe1ab6a49f3cca70808",
+        "skills/core/ue-audio-and-metasounds/SKILL.md": "ca297391e6bddd259734055e4349f9eb25b6e4d6856d594161cf440b12996ab2",
+        "skills/core/ue-audio-and-metasounds/references/attenuation-and-spatialization.md": "b758fb50160cce8db1f65bab51536a5360c552aa8ad3c33ecc08664708aa0e9c",
+        "skills/core/ue-audio-and-metasounds/references/audiocomponent-and-playback.md": "3c417136ba8073c19664f2a6fa1504e45a9f65f2bfccebdacf7d1ec49389e937",
+        "skills/core/ue-audio-and-metasounds/references/metasound-parameters-and-builder.md": "144e6af661c2bc5c619489214c70f0c910895ab9aa6817792986611fdd959a17",
+        "skills/core/ue-audio-and-metasounds/references/mixing-classes-submixes-concurrency.md": "6e2572730c3f4aa7999dc7c2a04b4f5b3999bcafc65d5efe3e6d3f94bec7ed18",
+        "skills/core/ue-auto-landscape-materials/SKILL.md": "7e5d2335997553b4144aec28bfec416138c454be70ae00365b331c47d27b3ad5",
+        "skills/core/ue-automation-and-testing/SKILL.md": "b1410bfef07b4ac1ea19adf904b4ae0ef50d844c9309f058971f0c278d8e9e8d",
+        "skills/core/ue-automation-and-testing/references/flags-and-ci.md": "d97bb775bc941fe0dcd15d157567d2fefd37a8f5b021dfc613a06741b25eb694",
+        "skills/core/ue-automation-and-testing/references/functional-tests.md": "2f248cb3d694b96ba9f466c304ddabb00d7c63ea0acce7e090930a1e188b7da5",
+        "skills/core/ue-automation-and-testing/references/low-level-tests.md": "94d0f07a1b53e507367fdbbb7dacd9b203bd111501e49d2d7cf0f20ea2f831e0",
+        "skills/core/ue-automation-and-testing/references/spec-and-latent-commands.md": "8e3ee7c77e9d3469ab9707b204efcd922fa139486ea78bb9ec6c3eea6c51689b",
+        "skills/core/ue-blueprint-cpp-integration/SKILL.md": "1bb1a0d82a7d6d28499199e1493b96f8482243e3969426e9433de8e2da0173e1",
+        "skills/core/ue-blueprint-cpp-integration/references/blueprint-interfaces.md": "47ae29e7b13ebc1092b296d92baf47b066e7006e6ea6cc943679f426819082dc",
+        "skills/core/ue-blueprint-cpp-integration/references/ufunction-specifiers.md": "2cb77419b3b31ec17b0385217c4ae119f35ff08d5bfcd9f25881306380505ff2",
+        "skills/core/ue-blueprint-cpp-integration/references/uproperty-specifiers.md": "57910ee7a2d686f1c4b05b2c1d5fb6c5147099c8a9c8fa36127f6f27f8a5c394",
+        "skills/core/ue-blueprint-fundamentals/SKILL.md": "aff27a8a99b3b85713312f7feb998615d482718ed05029ad70f48a519c200349",
+        "skills/core/ue-blueprint-fundamentals/references/blueprint-class-and-generated-class.md": "7b2d41a8cc5ef2801f9d90142236056deef6d50e99b62c139ca59de268b0aecc",
+        "skills/core/ue-blueprint-fundamentals/references/cpp-blueprint-boundary.md": "6afa6da142cbdfcc0c48fdc450a80dd49e0510dfe85a4250828b78501f0c4668",
+        "skills/core/ue-blueprint-fundamentals/references/graphs-variables-and-components.md": "c348cbba61eb7f549f4d579cf95bf012dae94b99f51b5786fd4ead029636fdb2",
+        "skills/core/ue-character-and-movement/SKILL.md": "9f515e04f7d3d21377d1ac62db6f9fd2949ccba58fc6f203ab945a29072a0071",
+        "skills/core/ue-character-and-movement/references/movement-modes-and-custom.md": "77fe45f514c53f66062b458bed68ecd8e9a151c0efd344519732bb1ea4f171da",
+        "skills/core/ue-character-and-movement/references/networked-movement.md": "e7847c9d4f7148ce2b7cc3e778f5578b3e29ac36a84244dc2d5a54370efdc523",
+        "skills/core/ue-character-and-movement/references/root-motion-and-launch.md": "6fb66217f73091f5855d05f3fe1bcfbf554be5ed85e8993615b70f0c3972c34d",
+        "skills/core/ue-coding-standards/SKILL.md": "8caedeff41f6e78557bb572d432f3a0dafe49690634e3e4bc7094cb35c2ceffa",
+        "skills/core/ue-coding-standards/references/formatting-and-includes.md": "0ad713fe4a5966df41ca10c05e194af311f40245da7e6c98b00ab28f26482803",
+        "skills/core/ue-coding-standards/references/naming-conventions.md": "561220e5676e7d6c501f1de7a4249086ba966895767c83d6b1a9859e8ac8b1dd",
+        "skills/core/ue-coding-standards/references/reflection-and-uht.md": "e1c0eefe8f21cc9b2564f295edd65d92961bdfc8ce3c3498cbbc3ef2c6ba36ea",
+        "skills/core/ue-control-rig-and-ik/SKILL.md": "e6377698cc3e7257be5d44ec86211d61f58e6f1a41a7c161360c88cb09a358fe",
+        "skills/core/ue-control-rig-and-ik/references/animgraph-ik-nodes.md": "7e42bec04a1a396e7ed789f54700a8387089b552dbd4bfa611746dd2593cb07e",
+        "skills/core/ue-control-rig-and-ik/references/control-rig-graph.md": "4ece84aade860333577c9f28ec1f0726c6bb7b5f8222e6f3ee27872ccdfba891",
+        "skills/core/ue-control-rig-and-ik/references/ik-retargeter.md": "cb1a7416c2fd57eb243cb43bf1e10cbfeaea6e303f1f591a7fd16fe1fe77dc4f",
+        "skills/core/ue-core-types-and-containers/SKILL.md": "bc10bb3036892b4348eca00ec854d66e9888b5ee11d394c2523b5f07226ed793",
+        "skills/core/ue-core-types-and-containers/references/containers.md": "36a7e031db240193207282d450a28c682ce1236664d7cbac9d5b50df50156b1d",
+        "skills/core/ue-core-types-and-containers/references/math-types.md": "4a1ef4c76d7b3bc7c7445426635c2d14937212e3852cf264e8c13b6bf63f1f1b",
+        "skills/core/ue-core-types-and-containers/references/strings-and-text.md": "bb34114bcaca8d3a42e9bee9957debd19cf59872009b7625f3758bc2251e587d",
+        "skills/core/ue-core-types-and-containers/references/utility-types.md": "af457758050e2af6aa8954e15c723b0049574afb23e165ae5add51bee1329823",
+        "skills/core/ue-cpp-fundamentals/SKILL.md": "5b3bbc6c8f31a95d2192cbe016e94da142cefa77831ae6f28e2114f09e1c58bc",
+        "skills/core/ue-cpp-fundamentals/references/object-creation-and-gc.md": "60b0c5272718a077855bda3404db165b3a266e60ee1729ca42be0d8c27bc970b",
+        "skills/core/ue-cpp-fundamentals/references/reflection-macros.md": "e06d1d4ec752a70a00d7c83884fdc50c603a98ee396266479080e99557e5f9e8",
+        "skills/core/ue-cpp-fundamentals/references/uobject-lifecycle-and-cdo.md": "674e3033cd129ab851255a15ce3eebcada4d5f78275fbbbbb01be71af80bbf05",
+        "skills/core/ue-data-driven-design/SKILL.md": "b9d16aeda410f1bf531d7fff15fc2f6ba0d9ad0cba1754562f8fdf14d24dcb25",
+        "skills/core/ue-data-driven-design/references/config-and-developer-settings.md": "4d45cba9a487500174034e6037b347eafa35178951d421ca6c143cec0042b14f",
+        "skills/core/ue-data-driven-design/references/curves-and-runtime-data.md": "086ee37e0d46f72abfdc602ae90ca813b6dcbb19c56a9782c1e5c38361242679",
+        "skills/core/ue-data-driven-design/references/data-assets-and-validation.md": "b888657940890815348d7d5f1eb834b8c9c66abea6b8d599c8c4bc9cc2c23e7a",
+        "skills/core/ue-data-driven-design/references/datatables-and-composite.md": "0f7cf1dbb0175e7daae6e063b01da4f1d3f2331b2869e4d5cf1ba66e88f81403",
+        "skills/core/ue-debugging-techniques/SKILL.md": "05ce14734ee1bcc17787904c6169415629627957cca281c0e2d585c83e29109f",
+        "skills/core/ue-debugging-techniques/references/draw-debug-and-console.md": "e5f9966ec6a8b5df1fe575a8eeac37c4301100cfd471a46201e621a22fd6e936",
+        "skills/core/ue-debugging-techniques/references/gameplay-debugger.md": "039ee90920fe9d38aa5bb48589374a0f978a093d97c814ec52c7f04b2d06c61d",
+        "skills/core/ue-debugging-techniques/references/visual-logger.md": "d72a77956cab14b1bb8b2303a1a7a0cc5870bf3c815f62ab4f3aa995217ddd57",
+        "skills/core/ue-delegates-and-events/SKILL.md": "a78ca829caa1e5c8b5321cefd29aa1cc644b13838f4e40e683e4ebb67801ea53",
+        "skills/core/ue-delegates-and-events/references/binding-and-lifetime.md": "fb04379559281509a6c188be100972c21084b5d41fb630f8cd72a8bad0d8d63d",
+        "skills/core/ue-delegates-and-events/references/delegate-types-matrix.md": "efd26b936d91bcc4ba8e62c8427bf1a1ba66312990a5ff7a28ae810c0dd6bedb",
+        "skills/core/ue-delegates-and-events/references/dynamic-and-blueprint.md": "bd61e32b4a416aea8c5016359e5fa3e5e90c6230e291b69098c4f88c95bda36e",
+        "skills/core/ue-editor-scripting-and-python/SKILL.md": "66961a8662e66e46e7fd555395de228c4b7fc674dbe4ef14c690b9782416996a",
+        "skills/core/ue-editor-scripting-and-python/references/editor-subsystems.md": "9255387faf7383123feed05d09c9c0429311ec99516e15b43ee601d5e398b678",
+        "skills/core/ue-editor-scripting-and-python/references/editor-utility-widgets.md": "64eed8ee1d0152903a3306ed56cd6b3f8aec8124ba1bc784a885ac1e25c462b2",
+        "skills/core/ue-editor-scripting-and-python/references/python-api.md": "105a9b55668948305e0a7578fe0b744ec020e5412ac8126007637b9df8915a04",
+        "skills/core/ue-enhanced-input/SKILL.md": "eab4557e653c07f4a298ca3443b40fc1f654a98104b37b43c20c70946da787bf",
+        "skills/core/ue-enhanced-input/references/actions-and-contexts.md": "0d3612694e8acdaa9c19b0a4a73dd262e5f4f4dd1524eeede41abfe854eaf64a",
+        "skills/core/ue-enhanced-input/references/binding-and-setup.md": "ec196c4d89ea6b6568e3b77876813f5b8c6181962a973d184d4de38c881a87ea",
+        "skills/core/ue-enhanced-input/references/modifiers-and-triggers.md": "0df8119475371d9a80582b2993933b051703343f8a074dac9eae5b860c4abfcb",
+        "skills/core/ue-game-thread-performance/SKILL.md": "6ba938519fc79fcd4148cac379aacf12b0dbdbfba7fdbf64b1efaabb643de460",
+        "skills/core/ue-gameplay-ability-system/SKILL.md": "f2c9296d60a80a9a2b7a5f0303430319f5f31da6093b1e7f89c6ff5313b6152c",
+        "skills/core/ue-gameplay-ability-system/references/ability-system-component.md": "1f62d884ab9feac44ec9fe743d84b69095883639f718f472b60a670956673d38",
+        "skills/core/ue-gameplay-ability-system/references/ability-tasks-and-cues.md": "fa4ed6ebe90c9232cdbfcdd7eb38a6cce533fd60a2533a7401f68062e3954829",
+        "skills/core/ue-gameplay-ability-system/references/attributes-and-effects.md": "8efb0af5c3d4de62c2dbd86cd86a128f30eca0f66b39991eef9437c8f6f21590",
+        "skills/core/ue-gameplay-ability-system/references/gameplay-abilities.md": "7b0a56b677c66df5aca38f4f0bb84548bd6ef1d3a6a4235e5a35a52546edf576",
+        "skills/core/ue-gameplay-architecture-planning/SKILL.md": "a314a0af08ad31af5f6f13fd991f70a6060afe457e3736566b995b76add3b980",
+        "skills/core/ue-gameplay-architecture-planning/references/decision-matrices.md": "299bbd5ddc73660452cb82cda572ff390a2b7a1597ebf5836f71ce9c25231a80",
+        "skills/core/ue-gameplay-framework/SKILL.md": "95f4062de090a46aba6b830ca23448a3e8f7ea6c502082663507fd913e59af1b",
+        "skills/core/ue-gameplay-framework/references/controllers-and-pawns.md": "314956c32dec1621a71e278be9b54c7de965d8a6a5c97dc08f4f68ed23390425",
+        "skills/core/ue-gameplay-framework/references/gamemode-and-state.md": "e22343d58e29786d4a8cf78a037523157c310a14570ed7b5b459308a04981245",
+        "skills/core/ue-gameplay-framework/references/init-and-login-flow.md": "d10f12be9a699c1a2538ca486993c6f42283a67dc947d51fc764e4e600220d2f",
+        "skills/core/ue-gameplay-tags/SKILL.md": "04d6dc14a88c58701ddf7757bed0d51f13e9bc6f0beb322f069ba6d040e9063f",
+        "skills/core/ue-gameplay-tags/references/containers-and-queries.md": "793d1a2bfab4dd11220bb8493a0a975e19f5fcb8929674aa68e17f092bab7f50",
+        "skills/core/ue-gameplay-tags/references/native-tags.md": "82d29079953d64b59a48ea88b7751795aacc8b0667287724828a8801787c9050",
+        "skills/core/ue-gameplay-tags/references/tag-driven-patterns.md": "ff8304b6d34190278a9faa2d3112277c43ec7b725dfa66270da48c05d0ecb81f",
+        "skills/core/ue-importing-content/SKILL.md": "ffeefdb77f1c38a226a1461559ee0563c352a0bf690144a4caad8d4a1ae65044",
+        "skills/core/ue-importing-content/references/interchange-framework.md": "aa22977cd6ffa657ec18ca23feff2654e52816161b9a539d087c30b898adc462",
+        "skills/core/ue-importing-content/references/mesh-and-texture-import.md": "db079e9fdc868b82a96ff4f615c6613ff954b76260f36109922850137fa51e50",
+        "skills/core/ue-importing-content/references/organic-surfaces-and-material-sections.md": "e2421f7ec7ecc7b183cbec109790592f9c16ca4294058f1faccfa4907c9ad88a",
+        "skills/core/ue-importing-content/references/reimport-and-import-data.md": "34d1e117b45ecaea5724f71e422ff55cffc90553b9eb25a90fc676921e783378",
+        "skills/core/ue-landscape-and-foliage/SKILL.md": "b67b96374c5b01b1ab280a518f5414d519316ee701c37693d98d070362913508",
+        "skills/core/ue-landscape-and-foliage/references/foliage-and-hism.md": "b502243c27d0396db54902e3fb7b997ffeaf5029ff0f18131edcbed982695fbb",
+        "skills/core/ue-landscape-and-foliage/references/landscape.md": "19dab5a594c9299c6d4adb991be4cd4b210b4e356b545ffa4b8baf502a9137fa",
+        "skills/core/ue-landscape-and-foliage/references/pcg.md": "391d8e62c2b1892018357584be16f653161e547056fe77c8404d15fda823658c",
+        "skills/core/ue-landscape-rvt-and-grass/SKILL.md": "6be4926627705442beff33ff0dd5cfcdefa2820797f41b688e8cb24e2f34dfa1",
+        "skills/core/ue-levels-and-world-partition/SKILL.md": "809fbcdfbff46e26f1bb33a9d3b52f197ec7efcd2d57abeb40f8d357e383cb70",
+        "skills/core/ue-levels-and-world-partition/references/data-layers-and-hlod.md": "0c7951993fe57f8b419ef7dcceb000367de9b9f52861552705a97cc78d7d7721",
+        "skills/core/ue-levels-and-world-partition/references/level-instances.md": "57cdb96d75174455b70498140284852653be68c7aa1f1869990d51bb324f5b16",
+        "skills/core/ue-levels-and-world-partition/references/world-partition-streaming.md": "33503d32da19a62bfb14c1db0953e2d45fe7e56034c01ea60b2907d7f2b643e2",
+        "skills/core/ue-lighting-and-lumen/SKILL.md": "846bd91350ae226ef76786c15d60061bf8f5f0479030d609ae3f200b709f64ca",
+        "skills/core/ue-lighting-and-lumen/references/light-components-and-mobility.md": "9802c4ddb1c26ab83b74c71ac606ac311b6249631d83b787115a7573ca8d9d84",
+        "skills/core/ue-lighting-and-lumen/references/lumen-gi-and-reflections.md": "080bac54a68a0726a1b6abf918effae2de6ab3c22bc71ffdf64ec7970530a11f",
+        "skills/core/ue-lighting-and-lumen/references/shadows-and-postprocess.md": "5bd29d27e4ad8e369f900e76d069377f57736cfaa527392962cedb745ec3faf3",
+        "skills/core/ue-logging-and-assertions/SKILL.md": "d8fc8fc55dc65f1814ab1473ac4f89423be7014ccd8ae836887c0e38c03a242a",
+        "skills/core/ue-logging-and-assertions/references/assertions.md": "9658875564d585c01e1a6fcbfff5314cdc49502eadab6aa6662b499f8a515287",
+        "skills/core/ue-logging-and-assertions/references/log-categories-and-verbosity.md": "1c3a0f41fad7444f4ddd3b1034b6448757bf2b2a6b1851a006ba039a809bbf0d",
+        "skills/core/ue-logging-and-assertions/references/structured-logging.md": "e73c62bd5bc69a965bc6235b79b7c8ed51083dbbe5c6224645936503300b5b4e",
+        "skills/core/ue-master-material-authoring/SKILL.md": "4cb99fd2318d273d398750bd49b7d96a9cd70095ac34217bfaadb1f0d4605471",
+        "skills/core/ue-material-graph-effects/SKILL.md": "ed5f95a0fcb6f8b1952bfac0c83a800536dd7f40f83c0cb12da4a98c572a2a60",
+        "skills/core/ue-material-graph-effects/references/prismatiscape-interaction.md": "db74ae3510f0d26e783d549bbd64445f806e6df326195085fbe8ad3e1ee113dd",
+        "skills/core/ue-material-graph-effects/references/rooted-plant-interaction.md": "cb75a8a4f4ac39245150b4b88177c4f851e0310ae9f465a0709d083d6f454425",
+        "skills/core/ue-materials-and-shaders/SKILL.md": "83baef5d348df6966386a1369d7a0d9b04cdfed464ce50e76c92d28bb5346e8b",
+        "skills/core/ue-materials-and-shaders/references/material-cpp-and-collections.md": "d4d03662c09896ddb34765120d0e0c156f0e41ffb0db405c1043587d8ee5b200",
+        "skills/core/ue-materials-and-shaders/references/material-graph-and-domains.md": "b080bb9fb7e9e13d3364c46dd315b6b1b81ec9198b89e6a82c0090a1d5322701",
+        "skills/core/ue-materials-and-shaders/references/material-instances-and-parameters.md": "b9cc40578885bb4edee2ebe0cc574657e60d0fa34eea16f908969f0e4298979d",
+        "skills/core/ue-memory-and-gc/SKILL.md": "78c7dd6050ffb6c1f30ba09917415cf011dd66a3e650980aad6147015ac69157",
+        "skills/core/ue-memory-and-gc/references/object-pointer-types.md": "2a4e440655f78027d4aefa8f7d7b213353192f3490ef37e648115356ed419325",
+        "skills/core/ue-memory-and-gc/references/smart-pointers.md": "176225608f6a4956abf79292eb9fe0466d2e309c0965a32330d56f2401283e89",
+        "skills/core/ue-memory-and-gc/references/uobject-gc-and-roots.md": "e9f067e67f9ae35a75c34dc954dac47722b8a61c377bec137af95400316b9c90",
+        "skills/core/ue-meshes-static-and-skeletal/SKILL.md": "e986b8e8168f3387369160f9b5ce5a5594e5c2034615ea523d7a0eca224d536b",
+        "skills/core/ue-meshes-static-and-skeletal/references/instanced-meshes.md": "542496e294bfbff8ba0da745fc301e3fb94a2dd7e20f137732b839f340ae9ee0",
+        "skills/core/ue-meshes-static-and-skeletal/references/materials-lods-collision.md": "37c4cf77dab7babd92aa988d13dcf2e599b0215ef07d8fd168f79cca1ed2f152",
+        "skills/core/ue-meshes-static-and-skeletal/references/skeletal-meshes.md": "6d95a44eb3634ecd242baf413795d840ccee671c80fb0a975a1533241536f262",
+        "skills/core/ue-meshes-static-and-skeletal/references/static-meshes.md": "8b0b06d1a6c68e4a85eb331ccb0ac929d58157f77f39afa96b516925ffb1e047",
+        "skills/core/ue-module-and-build-system/SKILL.md": "69f62866e848b6ff4f0f54cc8de886f5ee3c46e5f06b10e5f33002917141934b",
+        "skills/core/ue-module-and-build-system/references/build-cs-reference.md": "69c452f234d792efaf2c6deac08b6c52999a7d2501457ff957dbc5dcca498a89",
+        "skills/core/ue-module-and-build-system/references/module-cpp-and-phases.md": "755d6bc53b65adaeca39974553f563f942994dc514d62cd0e1dde52552a46ef4",
+        "skills/core/ue-module-and-build-system/references/target-cs-reference.md": "fea37fd80a49f107e2ded6270ffa233379f2ad32eb041ad382ecec5e4805ca54",
+        "skills/core/ue-mover-movement-system/SKILL.md": "b1330884887c4a2e5340bd9bfd60f8212ae8fcbf0611bc32a27c39e812b32b2e",
+        "skills/core/ue-mover-movement-system/references/layered-moves-and-instant-effects.md": "6fa3d99d7c229a9a4e454148e2843de2431d7811556dfd0244725b49c200a67e",
+        "skills/core/ue-mover-movement-system/references/modes-transitions-and-modifiers.md": "06acf73d72c718c1b298cd31ed9c3f6c1b96ed625d74872df97ff4581a9cbe1e",
+        "skills/core/ue-mover-movement-system/references/networking-and-backends.md": "8a0abd11f61974bab962154422a71117d24b02d6752e22c18dd57e46f9cfac08",
+        "skills/core/ue-nanite-and-rendering/SKILL.md": "cfe960615f7ec82369253630e896facd506297b6e3f6dd0e70c0ab0f3cd11f9d",
+        "skills/core/ue-nanite-and-rendering/references/nanite.md": "b646ced82a5f99b6c6cf9477ffa36fccbb943b0610e71408408559e82ca43222",
+        "skills/core/ue-nanite-and-rendering/references/rendering-pipeline.md": "542f35841774bd18e4b007ac71ceb34d362a6059c3b8b922fa5e3cfea8c7b070",
+        "skills/core/ue-nanite-and-rendering/references/virtual-textures-and-shadows.md": "17fecf55ee22a91b2dbac66a60bd97d1754d83609886d2f57e09a50e01e65697",
+        "skills/core/ue-navigating-engine-source/SKILL.md": "a55ad867734a7e16de7d59fc055dfd08be8f1bdad9df2180f4c38eb99419e1e1",
+        "skills/core/ue-navigating-engine-source/references/finding-apis.md": "2ab7b62aec7482f04b564c57c3e3a3e93d66c98468236739bfe2a922ec647399",
+        "skills/core/ue-navigating-engine-source/references/module-map.md": "f433135a8f6e8a45d379630f109f74f2e0eb6b03af8d42410664ffbe1f301170",
+        "skills/core/ue-navigating-engine-source/references/source-conventions.md": "88b63a79b6d861509b4972131a0e8feabe9be9e45bee16236c99204c85a15a97",
+        "skills/core/ue-networking-and-replication/SKILL.md": "631fbbd9e4085bfc186799c8b3a2e81013f154b24e49a911295a94e160948604",
+        "skills/core/ue-networking-and-replication/references/fast-arrays.md": "62c3cf5a6fa5cfe01a8ec5278c2befe3174cb5b61c31eba18d1aa20802f93c6a",
+        "skills/core/ue-networking-and-replication/references/property-replication.md": "6c3225676149c7cc2fda0c405c887aa893028fa5f7554ae3c7ad95abafdb10c0",
+        "skills/core/ue-networking-and-replication/references/replication-conditions-and-push-model.md": "d742cdcb34682ebb342d8c4ce1070aa14663c550edba0e54df9767063dab738e",
+        "skills/core/ue-networking-and-replication/references/rpcs.md": "08b564ab8162f1cef504954e09d2dbe05ba5ef3688da067cb4c79e4ab7201fce",
+        "skills/core/ue-niagara-custom-modules/SKILL.md": "c2f36c20b0a6bb9576630e69dce60b113235aa295f561d05f77ae993e0341e0b",
+        "skills/core/ue-niagara-flamethrower/SKILL.md": "b3e3bf759eaacedfcb4b98c4124374cc4705002f33b23d2d6a3dba2bea80e93e",
+        "skills/core/ue-niagara-mesh-disintegration/SKILL.md": "ac7abb423dab04b04d62e48e87110da4dca997fad8e04eedca9658d724eb4870",
+        "skills/core/ue-niagara-renderers-and-materials/SKILL.md": "46f7a1293c9acb1cd26295d80fd5e63d683f829c80494d0b395fedb71ed29e9b",
+        "skills/core/ue-niagara-sequenced-effects/SKILL.md": "d74b1c91e11d1506a0bf6f09c0c2139a0760407ae8387c6669a8f62b054964cb",
+        "skills/core/ue-niagara-vfx/SKILL.md": "8392942c1e87007f09b63a9e76e8deddce9c304c695b730531e18cd9d2d80777",
+        "skills/core/ue-niagara-vfx/references/data-interfaces-and-performance.md": "47cce1a4f403ee334ad99f2c59f8703d9c9a1b48a56b097305672511c567614d",
+        "skills/core/ue-niagara-vfx/references/spawning-and-parameters.md": "3e7db05595f6e15fdccfb5f2bb51a93129dc3f51b8c1547149aadd931c4df0f4",
+        "skills/core/ue-niagara-vfx/references/system-and-emitter-model.md": "e02b7c3f2c05f33a2211b359ce38c5bd54da6249e369039e300233c8c8ccdb11",
+        "skills/core/ue-packaging-and-deployment/SKILL.md": "3e2b38c1df87998029f696c7694744a27b6a12434999c31d660e9caaec9e59f2",
+        "skills/core/ue-packaging-and-deployment/references/buildcookrun-and-uat.md": "816eab1b84644ae3129b3f0057caa303ac54606fa549eba7ce6827ed9b5e11a1",
+        "skills/core/ue-packaging-and-deployment/references/cook-and-build-configs.md": "fa3d5bb8136ae87b5e9c4fa9145bb2a37aeaed67a310fa29650625034a6ef2d3",
+        "skills/core/ue-packaging-and-deployment/references/pak-iostore-and-chunking.md": "60349092b93a09ccf947493ff05e6e5dfa270cfd63b749a9a287396bd528390a",
+        "skills/core/ue-packaging-and-deployment/references/platform-and-dlc.md": "e58a0d11d5934c8bec019b991e9fab190cf64db95ef9f254b6b974ba38cc8eda",
+        "skills/core/ue-physics-and-chaos/SKILL.md": "ae3f00a85c831b3d92f25230a4dad05e3180da7365e7a055cf912f8c017afa48",
+        "skills/core/ue-physics-and-chaos/references/collision-channels-and-profiles.md": "a8338f3cc33f4c1f515812c7bf984b107752e70a7a05b894eab61197d6e76c9f",
+        "skills/core/ue-physics-and-chaos/references/physics-simulation-and-constraints.md": "c967b97b0e6726b9e524c2a8a060b15ca41ac626c8ea4ef4fc52947dd6541167",
+        "skills/core/ue-physics-and-chaos/references/traces-and-queries.md": "aa6b7080590311b6dd230516a707523ad735d347cb30c27b707c8efde8eb7ce7",
+        "skills/core/ue-plugins-and-modules/SKILL.md": "21f120257cbcbe6248d1ee652ea63879945219602c8d7d0705571ea37521e375",
+        "skills/core/ue-plugins-and-modules/references/plugin-dependencies-and-packaging.md": "d20ba60ed21f0eac425c4dd19c013b4b94afce0aa3332c8379a0d5fb67ec9f57",
+        "skills/core/ue-plugins-and-modules/references/plugin-structure-and-modules.md": "779bec2276ce910e2af375652c0d5118ffcdde2dc64953a832636789889bd8c7",
+        "skills/core/ue-plugins-and-modules/references/uplugin-descriptor.md": "073da78c8ebd2998e7b0e83d641ff667041b52d6cca278402a2225fd53e99987",
+        "skills/core/ue-profiling-and-optimization/SKILL.md": "431e97856514bb715faf8e13c583dc090b6942bda04f25d368c9ff06c41d4d91",
+        "skills/core/ue-profiling-and-optimization/references/instrumenting-cpp.md": "b37e6f20b59dedaada310397f1054da391fcad20c5ef747e00e54226ca71b15d",
+        "skills/core/ue-profiling-and-optimization/references/memory-profiling.md": "440543273ef59c8dcbfd82a80cbddf8f18c0163ba767cdcc131787b5a00f7066",
+        "skills/core/ue-profiling-and-optimization/references/stat-commands.md": "974d9945c61e0b2697d97cb74521aa210ae3515a65e896df6a164c34c222c104",
+        "skills/core/ue-profiling-and-optimization/references/unreal-insights-and-trace.md": "9466b04e4338436f558130f351200b7b31b134b337acd08a44f509fe8baa8535",
+        "skills/core/ue-project-structure/SKILL.md": "5ffeab664e0f05b32152500ad3ab376a45e6a9c4af4dac1a8578a0a5c4143199",
+        "skills/core/ue-project-structure/references/config-system.md": "c1015d2bc2bcb0b22fd03045b6dfde4d4b09a059eb515f97be3f6d124d61f20d",
+        "skills/core/ue-project-structure/references/folder-layout-and-vcs.md": "cc04aee5b9d878159b2da99a4f18ae3ae1e7ec3e3a264b86d357b60456e2b2d5",
+        "skills/core/ue-project-structure/references/uproject-and-modules.md": "9d9f7c9a88b7de46ebf8f088ed7676a97afb7154fb633520d2d599db59a158b8",
+        "skills/core/ue-save-and-load/SKILL.md": "eec7e97e1d715235234dd0559c98af5c87e3dcd753192df6e81afe25de9f02b9",
+        "skills/core/ue-save-and-load/references/savegame-objects-and-slots.md": "1a1345c2306ac8f42b0d47f5b0a8aecbe0595828743ae2376a6372bc76508cca",
+        "skills/core/ue-save-and-load/references/serializing-actor-state.md": "0c7c0ff2513ebe7a1abec59e5d599310069e89e5b10d0e912704af218c7b256e",
+        "skills/core/ue-save-and-load/references/versioning-and-migration.md": "b9a67bff1de60d1a0342674cad3db417bf5d183673e58f648ff91938cc1e3648",
+        "skills/core/ue-sequencer-and-cinematics/SKILL.md": "75a0d3d78354b30fccf3ab8fc99c225b0563e702295b3023524a086b89054a93",
+        "skills/core/ue-sequencer-and-cinematics/references/cameras-and-cuts.md": "e9c78f2fe7fb6c9aa54b3f586526183be1a7d8803a0853cd5293cd6f59ae491a",
+        "skills/core/ue-sequencer-and-cinematics/references/level-sequence-and-player.md": "289f87d3cc1365631159279d99623ec8b24a7574cd4f06b695ad4f15d11c5cd2",
+        "skills/core/ue-sequencer-and-cinematics/references/movie-render-queue.md": "6c17a610f982d48e9286a6b6c4062ea18a4a81a789852b7403856d6cee305c3c",
+        "skills/core/ue-sequencer-and-cinematics/references/tracks-and-bindings.md": "99baf9dec979f71ad4fdd3dd121c47cb593711ba19ad0878ccf05dccf53c921f",
+        "skills/core/ue-subsystems/SKILL.md": "3258a41c092b29f87ef0429da60a16cde7098d145d1172d73d2569efbe297ff1",
+        "skills/core/ue-subsystems/references/choosing-a-subsystem.md": "359608762b4fb39d45804cecdc09ef40161809ae5b418c5aa2bae66e8fe833ed",
+        "skills/core/ue-subsystems/references/lifecycle-and-access.md": "177ce4542241cda8e40df5074b867b1f240253a825409f5bf9cba28577706e9d",
+        "skills/core/ue-subsystems/references/subsystem-types.md": "f2931b87fbaf6cc4df14f783e4bf37a71feb6baa0f90d86135f1e2fee195cddb",
+        "skills/core/ue-timers-and-async/SKILL.md": "77ed66979e44b9a944f47f3bd3a331ae264b73422cda4a310513464b1b4f3808",
+        "skills/core/ue-timers-and-async/references/async-and-tasks.md": "590bdfe8f6487c21f475480095d42cfee8e94d54e9186be0c0f4d6d578c445fc",
+        "skills/core/ue-timers-and-async/references/threads-and-runnables.md": "fdb3557a28cacff34a4543998962a6b65b5e8838f11e61d66ce9a5621c718e33",
+        "skills/core/ue-timers-and-async/references/tickers-and-latent.md": "592635effb8847158ef9bf26473e55d51667f5b85a3905da48f3ae08c62cb383",
+        "skills/core/ue-timers-and-async/references/timer-manager.md": "7ea2263761036afbbf7989d5daf4882352c38722cfa6d15ac99561918b7555cf",
+        "skills/core/ue-umg-and-slate/SKILL.md": "3919924e9cd40b4782d33ff4f6836969ebd4f264cb3b073b638dd53414eeeea7",
+        "skills/core/ue-umg-and-slate/references/architecture-and-authoring.md": "60fdafe334e8b274283e834483e72136fa29d8b58d6dec2e87452f01dbad0eaa",
+        "skills/core/ue-umg-and-slate/references/common-widgets-and-layout.md": "b0900694c6bcc4d3e6931f0a40ae00a967fcb73aac6a3f125b57a3e40c3d1487",
+        "skills/core/ue-umg-and-slate/references/performance-and-best-practices.md": "ec01838fb9c7d3465a30e33fad3389ef19473549899fd33cdc29734f040e576d",
+        "skills/core/ue-umg-and-slate/references/slate-layer.md": "067d8286e5b02fabb2c8ce9d39d6d7c47fe8b8b92827dd7b08d3a2d6d45ec7c0",
+        "skills/core/ue-umg-and-slate/references/userwidget-and-binding.md": "5bfd88247fc8f2853e00763e79687ad50030604a3f1552cf3910b95bcebb7f7b",
+        "skills/core/ue-umg-and-slate/references/widget-component-and-input.md": "4071c7414cc869d9a550d18d00adfcae2842e2e3eac0aeccd53c9f87436a1dcb",
+        "skills/metahuman/ue-metahuman-animator/SKILL.md": "aff6d2ed32aef6958f87d8bfc963399b3548950b683499553af90fdc7179d1ad",
+        "skills/metahuman/ue-metahuman-animator/references/audio-driven-animation.md": "9615634a93fdb173c2fdd5829af4bd2dd391ccf09cfa1d5028646d43242b9794",
+        "skills/metahuman/ue-metahuman-animator/references/capture-data-and-ingest.md": "07e011a3ee73e2f69a9c569ad0aa34508f923e9e4a76da3a51e41cd8f997ca67",
+        "skills/metahuman/ue-metahuman-animator/references/identity-mesh-to-metahuman.md": "d11540efc910827d69ed7d5e5089f023a5efa5341f8329130b6584aae9b88104",
+        "skills/metahuman/ue-metahuman-animator/references/performance-processing-and-export.md": "f9237a8851419931d6460920c3ff131c6f2c0578499b9836dbbfea607d44d137",
+        "skills/metahuman/ue-metahuman-creator/SKILL.md": "8314202d6f98941587cfe822f4ce57771854b8be40ed884d0726352a3f2e3311",
+        "skills/metahuman/ue-metahuman-creator/references/character-asset-and-settings.md": "d3c2cd6ada1cf21b6870bec087d2513fc562670ba56a09792fcb3dc8c616ab92",
+        "skills/metahuman/ue-metahuman-creator/references/editor-subsystem-api.md": "c60b16b92ca6fbf52dea31cc33dce5ffd20e7f99929b8b7b095cb029da637bb4",
+        "skills/metahuman/ue-metahuman-creator/references/palette-pipeline-assembly.md": "26dcaad22e0604c169937424c72171d72744d959cea763de0770cc8dd3f426f9",
+        "skills/metahuman/ue-metahuman-creator/references/python-scripting.md": "7c6263a34e73bff12c4e53b888b80c74656a15a32c7d44ba0ff21d570c8f049e",
+        "skills/metahuman/ue-metahuman-live-link/SKILL.md": "5e56b78adca4df4b8965477c8b9e70cea81f0bacddbd81bf91ee4e3cd472c04e",
+        "skills/metahuman/ue-metahuman-live-link/references/character-binding-and-roles.md": "fcc9bc9c900c2956846d9d3c3b7efad83794031afbffc28820b2745396ce8953",
+        "skills/metahuman/ue-metahuman-live-link/references/live-link-sources.md": "168edb697e387b05c88ae5aa6426b9f37e267d02b3a2df6d3a77ce9c79f519e1",
+        "skills/metahuman/ue-metahuman-live-link/references/recording-and-runtime.md": "326e738567b1b7cf87a87961a77e8005e15178bd5a2d02dd09532eb2bb92f8d5",
+        "skills/ultra-dynamic-sky/ue-uds-cinematics-rendering/SKILL.md": "cc1beee3ee624069a4ece2b776d88b89f9d11bd115f88bf56b797570cdd272f5",
+        "skills/ultra-dynamic-sky/ue-uds-clouds/SKILL.md": "6f1244817fcf5fb67cd29b1fc8f7d3085221e70b9d1bc8a93a5723f9258e2e6a",
+        "skills/ultra-dynamic-sky/ue-uds-fog-and-atmosphere/SKILL.md": "94fc82831c1cdb119e1650070a7ae13d25130cbe626a1d1239c8dac9d1e40875",
+        "skills/ultra-dynamic-sky/ue-uds-lighting-and-shadows/SKILL.md": "344254897136a50eddc549d3711551429e5a0c488bed071c21cbf81d27239bb6",
+        "skills/ultra-dynamic-sky/ue-uds-modifiers-configs-state/SKILL.md": "869daef227966a1bb0c3d99df0a2dd1d17447e2dbc07c22c169498a1ca4d742e",
+        "skills/ultra-dynamic-sky/ue-uds-performance-mobile-troubleshooting/SKILL.md": "e1c42015c856e6d67f1d4cdd91458679c83fb82a87a1c14f2899c8228aa38073",
+        "skills/ultra-dynamic-sky/ue-uds-setup-and-modes/SKILL.md": "4d14850f1b62864d5c93871f91d0a56b18d0acc1114c2a889016bf745d9e41c0",
+        "skills/ultra-dynamic-sky/ue-uds-simulation/SKILL.md": "2fb1f452e32bfb91426343231961cbb83d8ba1df91775feba58cca11f27d95b7",
+        "skills/ultra-dynamic-sky/ue-uds-sun-moon-stars/SKILL.md": "1b2eea8f82317a8b639f2fcceba9530c4364613947443ca6832441da0b9b02dd",
+        "skills/ultra-dynamic-sky/ue-uds-time/SKILL.md": "0a65034a570e171e6094d06e4d6672a6b8f56df21bfbd4f82d79125daa56bec8",
+        "skills/ultra-dynamic-weather/ue-udw-material-and-screen-effects/SKILL.md": "30c61ea8edd5fee231f92835654a227091606ce1e2b2efe64e9d808ec53204ae",
+        "skills/ultra-dynamic-weather/ue-udw-particles-lightning-wind-sounds/SKILL.md": "6880b38157b0910e971cb7981474eee176ac58c3f1109c5457c15c5c435caabe",
+        "skills/ultra-dynamic-weather/ue-udw-random-seasons-temperature/SKILL.md": "cb36810b16153dee90bc181ca2558b941e4865f35734d1761b5de6ac9854dc5b",
+        "skills/ultra-dynamic-weather/ue-udw-setup-and-state/SKILL.md": "e7931e5eea8f527d34d245d056c2110a3a0566bd1e3cb1ee4b5b1f0ca21920a6",
+        "skills/ultra-dynamic-weather/ue-udw-spatial-weather/SKILL.md": "b836000bc04a270253765702ef8f4a1f40931b2b93d03fafd8b8f07b1835881f"
+      },
+      "licenses": [],
+      "license_note": "固定提交未提供仓库级 LICENSE；保留原始版权说明，不将其标为 MIT。"
+    },
+    {
+      "vendor": "epicgames",
+      "repo": "EpicGames/unreal-engine-skills-for-claude-code-plugin",
+      "branch": "main",
+      "commit": "a6aa73ada02a9fb1f5415bec491f9942c519b297",
+      "count": 3,
+      "files": {
+        "LICENSE": "5b337be051359edcdec510103aee15f5f870efb38b6d42eecd685dc3582314a6",
+        "README.md": "483693ad0e14d027525d25c3d3eb4883e774b2f8150013181f9625e2dd46b40e",
+        "skills/create-toolset/SKILL.md": "e9d050087f36de51f7eeef49adb0ba9ebc603b65f74f475bc53a6debfc1f7b1c",
+        "skills/unreal-mcp/SKILL.md": "7ef8b991a82f591c5776bb5fa167c2bc2269fd00338ed3e8534eacc551d038fa",
+        "skills/unreal-mcp/references/operations.md": "dbed002b4a46ab104274a31eb6682c3d277ce669216d0378df709f51567c3113",
+        "skills/unreal-mcp/references/setup.md": "bd16206ea142dc9cc1950b88af526a3137072ea152c5662e8549d21bc18a3b8a",
+        "skills/unreal-skill/SKILL.md": "7a0af781c458c7d192d6b23c16b5737922dc482470e2e4ef617bcda80f435087"
+      },
+      "licenses": [
+        "LICENSE"
+      ]
+    }
+  ],
+  "skills": [
+    {
+      "name": "ue-actor-component-architecture",
+      "domain": "actors",
+      "vendor": "quodsoler",
+      "upstream_name": "ue-actor-component-architecture",
+      "upstream_path": "skills/ue-actor-component-architecture"
+    },
+    {
+      "name": "ue-ai-navigation",
+      "domain": "ai",
+      "vendor": "quodsoler",
+      "upstream_name": "ue-ai-navigation",
+      "upstream_path": "skills/ue-ai-navigation"
+    },
+    {
+      "name": "ue-animation-system",
+      "domain": "animation",
+      "vendor": "quodsoler",
+      "upstream_name": "ue-animation-system",
+      "upstream_path": "skills/ue-animation-system"
+    },
+    {
+      "name": "ue-async-threading",
+      "domain": "async",
+      "vendor": "quodsoler",
+      "upstream_name": "ue-async-threading",
+      "upstream_path": "skills/ue-async-threading"
+    },
+    {
+      "name": "ue-audio-system",
+      "domain": "audio",
+      "vendor": "quodsoler",
+      "upstream_name": "ue-audio-system",
+      "upstream_path": "skills/ue-audio-system"
+    },
+    {
+      "name": "ue-blueprint-cpp-interop",
+      "domain": "reflection",
+      "vendor": "quodsoler",
+      "upstream_name": "ue-blueprint-cpp-interop",
+      "upstream_path": "skills/ue-blueprint-cpp-interop"
+    },
+    {
+      "name": "ue-character-movement",
+      "domain": "movement",
+      "vendor": "quodsoler",
+      "upstream_name": "ue-character-movement",
+      "upstream_path": "skills/ue-character-movement"
+    },
+    {
+      "name": "ue-cpp-foundations",
+      "domain": "reflection",
+      "vendor": "quodsoler",
+      "upstream_name": "ue-cpp-foundations",
+      "upstream_path": "skills/ue-cpp-foundations"
+    },
+    {
+      "name": "ue-data-assets-tables",
+      "domain": "assets",
+      "vendor": "quodsoler",
+      "upstream_name": "ue-data-assets-tables",
+      "upstream_path": "skills/ue-data-assets-tables"
+    },
+    {
+      "name": "ue-editor-tools",
+      "domain": "editor",
+      "vendor": "quodsoler",
+      "upstream_name": "ue-editor-tools",
+      "upstream_path": "skills/ue-editor-tools"
+    },
+    {
+      "name": "ue-game-features",
+      "domain": "gamefeatures",
+      "vendor": "quodsoler",
+      "upstream_name": "ue-game-features",
+      "upstream_path": "skills/ue-game-features"
+    },
+    {
+      "name": "ue-gameplay-abilities",
+      "domain": "gas",
+      "vendor": "quodsoler",
+      "upstream_name": "ue-gameplay-abilities",
+      "upstream_path": "skills/ue-gameplay-abilities"
+    },
+    {
+      "name": "ue-gameplay-cameras",
+      "domain": "cameras",
+      "vendor": "quodsoler",
+      "upstream_name": "ue-gameplay-cameras",
+      "upstream_path": "skills/ue-gameplay-cameras"
+    },
+    {
+      "name": "ue-gameplay-framework",
+      "domain": "framework",
+      "vendor": "quodsoler",
+      "upstream_name": "ue-gameplay-framework",
+      "upstream_path": "skills/ue-gameplay-framework"
+    },
+    {
+      "name": "ue-gameplay-tags-messaging",
+      "domain": "tags",
+      "vendor": "quodsoler",
+      "upstream_name": "ue-gameplay-tags-messaging",
+      "upstream_path": "skills/ue-gameplay-tags-messaging"
+    },
+    {
+      "name": "ue-input-system",
+      "domain": "input",
+      "vendor": "quodsoler",
+      "upstream_name": "ue-input-system",
+      "upstream_path": "skills/ue-input-system"
+    },
+    {
+      "name": "ue-mass-entity",
+      "domain": "mass",
+      "vendor": "quodsoler",
+      "upstream_name": "ue-mass-entity",
+      "upstream_path": "skills/ue-mass-entity"
+    },
+    {
+      "name": "ue-materials-rendering",
+      "domain": "materials",
+      "vendor": "quodsoler",
+      "upstream_name": "ue-materials-rendering",
+      "upstream_path": "skills/ue-materials-rendering"
+    },
+    {
+      "name": "ue-module-build-system",
+      "domain": "build",
+      "vendor": "quodsoler",
+      "upstream_name": "ue-module-build-system",
+      "upstream_path": "skills/ue-module-build-system"
+    },
+    {
+      "name": "ue-mover",
+      "domain": "mover",
+      "vendor": "quodsoler",
+      "upstream_name": "ue-mover",
+      "upstream_path": "skills/ue-mover"
+    },
+    {
+      "name": "ue-networking-replication",
+      "domain": "network",
+      "vendor": "quodsoler",
+      "upstream_name": "ue-networking-replication",
+      "upstream_path": "skills/ue-networking-replication"
+    },
+    {
+      "name": "ue-niagara-effects",
+      "domain": "niagara",
+      "vendor": "quodsoler",
+      "upstream_name": "ue-niagara-effects",
+      "upstream_path": "skills/ue-niagara-effects"
+    },
+    {
+      "name": "ue-physics-collision",
+      "domain": "physics",
+      "vendor": "quodsoler",
+      "upstream_name": "ue-physics-collision",
+      "upstream_path": "skills/ue-physics-collision"
+    },
+    {
+      "name": "ue-procedural-generation",
+      "domain": "pcg",
+      "vendor": "quodsoler",
+      "upstream_name": "ue-procedural-generation",
+      "upstream_path": "skills/ue-procedural-generation"
+    },
+    {
+      "name": "ue-project-context",
+      "domain": "context",
+      "vendor": "quodsoler",
+      "upstream_name": "ue-project-context",
+      "upstream_path": "skills/ue-project-context"
+    },
+    {
+      "name": "ue-sequencer-cinematics",
+      "domain": "sequencer",
+      "vendor": "quodsoler",
+      "upstream_name": "ue-sequencer-cinematics",
+      "upstream_path": "skills/ue-sequencer-cinematics"
+    },
+    {
+      "name": "ue-serialization-savegames",
+      "domain": "save",
+      "vendor": "quodsoler",
+      "upstream_name": "ue-serialization-savegames",
+      "upstream_path": "skills/ue-serialization-savegames"
+    },
+    {
+      "name": "ue-state-trees",
+      "domain": "statetree",
+      "vendor": "quodsoler",
+      "upstream_name": "ue-state-trees",
+      "upstream_path": "skills/ue-state-trees"
+    },
+    {
+      "name": "ue-testing-debugging",
+      "domain": "testing",
+      "vendor": "quodsoler",
+      "upstream_name": "ue-testing-debugging",
+      "upstream_path": "skills/ue-testing-debugging"
+    },
+    {
+      "name": "ue-ui-umg-slate",
+      "domain": "ui",
+      "vendor": "quodsoler",
+      "upstream_name": "ue-ui-umg-slate",
+      "upstream_path": "skills/ue-ui-umg-slate"
+    },
+    {
+      "name": "ue-world-level-streaming",
+      "domain": "world",
+      "vendor": "quodsoler",
+      "upstream_name": "ue-world-level-streaming",
+      "upstream_path": "skills/ue-world-level-streaming"
+    },
+    {
+      "name": "ue-actors-and-components",
+      "domain": "actors",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-actors-and-components",
+      "upstream_path": "skills/core/ue-actors-and-components"
+    },
+    {
+      "name": "ue-ai-and-navigation",
+      "domain": "ai",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-ai-and-navigation",
+      "upstream_path": "skills/core/ue-ai-and-navigation"
+    },
+    {
+      "name": "kb-ue-animation-system",
+      "domain": "animation",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-animation-system",
+      "upstream_path": "skills/core/ue-animation-system"
+    },
+    {
+      "name": "ue-asset-management",
+      "domain": "assets",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-asset-management",
+      "upstream_path": "skills/core/ue-asset-management"
+    },
+    {
+      "name": "ue-audio-and-metasounds",
+      "domain": "audio",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-audio-and-metasounds",
+      "upstream_path": "skills/core/ue-audio-and-metasounds"
+    },
+    {
+      "name": "ue-auto-landscape-materials",
+      "domain": "landscape",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-auto-landscape-materials",
+      "upstream_path": "skills/core/ue-auto-landscape-materials"
+    },
+    {
+      "name": "ue-automation-and-testing",
+      "domain": "testing",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-automation-and-testing",
+      "upstream_path": "skills/core/ue-automation-and-testing"
+    },
+    {
+      "name": "ue-blueprint-cpp-integration",
+      "domain": "reflection",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-blueprint-cpp-integration",
+      "upstream_path": "skills/core/ue-blueprint-cpp-integration"
+    },
+    {
+      "name": "ue-blueprint-fundamentals",
+      "domain": "blueprint",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-blueprint-fundamentals",
+      "upstream_path": "skills/core/ue-blueprint-fundamentals"
+    },
+    {
+      "name": "ue-character-and-movement",
+      "domain": "movement",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-character-and-movement",
+      "upstream_path": "skills/core/ue-character-and-movement"
+    },
+    {
+      "name": "ue-coding-standards",
+      "domain": "reflection",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-coding-standards",
+      "upstream_path": "skills/core/ue-coding-standards"
+    },
+    {
+      "name": "ue-control-rig-and-ik",
+      "domain": "rig",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-control-rig-and-ik",
+      "upstream_path": "skills/core/ue-control-rig-and-ik"
+    },
+    {
+      "name": "ue-core-types-and-containers",
+      "domain": "core",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-core-types-and-containers",
+      "upstream_path": "skills/core/ue-core-types-and-containers"
+    },
+    {
+      "name": "ue-cpp-fundamentals",
+      "domain": "reflection",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-cpp-fundamentals",
+      "upstream_path": "skills/core/ue-cpp-fundamentals"
+    },
+    {
+      "name": "ue-data-driven-design",
+      "domain": "assets",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-data-driven-design",
+      "upstream_path": "skills/core/ue-data-driven-design"
+    },
+    {
+      "name": "ue-debugging-techniques",
+      "domain": "testing",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-debugging-techniques",
+      "upstream_path": "skills/core/ue-debugging-techniques"
+    },
+    {
+      "name": "ue-delegates-and-events",
+      "domain": "delegates",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-delegates-and-events",
+      "upstream_path": "skills/core/ue-delegates-and-events"
+    },
+    {
+      "name": "ue-editor-scripting-and-python",
+      "domain": "editor",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-editor-scripting-and-python",
+      "upstream_path": "skills/core/ue-editor-scripting-and-python"
+    },
+    {
+      "name": "ue-enhanced-input",
+      "domain": "input",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-enhanced-input",
+      "upstream_path": "skills/core/ue-enhanced-input"
+    },
+    {
+      "name": "ue-game-thread-performance",
+      "domain": "profiling",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-game-thread-performance",
+      "upstream_path": "skills/core/ue-game-thread-performance"
+    },
+    {
+      "name": "ue-gameplay-ability-system",
+      "domain": "gas",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-gameplay-ability-system",
+      "upstream_path": "skills/core/ue-gameplay-ability-system"
+    },
+    {
+      "name": "ue-gameplay-architecture-planning",
+      "domain": "architecture",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-gameplay-architecture-planning",
+      "upstream_path": "skills/core/ue-gameplay-architecture-planning"
+    },
+    {
+      "name": "kb-ue-gameplay-framework",
+      "domain": "framework",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-gameplay-framework",
+      "upstream_path": "skills/core/ue-gameplay-framework"
+    },
+    {
+      "name": "ue-gameplay-tags",
+      "domain": "tags",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-gameplay-tags",
+      "upstream_path": "skills/core/ue-gameplay-tags"
+    },
+    {
+      "name": "ue-importing-content",
+      "domain": "import",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-importing-content",
+      "upstream_path": "skills/core/ue-importing-content"
+    },
+    {
+      "name": "ue-landscape-and-foliage",
+      "domain": "landscape",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-landscape-and-foliage",
+      "upstream_path": "skills/core/ue-landscape-and-foliage"
+    },
+    {
+      "name": "ue-landscape-rvt-and-grass",
+      "domain": "landscape",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-landscape-rvt-and-grass",
+      "upstream_path": "skills/core/ue-landscape-rvt-and-grass"
+    },
+    {
+      "name": "ue-levels-and-world-partition",
+      "domain": "world",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-levels-and-world-partition",
+      "upstream_path": "skills/core/ue-levels-and-world-partition"
+    },
+    {
+      "name": "ue-lighting-and-lumen",
+      "domain": "rendering",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-lighting-and-lumen",
+      "upstream_path": "skills/core/ue-lighting-and-lumen"
+    },
+    {
+      "name": "ue-logging-and-assertions",
+      "domain": "core",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-logging-and-assertions",
+      "upstream_path": "skills/core/ue-logging-and-assertions"
+    },
+    {
+      "name": "ue-master-material-authoring",
+      "domain": "materials",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-master-material-authoring",
+      "upstream_path": "skills/core/ue-master-material-authoring"
+    },
+    {
+      "name": "ue-material-graph-effects",
+      "domain": "materials",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-material-graph-effects",
+      "upstream_path": "skills/core/ue-material-graph-effects"
+    },
+    {
+      "name": "ue-materials-and-shaders",
+      "domain": "materials",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-materials-and-shaders",
+      "upstream_path": "skills/core/ue-materials-and-shaders"
+    },
+    {
+      "name": "ue-memory-and-gc",
+      "domain": "gc",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-memory-and-gc",
+      "upstream_path": "skills/core/ue-memory-and-gc"
+    },
+    {
+      "name": "ue-meshes-static-and-skeletal",
+      "domain": "meshes",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-meshes-static-and-skeletal",
+      "upstream_path": "skills/core/ue-meshes-static-and-skeletal"
+    },
+    {
+      "name": "ue-module-and-build-system",
+      "domain": "build",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-module-and-build-system",
+      "upstream_path": "skills/core/ue-module-and-build-system"
+    },
+    {
+      "name": "ue-mover-movement-system",
+      "domain": "mover",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-mover-movement-system",
+      "upstream_path": "skills/core/ue-mover-movement-system"
+    },
+    {
+      "name": "ue-nanite-and-rendering",
+      "domain": "rendering",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-nanite-and-rendering",
+      "upstream_path": "skills/core/ue-nanite-and-rendering"
+    },
+    {
+      "name": "ue-navigating-engine-source",
+      "domain": "source",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-navigating-engine-source",
+      "upstream_path": "skills/core/ue-navigating-engine-source"
+    },
+    {
+      "name": "ue-networking-and-replication",
+      "domain": "network",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-networking-and-replication",
+      "upstream_path": "skills/core/ue-networking-and-replication"
+    },
+    {
+      "name": "ue-niagara-custom-modules",
+      "domain": "niagara",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-niagara-custom-modules",
+      "upstream_path": "skills/core/ue-niagara-custom-modules"
+    },
+    {
+      "name": "ue-niagara-flamethrower",
+      "domain": "niagara",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-niagara-flamethrower",
+      "upstream_path": "skills/core/ue-niagara-flamethrower"
+    },
+    {
+      "name": "ue-niagara-mesh-disintegration",
+      "domain": "niagara",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-niagara-mesh-disintegration",
+      "upstream_path": "skills/core/ue-niagara-mesh-disintegration"
+    },
+    {
+      "name": "ue-niagara-renderers-and-materials",
+      "domain": "niagara",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-niagara-renderers-and-materials",
+      "upstream_path": "skills/core/ue-niagara-renderers-and-materials"
+    },
+    {
+      "name": "ue-niagara-sequenced-effects",
+      "domain": "niagara",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-niagara-sequenced-effects",
+      "upstream_path": "skills/core/ue-niagara-sequenced-effects"
+    },
+    {
+      "name": "ue-niagara-vfx",
+      "domain": "niagara",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-niagara-vfx",
+      "upstream_path": "skills/core/ue-niagara-vfx"
+    },
+    {
+      "name": "ue-packaging-and-deployment",
+      "domain": "packaging",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-packaging-and-deployment",
+      "upstream_path": "skills/core/ue-packaging-and-deployment"
+    },
+    {
+      "name": "ue-physics-and-chaos",
+      "domain": "physics",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-physics-and-chaos",
+      "upstream_path": "skills/core/ue-physics-and-chaos"
+    },
+    {
+      "name": "ue-plugins-and-modules",
+      "domain": "build",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-plugins-and-modules",
+      "upstream_path": "skills/core/ue-plugins-and-modules"
+    },
+    {
+      "name": "ue-profiling-and-optimization",
+      "domain": "profiling",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-profiling-and-optimization",
+      "upstream_path": "skills/core/ue-profiling-and-optimization"
+    },
+    {
+      "name": "ue-project-structure",
+      "domain": "build",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-project-structure",
+      "upstream_path": "skills/core/ue-project-structure"
+    },
+    {
+      "name": "ue-save-and-load",
+      "domain": "save",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-save-and-load",
+      "upstream_path": "skills/core/ue-save-and-load"
+    },
+    {
+      "name": "ue-sequencer-and-cinematics",
+      "domain": "sequencer",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-sequencer-and-cinematics",
+      "upstream_path": "skills/core/ue-sequencer-and-cinematics"
+    },
+    {
+      "name": "ue-subsystems",
+      "domain": "subsystems",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-subsystems",
+      "upstream_path": "skills/core/ue-subsystems"
+    },
+    {
+      "name": "ue-timers-and-async",
+      "domain": "async",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-timers-and-async",
+      "upstream_path": "skills/core/ue-timers-and-async"
+    },
+    {
+      "name": "ue-umg-and-slate",
+      "domain": "ui",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-umg-and-slate",
+      "upstream_path": "skills/core/ue-umg-and-slate"
+    },
+    {
+      "name": "ue-metahuman-animator",
+      "domain": "metahuman",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-metahuman-animator",
+      "upstream_path": "skills/metahuman/ue-metahuman-animator"
+    },
+    {
+      "name": "ue-metahuman-creator",
+      "domain": "metahuman",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-metahuman-creator",
+      "upstream_path": "skills/metahuman/ue-metahuman-creator"
+    },
+    {
+      "name": "ue-metahuman-live-link",
+      "domain": "metahuman",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-metahuman-live-link",
+      "upstream_path": "skills/metahuman/ue-metahuman-live-link"
+    },
+    {
+      "name": "ue-uds-cinematics-rendering",
+      "domain": "weather",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-uds-cinematics-rendering",
+      "upstream_path": "skills/ultra-dynamic-sky/ue-uds-cinematics-rendering"
+    },
+    {
+      "name": "ue-uds-clouds",
+      "domain": "weather",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-uds-clouds",
+      "upstream_path": "skills/ultra-dynamic-sky/ue-uds-clouds"
+    },
+    {
+      "name": "ue-uds-fog-and-atmosphere",
+      "domain": "weather",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-uds-fog-and-atmosphere",
+      "upstream_path": "skills/ultra-dynamic-sky/ue-uds-fog-and-atmosphere"
+    },
+    {
+      "name": "ue-uds-lighting-and-shadows",
+      "domain": "weather",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-uds-lighting-and-shadows",
+      "upstream_path": "skills/ultra-dynamic-sky/ue-uds-lighting-and-shadows"
+    },
+    {
+      "name": "ue-uds-modifiers-configs-state",
+      "domain": "weather",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-uds-modifiers-configs-state",
+      "upstream_path": "skills/ultra-dynamic-sky/ue-uds-modifiers-configs-state"
+    },
+    {
+      "name": "ue-uds-performance-mobile-troubleshooting",
+      "domain": "weather",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-uds-performance-mobile-troubleshooting",
+      "upstream_path": "skills/ultra-dynamic-sky/ue-uds-performance-mobile-troubleshooting"
+    },
+    {
+      "name": "ue-uds-setup-and-modes",
+      "domain": "weather",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-uds-setup-and-modes",
+      "upstream_path": "skills/ultra-dynamic-sky/ue-uds-setup-and-modes"
+    },
+    {
+      "name": "ue-uds-simulation",
+      "domain": "weather",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-uds-simulation",
+      "upstream_path": "skills/ultra-dynamic-sky/ue-uds-simulation"
+    },
+    {
+      "name": "ue-uds-sun-moon-stars",
+      "domain": "weather",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-uds-sun-moon-stars",
+      "upstream_path": "skills/ultra-dynamic-sky/ue-uds-sun-moon-stars"
+    },
+    {
+      "name": "ue-uds-time",
+      "domain": "weather",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-uds-time",
+      "upstream_path": "skills/ultra-dynamic-sky/ue-uds-time"
+    },
+    {
+      "name": "ue-udw-material-and-screen-effects",
+      "domain": "weather",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-udw-material-and-screen-effects",
+      "upstream_path": "skills/ultra-dynamic-weather/ue-udw-material-and-screen-effects"
+    },
+    {
+      "name": "ue-udw-particles-lightning-wind-sounds",
+      "domain": "weather",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-udw-particles-lightning-wind-sounds",
+      "upstream_path": "skills/ultra-dynamic-weather/ue-udw-particles-lightning-wind-sounds"
+    },
+    {
+      "name": "ue-udw-random-seasons-temperature",
+      "domain": "weather",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-udw-random-seasons-temperature",
+      "upstream_path": "skills/ultra-dynamic-weather/ue-udw-random-seasons-temperature"
+    },
+    {
+      "name": "ue-udw-setup-and-state",
+      "domain": "weather",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-udw-setup-and-state",
+      "upstream_path": "skills/ultra-dynamic-weather/ue-udw-setup-and-state"
+    },
+    {
+      "name": "ue-udw-spatial-weather",
+      "domain": "weather",
+      "vendor": "kevinpbuckley",
+      "upstream_name": "ue-udw-spatial-weather",
+      "upstream_path": "skills/ultra-dynamic-weather/ue-udw-spatial-weather"
+    },
+    {
+      "name": "create-toolset",
+      "domain": "epic-toolset",
+      "vendor": "epicgames",
+      "upstream_name": "create-toolset",
+      "upstream_path": "skills/create-toolset"
+    },
+    {
+      "name": "unreal-mcp",
+      "domain": "epic-mcp",
+      "vendor": "epicgames",
+      "upstream_name": "unreal-mcp",
+      "upstream_path": "skills/unreal-mcp"
+    },
+    {
+      "name": "unreal-skill",
+      "domain": "epic-skill",
+      "vendor": "epicgames",
+      "upstream_name": "unreal-skill",
+      "upstream_path": "skills/unreal-skill"
+    }
+  ],
+  "domains": {
+    "source": {
+      "title": "引擎源码定位",
+      "steps": [
+        "从 E:/UE/UE_5.5/Engine/Build/Build.version 确认 5.5.4，再用 rg --files 与 rg 查声明、定义、调用者和模块 Build.cs。",
+        "Public/Classes 决定 include 路径；公开头文件使用的模块类型要检查 PublicDependencyModuleNames，链接导出还要检查 API 宏。",
+        "删除上游默认 5.8/5.7 及 E:/Program Files 引擎路径假设。找到同名符号之后还要阅读实现、默认值和版本弃用标记。",
+        "报告真实文件、函数和适配差异；引擎或 Lyra 源码未覆盖的部分单独说明，不以历史示例证明当前实现。"
+      ],
+      "anchors": [
+        {
+          "path": "Source/Runtime/CoreUObject/Public/UObject/Object.h",
+          "symbol": "UObject",
+          "line": 99,
+          "excerpt": "return new (EC_InternalUseOnlyConstructor, (UObject*)GetTransientPackage(), NAME_None, RF_NeedLoad | RF_ClassDefaultObject | RF_TagGarbageTemp) UObject(Helper);"
+        },
+        {
+          "path": "Source/Programs/UnrealBuildTool/Configuration/ModuleRules.cs",
+          "symbol": "PublicDependencyModuleNames",
+          "line": 1213,
+          "excerpt": "public List<string> PublicDependencyModuleNames = new();"
+        }
+      ]
+    },
+    "gc": {
+      "title": "对象生命周期与 GC",
+      "steps": [
+        "先区分 UObject 与普通 C++ 对象。需要保活的 UObject 成员使用反射可见的 UPROPERTY/TObjectPtr，不能用 TSharedPtr 管理 UObject。",
+        "TWeakObjectPtr 不保活，回调执行前重新检查；TSoftObjectPtr 记录资源路径，加载后的保活关系要单独安排。",
+        "普通 C++ 持有者需要保活 UObject 时核实 FGCObject 或 TStrongObjectPtr 的契约；Outer 关系不能直接当作保活证明。",
+        "沿用项目 GC 设置，不因 5.8 示例开启增量 GC。Pawn/动作切换时还要验证执行身份，弱引用有效不代表回调仍属于当前动作。"
+      ],
+      "anchors": [
+        {
+          "path": "Source/Runtime/CoreUObject/Public/UObject/ObjectPtr.h",
+          "symbol": "TObjectPtr",
+          "line": 173,
+          "excerpt": "FORCEINLINE TObjectPtr<UObject>& ToTObjectPtr();"
+        },
+        {
+          "path": "Source/Runtime/Core/Public/UObject/WeakObjectPtrTemplates.h",
+          "symbol": "TWeakObjectPtr",
+          "line": 32,
+          "excerpt": "TWeakObjectPtr() = default;"
+        },
+        {
+          "path": "Source/Runtime/Core/Public/UObject/StrongObjectPtrTemplates.h",
+          "symbol": "TStrongObjectPtr",
+          "line": 30,
+          "excerpt": "TStrongObjectPtr(TStrongObjectPtr&& InOther)"
+        },
+        {
+          "path": "Source/Runtime/CoreUObject/Public/UObject/GCObject.h",
+          "symbol": "AddReferencedObjects",
+          "line": 71,
+          "excerpt": "COREUOBJECT_API static void AddReferencedObjects(UObject* InThis, FReferenceCollector& Collector);"
+        }
+      ]
+    },
+    "delegates": {
+      "title": "委托与事件",
+      "steps": [
+        "按是否需要蓝图和反射选择普通或 Dynamic 委托；Dynamic 回调核实 UFUNCTION 和精确签名。",
+        "普通多播保存 FDelegateHandle 并 Remove；Dynamic 使用成对 AddDynamic/RemoveDynamic，重复初始化先处理已有绑定。",
+        "AddUObject/AddWeakLambda 只能处理对象有效性，不能替代 Pawn/动作身份检查；跨线程回调应在合适线程提交结果。",
+        "本机 5.5.4 已有 DECLARE_TS_MULTICAST_DELEGATE；它不使被调用 UObject 或业务逻辑自动线程安全。"
+      ],
+      "anchors": [
+        {
+          "path": "Source/Runtime/Core/Public/Delegates/DelegateCombinations.h",
+          "symbol": "DECLARE_TS_MULTICAST_DELEGATE",
+          "line": 26,
+          "excerpt": "#define DECLARE_TS_MULTICAST_DELEGATE( DelegateName ) FUNC_DECLARE_TS_MULTICAST_DELEGATE( DelegateName, void )"
+        },
+        {
+          "path": "Source/Runtime/Core/Public/Delegates/DelegateSignatureImpl.inl",
+          "symbol": "AddWeakLambda",
+          "line": 831,
+          "excerpt": "inline FDelegateHandle AddWeakLambda(UserClass* InUserObject, FunctorType&& InFunctor, VarTypes&&... Vars)"
+        }
+      ]
+    },
+    "gas": {
+      "title": "GAS 能力、属性和效果",
+      "steps": [
+        "本项目玩家 ASC 由 AHodgePlayerState 持有，Pawn 是 Avatar；怪物使用自身 ASC。先追踪 PawnExtension/Hero 的 Init State，避免复制通用示例再造一条初始化链。",
+        "服务器授予和撤销分别记录 AbilitySpec、GameplayEffect 与 AttributeSet 句柄；重复初始化不得重复授予或补满持久资源。",
+        "UE5.5.4 已支持 GetAssetTags()/构造期 SetAssetTags()、GetDynamicSpecSourceTags()；不要简单把 5.8 弃用表全部反向替换成旧字段。",
+        "自定义能力沿用项目 InstancedPerActor；引擎默认 InstancedPerExecution 不等于项目默认。Commit 失败、取消、EndAbility 与任务完成均要清理资源。",
+        "先核实 Owner/Avatar、Mixed 所需拥有链、客户端 PlayerState 到达、预测键与迟到 TargetData；恢复 Pawn 时禁止旧回调清理新 Avatar。"
+      ],
+      "anchors": [
+        {
+          "path": "Plugins/Runtime/GameplayAbilities/Source/GameplayAbilities/Public/Abilities/GameplayAbility.h",
+          "symbol": "SetAssetTags",
+          "line": 540,
+          "excerpt": "void SetAssetTags(const FGameplayTagContainer& InAbilityTags);"
+        },
+        {
+          "path": "Plugins/Runtime/GameplayAbilities/Source/GameplayAbilities/Public/GameplayAbilitySpec.h",
+          "symbol": "GetDynamicSpecSourceTags",
+          "line": 239,
+          "excerpt": "UE_DEPRECATED(5.5, \"Use GetDynamicSpecSourceTags() which better represents what this variable does\")"
+        },
+        {
+          "path": "Plugins/Runtime/GameplayAbilities/Source/GameplayAbilities/Public/AbilitySystemComponent.h",
+          "symbol": "InitAbilityActorInfo",
+          "line": 1545,
+          "excerpt": "virtual void InitAbilityActorInfo(AActor* InOwnerActor, AActor* InAvatarActor);"
+        },
+        {
+          "path": "Plugins/Runtime/GameplayAbilities/Source/GameplayAbilities/Public/GameplayEffectTypes.h",
+          "symbol": "MultiplyAdditive",
+          "line": 121,
+          "excerpt": "MultiplyAdditive\tUMETA(DisplayName = \"Multiply (Additive)\"),"
+        }
+      ]
+    },
+    "gamefeatures": {
+      "title": "GameFeature、Experience 与 Init State",
+      "steps": [
+        "以本项目 Experience→PawnData→PawnExtension/Hero 的调用链为入口；GameFeature Action 根据 World/Context 保存资源归属，不另造并行加载器。",
+        "参照 Lyra AddAbilities 的 AddToWorld/HandleActorExtension/Reset/RemoveActorAbilities，核实注册、ActorReady、激活和停用的配对关系。",
+        "Init State 通过 RegisterInitStateFeature、ContinueInitStateChain 和事件推进；先校验依赖，再执行阶段副作用，清理时取消绑定。",
+        "Experience 已加载时 CallOrRegister 会立即执行；注册回调前其依赖必须已就绪。等待依赖、坏配置和运行失败分别诊断。",
+        "Lyra AddAbilities、Experience、AbilitySet 属于示例/项目实现，不能假定 GameFeatures 模块自带同名现成功能；不引入 CommonGame/CommonUser。"
+      ],
+      "anchors": [
+        {
+          "path": "Plugins/Runtime/ModularGameplay/Source/ModularGameplay/Public/Components/GameFrameworkComponentManager.h",
+          "symbol": "AddExtensionHandler",
+          "line": 152,
+          "excerpt": "TSharedPtr<FComponentRequestHandle> AddExtensionHandler(const TSoftClassPtr<AActor>& ReceiverClass, FExtensionHandlerDelegate ExtensionHandler);"
+        },
+        {
+          "path": "Plugins/Runtime/ModularGameplay/Source/ModularGameplay/Public/Components/GameFrameworkInitStateInterface.h",
+          "symbol": "ContinueInitStateChain",
+          "line": 54,
+          "excerpt": "virtual FGameplayTag ContinueInitStateChain(const TArray<FGameplayTag>& InitStateChain);"
+        },
+        {
+          "path": "Plugins/Runtime/GameFeatures/Source/GameFeatures/Public/GameFeatureAction.h",
+          "symbol": "OnGameFeatureDeactivating",
+          "line": 43,
+          "excerpt": "virtual void OnGameFeatureDeactivating(FGameFeatureDeactivatingContext& Context) {}"
+        }
+      ]
+    },
+    "network": {
+      "title": "复制与服务器权限",
+      "steps": [
+        "分别识别服务器、拥有者客户端和模拟代理，明确谁修改事实、谁发请求、谁接收 OnRep；拥有 Actor 不等于拥有服务器权限。",
+        "属性复制核实 GetLifetimeReplicatedProps/DOREPLIFETIME；FastArray 的增删改核实标记脏与子对象注册/撤销。",
+        "Push Model 必须同时检查注册参数、运行配置和写入时的脏标记；SetupIrisSupport 只提供构建支持，不能证明运行时启用了 Iris。",
+        "RPC 验证发送者、当前 Pawn、目标和参数；不用 Reliable 每帧发送表现数据。GAS 预测保留 ASC 自有协议。",
+        "分别测试 Listen Server、拥有者/其他客户端、重生和重连。本项目没有独立 Server Target，PIE Dedicated 不证明独立专服构建成功。"
+      ],
+      "anchors": [
+        {
+          "path": "Source/Runtime/Engine/Public/Net/UnrealNetwork.h",
+          "symbol": "DOREPLIFETIME",
+          "line": 261,
+          "excerpt": "#define DOREPLIFETIME(c,v) DOREPLIFETIME_WITH_PARAMS(c,v,FDoRepLifetimeParams())"
+        },
+        {
+          "path": "Source/Runtime/Net/Core/Classes/Net/Serialization/FastArraySerializer.h",
+          "symbol": "MarkItemDirty",
+          "line": 443,
+          "excerpt": "void MarkItemDirty(FFastArraySerializerItem & Item)"
+        },
+        {
+          "path": "Source/Runtime/Engine/Classes/GameFramework/Actor.h",
+          "symbol": "HasAuthority",
+          "line": 1866,
+          "excerpt": "ENGINE_API bool HasAuthority() const;"
+        }
+      ]
+    },
+    "animation": {
+      "title": "动画与 Montage",
+      "steps": [
+        "先追踪 UHodgeAnimInstance 与 LyraAnimInstance 的 ASC/GameplayTagPropertyMap 初始化，核实 Pawn 更换与 AnimInstance 重建。",
+        "Montage 播放由现有能力和战斗链路发起；结束、中断、取消及混出回调验证 Montage/动作身份，避免多个系统重复驱动。",
+        "线程安全动画更新只使用允许的数据快照；不能在工作线程随意读写 Actor、ASC 或组件。",
+        "根运动、MotionWarping、角色朝向与相机经过项目现有仲裁链路；不为照搬示例重构 ALS 或改无关动画资产。",
+        "上游 5.8 新动画插件的能力不视为 5.5 可用；核实本机 uplugin、依赖和蓝图节点后再给配置步骤。"
+      ],
+      "anchors": [
+        {
+          "path": "Source/Runtime/Engine/Classes/Animation/AnimInstance.h",
+          "symbol": "NativeThreadSafeUpdateAnimation",
+          "line": 1326,
+          "excerpt": "ENGINE_API virtual void NativeThreadSafeUpdateAnimation(float DeltaSeconds);"
+        },
+        {
+          "path": "Source/Runtime/Engine/Classes/Animation/AnimInstance.h",
+          "symbol": "Montage_SetEndDelegate",
+          "line": 734,
+          "excerpt": "ENGINE_API void Montage_SetEndDelegate(FOnMontageEnded & InOnMontageEnded, UAnimMontage* Montage = NULL);"
+        },
+        {
+          "path": "Source/Runtime/Engine/Classes/Animation/AnimMontage.h",
+          "symbol": "UAnimMontage",
+          "line": 22,
+          "excerpt": "class UAnimMontage;"
+        }
+      ]
+    },
+    "movement": {
+      "title": "CharacterMovement",
+      "steps": [
+        "沿用现有 ACharacter/CharacterMovement 和动作请求入口，先追踪输入、AI、能力到实际运动执行者。",
+        "自定义运动需同时检查服务器模拟、客户端预测、SavedMove、纠正和模拟代理表现；本地移动正常不足以证明联网正确。",
+        "RootMotion/MotionWarping 与角色旋转不可各自 Tick 争写；临时移动参数在动作取消和 Pawn 销毁时恢复且验证执行身份。",
+        "保持 UE5.5 的虚函数签名和项目既有配置，不把 5.8 Mover 例子换入现有 CMC。"
+      ],
+      "anchors": [
+        {
+          "path": "Source/Runtime/Engine/Classes/GameFramework/CharacterMovementComponent.h",
+          "symbol": "PhysCustom",
+          "line": 1951,
+          "excerpt": "ENGINE_API virtual void PhysCustom(float deltaTime, int32 Iterations);"
+        },
+        {
+          "path": "Source/Runtime/Engine/Classes/GameFramework/CharacterMovementComponent.h",
+          "symbol": "FSavedMove_Character",
+          "line": 2898,
+          "excerpt": "ENGINE_API FSavedMove_Character();"
+        }
+      ]
+    },
+    "cameras": {
+      "title": "相机与 CameraMode",
+      "steps": [
+        "本项目沿用 HodgeCameraComponent/CameraMode，参考 LyraCameraComponent.GetCameraView 与 CameraModeStack.EvaluateStack 的统一求值入口。",
+        "模式提交视图请求，由现有相机栈统一应用；技能、锁定和过场的相机占用在结束/取消时按执行身份释放。",
+        "5.5 已有实验性 GameplayCameras 插件不等于项目已启用，更不等于拥有 5.8 的同名接口；不为复用上游示例替换项目相机链路。",
+        "相机位置、控制器旋转和 Pawn 朝向区分职责，验证重生、切换目标、联机拥有者与恢复默认模式。"
+      ],
+      "anchors": [
+        {
+          "path": "Source/Runtime/Engine/Classes/Camera/CameraComponent.h",
+          "symbol": "GetCameraView",
+          "line": 258,
+          "excerpt": "ENGINE_API virtual void GetCameraView(float DeltaTime, FMinimalViewInfo& DesiredView);"
+        },
+        {
+          "path": "Source/Runtime/Engine/Classes/Camera/PlayerCameraManager.h",
+          "symbol": "APlayerCameraManager",
+          "line": 191,
+          "excerpt": "ENGINE_API virtual ~APlayerCameraManager();"
+        }
+      ]
+    },
+    "mover": {
+      "title": "实验性 Mover",
+      "steps": [
+        "本机 Mover 位于 Plugins/Experimental/Mover；项目当前使用 CharacterMovement，不将 skill 安装解释为启用或迁移 Mover。",
+        "只有任务明确需要 Mover 时才检查插件版本、模块、输入生产、同步状态和后端；用本机 MoverComponent 声明重建调用链。",
+        "5.8 的 movement modifiers、后端和同步 API 不能直接视为 5.5 可用；缺失功能沿用现有 CMC/RootMotion 路径或说明缺口。",
+        "改变网络运动框架前需要完整评估 GAS、根运动、预测和取消，不能通过改引擎版本来完成适配。"
+      ],
+      "anchors": [
+        {
+          "path": "Plugins/Experimental/Mover/Source/Mover/Public/MoverComponent.h",
+          "symbol": "UMoverComponent",
+          "line": 62,
+          "excerpt": "UMoverComponent();"
+        }
+      ]
+    },
+    "input": {
+      "title": "Enhanced Input",
+      "steps": [
+        "沿用 HodgeInputConfig/HodgeInputComponent 与 Hero 初始化；定位 IA/IMC、InputTag、绑定入口和本地玩家子系统。",
+        "MappingContext 的添加与移除要配对，Pawn 重建或重复初始化不得重复绑定；输入完成与取消均需释放持续动作。",
+        "按 Triggered/Started/Completed/Canceled 的实际语义选择回调，不把 IA 触发直接当作能力在服务器执行成功。",
+        "5.8 的 Input Mode Filtering 不作为本机配置前提；重绑定先核实 EnhancedInputUserSettings 的 5.5 签名与项目设置。"
+      ],
+      "anchors": [
+        {
+          "path": "Plugins/EnhancedInput/Source/EnhancedInput/Public/InputMappingContext.h",
+          "symbol": "UInputMappingContext",
+          "line": 22,
+          "excerpt": "class ENHANCEDINPUT_API UInputMappingContext : public UDataAsset"
+        },
+        {
+          "path": "Plugins/EnhancedInput/Source/EnhancedInput/Public/UserSettings/EnhancedInputUserSettings.h",
+          "symbol": "MapPlayerKey",
+          "line": 565,
+          "excerpt": "virtual void MapPlayerKey(const FMapPlayerKeyArgs& InArgs, FGameplayTagContainer& FailureReason);"
+        },
+        {
+          "path": "Plugins/EnhancedInput/Source/EnhancedInput/Public/EnhancedInputComponent.h",
+          "symbol": "BindAction",
+          "line": 430,
+          "excerpt": "FEnhancedInputActionEventBinding& BindAction(const UInputAction* Action, ETriggerEvent TriggerEvent, UserClass* Object, typename HANDLER_SIG::template TMethodPtr< UserClass, VarTypes... > Func, VarTypes... Vars) \\"
+        }
+      ]
+    },
+    "tags": {
+      "title": "GameplayTag 与消息",
+      "steps": [
+        "先查项目 Native Tags、DefaultGameplayTags.ini 和实际资产引用；保留既有拼写与重定向。",
+        "区分精确匹配和层级匹配，用容器或 TagQuery 表达组合条件；状态事实仍由所属系统维护。",
+        "注册/解绑标签变化委托要成对，确认客户端收到的标签源；松散标签和 GameplayEffect 授予标签的复制行为分别检查。",
+        "Lyra GameplayMessageRuntime 是样例插件能力；不假定 Engine 或项目已经启用它，也不为通知创建第二套状态源。"
+      ],
+      "anchors": [
+        {
+          "path": "Source/Runtime/GameplayTags/Classes/GameplayTagContainer.h",
+          "symbol": "MatchesTagExact",
+          "line": 112,
+          "excerpt": "FORCEINLINE bool MatchesTagExact(const FGameplayTag& TagToCheck) const"
+        },
+        {
+          "path": "Source/Runtime/GameplayTags/Public/NativeGameplayTags.h",
+          "symbol": "UE_DEFINE_GAMEPLAY_TAG",
+          "line": 41,
+          "excerpt": "#define UE_DEFINE_GAMEPLAY_TAG(TagName, Tag) FNativeGameplayTag TagName(UE_PLUGIN_NAME, UE_MODULE_NAME, Tag, TEXT(\"\"), ENativeGameplayTagToken::PRIVATE_USE_MACRO_INSTEAD); static_assert(UE::GameplayTags::Private::HasFileExtension(__FILE__), \"UE_DEFINE_GAMEPLAY_TAG can only be used in .cpp files, if you're trying to share tags across modules, use UE_DECLARE_GAMEPLAY_TAG_EXTERN in the public header, and UE_DEFINE_GAMEPLAY_TAG in the private .cpp\");"
+        }
+      ]
+    },
+    "assets": {
+      "title": "数据资产与资源加载",
+      "steps": [
+        "可调参数沿用项目已有 PawnData/Definition/Profile 资产，字段和路径以当前头文件及资产读取结果为准。",
+        "区分软路径、异步加载、实际驻留和 GC 持有；FStreamableHandle 与取消/释放的所有者保持明确。",
+        "回调检查对象和本次加载/Pawn 身份；无资源、加载失败与等待中的状态不能统一当作成功。",
+        "AssetManager 的 PrimaryAssetType、扫描、Bundle 和 Cook 规则分别核实；磁盘存在 uasset 不证明内部配置有效或已包含在包中。"
+      ],
+      "anchors": [
+        {
+          "path": "Source/Runtime/Engine/Classes/Engine/AssetManager.h",
+          "symbol": "LoadPrimaryAsset",
+          "line": 244,
+          "excerpt": "ENGINE_API virtual TSharedPtr<FStreamableHandle> LoadPrimaryAsset(const FPrimaryAssetId& AssetToLoad, const TArray<FName>& LoadBundles = TArray<FName>(), FStreamableDelegate DelegateToCall = FStreamableDelegate(), TAsyncLoadPriority Priority = FStreamableManager::DefaultAsyncLoadPriority);"
+        },
+        {
+          "path": "Source/Runtime/Engine/Classes/Engine/StreamableManager.h",
+          "symbol": "RequestAsyncLoad",
+          "line": 511,
+          "excerpt": "TSharedPtr<FStreamableHandle> RequestAsyncLoad("
+        },
+        {
+          "path": "Source/Runtime/Engine/Classes/Engine/DataAsset.h",
+          "symbol": "UPrimaryDataAsset",
+          "line": 46,
+          "excerpt": "class UPrimaryDataAsset : public UDataAsset"
+        }
+      ]
+    },
+    "build": {
+      "title": "模块与 UBT 构建",
+      "steps": [
+        "保持 Hodgepodge 单一业务 Runtime 模块和已有 HodgeAbilityEditor 工具模块，Public/Private 对应，不为整理目录增加模块。",
+        "本机保持 BuildSettingsVersion.V5 与 IncludeOrderVersion.Unreal5_5；不使用上游 5.8 枚举或默认构建参数。",
+        "公开头文件暴露的模块类型需要 Public 依赖；Editor 依赖受 Target.bBuildEditor/WITH_EDITOR 限制，Game 构建验证不能省略。",
+        "按 Docs/AI_DEVELOPMENT.md 常规构建 Editor；Runtime/依赖改变再构建 Game。保存后关闭编辑器，不强杀未保存工作，Live Coding 不代替常规构建。",
+        "同类非内联实现集中主 cpp；generated.h 位于头文件 include 末尾，反射实现沿用 UE_INLINE_GENERATED_CPP_BY_NAME。"
+      ],
+      "anchors": [
+        {
+          "path": "Source/Programs/UnrealBuildTool/Configuration/ModuleRules.cs",
+          "symbol": "PublicDependencyModuleNames",
+          "line": 1213,
+          "excerpt": "public List<string> PublicDependencyModuleNames = new();"
+        },
+        {
+          "path": "Source/Programs/UnrealBuildTool/Configuration/TargetRules.cs",
+          "symbol": "Unreal5_5",
+          "line": 196,
+          "excerpt": "Unreal5_5,"
+        }
+      ]
+    },
+    "reflection": {
+      "title": "C++ 反射与蓝图接口",
+      "steps": [
+        "沿用 UE 类型前缀、Hodge 命名、反射宏、中文注释和 Public/Private 结构；先明确调用方和可见性，再暴露最小蓝图接口。",
+        "UCLASS/USTRUCT/UPROPERTY/UFUNCTION 的组合以 5.5 UHT 和相邻代码为依据；generated.h 最后 include。",
+        "修改反射字段、继承或默认子对象前检查资产引用和 CoreRedirects，保存并关闭编辑器常规构建，再冷启动编译受影响蓝图。",
+        "不要用 AddToRoot 掩盖持有关系，也不要通过编辑尚不存在的蓝图字段弥补代码缺口。"
+      ],
+      "anchors": [
+        {
+          "path": "Source/Runtime/CoreUObject/Public/UObject/ObjectMacros.h",
+          "symbol": "UCLASS",
+          "line": 740,
+          "excerpt": "#define UCLASS(...)"
+        },
+        {
+          "path": "Source/Runtime/CoreUObject/Public/UObject/Object.h",
+          "symbol": "UObject",
+          "line": 99,
+          "excerpt": "return new (EC_InternalUseOnlyConstructor, (UObject*)GetTransientPackage(), NAME_None, RF_NeedLoad | RF_ClassDefaultObject | RF_TagGarbageTemp) UObject(Helper);"
+        }
+      ]
+    },
+    "core": {
+      "title": "核心类型、日志和容器",
+      "steps": [
+        "按标识、显示文本与普通字符串选择 FName/FText/FString；本地化文本不得通过 FString 往返丢失语义。",
+        "TArray/TMap/TSet 遍历时考虑扩容和迭代器失效；引用与指针的生命周期随容器变化重新评估。",
+        "日志包含对象、资产、请求和失败阶段；check 只表达程序不变量，坏配置和运行失败提供可诊断返回路径。",
+        "遵循项目中文注释和相邻风格，不按上游格式化建议重排无关代码。"
+      ],
+      "anchors": [
+        {
+          "path": "Source/Runtime/Core/Public/Containers/Array.h",
+          "symbol": "TArray",
+          "line": 393,
+          "excerpt": "FORCEINLINE TArray()"
+        },
+        {
+          "path": "Source/Runtime/Core/Public/UObject/NameTypes.h",
+          "symbol": "FName",
+          "line": 870,
+          "excerpt": "FORCEINLINE FName(EName Ename) : FName(Ename, NAME_NO_NUMBER_INTERNAL) {}"
+        },
+        {
+          "path": "Source/Runtime/Core/Public/Misc/AssertionMacros.h",
+          "symbol": "ensure",
+          "line": 425,
+          "excerpt": "#define ensure(           InExpression                ) UE_ENSURE_IMPL (   false, InExpression)"
+        }
+      ]
+    },
+    "actors": {
+      "title": "Actor 与组件生命周期",
+      "steps": [
+        "区分构造/CDO、OnRegister、InitializeComponent、BeginPlay 与 EndPlay，默认子对象只在构造期创建。",
+        "动态组件核实 Outer、AddInstanceComponent/注册、复制和卸载；附着规则明确局部/世界变换与 Socket。",
+        "组件依赖通过现有 Init State 协调，重复初始化和 Pawn 更换不得重复绑定或创建资源。",
+        "委托、Timer、异步加载和能力句柄在对应 EndPlay/停用路径释放，不能只依赖析构。"
+      ],
+      "anchors": [
+        {
+          "path": "Source/Runtime/Engine/Classes/GameFramework/Actor.h",
+          "symbol": "BeginPlay",
+          "line": 2050,
+          "excerpt": "ENGINE_API void ReceiveBeginPlay();"
+        },
+        {
+          "path": "Source/Runtime/Engine/Classes/Components/ActorComponent.h",
+          "symbol": "OnRegister",
+          "line": 686,
+          "excerpt": "ENGINE_API virtual void OnRegister();"
+        }
+      ]
+    },
+    "framework": {
+      "title": "Gameplay Framework",
+      "steps": [
+        "沿 Experience→GameMode/PawnData→PlayerState/PawnExtension→Hero 追踪，不套用模板角色 BeginPlay 全初始化。",
+        "区分仅服务器存在的 GameMode、复制 GameState/PlayerState、本地 LocalPlayer 和各端 Controller/Pawn 的生命周期。",
+        "玩家 ASC Owner 保持 PlayerState；重生/Travel 的持久状态与 Pawn 临时表现分离，服务器与客户端入口同时核实。",
+        "找到 Lyra 同职责实现后复用机制并记录差异；不把空覆盖、旧注释或同名类当作有效调用链。"
+      ],
+      "anchors": [
+        {
+          "path": "Source/Runtime/Engine/Classes/GameFramework/GameModeBase.h",
+          "symbol": "RestartPlayer",
+          "line": 440,
+          "excerpt": "ENGINE_API virtual void RestartPlayer(AController* NewPlayer);"
+        },
+        {
+          "path": "Source/Runtime/Engine/Classes/GameFramework/PlayerState.h",
+          "symbol": "APlayerState",
+          "line": 34,
+          "excerpt": "DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnPlayerStatePawnSet, APlayerState*, Player, APawn*, NewPawn, APawn*, OldPawn);"
+        },
+        {
+          "path": "Source/Runtime/Engine/Classes/GameFramework/Pawn.h",
+          "symbol": "OnRep_PlayerState",
+          "line": 262,
+          "excerpt": "ENGINE_API virtual void OnRep_PlayerState();"
+        }
+      ]
+    },
+    "async": {
+      "title": "Timer、异步与线程",
+      "steps": [
+        "按一次性延迟、后台纯计算、并行批处理选择 Timer/UE::Tasks/Async；不为等待依赖添加无限轮询。",
+        "TimerHandle、任务和委托由创建者负责清理；EndPlay、取消和 Pawn 更换验证执行身份。",
+        "后台线程处理拷贝的数据，访问 UObject 与提交游戏状态回到允许的线程；不要同步等待造成游戏线程死锁。",
+        "以本机头文件核实 5.5 Tasks API；上游 FTaskConcurrencyLimiter 等版本敏感类型先检查存在性和签名。"
+      ],
+      "anchors": [
+        {
+          "path": "Source/Runtime/Engine/Public/TimerManager.h",
+          "symbol": "ClearTimer",
+          "line": 276,
+          "excerpt": "FORCEINLINE void ClearTimer(FTimerHandle& InHandle)"
+        },
+        {
+          "path": "Source/Runtime/Core/Public/Tasks/Task.h",
+          "symbol": "Launch",
+          "line": 141,
+          "excerpt": "void Launch("
+        },
+        {
+          "path": "Source/Runtime/Core/Public/Async/Async.h",
+          "symbol": "AsyncTask",
+          "line": 449,
+          "excerpt": "CORE_API void AsyncTask(ENamedThreads::Type Thread, TUniqueFunction<void()> Function);"
+        }
+      ]
+    },
+    "subsystems": {
+      "title": "Subsystem 生命周期",
+      "steps": [
+        "按 Engine/GameInstance/World/LocalPlayer 生命周期选择现有 Subsystem，优先扩展已承担职责的系统。",
+        "Initialize/Deinitialize 配对注册与解绑，依赖初始化使用 Collection 而非假设构造顺序。",
+        "多 PIE World 和本地玩家分别持有状态，不用全局静态缓存串联不同世界；异步回调验证所属世界。",
+        "引擎已有任务机制能满足时避免增加 Tickable Subsystem；需要 Tick 时记录范围和开销。"
+      ],
+      "anchors": [
+        {
+          "path": "Source/Runtime/Engine/Public/Subsystems/SubsystemCollection.h",
+          "symbol": "InitializeDependency",
+          "line": 33,
+          "excerpt": "ENGINE_API USubsystem* InitializeDependency(TSubclassOf<USubsystem> SubsystemClass);"
+        },
+        {
+          "path": "Source/Runtime/Engine/Public/Subsystems/WorldSubsystem.h",
+          "symbol": "UTickableWorldSubsystem",
+          "line": 61,
+          "excerpt": "ENGINE_API UTickableWorldSubsystem();"
+        }
+      ]
+    },
+    "blueprint": {
+      "title": "蓝图图表与编译",
+      "steps": [
+        "先读取目标蓝图父类、默认值和目标图类型，核实 C++ 暴露接口与资产字段，不猜引脚名。",
+        "现有普通 EventGraph 桥不能证明支持 AnimGraph、函数图或 UMG 树；按实际工具 schema 选择编辑方式。",
+        "编辑现有资产前保留恢复点，串行修改同一资产，读取结果、编译诊断并保存明确目标，不批量重存无关资产。",
+        "蓝图编译、保存持久化、PIE 玩法和联机分别记录；工具返回成功不代替读取最终资产。"
+      ],
+      "anchors": [
+        {
+          "path": "Source/Runtime/Engine/Classes/Engine/Blueprint.h",
+          "symbol": "UBlueprint",
+          "line": 31,
+          "excerpt": "class UBlueprintExtension;"
+        },
+        {
+          "path": "Source/Editor/UnrealEd/Public/Kismet2/KismetEditorUtilities.h",
+          "symbol": "CompileBlueprint",
+          "line": 169,
+          "excerpt": "static UNREALED_API void CompileBlueprint(UBlueprint* BlueprintObj, EBlueprintCompileOptions CompileFlags = EBlueprintCompileOptions::None, class FCompilerResultsLog* pResults = nullptr );"
+        }
+      ]
+    },
+    "editor": {
+      "title": "编辑器工具与 Python",
+      "steps": [
+        "优先沿用 HodgeAbilityEditor 和已有 AuthoringLibrary；UE 编辑器 Python 通过 unreal 运行，普通系统 Python 没有编辑器对象。",
+        "编辑器模块依赖受目标限制，Runtime 不直接引用 UnrealEd；读取 5.5 实际子系统接口，不复制 5.8 ToolsetRegistry。",
+        "按目标资产开启事务、标记修改并保存，先读取状态，异步操作失败后读取结果再决定是否重试。",
+        "UI/动画编辑使用现有工具真实支持的范围；不得通过静默保存全部资产或升级插件补齐缺失能力。"
+      ],
+      "anchors": [
+        {
+          "path": "Source/Editor/UnrealEd/Public/Subsystems/EditorAssetSubsystem.h",
+          "symbol": "SaveLoadedAsset",
+          "line": 277,
+          "excerpt": "UNREALED_API bool SaveLoadedAsset(UObject* AssetToSave, bool bOnlyIfIsDirty = true);"
+        },
+        {
+          "path": "Source/Editor/Blutility/Public/EditorUtilitySubsystem.h",
+          "symbol": "UEditorUtilitySubsystem",
+          "line": 48,
+          "excerpt": "UEditorUtilitySubsystem();"
+        }
+      ]
+    },
+    "ui": {
+      "title": "UMG、Slate 与 CommonUI",
+      "steps": [
+        "本项目已经声明 UMG/Slate/CommonUI/CommonInput 依赖；仍要追踪实际 UIManager、层栈和宿主资产，不能沿旧快照认定未实现。",
+        "控件展示从现有事件/属性委托更新，Construct/Destruct 重复调用的绑定必须幂等；PlayerState/Pawn 更换重新绑定。",
+        "CommonActivatableWidget 管理激活/输入/焦点时保持现有路由；不用 Widget Tick 轮询 ASC，也不引入 CommonGame/CommonUser。",
+        "BindWidget 字段、控件树与蓝图父类必须实际存在；业务数据为真实来源或明确标注样例。"
+      ],
+      "anchors": [
+        {
+          "path": "Source/Runtime/UMG/Public/Blueprint/UserWidget.h",
+          "symbol": "NativeDestruct",
+          "line": 1514,
+          "excerpt": "UMG_API virtual void NativeDestruct();"
+        },
+        {
+          "path": "Plugins/Runtime/CommonUI/Source/CommonUI/Public/CommonActivatableWidget.h",
+          "symbol": "NativeOnActivated",
+          "line": 151,
+          "excerpt": "virtual void NativeOnActivated();"
+        }
+      ]
+    },
+    "ai": {
+      "title": "AI 与导航",
+      "steps": [
+        "先区分 Controller 决策、BehaviorTree/StateTree 运行、Pawn 执行和服务端权限；AI 共用现有战斗请求接口。",
+        "任务开始、Abort、结束与移动取消成对处理；观察者/感知委托在角色销毁和控制器更换时解绑。",
+        "NavMesh 可达、路径跟随结果和目标有效性分别检查，不用直接 SetActorLocation 绕过运动/复制。",
+        "LyraBotCreationComponent 是创建入口的参考；不为普通怪物增加 PlayerState，不假定 Lyra 含完整怪物战斗。"
+      ],
+      "anchors": [
+        {
+          "path": "Source/Runtime/AIModule/Classes/AIController.h",
+          "symbol": "MoveToActor",
+          "line": 180,
+          "excerpt": "AIMODULE_API EPathFollowingRequestResult::Type MoveToActor(AActor* Goal, float AcceptanceRadius = -1, bool bStopOnOverlap = true,"
+        },
+        {
+          "path": "Source/Runtime/AIModule/Classes/BehaviorTree/BTTaskNode.h",
+          "symbol": "AbortTask",
+          "line": 48,
+          "excerpt": "AIMODULE_API virtual EBTNodeResult::Type AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory);"
+        }
+      ]
+    },
+    "mass": {
+      "title": "Mass Entity",
+      "steps": [
+        "本机 5.5.4 MassEntity 模块位于 Engine/Source/Runtime/MassEntity，不能凭上游版本迁移叙述推断其位置。",
+        "任务确需 Mass 时才评估项目依赖；先明确 Fragment/Tag、Query 的读写权限、Processor 阶段和游戏线程要求。",
+        "以本机 ConfigureQueries 签名和 FMassEntityQuery API 为准，不套用 5.8 构造/注册变更；结构修改走 Deferred 命令。",
+        "实体句柄失效、World 切换与 UObject 桥接单独处理；没有需求不把现有 Actor/GAS 框架迁移成 ECS。"
+      ],
+      "anchors": [
+        {
+          "path": "Source/Runtime/MassEntity/Public/MassProcessor.h",
+          "symbol": "ConfigureQueries",
+          "line": 119,
+          "excerpt": "virtual void ConfigureQueries() PURE_VIRTUAL(UMassProcessor::ConfigureQueries);"
+        },
+        {
+          "path": "Source/Runtime/MassEntity/Public/MassEntityQuery.h",
+          "symbol": "ForEachEntityChunk",
+          "line": 45,
+          "excerpt": "void ForEachEntityChunk(FMassEntityManager& EntityManager, FMassExecutionContext& ExecutionContext, const FMassExecuteFunction& ExecuteFunction);"
+        }
+      ]
+    },
+    "statetree": {
+      "title": "StateTree",
+      "steps": [
+        "使用本机 StateTreeModule 头文件核实 Link、EnterState、Tick、ExitState 和 InstanceData 类型，签名不从 5.8 复制。",
+        "条件/评估器读取状态，任务负责动作；退出、失败、取消均撤销请求和外部回调，避免旧任务恢复角色。",
+        "5.8 Scheduled Tick、Considerations 和 Delegate 示例先查本机接口，未找到就使用 5.5 既有任务/事件机制。",
+        "Init State 是初始化协议，StateTree 是行为执行；不以行为切换倒退 Pawn 初始化状态。"
+      ],
+      "anchors": [
+        {
+          "path": "Plugins/Runtime/StateTree/Source/StateTreeModule/Public/StateTreeTaskBase.h",
+          "symbol": "EnterState",
+          "line": 36,
+          "excerpt": "virtual EStateTreeRunStatus EnterState(FStateTreeExecutionContext& Context, const EStateTreeStateChangeType ChangeType, const FStateTreeTransitionResult& Transition) const final { return EStateTreeRunStatus::Running; }"
+        },
+        {
+          "path": "Plugins/Runtime/StateTree/Source/StateTreeModule/Public/StateTreeExecutionContext.h",
+          "symbol": "FStateTreeExecutionContext",
+          "line": 95,
+          "excerpt": "FStateTreeExecutionContext(UObject& InOwner, const UStateTree& InStateTree, FStateTreeInstanceData& InInstanceData, const FOnCollectStateTreeExternalData& CollectExternalDataCallback = {}, const EStateTreeRecordTransitions RecordTransitions = EStateTreeRecordTransitions::No);"
+        }
+      ]
+    },
+    "physics": {
+      "title": "碰撞与 Chaos",
+      "steps": [
+        "复用项目已有 HitDetection/Trace 通道和动作请求；先确定服务器伤害裁定、客户端预测表现及一次命中的去重范围。",
+        "区分 Trace/Sweep/Overlap、对象通道与响应配置，查询忽略自身和持有装备，校验返回的有效目标。",
+        "ragdoll/物理模拟与运动、动画恢复的状态归属保持单一，取消时恢复对应执行者拥有的参数。",
+        "异步物理/网络物理以本机接口为准，不将 5.8 示例复制进当前 CMC/GAS 链路。"
+      ],
+      "anchors": [
+        {
+          "path": "Source/Runtime/Engine/Classes/Engine/World.h",
+          "symbol": "SweepMultiByChannel",
+          "line": 1984,
+          "excerpt": "bool SweepMultiByChannel(TArray<struct FHitResult>& OutHits, const FVector& Start, const FVector& End, const FQuat& Rot, ECollisionChannel TraceChannel, const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params = FCollisionQueryParams::DefaultQueryParam, const FCollisionResponseParams& ResponseParam = FCollisionResponseParams::DefaultResponseParam) const;"
+        },
+        {
+          "path": "Source/Runtime/Engine/Classes/Components/PrimitiveComponent.h",
+          "symbol": "SetSimulatePhysics",
+          "line": 1527,
+          "excerpt": "ENGINE_API virtual void SetSimulatePhysics(bool bSimulate);"
+        }
+      ]
+    },
+    "pcg": {
+      "title": "PCG 与程序化几何",
+      "steps": [
+        "先核实项目是否启用 PCG/GeometryScript/ProceduralMeshComponent，不因安装 skill 自动启用插件。",
+        "按本机 PCGSettings/PCGContext 创建 CPU 节点，读取实际输入类型、种子、取消和输出契约。",
+        "5.8 PointData/PointArrayData 与 GPU 执行 API 不能当作 5.5 既有能力；缺失时使用本机 CPU PCG 路径。",
+        "区分编辑器生成、运行时生成、WorldPartition 和 Cook，输出对象由正确世界持有并支持清理/重复生成。"
+      ],
+      "anchors": [
+        {
+          "path": "Plugins/PCG/Source/PCG/Public/PCGSettings.h",
+          "symbol": "UPCGSettings",
+          "line": 23,
+          "excerpt": "class UPCGSettings;"
+        },
+        {
+          "path": "Plugins/PCG/Source/PCG/Public/PCGContext.h",
+          "symbol": "FPCGContext",
+          "line": 72,
+          "excerpt": "virtual ~FPCGContext() = default;"
+        }
+      ]
+    },
+    "materials": {
+      "title": "材质与着色器",
+      "steps": [
+        "区分运行时 MID/参数集合与编辑器图表修改；运行时不依赖 MaterialEditingLibrary。",
+        "先检查现有材质、参数名、使用对象和实例层级；不批量覆盖第三方材质，不凭工具目录推断图表编辑能力。",
+        "上游 Substrate/着色器示例需核实 5.5 项目渲染配置与平台，禁止为复用示例切换渲染管线。",
+        "改图后检查编译、目标平台和实际视觉结果；动态参数生命周期跟随实际组件/动作。"
+      ],
+      "anchors": [
+        {
+          "path": "Source/Runtime/Engine/Public/Materials/MaterialInstanceDynamic.h",
+          "symbol": "SetScalarParameterValue",
+          "line": 22,
+          "excerpt": "ENGINE_API void SetScalarParameterValue(FName ParameterName, float Value);"
+        },
+        {
+          "path": "Source/Editor/MaterialEditor/Public/MaterialEditingLibrary.h",
+          "symbol": "CreateMaterialExpression",
+          "line": 112,
+          "excerpt": "static UMaterialExpression* CreateMaterialExpression(UMaterial* Material, TSubclassOf<UMaterialExpression> ExpressionClass, int32 NodePosX=0, int32 NodePosY=0);"
+        }
+      ]
+    },
+    "landscape": {
+      "title": "Landscape、RVT 与植被",
+      "steps": [
+        "先读取地形尺寸、EditLayers、材质层和 RVT/Grass 配置，明确改动资产及可恢复范围。",
+        "自动地形、斜率混合和纹理平铺参数沿用既有材质实例，WorldPosition/UV 单位保持一致。",
+        "核实 5.5 Landscape/RVT 实际节点及编辑器支持，不能直接套用 5.8 Nanite/PCG 组合能力。",
+        "验证编辑器表现、碰撞、流送和目标平台开销；安装知识 skill 不表示 UDS/UDW 商业资产已存在。"
+      ],
+      "anchors": [
+        {
+          "path": "Source/Runtime/Landscape/Classes/Landscape.h",
+          "symbol": "ALandscape",
+          "line": 256,
+          "excerpt": "ALandscape(const FObjectInitializer& ObjectInitializer);"
+        },
+        {
+          "path": "Source/Runtime/Engine/Classes/VT/RuntimeVirtualTexture.h",
+          "symbol": "URuntimeVirtualTexture",
+          "line": 19,
+          "excerpt": "ENGINE_API ~URuntimeVirtualTexture();"
+        }
+      ]
+    },
+    "rendering": {
+      "title": "渲染、Lumen 与性能",
+      "steps": [
+        "先核实项目平台/RHI、DeviceProfile 和渲染设置，再解释 Lumen/Nanite/阴影/后处理的实际开关。",
+        "本机 5.5 的 MegaLights 等实验功能以实际插件/CVar/项目配置为准，不套用 5.8 的成熟度和默认值。",
+        "性能结论基于目标场景与硬件的 Unreal Insights/GPU 数据，分别定位游戏线程、渲染线程、GPU 和显存。",
+        "任何画质或管线变更先说明影响；不为遵循上游 skill 自动开启 Substrate、升级引擎或更换插件。"
+      ],
+      "anchors": [
+        {
+          "path": "Source/Runtime/Engine/Classes/Components/SkyAtmosphereComponent.h",
+          "symbol": "USkyAtmosphereComponent",
+          "line": 50,
+          "excerpt": "~USkyAtmosphereComponent();"
+        },
+        {
+          "path": "Source/Runtime/Engine/Classes/Components/VolumetricCloudComponent.h",
+          "symbol": "UVolumetricCloudComponent",
+          "line": 32,
+          "excerpt": "~UVolumetricCloudComponent();"
+        }
+      ]
+    },
+    "audio": {
+      "title": "音频与 MetaSound",
+      "steps": [
+        "区分一次性 PlaySound 与可控制 AudioComponent，明确附着、空间化、并发和停止/释放的所有者。",
+        "MetaSound 参数名和类型从现有资源读取，运行时调用核实 5.5 AudioComponent 接口与 MetasoundEngine 依赖。",
+        "音乐/Quartz、混音和衰减按需要单独配置，委托和异步结果在世界/Pawn 结束时清理。",
+        "服务器事件与各客户端音效播放分开，避免 Listen Server 重复播放；验证实际听感而非仅工具返回成功。"
+      ],
+      "anchors": [
+        {
+          "path": "Source/Runtime/Engine/Classes/Components/AudioComponent.h",
+          "symbol": "SetFloatParameter",
+          "line": 541,
+          "excerpt": "virtual void SetFloatParameter(FName InName, float InFloat) override"
+        },
+        {
+          "path": "Plugins/Runtime/Metasound/Source/MetasoundEngine/Public/MetasoundSource.h",
+          "symbol": "UMetaSoundSource",
+          "line": 128,
+          "excerpt": "UMetaSoundSource(const FObjectInitializer& ObjectInitializer);"
+        }
+      ]
+    },
+    "niagara": {
+      "title": "Niagara 特效",
+      "steps": [
+        "先检查现有 System/Emitter、User 参数、材质、渲染器和激活方式；特效生命周期归属到当前组件/动作。",
+        "SpawnSystemAttached/AtLocation 的池化和自动销毁参数以本机签名为准，结束与取消时处理组件和回调。",
+        "DataChannel、SimCache、LightweightEmitter 等功能按本机 5.5 类和插件逐项查验，不能套用 5.8 示例。",
+        "表现复制与伤害裁定分离；自定义模块、火焰、溶解、序列特效只修改任务关联资源，并验证性能和视觉结果。"
+      ],
+      "anchors": [
+        {
+          "path": "Plugins/FX/Niagara/Source/Niagara/Public/NiagaraFunctionLibrary.h",
+          "symbol": "SpawnSystemAttached",
+          "line": 45,
+          "excerpt": "static NIAGARA_API UNiagaraComponent* SpawnSystemAttached(UNiagaraSystem* SystemTemplate, USceneComponent* AttachToComponent, FName AttachPointName, FVector Location, FRotator Rotation, EAttachLocation::Type LocationType, bool bAutoDestroy, bool bAutoActivate = true, ENCPoolMethod PoolingMethod = ENCPoolMethod::None, bool bPreCullCheck = true);"
+        },
+        {
+          "path": "Plugins/FX/Niagara/Source/Niagara/Public/NiagaraComponent.h",
+          "symbol": "SetVariableFloat",
+          "line": 517,
+          "excerpt": "NIAGARA_API void SetVariableFloat(FName InVariableName, float InValue);"
+        }
+      ]
+    },
+    "sequencer": {
+      "title": "Sequencer 与渲染队列",
+      "steps": [
+        "先读取序列资产、帧率、绑定对象、相机切换与播放世界，区分 Possessable/Spawnable 的生命周期。",
+        "SequencePlayer 的播放、结束和中断与角色输入/相机占用配对；旧序列回调不得清理新动作。",
+        "运行时 LevelSequence/MovieScene 与编辑器 MovieRenderPipeline 依赖分离，MRQ/MovieRenderGraph 按本机插件核实。",
+        "渲染前明确帧范围、输出目录、格式和成本；启动渲染队列不等于产出已验证视频。"
+      ],
+      "anchors": [
+        {
+          "path": "Source/Runtime/LevelSequence/Public/LevelSequencePlayer.h",
+          "symbol": "CreateLevelSequencePlayer",
+          "line": 106,
+          "excerpt": "static LEVELSEQUENCE_API ULevelSequencePlayer* CreateLevelSequencePlayer(UObject* WorldContextObject, ULevelSequence* LevelSequence, FMovieSceneSequencePlaybackSettings Settings, ALevelSequenceActor*& OutActor);"
+        },
+        {
+          "path": "Plugins/MovieScene/MovieRenderPipeline/Source/MovieRenderPipelineCore/Public/MoviePipelineQueueEngineSubsystem.h",
+          "symbol": "UMoviePipelineQueueEngineSubsystem",
+          "line": 28,
+          "excerpt": "UMoviePipelineQueueEngineSubsystem()"
+        }
+      ]
+    },
+    "world": {
+      "title": "世界分区与关卡流送",
+      "steps": [
+        "先确定 WorldPartition、DataLayer、LevelInstance 或传统子关卡的实际方案，检查默认地图和 WorldSettings 覆盖。",
+        "流送加载、可见、Actor 初始化和业务就绪分别确认，异步回调验证当前 World 与加载请求。",
+        "硬引用、跨层引用、HLOD 和 Cook 规则分别核实，不能凭编辑器已加载判断打包可用。",
+        "关卡切换和卸载清理临时对象/委托，持久玩家状态沿用 PlayerState/GameInstance 所属链路。"
+      ],
+      "anchors": [
+        {
+          "path": "Source/Runtime/Engine/Classes/Engine/LevelStreaming.h",
+          "symbol": "ULevelStreaming",
+          "line": 22,
+          "excerpt": "class ULevelStreaming;"
+        },
+        {
+          "path": "Source/Runtime/Engine/Public/WorldPartition/WorldPartition.h",
+          "symbol": "UWorldPartition",
+          "line": 35,
+          "excerpt": "class UWorldPartitionEditorHash;"
+        }
+      ]
+    },
+    "save": {
+      "title": "存档与序列化",
+      "steps": [
+        "明确持久数据 schema、稳定标识、版本号与迁移入口，不直接序列化临时 UObject 指针或 Pawn 地址。",
+        "SaveGame 标记不表示自动保存 Actor；采集/恢复流程、FArchive 标志和资源加载需明确实现。",
+        "异步保存和读取在回调中检查槽位/用户/请求身份，失败保留可诊断结果，禁止迟到读取覆盖当前游戏。",
+        "多人存档由服务器维护事实，客户端显示和平台存储权限分开；保存成功与加载后玩法正确分别验证。"
+      ],
+      "anchors": [
+        {
+          "path": "Source/Runtime/Engine/Classes/GameFramework/SaveGame.h",
+          "symbol": "USaveGame",
+          "line": 23,
+          "excerpt": "class USaveGame : public UObject"
+        },
+        {
+          "path": "Source/Runtime/Engine/Classes/Kismet/GameplayStatics.h",
+          "symbol": "AsyncSaveGameToSlot",
+          "line": 1156,
+          "excerpt": "static ENGINE_API void AsyncSaveGameToSlot(USaveGame* SaveGameObject, const FString& SlotName, const int32 UserIndex, FAsyncSaveGameToSlotDelegate SavedDelegate = FAsyncSaveGameToSlotDelegate());"
+        }
+      ]
+    },
+    "testing": {
+      "title": "自动化、调试和验证",
+      "steps": [
+        "文档/skill 修改只验证文档、链接和差异；项目 C++ 修改按现有 Editor/Game 常规构建流程执行。",
+        "新增自动化用例覆盖真实风险：坏配置、重复初始化、取消、解绑、旧 Pawn 回调和受影响网络边界，不复制实现凑测试。",
+        "命令行自动化使用 -ExecCmds='Automation RunTests <真实过滤器>' 与 -TestExit='Automation Test Queue Empty'；不要立即 quit 导致测试提前退出。",
+        "仅在本机确认插件/模块时使用 CQTest；测试启动、进程退出码和实际断言结果分别检查。",
+        "报告 Editor/Game、蓝图、PIE、联机、Cook/打包的实际范围；不把日志历史通过计为本次验证。"
+      ],
+      "anchors": [
+        {
+          "path": "Source/Runtime/Core/Public/Misc/AutomationTest.h",
+          "symbol": "IMPLEMENT_SIMPLE_AUTOMATION_TEST",
+          "line": 4153,
+          "excerpt": "#define IMPLEMENT_SIMPLE_AUTOMATION_TEST( TClass, PrettyName, TFlags ) \\"
+        },
+        {
+          "path": "Source/Runtime/Core/Public/Misc/AutomationTest.h",
+          "symbol": "BEGIN_DEFINE_SPEC",
+          "line": 4202,
+          "excerpt": "#define BEGIN_DEFINE_SPEC( TClass, PrettyName, TFlags ) \\"
+        }
+      ]
+    },
+    "profiling": {
+      "title": "性能分析",
+      "steps": [
+        "先固定硬件、地图、角色数量、网络模式和复现步骤，采集 stat/Unreal Insights 数据再决定优化。",
+        "区分游戏线程、渲染线程、GPU、分配和 GC 开销，找到调用者与触发频率后再修改。",
+        "优先事件驱动、减少重复查询和合理缓存；缓存要有明确失效来源，不能用错误状态换取帧率。",
+        "改前改后使用相同场景对比；没有测量结果时描述预期影响并明确未验证，不虚构提升比例。"
+      ],
+      "anchors": [
+        {
+          "path": "Source/Runtime/Core/Public/ProfilingDebugging/CpuProfilerTrace.h",
+          "symbol": "TRACE_CPUPROFILER_EVENT_SCOPE",
+          "line": 352,
+          "excerpt": "#define TRACE_CPUPROFILER_EVENT_SCOPE(Name) \\"
+        },
+        {
+          "path": "Source/Runtime/Core/Public/Stats/Stats.h",
+          "symbol": "DECLARE_CYCLE_STAT",
+          "line": 285,
+          "excerpt": "#define RETURN_QUICK_DECLARE_CYCLE_STAT(StatId,GroupId) return TStatId(ANSI_TO_PROFILING(#StatId));"
+        }
+      ]
+    },
+    "packaging": {
+      "title": "Cook、打包与部署",
+      "steps": [
+        "先核实已有 Target、平台工具链、地图和资源扫描规则；本项目无 Server Target，不生成臆造专服构建命令。",
+        "Editor/Game 编译与 Cook、Stage、Package 分别验收，UAT BuildCookRun 参数以本机脚本和目标需求为准。",
+        "软引用资源、PrimaryAssetLabel、插件内容和平台条件需要检查 Cook 可达性，不能用编辑器加载成功替代。",
+        "本次技能安装不触发打包或发布；后续按任务明确输出目录，保护用户资产和已有构建产物。"
+      ],
+      "anchors": [
+        {
+          "path": "Source/Developer/DeveloperToolSettings/Classes/Settings/ProjectPackagingSettings.h",
+          "symbol": "UProjectPackagingSettings",
+          "line": 177,
+          "excerpt": "class DEVELOPERTOOLSETTINGS_API UProjectPackagingSettings"
+        },
+        {
+          "path": "Source/Programs/UnrealBuildTool/Configuration/TargetRules.cs",
+          "symbol": "TargetType",
+          "line": 3150,
+          "excerpt": "internal void SetOverridesForTargetType()"
+        }
+      ]
+    },
+    "rig": {
+      "title": "Control Rig 与 IK",
+      "steps": [
+        "读取源/目标骨架、参考姿势、比例和现有 IK Rig/Retargeter，先定位本机 5.5 控制器和节点能力。",
+        "上游 5.8 IK Retargeter 操作栈和控制器 API 不作为 5.5 前提，使用本机 IKRetargeter 声明和现有资产流程。",
+        "ControlRig 与 AnimGraph 明确执行阶段和坐标空间，避免动画工作线程访问不允许的 UObject 状态。",
+        "只保存关联骨架/动画/Rig 资产；验证关节、足部接触、根运动和实际角色表现，不批量重存 ALS。"
+      ],
+      "anchors": [
+        {
+          "path": "Plugins/Animation/IKRig/Source/IKRig/Public/Retargeter/IKRetargeter.h",
+          "symbol": "UIKRetargeter",
+          "line": 218,
+          "excerpt": "UIKRetargeter(const FObjectInitializer& ObjectInitializer);"
+        },
+        {
+          "path": "Plugins/Animation/ControlRig/Source/ControlRig/Public/ControlRig.h",
+          "symbol": "UControlRig",
+          "line": 50,
+          "excerpt": "class CONTROLRIG_API UControlRig : public URigVMHost, public INodeMappingProviderInterface, public IRigHierarchyProvider"
+        }
+      ]
+    },
+    "meshes": {
+      "title": "网格与骨骼资源",
+      "steps": [
+        "先检查 Skeleton、Socket、LOD、材质槽和物理资产，确认现有蓝图与装备引用。",
+        "区分资源编辑和组件运行时设置；骨架/默认子对象变更后冷启动编译关联动画蓝图。",
+        "导入/重导入核实单位、坐标轴、骨骼映射和原文件设置，只写任务关联资源。",
+        "性能与视觉结果在目标场景验证，资源存在不证明骨架和引用正确。"
+      ],
+      "anchors": [
+        {
+          "path": "Source/Runtime/Engine/Classes/Components/SkeletalMeshComponent.h",
+          "symbol": "SetSkeletalMeshAsset",
+          "line": 330,
+          "excerpt": "void SetSkeletalMeshAsset(USkeletalMesh* NewMesh) { SetSkeletalMesh(NewMesh, false); }"
+        },
+        {
+          "path": "Source/Runtime/Engine/Classes/Components/StaticMeshComponent.h",
+          "symbol": "SetStaticMesh",
+          "line": 414,
+          "excerpt": "ENGINE_API virtual bool SetStaticMesh(class UStaticMesh* NewMesh);"
+        }
+      ]
+    },
+    "import": {
+      "title": "资源导入",
+      "steps": [
+        "先读取目标资源、源文件与导入设置，明确 FBX/Interchange 和当前插件支持范围。",
+        "按本机 5.5 AssetImportTask 设置导入路径、覆盖范围、骨架和材质选项，不沿用 5.8 默认管线。",
+        "只写明确目标资产，重复运行支持读取已有结果并诊断部分失败；不覆盖无关用户调整。",
+        "核对输出数量、资源类型、缩放、骨架和引用，再按需求执行编辑器视觉验证。"
+      ],
+      "anchors": [
+        {
+          "path": "Source/Editor/UnrealEd/Public/AssetImportTask.h",
+          "symbol": "UAssetImportTask",
+          "line": 30,
+          "excerpt": "UNREALED_API UAssetImportTask();"
+        }
+      ]
+    },
+    "metahuman": {
+      "title": "MetaHuman 可用性与旧版流程",
+      "steps": [
+        "本机未找到 5.8 的 MetaHumanCharacter/Identity 头文件；当前 skill 提供 5.5 前置核查，不宣称安装了 Creator/Animator。",
+        "5.5 角色使用已有导入资产/Bridge 工作流；需要云端 Creator 或 Animator 时先核实账号、插件版本和本地资产，不自动安装或升级。",
+        "LiveLink 可复用本机 LiveLinkComponentController，但源、Subject、面部 AnimBP、骨架和录制工具必须逐项确认。",
+        "不调用上游 UMetaHumanCharacterEditorSubsystem 或假定 webcam/audio 一键生成功能在本机存在；缺少依赖时给出具体缺口。"
+      ],
+      "anchors": [
+        {
+          "path": "Plugins/Animation/LiveLink/Source/LiveLinkComponents/Public/LiveLinkComponentController.h",
+          "symbol": "ULiveLinkComponentController",
+          "line": 25,
+          "excerpt": "ULiveLinkComponentController();"
+        }
+      ]
+    },
+    "weather": {
+      "title": "UDS/UDW 商业资产接入核查",
+      "steps": [
+        "这些条目保留 UDS/UDW 的专项知识，但 skill 不包含商业资产；先搜索项目 Content/Plugins 和真实蓝图类、版本、属性。",
+        "当前未核实 UDS/UDW 资产可用，禁止按上游 5.8 截图或属性名要求用户配置不存在的字段，也不自动购买/安装。",
+        "仅有引擎 SkyAtmosphere/VolumetricCloud 不等于 UDS/UDW；可用引擎原生能力说明环境机制，但不得伪装成插件功能。",
+        "确认已有资产后读取时间/天气/材质/粒子/序列对应 API，成对维护状态和事件，按目标平台验证效果与成本。"
+      ],
+      "anchors": [
+        {
+          "path": "Source/Runtime/Engine/Classes/Components/SkyAtmosphereComponent.h",
+          "symbol": "USkyAtmosphereComponent",
+          "line": 50,
+          "excerpt": "~USkyAtmosphereComponent();"
+        },
+        {
+          "path": "Source/Runtime/Engine/Classes/Components/VolumetricCloudComponent.h",
+          "symbol": "UVolumetricCloudComponent",
+          "line": 32,
+          "excerpt": "~UVolumetricCloudComponent();"
+        }
+      ]
+    },
+    "architecture": {
+      "title": "玩法架构方案",
+      "steps": [
+        "讨论具体方案前核查本机 Lyra 的同职责实现、调用者、配置和清理路径，再追踪 Hodgepodge 当前链路。",
+        "复用 Experience/PawnData/GameFeature/GAS/Init State 的既有职责；成熟实现做最小适配，不因安装 skill 增加 Runtime 模块或通用框架。",
+        "方案说明状态事实来源、修改入口、最终执行者、权限、初始化、取消清理、配置资产和验收用例。",
+        "Lyra 未实现、占位和与项目不兼容的部分给具体文件/函数证据；库存 AddEntry 的 unimplemented 不能当完整库存实现。"
+      ],
+      "anchors": [
+        {
+          "path": "Plugins/Runtime/ModularGameplay/Source/ModularGameplay/Public/Components/GameFrameworkInitStateInterface.h",
+          "symbol": "ContinueInitStateChain",
+          "line": 54,
+          "excerpt": "virtual FGameplayTag ContinueInitStateChain(const TArray<FGameplayTag>& InitStateChain);"
+        }
+      ]
+    },
+    "context": {
+      "title": "项目上下文核查",
+      "steps": [
+        "读取当前 .uproject、Target/Build.cs、Source、Config 和插件描述，更新 .agents/ue-project-context.md，事实保留核查日期和来源。",
+        "工程路径固定到本工作区和 UE5.5.4；移除 LocalUser、D:/Hodgepodge、未启用字段等旧环境假设。",
+        "只记录源码/配置可证明的能力，资产内部、PIE、联机和打包结果必须来自对应实际操作。",
+        "发现上下文与源码冲突时先相信源码；不让通用 skill 的项目模板覆盖用户现有文档或未提交改动。"
+      ],
+      "anchors": [
+        {
+          "path": "Source/Programs/UnrealBuildTool/Configuration/ModuleRules.cs",
+          "symbol": "PublicDependencyModuleNames",
+          "line": 1213,
+          "excerpt": "public List<string> PublicDependencyModuleNames = new();"
+        }
+      ]
+    },
+    "epic-mcp": {
+      "title": "UE5.5 编辑器 MCP 操作",
+      "steps": [
+        "5.5.4 没有上游 ModelContextProtocol/AllToolsets/ToolsetRegistry，删除默认已连接的假设，不调用 list_toolsets/describe_toolset/call_tool。",
+        "发现实际已加载的 hodge_unreal 或 hodge_blueprints。ChiR24 网关走 unreal 的 search→describe→execute，参数以返回 schema 为准。",
+        "普通蓝图桥先 bridge_status 核对 Hodgepodge 项目；它限定普通 EventGraph，不能代表 AnimGraph/UMG/材质编辑能力。",
+        "读取状态后串行修改目标资产，编译并核实保存；超时后先读回结果，避免重复写入。不以 Live Coding 代替常规 Editor/Game 构建。",
+        "连接不可用时继续源码/离线排查并报告缺失工具或旧路径；不自动启用 Remote Execution、启动其他引擎、升级插件或编造工具响应。"
+      ],
+      "anchors": []
+    },
+    "epic-toolset": {
+      "title": "UE5.5 编辑器工具扩展",
+      "steps": [
+        "保留 Epic 的职责清晰、接口可组合、读写对称和错误显式原则；5.5 不使用 ToolsetRegistry/ToolsetDefinition/tool_call 装饰器。",
+        "先查现有 AuthoringLibrary 与桥接 schema，已有接口直接复用；缺失的项目工具优先放 HodgeAbilityEditor 的独立类。",
+        "工具使用真实 UE5.5 UFUNCTION/Python 暴露接口；若任务确需网关扩展，遵循现有 server.py/插件注册协议，不假装两个 MCP 协议兼容。",
+        "新 C++ 工具按常规 Editor 构建验证，Runtime 依赖变化补 Game；测试覆盖资源不存在、非法参数、重复调用和保存结果。",
+        "不把 skill 安装变成对第三方 McpAutomationBridge 的自动重构；后续确需修改时明确任务关系及验证办法。"
+      ],
+      "anchors": [
+        {
+          "path": "Source/Editor/UnrealEd/Public/Subsystems/EditorAssetSubsystem.h",
+          "symbol": "SaveLoadedAsset",
+          "line": 277,
+          "excerpt": "UNREALED_API bool SaveLoadedAsset(UObject* AssetToSave, bool bOnlyIfIsDirty = true);"
+        }
+      ]
+    },
+    "epic-skill": {
+      "title": "UE5.5 项目工作流 Skill 编写",
+      "steps": [
+        "保留 Epic 的简洁、明确触发范围、可复用工作流原则；本机没有 UAgentSkill/FAgentSkillDetails/AgentSkillToolset。",
+        "在仓库 .agents/skills/<name>/SKILL.md 编写标准 Agent Skill，声明 name/description 并链接领域参考；不创建 /Game/Skills 的不存在资产类型。",
+        "读取已有 skill 避免同职责重复，项目长期规范继续由 AGENTS.md 与开发准则维护，skill 只描述特定操作流程。",
+        "源码/配置以 5.5.4 为准；校验 frontmatter、命名、链接及真实能力边界，不能用安装成功证明编辑器注册成功。"
+      ],
+      "anchors": []
+    }
+  }
+}

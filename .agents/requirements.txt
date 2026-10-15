@@ -1,0 +1,4 @@
+# -*- coding: utf-8 -*-
+# 本地 MCP 启动与 skill 校验使用隔离环境，不向系统 Python 安装依赖。
+mcp==1.30.0
+PyYAML==6.0.1

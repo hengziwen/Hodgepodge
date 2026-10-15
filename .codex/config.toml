@@ -1,15 +1,20 @@
 
 [mcp_servers.hodge_blueprints]
-command = 'D:\Hodgepodge\Tools\UnrealMCP\.venv\Scripts\python.exe'
-args = ['D:\Hodgepodge\Tools\UnrealMCP\server.py']
-cwd = 'D:\Hodgepodge\Tools\UnrealMCP'
+# 使用本工作区隔离环境，并明确限制到当前工程身份。
+command = 'E:/Project/Git/Hodgepodge/Saved/UESkillsRuntime/Scripts/python.exe'
+args = ['E:/Project/Git/Hodgepodge/Tools/UnrealMCP/server.py']
+cwd = 'E:/Project/Git/Hodgepodge/Tools/UnrealMCP'
+env = { HODGE_PROJECT = 'E:/Project/Git/Hodgepodge/Hodgepodge.uproject' }
 startup_timeout_sec = 30
 tool_timeout_sec = 90
 
 
 [mcp_servers.hodge_unreal]
-command = 'D:\Hodgepodge\Tools\UnrealMCP\.venv\Scripts\python.exe'
-args = ['D:\Hodgepodge\Tools\ChiR24MCP\server.py', '--project', 'D:\Hodgepodge\Hodgepodge.uproject', '--port', '3016']
-cwd = 'D:\Hodgepodge\Tools\ChiR24MCP'
+# 沿用现有 ChiR24 网关和端口，令牌由服务读取，不写入配置。
+command = 'E:/Project/Git/Hodgepodge/Saved/UESkillsRuntime/Scripts/python.exe'
+args = ['E:/Project/Git/Hodgepodge/Tools/ChiR24MCP/server.py', '--project', 'E:/Project/Git/Hodgepodge/Hodgepodge.uproject', '--port', '3016']
+cwd = 'E:/Project/Git/Hodgepodge/Tools/ChiR24MCP'
+# 本地回环请求绕过系统代理，避免被代理返回 502。
+env = { NO_PROXY = '127.0.0.1,localhost,::1', no_proxy = '127.0.0.1,localhost,::1' }
 startup_timeout_sec = 45
 tool_timeout_sec = 180

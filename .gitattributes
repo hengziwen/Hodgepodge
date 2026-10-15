@@ -16,3 +16,8 @@
 Archive/Timeline/Cpp/**/*.cpp -text -diff
 Archive/Timeline/Cpp/**/*.h -text -diff
 Archive/Timeline/Cpp/**/*.cs -text -diff
+
+# 保留上游 skill 快照的原始字节，避免换行转换破坏来源 SHA-256。
+.agents/skill-sources/** -text
+# 本地 skill 入口固定 LF，使目录中的来源摘要在 Windows 检出后仍然有效。
+.agents/skills/** text eol=lf
