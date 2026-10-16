@@ -460,6 +460,9 @@ void UHodgeHealthComponent::FinishDeath()
 // 对自身施加足以致死的 GameplayEffect。
 void UHodgeHealthComponent::DamageSelfDestruct(bool bFellOutOfWorld)
 {
+	// 自毁只属于当前服务器 Avatar，旧 Pawn 的迟到掉落回调不能伤害新角色。
+	if (!GetOwner() || !GetOwner()->HasAuthority() || !AbilitySystemComponent ||
+		AbilitySystemComponent->GetAvatarActor() != GetOwner()) { return; }
 	// 只有仍然存活并且存在有效 ASC 时才能执行自毁伤害。
 	if ((DeathState == EHodgeDeathState::NotDead) && AbilitySystemComponent)
 	{

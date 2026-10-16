@@ -93,46 +93,46 @@ UAbilitySystemComponent* AHodgePlayerState::GetAbilitySystemComponent() const
 // 为当前 PlayerState 设置 PawnData。
 void AHodgePlayerState::SetPawnData(const UHodgePawnData* InPawnData)
 {
-	// PawnData 必须有效。
-	check(InPawnData);
+    if (!HasAuthority() || bBaseGrantsClosed || bBaseGrantFailed || bBaseGrantInProgress) { return; }
+    if (PawnData)
+    {
+        if (PawnData != InPawnData)
+        { UE_LOG(LogTemp, Error, TEXT("PlayerState %s cannot replace committed PawnData"), *GetName()); }
+        return;
+    }
+    if (!IsValid(InPawnData))
+    {
+        bBaseGrantFailed = true;
+        UE_LOG(LogTemp, Error, TEXT("PlayerState %s base grant failed: missing PawnData"), *GetName());
+        return;
+    }
+    TGuardValue<bool> GrantGuard(bBaseGrantInProgress, true);
+    TArray<const UHodgeAbilitySet*> Sets;
+    for (const UHodgeAbilitySet* Set : InPawnData->AbilitySets) { Sets.Add(Set); }
+    // 玩家资源允许先于 Pawn 授予；OnSpawn 仍等真实 Avatar 到达后由 ASC 激活。
+    const auto Result = UHodgeAbilitySet::TryGiveBatchToAbilitySystem(Sets, AbilitySystemComponent, BaseAbilityHandles,
+        nullptr, false, EHodgeAbilityGrantContext::OwnerInitialized);
+    if (!Result.bSucceeded || bBaseGrantsClosed)
+    {
+        BaseAbilityHandles.TakeFromAbilitySystem(AbilitySystemComponent);
+        bBaseGrantFailed = true;
+        UE_LOG(LogTemp, Error, TEXT("PlayerState %s base grant failed: %s (irreversible=%d)"),
+            *GetName(), *Result.Error, Result.bHasIrreversibleEffects ? 1 : 0);
+        return;
+    }
+    // 仅发布已提交配置；失败时客户端和 Hero 都不能把 PawnData 当作能力就绪。
+    PawnData = InPawnData;
+    MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, PawnData, this);
+    UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent(this, NAME_HodgeAbilityReady);
+    ForceNetUpdate();
+}
 
-	// PawnData 只允许服务器权威端设置。
-	if (GetLocalRole() != ROLE_Authority)
-	{
-		return;
-	}
-
-	// 当前已经拥有 PawnData 时不允许重复设置。
-	if (PawnData)
-	{
-		UE_LOG(LogTemp, Error,
-		       TEXT("Trying to set PawnData [%s] on player state [%s] that already has valid PawnData [%s]."),
-		       *GetNameSafe(InPawnData), *GetNameSafe(this), *GetNameSafe(PawnData));
-		return;
-	}
-
-	// Push Model 下手动标记 PawnData 属性已经发生变化。
-	MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, PawnData, this);
-
-	// 保存服务器确定下来的 PawnData。
-	PawnData = InPawnData;
-
-	// 遍历 PawnData 中配置的所有 AbilitySet。
-	for (const UHodgeAbilitySet* AbilitySet : PawnData->AbilitySets)
-	{
-		// 跳过空 AbilitySet。
-		if (AbilitySet)
-		{
-			// 将 AbilitySet 中配置的 Ability / GameplayEffect / AttributeSet 授予当前 ASC。
-			AbilitySet->GiveToAbilitySystem(AbilitySystemComponent, nullptr);
-		}
-	}
-
-	// 通知 GameFrameworkComponentManager：当前 PlayerState 的 Ability 已经准备完成。
-	UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent(this, NAME_HodgeAbilityReady);
-
-	// 强制尽快进行一次网络更新，让 PawnData 等变化及时同步。
-	ForceNetUpdate();
+/** 持久 Owner 结束时配对撤销基础来源，防止回调重入后重新授予。 */
+void AHodgePlayerState::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+    bBaseGrantsClosed = true;
+    BaseAbilityHandles.TakeFromAbilitySystem(AbilitySystemComponent);
+    Super::EndPlay(EndPlayReason);
 }
 
 // Actor 组件正式初始化之前调用。
@@ -394,7 +394,8 @@ void AHodgePlayerState::OnExperienceLoaded(const UHodgeExperienceDefinition* Cur
 // PawnData 从服务器复制到客户端后触发。
 void AHodgePlayerState::OnRep_PawnData()
 {
-	// 当前暂无额外处理逻辑。
+	// PawnData 可能晚于 PawnExtension 到达，补偿推进此前等待基础授予的 Hero。
+	if (auto* Hero = UHodgeHeroComponent::FindHeroComponent(GetPawn())) { Hero->CheckDefaultInitialization(); }
 }
 
 // TeamID 从服务器复制到客户端后触发。

@@ -1,4 +1,4 @@
-﻿/** @file HodgeAbilityDefinition.h
+/** @file HodgeAbilityDefinition.h
  * @brief 声明单段技能执行定义相关的类型、接口与现有处理流程。
  */
 #pragma once
@@ -14,6 +14,9 @@
 #include "HodgeAbilityDefinition.generated.h"
 
 class UHodgeGameplayAbility;
+class UHodgeAttackRuleConfig;
+class UHodgeAttackRule;
+class UHodgeGameplayAbility_Definition;
 class UAnimMontage;
 
 /** 区分连段协调器授权与独立GAS激活两条执行路由。 */
@@ -84,6 +87,11 @@ public:
 	/** 形态资格先于冷却判断，不因分支冷却而回退其他形态。 */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Variant") FGameplayTagContainer RequiredSourceTags;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Variant") FGameplayTagContainer BlockedSourceTags;
+	/** 可选执行规则拥有专属配置与收益账本；普通 NPC 可留空。 */
+	UPROPERTY(EditDefaultsOnly, Instanced, BlueprintReadOnly, Category="Hodge|Rules") TArray<TObjectPtr<UHodgeAttackRuleConfig>> AttackRules;
+	/** 仅服务器为本次执行创建规则，失败不启动动作。 */
+	bool CreateAttackRules(UHodgeGameplayAbility_Definition* Source, TArray<TObjectPtr<UHodgeAttackRule>>& OutRules) const;
+	/** 以下旧字段仅供未迁移资产读取；正式资产统一使用 AttackRules。 */
 	/** 常态普攻实际生命伤害按阶段回暗流，默认零保持原技能。 */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Havoc", meta=(ClampMin="0")) float DarkFlowGainPerPhase=0.f;
 	/** 成功施放通知提交后回暗流，空挥有效，提交前取消无收益。 */

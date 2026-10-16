@@ -24,7 +24,7 @@ Lyra参考为`LyraCheatManager::God`的客户端转发和`ApplySetByCallerHeal`�
 - `GA_Resonance_Liberation` Class Defaults：AdditionalCosts只有一个HodgeAbilityCost_ResonanceEnergy，内部CostGameplayEffectClass为GE_ResonanceEnergy_Cost。GA原生CostGameplayEffectClass保持空；CooldownGameplayEffectClass为本目录GE_Resonance_Liberation_Cooldown。
 - `GE_Resonance_Liberation_Cooldown`：12秒，独立`Cooldown.Hero.ResonanceLiberation`。
 - `GE_ResonanceEnergy_Init`：共享初始化父类只将MaxResonanceEnergy设为100；不补充当前能量。AS不再授予第二份ResonanceSet。
-- 普攻`DA_Attack_1～5`和`DA_Resonance_Skill`：ResonanceEnergyGainPerPhase分别初值5和20，ResonanceEnergyGainEffect为GE_ResonanceEnergy_Gain。大招同字段为0。
+- 普攻 `DA_Attack_1～5` 和 `DA_Resonance_Skill`：在 `AttackRules` 中选择 `HodgeResonanceAttackRuleConfig`，`GainPerPhase` 分别初值 5 和 20，`GainEffect` 为 GE_ResonanceEnergy_Gain。大招不配置该命中收益规则。旧 Definition 同名能量字段已迁移，不能继续作为正式参数编辑。
 
 回能依赖真实生命扣除，不由命中提示或Overlap数量决定。相同执行、相同HitGroup＋AttackPhase只回一次；新增多段伤害时给真正独立阶段不同Phase，同刀多个检测源保持相同Group／Phase。
 

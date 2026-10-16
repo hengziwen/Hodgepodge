@@ -14,6 +14,16 @@ const FHodgeHitReactionAnimation* UHodgeHitReactionProfile::FindAnimation(EHodge
 	return Animations.FindByPredicate([Type](const auto& Entry) { return Entry.Type == Type; });
 }
 
+/** 选用局部来源最主要的水平轴；退化方向按正面处理。 */
+UAnimMontage* UHodgeHitReactionProfile::FindLightFeedback(FVector LocalSourceDirection) const
+{
+	const auto Direction = FMath::Abs(LocalSourceDirection.X) >= FMath::Abs(LocalSourceDirection.Y) ?
+		(LocalSourceDirection.X >= 0.f ? EHodgeHitPresentationDirection::Front : EHodgeHitPresentationDirection::Back) :
+		(LocalSourceDirection.Y >= 0.f ? EHodgeHitPresentationDirection::Right : EHodgeHitPresentationDirection::Left);
+	const auto* Entry = DirectionalLightFeedback.FindByPredicate([Direction](const auto& Value) { return Value.Direction == Direction; });
+	return Entry ? Entry->Montage.Get() : LightFeedbackMontage.Get();
+}
+
 /** 检查当前配置并收集诊断。 */
 bool UHodgeHitReactionProfile::Validate(TArray<FText>& Errors) const
 {
@@ -21,8 +31,9 @@ bool UHodgeHitReactionProfile::Validate(TArray<FText>& Errors) const
 	TSet<EHodgeImpactType> Types;
 	for (const auto& Entry : Animations)
 	{
+		const bool bGroundControl = Entry.Type == EHodgeImpactType::HitStun || Entry.Type == EHodgeImpactType::Knockback;
 		if (uint8(Entry.Type) > uint8(EHodgeImpactType::Slam) || Types.Contains(Entry.Type) ||
-			!FMath::IsFinite(Entry.DefaultDuration) || Entry.DefaultDuration <= 0.f || (!Entry.Montage && !Entry.bAllowWithoutMontage))
+			(bGroundControl && (!FMath::IsFinite(Entry.DefaultDuration) || Entry.DefaultDuration <= 0.f)) || (!Entry.Montage && !Entry.bAllowWithoutMontage))
 		{
 			Errors.Add(FText::FromString(TEXT("Reaction entries require unique valid types, a positive duration and a montage or explicit animation-free permission.")));
 		}
@@ -46,6 +57,14 @@ bool UHodgeHitReactionProfile::Validate(TArray<FText>& Errors) const
 	{ Errors.Add(FText::FromString(TEXT("Reaction bounds must be finite and positive; MaxAirHits must be nonnegative."))); }
 	if (LightFeedbackMontage && LightFeedbackMontage->HasRootMotion())
 	{ Errors.Add(FText::FromString(TEXT("Light feedback cannot contain root motion."))); }
+	TSet<EHodgeHitPresentationDirection> Directions;
+	for (const auto& Entry : DirectionalLightFeedback)
+	{
+		if (uint8(Entry.Direction) > uint8(EHodgeHitPresentationDirection::Right) || Directions.Contains(Entry.Direction) ||
+			!Entry.Montage || Entry.Montage->HasRootMotion() || !Entry.Montage->IsValidAdditive() || Entry.Montage->GetPlayLength() <= 0.f)
+		{ Errors.Add(FText::FromString(TEXT("Directional feedback requires unique directions and valid in-place additive montages."))); }
+		Directions.Add(Entry.Direction);
+	}
 	return Before == Errors.Num();
 }
 

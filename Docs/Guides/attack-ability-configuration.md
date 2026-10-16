@@ -4,6 +4,8 @@
 
 本手册适用于 dev-AN。旧自建 Timeline 已退役；动画相关时机在 Montage 原生通知轨编辑。设计与迁移结果见 [迁移设计](../Design/anim-notify-combat-migration.md)，旧文件恢复见 [归档说明](../../Archive/Timeline/README.md)。
 
+> 2026-10-15 R1／R3：检测会话、来源解析、几何历史和姿势占用由 `HodgeHitDetectionComponent` 管理，Combat 原入口保留代理，现有 Task 仍在 PostPhysics 采样。角色收益填写 Definition 的 `AttackRules`：共鸣使用 `HodgeResonanceAttackRuleConfig`（`GainPerPhase`／`GainEffect`），暗流使用 `HodgeHavocAttackRuleConfig`（`DarkFlowGainPerPhase`／`DarkFlowGainOnCast`／`bEnhancedNormalAttack`）。两者可组合，普通 NPC 留空；每种配置只放一份。旧 Definition 同名收益字段仅为读取适配，正式配置不要继续填写。
+
 ## 1. 正式资产入口与制作步骤
 
 正式五段动作：`/Game/Main/Character/Hero/Ability/BasicAttack/DA_Attack_1～5`；各 Definition 引用对应 `AM_Attack01～05_Montage`，当前连段顺序 01 → 02 → 03 → 05 → 04。
@@ -171,7 +173,7 @@ Source=AvatarRoot，Shape=Sphere／Box／Capsule，配置偏移与尺寸即可�
 
 命中最终在服务器执行，拥有端可预测动画、状态与武器表现。编辑器创建时自动设为 Branching Point、TriggerOnDedicatedServer=true、零触发权重且关闭姿势图／LOD／概率过滤；不要重新打开这些过滤来控制伤害概率。客户端不上传一个命中名单作为可信伤害结果。
 
-GA 播放前租用角色骨骼更新，身体攻击即使没有手持请求也可在未渲染的服务器上读取骨骼。GA 与 WeaponInstance 共用 CombatComponent 的租用计数，最后一个租用退出后恢复原策略。
+GA 播放前租用角色骨骼更新，身体攻击即使没有手持请求也可在未渲染的服务器上读取骨骼。GA 与 WeaponInstance 通过 Combat 的兼容门面共用 HitDetectionComponent 的唯一租用计数，最后一个租用退出后恢复原策略；检测组件注销也会配对释放全部占用。
 
 客户端连段请求可能早于服务器当前帧 NotifyBegin。来源和目标边有效的请求会在 ComboDefinition.InputBufferSeconds 内等待服务器实际窗口，随后仍完整授权；过期、错误来源或状态禁用会被拒绝。移动取消在动画更新后检查。无需延长 Montage 窗口或恢复 Timeline；见 [客户端窗口修复报告](../Validation/client-combo-window-2026-10-07.md)。
 

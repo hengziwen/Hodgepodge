@@ -905,6 +905,9 @@ bool UHodgeAnimationAuthoringLibrary::ConfigureHeroHitReactionGraph(UAnimBluepri
 	Blend->Node.BlendMode = ELayeredBoneBlendMode::BranchFilter;
 	Blend->Node.BlendPoses.SetNum(1); Blend->Node.BlendWeights.SetNum(1); Blend->Node.LayerSetup.SetNum(1);
 	Blend->Node.BlendWeights[0] = .35f;
+	// 暴露引脚覆盖节点默认值，二者同步才能使编译后的分骨权重一致。
+	if (UEdGraphPin* WeightPin = Blend->FindPin(TEXT("BlendWeights_0")); WeightPin && WeightPin->LinkedTo.IsEmpty())
+	{ Blend->GetSchema()->TrySetDefaultValue(*WeightPin, TEXT("0.35")); }
 	Blend->Node.LayerSetup[0].BranchFilters.Reset();
 	FBranchFilter Filter; Filter.BoneName = TEXT("Bip001Spine"); Filter.BlendDepth = 1;
 	Blend->Node.LayerSetup[0].BranchFilters.Add(Filter);

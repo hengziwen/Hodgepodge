@@ -36,6 +36,7 @@ struct FComponentRequestHandle;
 
 // 前向声明项目自定义的 AbilitySet。
 class UHodgeAbilitySet;
+class UGameFrameworkComponentManager;
 
 // 描述一个需要授予 Actor 的 GameplayAbility。
 USTRUCT(BlueprintType)
@@ -142,31 +143,38 @@ public:
 	TArray<FGameFeatureAbilitiesEntry> AbilitiesList;
 
 private:
-	// 记录单个 Actor 当前被本 GameFeature 添加的所有能力资源。
+	friend struct FHodgeGameFeatureGrantTestAccess;
+	/** 条目状态区分依赖等待、正在提交、成功和失败，失败不自动重复副作用。 */
+	enum class EGrantState : uint8 { Waiting, Applying, Applied, Failed, Removed };
+	// 每个 Actor/EntryIndex 独立持有来源账本，回调重入时由共享记录保持地址稳定。
 	struct FActorExtensions
 	{
-		// 记录通过 GiveAbility 授予的 GameplayAbility Spec Handle。
-		TArray<FGameplayAbilitySpecHandle> Abilities;
-
-		// 记录通过本 GameFeature 创建并添加到 Actor 的 AttributeSet。
-		TArray<UAttributeSet*> Attributes;
-
-		// 记录通过 AbilitySet 授予的所有能力句柄，方便后续完整撤销。
-		TArray<FHodgeAbilitySet_GrantedHandles> AbilitySetHandles;
+		TWeakObjectPtr<AActor> Actor;
+		TWeakObjectPtr<UHodgeAbilitySystemComponent> GrantedASC;
+		TWeakObjectPtr<UGameFrameworkComponentManager> InitManager;
+		FDelegateHandle InitStateHandle;
+		TArray<FGameplayAbilitySpecHandle> DirectAbilities;
+		FHodgeAbilitySet_GrantedHandles GrantedHandles;
+		EGrantState State = EGrantState::Waiting;
+		bool bApplying = false;
+		bool bCommitted = false;
+		bool bHasIrreversibleEffects = false;
+		bool bCancelDirectOnRemoval = false;
 	};
 
 	// 记录一次 GameFeature 激活上下文对应的所有运行时资源。
 	struct FPerContextData
 	{
-		// Actor → 本 GameFeature 为该 Actor 添加的能力资源。
-		TMap<AActor*, FActorExtensions> ActiveExtensions;
+		// 不同条目互不覆盖，失效 Actor 的撤销仍使用原授予 ASC。
+		TMap<TWeakObjectPtr<AActor>, TMap<int32, TSharedPtr<FActorExtensions>>> ActiveExtensions;
+		bool bActive = true;
 
 		// 记录向 GameFrameworkComponentManager 注册的 Actor 扩展监听句柄。
 		TArray<TSharedPtr<FComponentRequestHandle>> ComponentRequests;
 	};
 	
 	// 按 GameFeature 激活上下文保存对应的运行时数据。
-	TMap<FGameFeatureStateChangeContext, FPerContextData> ContextData;	
+	TMap<FGameFeatureStateChangeContext, TSharedPtr<FPerContextData>> ContextData;
 
 	//~ Begin UGameFeatureAction_WorldActionBase interface
 	// 将当前 GameFeature Action 添加到指定 World。
@@ -198,14 +206,18 @@ private:
 	 * @param AbilitiesEntry Abilities条目，由调用方传入。
 	 * @param ActiveData 活动数据，由调用方传入。
 	 */
-	void AddActorAbilities(AActor* Actor, const FGameFeatureAbilitiesEntry& AbilitiesEntry, FPerContextData& ActiveData);
+	void AddActorAbilities(AActor* Actor, int32 EntryIndex, const TSharedRef<FPerContextData>& ActiveData);
 
 	// 移除指定 Actor 上由当前 GameFeature 添加的所有能力。
 	/** 移除Actor对象Abilities。
 	 * @param Actor 本次操作关联的Actor。
 	 * @param ActiveData 活动数据，由调用方传入。
 	 */
-	void RemoveActorAbilities(AActor* Actor, FPerContextData& ActiveData);
+	void RemoveActorAbilities(AActor* Actor, int32 EntryIndex, FPerContextData& ActiveData, bool bCancelDirect = false);
+	/** 先使来源失效再撤销；提交中的记录由当前调用栈完成失败清理。 */
+	void RetireExtension(const TSharedRef<FActorExtensions>& Extension, bool bCancelDirect = false);
+	/** 普通停用保留直接能力的结束后移除语义；未提交资源立即清理。 */
+	void RevokeExtension(FActorExtensions& Extension, bool bCancelDirectAbilities);
 
 	// 根据指定配置查找或创建 Actor 上需要的组件。
 	template<class ComponentType>

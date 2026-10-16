@@ -18,6 +18,17 @@ void UHodgeEnemyTestAbilitySet::AddEffect(TSubclassOf<UGameplayEffect> Class)
 {
 	FHodgeAbilitySet_GameplayEffect Entry; Entry.GameplayEffect = Class; GrantedGameplayEffects.Add(Entry);
 }
+/** 为测试配置直接属性，实际验证与授予仍走生产入口。 */
+void UHodgeEnemyTestAbilitySet::AddAttribute(TSubclassOf<UAttributeSet> Class)
+{
+	FHodgeAbilitySet_AttributeSet Entry; Entry.AttributeSet = Class; GrantedAttributes.Add(Entry);
+}
+/** OnSpawn 必须等 Avatar 到达，并只在服务器执行。 */
+UHodgeOwnerOnlyOnSpawnTestAbility::UHodgeOwnerOnlyOnSpawnTestAbility()
+{
+	ActivationPolicy = EHodgeAbilityActivationPolicy::OnSpawn;
+	bRequiresInitializedAttributes = false;
+}
 /** 构造敌人测试装备并初始化其默认状态。 */
 UHodgeEnemyTestEquipment::UHodgeEnemyTestEquipment() { InstanceType = UHodgeWeaponInstance::StaticClass(); }
 /** 处理授予能力。 */

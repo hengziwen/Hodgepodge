@@ -21,7 +21,13 @@
 #include "GameFramework/GameStateBase.h"
 #include "AIController.h"
 #include "Net/UnrealNetwork.h"
+#include "Kismet/GameplayStatics.h"
+#include "NiagaraFunctionLibrary.h"
+#include "PhysicalMaterials/PhysicalMaterial.h"
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeHitReactionComponent)
+
+// 独立分类使逐接触网络诊断可按需启用，不污染每帧日志。
+DEFINE_LOG_CATEGORY_STATIC(LogHodgeHitPresentation, Log, All);
 
 /** 构造受击状态组件并初始化其默认状态。 */
 UHodgeHitReactionComponent::UHodgeHitReactionComponent(const FObjectInitializer& ObjectInitializer)
@@ -53,10 +59,21 @@ void UHodgeHitReactionComponent::UninitializeFromAbilitySystem()
 {
 	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (ActiveAbility.IsValid()) { ActiveAbility->FinishReaction(true); }
+	// 解绑只混出本组件播放的局部动作，避免旧 Avatar 留下反馈或停止无关 Montage。
+	if (auto* Character = Cast<ACharacter>(GetOwner()); Character && LastLightMontage.IsValid())
+	{
+		if (UAnimInstance* Anim = Character->GetMesh()->GetAnimInstance(); Anim && Anim->Montage_IsPlaying(LastLightMontage.Get()))
+		{ Anim->Montage_Stop(LastLightMontage->BlendOut.GetBlendTime(), LastLightMontage.Get()); }
+	}
 	SetControl(false);
 	ActiveAbility.Reset();
 	ASC.Reset();
 	PendingHits.Reset();
+	PresentedHits.Reset();
+	LastLightMontage.Reset();
+	LastLightStrength = 0.f;
+	PresentationCount = 0;
+	LastPresentation = FHodgeHitPresentation();
 	// 按服务器权限区分本次处理分支。
 	if (GetOwner() && GetOwner()->HasAuthority())
 	{
@@ -84,7 +101,8 @@ void UHodgeHitReactionComponent::RefreshConfiguration()
 }
 
 /** 开始命中。 */
-FGuid UHodgeHitReactionComponent::BeginHit(const FHodgeHitReactionConfig& Request, AActor* Source, FVector SourceOrigin)
+FGuid UHodgeHitReactionComponent::BeginHit(const FHodgeHitReactionConfig& Request, AActor* Source, FVector SourceOrigin,
+	const FHitResult* Contact, FGuid ExecutionId, FName AttackPhase)
 {
 	// 按服务器权限区分本次处理分支。
 	if (!GetOwner()->HasAuthority() || !IsBound() || !Request.IsConfigured() || SourceOrigin.ContainsNaN()) { return {}; }
@@ -95,6 +113,19 @@ FGuid UHodgeHitReactionComponent::BeginHit(const FHodgeHitReactionConfig& Reques
 	Hit.Origin = SourceOrigin;
 	Hit.BodyRank = HodgeHitReaction::ResolveBody(ASC.Get(), Hit.BodyTag);
 	const FGuid Id = FGuid::NewGuid();
+	Hit.Presentation.HitId = Id;
+	Hit.Presentation.ExecutionId = ExecutionId;
+	Hit.Presentation.AttackPhase = AttackPhase;
+	Hit.Presentation.Strength = Request.PresentationStrength;
+	Hit.Presentation.Direction = (GetOwner()->GetActorLocation() - SourceOrigin).GetSafeNormal();
+	Hit.Presentation.LocalSourceDirection = GetOwner()->GetActorTransform().InverseTransformVectorNoScale(-Hit.Presentation.Direction);
+	// 只有真实非穿透 Sweep 接触使用表面坐标；其他情况明确回退目标附近。
+	Hit.Presentation.bPreciseContact = Contact && Contact->bBlockingHit && !Contact->bStartPenetrating &&
+		!Contact->ImpactPoint.ContainsNaN() && !Contact->ImpactNormal.ContainsNaN() && !Contact->ImpactNormal.IsNearlyZero();
+	Hit.Presentation.Location = Hit.Presentation.bPreciseContact ? FVector(Contact->ImpactPoint) : GetOwner()->GetActorLocation() + FVector(0.f, 0.f, 35.f);
+	Hit.Presentation.Normal = Hit.Presentation.bPreciseContact ? Contact->ImpactNormal.GetSafeNormal() : -Hit.Presentation.Direction;
+	Hit.Presentation.bHasSurface = Hit.Presentation.bPreciseContact && Contact->PhysMaterial.IsValid();
+	Hit.Presentation.SurfaceType = Hit.Presentation.bHasSurface ? UPhysicalMaterial::DetermineSurfaceType(Contact->PhysMaterial.Get()) : SurfaceType_Default;
 	PendingHits.Add(Id, MoveTemp(Hit));
 	return Id;
 }
@@ -138,6 +169,10 @@ FHodgeHitReactionResult UHodgeHitReactionComponent::FinishHit(const FGuid& HitId
 	else if (!HodgeHitReaction::CanImpact(Result.AttackRank, Result.TargetBodyRank))
 	{ Result.Outcome = EHodgeHitReactionOutcome::LowJudgement; }
 	else if (Hit.Request.Impacts.IsEmpty()) { Result.Outcome = EHodgeHitReactionOutcome::NoImpact; }
+	// 倒地或起身中的普通硬直只作接触反馈，不突然跳回站立动作。
+	else if ((State.Phase == EHodgeHitReactionPhase::Downed || State.Phase == EHodgeHitReactionPhase::GettingUp) &&
+		!Hit.Request.Impacts.ContainsByPredicate([](const auto& Impact) { return Impact.Type != EHodgeImpactType::HitStun; }))
+	{ Result.Outcome = EHodgeHitReactionOutcome::NoImpact; }
 	else
 	{
 		RefreshConfiguration();
@@ -158,7 +193,16 @@ FHodgeHitReactionResult UHodgeHitReactionComponent::FinishHit(const FGuid& HitId
 			Parameters.Instigator = Hit.Source.Get();
 			ASC->ExecuteGameplayCue(Profile->LightFeedbackCue, Parameters);
 		}
-		MulticastLightFeedback(Direction);
+	}
+	// 每个被接受且配置合法的接触只走一次公共音画；控制裁决不负责播放主动画。
+	if (Result.Outcome == EHodgeHitReactionOutcome::Applied || Result.Outcome == EHodgeHitReactionOutcome::LowJudgement ||
+		Result.Outcome == EHodgeHitReactionOutcome::Unsupported || Result.Outcome == EHodgeHitReactionOutcome::NoImpact ||
+		Result.Outcome == EHodgeHitReactionOutcome::CannotInterrupt)
+	{
+		Hit.Presentation.bLightFeedback = Result.Outcome != EHodgeHitReactionOutcome::Applied ||
+			(State.Phase == EHodgeHitReactionPhase::Controlled && State.Type == EHodgeImpactType::HitStun &&
+				GetServerTime() - State.StartedAt > 0.01f);
+		MulticastContactFeedback(Hit.Presentation);
 	}
 	LastResult = Result;
 	// 向当前监听者发布状态变化，调用方继续负责后续处理。
@@ -200,12 +244,14 @@ bool UHodgeHitReactionComponent::BuildPlan(const FPendingHit& Hit, FHodgeHitReac
 		{ if (Montage && !HodgeHitReaction::CanUseMontage(Montage, MeshAsset)) { return false; } }
 		const EHodgeImpactType Type = bFallback ? EHodgeImpactType::HitStun : Requested.Type;
 		Applied.AddUnique(Type);
-		Duration = FMath::Max(Duration, Requested.ControlDuration > 0.f ? Requested.ControlDuration : Entry->DefaultDuration);
+		const bool bGroundControl = Type == EHodgeImpactType::HitStun || Type == EHodgeImpactType::Knockback;
+		if (bGroundControl)
+		{ Duration = FMath::Max(Duration, Requested.ControlDuration > 0.f ? Requested.ControlDuration : Entry->DefaultDuration); }
 		if (!Presentation || Type != EHodgeImpactType::HitStun) { Presentation = Entry; Plan.Type = Type; }
 		if (!bFallback && Requested.IsMovement())
 		{
 			Plan.bHasMovement = true;
-			Plan.MoveDuration = FMath::Clamp(Requested.MoveDuration, 0.01f, Profile->MaxControlDuration);
+			Plan.MoveDuration = Type == EHodgeImpactType::Knockback ? FMath::Clamp(Requested.MoveDuration, 0.01f, Profile->MaxControlDuration) : 0.f;
 			FVector Direction = Requested.Direction == EHodgeImpactDirection::WorldDirection ? Requested.WorldDirection.GetSafeNormal2D() :
 				Requested.Direction == EHodgeImpactDirection::SourceForward && Hit.Source.IsValid() ? Hit.Source->GetActorForwardVector().GetSafeNormal2D() :
 				(GetOwner()->GetActorLocation() - Hit.Origin).GetSafeNormal2D();
@@ -252,6 +298,11 @@ bool UHodgeHitReactionComponent::BuildPlan(const FPendingHit& Hit, FHodgeHitReac
 	}
 	if (Plan.Phase == EHodgeHitReactionPhase::Downed)
 	{ Plan.EndsAt = FMath::Min(Now + Profile->DownedDuration, Plan.ChainStartedAt + Profile->MaxControlDuration); }
+	// 延续尚未结束的同类地面硬直动作，但保持新命中控制结束时间与身份。
+	if (Plan.Phase == EHodgeHitReactionPhase::Controlled && State.Phase == Plan.Phase && Plan.Type == EHodgeImpactType::HitStun &&
+		State.Type == Plan.Type && !Plan.bHasMovement && !State.bHasMovement && Plan.Montage && Plan.Montage == State.Montage &&
+		Now - State.StartedAt < Plan.Montage->GetPlayLength() - 0.03f)
+	{ Plan.StartedAt = State.StartedAt; }
 	return Plan.EndsAt > Now;
 }
 
@@ -484,18 +535,57 @@ void UHodgeHitReactionComponent::TickComponent(float DeltaTime, ELevelTick TickT
 /** 把轻受击表现通知到网络观察者。 */
 void UHodgeHitReactionComponent::MulticastLightFeedback_Implementation(FVector Direction)
 {
-	if (Profile && Profile->LightFeedbackMontage && !Profile->LightFeedbackMontage->HasRootMotion())
+	PlayLightFeedback(Direction, GetOwner()->GetActorTransform().InverseTransformVectorNoScale(-Direction), 1.f);
+}
+
+/** 方向只影响目标动画选择，不写回角色朝向或控制状态。 */
+void UHodgeHitReactionComponent::PlayLightFeedback(FVector Direction, FVector LocalSourceDirection, float Strength)
+{
+	if (Profile && State.Phase != EHodgeHitReactionPhase::Downed && State.Phase != EHodgeHitReactionPhase::GettingUp)
 	{
 		if (auto* Character = Cast<ACharacter>(GetOwner()))
 		{
 			UAnimInstance* Anim = Character->GetMesh()->GetAnimInstance();
 			UAnimMontage* Main = ASC.IsValid() ? ASC->GetCurrentMontage() : nullptr;
-			if (Anim && (!Main || Main->GetGroupName() != Profile->LightFeedbackMontage->GetGroupName()))
-			{ Anim->Montage_Play(Profile->LightFeedbackMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, false); }
+			UAnimMontage* Montage = Profile->FindLightFeedback(LocalSourceDirection);
+			// 混出中的短动作仍占有姿态，同级命中不能在恢复阶段从零重启。
+			const auto* LastLightInstance = Anim && LastLightMontage.IsValid() ? Anim->GetInstanceForMontage(LastLightMontage.Get()) : nullptr;
+			const bool bPlayingLight = LastLightInstance && (LastLightInstance->IsActive() || LastLightInstance->GetWeight() > UE_KINDA_SMALL_NUMBER);
+			if (Anim && Montage && !Montage->HasRootMotion() && HodgeHitReaction::CanUseMontage(Montage, Character->GetMesh()->GetSkeletalMeshAsset()) &&
+				(!Main || Main->GetGroupName() != Montage->GetGroupName()) && (!bPlayingLight || Strength > LastLightStrength + UE_KINDA_SMALL_NUMBER))
+			{
+				Anim->Montage_Play(Montage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, false);
+				LastLightMontage = Montage;
+				LastLightStrength = Strength;
+			}
 		}
 	}
 	// 向当前监听者发布状态变化，调用方继续负责后续处理。
 	OnLightFeedback.Broadcast(Direction);
+}
+
+/** 身份只用于去重；漏掉不可靠表现事件不能改变玩法结算。 */
+void UHodgeHitReactionComponent::MulticastContactFeedback_Implementation(const FHodgeHitPresentation& Presentation)
+{
+	if (!IsBound() || !Profile || !Presentation.HitId.IsValid() || PresentedHits.Contains(Presentation.HitId)) { return; }
+	PresentedHits.Add(Presentation.HitId);
+	++PresentationCount;
+	LastPresentation = Presentation;
+	UE_LOG(LogHodgeHitPresentation, Verbose, TEXT("Contact Actor=%s Role=%d Hit=%s Execution=%s Phase=%s Strength=%.2f Precise=%d Surface=%d Light=%d Position=%s"),
+		*GetNameSafe(GetOwner()), int32(GetOwner()->GetLocalRole()), *Presentation.HitId.ToString(), *Presentation.ExecutionId.ToString(),
+		*Presentation.AttackPhase.ToString(), Presentation.Strength, Presentation.bPreciseContact, Presentation.bHasSurface,
+		Presentation.bLightFeedback, *Presentation.Location.ToString());
+	if (PresentedHits.Num() > 64) { PresentedHits.RemoveAt(0, PresentedHits.Num() - 64, EAllowShrinking::No); }
+	if (GetNetMode() == NM_DedicatedServer) { return; }
+	if (Profile->ContactEffect)
+	{ UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, Profile->ContactEffect, Presentation.Location, Presentation.Normal.Rotation(), FVector(FMath::Clamp(Presentation.Strength, 0.1f, 2.f))); }
+	if (Profile->ContactSound)
+	{ UGameplayStatics::PlaySoundAtLocation(this, Profile->ContactSound, Presentation.Location, FMath::Clamp(Presentation.Strength, 0.1f, 2.f)); }
+	if (Presentation.bLightFeedback)
+	{
+		// 更强命中允许替换局部反馈；同级连续命中保留当前短动作。
+		PlayLightFeedback(Presentation.Direction, Presentation.LocalSourceDirection, Presentation.Strength);
+	}
 }
 
 /** 登记本类型需要网络复制的属性及复制条件。 */

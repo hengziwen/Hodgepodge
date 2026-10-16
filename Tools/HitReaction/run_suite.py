@@ -39,11 +39,15 @@ if s.get('extended'):
              ('WallKnockback', 'Skill', 'Normal', unreal.HodgeImpactType.KNOCKBACK),
              ('CeilingLaunch', 'Skill', 'Normal', unreal.HodgeImpactType.LAUNCH)]
 state = {'index': -1, 'stage': 'idle', 'after': clock() + 0.8, 'start_wall': time.monotonic()}
+# 定向复核只覆盖调用者明确选择的用例，不冒充完整七项套件。
+cases = s.get('cases', cases)
 rows = []; reports = []
 owned_target = s.get('owned_target', target)
 observer_target = s.get('observer_target', target)
 source_owner = s.get('source_owner', source)
 light_montage = s['profile'].get_editor_property('LightFeedbackMontage')
+light_montages = [e.get_editor_property('Montage') for e in s['profile'].get_editor_property('DirectionalLightFeedback')]
+light_montages += [light_montage] if light_montage else []
 hold_montage = s['hold'].get_editor_property('ExecutionConfig').get_editor_property('Montage')
 hold_sequence = unreal.load_asset('/Game/CodexText/HitReactionValidation/A_Hold') if s.get('use_formal_profile') else None
 
@@ -61,12 +65,13 @@ def snapshot(pawn):
             dot = abs(actual.x*expected.x + actual.y*expected.y + actual.z*expected.z + actual.w*expected.w)
             bone_deviation[bone] = math.degrees(2*math.acos(min(1.0, dot)))
     return {'role': str(pawn.get_local_role()), 'phase': str(st.phase), 'sequence': st.sequence,
+            'presentation_count': r.get_presentation_count(),
             'type': str(st.type), 'controlled': r.is_controlled(), 'health': hp(pawn),
             'position': [pos.x, pos.y, pos.z], 'velocity': [vel.x, vel.y, vel.z],
             'montage': m.get_name() if m else None,
             'montage_position': ai.montage_get_position(m) if ai and m else None,
             'montage_playing': bool(ai and m and ai.montage_is_playing(m)), 'air_hit_count': st.air_hit_count,
-            'light_playing': bool(ai and light_montage and ai.montage_is_playing(light_montage)),
+            'light_playing': bool(ai and any(ai.montage_is_playing(m) for m in light_montages if m)),
             'hold_playing': bool(ai and hold_montage and ai.montage_is_playing(hold_montage)), 'light_bone_deviation': bone_deviation}
 
 def finish(error=None):
@@ -139,6 +144,7 @@ def tick(delta):
                 pawn.set_actor_rotation(unreal.Rotator(0, 0, 0), False)
                 pawn.character_movement.set_movement_mode(unreal.MovementMode.MOVE_WALKING)
             state.update({'stage': 'hold_wait', 'start': now, 'initial_health': hp(target),
+                          'presentation_before': [react(p).get_presentation_count() for p in [target, owned_target, observer_target]],
                           'initial_id': str(react(target).get_last_result().hit_id),
                           'feedback_before': s['feedback'].get(target.get_path_name(), 0),
                           'owner_feedback_before': s['feedback'].get(owned_target.get_path_name(), 0),
@@ -210,6 +216,10 @@ def tick(delta):
                        'owner_final_position_error': sum((a['position'][i]-o['position'][i])**2 for i in range(3))**.5,
                        'observer_final_position_error': sum((a['position'][i]-v['position'][i])**2 for i in range(3))**.5})
         reports.append(report)
+        if s.get('verify_presentation_count'):
+            # 读取组件实际去重计数，不用 Python 委托监听次数代替网络事件次数。
+            report['contact_events'] = [react(p).get_presentation_count() - n for p, n in zip([target, owned_target, observer_target], state['presentation_before'])]
+            assert report['contact_events'] == [1, 1, 1], report
         assert state['result_seen'] and hp(target) < state['initial_health'], report
         if expected_low:
             assert r.outcome == unreal.HodgeHitReactionOutcome.LOW_JUDGEMENT and not state['seen_control'], report

@@ -65,7 +65,7 @@ void UHodgeAbilityTask_WaitMoveCancel::Activate()
 	// 信号二：移动意图（输入层）。找不到 HeroComponent（AI、模拟代理）就只订阅标签，
 	// 条件于是永不成立 —— 这正是头文件里说的"本地控制端语义"。
 	if (UHodgeHeroComponent* HeroComponent =
-		    UHodgeHeroComponent::FindHeroComponent(Ability->GetAvatarActorFromActorInfo()))
+		UHodgeHeroComponent::FindHeroComponent(Ability->GetAvatarActorFromActorInfo()))
 	{
 		SubscribedHeroComponent = HeroComponent;
 		HeroComponent->OnMoveIntentChanged.AddDynamic(this, &ThisClass::HandleMoveIntentChanged);

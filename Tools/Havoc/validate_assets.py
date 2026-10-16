@@ -2,6 +2,9 @@
 import json
 from pathlib import Path
 import unreal
+# 共用新规则配置入口，避免作者工具重新建立旧字段事实来源。
+exec(Path(unreal.Paths.project_dir(), 'Tools/AttackRules/rule_config.py').read_text(encoding='utf-8-sig'))
+
 
 root = Path(unreal.Paths.convert_relative_path_to_full(unreal.Paths.project_dir()))
 base = '/Game/Main/Character/Hero/Ability/Havoc/'
@@ -34,9 +37,9 @@ for name in sources:
     check('HDS-09 ' + name + '正式通知存在', len(unreal.AnimationLibrary.get_animation_notify_events(montage)) >= 5)
 for i in range(1, 6):
     data = unreal.load_asset('/Game/Main/Character/Hero/Ability/BasicAttack/DA_Attack_%d' % i)
-    check('HDS-06 常态第%d段每阶段5点' % i, data.get_editor_property('DarkFlowGainPerPhase') == 5.)
+    check('HDS-06 常态第%d段每阶段5点' % i, find_attack_rule(data, unreal.HodgeHavocAttackRuleConfig).get_editor_property('DarkFlowGainPerPhase') == 5.)
     data = unreal.load_asset(base + 'DA_EnhancedAttack_%d' % i)
-    check('HDS-05/06 强化第%d段资格和拢音分类' % i, data.get_editor_property('bEnhancedNormalAttack') and data.get_editor_property('DarkFlowGainPerPhase') == 0.
+    check('HDS-05/06 强化第%d段资格和拢音分类' % i, find_attack_rule(data, unreal.HodgeHavocAttackRuleConfig).get_editor_property('bEnhancedNormalAttack') and find_attack_rule(data, unreal.HodgeHavocAttackRuleConfig).get_editor_property('DarkFlowGainPerPhase') == 0.
           and 'State.Combat.Mode.DarkSurge' in data.get_editor_property('RequiredSourceTags').export_text())
 action = next(a for a in unreal.load_asset('/Game/Main/UI/EAS_HodgeGameplayUI').get_editor_property('Actions') if a.get_class().get_name() == 'GameFeatureAction_AddWidgets')
 slots = [w for w in action.get_editor_property('Widgets') if 'UI.Slot.DarkFlow' in w.get_editor_property('SlotID').export_text()]

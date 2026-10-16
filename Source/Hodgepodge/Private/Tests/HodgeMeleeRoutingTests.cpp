@@ -10,6 +10,7 @@
 #include "AbilitySystem/AttributeSet/HodgeCombatSet.h"
 #include "AbilitySystemComponent.h"
 #include "Component/HodgeCombatComponentBase.h"
+#include "Component/HodgeHitDetectionComponent.h"
 #include "Components/SphereComponent.h"
 #include "Engine/World.h"
 #include "GameplayEffect.h"
@@ -44,6 +45,7 @@ struct FHodgeMeleeTestAccess
 	static void Release(UHodgeAbilityTask_WaitHitResults* Task, UHodgeCombatComponentBase* Combat, const FGuid& Execution)
 	{
 		Task->CombatComponent = Combat;
+		Task->DetectionComponent = Combat->GetHitDetectionComponent();
 		Task->ExecutionId = Execution;
 		Task->ReleaseSessions();
 	}

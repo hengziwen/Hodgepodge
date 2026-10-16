@@ -76,7 +76,7 @@ bool FHodgeResonanceCostTest::RunTest(const FString& Parameters)
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeResonancePhaseTest,"Hodge.Resonance.PhaseLedger",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
 bool FHodgeResonancePhaseTest::RunTest(const FString& Parameters)
 {
-	FHodgeResonancePhaseLedger Ledger;
+	FHodgeAttackPhaseLedger Ledger;
 	TestFalse(TEXT("打空不占用阶段"),Ledger.TryReserve(TEXT("Attack"),TEXT("Strike"),0.f));
 	TestFalse(TEXT("非法生命伤害不占用阶段"),Ledger.TryReserve(TEXT("Attack"),TEXT("Strike"),std::numeric_limits<float>::quiet_NaN()));
 	TestTrue(TEXT("首次真实生命伤害回能"),Ledger.TryReserve(TEXT("Attack"),TEXT("Strike"),10.f));

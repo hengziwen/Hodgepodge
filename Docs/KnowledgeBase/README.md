@@ -1,5 +1,7 @@
 # Hodgepodge 本地知识库
 
+> **2026-10-16**：[R1 检测独立／R3 角色收益隔离](../Validation/combat-detection-role-rules-2026-10-16.md) 已实施，13 个正式 Definition 已迁移；Editor/Game、149 项原生、资产与单人／Listen 客户端／PIE Dedicated 的指定回归通过。Client 普攻窗口疑似异常已记录，按用户要求暂缓处理。
+
 > **2026-10-15**：攻击链路已完成 **Timeline → Montage 动画通知** 的彻底迁移；伤害倍率、敌人 AI、目标锁定、Dash/Sprint、角色朝向、参考 HUD、共鸣／暗涌均已交付并各自有验证报告。当前任务与待办见 [最新复核](29-current-work-and-backlog.md)，本轮详情见 [30 号更新](30-update-2026-10-15.md)。
 
 > 2026-10-07：dev-AN 的攻击时机已改为 Montage 原生通知。迁移前的人工核对保持历史日期，本次实现与实际验证见 [通知迁移更新](27-update-2026-10-07-anim-notify.md)。
@@ -17,7 +19,7 @@
 - [UI 基础闭环](28-update-2026-10-08-ui.md)、[UI 配置指南](../Guides/ui-foundation-configuration.md)：正式 Main HUD、血条／技能栏、菜单输入与玩家生命周期。⚠️ 方案**明确不引入 CommonGame / CommonUser**。
 - [属性初始化／成长／装备加成](../Design/character-attribute-growth.md)：首版已实现；经验／存档后端未实现。
 - [Lyra 迁移现状与检查清单](../Design/lyra-migration-status.md)：已迁移一部分的系统与逐项验收。
-- [架构审查与分阶段重构方案](../Design/architecture-refactor-review-2026-10-15.md)：**只评审、未实施**，优先 R1 抽离命中检测。
+- [架构审查与分阶段重构方案](../Design/architecture-refactor-review-2026-10-15.md)：R9／R5 已实施，[对应记录](../Validation/game-data-grant-contracts-2026-10-15.md)；R1／R3 已实施，[149 项原生与指定玩法回归记录](../Validation/combat-detection-role-rules-2026-10-16.md)；其他阶段待实施。
 - [项目 README](../../README.md)、[设计文档目录](../README.md)。
 
 ## 按系统阅读

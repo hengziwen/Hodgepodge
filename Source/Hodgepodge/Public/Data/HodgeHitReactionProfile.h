@@ -7,6 +7,19 @@
 #include "Combat/HodgeHitReactionTypes.h"
 #include "HodgeHitReactionProfile.generated.h"
 
+class UNiagaraSystem;
+class USoundBase;
+
+/** 目标骨架对应的方向性局部动作，继续使用既有 Additive Slot。 */
+USTRUCT(BlueprintType)
+struct HODGEPODGE_API FHodgeDirectionalHitFeedback
+{
+	GENERATED_BODY()
+	// 方向由目标局部坐标确定，不依赖观察相机。
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) EHodgeHitPresentationDirection Direction = EHodgeHitPresentationDirection::Front;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<UAnimMontage> Montage;
+};
+
 /** 每种目标保存自己的受击动作，不由攻击者引用目标骨骼资产。 */
 USTRUCT(BlueprintType)
 struct HODGEPODGE_API FHodgeHitReactionAnimation
@@ -23,7 +36,7 @@ struct HODGEPODGE_API FHodgeHitReactionAnimation
 	// 获取Up蒙太奇的数据或对象引用。
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<UAnimMontage> GetUpMontage;
 	// 默认持续时间的数值或阈值。
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(ClampMin="0.01", Units="s")) float DefaultDuration = 0.4f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(ClampMin="0.01", Units="s", DisplayName="Default Control Duration", EditCondition="Type == EHodgeImpactType::HitStun || Type == EHodgeImpactType::Knockback", EditConditionHides)) float DefaultDuration = 0.4f;
 	// 控制是否AllowWithout蒙太奇的状态标记。
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) bool bAllowWithoutMontage = false;
 };
@@ -40,6 +53,13 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) TArray<EHodgeImpactType> FallbackToHitStun;
 	// LightFeedback蒙太奇的数据或对象引用。
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) TObjectPtr<UAnimMontage> LightFeedbackMontage;
+	// 新资产按方向选取；未配置的旧目标继续使用 LightFeedbackMontage。
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Presentation") TArray<FHodgeDirectionalHitFeedback> DirectionalLightFeedback;
+	// 接触音画与强受击是否成功分开，资源为空时不伪造可用效果。
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Presentation") TObjectPtr<UNiagaraSystem> ContactEffect;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Presentation") TObjectPtr<USoundBase> ContactSound;
+	/** 根据目标局部攻击来源选择局部动作，缺少方向条目时保留旧入口。 */
+	UAnimMontage* FindLightFeedback(FVector LocalSourceDirection) const;
 	// LightFeedbackGameplayCue的数据或对象引用。
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) FGameplayTag LightFeedbackCue;
 	// Interruptible能力标签的数据或对象引用。

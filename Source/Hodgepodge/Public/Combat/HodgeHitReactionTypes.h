@@ -6,6 +6,7 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "NativeGameplayTags.h"
+#include "Engine/EngineTypes.h"
 #include "HodgeHitReactionTypes.generated.h"
 
 class UAbilitySystemComponent;
@@ -28,6 +29,10 @@ namespace HodgeHitReactionTags
 /** 定义冲击类型的可选状态与配置取值。 */
 UENUM(BlueprintType)
 enum class EHodgeImpactType : uint8 { /* 使用强受击硬直。 */ HitStun, /* 使用击退控制。 */ Knockback, /* 使用挑飞控制。 */ Launch, /* 使用击倒控制。 */ Knockdown, /* Air命中选项。 */ AirHit, /* Slam选项。 */ Slam };
+
+/** 接触来源在目标局部坐标中的方向，不增加玩法 Impact 类型。 */
+UENUM(BlueprintType)
+enum class EHodgeHitPresentationDirection : uint8 { Front, Back, Left, Right };
 
 /** 定义冲击方向的可选状态与配置取值。 */
 UENUM(BlueprintType)
@@ -59,21 +64,21 @@ struct HODGEPODGE_API FHodgeImpactSpec
 	// 类型的枚举配置或当前取值。
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) EHodgeImpactType Type = EHodgeImpactType::HitStun;
 	// 0 使用目标默认时长。
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ClampMin="0", Units="s")) float ControlDuration = 0.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ClampMin="0", Units="s", EditCondition="Type == EHodgeImpactType::HitStun || Type == EHodgeImpactType::Knockback", EditConditionHides)) float ControlDuration = 0.f;
 	// 方向的枚举配置或当前取值。
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) EHodgeImpactDirection Direction = EHodgeImpactDirection::AwayFromSource;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(EditCondition="Type != EHodgeImpactType::HitStun && Type != EHodgeImpactType::Knockdown", EditConditionHides)) EHodgeImpactDirection Direction = EHodgeImpactDirection::AwayFromSource;
 	// 世界方向的几何或变换数据。
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) FVector WorldDirection = FVector::ForwardVector;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(EditCondition="Direction == EHodgeImpactDirection::WorldDirection && Type != EHodgeImpactType::HitStun && Type != EHodgeImpactType::Knockdown", EditConditionHides)) FVector WorldDirection = FVector::ForwardVector;
 	// 击退距离的数值或阈值。
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ClampMin="0", Units="cm")) float KnockbackDistance = 120.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ClampMin="0", Units="cm", EditCondition="Type == EHodgeImpactType::Knockback", EditConditionHides)) float KnockbackDistance = 120.f;
 	// 移动持续时间的数值或阈值。
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ClampMin="0.01", Units="s")) float MoveDuration = 0.2f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ClampMin="0.01", Units="s", EditCondition="Type == EHodgeImpactType::Knockback", EditConditionHides)) float MoveDuration = 0.2f;
 	// 水平速度的数值或阈值。
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ClampMin="0", Units="cm/s")) float HorizontalSpeed = 180.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ClampMin="0", Units="cm/s", EditCondition="Type == EHodgeImpactType::Launch || Type == EHodgeImpactType::AirHit || Type == EHodgeImpactType::Slam", EditConditionHides)) float HorizontalSpeed = 180.f;
 	// Launch/AirHit 向上，Slam 向下；配置保存非负幅值。
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ClampMin="0", Units="cm/s")) float VerticalSpeed = 650.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ClampMin="0", Units="cm/s", EditCondition="Type == EHodgeImpactType::Launch || Type == EHodgeImpactType::AirHit || Type == EHodgeImpactType::Slam", EditConditionHides)) float VerticalSpeed = 650.f;
 	// 控制是否Knockdown事件落地的状态标记。
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) bool bKnockdownOnLanding = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(EditCondition="Type == EHodgeImpactType::Launch || Type == EHodgeImpactType::AirHit", EditConditionHides)) bool bKnockdownOnLanding = false;
 	/** 判断移动。
 	 * @return true表示满足该查询条件，false表示不满足。
 	 */
@@ -95,7 +100,9 @@ struct HODGEPODGE_API FHodgeHitReactionConfig
 	// Impacts的记录集合。
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) TArray<FHodgeImpactSpec> Impacts;
 	// 仅预留，不消费韧性属性。
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ClampMin="0")) float ReservedPoiseDamage = 0.f;
+	UPROPERTY(BlueprintReadWrite) float ReservedPoiseDamage = 0.f;
+	// 只影响接触表现的强度，不改变伤害、判定或控制时长。
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ClampMin="0.1", ClampMax="2")) float PresentationStrength = 1.f;
 	// 命中Acceptance策略的枚举配置或当前取值。
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) EHodgeHitAcceptancePolicy HitAcceptancePolicy = EHodgeHitAcceptancePolicy::AcceptedDamage;
 	/** 判断Configured。
@@ -107,6 +114,31 @@ struct HODGEPODGE_API FHodgeHitReactionConfig
 	 * @return true表示本次检查或操作成功，false表示失败。
 	 */
 	bool Validate(TArray<FText>& Errors) const;
+};
+
+/** 服务器确认的一次接触表现；不复制完整 HitResult 或玩法控制状态。 */
+USTRUCT(BlueprintType)
+struct HODGEPODGE_API FHodgeHitPresentation
+{
+	GENERATED_BODY()
+	// 同一命中的结算身份用于客户端有界去重。
+	UPROPERTY(BlueprintReadOnly) FGuid HitId;
+	// 攻击执行与阶段用于调试关联，不作为多接触合并键。
+	UPROPERTY(BlueprintReadOnly) FGuid ExecutionId;
+	UPROPERTY(BlueprintReadOnly) FName AttackPhase;
+	// 没有可靠 Sweep 接触时使用目标附近回退位置，并显式标记。
+	UPROPERTY(BlueprintReadOnly) FVector Location = FVector::ZeroVector;
+	UPROPERTY(BlueprintReadOnly) FVector Normal = FVector::UpVector;
+	UPROPERTY(BlueprintReadOnly) bool bPreciseContact = false;
+	// 仅可靠接触且携带物理材质时声明表面有效，缺失时使用默认材质回退。
+	UPROPERTY(BlueprintReadOnly) bool bHasSurface = false;
+	UPROPERTY(BlueprintReadOnly) TEnumAsByte<EPhysicalSurface> SurfaceType = SurfaceType_Default;
+	// Direction 保留冲击运动方向，动画选择使用其反向的攻击来源。
+	UPROPERTY(BlueprintReadOnly) FVector Direction = FVector::ForwardVector;
+	// 命中瞬间的局部来源快照，避免 RPC 到达前目标转向改变客户端选片。
+	UPROPERTY(BlueprintReadOnly) FVector LocalSourceDirection = FVector::ForwardVector;
+	UPROPERTY(BlueprintReadOnly) float Strength = 1.f;
+	UPROPERTY(BlueprintReadOnly) bool bLightFeedback = false;
 };
 
 /** 保存命中受击结果的数据和接口契约。 */

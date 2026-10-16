@@ -265,7 +265,8 @@ bool UHodgeHeroComponent::CanChangeInitState(UGameFrameworkComponentManager* Man
 			Pawn, UHodgePawnExtensionComponent::NAME_ActorFeatureName, HodgeGameplayTags::InitState_DataInitialized);
 		UE_LOG(LogTemp, Warning, TEXT("[HODGE-DBG] Hero->DataInitialized check PS=%s PawnExtReady=%d"),
 		       *GetNameSafe(HodgePS), bPawnExtReady ? 1 : 0);
-		return HodgePS && bPawnExtReady;
+		// PlayerState 只在基础能力整批提交后发布 PawnData，未提交时不能绑定为已就绪。
+		return HodgePS && HodgePS->GetPawnData<UHodgePawnData>() && bPawnExtReady;
 	}
 
 	// DataInitialized → GameplayReady。

@@ -27,17 +27,24 @@ UHodgeGameplayAbility_HitReaction::UHodgeGameplayAbility_HitReaction(const FObje
 }
 
 /** 检查技能激活所需的上下文、标签与现有GAS限制。 */
-bool UHodgeGameplayAbility_HitReaction::CanActivateAbility(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* Info,
-	const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* RelevantTags) const
+bool UHodgeGameplayAbility_HitReaction::CanActivateAbility(FGameplayAbilitySpecHandle Handle,
+                                                           const FGameplayAbilityActorInfo* Info,
+                                                           const FGameplayTagContainer* SourceTags,
+                                                           const FGameplayTagContainer* TargetTags,
+                                                           FGameplayTagContainer* RelevantTags) const
 {
-	const auto* Component = Info && Info->AvatarActor.IsValid() ? Info->AvatarActor->FindComponentByClass<UHodgeHitReactionComponent>() : nullptr;
+	const auto* Component = Info && Info->AvatarActor.IsValid()
+		                        ? Info->AvatarActor->FindComponentByClass<UHodgeHitReactionComponent>()
+		                        : nullptr;
 	return Component && (!Info->IsNetAuthority() || Component->IsControlled()) &&
 		Super::CanActivateAbility(Handle, Info, SourceTags, TargetTags, RelevantTags);
 }
 
 /** 启动本次技能，按现有配置提交消耗并建立执行资源。 */
-void UHodgeGameplayAbility_HitReaction::ActivateAbility(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* Info,
-	FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* Payload)
+void UHodgeGameplayAbility_HitReaction::ActivateAbility(FGameplayAbilitySpecHandle Handle,
+                                                        const FGameplayAbilityActorInfo* Info,
+                                                        FGameplayAbilityActivationInfo ActivationInfo,
+                                                        const FGameplayEventData* Payload)
 {
 	bEnding = false;
 	AppliedSequence = 0;
@@ -45,7 +52,11 @@ void UHodgeGameplayAbility_HitReaction::ActivateAbility(FGameplayAbilitySpecHand
 	AppliedStartedAt = -1.f;
 	Reaction = Info->AvatarActor->FindComponentByClass<UHodgeHitReactionComponent>();
 	// 先检查对象与上下文，避免在依赖失效后继续处理。
-	if (!Reaction.IsValid()) { FinishReaction(true); return; }
+	if (!Reaction.IsValid())
+	{
+		FinishReaction(true);
+		return;
+	}
 	ReactionAvatar = Cast<ACharacter>(Info->AvatarActor.Get());
 	// 按服务器权限区分本次处理分支。
 	if (Info->IsNetAuthority() && ReactionAvatar.IsValid())
@@ -60,7 +71,11 @@ void UHodgeGameplayAbility_HitReaction::ActivateAbility(FGameplayAbilitySpecHand
 		}
 	}
 	Reaction->AttachAbility(this);
-	if (Reaction->IsControlled() && !Synchronize(Reaction->GetReactionState()) && Info->IsNetAuthority()) { FinishReaction(true); return; }
+	if (Reaction->IsControlled() && !Synchronize(Reaction->GetReactionState()) && Info->IsNetAuthority())
+	{
+		FinishReaction(true);
+		return;
+	}
 	Super::ActivateAbility(Handle, Info, ActivationInfo, Payload);
 }
 
@@ -72,19 +87,28 @@ bool UHodgeGameplayAbility_HitReaction::Synchronize(const FHodgeHitReactionState
 		CurrentActorInfo->AvatarActor.Get() != Reaction->GetOwner()) { return false; }
 	// 根据当前生命周期状态决定是否继续执行。
 	if (!State.IsActive()) { return true; }
-	if (AppliedSequence == State.Sequence && AppliedPhase == State.Phase && PlayedMontage.Get() == State.Montage && AppliedStartedAt == State.StartedAt) { return true; }
+	if (AppliedSequence == State.Sequence && AppliedPhase == State.Phase && PlayedMontage.Get() == State.Montage &&
+		AppliedStartedAt == State.StartedAt) { return true; }
 	if (State.Montage && !CurrentActorInfo->GetAnimInstance()) { return false; }
 	auto* Character = Cast<ACharacter>(GetAvatarActorFromActorInfo());
 	if (!Character) { return false; }
 	auto* Movement = Character->GetCharacterMovement();
 	// 后续GAS操作使用的能力系统组件。
 	auto* ASC = GetAbilitySystemComponentFromActorInfo();
-	if (State.Sequence != AppliedSequence && State.Phase != EHodgeHitReactionPhase::Airborne) { Movement->StopMovementImmediately(); }
+	// 控制身份更新不等于动画重播；服务端保留的起播时间使迟到客户端得到同一姿态。
+	const bool bContinuePresentation = AppliedPhase == State.Phase && PlayedMontage.Get() == State.Montage &&
+		AppliedStartedAt == State.StartedAt && State.Montage && CurrentActorInfo->GetAnimInstance()->Montage_IsPlaying(
+			State.Montage);
+	if (State.Sequence != AppliedSequence && State.Phase != EHodgeHitReactionPhase::Airborne)
+	{
+		Movement->StopMovementImmediately();
+	}
 	const bool bNewMotion = State.Sequence != AppliedSequence;
 	if (bNewMotion || State.Phase != EHodgeHitReactionPhase::Airborne) { ClearMotion(); }
 	const float Elapsed = FMath::Max(0.f, Reaction->GetServerTime() - State.StartedAt);
 	// 按服务器权限区分本次处理分支。
-	if (bNewMotion && State.bHasMovement && (CurrentActorInfo->IsNetAuthority() || CurrentActorInfo->IsLocallyControlled()))
+	if (bNewMotion && State.bHasMovement && (CurrentActorInfo->IsNetAuthority() || CurrentActorInfo->
+		IsLocallyControlled()))
 	{
 		if (State.Type == EHodgeImpactType::Knockback && Elapsed < State.MoveDuration)
 		{
@@ -107,21 +131,27 @@ bool UHodgeGameplayAbility_HitReaction::Synchronize(const FHodgeHitReactionState
 			Character->LaunchCharacter(Velocity, true, true);
 		}
 	}
-	if (ASC->GetAnimatingAbility() == this && PlayedMontage.IsValid())
+	if (!bContinuePresentation && ASC->GetAnimatingAbility() == this && PlayedMontage.IsValid())
 	{
 		ASC->CurrentMontageStop(0.05f);
 		ASC->ClearAnimatingAbility(this);
 	}
-	PlayedMontage.Reset();
-	if (State.Montage && (CurrentActorInfo->IsNetAuthority() || CurrentActorInfo->IsLocallyControlled()))
+	if (!bContinuePresentation) { PlayedMontage.Reset(); }
+	if (!bContinuePresentation && State.Montage && (CurrentActorInfo->IsNetAuthority() || CurrentActorInfo->
+		IsLocallyControlled()))
 	{
 		const float Position = FMath::Min(Elapsed, FMath::Max(0.f, State.Montage->GetPlayLength() - 0.01f));
-		if (ASC->PlayMontage(this, CurrentActivationInfo, State.Montage, 1.f, NAME_None, Position) <= 0.f) { return false; }
+		if (ASC->PlayMontage(this, CurrentActivationInfo, State.Montage, 1.f, NAME_None, Position) <= 0.f)
+		{
+			return false;
+		}
 		PlayedMontage = State.Montage;
 		if (UAnimInstance* Anim = CurrentActorInfo->GetAnimInstance())
 		{
 			if (FAnimMontageInstance* Instance = Anim->GetActiveInstanceForMontage(State.Montage))
-			{ Instance->bEnableAutoBlendOut = State.Phase != EHodgeHitReactionPhase::Downed; }
+			{
+				Instance->bEnableAutoBlendOut = State.Phase != EHodgeHitReactionPhase::Downed;
+			}
 		}
 	}
 	AppliedSequence = State.Sequence;
@@ -145,7 +175,9 @@ void UHodgeGameplayAbility_HitReaction::ClearMotion()
 	if (MotionSourceId)
 	{
 		if (auto* Character = ReactionAvatar.Get())
-		{ Character->GetCharacterMovement()->RemoveRootMotionSourceByID(MotionSourceId); }
+		{
+			Character->GetCharacterMovement()->RemoveRootMotionSourceByID(MotionSourceId);
+		}
 		MotionSourceId = 0;
 	}
 }
@@ -155,12 +187,17 @@ void UHodgeGameplayAbility_HitReaction::FinishReaction(bool bCancelled)
 {
 	// 按服务器权限区分本次处理分支。
 	if (IsActive() && !bEnding)
-	{ EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, CurrentActorInfo && CurrentActorInfo->IsNetAuthority(), bCancelled); }
+	{
+		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo,
+		           CurrentActorInfo && CurrentActorInfo->IsNetAuthority(), bCancelled);
+	}
 }
 
 /** 结束本次技能并释放其拥有的资源，再交还GAS生命周期。 */
-void UHodgeGameplayAbility_HitReaction::EndAbility(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* Info,
-	FGameplayAbilityActivationInfo ActivationInfo, bool bReplicate, bool bCancelled)
+void UHodgeGameplayAbility_HitReaction::EndAbility(FGameplayAbilitySpecHandle Handle,
+                                                   const FGameplayAbilityActorInfo* Info,
+                                                   FGameplayAbilityActivationInfo ActivationInfo, bool bReplicate,
+                                                   bool bCancelled)
 {
 	// 根据当前生命周期状态决定是否继续执行。
 	if (bEnding || !IsActive()) { return; }
@@ -168,8 +205,11 @@ void UHodgeGameplayAbility_HitReaction::EndAbility(FGameplayAbilitySpecHandle Ha
 	ClearMotion();
 	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (PoseCombat.IsValid()) { PoseCombat->ReleasePoseLease(PoseLease); }
-	if (PoseMesh.IsValid() && PoseMesh->VisibilityBasedAnimTickOption == EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones)
-	{ PoseMesh->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption(SavedPosePolicy); }
+	if (PoseMesh.IsValid() && PoseMesh->VisibilityBasedAnimTickOption ==
+		EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones)
+	{
+		PoseMesh->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption(SavedPosePolicy);
+	}
 	PoseLease.Invalidate();
 	PoseCombat.Reset();
 	PoseMesh.Reset();

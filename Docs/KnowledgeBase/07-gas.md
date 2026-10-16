@@ -11,9 +11,11 @@
 
 PlayerState 创建玩家 ASC、HealthSet/CombatSet，PawnExtension 以 PS 为 Owner、当前身体为 Avatar 接入；HeroComponent 绑定输入和默认相机。PlayerController.PostProcessInput 消费 ASC 输入，换 Pawn 要同时考虑解绑、重绑及输入清理。
 
-PawnData 的 AbilitySets 在权威端授予，但 PlayerState 仍未保存完整 GrantedHandles 撤销账本。EquipmentManager 为装备来源保存句柄，卸装可精确撤销，不能混同两条路径。
+2026-10-15 R5：PawnData 的 AbilitySets 在权威端整批受检授予，PlayerState 已保存基础 GrantedHandles，成功后才发布 PawnData／AbilityReady，结束时撤销自身来源。允许 Pawn 出现前的 OwnerInitialized 授予，OnSpawn 留待真实 Avatar 到达；AvatarBound 仍要求有效绑定。EquipmentManager 与 EnemyInit 继续保存各自句柄，不能混同来源。旧 void 授予签名仅代理受检路径，不再维护宽松执行语义。失败不假报就绪，Instant GE／OnSpawn 副作用不承诺回滚。详见 [R9/R5 验证](../Validation/game-data-grant-contracts-2026-10-15.md)。
 
 ## 现有普攻主链
+
+2026-10-16：角色收益退出公共 Melee，按 Definition.AttackRules 创建执行级规则；阶段账本与施放账本随执行结束，旧执行／旧 Avatar 不续用。共鸣与暗流各自处理，角色级拢音继续由 HavocRules 管理。13 个正式资产完成迁移，旧字段仅作读取适配。149 项原生、核心／命中 PIE 与资产验证见 [R1/R3 记录](../Validation/combat-detection-role-rules-2026-10-16.md)。用户报告的 Client 普攻窗口问题仍暂缓，不因这些验证通过而关闭。
 
 Input → CombatComponent 选择跳转 → GAS 激活 Definition/Melee GA → 播放对应 FullBody Montage → 原生通知直接请求状态、手持与命中 → PostPhysics 采样 → Montage 生命周期／EndAbility 统一清理。
 

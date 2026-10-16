@@ -84,13 +84,17 @@ bool FHodgeImpactSpec::IsMovement() const
 bool FHodgeImpactSpec::Validate(TArray<FText>& Errors) const
 {
 	const int32 Before = Errors.Num();
-	if (uint8(Type) > uint8(EHodgeImpactType::Slam) || uint8(Direction) > uint8(EHodgeImpactDirection::WorldDirection) ||
-		!FMath::IsFinite(ControlDuration) || ControlDuration < 0.f || !FMath::IsFinite(KnockbackDistance) || KnockbackDistance < 0.f ||
-		!FMath::IsFinite(MoveDuration) || MoveDuration <= 0.f || !FMath::IsFinite(HorizontalSpeed) || HorizontalSpeed < 0.f ||
-		!FMath::IsFinite(VerticalSpeed) || VerticalSpeed < 0.f || WorldDirection.ContainsNaN() ||
-		(IsMovement() && Direction == EHodgeImpactDirection::WorldDirection && WorldDirection.GetSafeNormal2D().IsNearlyZero()))
+	const bool bGroundControl = Type == EHodgeImpactType::HitStun || Type == EHodgeImpactType::Knockback;
+	const bool bAirMotion = Type == EHodgeImpactType::Launch || Type == EHodgeImpactType::AirHit || Type == EHodgeImpactType::Slam;
+	// 隐藏参数不参与无关类型校验；真正使用的参数仍必须有限且合法。
+	if (uint8(Type) > uint8(EHodgeImpactType::Slam) ||
+		(bGroundControl && (!FMath::IsFinite(ControlDuration) || ControlDuration < 0.f)) ||
+		(Type == EHodgeImpactType::Knockback && (!FMath::IsFinite(KnockbackDistance) || KnockbackDistance < 0.f || !FMath::IsFinite(MoveDuration) || MoveDuration <= 0.f)) ||
+		(bAirMotion && (!FMath::IsFinite(HorizontalSpeed) || HorizontalSpeed < 0.f || !FMath::IsFinite(VerticalSpeed) || VerticalSpeed < 0.f)) ||
+		(IsMovement() && (uint8(Direction) > uint8(EHodgeImpactDirection::WorldDirection) ||
+			(Direction == EHodgeImpactDirection::WorldDirection && (WorldDirection.ContainsNaN() || WorldDirection.GetSafeNormal2D().IsNearlyZero())))))
 	{
-		Errors.Add(FText::FromString(TEXT("Impact requires valid enums, finite nonnegative magnitudes, positive move duration and a usable direction.")));
+		Errors.Add(FText::FromString(FString::Printf(TEXT("Impact %d has invalid relevant control, motion or direction parameters."), uint8(Type))));
 	}
 	return Before == Errors.Num();
 }
@@ -110,7 +114,7 @@ bool FHodgeHitReactionConfig::Validate(TArray<FText>& Errors) const
 	{
 		Errors.Add(FText::FromString(TEXT("Reaction requires one exact Normal/Skill/SuperArmor/Vajra judgement tag.")));
 	}
-	if (!FMath::IsFinite(ReservedPoiseDamage) || ReservedPoiseDamage < 0.f ||
+	if (!FMath::IsFinite(ReservedPoiseDamage) || ReservedPoiseDamage < 0.f || !FMath::IsFinite(PresentationStrength) || PresentationStrength < 0.1f || PresentationStrength > 2.f ||
 		uint8(HitAcceptancePolicy) > uint8(EHodgeHitAcceptancePolicy::ExplicitControl))
 	{
 		Errors.Add(FText::FromString(TEXT("Invalid reaction acceptance policy or reserved poise magnitude.")));

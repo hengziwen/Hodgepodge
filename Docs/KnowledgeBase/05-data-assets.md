@@ -9,6 +9,8 @@
 
 ## 配置所有权
 
+2026-10-15 R9：`UHodgeGameData::Get()` 已恢复走 AssetManager 的配置资产与 GC 持有链，不再返回 NewObject 空实例。正式 `/Game/Main/Data/DA_Dafult_GameData` 三个 GE 字段已读取；动态 Tag 增删、GC、自毁专用伤害及掉出世界死亡／重生已验证。详见 [修复记录](../Validation/game-data-grant-contracts-2026-10-15.md)。
+
 2026-10-06 属性首版：PawnData.StatProfile 引用角色成长配置，EquipmentDefinition.StatProfile 引用装备加成配置；正式角色用 DA_Pover_Stats，默认剑用 DA_Sword_Stats。曲线在 Main/Data/CharacterStats，角色基础为 Instant GE、装备为独立 Infinite GE。详见 [实现记录](../Design/character-attribute-growth.md)。
 
 Experience 声明 GameFeature、Actions/ActionSets 与 DefaultPawnData。PawnData 提供 PawnClass、AbilitySets、ComboDefinition、DefaultWeaponDefinition、InputConfig、DefaultCameraMode、TagRelationshipMapping；字段均已存在，不能再说只有 PawnClass。
@@ -16,6 +18,8 @@ Experience 声明 GameFeature、Actions/ActionSets 与 DefaultPawnData。PawnDat
 当前 Experience 指向 `/Game/Main/Data/PawnData/DA_Dafult_PawnData`，输入 DA_HodgeInputConfig、相机 CM_ThirdPerson、默认装备 BP_Equipment_Sword、连段 DA_LightCombo。AbilitySets 为 Main/Data/AbilitySet/DA_Pover 与 AS_LightCombo，关系映射为空。DefaultGame.ini 的 `/Game/Main/Data/DA_Dafult_PawnData` 只是回退入口。
 
 ## 技能与装备数据
+
+2026-10-16 R3：正式角色收益改填 Definition.AttackRules：HodgeResonanceAttackRuleConfig 的 GainPerPhase／GainEffect，以及 HodgeHavocAttackRuleConfig 的阶段暗流／施放暗流／强化普攻标记。13 个有收益的 Main Definition 已逐字段迁移，旧收益字段归零；普通 NPC 可以不配置。作者脚本共用 Tools/AttackRules/rule_config.py；新配置优先，旧读取适配不形成第二套结算。[迁移与验证](../Validation/combat-detection-role-rules-2026-10-16.md)。
 
 Definition.ExecutionConfig 持有 Montage、PlayRate、Blend 与 Timeline；HitWindows 绑定命中窗口和配置，WeaponUseWindowTag 关联手持窗口。Timeline 单一 Events 数组，Kind=Window/Point，时间使用蒙太奇源时间；不是 GA、不是连段状态容器。
 

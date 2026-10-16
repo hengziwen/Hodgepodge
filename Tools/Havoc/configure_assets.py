@@ -4,6 +4,9 @@ import re
 import shutil
 from pathlib import Path
 import unreal
+# 共用新规则配置入口，避免作者工具重新建立旧字段事实来源。
+exec(Path(unreal.Paths.project_dir(), 'Tools/AttackRules/rule_config.py').read_text(encoding='utf-8-sig'))
+
 
 root = Path(unreal.Paths.convert_relative_path_to_full(unreal.Paths.project_dir()))
 work = root / 'Saved/Havoc'
@@ -148,9 +151,10 @@ for index, (name, source_name, bp, hit_start, hit_end, recovery, is_circuit, is_
         facing = definition.get_editor_property('FacingWarp')
         facing.set_editor_property('bEnabled', False)
         definition.set_editor_property('FacingWarp', facing)
-        definition.set_editor_property('DarkFlowGainPerPhase', 0.)
-        definition.set_editor_property('DarkFlowGainOnCast', 20. if is_skill else 0.)
-        definition.set_editor_property('bEnhancedNormalAttack', not is_circuit and not is_skill)
+        havoc_rule = ensure_attack_rule(definition, unreal.HodgeHavocAttackRuleConfig)
+        havoc_rule.set_editor_property('DarkFlowGainPerPhase', 0.)
+        havoc_rule.set_editor_property('DarkFlowGainOnCast', 20. if is_skill else 0.)
+        havoc_rule.set_editor_property('bEnhancedNormalAttack', not is_circuit and not is_skill)
         variant(definition, not is_circuit)
         binding = definition.get_editor_property('DefaultHitConfig')
         binding.set_editor_property('DamageElement', tag('GameplayEffect.DamageElement.Havoc'))
@@ -162,13 +166,13 @@ for index, (name, source_name, bp, hit_start, hit_end, recovery, is_circuit, is_
 # 常态五段只增补收益与元素，不改用户已有的3→5→4连段次序。
 for i in range(1, 6):
     asset = edit(unreal.load_asset('/Game/Main/Character/Hero/Ability/BasicAttack/DA_Attack_%d' % i))
-    asset.set_editor_property('DarkFlowGainPerPhase', 5.)
+    ensure_attack_rule(asset, unreal.HodgeHavocAttackRuleConfig).set_editor_property('DarkFlowGainPerPhase', 5.)
     variant(asset, False)
     hit = asset.get_editor_property('DefaultHitConfig')
     hit.set_editor_property('DamageElement', tag('GameplayEffect.DamageElement.Havoc'))
     asset.set_editor_property('DefaultHitConfig', hit)
 variant(e_data, False)
-e_data.set_editor_property('DarkFlowGainOnCast', 20.)
+ensure_attack_rule(e_data, unreal.HodgeHavocAttackRuleConfig).set_editor_property('DarkFlowGainOnCast', 20.)
 normal_montage = edit(e_data.get_editor_property('ExecutionConfig').montage)
 if fresh(e_data):
     assert unreal.HodgeAnimationAuthoringLibrary.configure_havoc_cast_commit(normal_montage, .17)

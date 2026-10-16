@@ -23,6 +23,8 @@ WorldActionBase 为需要参与世界生命周期的 Action 提供上下文和 W
 
 有有效的能力、属性、AbilitySet 授予和回收代码。它通过组件管理器观察 Actor 扩展事件，寻找或请求 ASC，记录授予句柄供停用撤销。具体入口是否触发依赖目标 Actor Receiver、Action 的 ActorClass 配置及加载流程。
 
+2026-10-15 R5：直接能力／属性／AbilitySet 一起预检，按 Context＋Actor＋EntryIndex 保存提交状态和原 ASC；重复事件不重授，重叠条目独立撤销。依赖晚到等待 Init State／PawnExtension 绑定事件，软引用未驻留或非法配置明确失败，修复后需重新激活。玩家接口尚未提供 ASC 时不创建第二份。真实 Action 激活、解绑、重绑、停用已通过原生隔离世界测试；正式 Experience 没有 AddAbilities，未验证独立插件冷加载 Bundle。详见 [实现与验证](../Validation/game-data-grant-contracts-2026-10-15.md)。
+
 配置前确定目标应该是 PlayerState 还是 Pawn。给 Pawn 动态新增另一个 ASC 可能与玩家 PlayerState ASC 分裂；不要为了让查询不为空而临时生成第二套能力系统。
 
 ## AddInputContextMapping

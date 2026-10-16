@@ -12,19 +12,21 @@
 
 源码：[Source/Hodgepodge/Private/GameFeatures/GameFeatureAction_AddAbilities.cpp](../../../Source/Hodgepodge/Private/GameFeatures/GameFeatureAction_AddAbilities.cpp)
 
-项目内直接 include（不是运行调用关系）：[GameFeatures/GameFeatureAction_AddAbilities.h](../../../Source/Hodgepodge/Public/GameFeatures/GameFeatureAction_AddAbilities.h)、[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)、[Core/PlayState/HodgePlayerState.h](../../../Source/Hodgepodge/Public/Core/PlayState/HodgePlayerState.h)、[GameFeatures/GameFeatureAction_WorldActionBase.h](../../../Source/Hodgepodge/Public/GameFeatures/GameFeatureAction_WorldActionBase.h)
+项目内直接 include（不是运行调用关系）：[GameFeatures/GameFeatureAction_AddAbilities.h](../../../Source/Hodgepodge/Public/GameFeatures/GameFeatureAction_AddAbilities.h)、[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)、[AbilitySystem/Abilities/HodgeGameplayAbility.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)、[Component/HodgePawnExtensionComponent.h](../../../Source/Hodgepodge/Public/Component/HodgePawnExtensionComponent.h)、[Core/PlayState/HodgePlayerState.h](../../../Source/Hodgepodge/Public/Core/PlayState/HodgePlayerState.h)、[GameFeatures/GameFeatureAction_WorldActionBase.h](../../../Source/Hodgepodge/Public/GameFeatures/GameFeatureAction_WorldActionBase.h)
 
 定义候选（多行签名仅展示首行）：
 
-- L42: `void UGameFeatureAction_AddAbilities::OnGameFeatureActivating(FGameFeatureActivatingContext& Context)`
-- L60: `void UGameFeatureAction_AddAbilities::OnGameFeatureDeactivating(FGameFeatureDeactivatingContext& Context)`
-- L79: `EDataValidationResult UGameFeatureAction_AddAbilities::IsDataValid(FDataValidationContext& Context) const`
-- L198: `void UGameFeatureAction_AddAbilities::AddToWorld(const FWorldContext& WorldContext,`
-- L247: `void UGameFeatureAction_AddAbilities::Reset(FPerContextData& ActiveData)`
-- L264: `void UGameFeatureAction_AddAbilities::HandleActorExtension(AActor* Actor, FName EventName, int32 EntryIndex,`
-- L295: `void UGameFeatureAction_AddAbilities::AddActorAbilities(AActor* Actor, const FGameFeatureAbilitiesEntry& AbilitiesEntry,`
-- L413: `void UGameFeatureAction_AddAbilities::RemoveActorAbilities(AActor* Actor, FPerContextData& ActiveData)`
-- L452: `UActorComponent* UGameFeatureAction_AddAbilities::FindOrAddComponentForActor(`
+- L51: `void UGameFeatureAction_AddAbilities::OnGameFeatureActivating(FGameFeatureActivatingContext& Context)`
+- L62: `void UGameFeatureAction_AddAbilities::OnGameFeatureDeactivating(FGameFeatureDeactivatingContext& Context)`
+- L73: `EDataValidationResult UGameFeatureAction_AddAbilities::IsDataValid(FDataValidationContext& Context) const`
+- L190: `void UGameFeatureAction_AddAbilities::AddToWorld(const FWorldContext& WorldContext,`
+- L217: `void UGameFeatureAction_AddAbilities::Reset(FPerContextData& ActiveData)`
+- L227: `void UGameFeatureAction_AddAbilities::HandleActorExtension(AActor* Actor, FName EventName, int32 EntryIndex,`
+- L243: `void UGameFeatureAction_AddAbilities::AddActorAbilities(AActor* Actor, int32 EntryIndex,`
+- L404: `void UGameFeatureAction_AddAbilities::RemoveActorAbilities(AActor* Actor, int32 EntryIndex, FPerContextData& ActiveData, bool bCancelDirect)`
+- L415: `void UGameFeatureAction_AddAbilities::RetireExtension(const TSharedRef<FActorExtensions>& Entry, bool bCancelDirect)`
+- L426: `void UGameFeatureAction_AddAbilities::RevokeExtension(FActorExtensions& Entry, bool bCancelDirectAbilities)`
+- L442: `UActorComponent* UGameFeatureAction_AddAbilities::FindOrAddComponentForActor(`
 
 ## GameFeatureAction_AddGameplayCuePath.cpp
 
@@ -176,72 +178,86 @@ GameFeature 激活期间的分屏策略调整。
   32: class UDataTable;
   35: struct FComponentRequestHandle;
   38: class UHodgeAbilitySet;
-  41: USTRUCT(BlueprintType)
-  42: struct FHodgeAbilityGrant
-  43: {
-  44: 	GENERATED_BODY()
-  48: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(AssetBundles="Client,Server"))
-  49: 	TSoftClassPtr<UGameplayAbility> AbilityType;
-  56: };
-  59: USTRUCT(BlueprintType)
-  60: struct FHodgeAttributeSetGrant
-  61: {
-  62: 	GENERATED_BODY()
-  66: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(AssetBundles="Client,Server"))
-  67: 	TSoftClassPtr<UAttributeSet> AttributeSetType;
-  71: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(AssetBundles="Client,Server"))
-  72: 	TSoftObjectPtr<UDataTable> InitializationData;
-  73: };
-  76: USTRUCT()
-  77: struct FGameFeatureAbilitiesEntry
-  78: {
-  79: 	GENERATED_BODY()
-  83: 	UPROPERTY(EditAnywhere, Category="Abilities")
-  84: 	TSoftClassPtr<AActor> ActorClass;
-  88: 	UPROPERTY(EditAnywhere, Category="Abilities")
-  89: 	TArray<FHodgeAbilityGrant> GrantedAbilities;
-  93: 	UPROPERTY(EditAnywhere, Category="Attributes")
-  94: 	TArray<FHodgeAttributeSetGrant> GrantedAttributes;
-  98: 	UPROPERTY(EditAnywhere, Category="Attributes", meta=(AssetBundles="Client,Server"))
-  99: 	TArray<TSoftObjectPtr<const UHodgeAbilitySet>> GrantedAbilitySets;
- 100: };
- 109: UCLASS(MinimalAPI, meta = (DisplayName = "Add Abilities"))
- 110: class UGameFeatureAction_AddAbilities final : public UGameFeatureAction_WorldActionBase
- 111: {
- 112: 	GENERATED_BODY()
- 114: public:
- 120: 	virtual void OnGameFeatureActivating(FGameFeatureActivatingContext& Context) override;
- 126: 	virtual void OnGameFeatureDeactivating(FGameFeatureDeactivatingContext& Context) override;
- 130: #if WITH_EDITOR
- 136: 	virtual EDataValidationResult IsDataValid(class FDataValidationContext& Context) const override;
- 137: #endif
- 141: 	UPROPERTY(EditAnywhere, Category="Abilities", meta=(TitleProperty="ActorClass", ShowOnlyInnerProperties))
- 142: 	TArray<FGameFeatureAbilitiesEntry> AbilitiesList;
- 144: private:
- 146: 	struct FActorExtensions
- 147: 	{
- 149: 		TArray<FGameplayAbilitySpecHandle> Abilities;
- 152: 		TArray<UAttributeSet*> Attributes;
- 155: 		TArray<FHodgeAbilitySet_GrantedHandles> AbilitySetHandles;
- 156: 	};
- 159: 	struct FPerContextData
- 160: 	{
- 162: 		TMap<AActor*, FActorExtensions> ActiveExtensions;
- 165: 		TArray<TSharedPtr<FComponentRequestHandle>> ComponentRequests;
- 166: 	};
- 169: 	TMap<FGameFeatureStateChangeContext, FPerContextData> ContextData;
- 177: 	virtual void AddToWorld(const FWorldContext& WorldContext, const FGameFeatureStateChangeContext& ChangeContext) override;
- 184: 	void Reset(FPerContextData& ActiveData);
- 193: 	void HandleActorExtension(AActor* Actor, FName EventName, int32 EntryIndex, FGameFeatureStateChangeContext ChangeContext);
- 201: 	void AddActorAbilities(AActor* Actor, const FGameFeatureAbilitiesEntry& AbilitiesEntry, FPerContextData& ActiveData);
- 208: 	void RemoveActorAbilities(AActor* Actor, FPerContextData& ActiveData);
- 211: 	template<class ComponentType>
- 218: 	ComponentType* FindOrAddComponentForActor(AActor* Actor, const FGameFeatureAbilitiesEntry& AbilitiesEntry, FPerContextData& ActiveData)
- 219: 	{
- 222: 		return Cast<ComponentType>(FindOrAddComponentForActor(ComponentType::StaticClass(), Actor, AbilitiesEntry, ActiveData));
- 223: 	}
- 233: 	UActorComponent* FindOrAddComponentForActor(UClass* ComponentType, AActor* Actor, const FGameFeatureAbilitiesEntry& AbilitiesEntry, FPerContextData& ActiveData);
- 234: };
+  39: class UGameFrameworkComponentManager;
+  42: USTRUCT(BlueprintType)
+  43: struct FHodgeAbilityGrant
+  44: {
+  45: 	GENERATED_BODY()
+  49: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(AssetBundles="Client,Server"))
+  50: 	TSoftClassPtr<UGameplayAbility> AbilityType;
+  57: };
+  60: USTRUCT(BlueprintType)
+  61: struct FHodgeAttributeSetGrant
+  62: {
+  63: 	GENERATED_BODY()
+  67: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(AssetBundles="Client,Server"))
+  68: 	TSoftClassPtr<UAttributeSet> AttributeSetType;
+  72: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(AssetBundles="Client,Server"))
+  73: 	TSoftObjectPtr<UDataTable> InitializationData;
+  74: };
+  77: USTRUCT()
+  78: struct FGameFeatureAbilitiesEntry
+  79: {
+  80: 	GENERATED_BODY()
+  84: 	UPROPERTY(EditAnywhere, Category="Abilities")
+  85: 	TSoftClassPtr<AActor> ActorClass;
+  89: 	UPROPERTY(EditAnywhere, Category="Abilities")
+  90: 	TArray<FHodgeAbilityGrant> GrantedAbilities;
+  94: 	UPROPERTY(EditAnywhere, Category="Attributes")
+  95: 	TArray<FHodgeAttributeSetGrant> GrantedAttributes;
+  99: 	UPROPERTY(EditAnywhere, Category="Attributes", meta=(AssetBundles="Client,Server"))
+ 100: 	TArray<TSoftObjectPtr<const UHodgeAbilitySet>> GrantedAbilitySets;
+ 101: };
+ 110: UCLASS(MinimalAPI, meta = (DisplayName = "Add Abilities"))
+ 111: class UGameFeatureAction_AddAbilities final : public UGameFeatureAction_WorldActionBase
+ 112: {
+ 113: 	GENERATED_BODY()
+ 115: public:
+ 121: 	virtual void OnGameFeatureActivating(FGameFeatureActivatingContext& Context) override;
+ 127: 	virtual void OnGameFeatureDeactivating(FGameFeatureDeactivatingContext& Context) override;
+ 131: #if WITH_EDITOR
+ 137: 	virtual EDataValidationResult IsDataValid(class FDataValidationContext& Context) const override;
+ 138: #endif
+ 142: 	UPROPERTY(EditAnywhere, Category="Abilities", meta=(TitleProperty="ActorClass", ShowOnlyInnerProperties))
+ 143: 	TArray<FGameFeatureAbilitiesEntry> AbilitiesList;
+ 145: private:
+ 146: 	friend struct FHodgeGameFeatureGrantTestAccess;
+ 148: 	enum class EGrantState : uint8 { Waiting, Applying, Applied, Failed, Removed };
+ 150: 	struct FActorExtensions
+ 151: 	{
+ 152: 		TWeakObjectPtr<AActor> Actor;
+ 153: 		TWeakObjectPtr<UHodgeAbilitySystemComponent> GrantedASC;
+ 154: 		TWeakObjectPtr<UGameFrameworkComponentManager> InitManager;
+ 155: 		FDelegateHandle InitStateHandle;
+ 156: 		TArray<FGameplayAbilitySpecHandle> DirectAbilities;
+ 157: 		FHodgeAbilitySet_GrantedHandles GrantedHandles;
+ 158: 		EGrantState State = EGrantState::Waiting;
+ 159: 		bool bApplying = false;
+ 160: 		bool bCommitted = false;
+ 161: 		bool bHasIrreversibleEffects = false;
+ 162: 		bool bCancelDirectOnRemoval = false;
+ 163: 	};
+ 166: 	struct FPerContextData
+ 167: 	{
+ 169: 		TMap<TWeakObjectPtr<AActor>, TMap<int32, TSharedPtr<FActorExtensions>>> ActiveExtensions;
+ 170: 		bool bActive = true;
+ 173: 		TArray<TSharedPtr<FComponentRequestHandle>> ComponentRequests;
+ 174: 	};
+ 177: 	TMap<FGameFeatureStateChangeContext, TSharedPtr<FPerContextData>> ContextData;
+ 185: 	virtual void AddToWorld(const FWorldContext& WorldContext, const FGameFeatureStateChangeContext& ChangeContext) override;
+ 192: 	void Reset(FPerContextData& ActiveData);
+ 201: 	void HandleActorExtension(AActor* Actor, FName EventName, int32 EntryIndex, FGameFeatureStateChangeContext ChangeContext);
+ 209: 	void AddActorAbilities(AActor* Actor, int32 EntryIndex, const TSharedRef<FPerContextData>& ActiveData);
+ 216: 	void RemoveActorAbilities(AActor* Actor, int32 EntryIndex, FPerContextData& ActiveData, bool bCancelDirect = false);
+ 218: 	void RetireExtension(const TSharedRef<FActorExtensions>& Extension, bool bCancelDirect = false);
+ 220: 	void RevokeExtension(FActorExtensions& Extension, bool bCancelDirectAbilities);
+ 223: 	template<class ComponentType>
+ 230: 	ComponentType* FindOrAddComponentForActor(AActor* Actor, const FGameFeatureAbilitiesEntry& AbilitiesEntry, FPerContextData& ActiveData)
+ 231: 	{
+ 234: 		return Cast<ComponentType>(FindOrAddComponentForActor(ComponentType::StaticClass(), Actor, AbilitiesEntry, ActiveData));
+ 235: 	}
+ 245: 	UActorComponent* FindOrAddComponentForActor(UClass* ComponentType, AActor* Actor, const FGameFeatureAbilitiesEntry& AbilitiesEntry, FPerContextData& ActiveData);
+ 246: };
 ```
 
 ## GameFeatureAction_AddGameplayCuePath.h

@@ -20,6 +20,21 @@
 - L16: `bool HodgeAttackFacing::ResolveYaw(float StartYaw, float DesiredYaw, float MaxAngle, float& OutYaw)`
 - L21: `bool FHodgeAttackFacingTargetData::NetSerialize(FArchive& Ar, UPackageMap* Map, bool& bOutSuccess)`
 
+## HodgeAttackRule.cpp
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Private/Combat/HodgeAttackRule.cpp](../../../Source/Hodgepodge/Private/Combat/HodgeAttackRule.cpp)
+
+项目内直接 include（不是运行调用关系）：[Combat/HodgeAttackRule.h](../../../Source/Hodgepodge/Public/Combat/HodgeAttackRule.h)、[AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h)
+
+定义候选（多行签名仅展示首行）：
+
+- L9: `bool FHodgeAttackPhaseLedger::TryReserve(FName Group, FName Phase, float AcceptedDamage)`
+- L18: `void UHodgeAttackRule::Initialize(UHodgeGameplayAbility_Definition* InSource, const UHodgeAttackRuleConfig* InConfig)`
+- L27: `bool UHodgeAttackRule::IsCurrent() const`
+- L37: `bool UHodgeAttackRule::Accepts(const FHodgeAttackSettlement& Settlement) const`
+
 ## HodgeCharacterFacingTypes.cpp
 
 模块或基础类型入口。
@@ -104,6 +119,20 @@
 - L99: `bool FHodgeHitReactionConfig::IsConfigured() const`
 - L105: `bool FHodgeHitReactionConfig::Validate(TArray<FText>& Errors) const`
 
+## HodgeLegacyAttackRuleAdapter.cpp
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Private/Combat/HodgeLegacyAttackRuleAdapter.cpp](../../../Source/Hodgepodge/Private/Combat/HodgeLegacyAttackRuleAdapter.cpp)
+
+项目内直接 include（不是运行调用关系）：[Combat/HodgeLegacyAttackRuleAdapter.h](../../../Source/Hodgepodge/Public/Combat/HodgeLegacyAttackRuleAdapter.h)、[Data/HodgeAbilityDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilityDefinition.h)、[Data/HodgeHavocAttackRule.h](../../../Source/Hodgepodge/Public/Data/HodgeHavocAttackRule.h)、[Data/HodgeResonanceAttackRule.h](../../../Source/Hodgepodge/Public/Data/HodgeResonanceAttackRule.h)、[AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h)、[AbilitySystem/Effects/HodgeResonanceEnergyEffect.h](../../../Source/Hodgepodge/Public/AbilitySystem/Effects/HodgeResonanceEnergyEffect.h)
+
+定义候选（多行签名仅展示首行）：
+
+- L36: `void HodgeLegacyAttackRules::InitializeDefaults(UHodgeAbilityDefinition& Definition)`
+- L40: `void HodgeLegacyAttackRules::CreateRules(const UHodgeAbilityDefinition& Definition, UHodgeGameplayAbility_Definition* Source, TArray<TObjectPtr<UHodgeAttackRule>>& OutRules)`
+- L49: `void HodgeLegacyAttackRules::Validate(const UHodgeAbilityDefinition& Definition, TArray<FText>& Errors)`
+
 ## HodgeMovementActionTypes.cpp
 
 模块或基础类型入口。
@@ -170,6 +199,76 @@
   53: {
   55: 	HODGEPODGE_API bool ResolveYaw(float StartYaw, float DesiredYaw, float MaxAngle, float& OutYaw);
   56: }
+```
+
+## HodgeAttackRule.h
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Public/Combat/HodgeAttackRule.h](../../../Source/Hodgepodge/Public/Combat/HodgeAttackRule.h)
+
+有效头文件声明摘录（未展开宏，未求值预处理分支）：
+
+```cpp
+   2: #pragma once
+   3: #include "CoreMinimal.h"
+   4: #include "GameplayTagContainer.h"
+   5: #include "GameplayAbilitySpecHandle.h"
+   6: #include "HodgeAttackRule.generated.h"
+   8: class UHodgeGameplayAbility_Definition;
+   9: class UHodgeAbilityDefinition;
+  10: class UAbilitySystemComponent;
+  11: class UHodgeAttackRuleConfig;
+  14: struct HODGEPODGE_API FHodgeHitGroupKey
+  15: {
+  16: 	FName Group;
+  17: 	FName Phase;
+  18: 	bool operator==(const FHodgeHitGroupKey& Other) const { return Group == Other.Group && Phase == Other.Phase; }
+  19: 	friend uint32 GetTypeHash(const FHodgeHitGroupKey& Key) { return HashCombine(GetTypeHash(Key.Group), GetTypeHash(Key.Phase)); }
+  20: };
+  23: struct HODGEPODGE_API FHodgeAttackPhaseLedger
+  24: {
+  25: 	bool TryReserve(FName Group, FName Phase, float AcceptedDamage);
+  27: 	void Reset() { Phases.Reset(); }
+  28: private:
+  29: 	TSet<FHodgeHitGroupKey> Phases;
+  30: };
+  33: struct HODGEPODGE_API FHodgeAttackSettlement
+  34: {
+  35: 	FGuid ExecutionId;
+  36: 	FGuid SettlementId;
+  37: 	FGameplayAbilitySpecHandle AbilityHandle;
+  38: 	FName HitGroup;
+  39: 	FName AttackPhase;
+  40: 	TWeakObjectPtr<UAbilitySystemComponent> TargetASC;
+  41: 	float AcceptedDamage = 0.f;
+  42: };
+  45: UCLASS(Abstract)
+  46: class HODGEPODGE_API UHodgeAttackRule : public UObject
+  47: {
+  48: 	GENERATED_BODY()
+  49: public:
+  51: 	void Initialize(UHodgeGameplayAbility_Definition* InSource, const UHodgeAttackRuleConfig* InConfig);
+  53: 	virtual void OnSettlement(const FHodgeAttackSettlement& Settlement) {}
+  54: 	virtual void OnExecutionEvent(FGameplayTag Tag) {}
+  55: protected:
+  56: 	bool IsCurrent() const;
+  57: 	bool Accepts(const FHodgeAttackSettlement& Settlement) const;
+  58: 	UPROPERTY(Transient) TWeakObjectPtr<UHodgeGameplayAbility_Definition> Source;
+  59: 	UPROPERTY(Transient) TObjectPtr<const UHodgeAttackRuleConfig> Config;
+  60: private:
+  61: 	FGuid ExecutionId;
+  62: 	TWeakObjectPtr<UAbilitySystemComponent> BoundASC;
+  63: 	TWeakObjectPtr<AActor> BoundAvatar;
+  64: };
+  67: UCLASS(Abstract, BlueprintType, EditInlineNew, DefaultToInstanced)
+  68: class HODGEPODGE_API UHodgeAttackRuleConfig : public UObject
+  69: {
+  70: 	GENERATED_BODY()
+  71: public:
+  73: 	virtual UHodgeAttackRule* CreateRule(UObject* Outer) const PURE_VIRTUAL(UHodgeAttackRuleConfig::CreateRule, return nullptr;);
+  75: 	virtual void ValidateRule(const UHodgeAbilityDefinition& Definition, TArray<FText>& Errors) const {}
+  76: };
 ```
 
 ## HodgeCharacterFacingTypes.h
@@ -660,6 +759,28 @@
  205: 	HODGEPODGE_API bool CanImpact(int32 AttackRank, int32 BodyRank);
  211: 	HODGEPODGE_API bool CanUseMontage(const UAnimMontage* Montage, const USkeletalMesh* Mesh);
  212: }
+```
+
+## HodgeLegacyAttackRuleAdapter.h
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Public/Combat/HodgeLegacyAttackRuleAdapter.h](../../../Source/Hodgepodge/Public/Combat/HodgeLegacyAttackRuleAdapter.h)
+
+有效头文件声明摘录（未展开宏，未求值预处理分支）：
+
+```cpp
+   2: #pragma once
+   3: #include "CoreMinimal.h"
+   4: class UHodgeAbilityDefinition;
+   5: class UHodgeGameplayAbility_Definition;
+   6: class UHodgeAttackRule;
+   7: namespace HodgeLegacyAttackRules
+   8: {
+  10: 	void InitializeDefaults(UHodgeAbilityDefinition& Definition);
+  12: 	void CreateRules(const UHodgeAbilityDefinition& Definition, UHodgeGameplayAbility_Definition* Source, TArray<TObjectPtr<UHodgeAttackRule>>& OutRules);
+  14: 	void Validate(const UHodgeAbilityDefinition& Definition, TArray<FText>& Errors);
+  15: }
 ```
 
 ## HodgeMovementActionTypes.h

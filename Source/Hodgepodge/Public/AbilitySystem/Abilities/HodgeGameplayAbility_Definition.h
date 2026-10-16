@@ -1,4 +1,4 @@
-﻿/** @file HodgeGameplayAbility_Definition.h
+/** @file HodgeGameplayAbility_Definition.h
  * @brief 声明玩法能力定义相关的类型、接口与现有处理流程。
  */
 #pragma once
@@ -13,6 +13,8 @@
 class UHodgeAbilityDefinition;
 class UHodgeWeaponInstance;
 class UHodgeCombatComponentBase;
+class UHodgeAttackRule;
+struct FHodgeAttackSettlement;
 class UAnimMontage;
 
 /** Executes one granted definition; the combo coordinator owns transitions and input. */
@@ -167,7 +169,15 @@ protected:
 	                        FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility,
 	                        bool bWasCancelled) override;
 
+protected:
+ /** 公共攻击仅发布值载荷，规则不能保留临时 Spec 指针。 */
+ void PublishAttackSettlement(const FHodgeAttackSettlement& Settlement);
+ bool HasAttackSettlementRules() const { return !AttackRules.IsEmpty(); }
 private:
+	friend struct FHodgeAttackRuleTestAccess;
+ /** 规则跟随执行创建／失效，不能沿用到下一次激活或另一 Pawn。 */
+ UPROPERTY(Transient) TArray<TObjectPtr<UHodgeAttackRule>> AttackRules;
+ void DispatchAttackRuleEvent(FGameplayTag Tag);
 	friend struct FHodgeAttackWarpTestAccess;
 	void StartExecutionMontage();
 	void InitializeAttackFacing(const FGameplayEventData* Payload);

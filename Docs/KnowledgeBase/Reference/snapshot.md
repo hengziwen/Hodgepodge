@@ -6,71 +6,86 @@
 
 ## 生成信息
 
-- UTC：2026-10-15T12:39:24.675583+00:00
-- Git HEAD：`b702482967b7185de062392be83cc789f7d031db`
-- 源文件（h/cpp/cs）：426
+- UTC：2026-10-16T01:54:17.242216+00:00
+- Git HEAD：`d028591d56ba402d000e6c251eb6ba9695279708`
+- 源文件（h/cpp/cs）：440
 - Main 与选定 CodexText 正式依赖文件：300
 - 原生标签注册条目：237
-- 漂移跟踪文件：900
+- 漂移跟踪文件：919
 
 ## 生成时已有的受 Git 跟踪修改
 
 ```text
-M .agents/ue-project-context.md
- M .codex/config.toml
- M .gitattributes
- M AGENTS.md
+M Content/Main/Character/Hero/Ability/BasicAttack/DA_Attack_1.uasset
+ M Content/Main/Character/Hero/Ability/BasicAttack/DA_Attack_2.uasset
+ M Content/Main/Character/Hero/Ability/BasicAttack/DA_Attack_3.uasset
+ M Content/Main/Character/Hero/Ability/BasicAttack/DA_Attack_4.uasset
+ M Content/Main/Character/Hero/Ability/BasicAttack/DA_Attack_5.uasset
+ M Content/Main/Character/Hero/Ability/Havoc/DA_EnhancedAttack_1.uasset
+ M Content/Main/Character/Hero/Ability/Havoc/DA_EnhancedAttack_2.uasset
+ M Content/Main/Character/Hero/Ability/Havoc/DA_EnhancedAttack_3.uasset
+ M Content/Main/Character/Hero/Ability/Havoc/DA_EnhancedAttack_4.uasset
+ M Content/Main/Character/Hero/Ability/Havoc/DA_EnhancedAttack_5.uasset
+ M Content/Main/Character/Hero/Ability/Havoc/DA_MieYin.uasset
+ M Content/Main/Character/Hero/Ability/Havoc/DA_PoMing.uasset
+ M Content/Main/Character/Hero/Ability/ResonanceSkill/DA_Resonance_Skill.uasset
+ D Content/__ExternalActors__/ThirdPerson/Maps/ThirdPersonMap/C/QF/BY1DA5CRGQSAMOTK8RA8KR.uasset
  M Docs/Design/architecture-refactor-review-2026-10-15.md
- M Docs/Design/lyra-migration-status.md
- M Docs/Development/development-standards.md
- M Docs/KnowledgeBase/01-project-map.md
- M Docs/KnowledgeBase/02-architecture.md
- M Docs/KnowledgeBase/03-runtime-startup.md
- M Docs/KnowledgeBase/04-pawn-initialization.md
+ M Docs/Guides/attack-ability-configuration.md
+ M Docs/Guides/hit-reaction-configuration.md
+ M Docs/Guides/resonance-liberation-configuration.md
  M Docs/KnowledgeBase/05-data-assets.md
- M Docs/KnowledgeBase/06-input.md
  M Docs/KnowledgeBase/07-gas.md
  M Docs/KnowledgeBase/08-combat-health.md
- M Docs/KnowledgeBase/09-camera-animation.md
  M Docs/KnowledgeBase/10-game-features.md
- M Docs/KnowledgeBase/11-network.md
- M Docs/KnowledgeBase/12-integration-backlog.md
- M Docs/KnowledgeBase/13-build-config.md
- M Docs/KnowledgeBase/14-troubleshooting.md
- M Docs/KnowledgeBase/15-development-recipes.md
- M Docs/KnowledgeBase/16-validation.md
- M Docs/KnowledgeBase/17-maintenance-glossary.md
- M Docs/KnowledgeBase/18-faq.md
  M Docs/KnowledgeBase/29-current-work-and-backlog.md
  M Docs/KnowledgeBase/README.md
  M Docs/KnowledgeBase/Reference/README.md
  M Docs/KnowledgeBase/Reference/assets.md
- M Docs/KnowledgeBase/Reference/config.md
  M Docs/KnowledgeBase/Reference/gameplay-tags.md
  M Docs/KnowledgeBase/Reference/snapshot.json
  M Docs/KnowledgeBase/Reference/snapshot.md
  M Docs/KnowledgeBase/Reference/source-abilitysystem.md
- M Docs/KnowledgeBase/Reference/source-actor.md
- M Docs/KnowledgeBase/Reference/source-animation.md
- M Docs/KnowledgeBase/Reference/source-camera.md
- M Docs/KnowledgeBase/Reference/source-character.md
- M Docs/KnowledgeBase/Reference/source-codextext.md
  M Docs/KnowledgeBase/Reference/source-combat.md
  M Docs/KnowledgeBase/Reference/source-component.md
  M Docs/KnowledgeBase/Reference/source-core.md
  M Docs/KnowledgeBase/Reference/source-data.md
- M Docs/KnowledgeBase/Reference/source-equipment.md
  M Docs/KnowledgeBase/Reference/source-gamefeatures.md
  M Docs/KnowledgeBase/Reference/source-index.md
- M Docs/KnowledgeBase/Reference/source-input.md
- M Docs/KnowledgeBase/Reference/source-interface.md
- M Docs/KnowledgeBase/Reference/source-module.md
  M Docs/KnowledgeBase/Reference/source-tests.md
- M Docs/KnowledgeBase/Reference/source-ui.md
- M Docs/Learning/伤害链路的总流程.md
- M Docs/README.md
- M README.md
- M TagMigration/GameplayTags_对照表.md
+ M Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeAbilityTask_WaitHitResults.cpp
+ M Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.cpp
+ M Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility_Melee.cpp
+ M Source/Hodgepodge/Private/AbilitySystem/Executions/HodgeDamageExecution.cpp
+ M Source/Hodgepodge/Private/Component/HodgeCombatComponentBase.cpp
+ M Source/Hodgepodge/Private/Component/HodgeHealthComponent.cpp
+ M Source/Hodgepodge/Private/Component/HodgeHeroComponent.cpp
+ M Source/Hodgepodge/Private/Component/HodgePawnExtensionComponent.cpp
+ M Source/Hodgepodge/Private/Core/PlayState/HodgePlayerState.cpp
+ M Source/Hodgepodge/Private/Data/HodgeAbilityDefinition.cpp
+ M Source/Hodgepodge/Private/Data/HodgeAbilitySet.cpp
+ M Source/Hodgepodge/Private/Data/HodgeGameData.cpp
+ M Source/Hodgepodge/Private/GameFeatures/GameFeatureAction_AddAbilities.cpp
+ M Source/Hodgepodge/Private/Tests/HodgeEnemyAITestTypes.cpp
+ M Source/Hodgepodge/Private/Tests/HodgeEnemyAITestTypes.h
+ M Source/Hodgepodge/Private/Tests/HodgeHavocTests.cpp
+ M Source/Hodgepodge/Private/Tests/HodgeMeleeRoutingTests.cpp
+ M Source/Hodgepodge/Private/Tests/HodgeResonanceEnergyTests.cpp
+ M Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeAbilityTask_WaitHitResults.h
+ M Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h
+ M Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Melee.h
+ M Source/Hodgepodge/Public/Component/HodgeCombatComponentBase.h
+ M Source/Hodgepodge/Public/Component/HodgePawnExtensionComponent.h
+ M Source/Hodgepodge/Public/Core/PlayState/HodgePlayerState.h
+ M Source/Hodgepodge/Public/Data/HodgeAbilityDefinition.h
+ M Source/Hodgepodge/Public/Data/HodgeAbilitySet.h
+ M Source/Hodgepodge/Public/Data/HodgeGameData.h
+ M Source/Hodgepodge/Public/GameFeatures/GameFeatureAction_AddAbilities.h
+ M Tools/CinematicUltimate/configure_assets.py
+ M Tools/Havoc/README.md
+ M Tools/Havoc/configure_assets.py
+ M Tools/Havoc/validate_assets.py
+ M Tools/HitReaction/README.md
 ```
 
 这里只记录已跟踪路径状态，未跟踪知识库自身不包含在此列表。HEAD 不足以还原 dirty 工作区；[snapshot.json](snapshot.json) 保存扫描范围的 SHA-256。

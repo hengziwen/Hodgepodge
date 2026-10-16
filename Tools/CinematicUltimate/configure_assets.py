@@ -2,6 +2,9 @@
 import json
 from pathlib import Path
 import unreal
+# 共用新规则配置入口，避免作者工具重新建立旧字段事实来源。
+exec(Path(unreal.Paths.project_dir(), 'Tools/AttackRules/rule_config.py').read_text(encoding='utf-8-sig'))
+
 
 ROOT = '/Game/Main/Character/Hero/Ability/ResonanceLiberation'
 WING_ROOT = '/Game/Main/Character/Hero/Wing'
@@ -185,10 +188,11 @@ for path, amount in [(f'/Game/Main/Character/Hero/Ability/BasicAttack/DA_Attack_
     attack = unreal.load_asset(path)
     assert attack, path
     if not unreal.EditorAssetLibrary.get_metadata_tag(attack, 'Hodge.ResonanceGain.Version'):
-        value = attack.get_editor_property('ResonanceEnergyGainPerPhase')
+        rule = ensure_attack_rule(attack, unreal.HodgeResonanceAttackRuleConfig)
+        value = rule.get_editor_property('GainPerPhase')
         assert value.import_text('(Value=' + str(amount) + ')')
-        attack.set_editor_property('ResonanceEnergyGainPerPhase', value)
-        attack.set_editor_property('ResonanceEnergyGainEffect', gain.generated_class())
+        rule.set_editor_property('GainPerPhase', value)
+        rule.set_editor_property('GainEffect', gain.generated_class())
         for event in unreal.AnimationLibrary.get_animation_notify_events(attack.execution_config.montage):
             notify = event.notify or event.notify_state_class
             if notify and notify.get_class().get_name() in ('HodgeAnimNotify_Hit', 'HodgeAnimNotifyState_HitCheck'):

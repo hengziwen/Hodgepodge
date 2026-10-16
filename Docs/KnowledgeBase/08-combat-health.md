@@ -3,6 +3,8 @@
 
 # 属性、命中、装备与死亡
 
+2026-10-16：[受击实现审计](../Design/hit-reaction-implementation-audit-2026-10-16.md) 记录正式五段空受击请求、编译权重与表现边界；[独立高血量假人](../Guides/hit-reaction-dummy.md) 提供真实扣血、七类测试攻击和服务器事件观察，不改变正式受击行为。
+
 攻击字段含义与配置步骤统一见[攻击能力配置手册](../Guides/attack-ability-configuration.md)；后续配置问答优先引用手册相应章节，本章说明系统职责和状态。
 
 [返回知识库](README.md) · [本轮更新](30-update-2026-10-15.md) · [接通清单](12-integration-backlog.md)
@@ -13,7 +15,9 @@
 
 属性初始化/成长首版已实施：PlayerState 拥有属性协调器和等级/装备来源记录，HealthComponent 只绑定/通知；出生等待默认装备属性后补满，角色升级保持比例，装备变化保留绝对值。重算期间上限夹取延后，真实资源变化仍记录；现有属性名和伤害结算入口保持。死亡 GA 已由用户接入，真实致死 GE 能触发死亡事件并完成 8 秒死亡阶段与 Pawn 销毁，但互斥计数和 PIE 清理仍有错误；复活玩法待接入。见 [死亡验证](../Validation/jump-death-2026-10-06.md) 与 [成长方案](../Design/character-attribute-growth.md)。
 
-Experience 通过 AddComponents 给 Pawn 添加 HodgeCombatComponentBase 与 EquipmentManager。CombatComponent 协调连段和服务器检测会话、去重及命中结果；HodgeGameplayAbility_Melee 接收结果并构建/施加 GE，组件不直接写 Health。
+Experience 通过 AddComponents 给 Pawn 添加 HodgeCombatComponentBase 与 EquipmentManager。2026-10-16 R1：Combat 只协调连段／请求／网络，旧检测入口代理唯一的 HodgeHitDetectionComponent；检测服务保存会话、来源、几何历史及姿势账本，既有能力 Task 保留 PostPhysics 节拍。Melee 负责目标资格、每目标命中去重、GE 提交及实际伤害确认，检测组件不直接写 Health。
+
+2026-10-16 R3：Melee 发布带 Execution／Spec／SettlementId 的强类型结算，Definition 的 AttackRules 持有可选共鸣／暗流配置，每执行创建独立规则及阶段账本；角色级拢音仍由 HavocRules 限流。正式 13 个资产已迁移并清空旧收益值，新旧路径不并行。[实现与完整验证](../Validation/combat-detection-role-rules-2026-10-16.md)。
 
 检测支持身体、武器组件/socket 和 HitBox 配置。策略选择、采样和目标规则位于 Combat 目录；共享 FHodgeDamageRules 同时用于检测与伤害 Execution。
 
@@ -26,6 +30,8 @@ DamageExecution 捕获 Source CombatSet.BaseDamage，乘 SetByCaller.DamageMulti
 HealthSet 管 Health/MaxHealth、Damage/Healing 元属性与夹取/通知；CombatSet 管 BaseDamage/BaseHeal。HealthComponent 已挂角色，监听耗尽并推进 DeathState，角色禁移动/碰撞并执行销毁清理。完整击杀消息与重生策略仍待补（**敌人 ASC 已补齐**，见下）。
 
 ### 受击系统（2026-10-08 接入并验证）
+
+2026-10-16 新增[受击表现切片](../Validation/hit-presentation-2026-10-16.md)：四方向短 Additive、独立接触音画与去重、重复地面硬直续播、正式五段 Reaction 编排及配置校验。已提供离线画面对照与实际回归；素材和主观手感仍需验收，公共动画字段未迁移，旧基线不代表新版本验证。
 
 `UHodgeHitReactionComponent`（`UPawnComponent`）挂在 `AHodgeCombatCharacter`（支持 `OverrideProfile`）。链路：攻击方 Melee GA `BeginHit` → `HealthSet::RecordDamage` → **目标侧自己的** `UHodgeGameplayAbility_HitReaction` 执行（**动画通知驱动，非 Timeline**）。四级 Body / 独立判定 / Impact / 目标动画与恢复。验证 46 项 PIE/联机用例（[报告](../Validation/hit-reaction-pie-network-2026-10-08.md)）；正式动画与联机手感仍待调。
 

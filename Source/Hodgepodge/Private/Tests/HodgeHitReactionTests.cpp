@@ -28,6 +28,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Animation/AnimMontage.h"
 #include "Engine/SkeletalMesh.h"
+#include <limits>
 
 /** 保存命中受击测试Access的数据和接口契约。 */
 struct FHodgeHitReactionTestAccess
@@ -36,6 +37,8 @@ struct FHodgeHitReactionTestAccess
 	 * @param Component 组件，由调用方传入。
 	 */
 	static void Expire(UHodgeHitReactionComponent* Component) { Component->State.EndsAt = Component->GetServerTime() - 1.f; }
+	/** 重放同一已确认表现，检查网络重复交付不会重复副作用。 */
+	static void Present(UHodgeHitReactionComponent* Component, const FHodgeHitPresentation& Value) { Component->MulticastContactFeedback_Implementation(Value); }
 };
 
 namespace HodgeReactionTests
@@ -158,6 +161,69 @@ bool FHodgeReactionRanksTest::RunTest(const FString& Parameters)
 	TestFalse(TEXT("Conflicting movement effects are rejected"), Config.Validate(Errors));
 	Config.Impacts = {Launch}; Config.ReservedPoiseDamage = -1.f; Errors.Reset();
 	TestFalse(TEXT("Negative reserved poise is rejected"), Config.Validate(Errors));
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeReactionRelevantFieldsTest, "Hodge.HitReaction.RelevantFieldsAndPresentation", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 隐藏字段失效不能阻断无关类型，实际使用的运动参数仍严格校验。 */
+bool FHodgeReactionRelevantFieldsTest::RunTest(const FString& Parameters)
+{
+	HodgeReactionTests::FFixture F;
+	auto Config = F.Request();
+	auto& Impact = Config.Impacts[0];
+	Impact.MoveDuration = 0.f;
+	Impact.HorizontalSpeed = -10.f;
+	Impact.WorldDirection.X = std::numeric_limits<float>::quiet_NaN();
+	TArray<FText> Errors;
+	TestTrue(TEXT("HitStun ignores unrelated hidden motion fields"), Config.Validate(Errors));
+	TestEqual(TEXT("HitStun still applies with hidden invalid motion fields"), F.Hit(Config).Outcome, EHodgeHitReactionOutcome::Applied);
+	F.Reaction->CancelReaction();
+	Config = F.Request(EHodgeImpactType::Launch);
+	Config.Impacts[0].ControlDuration = std::numeric_limits<float>::quiet_NaN();
+	Config.Impacts[0].MoveDuration = 0.f;
+	F.Profile->Animations.FindByPredicate([](const auto& Entry) { return Entry.Type == EHodgeImpactType::Launch; })->DefaultDuration = 0.f;
+	Errors.Reset();
+	TestTrue(TEXT("Airborne control uses phase bounds instead of hidden durations"), Config.Validate(Errors));
+	TestEqual(TEXT("Launch does not consume hidden durations"), F.Hit(Config).Outcome, EHodgeHitReactionOutcome::Applied);
+	F.Reaction->CancelReaction();
+	Config = F.Request(EHodgeImpactType::Knockback);
+	Config.Impacts[0].MoveDuration = 0.f;
+	Errors.Reset();
+	TestFalse(TEXT("Knockback still rejects invalid relevant move duration"), Config.Validate(Errors));
+	FHodgeHitPresentation Presentation;
+	Presentation.HitId = FGuid::NewGuid();
+	const int32 Before = F.Reaction->GetPresentationCount();
+	FHodgeHitReactionTestAccess::Present(F.Reaction, Presentation);
+	FHodgeHitReactionTestAccess::Present(F.Reaction, Presentation);
+	TestEqual(TEXT("Duplicate contact identity is presented once"), F.Reaction->GetPresentationCount(), Before + 1);
+	Presentation.HitId = FGuid::NewGuid();
+	FHodgeHitReactionTestAccess::Present(F.Reaction, Presentation);
+	TestEqual(TEXT("Independent multi-hit contact is retained"), F.Reaction->GetPresentationCount(), Before + 2);
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeReactionDownedFeedbackTest, "Hodge.HitReaction.DownedContactAndDirections", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 倒地普通命中保留伤害与接触，不将目标切回站立硬直。 */
+bool FHodgeReactionDownedFeedbackTest::RunTest(const FString& Parameters)
+{
+	HodgeReactionTests::FFixture F;
+	TestEqual(TEXT("Knockdown enters the actual control path"), F.Hit(F.Request(EHodgeImpactType::Knockdown)).Outcome, EHodgeHitReactionOutcome::Applied);
+	const auto Before = F.Reaction->GetReactionState();
+	const auto Result = F.Hit(F.Request());
+	TestEqual(TEXT("Standing HitStun becomes contact while downed"), Result.Outcome, EHodgeHitReactionOutcome::NoImpact);
+	TestEqual(TEXT("Contact still has actual damage"), Result.ActualDamage, 10.f);
+	TestEqual(TEXT("Downed phase remains"), F.Reaction->GetReactionState().Phase, EHodgeHitReactionPhase::Downed);
+	TestEqual(TEXT("Contact does not refresh downed timer"), F.Reaction->GetReactionState().EndsAt, Before.EndsAt);
+	TestFalse(TEXT("Synthetic contact does not pretend a precise surface"), F.Reaction->GetLastPresentation().bPreciseContact);
+	const FVector Sources[] = {FVector::ForwardVector, -FVector::ForwardVector, -FVector::RightVector, FVector::RightVector};
+	for (int32 Index = 0; Index < 4; ++Index)
+	{
+		FHodgeDirectionalHitFeedback Entry;
+		Entry.Direction = EHodgeHitPresentationDirection(Index);
+		Entry.Montage = NewObject<UAnimMontage>(F.Profile);
+		F.Profile->DirectionalLightFeedback.Add(Entry);
+		TestEqual(TEXT("Local source chooses the corresponding directional asset"), F.Profile->FindLightFeedback(Sources[Index]), Entry.Montage.Get());
+	}
 	return true;
 }
 
@@ -293,6 +359,11 @@ bool FHodgeReactionCancellationTest::RunTest(const FString& Parameters)
 	// 通过ASC发起激活，保留GAS自身的条件与消耗校验。
 	if (!TestTrue(TEXT("Native action starts before hit"), F.ASC->TryActivateAbility(JumpHandle, false))) { return false; }
 	UGameplayAbility* Jump = F.ASC->FindAbilitySpecFromHandle(JumpHandle)->GetPrimaryInstance();
+	// 低判定命中高抗状态仍扣血，但不取消正在执行的真实 GAS 动作。
+	F.ASC->AddLooseGameplayTag(HodgeHitReactionTags::Body_SuperArmor);
+	TestEqual(TEXT("High armor only receives contact from lower judgement"), F.Hit(F.Request()).Outcome, EHodgeHitReactionOutcome::LowJudgement);
+	TestTrue(TEXT("High armor keeps the active action running"), Jump->IsActive());
+	F.ASC->RemoveLooseGameplayTag(HodgeHitReactionTags::Body_SuperArmor);
 	Jump->SetCanBeCanceled(false);
 	TestEqual(TEXT("Noncancellable action does not falsely report interrupt"), F.Hit(F.Request()).Outcome, EHodgeHitReactionOutcome::CannotInterrupt);
 	TestFalse(TEXT("Failed interrupt leaves no control"), F.Reaction->IsControlled());

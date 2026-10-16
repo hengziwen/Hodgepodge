@@ -42,6 +42,10 @@ public:
 	 * @return 上次结果的当前值或引用。
 	 */
 	UFUNCTION(BlueprintPure, Category="Hodge|HitReaction") FHodgeHitReactionResult GetLastResult() const { return LastResult; }
+	/** 当前 Avatar 已接受的独立表现次数，供跨端核对，不参与结算。 */
+	UFUNCTION(BlueprintPure, Category="Hodge|HitReaction") int32 GetPresentationCount() const { return PresentationCount; }
+	/** 最近一次接触快照不代替逐事件日志，同帧多接触以日志为准。 */
+	UFUNCTION(BlueprintPure, Category="Hodge|HitReaction") FHodgeHitPresentation GetLastPresentation() const { return LastPresentation; }
 	/** 判断Controlled。
 	 * @return true表示满足该查询条件，false表示不满足。
 	 */
@@ -70,7 +74,8 @@ public:
 	 * @param SourceOrigin 来源Origin，由调用方传入。
 	 * @return 本次计算、查询或创建得到的唯一标识。
 	 */
-	FGuid BeginHit(const FHodgeHitReactionConfig& Request, AActor* Source, FVector SourceOrigin);
+	FGuid BeginHit(const FHodgeHitReactionConfig& Request, AActor* Source, FVector SourceOrigin,
+		const FHitResult* Contact = nullptr, FGuid ExecutionId = FGuid(), FName AttackPhase = NAME_None);
 	/** 记录本次采样观察到的伤害结果。
 	 * @param HitId 命中标识，由调用方传入。
 	 * @param bAccepted 是否已接受的控制标记。
@@ -122,6 +127,8 @@ private:
 	{
 		// 请求的数据或对象引用。
 		FHodgeHitReactionConfig Request;
+		// 同一结算的接触快照，只有确认命中后才发送表现。
+		FHodgeHitPresentation Presentation;
 		// 本次操作的来源。
 		TWeakObjectPtr<AActor> Source;
 		// 表现角色的弱引用，不延长目标对象生命周期。
@@ -161,6 +168,12 @@ private:
 	bool bCompleting = false;
 	// 控制是否SawAirborne的状态标记。
 	bool bSawAirborne = false;
+	// 客户端只保留有限命中身份，解绑时清空，避免重复副作用与无限增长。
+	TArray<FGuid> PresentedHits;
+	UPROPERTY(Transient) TWeakObjectPtr<UAnimMontage> LastLightMontage;
+	float LastLightStrength = 0.f;
+	int32 PresentationCount = 0;
+	UPROPERTY(Transient) FHodgeHitPresentation LastPresentation;
 	/** 判断已绑定。
 	 * @return true表示满足该查询条件，false表示不满足。
 	 */
@@ -198,4 +211,8 @@ private:
 	 * @param Direction 方向，由调用方传入。
 	 */
 	UFUNCTION(NetMulticast, Unreliable) void MulticastLightFeedback(FVector Direction);
+	/** 只分发表现，不改变伤害、受控状态或权威位移。 */
+	UFUNCTION(NetMulticast, Unreliable) void MulticastContactFeedback(const FHodgeHitPresentation& Presentation);
+	/** 局部动作和通知分开；抑制重播时仍保留这次接触事件。 */
+	void PlayLightFeedback(FVector Direction, FVector LocalSourceDirection, float Strength);
 };

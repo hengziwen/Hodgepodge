@@ -1,5 +1,9 @@
 # 受击配置手册：Body 判定与目标侧 Impact
 
+> 2026-10-16：当前源码与正式资产的差异见[实现审计](../Design/hit-reaction-implementation-audit-2026-10-16.md)；需要长时间实测时使用[100 万血量假人](hit-reaction-dummy.md)。旧验证记录不替代当前五段配置核对。
+
+> 2026-10-16 表现切片：新增 DirectionalLightFeedback、ContactEffect、ContactSound 与攻击 PresentationStrength；正式五段与原型变化、实测范围见[表现验证](../Validation/hit-presentation-2026-10-16.md)。DefaultDuration／ControlDuration 只对地面 HitStun／Knockback 展示和校验，MoveDuration 只对 Knockback 使用；预留削韧保留兼容但不在普通详情中编辑。公共 AirLoop／Landing／GetUp 引用尚未迁移。
+
 日期：2026-10-08。适用 UE 5.5.4。本手册描述本次新增源码接口，不表示所有正式动画和怪物资产已配置或通过 PIE／联机验证。设计背景见[受击系统](../Design/hit-reaction-system.md)，已有伤害与通知配置见[攻击配置手册](attack-ability-configuration.md)。
 
 ## 1. 配置归属
