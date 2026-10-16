@@ -13,6 +13,7 @@
 
 // 项目相机辅助接口，用于接收相机穿透角色等反馈。
 #include "Camera/HodgeCameraAssistInterface.h"
+#include "Feedback/NumberPops/HodgeNumberPopComponent.h"
 
 #include "HodgePlayerController.generated.h"
 
@@ -78,6 +79,17 @@ public:
 	/** 开发控制台回满当前玩家暗流；不自动灭音、不改变Buff消耗或技能冷却。 */
 	UFUNCTION(Exec)
 	void HodgeFillDarkFlow();
+
+	/** 仅服务器接受已结算伤害，向本 Controller 的拥有者发送纯表现数据。 */
+	void SendDamageNumber(FHodgeNumberPopRequest Request);
+	/** Controller 持有共享后端，Pawn 更换不影响仍在播放的数字。 */
+	UFUNCTION(BlueprintPure, Category="Hodge|NumberPop")
+	class UHodgeNumberPopComponent_NiagaraText* GetNumberPopComponent() const { return NumberPopComponent; }
+	/** 诊断实际发送次数与最后一笔原始数值，不参与伤害结算。 */
+	UFUNCTION(BlueprintPure, Category="Hodge|NumberPop")
+	int32 GetDamageNumberSentCount() const { return DamageNumberSentCount; }
+	UFUNCTION(BlueprintPure, Category="Hodge|NumberPop")
+	FHodgeNumberPopRequest GetLastDamageNumberSent() const { return LastDamageNumberSent; }
 
 	// Call to see if we should record a replay, subclasses could change this
 	// 判断当前 PlayerController 是否应该录制客户端 Replay，子类可以重写策略。
@@ -243,6 +255,19 @@ public:
 	bool GetIsAutoRunning() const;
 
 private:
+	/** Unreliable 允许丢弃纯表现事件；不在其他玩家广播，也不回写玩法状态。 */
+	UFUNCTION(Client, Unreliable)
+	void ClientShowDamageNumbers(const TArray<FHodgeNumberPopRequest>& Requests);
+	/** 合并同帧传输而非合并伤害，降低多目标瞬时 RPC 数量。 */
+	void FlushDamageNumbers();
+	// 专服只有无 Tick 的门面，Niagara 和样式仅在本地客户端创建。
+	UPROPERTY(VisibleAnywhere, Category="Hodge|NumberPop") TObjectPtr<class UHodgeNumberPopComponent_NiagaraText> NumberPopComponent;
+	UPROPERTY(Transient) FHodgeNumberPopRequest LastDamageNumberSent;
+	int32 DamageNumberSentCount = 0;
+	int32 NextDamageNumberEventId = 0;
+	TArray<FHodgeNumberPopRequest> PendingDamageNumbers;
+	FTimerHandle DamageNumberFlushTimer;
+
 	// Controller 持有本地投影描述；专服只保留不复制、无 Tick 的空管理组件。
 	UPROPERTY(VisibleAnywhere, Category="Hodge|UI") TObjectPtr<class UHodgeIndicatorManagerComponent> IndicatorManager;
 	// 保存 Controller 队伍变化事件的多播委托。

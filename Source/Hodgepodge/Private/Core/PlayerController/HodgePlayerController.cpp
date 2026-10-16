@@ -8,6 +8,8 @@
 #include "Core/PlayerController/HodgePlayerController.h"
 #include "Component/HodgeLockOnComponent.h"
 #include "UI/IndicatorSystem/HodgeIndicatorManagerComponent.h"
+#include "Feedback/NumberPops/HodgeNumberPopComponent_NiagaraText.h"
+#include "TimerManager.h"
 
 // CommonInput 输入设备类型定义，当前暂未启用。
 //#include "CommonInputTypeEnum.h"
@@ -110,11 +112,51 @@ AHodgePlayerController::AHodgePlayerController(const FObjectInitializer& ObjectI
 	// 使用项目自定义 PlayerCameraManager。
 	PlayerCameraManagerClass = AHodgePlayerCameraManager::StaticClass();
 	IndicatorManager = CreateDefaultSubobject<UHodgeIndicatorManagerComponent>(TEXT("IndicatorManager"));
+	NumberPopComponent = CreateDefaultSubobject<UHodgeNumberPopComponent_NiagaraText>(TEXT("NumberPopComponent"));
 
 	// 如果启用了 CheatManager，则可以在这里指定项目自定义 CheatManager。
 	// #if USING_CHEAT_MANAGER
 	//     CheatClass = UHodgeCheatManager::StaticClass();
 	// #endif // #if USING_CHEAT_MANAGER
+}
+
+/** 在服务器分配每个接收者独立的事件身份；主机也只走同一个 Client RPC。 */
+void AHodgePlayerController::SendDamageNumber(FHodgeNumberPopRequest Request)
+{
+	if (!HasAuthority() || !Request.IsValid()) { return; }
+	NextDamageNumberEventId = NextDamageNumberEventId == MAX_int32 ? 1 : NextDamageNumberEventId + 1;
+	Request.EventId = NextDamageNumberEventId;
+	LastDamageNumberSent = Request;
+	++DamageNumberSentCount;
+	// 队列仅保留当前帧的最新 256 笔，极端表现压力不阻塞玩法。
+	if (PendingDamageNumbers.Num() == 256) { PendingDamageNumbers.RemoveAt(0, 1, EAllowShrinking::No); }
+	PendingDamageNumbers.Add(MoveTemp(Request));
+	if (!DamageNumberFlushTimer.IsValid())
+	{ DamageNumberFlushTimer = GetWorldTimerManager().SetTimerForNextTick(this, &ThisClass::FlushDamageNumbers); }
+}
+
+/** 小批次限制单个网络载荷；批内每刀仍有自己的数值、位置与身份。 */
+void AHodgePlayerController::FlushDamageNumbers()
+{
+	DamageNumberFlushTimer.Invalidate();
+	if (PendingDamageNumbers.IsEmpty()) { return; }
+	TArray<FHodgeNumberPopRequest> Batch;
+	const int32 Count = FMath::Min(64, PendingDamageNumbers.Num());
+	Batch.Append(PendingDamageNumbers.GetData(), Count);
+	PendingDamageNumbers.RemoveAt(0, Count, EAllowShrinking::No);
+	ClientShowDamageNumbers(Batch);
+	// 同一处理阶段只发一个 RPC，余量后续发送，避免后续批次被连接瞬时带宽预算拒绝。
+	if (!PendingDamageNumbers.IsEmpty() && !DamageNumberFlushTimer.IsValid())
+	{
+		DamageNumberFlushTimer = GetWorldTimerManager().SetTimerForNextTick(this, &ThisClass::FlushDamageNumbers);
+	}
+}
+
+/** 不创建独立 HUD，不向远端 Controller 或专服加载表现资源。 */
+void AHodgePlayerController::ClientShowDamageNumbers_Implementation(const TArray<FHodgeNumberPopRequest>& Requests)
+{
+	if (IsLocalController() && NumberPopComponent)
+	{ for (const auto& Request : Requests) { NumberPopComponent->AddNumberPop(Request); } }
 }
 
 // Actor 组件初始化前调用。
@@ -152,6 +194,9 @@ void AHodgePlayerController::BeginPlay()
 // PlayerController 生命周期结束时调用。
 void AHodgePlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	// Controller 退出时丢弃未发送的纯表现，不能把旧世界队列带到新连接。
+	GetWorldTimerManager().ClearTimer(DamageNumberFlushTimer);
+	PendingDamageNumbers.Reset();
 	// 执行父类 EndPlay。
 	Super::EndPlay(EndPlayReason);
 }

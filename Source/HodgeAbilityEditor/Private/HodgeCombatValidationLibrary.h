@@ -73,6 +73,9 @@ class HODGEABILITYEDITOR_API UHodgeCombatValidationLibrary : public UBlueprintFu
 {
 	GENERATED_BODY()
 public:
+	/** 跳字 PIE 夹具：权威 Tick 经 Damage GE 结算；零伤重置仅供高血量测试目标。 */
+	UFUNCTION(BlueprintCallable, Category="Hodge|Editor|Validation")
+	static bool QueueNumberPopProbe(AActor* Source, AActor* Target, float Damage, bool bResetTargetHealth = false);
 	/** 暗流PIE夹具通过正式GE修改资源，只在权威游戏Tick执行。 */
 	UFUNCTION(BlueprintCallable, Category="Hodge|Editor|Validation") static bool QueueDarkFlowDelta(AActor* Avatar, float Delta);
 	/** 读取实际暗流与容量；缺少属性集明确返回负值。 */

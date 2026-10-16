@@ -23,6 +23,8 @@
 
 // 项目全局 GameData，用于获取自毁伤害等公共资源配置。
 #include "Data/HodgeGameData.h"
+#include "Core/PlayerController/HodgePlayerController.h"
+#include "GameFramework/PlayerState.h"
 
 // 网络属性复制相关宏与类型。
 #include "Net/UnrealNetwork.h"
@@ -127,6 +129,8 @@ void UHodgeHealthComponent::InitializeWithAbilitySystem(UHodgeAbilitySystemCompo
 
 	// 监听 Health 耗尽事件，用于触发死亡相关 GameplayEvent。
 	HealthSet->OnOutOfHealth.AddUObject(this, &ThisClass::HandleOutOfHealth);
+	// 与生命监听共用绑定周期；事件在死亡流程前已包含夹取后的真实损失。
+	HealthSet->OnDamageAccepted.AddUObject(this, &ThisClass::HandleDamageAccepted);
 
 	// 数值与死亡状态由服务器明确的出生/重生入口设置，绑定只建立监听。
 
@@ -163,6 +167,7 @@ void UHodgeHealthComponent::UninitializeFromAbilitySystem()
 
 		// 移除当前组件注册的 Health 耗尽监听。
 		HealthSet->OnOutOfHealth.RemoveAll(this);
+		HealthSet->OnDamageAccepted.RemoveAll(this);
 	}
 
 	// 清空 HealthSet 引用。
@@ -170,6 +175,40 @@ void UHodgeHealthComponent::UninitializeFromAbilitySystem()
 
 	// 清空 ASC 引用。
 	AbilitySystemComponent = nullptr;
+}
+
+/** 在 EffectSpec 有效的同步回调内提取值；不保存 Spec 或目标 Actor 的网络引用。 */
+void UHodgeHealthComponent::HandleDamageAccepted(AActor* DamageInstigator, AActor* DamageCauser,
+	const FGameplayEffectSpec* DamageEffectSpec, float DamageMagnitude, float OldValue, float NewValue)
+{
+	AActor* Target = GetOwner();
+	if (!Target || !Target->HasAuthority() || !AbilitySystemComponent ||
+		AbilitySystemComponent->GetAvatarActor() != Target || !DamageEffectSpec || DamageMagnitude <= 0.f) { return; }
+	const FGameplayEffectContextHandle& Context = DamageEffectSpec->GetContext();
+	const UAbilitySystemComponent* SourceASC = Context.GetOriginalInstigatorAbilitySystemComponent();
+	AHodgePlayerController* PC = SourceASC && SourceASC->AbilityActorInfo.IsValid()
+		? Cast<AHodgePlayerController>(SourceASC->AbilityActorInfo->PlayerController.Get()) : nullptr;
+	// ASC 可能由 PlayerState 持有；不使用玩家索引或 AI 的任意 Owner 链猜测归属。
+	if (!PC)
+	{
+		const AActor* SourceOwner = SourceASC ? SourceASC->GetOwnerActor() : Context.GetOriginalInstigator();
+		if (const auto* PS = Cast<APlayerState>(SourceOwner)) { PC = Cast<AHodgePlayerController>(PS->GetPlayerController()); }
+		else if (const auto* Pawn = Cast<APawn>(SourceOwner)) { PC = Cast<AHodgePlayerController>(Pawn->GetController()); }
+		else { PC = Cast<AHodgePlayerController>(const_cast<AActor*>(SourceOwner)); }
+	}
+	if (!PC || PC->GetPawn() == Target || (SourceASC && SourceASC->GetAvatarActor() == Target)) { return; }
+	FHodgeNumberPopRequest Request;
+	Request.DamageAmount = DamageMagnitude;
+	FVector BoundsExtent;
+	Target->GetActorBounds(true, Request.WorldLocation, BoundsExtent);
+	// 只有可靠 Sweep 接触使用表面命中点；重叠和确认目标回退到碰撞包围中心。
+	const FHitResult* Hit = Context.GetHitResult();
+	if (Hit && Hit->bBlockingHit && !Hit->bStartPenetrating && !Hit->ImpactPoint.ContainsNaN() && Hit->GetActor() == Target)
+	{ Request.WorldLocation = Hit->ImpactPoint; }
+	DamageEffectSpec->GetAllAssetTags(Request.SourceTags);
+	if (const auto* Tags = DamageEffectSpec->CapturedSourceTags.GetAggregatedTags()) { Request.SourceTags.AppendTags(*Tags); }
+	if (const auto* Tags = DamageEffectSpec->CapturedTargetTags.GetAggregatedTags()) { Request.TargetTags = *Tags; }
+	PC->SendDamageNumber(Request);
 }
 
 // 清除 HealthComponent 维护的死亡相关 GameplayTag。

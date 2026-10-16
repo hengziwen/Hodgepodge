@@ -194,6 +194,10 @@ public:
 	FHodgeHealth_DeathEvent OnDeathFinished;
 
 protected:
+	/** 只转发 Damage 元属性实际接受的生命损失，不从复制差值推断攻击。 */
+	void HandleDamageAccepted(AActor* DamageInstigator, AActor* DamageCauser,
+		const FGameplayEffectSpec* DamageEffectSpec, float DamageMagnitude, float OldValue, float NewValue);
+
 	// Component 从所属 Actor 注销时调用，用于执行组件生命周期结束前的清理。
 	/** 组件注销时解除依赖并清理本组件资源。 */
 	virtual void OnUnregister() override;

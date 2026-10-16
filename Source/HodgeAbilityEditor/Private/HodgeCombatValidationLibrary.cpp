@@ -37,7 +37,39 @@
 #include "AbilitySystem/Effects/HodgeResonanceEnergyEffect.h"
 #include "AbilitySystem/AttributeSet/HodgeHavocSet.h"
 #include "AbilitySystem/Effects/HodgeHavocEffects.h"
+#include "AbilitySystem/AttributeSet/HodgeHealthSet.h"
+#include "GameplayEffect.h"
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeCombatValidationLibrary)
+
+/** 仅在权威 PIE 世界操作测试对象，回调检查双方 Avatar 身份，避免影响重生后的角色。 */
+bool UHodgeCombatValidationLibrary::QueueNumberPopProbe(AActor* Source, AActor* Target, float Damage, bool bResetTargetHealth)
+{
+	if (!IsValid(Source) || !IsValid(Target) || !Source->HasAuthority() || !Target->HasAuthority() ||
+		Source->GetWorld() != Target->GetWorld() || !Target->GetWorld() || Target->GetWorld()->WorldType != EWorldType::PIE ||
+		!FMath::IsFinite(Damage) || Damage < 0.f) { return false; }
+	const TWeakObjectPtr<AActor> WeakSource = Source, WeakTarget = Target;
+	Target->GetWorld()->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateLambda([WeakSource, WeakTarget, Damage, bResetTargetHealth]()
+	{
+		auto* S = WeakSource.IsValid() ? UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(WeakSource.Get()) : nullptr;
+		auto* T = WeakTarget.IsValid() ? UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(WeakTarget.Get()) : nullptr;
+		if (!S || !T || S->GetAvatarActor() != WeakSource.Get() || T->GetAvatarActor() != WeakTarget.Get() || !T->GetSet<UHodgeHealthSet>()) { return; }
+		if (bResetTargetHealth)
+		{
+			T->SetNumericAttributeBase(UHodgeHealthSet::GetMaxHealthAttribute(), 100000.f);
+			T->SetNumericAttributeBase(UHodgeHealthSet::GetHealthAttribute(), 100000.f);
+		}
+		if (Damage <= 0.f) { return; }
+		auto* Effect = NewObject<UGameplayEffect>();
+		Effect->DurationPolicy = EGameplayEffectDurationType::Instant;
+		FGameplayModifierInfo Modifier;
+		Modifier.Attribute = UHodgeHealthSet::GetDamageAttribute(); Modifier.ModifierOp = EGameplayModOp::Additive;
+		Modifier.ModifierMagnitude = FGameplayEffectModifierMagnitude(FScalableFloat(Damage));
+		Effect->Modifiers.Add(Modifier);
+		FGameplayEffectSpec Spec(Effect, S->MakeEffectContext(), 1.f);
+		T->ApplyGameplayEffectSpecToSelf(Spec);
+	}));
+	return true;
+}
 
 bool UHodgeCombatValidationLibrary::QueueDarkFlowDelta(AActor* Avatar, float Delta)
 {

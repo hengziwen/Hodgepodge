@@ -3,6 +3,8 @@
 
 # 属性、命中、装备与死亡
 
+> 2026-10-16：新增 [Lyra 本地伤害跳字](../Design/damage-numbers-lyra.md)，正式输入为 `OnDamageAccepted` 的实际 HP 损失，经攻击者 Controller 的拥有者 RPC 送往本地 NiagaraText，不从 Health 复制差值反推每刀伤害。配置见 [指南](../Guides/damage-number-configuration.md)，真实验证边界见 [报告](../Validation/damage-numbers-lyra.md)。受击封存改造仍暂缓。
+
 攻击字段含义与配置步骤统一见[攻击能力配置手册](../Guides/attack-ability-configuration.md)；后续配置问答优先引用手册相应章节，本章说明系统职责和状态。
 
 [返回知识库](README.md) · [本轮更新](30-update-2026-10-15.md) · [接通清单](12-integration-backlog.md)
