@@ -14,6 +14,7 @@
 // 项目相机辅助接口，用于接收相机穿透角色等反馈。
 #include "Camera/HodgeCameraAssistInterface.h"
 #include "Feedback/NumberPops/HodgeNumberPopComponent.h"
+#include "Inventory/HodgeInventoryTypes.h"
 
 #include "HodgePlayerController.generated.h"
 
@@ -38,6 +39,12 @@ class HODGEPODGE_API AHodgePlayerController : public AHodgePlayerControllerBase,
 	GENERATED_BODY()
 
 public:
+	/** 客户端只能按物品身份请求换装，定义、等级和持有权由服务器重新验证。 */
+	UFUNCTION(BlueprintCallable, Category="Hodge|Inventory") void RequestInventoryEquip(FGuid ItemId, FGuid RequestId);
+	UFUNCTION(BlueprintCallable, Category="Hodge|Inventory") void RequestInventoryUnequip(FGuid RequestId);
+	UFUNCTION(Client, Reliable) void ClientInventoryResult(FGuid RequestId, const FHodgeInventoryOperation& Result);
+	UFUNCTION(BlueprintPure, Category="Hodge|Inventory") FHodgeInventoryOperation GetLastInventoryResult() const { return LastInventoryResult; }
+	UFUNCTION(BlueprintPure, Category="Hodge|Inventory") FGuid GetLastInventoryRequestId() const { return LastInventoryRequestId; }
 	// 构造函数，允许通过 FObjectInitializer 初始化默认子对象。
 	/** 构造玩家控制器并初始化其默认状态。
 	 * @param ObjectInitializer UE构造对象时传入的初始化器。
@@ -255,6 +262,12 @@ public:
 	bool GetIsAutoRunning() const;
 
 private:
+	/** 门面通过原生 RPC 包装发送，反射调用不能误入本地实现。 */
+	UFUNCTION(Server, Reliable) void ServerRequestInventoryEquip(FGuid ItemId, FGuid RequestId);
+	UFUNCTION(Server, Reliable) void ServerRequestInventoryUnequip(FGuid RequestId);
+	/** 结果供调用者读取，不作为状态复制或玩法授权。 */
+	UPROPERTY(Transient) FHodgeInventoryOperation LastInventoryResult;
+	UPROPERTY(Transient) FGuid LastInventoryRequestId;
 	/** Unreliable 允许丢弃纯表现事件；不在其他玩家广播，也不回写玩法状态。 */
 	UFUNCTION(Client, Unreliable)
 	void ClientShowDamageNumbers(const TArray<FHodgeNumberPopRequest>& Requests);

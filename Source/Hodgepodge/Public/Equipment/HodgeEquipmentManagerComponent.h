@@ -145,7 +145,7 @@ public:
 	 * @param Level 配置或运行实例的等级。
 	 * @return 本次计算、查询或创建得到的装备运行实例。
 	 */
-	UHodgeEquipmentInstance* AddEntry(TSubclassOf<UHodgeEquipmentDefinition> EquipmentDefinition, FGuid Id, int32 Level);
+	UHodgeEquipmentInstance* AddEntry(TSubclassOf<UHodgeEquipmentDefinition> EquipmentDefinition, FGuid Id, int32 Level, UObject* SourceItem = nullptr);
 
 	// 根据运行时 EquipmentInstance 找到并移除对应的装备记录。
 	/** 移除条目。
@@ -215,7 +215,7 @@ public:
 	 * @param Level 配置或运行实例的等级。
 	 * @return 本次计算、查询或创建得到的装备运行实例。
 	 */
-	UHodgeEquipmentInstance* EquipItemWithState(TSubclassOf<UHodgeEquipmentDefinition> Definition, FGuid Id, int32 Level);
+	UHodgeEquipmentInstance* EquipItemWithState(TSubclassOf<UHodgeEquipmentDefinition> Definition, FGuid Id, int32 Level, UObject* SourceItem = nullptr);
 	/** 设置装备等级。
 	 * @param Instance Instance，由调用方传入。
 	 * @param Level 配置或运行实例的等级。

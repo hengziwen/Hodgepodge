@@ -14,6 +14,8 @@
 #include "Character/HodgeEnemyCharacter.h"
 #include "Component/HodgeEnemyInitComponent.h"
 #include "AbilitySystem/Stats/HodgeAttributeCoordinator.h"
+#include "Inventory/HodgeInventoryManagerComponent.h"
+#include "Inventory/HodgeEquipmentSelectionComponent.h"
 
 #include "SignificanceManager.h"
 #include "AbilitySystem/HodgeGameplayTags.h"
@@ -407,6 +409,20 @@ void AHodgeCombatCharacter::InitializeDefaultEquipment()
 	}
 
 	const UHodgePawnData* PawnData = PawnExtComponent->GetPawnData<UHodgePawnData>();
+	const auto* InventoryASC = GetHodgeAbilitySystemComponent();
+	auto* InventoryPS = InventoryASC ? Cast<AHodgePlayerState>(InventoryASC->GetOwnerActor()) : nullptr;
+	if (PawnData && PawnData->bUseInventory && InventoryPS)
+	{
+		// 只由选择组件装备库存玩家，避免旧默认武器路径重复授予。
+		auto* Selection = InventoryPS->FindComponentByClass<UHodgeEquipmentSelectionComponent>();
+		if (Selection && Selection->InitializeFromPawnData(PawnData).Succeeded())
+		{
+			const auto Result = Selection->BindAvatar(this);
+			if (!Result.Succeeded() && Result.Code != EHodgeInventoryResult::Waiting)
+			{ UE_LOG(LogTemp, Warning, TEXT("Inventory equipment rejected for %s: %s"), *GetNameSafe(this), *Result.Reason); }
+		}
+		return;
+	}
 	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (!PawnData || !PawnData->DefaultWeaponDefinition)
 	{
@@ -473,6 +489,10 @@ void AHodgeCombatCharacter::UninitializeDefaultEquipment()
 	{
 		return;
 	}
+	// 保留物品选择，仅撤销当前 Pawn 的实际装备。
+	if (auto* ASC = GetHodgeAbilitySystemComponent())
+	{ if (auto* PS = Cast<AHodgePlayerState>(ASC->GetOwnerActor()))
+		{ if (auto* Selection = PS->FindComponentByClass<UHodgeEquipmentSelectionComponent>()) { Selection->UnbindAvatar(this); } } }
 
 	// 卸装过程中禁止回调重新创建默认武器。
 	TGuardValue<bool> InitializationGuard(bInitializingDefaultEquipment, true);
@@ -1113,6 +1133,19 @@ void AHodgeCombatCharacter::TryInitializeAttributesAndEquipment()
     auto* PS = ASC ? Cast<AHodgePlayerState>(ASC->GetOwnerActor()) : nullptr;
     const auto* Data = PawnExtComponent->GetPawnData<UHodgePawnData>();
     if (!PS || !Data) { return; }
+	// 库存配置与组件等待不能反复开启属性重建，错误保留为明确的失败。
+	if (Data->bUseInventory)
+	{
+		auto* Selection = PS->FindComponentByClass<UHodgeEquipmentSelectionComponent>();
+		if (!Selection || !Selection->IsRegistered()) { return; }
+		const auto Result = Selection->InitializeFromPawnData(Data);
+		if (!Result.Succeeded())
+		{
+			if (Result.Code != EHodgeInventoryResult::Waiting)
+			{ UE_LOG(LogTemp, Warning, TEXT("Inventory initialization rejected for %s (%s): %s"), *GetNameSafe(this), *GetNameSafe(Data), *Result.Reason); }
+			return;
+		}
+	}
     auto* Coordinator = PS->GetAttributeCoordinator();
     if (Coordinator->PrepareAvatar(this, Data))
     {
@@ -1134,6 +1167,13 @@ bool AHodgeCombatCharacter::IsDefaultEquipmentReady() const
 {
 	const auto* Data = PawnExtComponent ? PawnExtComponent->GetPawnData<UHodgePawnData>() : nullptr;
 	if (!Data) { return false; }
+	const auto* InventoryASC = GetHodgeAbilitySystemComponent();
+	const auto* InventoryPS = InventoryASC ? Cast<AHodgePlayerState>(InventoryASC->GetOwnerActor()) : nullptr;
+	if (Data->bUseInventory && InventoryPS)
+	{
+		const auto* Selection = InventoryPS->FindComponentByClass<UHodgeEquipmentSelectionComponent>();
+		return Selection && Selection->IsRegistered() && Selection->IsSelectionApplied();
+	}
 	if (!Data->DefaultWeaponDefinition) { return true; }
 	const auto* Manager = DefaultEquipmentManager.Get();
 	return Manager && DefaultWeaponInstance && Manager->IsEquipmentReady(DefaultWeaponInstance);

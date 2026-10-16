@@ -140,6 +140,8 @@ public:
 	 * @return true表示满足该查询条件，false表示不满足。
 	 */
 	bool IsCombatReadyForActions() const;
+	/** 装备切换不得跨越活动攻击或待处理动作请求。 */
+	bool IsEquipmentChangeBlocked() const;
 	// 事件动作请求变化对应的事件通知。
 	FHodgeCombatActionRequestChanged OnActionRequestChanged;
 	// 事件战斗动作请求变化对应的事件通知。

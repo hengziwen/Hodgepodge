@@ -32,6 +32,13 @@
 #include "Animation/AnimMontage.h"
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeCombatComponentBase)
 
+bool UHodgeCombatComponentBase::IsEquipmentChangeBlocked() const
+{
+	if (CurrentAbility || bSwitching || bMoveRequestPending) { return true; }
+	for (const auto& Pair : ActionRequests) { if (!Pair.Value.State.IsTerminal()) { return true; } }
+	return false;
+}
+
 namespace
 {
 	/** 查找来源组件。

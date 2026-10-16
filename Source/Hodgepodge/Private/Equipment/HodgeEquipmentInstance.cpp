@@ -63,7 +63,7 @@ void UHodgeEquipmentInstance::GetLifetimeReplicatedProps(TArray<FLifetimePropert
 	DOREPLIFETIME(ThisClass, StatProfile);
 
 	// 将装备来源对象 Instigator 注册为复制属性。
-	DOREPLIFETIME(ThisClass, Instigator);
+	DOREPLIFETIME_CONDITION(ThisClass, Instigator, COND_OwnerOnly);
 
 	// 将当前装备实例生成的 Actor 列表注册为复制属性。
 	DOREPLIFETIME(ThisClass, SpawnedActors);

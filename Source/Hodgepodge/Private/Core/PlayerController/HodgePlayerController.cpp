@@ -6,6 +6,7 @@
 
 // AHodgePlayerController / AHodgeReplayPlayerController 类定义。
 #include "Core/PlayerController/HodgePlayerController.h"
+#include "Inventory/HodgeEquipmentSelectionComponent.h"
 #include "Component/HodgeLockOnComponent.h"
 #include "UI/IndicatorSystem/HodgeIndicatorManagerComponent.h"
 #include "Feedback/NumberPops/HodgeNumberPopComponent_NiagaraText.h"
@@ -87,6 +88,42 @@
 #include "UI/Subsystem/HodgeUIManagerSubsystem.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgePlayerController)
+
+void AHodgePlayerController::RequestInventoryEquip(FGuid ItemId, FGuid RequestId)
+{
+	ServerRequestInventoryEquip(ItemId, RequestId);
+}
+
+void AHodgePlayerController::RequestInventoryUnequip(FGuid RequestId)
+{
+	ServerRequestInventoryUnequip(RequestId);
+}
+
+void AHodgePlayerController::ServerRequestInventoryEquip_Implementation(FGuid ItemId, FGuid RequestId)
+{
+	// 只解析本 Controller 的 PlayerState，拒绝其他玩家身份和未激活的组件。
+	auto* PS = GetHodgePlayerState();
+	auto* Selection = PS ? PS->FindComponentByClass<UHodgeEquipmentSelectionComponent>() : nullptr;
+	FHodgeInventoryOperation Result;
+	if (!RequestId.IsValid() || !Selection) { Result.Code = EHodgeInventoryResult::InvalidConfiguration; Result.Reason = TEXT("请求身份无效或库存体验尚未就绪"); }
+	else { Result = Selection->RequestEquipItem(ItemId); }
+	ClientInventoryResult(RequestId, Result);
+}
+
+void AHodgePlayerController::ServerRequestInventoryUnequip_Implementation(FGuid RequestId)
+{
+	auto* PS = GetHodgePlayerState();
+	auto* Selection = PS ? PS->FindComponentByClass<UHodgeEquipmentSelectionComponent>() : nullptr;
+	FHodgeInventoryOperation Result;
+	if (!RequestId.IsValid() || !Selection) { Result.Code = EHodgeInventoryResult::InvalidConfiguration; Result.Reason = TEXT("请求身份无效或库存体验尚未就绪"); }
+	else { Result = Selection->RequestUnequip(); }
+	ClientInventoryResult(RequestId, Result);
+}
+
+void AHodgePlayerController::ClientInventoryResult_Implementation(FGuid RequestId, const FHodgeInventoryOperation& Result)
+{
+	LastInventoryRequestId = RequestId; LastInventoryResult = Result;
+}
 
 // Hodge 项目命名空间。
 namespace Hodge

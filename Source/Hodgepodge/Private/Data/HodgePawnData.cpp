@@ -7,6 +7,7 @@
 #include "Data/HodgePawnData.h"
 #include "Data/HodgeCharacterStatProfile.h"
 #include "Data/HodgeHitReactionProfile.h"
+#include "Inventory/HodgeInventoryItemDefinition.h"
 
 #if WITH_EDITOR
 #include "Data/HodgeAbilityDefinition.h"
@@ -34,6 +35,21 @@ UHodgePawnData::UHodgePawnData(const FObjectInitializer& ObjectInitializer)
 EDataValidationResult UHodgePawnData::IsDataValid(FDataValidationContext& Context) const
 {
 	const auto Parent = Super::IsDataValid(Context);
+	if (bUseInventory)
+	{
+		bool bValid = InventoryMaxEntries > 0;
+		int32 Selections = 0;
+		for (const auto& Item : DefaultInventoryItems)
+		{
+			FString Error;
+			const auto* Definition = Item.Definition ? GetDefault<UHodgeInventoryItemDefinition>(Item.Definition) : nullptr;
+			if (!Definition || Item.Count < 1 || !Definition->Validate(Item.Level, Error))
+			{ Context.AddError(FText::FromString(Error.IsEmpty() ? TEXT("库存默认物品定义或数量非法") : Error)); bValid = false; }
+			if (Item.bEquip && (++Selections > 1 || Item.Count != 1 || !Definition || !Definition->FindFragment<UHodgeInventoryFragment_EquippableItem>()))
+			{ Context.AddError(FText::FromString(TEXT("库存只能指定一个可装备的默认物品"))); bValid = false; }
+		}
+		if (!bValid) { return EDataValidationResult::Invalid; }
+	}
 	if (StatProfile)
 	{
 		TArray<FText> Errors;

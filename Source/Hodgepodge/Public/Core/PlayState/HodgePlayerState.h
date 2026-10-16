@@ -50,6 +50,8 @@ class AHodgePlayerState : public AHodgePlayerStateBase, public IAbilitySystemInt
 	GENERATED_BODY()
 
 public:
+	/** 库存初始化接续旧装备记录，只读访问不增加第二个写入口。 */
+	const TArray<FHodgeOwnedEquipmentState>& GetOwnedEquipmentStates() const { return OwnedEquipmentStates; }
 	// 构造玩家状态并创建玩家专属的 Gameplay 组件。
 	/** 构造玩家持久状态与ASC所有者并初始化其默认状态。
 	 * @param ObjectInitializer UE构造对象时传入的初始化器。
@@ -276,6 +278,7 @@ private:
 	 */
 	void OnExperienceLoaded(const UHodgeExperienceDefinition* CurrentExperience);
 	friend class UHodgeAttributeCoordinator;
+	friend class UHodgeInventoryManagerComponent;
 	// PlayerState属性协调器的数据或对象引用。
 	UPROPERTY(VisibleAnywhere, Category="Hodge|Attributes") TObjectPtr<UHodgeAttributeCoordinator> AttributeCoordinator;
 	// 角色成长的数据或对象引用。

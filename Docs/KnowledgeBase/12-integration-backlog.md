@@ -64,9 +64,12 @@
 
 只读审查，**尚未实施**。优先 R1：把命中检测从 `CombatComponent` 抽成独立 `UHodgeHitDetectionComponent`（`HodgeCombatComponentBase.cpp` 已 1525 行，公共逻辑在吸收角色专属规则）。另含 R2 电影/暗流会话解耦、R3 剥离角色收益规则、R5 统一授予契约、R7 Editor 工具按域拆分；分阶段 0~5，估 14~24 工作日。
 
+### Inventory 数据层（2026-10-16）
+
+- [Inventory 集成](../Design/inventory-equipment-integration.md) 已实现物品容器、单武器选择、旧身份／等级接续和拥有者复制，正式 PawnData／Experience 已接线；UI、拾取、存档后置。[本轮验收](../Validation/inventory-equipment.md)：Editor／Game 构建通过，139 项原生测试及单人／双玩家三种角色组合的 67 条 PIE 断言通过，无视觉校验。
+
 ### 明确"只设计不实现"的项
 
-- [Inventory 集成](../Design/inventory-equipment-integration.md)：用户明确只设计；C++ **无任何 `UHodgeInventory*`**。
 - [近战索敌与攻击吸附](../Design/melee-attack-assist.md)：草案，接口尚未创建。
 - 加载屏、战斗消息 Router、交互：缺执行器 / 未接 / 是占位。
 

@@ -14,6 +14,10 @@
 #include "Data/HodgeEquipmentStatProfile.h"
 #include "Equipment/HodgeEquipmentManagerComponent.h"
 #include "Equipment/HodgeEquipmentDefinition.h"
+#include "Inventory/HodgeInventoryManagerComponent.h"
+#include "Inventory/HodgeInventoryItemInstance.h"
+#include "Inventory/HodgeInventoryItemDefinition.h"
+#include "Inventory/HodgeEquipmentSelectionComponent.h"
 #include "GameFramework/Pawn.h"
 #include "TimerManager.h"
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeAttributeCoordinator)
@@ -135,11 +139,17 @@ bool UHodgeAttributeCoordinator::PrepareAvatar(APawn* Avatar, const UHodgePawnDa
 /** 完成本Avatar的属性和装备准备并发布结果。 */
 bool UHodgeAttributeCoordinator::CompleteAvatarInitialization()
 {
+	const auto* PS = GetPlayerState();
 	if (!bUpdating) { return IsReadyFor(BoundAvatar.Get()); }
 	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (!bBootstrap || !PawnData || !IsCurrentAvatar()) { return CommitUpdate(false); }
 	bool bHasEquipment = true;
-	if (PawnData->DefaultWeaponDefinition)
+	if (PawnData->bUseInventory)
+	{
+		const auto* Selection = PS->FindComponentByClass<UHodgeEquipmentSelectionComponent>();
+		bHasEquipment = Selection && Selection->IsSelectionApplied();
+	}
+	else if (PawnData->DefaultWeaponDefinition)
 	{
 		const auto* Manager = BoundAvatar->FindComponentByClass<UHodgeEquipmentManagerComponent>();
 		bHasEquipment = Manager && Manager->FindInstanceOfDefinition(PawnData->DefaultWeaponDefinition);
@@ -261,6 +271,16 @@ FHodgeOwnedEquipmentState UHodgeAttributeCoordinator::GetOrCreateDefaultEquipmen
 	auto* PS = GetPlayerState();
 	// 按服务器权限区分本次处理分支。
 	if (!PS || !PS->HasAuthority() || !Definition) { return {}; }
+	if (const auto* Inventory = PS->FindComponentByClass<UHodgeInventoryManagerComponent>(); Inventory && Inventory->IsInitialized())
+	{
+		for (const auto& View : Inventory->GetItems())
+		{
+			const auto* Fragment = GetDefault<UHodgeInventoryItemDefinition>(View.Instance->GetItemDef())->FindFragment<UHodgeInventoryFragment_EquippableItem>();
+			if (Fragment && Fragment->EquipmentDefinition == Definition)
+			{ FHodgeOwnedEquipmentState State; State.InstanceId = View.ItemId; State.Level = View.Instance->GetItemLevel(); State.Definition = Definition; return State; }
+		}
+		return {};
+	}
 	if (const auto* Existing = PS->OwnedEquipmentStates.FindByPredicate([Definition](const auto& State) { return State.Definition == Definition; })) { return *Existing; }
 	FHodgeOwnedEquipmentState State;
 	State.InstanceId = FGuid::NewGuid();
@@ -279,6 +299,13 @@ void UHodgeAttributeCoordinator::RememberEquipment(FGuid Id, TSubclassOf<UHodgeE
 	auto* PS = GetPlayerState();
 	// 按服务器权限区分本次处理分支。
 	if (!PS || !PS->HasAuthority() || !Id.IsValid()) { return; }
+	// 兼容记录只能镜像库存事实，不能成为第二个物品／等级写入口。
+	if (const auto* Inventory = PS->FindComponentByClass<UHodgeInventoryManagerComponent>(); Inventory && Inventory->IsInitialized())
+	{
+		const auto* Item = Inventory->FindItemById(Id);
+		const auto* Fragment = Item ? GetDefault<UHodgeInventoryItemDefinition>(Item->GetItemDef())->FindFragment<UHodgeInventoryFragment_EquippableItem>() : nullptr;
+		if (!Fragment || Fragment->EquipmentDefinition != Definition || Item->GetItemLevel() != Level) { return; }
+	}
 	auto* State = PS->OwnedEquipmentStates.FindByPredicate([Id](const auto& Item) { return Item.InstanceId == Id; });
 	if (!State) { State = &PS->OwnedEquipmentStates.AddDefaulted_GetRef(); State->InstanceId = Id; }
 	State->Definition = Definition;

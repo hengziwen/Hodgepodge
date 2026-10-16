@@ -10,6 +10,7 @@
 
 // UPrimaryDataAsset 所需头文件。
 #include "Engine/DataAsset.h"
+#include "Inventory/HodgeInventoryTypes.h"
 
 #include "HodgePawnData.generated.h"
 
@@ -65,6 +66,10 @@ public:
 	// ASC 就绪后由服务器装备的默认武器，留空表示不自动装备。
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hodge|Equipment")
 	TSubclassOf<UHodgeEquipmentDefinition> DefaultWeaponDefinition;
+	/** 玩家库存由 Experience 注入；关闭时保留旧默认装备链。 */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Inventory") bool bUseInventory = false;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Inventory", meta=(ClampMin="1", EditCondition="bUseInventory")) int32 InventoryMaxEntries = 40;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Inventory", meta=(EditCondition="bUseInventory")) TArray<FHodgeInventoryDefaultItem> DefaultInventoryItems;
 	// 角色初始属性和等级成长配置，攻击需要其初始化完成后才能激活。
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Attributes")
 	TObjectPtr<UHodgeCharacterStatProfile> StatProfile;

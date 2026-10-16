@@ -9,6 +9,8 @@
 #include "AbilitySystem/Stats/HodgeAttributeCoordinator.h"
 #include "AbilitySystem/HodgeGameplayTags.h"
 #include "Core/PlayState/HodgePlayerState.h"
+#include "Inventory/HodgeInventoryManagerComponent.h"
+#include "Inventory/HodgeInventoryItemInstance.h"
 #include "Data/HodgeEquipmentStatProfile.h"
 #include "Character/HodgeCombatCharacter.h"
 
@@ -131,7 +133,7 @@ UHodgeAbilitySystemComponent* FHodgeEquipmentList::GetAbilitySystemComponent() c
 }
 
 // 在服务器上根据 EquipmentDefinition 创建并添加一条新的已装备记录。
-UHodgeEquipmentInstance* FHodgeEquipmentList::AddEntry(TSubclassOf<UHodgeEquipmentDefinition> Definition, FGuid Id, int32 Level)
+UHodgeEquipmentInstance* FHodgeEquipmentList::AddEntry(TSubclassOf<UHodgeEquipmentDefinition> Definition, FGuid Id, int32 Level, UObject* SourceItem)
 {
 	auto* Manager = CastChecked<UHodgeEquipmentManagerComponent>(OwnerComponent);
 	Manager->LastEquipError.Reset(); Manager->bEquipIrreversibleEffects = false;
@@ -149,6 +151,8 @@ UHodgeEquipmentInstance* FHodgeEquipmentList::AddEntry(TSubclassOf<UHodgeEquipme
 	FHodgeAppliedEquipmentEntry Pending;
 	Pending.EquipmentDefinition = Definition; Pending.Instance = Instance.Get(); Pending.GrantedAbilitySystem = ASC;
 	Instance->SetStatIdentity(Id, Level, CDO->StatProfile);
+	// 先建立来源，再执行属性和能力授予，激活回调可以立即读取物品。
+	Instance->SetInstigator(SourceItem);
 	TWeakObjectPtr<AActor> Avatar = ASC ? ASC->GetAvatarActor() : nullptr;
 	auto Current = [&]() { return ASC && Avatar.IsValid() && !Avatar->IsActorBeingDestroyed() && Manager->IsRegistered() &&
 		!Manager->bPendingUninitialize && ASC->GetAvatarActor() == Avatar.Get() && GetAbilitySystemComponent() == ASC; };
@@ -259,7 +263,7 @@ UHodgeEquipmentInstance* UHodgeEquipmentManagerComponent::EquipItem(TSubclassOf<
 }
 
 /** 按已有物品身份和等级创建装备并提交其授予。 */
-UHodgeEquipmentInstance* UHodgeEquipmentManagerComponent::EquipItemWithState(TSubclassOf<UHodgeEquipmentDefinition> EquipmentClass, FGuid Id, int32 Level)
+UHodgeEquipmentInstance* UHodgeEquipmentManagerComponent::EquipItemWithState(TSubclassOf<UHodgeEquipmentDefinition> EquipmentClass, FGuid Id, int32 Level, UObject* SourceItem)
 {
 	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (bEquipmentMutation) { return nullptr; }
@@ -284,7 +288,7 @@ UHodgeEquipmentInstance* UHodgeEquipmentManagerComponent::EquipItemWithState(TSu
 	if (EquipmentClass != nullptr)
 	{
 		// 向装备列表添加 Entry，并创建 Instance、授予 AbilitySet、生成装备 Actor。
-		Result = EquipmentList.AddEntry(EquipmentClass, Id, Level);
+		Result = EquipmentList.AddEntry(EquipmentClass, Id, Level, SourceItem);
 
 		// EquipmentInstance 创建成功后继续执行装备生命周期。
 		if (Result != nullptr)
@@ -493,6 +497,8 @@ UHodgeEquipmentInstance* UHodgeEquipmentManagerComponent::FindInstanceOfDefiniti
 /** 设置装备等级。 */
 bool UHodgeEquipmentManagerComponent::SetEquipmentLevel(UHodgeEquipmentInstance* Instance, int32 Level)
 {
+	// 库存物品为等级事实来源，本轮不开放升级入口，禁止旧接口旁路写入。
+	if (Instance && Cast<UHodgeInventoryItemInstance>(Instance->GetInstigator()) && Instance->GetEquipmentLevel() != Level) { return false; }
 	if (bEquipmentMutation) { return false; }
 	FHodgeEquipmentMutationScope MutationScope(*this);
     // 按服务器权限区分本次处理分支。
