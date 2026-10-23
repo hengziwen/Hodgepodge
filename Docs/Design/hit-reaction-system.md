@@ -1,8 +1,14 @@
 # 受击系统设计：Body 等级判定与 Impact 执行
 
+> 2026-10-18 当前普通攻击路线已迁移为[目标侧削韧裁决与原地运动](poise-driven-hit-reactions.md)：五段不再直接指定强受击，Hero／假人使用原地 Behit 副本和 CMC／RMS；Guardian 保留自己的骨架。下方 10-17 全根运动与 10-16 预留削韧段落保留为历史，不能作为当前正式配置依据。显式 Impact、Body 和网络执行链继续保留；实际验证见[本轮记录](../Validation/poise-driven-hit-reactions-2026-10-18.md)。
+
 日期：2026-10-08。第三版，整合四级体状态、独立攻击判定、Impact、目标侧动画与当前项目接入方案。适用 UE 5.5.4 与现有 Hodgepodge Runtime 模块。
 
-> 2026-10-16 计划修订：后续受击表现工作以[第 17 节](#17-2026-10-16-受击表现实施计划修订)为准，优先交付正式五段普攻的可视化垂直切片。配置整理作为辅助，公共动画引用迁移后置。本节计划尚未实施，不改变下文历史实现边界。
+> 2026-10-17 整合入口：[ACT 战斗动画与受击反馈总设计](act-combat-animation-feedback-design.md)与[实施／状态／验收计划](act-combat-animation-feedback-plan.md)汇总近期讨论和悟空参考。本轮已授权启动制作，跑攻和切手暂缓；本文继续承载底层 Body／Impact 契约，当前字段以配置手册和本轮测试记录为准。
+
+> 后续现有 Behit 与逐阶段根运动已接入，见[当前实施记录](../Validation/authored-behit-root-motion-2026-10-17.md)。本文旧“全部原地／RMS 主导”描述只适用于兼容 Impact 路线；当前 Hero／假人的地面、落地及起身使用动画根运动，空中继续 CMC，Body／Judgement 契约不变。
+
+> 2026-10-16 计划修订：[第 17 节](#17-2026-10-16-受击表现实施计划修订)保留当时的实施安排，优先正式五段演出，配置整理辅助、公共动画迁移后置。其 P0 工程原型及 P1 字段／工具逻辑后来已落地，见 §17.10 和[表现验证](../Validation/hit-presentation-2026-10-16.md)；主观体验、公共动画迁移和完整运动仍未完成。
 
 **状态：核心 C++ 已接入，正式动画／目标资产与联机手感尚待配置验证。** 本文替代上一版以反应意图、独立控制等级和完整韧性系统为中心的方案。阶段 A～C 的类型、字段、Tag 和执行入口已创建；玩家追击目前提供确认结果接口，不自动配置空中连段。实施前基线见第 2 节，当前边界见第 16 节；实际作者字段以[受击配置手册](../Guides/hit-reaction-configuration.md)为准。
 
@@ -70,7 +76,7 @@ Body 与攻击判定不是同一个数据来源。普攻 GA 可以给自身 Norm
 
 允许命中载荷使用上述四个 Tag，也允许独立命名空间。建议作者界面使用拟议的 `Combat.Attack.Judgement.Normal / Skill / SuperArmor / Vajra`，与 Body 分别映射到同样的 1～4。
 
-此独立命名空间是建议，尚未注册；两类映射集中维护。合法叶子 Tag 精确解析，父 Tag、未知子 Tag 或缺失攻击判定视为配置错误，不默认提升等级。缺失判定可以继续结算合法伤害，但不执行强 Impact，并输出可定位的诊断。
+独立 Judgement 命名空间后来已注册，当前也兼容合法 Body 叶子作为输出判定，两类映射集中维护。合法叶子 Tag 精确解析，父 Tag、未知子 Tag 或缺失攻击判定视为配置错误，不默认提升等级。缺失判定可以继续结算合法伤害，但不执行强 Impact，并输出可定位的诊断。
 
 例如一段普攻：
 
@@ -147,7 +153,7 @@ ReservedPoiseDamage 仅为有限、非负数值。当前可随命中记录／诊
 
 ### 5.2 目标方配置什么
 
-建议新增 `UHodgeHitReactionProfile`，并在 PawnData 新增 HitReactionProfile 引用。每种角色／骨骼可以有自己的 Profile，多个使用相同骨骼和规则的角色可共享。此数据资产和字段尚未创建。
+`UHodgeHitReactionProfile` 与 PawnData.HitReactionProfile 引用后来已创建。每种角色／骨骼可以有自己的 Profile，多个使用相同骨骼和规则的角色可共享。下列条目保留原始职责设计，不表示每项方向／姿态变体都已支持；当前实际字段见配置手册。
 
 Profile 保存：
 
@@ -283,6 +289,8 @@ GE 提交成功不等于最终接受命中。现有 HealthSet 可能拒绝 Damag
 
 ### 8.3 每刀请求：改在已有通知和命中快照入口
 
+> 本节保留早期接入提案。当前 R1 已独立检测会话／来源／历史与姿势租约，R3 已隔离角色收益；Melee 仍是共同结算入口，不把旧检测存储迁回 Melee。最新职责和实际接口见[总设计 §5](act-combat-animation-feedback-design.md#5-总体架构状态归属和现有接口)。
+
 在 HodgeGameplayAbility_Melee.BeginNotifyHit 中解析拟议的默认／覆盖 Reaction，保存到已有 FHodgeMeleeHitState.Binding。持续／单次通知继续沿用已有 occurrence、HitGroup、AttackPhase 和去重，不新增碰撞查询，也不在共享 Notify 对象上保存运行目标。
 
 ProcessMeleeHitResults 保留目标 ASC／Avatar、阵营、执行身份和重复命中检查。取得目标当前反应组件后，ApplyMeleeHitEffects 的共同提交入口在实际 GE 应用前建立一份目标结算作用域，固定本刀请求、来源、HitResult 和 Body 快照。
@@ -352,7 +360,7 @@ CombatComponent.ExecutionEnded 已有连段／输入清理，ExecutionEvent 又�
 
 若轻反馈使用蒙太奇，与主动作采用不同 Slot Group 和独立表现同步入口；只改 Slot 名称不能保证并行，普通 ASC 当前蒙太奇接口也不能被轻反馈覆盖。轻反馈不带根运动。
 
-强 Impact 才使用主要受击姿势和运动。地面 Knockback 选择合适根运动或 Root Motion Source；简单 Launch 可先用 LaunchCharacter，精确轨迹接入 CharacterMovement。每阶段明确主运动来源，避免动画根运动与完整额外位移重复叠加。
+强 Impact 才使用主要受击姿势和运动。早期提案曾允许地面 Knockback 在动画根运动与 RMS 中择一；**当前实现已选择原地受击 Montage＋Impact／CharacterMovement／RMS**，Profile 校验拒绝强受击根运动 Montage。Launch 等使用现有受限速度链。未来更换运动路线需单独设计，不能在换素材时双重驱动。
 
 倒地的典型目标流程为：Profile 的倒地动画 → 倒地保持 → 满足 Profile 的起身许可 → 播放该目标的起身动画 → 恢复自主行动。挑飞流程为：目标腾空姿势／实际向上运动 → 空中受控 → 实际落地 → Profile 的落地／倒地姿势 → 按规则恢复。攻击者只指定 Knockdown 或 Launch 及参数，不提供这些目标动画。
 

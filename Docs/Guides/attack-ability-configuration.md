@@ -1,5 +1,7 @@
 # 攻击能力配置手册：动画通知驱动
 
+> **从命中配置到受击验收：**[战斗制作执行文档](combat-production-workflow.md)串联攻击意图、目标抗打断/削韧/动画、Montage 时机、旧配置迁移和完整验证，并列出当前正式五段的实际窗口与终结刀来源。
+
 > 翅膀动作配置已收敛为角色 Wing 通知中的蒙太奇、倍率、起播位置和淡出时间；不再填写 Profile 动画映射。见[翅膀通知与蒙太奇配置](wing-notify-montage-configuration.md)。
 
 本手册适用于 dev-AN。旧自建 Timeline 已退役；动画相关时机在 Montage 原生通知轨编辑。设计与迁移结果见 [迁移设计](../Design/anim-notify-combat-migration.md)，旧文件恢复见 [归档说明](../../Archive/Timeline/README.md)。
@@ -195,15 +197,35 @@ GA 播放前租用角色骨骼更新，身体攻击即使没有手持请求也�
 - BoxHalfExtent=(67.642195, 33.136577, 77.690944) cm，是三轴半尺寸。
 - LocalTransform.Location=(61.441557, 5.547495, -35.116657) cm；Rotation 为零，Scale=1。
 - 伤害区间保留 0.566667～0.866667 秒；WingAction 的显示窗口与 FadeOutSeconds 不控制伤害时长。
-- HitGroup=PoverWingFinisher、AttackPhase=Strike，与同一刀的手部通知共享去重；RepeatHitInterval=0。
+- HitGroup=PoverWingFinisher、AttackPhase=Strike，RepeatHitInterval=0；当前终结刀仅有该翼盒命中通知，标识用于本刀去重。
 
 这些值在当前 0.8 组件缩放下按实际翼动画实体顶点测量，已经包含各轴 4 cm 余量；不要再将 BoxHalfExtent 乘 0.8。尺寸及偏移属于命中通知，Profile `/Game/Main/Character/Hero/Wing/DA_PoverWing_Anzhu` 只提供已开启的 EnableAuthorityHitSampling，以及原有资源和显示配置。
 
-单人 PIE 或 Listen Server 服务端可用 `Hodge.Combat.DebugDraw.Body 1`、`Hodge.Combat.DebugDraw.Duration 0.05` 查看跟随翼根的当前盒体；客户端不结算或绘制服务器查询，专服也不绘制。WingText 是显示预览，不提供正式 GAS 命中链路。调整翼动画、伤害窗口或组件缩放后重新测量；改尺寸和偏移可直接编辑上述通知。设计与服务器准备流程见[设计第 12 节](../Design/attack-wing-presentation.md#12-翼面-box-攻击判定2026-10-12)。
+单人 PIE 或 Listen Server 服务端可用 `Hodge.Combat.DebugDraw.Body 1`、`Hodge.Combat.DebugDraw.Duration 0.05` 查看跟随翼根的当前盒体；客户端不结算或绘制服务器查询，专服也不绘制。WingText 是显示预览，不提供正式 GAS 命中链路。调整翼动画、伤害窗口或组件缩放后重新测量；改尺寸和偏移可直接编辑上述通知。设计与服务器准备流程见[命中与网络设计](../Design/attack-wing-presentation.md#5-命中网络与性能)。
 
-## 旋转 Motion Warping 首版（2026-10-13）
+## 锁定五段的前摇追踪（2026-10-20）
 
-正式首招 DA_Attack_1 已配置 FacingWarp；DA_Attack_2～5 默认关闭。角色原生持有 HodgeAttackMotionWarpingComponent，MotionWarping 插件已启用，不重复添加组件。
+正式 `DA_Attack_1/2/3/5/4` 当前均开启 `FacingWarp.bEnabled` 和 `FacingWarp.bTrackExecutionLockTargetDuringWarp`，最大起手修正角135°、速率1080°/s；五份备份保存在 `/Game/Tests/Combat/LockedFinisher/Backups/DA_Attack_<编号>_BeforeTracking`。其中 `DA_Attack_1` 的 `MaxCorrectionAngle=135`、`MaxRotationRate=1080` 是本轮前已有的资产参数，本轮未调整；对正式资产只启用新开关，原运动、判定盒和通知时机保持既有配置。实测进度见[计划提取及终结刀验证记录](../Validation/hit-reaction-plan-builder-2026-10-19.md)。
+
+新开关在结构默认值中为false，位于既有高级 `FacingWarp` 配置。开启后，仅当初始方向来源为本刀原已确认锁定对象时，在原Warp窗口内、最早伤害通知开始前，持续更新指向该对象当前确认点的方向。角度额度始终从被接受的起手StartYaw计算，执行仍受原旋转速率和YawLocked约束；最终伤害仍要求实际检测体命中。
+
+`MaxCorrectionAngle` 限制从起手StartYaw计算的合法攻击朝向意图，实际胶囊转角还受原Warp窗口、旋转速率和真实求值时机影响。例如165°输入可限幅为135°目标，但短窗口内不保证胶囊到达135°。经用户批准，仅大角度场景按逐帧可见Yaw向合法方向推进、不越过目标、受现有速率约束及同刻跨端8°一致性验收；其余场景保留原6°/8°到达要求，不为通过测试调整正式参数。
+
+Queued/Pending切换或解锁请求继续使用原确认目标；确认切换、解锁、失效、窗口结束、命中边界或预测暂停后，本刀永久停止追踪，保留最后合法方向，下一刀重新采样。确认状态事件在等待初始方向数据期间也被记录，先确认B再确认回A不会恢复本刀。回放读取本次移动实际保存的Yaw，不重新追踪当前目标。
+
+已修复两处生命周期缺口：Recovery释放先将本刀标记Retired，再调用会同步解析请求的 `ReleaseFacingRequest`，阻止旧权威租约回填；纠正后时间倒回清理modifier时，在原合法Montage Notify窗口内通过 `OnBecomeRelevant` 当步重建Hodge modifier。回放继续消费原生SavedMove历史输入，网络格式、窗口、参数和原动画位移均保持。
+
+本次验证目标的削韧累计窗口仍为1.5秒、Heavy阈值仍为55，本轮未调整参数。Heavy是否出现由服务器实际命中时间和有效窗口内的累计值决定，不能硬性要求每轮五段必出Heavy；另以确定时序专项覆盖HeavyR/L，12场景89项检查已通过。
+
+最终Editor/Game常规构建及全量205项原生测试已通过（119项无警告、86项带警告）；转向专项Dedicated0ms与Listen100ms各通过11场景83项检查，均退出0。正式五段三模式已通过：单人7项流程，Dedicated0ms/100ms各7项流程及11项三端检查，五刀均造成31真实伤害且仅终结刀Launch。本轮获批范围验收已完成，详细证据与历史失败见[中央验证记录](../Validation/hit-reaction-plan-builder-2026-10-19.md)。
+
+历史 `0xC0000409` 退出异常的原因仍未知，最终正常退出不表示该异常已定位修复；独立OS进程、物理键鼠、完整生命周期及Cook/打包等未验证边界仍按中央记录保留。
+
+关闭开关的动作沿用下述首版固定方向流程。已批准规则与身份/回放契约见[补充方案](../Design/locked-combo-finisher-fix-2026-10-19.md)。
+
+## 旋转 Motion Warping 首版（2026-10-13，历史范围）
+
+以下90°参数、固定采样和窗口数值记录2026-10-13首版状态；当前正式配置以本节前的2026-10-20说明为准。首版正式首招 DA_Attack_1 已配置 FacingWarp，DA_Attack_2～5 默认关闭。角色原生持有 HodgeAttackMotionWarpingComponent，MotionWarping 插件已启用，不重复添加组件。
 
 方向顺序：当前有效锁定目标 → 有效移动意图 → 镜头水平朝向（无移动输入，用户确认）；无控制器才保留 Actor 朝向。每刀采样一次，不持续追踪移动目标，不修改镜头。
 

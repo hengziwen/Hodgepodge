@@ -3,6 +3,10 @@
 
 # 相机、移动、动画与旋转约束
 
+> 2026-10-17：近期动作衔接、连段／闪避派生、受击恢复、根运动交接与悟空参考见[ACT 总设计](../Design/act-combat-animation-feedback-design.md)和[实施／验收计划](../Design/act-combat-animation-feedback-plan.md)。本轮已制作方向中／重原型、持续与恢复段并接入分时恢复及曲线运动；实际构建、资产读回和测试边界见[实现验证](../Validation/act-combat-animation-feedback-2026-10-17.md)，不以本章历史快照代替当前事实。
+
+> 后续已改用现有 Behit，地面 S/B、Fall、StandUp 由动画根运动执行，空中 Fly/Push Start／Loop 由 CMC 弹道执行，实际落地才进入 Fall。原程序原型退出 Hero／假人引用但保留备份；当前实现见[Behit 实施记录](../Validation/authored-behit-root-motion-2026-10-17.md)。
+
 [返回知识库](README.md) · [本轮更新](30-update-2026-10-15.md) · [接通清单](12-integration-backlog.md)
 
 > 当前核对：**2026-10-15**（HEAD `b702482`）；运行结论仅限 `Docs/Validation/` 里对应日期报告的范围。

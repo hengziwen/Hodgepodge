@@ -1,5 +1,9 @@
 # 项目文档
 
+**战斗制作执行入口：[配置重组、受击全流程与端到端验收](Guides/combat-production-workflow.md)**：当前真实字段与正式五段窗口、单目标接触→轻重受击→分段Fly→真实接地倒地→起身恢复、迁移/高级入口和独占验证步骤；本文为执行说明，不表示本轮已运行玩法验收。
+
+[2026-10-18 目标侧削韧受击与原地运动](Design/poise-driven-hit-reactions.md)：普通攻击输入、目标阈值、精简 Profile、Behit 原地副本及兼容边界；[本轮测试](Validation/poise-driven-hit-reactions-2026-10-18.md)独立记录，不沿用旧根运动验证结论。
+
 **开发入口：[项目开发准则](Development/development-standards.md)**。新增代码必须有简洁中文注释；讨论或设计具体实现前核查本机 Lyra，已有成熟详细实现直接复用。任务启动同时阅读 [AGENTS.md](../AGENTS.md) 与 [AI 开发与验证流程](AI_DEVELOPMENT.md)。
 
 **dev-AN 通知驱动迁移：[彻底弃用自建 Timeline，迁移到动画通知](Design/anim-notify-combat-migration.md)。** 旧文件集中归档，当前配置参阅通知驱动手册；实际验证见迁移报告。
@@ -60,12 +64,15 @@ Design 并非全是未实现草案：各篇开头区分当前实现、历史设�
 
 ## 战斗扩展与后续设计
 
+- [受击自动朝向设计（2026-10-21，10-23收口核对）](Design/hit-reaction-facing-design-2026-10-21.md)：仅Hero／Dummy备份启用；Editor13／Game09、240项原生、59项Python断言与最终FullFinal01十格均通过，共100个正式场景。[实施记录](Validation/hit-reaction-facing-2026-10-21.md)保留旧失败、正式／预热独立证据、源码及资产保护结果；W05画面、W06真实生命周期余项、W07操作／碰撞及长跑仍待专项，PIE Dedicated不等于独立专服或打包验收。
+- [ACT 战斗动画与受击反馈总设计](Design/act-combat-animation-feedback-design.md)、[实施／状态／验收计划](Design/act-combat-animation-feedback-plan.md)：整合近期受击、配置、假人、五段与悟空参考；[当前 Behit 与根运动实施](Validation/authored-behit-root-motion-2026-10-17.md)记录现有素材替换、阶段运动所有权和实际验证。[早期原型验证](Validation/act-combat-animation-feedback-2026-10-17.md)保留历史证据，[悟空参考审查](Design/bmwukong-combat-reference-review-2026-10-17.md)保留独立审查；跑攻和切手暂缓。
+
 - [灭音与暗涌／共鸣回路技能系统](Design/havoc-dark-surge.md)、[首版实施验证](Validation/havoc-dark-surge-2026-10-15.md)：已接入暗流燃料、灭音、强化五段、破命共享E冷却、20%湮灭增伤和HUD；[暗流回满调试命令](Validation/havoc-debug-fill-2026-10-15.md)。E换图标、重击和变奏仍暂缓，完整限制以验证报告为准。
 - [共鸣解放设计](Design/resonance-liberation.md)、[配置指南](Guides/resonance-liberation-configuration.md)、[实施验证](Validation/resonance-liberation-2026-10-15.md)：R键、充能与独立冷却、金刚体、固定范围命中和前半段电影镜头。
 - [共鸣技能配置](Guides/resonance-skill-configuration.md)、[共鸣图标与Layout接入](Guides/resonance-ability-icons.md)：E技能及E／R冷却、能量环与Experience扩展点配置。
 - [近战索敌与攻击吸附](Design/melee-attack-assist.md)：软索敌、手动锁定、起手转向、有限接近、真实命中边界、预测与空中追击衔接。
 
-攻击吸附仍为设计草案，相关接口尚未创建；受击核心的当前字段见受击配置手册，削韧仍只预留数值。
+攻击吸附仍为设计草案，相关接口尚未创建；普通受击的轻重削韧与分段Can Launch已接入，当前字段及实际制作步骤见[战斗制作执行文档](Guides/combat-production-workflow.md)，旧“削韧仅预留”和累计破韧击飞说明按历史范围阅读。
 
 ## UI 迁移与学习
 
@@ -82,7 +89,13 @@ Design 并非全是未实现草案：各篇开头区分当前实现、历史设�
 
 ## 验证与维护
 
-- [架构审查与分阶段重构方案](Design/architecture-refactor-review-2026-10-15.md)：本机Lyra对照、维护热点、目标依赖图、R1～R8问题和阶段0～5验收；仅完成评审，尚未实施结构重构。
+- [2026-10-19 受击纯计划解析提取及10-20最终验收](Validation/hit-reaction-plan-builder-2026-10-19.md)：第3节及获批终结刀、交接、释放/回放修复完成；205项原生、转向两模式各11场景83项、正式单人及Dedicated0/100ms五段、12场景89项假人专项通过。真实窗口决定Heavy，参数不改；历史退出异常保留，第4～5节仍另行批准。
+- [2026-10-19 战斗复审收尾修复与验证](Validation/combat-review-final-fixes-2026-10-19.md)：最终受击依赖检查、同资源全实例释放采集、独占编辑器保护及等待截止断言；逐阶段记录本批结果，保留暂缓范围。
+- [2026-10-19 战斗重构修复后详细评审](Design/combat-refactor-post-fix-review-2026-10-19.md)：整理核心实现、已修问题与残余缺陷，复核 F01～F12／RV01～RV12、测试证据和暂缓拆分草案；仅文档，不恢复修复或迁移授权。
+- [2026-10-18 战斗重构复审与跟进清单](Design/combat-refactor-follow-up-review-2026-10-18.md)：复核已实现整改、原 F01～F12 和后续拆分草案，列出十二项发现、逐项建议、建议负责角色和排期前提；保留暂缓问题，不代表已修复或已批准拆类。
+- [战斗复审后续修复与验证](Validation/combat-review-follow-up-2026-10-18.md)：方向数据持有、实际受击阶段校验、逐端清理断言与服务器等待回归；RV04 已确认，拆类及两项旧故障继续暂缓，实际结果分阶段记录。
+- [2026-10-18 战斗模块详细代码评审](Design/combat-code-review-2026-10-18.md)：保留审查时的调用链、十二项问题、证据边界、分阶段路线和回归要求；后续切片、用户确认规则与真实测试结果见[评审整改与验证记录](Validation/combat-review-refactor-2026-10-18.md)，不将局部修复视为整套重构完成。
+- [架构审查与分阶段重构方案](Design/architecture-refactor-review-2026-10-15.md)：本机 Lyra 对照、维护热点、依赖与阶段验收。本文早期“尚未实施”概括不适用于当前封存基线；R1／R3 已有[实施验证](Validation/combat-detection-role-rules-2026-10-16.md)，其余范围分别按设计和对应验证记录核对，不能称全部重构已完成。
 - [项目开发准则](Development/development-standards.md)：中文注释、Lyra优先复用、单Runtime模块、生命周期、验证与提交约定。
 - [检测体与多段攻击验证](Validation/skill-hit-volumes-2026-10-06.md)：构建、原生、单人、100ms 联机、原技能保护与测试入口边界。
 - [跳跃衔接与死亡能力验证](Validation/jump-death-2026-10-06.md)：跳跃过渡修正；死亡事件/阶段已测试，互斥计数与 PIE 清理仍有错误。

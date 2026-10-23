@@ -3,7 +3,9 @@
 
 # 属性、命中、装备与死亡
 
-2026-10-16：[受击实现审计](../Design/hit-reaction-implementation-audit-2026-10-16.md) 记录正式五段空受击请求、编译权重与表现边界；[独立高血量假人](../Guides/hit-reaction-dummy.md) 提供真实扣血、七类测试攻击和服务器事件观察，不改变正式受击行为。
+2026-10-17：[ACT 总设计](../Design/act-combat-animation-feedback-design.md)与[实施／验收计划](../Design/act-combat-animation-feedback-plan.md)已进入实现，方向强动画、持续／恢复、玩家恢复与曲线移动见[本轮验证](../Validation/act-combat-animation-feedback-2026-10-17.md)。10-16 [审计](../Design/hit-reaction-implementation-audit-2026-10-16.md)保留切片前快照，[表现验证](../Validation/hit-presentation-2026-10-16.md)保留当日结果；[假人](../Guides/hit-reaction-dummy.md)不代替正式 Guardian、物理输入与最终演出验收。Client 后续连段问题继续独立保留。
+
+后续已按用户要求退出八个程序强动作的正式引用，Hero／假人接入完整现有 Behit S/B、Fly/Push、StandUp；地面／落地根运动与空中 CMC 分阶段互斥，当前资产和实际测试见[Behit 实施记录](../Validation/authored-behit-root-motion-2026-10-17.md)。不据此宣称 Guardian 专属素材或最终手感完成。
 
 攻击字段含义与配置步骤统一见[攻击能力配置手册](../Guides/attack-ability-configuration.md)；后续配置问答优先引用手册相应章节，本章说明系统职责和状态。
 
