@@ -11,6 +11,7 @@ assert not s.get('last_report', {}).get('error'), '先处理上一套件失败�
 source, target = s['source'], s['target']
 world, definition = s['world'], s['definition']
 peers = [target, s['owned_target'], s['observer_target']]
+dedicated = unreal.SystemLibrary.is_dedicated_server(world)
 montage = definition.get_editor_property('ExecutionConfig').get_editor_property('Montage')
 events = [e for e in unreal.AnimationLibrary.get_animation_notify_events(montage) if isinstance(e.get_editor_property('Notify'), unreal.HodgeAnimNotify_Hit)]
 assert len(events) in [1, 2], '只允许原始通知与本次临时通知'
@@ -117,7 +118,10 @@ def tick(delta):
             return
         assert all(v['contacts'] == 2 for v in values), values
         assert state['first'] and state['second'], '采样未观察到两次独立接触'
-        first, second = state['first'][0], state['second'][0]
+        # 专服只记接触，不播放轻反馈；轻动作断言使用实际渲染的拥有者与观察端。
+        rendered = 1 if dedicated and state['index'] < 2 else 0
+        first, second = state['peer_first'][rendered], state['peer_second'][rendered]
+        assert first and second, '表现端未观察到两个独立事件'
         if state['index'] == 0:
             assert second['playing'] and second['position'] > first['position'] + .05, (first, second)
             assert second['instance_id'] == first['instance_id'], (first, second)
@@ -128,11 +132,15 @@ def tick(delta):
             assert second['sequence'] != first['sequence'] and abs(second['started'] - first['started']) < .001, (first, second)
             assert second['position'] > first['position'] + .05, (first, second)
         # 每端分别按自己的事件到达时刻比较，避免用服务端同一帧冒充客户端观察。
-        for first_peer, second_peer in zip(state['peer_first'], state['peer_second']):
+        for peer_index, (first_peer, second_peer) in enumerate(zip(state['peer_first'], state['peer_second'])):
             assert first_peer and second_peer, '某端未观察到两个独立事件'
+            if dedicated and peer_index == 0 and state['index'] < 2:
+                continue
             if state['index'] == 0:
+                assert second_peer['playing'] and second_peer['position'] > first_peer['position'] + .05
                 assert first_peer['instance_id'] == second_peer['instance_id'], (first_peer, second_peer)
             elif state['index'] == 1:
+                assert second_peer['playing'] and second_peer['position'] < .08
                 assert first_peer['instance_id'] != second_peer['instance_id'], (first_peer, second_peer)
             else:
                 assert first_peer['sequence'] != second_peer['sequence'] and abs(first_peer['started'] - second_peer['started']) < .001

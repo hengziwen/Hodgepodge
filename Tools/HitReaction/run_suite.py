@@ -4,6 +4,7 @@ from pathlib import Path
 
 s = builtins.HODGE_REACTION_TEST
 world = s['world']
+dedicated = unreal.SystemLibrary.is_dedicated_server(world)
 source = s['source']
 target = s['target']
 lib = s['lib']
@@ -125,7 +126,8 @@ def prepare(index):
                   'max_z': 0.0, 'max_x_delta': 0.0, 'max_owner_z': 0.0, 'max_observer_z': 0.0,
                   'max_owner_x_delta': 0.0, 'max_observer_x_delta': 0.0, 'chain_requested': False,
                   'chain_queued': False, 'seen_chain_type': False, 'max_air_hits': 0, 'first_control_at': None,
-                  'seen_light_overlap': False, 'seen_owner_light_overlap': False, 'seen_observer_light_overlap': False})
+                  'seen_light_overlap': False, 'seen_owner_light_overlap': False, 'seen_observer_light_overlap': False,
+                  'accepted_hits': {}})
 
 def tick(delta):
     try:
@@ -145,7 +147,7 @@ def tick(delta):
                 pawn.character_movement.set_movement_mode(unreal.MovementMode.MOVE_WALKING)
             state.update({'stage': 'hold_wait', 'start': now, 'initial_health': hp(target),
                           'presentation_before': [react(p).get_presentation_count() for p in [target, owned_target, observer_target]],
-                          'initial_id': str(react(target).get_last_result().hit_id),
+                          'initial_id': react(target).get_last_result().hit_id.export_text(),
                           'feedback_before': s['feedback'].get(target.get_path_name(), 0),
                           'owner_feedback_before': s['feedback'].get(owned_target.get_path_name(), 0),
                           'observer_feedback_before': s['feedback'].get(observer_target.get_path_name(), 0)})
@@ -162,7 +164,11 @@ def tick(delta):
         state['last_sample'] = t
         a = snapshot(target); o = snapshot(owned_target); v = snapshot(observer_target)
         r = react(target).get_last_result()
-        state['result_seen'] |= str(r.hit_id) != state['initial_id']
+        # 正式玩家属性会影响实际伤害，按独立结算身份核对，不假定每刀固定扣五血。
+        hit_key = r.hit_id.export_text()
+        if hit_key != state['initial_id'] and r.actual_damage > 0:
+            state['accepted_hits'][hit_key] = r.actual_damage
+        state['result_seen'] |= hit_key != state['initial_id']
         state['seen_control'] |= a['controlled']; state['seen_air'] |= 'AIRBORNE' in a['phase']
         state['seen_down'] |= 'DOWNED' in a['phase']; state['seen_getup'] |= 'GETTING_UP' in a['phase']
         state['seen_montage'] |= a['montage_playing']
@@ -207,6 +213,7 @@ def tick(delta):
                    'cancelled', 'chain_queued', 'seen_chain_type', 'max_air_hits', 'seen_light_overlap',
                    'seen_owner_light_overlap', 'seen_observer_light_overlap']}
         report.update({'outcome': str(r.outcome), 'health_before': state['initial_health'], 'health_after': hp(target),
+                       'accepted_hits': state['accepted_hits'],
                        'owner_health': hp(owned_target), 'observer_health': hp(observer_target),
                        'target_hold_active': active(ga(target, s['hold'])), 'controlled_after': react(target).is_controlled(),
                        'owner_controlled_after': react(owned_target).is_controlled(), 'observer_controlled_after': react(observer_target).is_controlled(),
@@ -223,8 +230,11 @@ def tick(delta):
         assert state['result_seen'] and hp(target) < state['initial_health'], report
         if expected_low:
             assert r.outcome == unreal.HodgeHitReactionOutcome.LOW_JUDGEMENT and not state['seen_control'], report
-            assert report['target_hold_active'] and report['light_feedback_events'] > 0, report
-            if light_montage:
+            # 专服仍需保持出招和结算接触，但轻动画及其表现委托只在渲染端执行。
+            assert report['target_hold_active'], report
+            if not dedicated:
+                assert report['light_feedback_events'] > 0, report
+            if light_montage and not dedicated:
                 assert state['seen_light_overlap'] and a['hold_playing'], report
             if network:
                 assert report['owner_light_feedback_events'] > 0 and report['observer_light_feedback_events'] > 0, report
@@ -239,7 +249,8 @@ def tick(delta):
             if state['name'] == 'WallKnockback': assert 10 < state['max_x_delta'] < 85, report
             if state['name'] == 'CeilingLaunch': assert 70 < state['max_z'] < 165, report
             if state['name'] in ['AirHit', 'Slam']:
-                assert state['chain_queued'] and state['seen_chain_type'] and hp(target) <= state['initial_health'] - 10, report
+                assert state['chain_queued'] and state['seen_chain_type'] and len(state['accepted_hits']) == 2, report
+                assert abs((state['initial_health'] - hp(target)) - sum(state['accepted_hits'].values())) < .01, report
                 if state['name'] == 'AirHit': assert state['max_air_hits'] == 1, report
                 else: assert state['seen_down'] and state['seen_getup'], report
             if network:

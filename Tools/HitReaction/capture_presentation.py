@@ -11,6 +11,7 @@ import unreal
 STAGE = globals().get('CAPTURE_STAGE', 'Before')
 DENSE = globals().get('CAPTURE_FIXED_STEP', False)
 BASELINE = globals().get('CAPTURE_BASELINE_ASSETS', False)
+WALL_TIMEOUT = globals().get('CAPTURE_WALL_TIMEOUT', 180)
 OUT = (Path(unreal.Paths.project_saved_dir()) / 'HitPresentation' / STAGE).resolve()
 OUT.mkdir(parents=True, exist_ok=True)
 sys.path.insert(0, str(Path(unreal.Paths.project_dir()) / 'Tools' / 'HitReactionDummy'))
@@ -99,7 +100,7 @@ def tick(delta):
             perf.set_editor_property('bThrottleCPUWhenNotForeground', state['throttle'])
             unreal.unregister_slate_post_tick_callback(state['callback'])
             return
-        if time.monotonic() - state['boot'] > 180:
+        if time.monotonic() - state['boot'] > WALL_TIMEOUT:
             raise RuntimeError('动作采集超时')
         if not worlds:
             return

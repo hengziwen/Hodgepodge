@@ -25,6 +25,8 @@ def snapshot():
            'position': [location.x, location.y, location.z],
            'velocity': [velocity.x, velocity.y, velocity.z],
            'controlled': reaction.is_controlled(), 'air_hits': state.air_hit_count}
+    # 削韧只在服务器采样，目标等级与执行阶段分别显示，避免把表现力度当玩法阈值。
+    row.update(poise=reaction.get_accumulated_poise(), reaction_level=str(state.reaction_level))
     profile = reaction.get_profile()
     selected = state.montage or (profile.get_editor_property('LightFeedbackMontage') if profile else None)
     if selected:
@@ -66,21 +68,27 @@ class HodgeDummyObserver(unreal.Object):
                instigator=instigator.get_name() if instigator else None)
 
 
-def start():
-    """在服务器 PIE 世界绑定一个已完成初始化的预放置假人。"""
+def start(target=None):
+    """默认观察假人；专项联机回归可明确指定服务器上的真实玩家受击目标。"""
     if _state:
         stop()
     worlds = [w for w in unreal.EditorLevelLibrary.get_pie_worlds(True) if unreal.SystemLibrary.is_server(w)]
     assert len(worlds) == 1, '请先在假人地图启动 PIE，且只观察一个服务器世界'
     world = worlds[0]
-    cls = unreal.load_asset(ROOT + '/BP_HitReactionDummy').generated_class()
-    targets = unreal.GameplayStatics.get_all_actors_of_class(world, cls)
-    assert len(targets) == 1, '地图应预放置一个假人'
-    dummy = targets[0]
+    if target is None:
+        cls = unreal.load_asset(ROOT + '/BP_HitReactionDummy').generated_class()
+        targets = unreal.GameplayStatics.get_all_actors_of_class(world, cls)
+        assert len(targets) == 1, '地图应预放置一个假人'
+        dummy = targets[0]
+        assert dummy.initialize_enemy_ability_system(), '等待假人初始化完成'
+    else:
+        dummy = target
+        assert dummy in unreal.GameplayStatics.get_all_actors_of_class(world, unreal.HodgeHeroCharacter), '指定目标必须是服务器真实玩家'
+        assert dummy.get_hodge_ability_system_component(), '等待玩家ASC绑定完成'
     source = unreal.GameplayStatics.get_player_pawn(world, 0)
-    assert isinstance(source, unreal.HodgeHeroCharacter) and dummy.initialize_enemy_ability_system(), '等待玩家与假人初始化完成后重试'
+    assert isinstance(source, unreal.HodgeHeroCharacter) and source != dummy, '等待不同攻击者和受击目标初始化完成'
     health = dummy.get_component_by_class(unreal.HodgeHealthComponent)
-    assert health.get_max_health() == 1000000.0, '假人属性没有按独立配置初始化'
+    assert target is not None or health.get_max_health() == 1000000.0, '假人属性没有按独立配置初始化'
     reaction = dummy.get_component_by_class(unreal.HodgeHitReactionComponent)
     observer = unreal.new_object(HodgeDummyObserver)
     _state.update(world=world, dummy=dummy, source=source, reaction=reaction, health=health,
@@ -157,7 +165,9 @@ def probe(kind='HitStun'):
                 if unreal.SystemLibrary.is_server(world) or not player_state or player_state.get_editor_property('PlayerId') != source_id:
                     continue
                 client_asc = owner.get_hodge_ability_system_component()
-                values = [h for h in client_asc.get_all_abilities() if client_asc.find_ability_definition(h) == definition] if client_asc else []
+                # 同 Definition 重授予时旧句柄可能仍在路上，必须等到本次服务器句柄抵达。
+                values = [h for h in client_asc.get_all_abilities() if h.export_text() == handles[0].export_text()
+                          and client_asc.find_ability_definition(h) == definition] if client_asc else []
                 if len(values) == 1:
                     owner.character_movement.stop_movement_immediately()
                     owner.set_actor_location(source.get_actor_location(), False, True)
@@ -173,7 +183,7 @@ def probe(kind='HitStun'):
 
         pending['handle'] = unreal.register_slate_post_tick_callback(activate_owner)
         _state.setdefault('followups', []).append(pending['handle'])
-    record('probe_queued', kind=kind)
+    record('probe_queued', kind=kind, server_handle=handles[0].export_text())
 
 
 def reset():
@@ -188,14 +198,19 @@ def reset():
         actor.set_actor_rotation(unreal.Rotator(yaw=yaw), False)
         actor.character_movement.set_movement_mode(unreal.MovementMode.MOVE_WALKING)
     # 远端拥有者有自主移动预测，测试站位需同步设置；只移动服务端会被旧客户端位置纠正。
-    source_id = source.get_editor_property('PlayerState').get_editor_property('PlayerId')
-    for world in unreal.EditorLevelLibrary.get_pie_worlds(True):
-        owner = unreal.GameplayStatics.get_player_pawn(world, 0)
-        player_state = owner.get_editor_property('PlayerState') if owner else None
-        if owner and owner != source and player_state and player_state.get_editor_property('PlayerId') == source_id:
-            owner.character_movement.stop_movement_immediately()
-            owner.set_actor_location(unreal.Vector(0, 0, 95), False, True)
-            owner.set_actor_rotation(unreal.Rotator(yaw=0), False)
+    for actor, x, yaw in [(source, 0, 0), (dummy, 180, 180)]:
+        state = actor.get_editor_property('PlayerState')
+        if not state:
+            continue
+        player_id = state.get_editor_property('PlayerId')
+        for world in unreal.EditorLevelLibrary.get_pie_worlds(True):
+            owner = unreal.GameplayStatics.get_player_pawn(world, 0)
+            player_state = owner.get_editor_property('PlayerState') if owner else None
+            if owner and owner != actor and player_state and player_state.get_editor_property('PlayerId') == player_id:
+                owner.character_movement.stop_movement_immediately()
+                owner.set_actor_location(unreal.Vector(x, 0, 95), False, True)
+                owner.set_actor_rotation(unreal.Rotator(yaw=yaw), False)
+                owner.character_movement.set_movement_mode(unreal.MovementMode.MOVE_WALKING)
     record('reset')
 
 
