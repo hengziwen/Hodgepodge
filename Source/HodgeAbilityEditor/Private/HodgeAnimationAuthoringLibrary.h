@@ -13,6 +13,7 @@ class UAnimBlueprint;
 class UBlueprint;
 class USkeleton;
 class UAnimMontage;
+class UCurveFloat;
 class UHodgeAbilityDefinition;
 class UAnimationAsset;
 class APawn;
@@ -298,6 +299,19 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Hodge|Editor|Animation")
 	static bool SetHeroReactionMontageSlot(UAnimMontage* Montage, FName Slot);
+
+	/** 为本轮独立原型设置冲击／持续／恢复三段，不裁剪素材或改正式攻击通知。 */
+	UFUNCTION(BlueprintCallable, Category="Hodge|Editor|Animation")
+	static bool ConfigureACTReactionSections(UAnimMontage* Montage, float SustainStart, float RecoveryStart);
+	/** 原型曲线的受检作者入口，避免 Python 访问受保护的 FRichCurve 字段。 */
+	UFUNCTION(BlueprintCallable, Category="Hodge|Editor|Animation")
+	static bool ConfigureACTKnockbackCurve(UCurveFloat* Curve, const TArray<FVector2D>& Keys);
+	/** 只读比较原动作与目标骨架，并提取完整根轨迹，不生成骨骼关键帧。 */
+	UFUNCTION(BlueprintCallable, Category="Hodge|Editor|Animation")
+	static FString InspectBehitAnimation(UAnimSequence* Sequence, USkeletalMesh* TargetMesh);
+	/** 仅编排 Behit 项目副本的原片段范围，不改写源 Sequence 或攻击通知。 */
+	UFUNCTION(BlueprintCallable, Category="Hodge|Editor|Animation")
+	static bool ConfigureBehitMontage(UAnimMontage* Montage, float StartTime, float EndTime, float PlayRate = 1.f);
 
 	/** 设置玩家角色受击骨架。
 	 * @param Asset 资产，由调用方传入。

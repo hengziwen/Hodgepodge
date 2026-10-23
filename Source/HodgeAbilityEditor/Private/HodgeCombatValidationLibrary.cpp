@@ -26,6 +26,7 @@
 #include "Animation/AnimMontage.h"
 #include "Animation/AnimInstance.h"
 #include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h"
 #include "Component/HodgeCombatComponentBase.h"
 #include "Editor.h"
@@ -38,6 +39,16 @@
 #include "AbilitySystem/AttributeSet/HodgeHavocSet.h"
 #include "AbilitySystem/Effects/HodgeHavocEffects.h"
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeCombatValidationLibrary)
+
+/** 读取实际运动源，避免把配置成根运动但没有真正提取位移误报为成功。 */
+FVector UHodgeCombatValidationLibrary::InspectReactionMotion(AActor* Avatar)
+{
+	const auto* Character = Cast<ACharacter>(Avatar);
+	const auto* Movement = Character ? Character->GetCharacterMovement() : nullptr;
+	// HasRootMotionSources 也包含动画根运动；此处必须只读取外部 source group。
+	return Movement ? FVector(Movement->HasAnimRootMotion() ? 1.f : 0.f, Movement->CurrentRootMotion.HasActiveRootMotionSources() ? 1.f : 0.f,
+		Character->IsPlayingRootMotion() ? 1.f : 0.f) : FVector(-1.f);
+}
 
 bool UHodgeCombatValidationLibrary::QueueDarkFlowDelta(AActor* Avatar, float Delta)
 {
@@ -419,6 +430,31 @@ FHodgeMontageValidationState UHodgeCombatValidationLibrary::InspectMontageState(
 		break;
 	}
 	return Result;
+}
+
+/** 全量返回同资源的每个实例，不用最新实例的退出状态替代旧实例权重。 */
+TArray<FHodgeMontageValidationState> UHodgeCombatValidationLibrary::InspectMontageStates(AActor* Avatar, UAnimMontage* Montage)
+{
+	TArray<FHodgeMontageValidationState> Results;
+	const auto* Character = Cast<ACharacter>(Avatar);
+	UAnimInstance* Anim = Character && Character->GetMesh() ? Character->GetMesh()->GetAnimInstance() : nullptr;
+	if (!Anim || !Montage) { return Results; }
+	const int32 Machine = Anim->GetStateMachineIndex(TEXT("LocomotionSM"));
+	const FName Locomotion = Machine != INDEX_NONE ? Anim->GetCurrentStateName(Machine) : NAME_None;
+	for (const FAnimMontageInstance* Instance : Anim->MontageInstances)
+	{
+		if (!Instance || Instance->Montage != Montage) { continue; }
+		auto& Result = Results.AddDefaulted_GetRef();
+		Result.InstanceId = Instance->GetInstanceID();
+		Result.Position = Instance->GetPosition();
+		Result.Weight = Instance->GetWeight();
+		Result.DesiredWeight = Instance->GetDesiredWeight();
+		Result.BlendTime = Instance->GetBlendTime();
+		Result.bPlaying = Instance->IsPlaying();
+		Result.bStopped = Instance->IsStopped();
+		Result.LocomotionState = Locomotion;
+	}
+	return Results;
 }
 
 /** 配置校验PIE。 */

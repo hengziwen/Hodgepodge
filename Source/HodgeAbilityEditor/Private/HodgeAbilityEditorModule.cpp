@@ -6,6 +6,10 @@
 #include "AssetTypeActions_Base.h"
 #include "Data/HodgeAbilityDefinition.h"
 #include "Toolkits/SimpleAssetEditor.h"
+#include "HodgeNotifyDamageCustomization.h"
+#include "HodgeCombatAssetCustomization.h"
+#include "HodgeCombatPropertyCustomization.h"
+#include "PropertyEditorModule.h"
 /** 封装能力定义Actions的状态与操作接口。 */
 class FHodgeAbilityDefinitionActions : public FAssetTypeActions_Base
 {
@@ -44,16 +48,53 @@ class FHodgeAbilityEditorModule : public IModuleInterface
 {
     // Actions的数据或对象引用。
     TSharedPtr<IAssetTypeActions> Actions;
+    // 身份对象必须与注销时配对，避免影响其他上下文的同类型详情。
+    TSharedPtr<IPropertyTypeIdentifier> NotifyDamageIdentifier;
 public:
     /** 在模块加载时注册其编辑器或运行入口。 */
     virtual void StartupModule() override
     {
         Actions = MakeShared<FHodgeAbilityDefinitionActions>();
         FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools").Get().RegisterAssetTypeActions(Actions.ToSharedRef());
+        NotifyDamageIdentifier = FHodgeNotifyDamageCustomization::MakeIdentifier();
+        auto& Properties = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
+        Properties.RegisterCustomPropertyTypeLayout(TEXT("HodgeHitEffectConfig"),
+            FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FHodgeNotifyDamageCustomization::MakeInstance), NotifyDamageIdentifier);
+        // 复用既有资产与结构，不建立新的配置副本或运行时入口。
+        Properties.RegisterCustomClassLayout(TEXT("HodgeAbilityDefinition"),
+            FOnGetDetailCustomizationInstance::CreateStatic(&HodgeCombatDetails::MakeAbilityDefinitionCustomization));
+        Properties.RegisterCustomClassLayout(TEXT("HodgePawnData"),
+            FOnGetDetailCustomizationInstance::CreateStatic(&HodgeCombatDetails::MakePawnDataCustomization));
+        Properties.RegisterCustomClassLayout(TEXT("HodgeHitReactionProfile"),
+            FOnGetDetailCustomizationInstance::CreateStatic(&HodgeCombatDetails::MakeHitReactionProfileCustomization));
+        Properties.RegisterCustomPropertyTypeLayout(TEXT("HodgeHitReactionConfig"),
+            FOnGetPropertyTypeCustomizationInstance::CreateStatic(&HodgeCombatDetails::MakeHitReactionConfigCustomization));
+        Properties.RegisterCustomPropertyTypeLayout(TEXT("HodgePoiseSettings"),
+            FOnGetPropertyTypeCustomizationInstance::CreateStatic(&HodgeCombatDetails::MakePoiseSettingsCustomization));
+        Properties.RegisterCustomPropertyTypeLayout(TEXT("HodgeAnimHitConfig"),
+            FOnGetPropertyTypeCustomizationInstance::CreateStatic(&HodgeCombatDetails::MakeAnimHitConfigCustomization));
+        Properties.RegisterCustomPropertyTypeLayout(TEXT("HodgeHitReactionAnimation"),
+            FOnGetPropertyTypeCustomizationInstance::CreateStatic(&HodgeCombatDetails::MakeLegacyReactionAnimationCustomization));
+        Properties.NotifyCustomizationModuleChanged();
     }
     /** 在模块卸载时注销其注册项。 */
     virtual void ShutdownModule() override
     {
+        if (NotifyDamageIdentifier && FModuleManager::Get().IsModuleLoaded("PropertyEditor"))
+        {
+            auto& Properties = FModuleManager::GetModuleChecked<FPropertyEditorModule>("PropertyEditor");
+            Properties.UnregisterCustomPropertyTypeLayout(TEXT("HodgeHitEffectConfig"), NotifyDamageIdentifier);
+            // 使用与注册一致的类型名，卸载后不留下指向本模块的委托。
+            Properties.UnregisterCustomClassLayout(TEXT("HodgeAbilityDefinition"));
+            Properties.UnregisterCustomClassLayout(TEXT("HodgePawnData"));
+            Properties.UnregisterCustomClassLayout(TEXT("HodgeHitReactionProfile"));
+            Properties.UnregisterCustomPropertyTypeLayout(TEXT("HodgeHitReactionConfig"));
+            Properties.UnregisterCustomPropertyTypeLayout(TEXT("HodgePoiseSettings"));
+            Properties.UnregisterCustomPropertyTypeLayout(TEXT("HodgeAnimHitConfig"));
+            Properties.UnregisterCustomPropertyTypeLayout(TEXT("HodgeHitReactionAnimation"));
+            Properties.NotifyCustomizationModuleChanged();
+        }
+        NotifyDamageIdentifier.Reset();
         if (Actions && FModuleManager::Get().IsModuleLoaded("AssetTools"))
         { FModuleManager::GetModuleChecked<FAssetToolsModule>("AssetTools").Get().UnregisterAssetTypeActions(Actions.ToSharedRef()); }
         Actions.Reset();

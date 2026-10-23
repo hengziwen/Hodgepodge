@@ -1,4 +1,4 @@
-﻿/** @file HodgeAnimationAuthoringLibrary.cpp
+/** @file HodgeAnimationAuthoringLibrary.cpp
  * @brief 实现动画/行为树编辑器制作函数库相关的类型、接口与现有处理流程。
  */
 #include "HodgeAnimationAuthoringLibrary.h"
@@ -63,6 +63,11 @@
 #include "AnimGraphNode_UseCachedPose.h"
 #include "AnimBlueprintExtension.h"
 #include "AssetRegistry/AssetRegistryModule.h"
+#include "Curves/CurveFloat.h"
+#include "Dom/JsonObject.h"
+#include "Serialization/JsonSerializer.h"
+#include "Serialization/JsonWriter.h"
+
 #include "EdGraph/EdGraph.h"
 #include "EdGraph/EdGraphNode.h"
 #include "EdGraphSchema_K2.h"
@@ -844,6 +849,69 @@ bool UHodgeAnimationAuthoringLibrary::SetHeroReactionMontageSlot(UAnimMontage* M
 	return !Montage->SlotAnimTracks.IsEmpty();
 }
 
+/** 根轨迹提取和骨架比较不修改动画，也不把骨架名称相同当作重定向完成。 */
+FString UHodgeAnimationAuthoringLibrary::InspectBehitAnimation(UAnimSequence* Sequence, USkeletalMesh* TargetMesh)
+{
+	if (!Sequence || !Sequence->GetSkeleton() || !TargetMesh) { return TEXT("{}"); }
+	const auto& Source = Sequence->GetSkeleton()->GetReferenceSkeleton();
+	const auto& Target = TargetMesh->GetRefSkeleton();
+	auto Result = MakeShared<FJsonObject>();
+	TArray<TSharedPtr<FJsonValue>> Missing, Parents, Samples;
+	float TranslationError = 0.f, RotationError = 0.f;
+	for (int32 Index = 0; Index < Source.GetNum(); ++Index)
+	{
+		const int32 Other = Target.FindBoneIndex(Source.GetBoneName(Index));
+		if (Other == INDEX_NONE) { Missing.Add(MakeShared<FJsonValueString>(Source.GetBoneName(Index).ToString())); continue; }
+		const int32 A = Source.GetParentIndex(Index), B = Target.GetParentIndex(Other);
+		if ((A == INDEX_NONE) != (B == INDEX_NONE) || (A != INDEX_NONE && B != INDEX_NONE && Source.GetBoneName(A) != Target.GetBoneName(B)))
+		{ Parents.Add(MakeShared<FJsonValueString>(Source.GetBoneName(Index).ToString())); }
+		TranslationError = FMath::Max(TranslationError, float(FVector::Dist(Source.GetRefBonePose()[Index].GetTranslation(), Target.GetRefBonePose()[Other].GetTranslation())));
+		RotationError = FMath::Max(RotationError, float(FMath::RadiansToDegrees(Source.GetRefBonePose()[Index].GetRotation().AngularDistance(Target.GetRefBonePose()[Other].GetRotation()))));
+	}
+	const int32 Steps = FMath::Max(1, FMath::CeilToInt(Sequence->GetPlayLength() * 60.f));
+	for (int32 Index = 0; Index <= Steps; ++Index)
+	{
+		const float Time = Sequence->GetPlayLength() * Index / Steps;
+		const FTransform Root = Sequence->ExtractRootMotionFromRange(0.f, Time);
+		auto Sample = MakeShared<FJsonObject>();
+		Sample->SetNumberField(TEXT("time"), Time);
+		Sample->SetNumberField(TEXT("x"), Root.GetTranslation().X);
+		Sample->SetNumberField(TEXT("y"), Root.GetTranslation().Y);
+		Sample->SetNumberField(TEXT("z"), Root.GetTranslation().Z);
+		Samples.Add(MakeShared<FJsonValueObject>(Sample));
+	}
+	Result->SetStringField(TEXT("asset"), Sequence->GetPathName());
+	Result->SetNumberField(TEXT("length"), Sequence->GetPlayLength());
+	Result->SetArrayField(TEXT("missing_bones"), Missing);
+	Result->SetArrayField(TEXT("parent_mismatch"), Parents);
+	Result->SetNumberField(TEXT("max_ref_translation_error"), TranslationError);
+	Result->SetNumberField(TEXT("max_ref_rotation_degrees"), RotationError);
+	Result->SetArrayField(TEXT("root_samples"), Samples);
+	FString Text;
+	FJsonSerializer::Serialize(Result, TJsonWriterFactory<>::Create(&Text));
+	return Text;
+}
+
+/** 将完整既有动作编排到项目自有 Montage，不生成、缩放或替换骨骼轨道。 */
+bool UHodgeAnimationAuthoringLibrary::ConfigureBehitMontage(UAnimMontage* Montage, float StartTime, float EndTime, float PlayRate)
+{
+	if (!Montage || !Montage->GetPathName().StartsWith(TEXT("/Game/Main/Character/Hero/Anim/HitReactions/Behit/")) ||
+		(GEditor && GEditor->PlayWorld) || Montage->SlotAnimTracks.Num() != 1 || Montage->SlotAnimTracks[0].AnimTrack.AnimSegments.Num() != 1 ||
+		!Montage->Notifies.IsEmpty() || !FMath::IsFinite(StartTime) || !FMath::IsFinite(EndTime) || !FMath::IsFinite(PlayRate) ||
+		StartTime < 0.f || EndTime <= StartTime || PlayRate <= 0.f) { return false; }
+	FAnimSegment& Segment = Montage->SlotAnimTracks[0].AnimTrack.AnimSegments[0];
+	if (!Segment.GetAnimReference() || EndTime > Segment.GetAnimReference()->GetPlayLength() + UE_KINDA_SMALL_NUMBER) { return false; }
+	Montage->Modify();
+	Segment.AnimStartTime = StartTime;
+	Segment.AnimEndTime = EndTime;
+	Segment.AnimPlayRate = PlayRate;
+	Segment.LoopingCount = 1;
+	Montage->SetCompositeLength((EndTime - StartTime) / PlayRate);
+	Montage->RefreshCacheData();
+	Montage->MarkPackageDirty();
+	return true;
+}
+
 /** 设置玩家角色受击骨架。 */
 bool UHodgeAnimationAuthoringLibrary::SetHeroReactionSkeleton(UAnimationAsset* Asset, USkeleton* Skeleton)
 {
@@ -1511,4 +1579,56 @@ FString UHodgeAnimationAuthoringLibrary::ConfigureAttackFacingWarp(UHodgeAbility
  TArray<FText> Errors; Definition->ValidateDefinition(Errors);
  FString Result; for (const auto& Error : Errors) { Result+=Error.ToString()+TEXT("\n"); }
  return Errors.IsEmpty() ? TEXT("OK") : Result;
+}
+
+/** 限定本轮原型路径与无通知 Montage，避免作者工具覆盖正式时序。 */
+bool UHodgeAnimationAuthoringLibrary::ConfigureACTReactionSections(UAnimMontage* Montage, float SustainStart, float RecoveryStart)
+{
+	if (!Montage || (GEditor && GEditor->PlayWorld) || !Montage->Notifies.IsEmpty() || Montage->SlotAnimTracks.IsEmpty() ||
+		(!Montage->GetOutermost()->GetName().StartsWith(TEXT("/Game/Main/Character/Hero/Anim/HitReactions/ACTPrototype/")) &&
+		 !Montage->GetOutermost()->GetName().StartsWith(TEXT("/Game/Tests/Combat/ACTPrototype/"))) ||
+		!FMath::IsFinite(SustainStart) || !FMath::IsFinite(RecoveryStart) || SustainStart <= 0.f ||
+		RecoveryStart <= SustainStart || RecoveryStart >= Montage->GetPlayLength()) { return false; }
+	Montage->Modify();
+	for (auto& Track : Montage->SlotAnimTracks) { Track.SlotName = TEXT("FullBody"); }
+	Montage->CompositeSections.Reset();
+	const FName Names[] = {TEXT("Impact"), TEXT("Sustain"), TEXT("Recover")};
+	const float Times[] = {0.f, SustainStart, RecoveryStart};
+	for (int32 Index = 0; Index < 3; ++Index)
+	{
+		FCompositeSection Section;
+		Section.SectionName = Names[Index];
+		Section.NextSectionName = Index < 2 ? Names[Index + 1] : NAME_None;
+		Section.Link(Montage, Times[Index]);
+		Montage->CompositeSections.Add(Section);
+	}
+	Montage->RefreshCacheData();
+	Montage->MarkPackageDirty();
+	return true;
+}
+
+/** 先完整校验再修改，仅允许本轮原型目录或临时对象。 */
+bool UHodgeAnimationAuthoringLibrary::ConfigureACTKnockbackCurve(UCurveFloat* Curve, const TArray<FVector2D>& Keys)
+{
+	if (!Curve || (GEditor && GEditor->PlayWorld) || Keys.Num() < 2 ||
+		(Curve->GetOutermost() != GetTransientPackage() && !Curve->GetOutermost()->GetName().StartsWith(TEXT("/Game/Tests/Combat/ACTPrototype/"))) ||
+		Keys[0].X != 0.0 || Keys.Last().X != 1.0) { return false; }
+	double Area = 0.0;
+	for (int32 Index = 0; Index < Keys.Num(); ++Index)
+	{
+		const auto& Key = Keys[Index];
+		if (Key.ContainsNaN() || Key.X < 0.0 || Key.X > 1.0 || Key.Y < 0.0 || Key.Y > MAX_flt ||
+			(Index && Key.X <= Keys[Index - 1].X)) { return false; }
+		if (Index) { Area += (Key.X - Keys[Index - 1].X) * (Key.Y + Keys[Index - 1].Y) * 0.5; }
+	}
+	if (!FMath::IsFinite(Area) || Area <= UE_KINDA_SMALL_NUMBER) { return false; }
+	Curve->Modify();
+	Curve->FloatCurve.Reset();
+	for (const auto& Key : Keys)
+	{
+		const auto Handle = Curve->FloatCurve.AddKey(float(Key.X), float(Key.Y));
+		Curve->FloatCurve.SetKeyInterpMode(Handle, RCIM_Linear);
+	}
+	Curve->MarkPackageDirty();
+	return true;
 }
