@@ -76,6 +76,8 @@ public:
 	/** 跳字 PIE 夹具：权威 Tick 经 Damage GE 结算；零伤重置仅供高血量测试目标。 */
 	UFUNCTION(BlueprintCallable, Category="Hodge|Editor|Validation")
 	static bool QueueNumberPopProbe(AActor* Source, AActor* Target, float Damage, bool bResetTargetHealth = false);
+	/** 只读检查实际运动来源：X=动画根运动，Y=外部 RMS，Z=角色正在播放根运动。 */
+	UFUNCTION(BlueprintPure, Category="Hodge|Editor|Validation") static FVector InspectReactionMotion(AActor* Avatar);
 	/** 暗流PIE夹具通过正式GE修改资源，只在权威游戏Tick执行。 */
 	UFUNCTION(BlueprintCallable, Category="Hodge|Editor|Validation") static bool QueueDarkFlowDelta(AActor* Avatar, float Delta);
 	/** 读取实际暗流与容量；缺少属性集明确返回负值。 */
@@ -208,6 +210,9 @@ public:
 	 */
 	UFUNCTION(BlueprintPure, Category="Hodge|Editor|Validation")
 	static FHodgeMontageValidationState InspectMontageState(AActor* Avatar, UAnimMontage* Montage);
+	/** 返回同一资源的全部播放实例；最终释放检查必须包含仍在混出的旧实例，逐帧采样继续使用原接口。 */
+	UFUNCTION(BlueprintPure, Category="Hodge|Editor|Validation")
+	static TArray<FHodgeMontageValidationState> InspectMontageStates(AActor* Avatar, UAnimMontage* Montage);
 	/** 配置校验PIE。
 	 * @param Players 玩家，由调用方传入。
 	 * @param bDedicated 是否Dedicated的控制标记。

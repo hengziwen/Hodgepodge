@@ -27,27 +27,27 @@
 
 源码：[Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeAbilityTask_WaitHitResults.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeAbilityTask_WaitHitResults.cpp)
 
-项目内直接 include（不是运行调用关系）：[AbilitySystem/Abilities/HodgeAbilityTask_WaitHitResults.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeAbilityTask_WaitHitResults.h)、[AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)、[Component/HodgeCombatComponentBase.h](../../../Source/Hodgepodge/Public/Component/HodgeCombatComponentBase.h)、[Component/HodgeWingComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeWingComponent.h)
+项目内直接 include（不是运行调用关系）：[AbilitySystem/Abilities/HodgeAbilityTask_WaitHitResults.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeAbilityTask_WaitHitResults.h)、[AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)、[Component/HodgeCombatComponentBase.h](../../../Source/Hodgepodge/Public/Component/HodgeCombatComponentBase.h)、[Component/HodgeHitDetectionComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeHitDetectionComponent.h)
 
 定义候选（多行签名仅展示首行）：
 
 - L15: `void FHodgeHitResultsTickFunction::ExecuteTick(float DeltaTime, ELevelTick TickType,`
 - L23: `FString FHodgeHitResultsTickFunction::DiagnosticMessage()`
 - L29: `UHodgeAbilityTask_WaitHitResults* UHodgeAbilityTask_WaitHitResults::WaitHitResults(`
-- L42: `bool UHodgeAbilityTask_WaitHitResults::IsRunningForExecution(const FGuid& InExecutionId) const`
-- L55: `void UHodgeAbilityTask_WaitHitResults::Activate()`
-- L75: `uint64 UHodgeAbilityTask_WaitHitResults::CreateWindow(int32 OccurrenceId, const FHodgeHitDetectionRequest& Request)`
-- L98: `bool UHodgeAbilityTask_WaitHitResults::IsBatchCurrent(const FHodgeHitDetectionBatch& Batch) const`
-- L106: `bool UHodgeAbilityTask_WaitHitResults::PrepareSourcePose(uint64 Handle)`
-- L119: `void UHodgeAbilityTask_WaitHitResults::SampleWindow(int32 OccurrenceId)`
-- L150: `void UHodgeAbilityTask_WaitHitResults::CloseWindow(int32 OccurrenceId, bool bSampleFinal)`
-- L163: `void UHodgeAbilityTask_WaitHitResults::TickDetection()`
-- L190: `void UHodgeAbilityTask_WaitHitResults::UpdateTickState()`
-- L198: `void UHodgeAbilityTask_WaitHitResults::Pause()`
-- L205: `void UHodgeAbilityTask_WaitHitResults::Resume()`
-- L224: `void UHodgeAbilityTask_WaitHitResults::ReleaseSessions()`
-- L238: `void UHodgeAbilityTask_WaitHitResults::OnDestroy(bool bInOwnerFinished)`
-- L245: `void UHodgeAbilityTask_WaitHitResults::BeginDestroy()`
+- L43: `bool UHodgeAbilityTask_WaitHitResults::IsRunningForExecution(const FGuid& InExecutionId) const`
+- L56: `void UHodgeAbilityTask_WaitHitResults::Activate()`
+- L73: `uint64 UHodgeAbilityTask_WaitHitResults::CreateWindow(int32 OccurrenceId, const FHodgeHitDetectionRequest& Request)`
+- L88: `bool UHodgeAbilityTask_WaitHitResults::IsBatchCurrent(const FHodgeHitDetectionBatch& Batch) const`
+- L96: `bool UHodgeAbilityTask_WaitHitResults::PrepareSourcePose(uint64 Handle)`
+- L102: `void UHodgeAbilityTask_WaitHitResults::SampleWindow(int32 OccurrenceId)`
+- L133: `void UHodgeAbilityTask_WaitHitResults::CloseWindow(int32 OccurrenceId, bool bSampleFinal)`
+- L146: `void UHodgeAbilityTask_WaitHitResults::TickDetection()`
+- L173: `void UHodgeAbilityTask_WaitHitResults::UpdateTickState()`
+- L181: `void UHodgeAbilityTask_WaitHitResults::Pause()`
+- L188: `void UHodgeAbilityTask_WaitHitResults::Resume()`
+- L207: `void UHodgeAbilityTask_WaitHitResults::ReleaseSessions()`
+- L221: `void UHodgeAbilityTask_WaitHitResults::OnDestroy(bool bInOwnerFinished)`
+- L228: `void UHodgeAbilityTask_WaitHitResults::BeginDestroy()`
 
 ## HodgeAbilityTask_WaitMoveCancel.cpp
 
@@ -150,41 +150,43 @@
 
 源码：[Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.cpp)
 
-项目内直接 include（不是运行调用关系）：[AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h)、[Component/HodgeLockOnComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeLockOnComponent.h)、[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)、[Component/HodgeCombatComponentBase.h](../../../Source/Hodgepodge/Public/Component/HodgeCombatComponentBase.h)、[Data/HodgeAbilityDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilityDefinition.h)、[Component/HodgeHeroComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeHeroComponent.h)、[Component/HodgeWingComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeWingComponent.h)、[Animation/HodgeCombatAnimNotifies.h](../../../Source/Hodgepodge/Public/Animation/HodgeCombatAnimNotifies.h)、[Equipment/HodgeWeaponInstance.h](../../../Source/Hodgepodge/Public/Equipment/HodgeWeaponInstance.h)、[Component/HodgeHeroComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeHeroComponent.h)、[Component/HodgeCharacterRotationComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeCharacterRotationComponent.h)、[Component/HodgeAttackMotionWarpingComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeAttackMotionWarpingComponent.h)
+项目内直接 include（不是运行调用关系）：[AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h)、[Combat/HodgeAttackRule.h](../../../Source/Hodgepodge/Public/Combat/HodgeAttackRule.h)、[Component/HodgeLockOnComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeLockOnComponent.h)、[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)、[Component/HodgeCombatComponentBase.h](../../../Source/Hodgepodge/Public/Component/HodgeCombatComponentBase.h)、[Data/HodgeAbilityDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilityDefinition.h)、[Component/HodgeHeroComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeHeroComponent.h)、[Component/HodgeWingComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeWingComponent.h)、[Animation/HodgeCombatAnimNotifies.h](../../../Source/Hodgepodge/Public/Animation/HodgeCombatAnimNotifies.h)、[Equipment/HodgeWeaponInstance.h](../../../Source/Hodgepodge/Public/Equipment/HodgeWeaponInstance.h)、[Component/HodgeHeroComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeHeroComponent.h)、[Component/HodgeCharacterRotationComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeCharacterRotationComponent.h)、[Component/HodgeAttackMotionWarpingComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeAttackMotionWarpingComponent.h)
 
 定义候选（多行签名仅展示首行）：
 
-- L28: `UHodgeGameplayAbility_Definition::UHodgeGameplayAbility_Definition(const FObjectInitializer& Initializer)`
-- L39: `const UHodgeAbilityDefinition* UHodgeGameplayAbility_Definition::GetDefinition() const`
-- L47: `bool UHodgeGameplayAbility_Definition::IsComboCoordinated() const`
-- L55: `void UHodgeGameplayAbility_Definition::ActivateConfirmedDefinition(FGameplayAbilitySpecHandle Handle,`
-- L72: `bool UHodgeGameplayAbility_Definition::CanActivateAbility(FGameplayAbilitySpecHandle Handle,`
-- L94: `void UHodgeGameplayAbility_Definition::ActivateAbility(FGameplayAbilitySpecHandle Handle,`
-- L142: `void UHodgeGameplayAbility_Definition::StartExecutionMontage()`
-- L173: `bool UHodgeGameplayAbility_Definition::BuildAttackFacingData(const FGameplayAbilityActorInfo* Info, FHodgeAttackFacingTargetData& Out)`
-- L202: `void UHodgeGameplayAbility_Definition::InitializeAttackFacing(const FGameplayEventData* Payload)`
-- L227: `void UHodgeGameplayAbility_Definition::OnAttackFacingData(const FGameplayAbilityTargetDataHandle& Handle, FGameplayTag, FGuid ForExecution)`
-- L240: `bool UHodgeGameplayAbility_Definition::ApplyAttackFacing(const FHodgeAttackFacingTargetData& Target)`
-- L262: `void UHodgeGameplayAbility_Definition::OnAttackFacingTimeout(FGuid ForExecution)`
-- L264: `void UHodgeGameplayAbility_Definition::UpdateAttackFacingLifecycle()`
-- L276: `void UHodgeGameplayAbility_Definition::ReleaseAttackFacing()`
-- L288: `void UHodgeGameplayAbility_Definition::FinishExecution(bool bCancelled, bool bReplicate)`
-- L298: `bool UHodgeGameplayAbility_Definition::BeginPredictedMoveCancel()`
-- L319: `void UHodgeGameplayAbility_Definition::ResolvePredictedMoveCancel(bool bEnd, float ServerPosition, float ServerTime, float ServerPlayRate)`
-- L358: `void UHodgeGameplayAbility_Definition::EndAbility(FGameplayAbilitySpecHandle Handle,`
-- L438: `FGameplayTagContainer UHodgeGameplayAbility_Definition::GetExecutionWindows() const`
-- L445: `bool UHodgeGameplayAbility_Definition::GetCinematicSource(UAnimMontage*& OutMontage, int32& OutInstanceId, float& OutPosition) const`
-- L459: `bool UHodgeGameplayAbility_Definition::AcceptsNotify(const FBranchingPointNotifyPayload& Payload) const`
-- L468: `int32 UHodgeGameplayAbility_Definition::AllocateNotifyOccurrence()`
-- L474: `int32 UHodgeGameplayAbility_Definition::BeginNotifyResource(const FBranchingPointNotifyPayload& Payload)`
-- L484: `void UHodgeGameplayAbility_Definition::EndNotifyResource(const FBranchingPointNotifyPayload& Payload)`
-- L504: `void UHodgeGameplayAbility_Definition::AcquireNotifyTag(int32 OccurrenceId, FGameplayTag Tag)`
-- L521: `void UHodgeGameplayAbility_Definition::AcquireNotifyWeapon(int32 OccurrenceId, EHodgeWeaponHandEndBehavior EndBehavior)`
-- L537: `void UHodgeGameplayAbility_Definition::NotifyWindowsChanged()`
-- L544: `void UHodgeGameplayAbility_Definition::SendExecutionEvent(FGameplayTag Tag)`
-- L560: `void UHodgeGameplayAbility_Definition::OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted, FGuid Execution, int32 InstanceId)`
-- L570: `void UHodgeGameplayAbility_Definition::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted, FGuid Execution, int32 InstanceId)`
-- L577: `void UHodgeGameplayAbility_Definition::ValidateExecutionConfiguration(const UHodgeAbilityDefinition& Definition, TArray<FText>& Errors) const`
+- L30: `UHodgeGameplayAbility_Definition::UHodgeGameplayAbility_Definition(const FObjectInitializer& Initializer)`
+- L41: `const UHodgeAbilityDefinition* UHodgeGameplayAbility_Definition::GetDefinition() const`
+- L49: `bool UHodgeGameplayAbility_Definition::IsComboCoordinated() const`
+- L57: `void UHodgeGameplayAbility_Definition::ActivateConfirmedDefinition(FGameplayAbilitySpecHandle Handle,`
+- L74: `bool UHodgeGameplayAbility_Definition::CanActivateAbility(FGameplayAbilitySpecHandle Handle,`
+- L96: `void UHodgeGameplayAbility_Definition::ActivateAbility(FGameplayAbilitySpecHandle Handle,`
+- L144: `void UHodgeGameplayAbility_Definition::StartExecutionMontage()`
+- L177: `bool UHodgeGameplayAbility_Definition::BuildAttackFacingData(const FGameplayAbilityActorInfo* Info, FHodgeAttackFacingTargetData& Out)`
+- L206: `void UHodgeGameplayAbility_Definition::InitializeAttackFacing(const FGameplayEventData* Payload)`
+- L231: `void UHodgeGameplayAbility_Definition::OnAttackFacingData(const FGameplayAbilityTargetDataHandle& Handle, FGameplayTag, FGuid ForExecution)`
+- L244: `bool UHodgeGameplayAbility_Definition::ApplyAttackFacing(const FHodgeAttackFacingTargetData& Target)`
+- L266: `void UHodgeGameplayAbility_Definition::OnAttackFacingTimeout(FGuid ForExecution)`
+- L268: `void UHodgeGameplayAbility_Definition::UpdateAttackFacingLifecycle()`
+- L280: `void UHodgeGameplayAbility_Definition::ReleaseAttackFacing()`
+- L292: `void UHodgeGameplayAbility_Definition::FinishExecution(bool bCancelled, bool bReplicate)`
+- L302: `bool UHodgeGameplayAbility_Definition::BeginPredictedMoveCancel()`
+- L323: `void UHodgeGameplayAbility_Definition::ResolvePredictedMoveCancel(bool bEnd, float ServerPosition, float ServerTime, float ServerPlayRate)`
+- L362: `void UHodgeGameplayAbility_Definition::EndAbility(FGameplayAbilitySpecHandle Handle,`
+- L443: `FGameplayTagContainer UHodgeGameplayAbility_Definition::GetExecutionWindows() const`
+- L450: `bool UHodgeGameplayAbility_Definition::GetCinematicSource(UAnimMontage*& OutMontage, int32& OutInstanceId, float& OutPosition) const`
+- L464: `bool UHodgeGameplayAbility_Definition::AcceptsNotify(const FBranchingPointNotifyPayload& Payload) const`
+- L473: `int32 UHodgeGameplayAbility_Definition::AllocateNotifyOccurrence()`
+- L479: `int32 UHodgeGameplayAbility_Definition::BeginNotifyResource(const FBranchingPointNotifyPayload& Payload)`
+- L489: `void UHodgeGameplayAbility_Definition::EndNotifyResource(const FBranchingPointNotifyPayload& Payload)`
+- L509: `void UHodgeGameplayAbility_Definition::AcquireNotifyTag(int32 OccurrenceId, FGameplayTag Tag)`
+- L526: `void UHodgeGameplayAbility_Definition::AcquireNotifyWeapon(int32 OccurrenceId, EHodgeWeaponHandEndBehavior EndBehavior)`
+- L542: `void UHodgeGameplayAbility_Definition::NotifyWindowsChanged()`
+- L549: `void UHodgeGameplayAbility_Definition::SendExecutionEvent(FGameplayTag Tag)`
+- L567: `void UHodgeGameplayAbility_Definition::OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted, FGuid Execution, int32 InstanceId)`
+- L577: `void UHodgeGameplayAbility_Definition::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted, FGuid Execution, int32 InstanceId)`
+- L584: `void UHodgeGameplayAbility_Definition::ValidateExecutionConfiguration(const UHodgeAbilityDefinition& Definition, TArray<FText>& Errors) const`
+- L593: `void UHodgeGameplayAbility_Definition::PublishAttackSettlement(const FHodgeAttackSettlement& Settlement)`
+- L605: `void UHodgeGameplayAbility_Definition::DispatchAttackRuleEvent(FGameplayTag Tag)`
 
 ## HodgeGameplayAbility_EnemyDeath.cpp
 
@@ -290,34 +292,31 @@
 
 源码：[Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility_Melee.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility_Melee.cpp)
 
-项目内直接 include（不是运行调用关系）：[AbilitySystem/Abilities/HodgeGameplayAbility_Melee.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Melee.h)、[AbilitySystem/Abilities/HodgeGameplayAbility_HavocRules.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_HavocRules.h)、[AbilitySystem/AttributeSet/HodgeHavocSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeHavocSet.h)、[AbilitySystem/AttributeSet/HodgeResonanceSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeResonanceSet.h)、[AbilitySystem/AttributeSet/HodgeHealthSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeHealthSet.h)、[Component/HodgeDefenseComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeDefenseComponent.h)、[AbilitySystem/Abilities/HodgeAbilityTask_WaitHitResults.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeAbilityTask_WaitHitResults.h)、[AbilitySystem/AttributeSet/HodgeCombatSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeCombatSet.h)、[AbilitySystem/Executions/HodgeDamageExecution.h](../../../Source/Hodgepodge/Public/AbilitySystem/Executions/HodgeDamageExecution.h)、[AbilitySystem/HodgeGameplayEffectContext.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayEffectContext.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)、[Combat/HodgeDamageRules.h](../../../Source/Hodgepodge/Public/Combat/HodgeDamageRules.h)、[Component/HodgeCombatComponentBase.h](../../../Source/Hodgepodge/Public/Component/HodgeCombatComponentBase.h)、[Component/HodgeHitReactionComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeHitReactionComponent.h)、[Data/HodgeAbilityDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilityDefinition.h)、[Equipment/HodgeWeaponInstance.h](../../../Source/Hodgepodge/Public/Equipment/HodgeWeaponInstance.h)
+项目内直接 include（不是运行调用关系）：[AbilitySystem/Abilities/HodgeGameplayAbility_Melee.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Melee.h)、[AbilitySystem/AttributeSet/HodgeHealthSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeHealthSet.h)、[Component/HodgeDefenseComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeDefenseComponent.h)、[AbilitySystem/Abilities/HodgeAbilityTask_WaitHitResults.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeAbilityTask_WaitHitResults.h)、[AbilitySystem/AttributeSet/HodgeCombatSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeCombatSet.h)、[AbilitySystem/Executions/HodgeDamageExecution.h](../../../Source/Hodgepodge/Public/AbilitySystem/Executions/HodgeDamageExecution.h)、[AbilitySystem/HodgeGameplayEffectContext.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayEffectContext.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)、[Combat/HodgeDamageRules.h](../../../Source/Hodgepodge/Public/Combat/HodgeDamageRules.h)、[Component/HodgeCombatComponentBase.h](../../../Source/Hodgepodge/Public/Component/HodgeCombatComponentBase.h)、[Component/HodgeHitReactionComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeHitReactionComponent.h)、[Data/HodgeAbilityDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilityDefinition.h)、[Equipment/HodgeWeaponInstance.h](../../../Source/Hodgepodge/Public/Equipment/HodgeWeaponInstance.h)
 
 定义候选（多行签名仅展示首行）：
 
-- L31: `UHodgeGameplayAbility_Melee::UHodgeGameplayAbility_Melee()`
-- L37: `bool FHodgeMeleeHitHistory::CanHit(UAbilitySystemComponent* Target, double Time, float RepeatInterval) const`
-- L46: `void FHodgeMeleeHitHistory::RecordHit(UAbilitySystemComponent* Target, double Time)`
-- L52: `void UHodgeGameplayAbility_Melee::ValidateExecutionConfiguration(`
-- L98: `bool UHodgeGameplayAbility_Melee::PrepareHitExecutionContext_Implementation() { return true; }`
-- L101: `bool UHodgeGameplayAbility_Melee::SetHitAnchor(FName Key, const FTransform& WorldTransform)`
-- L116: `bool UHodgeGameplayAbility_Melee::SetHitTarget(FName Key, AActor* Target)`
-- L127: `void UHodgeGameplayAbility_Melee::ResetHitGeometryHistory()`
-- L138: `void UHodgeGameplayAbility_Melee::OnExecutionReady()`
-- L169: `void UHodgeGameplayAbility_Melee::OnExecutionEnding(const FGuid& EndingExecutionId)`
-- L188: `bool UHodgeGameplayAbility_Melee::BeginNotifyHit(int32 OccurrenceId, const FHodgeAnimHitConfig& Config, USkeletalMeshComponent* Mesh, bool bSingle)`
-- L257: `bool UHodgeGameplayAbility_Melee::OpenHit(int32 OccurrenceId, const FHodgeHitEffectConfig& Binding, const FHodgeHitDetectionRequest& Request)`
-- L281: `void UHodgeGameplayAbility_Melee::OnNotifyResourceEnded(int32 OccurrenceId)`
-- L287: `bool UHodgeGameplayAbility_Melee::IsMeleeBatchCurrent(const FHodgeHitDetectionBatch& Batch) const`
-- L295: `void UHodgeGameplayAbility_Melee::OnHitResults(const FHodgeHitDetectionBatch& Batch)`
-- L306: `bool UHodgeGameplayAbility_Melee::CanApplyMeleeHit_Implementation(AActor* Target, const FHitResult& Hit,`
-- L313: `FGameplayEffectContextHandle UHodgeGameplayAbility_Melee::MakeMeleeHitContext(`
-- L335: `FGameplayEffectSpecHandle UHodgeGameplayAbility_Melee::BuildMeleeHitSpec(const FHodgeHitDetectionBatch& Batch,`
-- L359: `void UHodgeGameplayAbility_Melee::ProcessMeleeHitResults_Implementation(const FHodgeHitDetectionBatch& Batch)`
-- L394: `void UHodgeGameplayAbility_Melee::SubmitMeleeHitEffects(const FHodgeHitDetectionBatch& Batch,`
-- L448: `bool FHodgeResonancePhaseLedger::TryReserve(FName Group, FName Phase, float AcceptedDamage)`
-- L456: `void UHodgeGameplayAbility_Melee::TryGrantResonanceEnergy(const FHodgeHitDetectionBatch& Batch,`
-- L474: `void UHodgeGameplayAbility_Melee::ApplyMeleeHitEffects_Implementation(const FHodgeHitDetectionBatch& Batch,`
-- L492: `void UHodgeGameplayAbility_Melee::OnExecutionEvent(FGameplayTag Tag)`
+- L28: `UHodgeGameplayAbility_Melee::UHodgeGameplayAbility_Melee()`
+- L34: `bool FHodgeMeleeHitHistory::CanHit(UAbilitySystemComponent* Target, double Time, float RepeatInterval) const`
+- L43: `void FHodgeMeleeHitHistory::RecordHit(UAbilitySystemComponent* Target, double Time)`
+- L49: `void UHodgeGameplayAbility_Melee::ValidateExecutionConfiguration(`
+- L95: `bool UHodgeGameplayAbility_Melee::PrepareHitExecutionContext_Implementation() { return true; }`
+- L98: `bool UHodgeGameplayAbility_Melee::SetHitAnchor(FName Key, const FTransform& WorldTransform)`
+- L113: `bool UHodgeGameplayAbility_Melee::SetHitTarget(FName Key, AActor* Target)`
+- L124: `void UHodgeGameplayAbility_Melee::ResetHitGeometryHistory()`
+- L135: `void UHodgeGameplayAbility_Melee::OnExecutionReady()`
+- L164: `void UHodgeGameplayAbility_Melee::OnExecutionEnding(const FGuid& EndingExecutionId)`
+- L182: `bool UHodgeGameplayAbility_Melee::BeginNotifyHit(int32 OccurrenceId, const FHodgeAnimHitConfig& Config, USkeletalMeshComponent* Mesh, bool bSingle)`
+- L251: `bool UHodgeGameplayAbility_Melee::OpenHit(int32 OccurrenceId, const FHodgeHitEffectConfig& Binding, const FHodgeHitDetectionRequest& Request)`
+- L275: `void UHodgeGameplayAbility_Melee::OnNotifyResourceEnded(int32 OccurrenceId)`
+- L281: `bool UHodgeGameplayAbility_Melee::IsMeleeBatchCurrent(const FHodgeHitDetectionBatch& Batch) const`
+- L289: `void UHodgeGameplayAbility_Melee::OnHitResults(const FHodgeHitDetectionBatch& Batch)`
+- L300: `bool UHodgeGameplayAbility_Melee::CanApplyMeleeHit_Implementation(AActor* Target, const FHitResult& Hit,`
+- L307: `FGameplayEffectContextHandle UHodgeGameplayAbility_Melee::MakeMeleeHitContext(`
+- L329: `FGameplayEffectSpecHandle UHodgeGameplayAbility_Melee::BuildMeleeHitSpec(const FHodgeHitDetectionBatch& Batch,`
+- L353: `void UHodgeGameplayAbility_Melee::ProcessMeleeHitResults_Implementation(const FHodgeHitDetectionBatch& Batch)`
+- L388: `void UHodgeGameplayAbility_Melee::SubmitMeleeHitEffects(const FHodgeHitDetectionBatch& Batch,`
+- L441: `void UHodgeGameplayAbility_Melee::ApplyMeleeHitEffects_Implementation(const FHodgeHitDetectionBatch& Batch,`
 
 ## HodgeGameplayAbility_MovementAction.cpp
 
@@ -900,58 +899,60 @@ Tag 输入、激活组、关系映射、Montage 复制和全局注册；失败�
    9: #include "HodgeAbilityTask_WaitHitResults.generated.h"
   11: class UHodgeGameplayAbility_Definition;
   12: class UHodgeCombatComponentBase;
-  13: class UHodgeAbilityTask_WaitHitResults;
-  16: struct FHodgeHitResultsTickFunction final : FTickFunction
-  17: {
-  19: 	TWeakObjectPtr<UHodgeAbilityTask_WaitHitResults> Target;
-  26: 	virtual void ExecuteTick(float DeltaTime, ELevelTick TickType, ENamedThreads::Type CurrentThread,
-  27: 		const FGraphEventRef& CompletionEvent) override;
-  31: 	virtual FString DiagnosticMessage() override;
-  32: };
-  35: UCLASS()
-  36: class HODGEPODGE_API UHodgeAbilityTask_WaitHitResults : public UAbilityTask
-  37: {
-  38: 	GENERATED_BODY()
-  39: public:
-  46: 	static UHodgeAbilityTask_WaitHitResults* WaitHitResults(UHodgeGameplayAbility_Definition* OwningAbility,
-  47: 		UHodgeCombatComponentBase* Combat, const FGuid& ExecutionId);
-  49: 	DECLARE_MULTICAST_DELEGATE_OneParam(FHitResults, const FHodgeHitDetectionBatch&);
-  51: 	FHitResults OnHitResults;
-  59: 	uint64 CreateWindow(int32 OccurrenceId, const FHodgeHitDetectionRequest& Request);
-  63: 	void SampleWindow(int32 OccurrenceId);
-  68: 	void CloseWindow(int32 OccurrenceId, bool bSampleFinal);
-  73: 	bool IsRunningForExecution(const FGuid& ExecutionId) const;
-  78: 	bool IsBatchCurrent(const FHodgeHitDetectionBatch& Batch) const;
-  80: 	virtual void Pause() override;
-  82: 	virtual void Resume() override;
-  84: 	virtual void BeginDestroy() override;
-  86: protected:
-  88: 	virtual void Activate() override;
-  92: 	virtual void OnDestroy(bool bInOwnerFinished) override;
-  94: private:
-  95: 	friend struct FHodgeHitResultsTickFunction;
-  96: 	friend struct FHodgeMeleeTestAccess;
-  98: 	struct FWindow
-  99: 	{
- 101: 		uint64 Handle = 0;
- 103: 		bool bClosing = false;
- 105: 		bool bSampled = false;
- 107: 		bool bOnce = false;
- 108: 	};
- 110: 	void TickDetection();
- 112: 	bool PrepareSourcePose(uint64 Handle);
- 114: 	void ReleaseSessions();
- 116: 	void UpdateTickState();
- 119: 	FGuid ExecutionId;
- 121: 	TMap<int32, FWindow> Windows;
- 123: 	FHodgeHitResultsTickFunction DetectionTick;
- 125: 	UPROPERTY() TWeakObjectPtr<UHodgeGameplayAbility_Definition> ExecutionAbility;
- 127: 	UPROPERTY() TWeakObjectPtr<UHodgeCombatComponentBase> CombatComponent;
- 129: 	UPROPERTY() TWeakObjectPtr<AActor> Avatar;
- 131: 	bool bStopped = false;
- 133: 	bool bSampling = false;
- 135: 	bool bTickingDetection = false;
- 136: };
+  13: class UHodgeHitDetectionComponent;
+  14: class UHodgeAbilityTask_WaitHitResults;
+  17: struct FHodgeHitResultsTickFunction final : FTickFunction
+  18: {
+  20: 	TWeakObjectPtr<UHodgeAbilityTask_WaitHitResults> Target;
+  27: 	virtual void ExecuteTick(float DeltaTime, ELevelTick TickType, ENamedThreads::Type CurrentThread,
+  28: 		const FGraphEventRef& CompletionEvent) override;
+  32: 	virtual FString DiagnosticMessage() override;
+  33: };
+  36: UCLASS()
+  37: class HODGEPODGE_API UHodgeAbilityTask_WaitHitResults : public UAbilityTask
+  38: {
+  39: 	GENERATED_BODY()
+  40: public:
+  47: 	static UHodgeAbilityTask_WaitHitResults* WaitHitResults(UHodgeGameplayAbility_Definition* OwningAbility,
+  48: 		UHodgeCombatComponentBase* Combat, const FGuid& ExecutionId);
+  50: 	DECLARE_MULTICAST_DELEGATE_OneParam(FHitResults, const FHodgeHitDetectionBatch&);
+  52: 	FHitResults OnHitResults;
+  60: 	uint64 CreateWindow(int32 OccurrenceId, const FHodgeHitDetectionRequest& Request);
+  64: 	void SampleWindow(int32 OccurrenceId);
+  69: 	void CloseWindow(int32 OccurrenceId, bool bSampleFinal);
+  74: 	bool IsRunningForExecution(const FGuid& ExecutionId) const;
+  79: 	bool IsBatchCurrent(const FHodgeHitDetectionBatch& Batch) const;
+  81: 	virtual void Pause() override;
+  83: 	virtual void Resume() override;
+  85: 	virtual void BeginDestroy() override;
+  87: protected:
+  89: 	virtual void Activate() override;
+  93: 	virtual void OnDestroy(bool bInOwnerFinished) override;
+  95: private:
+  97: 	UPROPERTY() TWeakObjectPtr<UHodgeHitDetectionComponent> DetectionComponent;
+  98: 	friend struct FHodgeHitResultsTickFunction;
+  99: 	friend struct FHodgeMeleeTestAccess;
+ 101: 	struct FWindow
+ 102: 	{
+ 104: 		uint64 Handle = 0;
+ 106: 		bool bClosing = false;
+ 108: 		bool bSampled = false;
+ 110: 		bool bOnce = false;
+ 111: 	};
+ 113: 	void TickDetection();
+ 115: 	bool PrepareSourcePose(uint64 Handle);
+ 117: 	void ReleaseSessions();
+ 119: 	void UpdateTickState();
+ 122: 	FGuid ExecutionId;
+ 124: 	TMap<int32, FWindow> Windows;
+ 126: 	FHodgeHitResultsTickFunction DetectionTick;
+ 128: 	UPROPERTY() TWeakObjectPtr<UHodgeGameplayAbility_Definition> ExecutionAbility;
+ 130: 	UPROPERTY() TWeakObjectPtr<UHodgeCombatComponentBase> CombatComponent;
+ 132: 	UPROPERTY() TWeakObjectPtr<AActor> Avatar;
+ 134: 	bool bStopped = false;
+ 136: 	bool bSampling = false;
+ 138: 	bool bTickingDetection = false;
+ 139: };
 ```
 
 ## HodgeAbilityTask_WaitMoveCancel.h
@@ -1263,95 +1264,103 @@ Tag 输入、激活组、关系映射、Montage 复制和全局注册；失败�
   13: class UHodgeAbilityDefinition;
   14: class UHodgeWeaponInstance;
   15: class UHodgeCombatComponentBase;
-  16: class UAnimMontage;
-  20: UCLASS(Blueprintable)
-  21: class HODGEPODGE_API UHodgeGameplayAbility_Definition : public UHodgeGameplayAbility
-  22: {
-  23: 	GENERATED_BODY()
-  25: public:
-  27: 	static bool BuildAttackFacingData(const FGameplayAbilityActorInfo* Info, FHodgeAttackFacingTargetData& OutData);
-  29: 	void UpdateAttackFacingLifecycle();
-  30: 	bool IsFacingExecutionSuspended() const { return bPredictedMoveCancel; }
-  31: 	bool IsFacingAuthorityRetired() const { return bAttackFacingRetired; }
-  32: 	bool IsAwaitingFacingData() const { return bFacingDataWaiting && !bEnding; }
-  33: 	UFUNCTION(BlueprintPure, Category="Hodge|Facing") float GetAttackFacingYaw() const { return FacingTargetYaw; }
-  35: 	UFUNCTION(BlueprintPure, Category="Hodge|Targeting") AActor* GetExecutionLockTarget() const { return ExecutionLockTarget.Get(); }
-  39: 	UHodgeGameplayAbility_Definition(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-  43: 	UFUNCTION(BlueprintPure, Category="Hodge|Ability")
-  44: 	const UHodgeAbilityDefinition* GetDefinition() const;
-  48: 	FGameplayTagContainer GetExecutionWindows() const;
-  53: 	void FinishExecution(bool bCancelled, bool bReplicate);
-  57: 	bool BeginPredictedMoveCancel();
-  64: 	void ResolvePredictedMoveCancel(bool bEnd, float ServerPosition, float ServerTime, float ServerPlayRate);
-  69: 	bool AcceptsNotify(const FBranchingPointNotifyPayload& Payload) const;
-  73: 	int32 AllocateNotifyOccurrence();
-  78: 	int32 BeginNotifyResource(const FBranchingPointNotifyPayload& Payload);
-  82: 	void EndNotifyResource(const FBranchingPointNotifyPayload& Payload);
-  87: 	void AcquireNotifyTag(int32 OccurrenceId, FGameplayTag Tag);
-  91: 	void AcquireNotifyWeapon(int32 OccurrenceId, EHodgeWeaponHandEndBehavior EndBehavior = EHodgeWeaponHandEndBehavior::ReturnToBack);
-  95: 	void SendExecutionEvent(FGameplayTag Tag);
-  99: 	FGuid GetExecutionId() const { return ExecutionId; }
- 101: 	bool GetCinematicSource(UAnimMontage*& OutMontage, int32& OutInstanceId, float& OutPosition) const;
- 105: 	bool IsComboCoordinated() const;
- 109: 	bool IsExecutionEnding() const { return bEnding; }
- 114: 	virtual void ValidateExecutionConfiguration(const UHodgeAbilityDefinition& Definition, TArray<FText>& Errors) const;
- 121: 	void ActivateConfirmedDefinition(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* Info,
- 122: 	                                 const FPredictionKey& Key, const FGameplayEventData& Payload);
- 131: 	virtual bool CanActivateAbility(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
- 132: 	                                const FGameplayTagContainer* SourceTags = nullptr,
- 133: 	                                const FGameplayTagContainer* TargetTags = nullptr,
- 134: 	                                FGameplayTagContainer* OptionalRelevantTags = nullptr) const override;
- 136: protected:
- 139: 	virtual void OnExecutionReady() {}
- 141: 	virtual void OnExecutionEvent(FGameplayTag Tag) {}
- 145: 	virtual void OnExecutionEnding(const FGuid& EndingExecutionId) {}
- 149: 	virtual void OnNotifyResourceEnded(int32 OccurrenceId) {}
- 156: 	virtual void ActivateAbility(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
- 157: 	                             FGameplayAbilityActivationInfo ActivationInfo,
- 158: 	                             const FGameplayEventData* TriggerEventData) override;
- 166: 	virtual void EndAbility(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
- 167: 	                        FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility,
- 168: 	                        bool bWasCancelled) override;
- 170: private:
- 171: 	friend struct FHodgeAttackWarpTestAccess;
- 172: 	void StartExecutionMontage();
- 173: 	void InitializeAttackFacing(const FGameplayEventData* Payload);
- 174: 	void OnAttackFacingData(const FGameplayAbilityTargetDataHandle& Data, FGameplayTag ApplicationTag, FGuid ForExecution);
- 175: 	bool ApplyAttackFacing(const FHodgeAttackFacingTargetData& Data);
- 176: 	void OnAttackFacingTimeout(FGuid ForExecution);
- 177: 	void ReleaseAttackFacing();
- 178: 	FDelegateHandle FacingDataDelegate;
- 179: 	FTimerHandle FacingDataTimer;
- 180: 	FHodgeFacingRequestHandle AttackFacingHandle;
- 181: 	float FacingTargetYaw = 0.f;
- 182: 	bool bFacingDataWaiting = false;
- 183: 	bool bFacingDataProcessed = false;
- 184: 	bool bActivationReturned = false;
- 185: 	bool bAttackFacingRetired = false;
- 186: 	friend struct FHodgeCombatActionTestAccess;
- 189: 	UPROPERTY(Transient) TWeakObjectPtr<AActor> ExecutionLockTarget;
- 190: 	FGuid ExecutionId;
- 198: 	void OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted, FGuid Execution, int32 InstanceId);
- 205: 	void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted, FGuid Execution, int32 InstanceId);
- 207: 	void NotifyWindowsChanged();
- 209: 	struct FNotifyResource
- 210: 	{
- 212: 		int32 OccurrenceId = INDEX_NONE;
- 214: 		FGameplayTag Tag;
- 216: 		FGuid WeaponHandle;
- 217: 	};
- 219: 	TMap<const UObject*, FNotifyResource> NotifyResources;
- 221: 	TMap<FGameplayTag, int32> StateCounts;
- 223: 	int32 NextOccurrence = 0;
- 225: 	int32 MontageInstanceId = INDEX_NONE;
- 227: 	FGuid PoseLease;
- 229: 	FGameplayTag ExecutionBodyTag;
- 231: 	UPROPERTY(Transient) TWeakObjectPtr<UHodgeCombatComponentBase> ExecutionCombat;
- 233: 	UPROPERTY(Transient) TWeakObjectPtr<UHodgeWeaponInstance> PresentationWeapon;
- 235: 	bool bEnding = false;
- 237: 	bool bLifecycleEventSent = false;
- 239: 	bool bPredictedMoveCancel = false;
- 240: };
+  16: class UHodgeAttackRule;
+  17: struct FHodgeAttackSettlement;
+  18: class UAnimMontage;
+  22: UCLASS(Blueprintable)
+  23: class HODGEPODGE_API UHodgeGameplayAbility_Definition : public UHodgeGameplayAbility
+  24: {
+  25: 	GENERATED_BODY()
+  27: public:
+  29: 	static bool BuildAttackFacingData(const FGameplayAbilityActorInfo* Info, FHodgeAttackFacingTargetData& OutData);
+  31: 	void UpdateAttackFacingLifecycle();
+  32: 	bool IsFacingExecutionSuspended() const { return bPredictedMoveCancel; }
+  33: 	bool IsFacingAuthorityRetired() const { return bAttackFacingRetired; }
+  34: 	bool IsAwaitingFacingData() const { return bFacingDataWaiting && !bEnding; }
+  35: 	UFUNCTION(BlueprintPure, Category="Hodge|Facing") float GetAttackFacingYaw() const { return FacingTargetYaw; }
+  37: 	UFUNCTION(BlueprintPure, Category="Hodge|Targeting") AActor* GetExecutionLockTarget() const { return ExecutionLockTarget.Get(); }
+  41: 	UHodgeGameplayAbility_Definition(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+  45: 	UFUNCTION(BlueprintPure, Category="Hodge|Ability")
+  46: 	const UHodgeAbilityDefinition* GetDefinition() const;
+  50: 	FGameplayTagContainer GetExecutionWindows() const;
+  55: 	void FinishExecution(bool bCancelled, bool bReplicate);
+  59: 	bool BeginPredictedMoveCancel();
+  66: 	void ResolvePredictedMoveCancel(bool bEnd, float ServerPosition, float ServerTime, float ServerPlayRate);
+  71: 	bool AcceptsNotify(const FBranchingPointNotifyPayload& Payload) const;
+  75: 	int32 AllocateNotifyOccurrence();
+  80: 	int32 BeginNotifyResource(const FBranchingPointNotifyPayload& Payload);
+  84: 	void EndNotifyResource(const FBranchingPointNotifyPayload& Payload);
+  89: 	void AcquireNotifyTag(int32 OccurrenceId, FGameplayTag Tag);
+  93: 	void AcquireNotifyWeapon(int32 OccurrenceId, EHodgeWeaponHandEndBehavior EndBehavior = EHodgeWeaponHandEndBehavior::ReturnToBack);
+  97: 	void SendExecutionEvent(FGameplayTag Tag);
+ 101: 	FGuid GetExecutionId() const { return ExecutionId; }
+ 103: 	bool GetCinematicSource(UAnimMontage*& OutMontage, int32& OutInstanceId, float& OutPosition) const;
+ 107: 	bool IsComboCoordinated() const;
+ 111: 	bool IsExecutionEnding() const { return bEnding; }
+ 116: 	virtual void ValidateExecutionConfiguration(const UHodgeAbilityDefinition& Definition, TArray<FText>& Errors) const;
+ 123: 	void ActivateConfirmedDefinition(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* Info,
+ 124: 	                                 const FPredictionKey& Key, const FGameplayEventData& Payload);
+ 133: 	virtual bool CanActivateAbility(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+ 134: 	                                const FGameplayTagContainer* SourceTags = nullptr,
+ 135: 	                                const FGameplayTagContainer* TargetTags = nullptr,
+ 136: 	                                FGameplayTagContainer* OptionalRelevantTags = nullptr) const override;
+ 138: protected:
+ 141: 	virtual void OnExecutionReady() {}
+ 143: 	virtual void OnExecutionEvent(FGameplayTag Tag) {}
+ 147: 	virtual void OnExecutionEnding(const FGuid& EndingExecutionId) {}
+ 151: 	virtual void OnNotifyResourceEnded(int32 OccurrenceId) {}
+ 158: 	virtual void ActivateAbility(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+ 159: 	                             FGameplayAbilityActivationInfo ActivationInfo,
+ 160: 	                             const FGameplayEventData* TriggerEventData) override;
+ 168: 	virtual void EndAbility(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+ 169: 	                        FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility,
+ 170: 	                        bool bWasCancelled) override;
+ 172: protected:
+ 174:  void PublishAttackSettlement(const FHodgeAttackSettlement& Settlement);
+ 175:  bool HasAttackSettlementRules() const { return !AttackRules.IsEmpty(); }
+ 176: private:
+ 177: 	friend struct FHodgeAttackRuleTestAccess;
+ 179:  UPROPERTY(Transient) TArray<TObjectPtr<UHodgeAttackRule>> AttackRules;
+ 180:  void DispatchAttackRuleEvent(FGameplayTag Tag);
+ 181: 	friend struct FHodgeAttackWarpTestAccess;
+ 182: 	void StartExecutionMontage();
+ 183: 	void InitializeAttackFacing(const FGameplayEventData* Payload);
+ 184: 	void OnAttackFacingData(const FGameplayAbilityTargetDataHandle& Data, FGameplayTag ApplicationTag, FGuid ForExecution);
+ 185: 	bool ApplyAttackFacing(const FHodgeAttackFacingTargetData& Data);
+ 186: 	void OnAttackFacingTimeout(FGuid ForExecution);
+ 187: 	void ReleaseAttackFacing();
+ 188: 	FDelegateHandle FacingDataDelegate;
+ 189: 	FTimerHandle FacingDataTimer;
+ 190: 	FHodgeFacingRequestHandle AttackFacingHandle;
+ 191: 	float FacingTargetYaw = 0.f;
+ 192: 	bool bFacingDataWaiting = false;
+ 193: 	bool bFacingDataProcessed = false;
+ 194: 	bool bActivationReturned = false;
+ 195: 	bool bAttackFacingRetired = false;
+ 196: 	friend struct FHodgeCombatActionTestAccess;
+ 199: 	UPROPERTY(Transient) TWeakObjectPtr<AActor> ExecutionLockTarget;
+ 200: 	FGuid ExecutionId;
+ 208: 	void OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted, FGuid Execution, int32 InstanceId);
+ 215: 	void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted, FGuid Execution, int32 InstanceId);
+ 217: 	void NotifyWindowsChanged();
+ 219: 	struct FNotifyResource
+ 220: 	{
+ 222: 		int32 OccurrenceId = INDEX_NONE;
+ 224: 		FGameplayTag Tag;
+ 226: 		FGuid WeaponHandle;
+ 227: 	};
+ 229: 	TMap<const UObject*, FNotifyResource> NotifyResources;
+ 231: 	TMap<FGameplayTag, int32> StateCounts;
+ 233: 	int32 NextOccurrence = 0;
+ 235: 	int32 MontageInstanceId = INDEX_NONE;
+ 237: 	FGuid PoseLease;
+ 239: 	FGameplayTag ExecutionBodyTag;
+ 241: 	UPROPERTY(Transient) TWeakObjectPtr<UHodgeCombatComponentBase> ExecutionCombat;
+ 243: 	UPROPERTY(Transient) TWeakObjectPtr<UHodgeWeaponInstance> PresentationWeapon;
+ 245: 	bool bEnding = false;
+ 247: 	bool bLifecycleEventSent = false;
+ 249: 	bool bPredictedMoveCancel = false;
+ 250: };
 ```
 
 ## HodgeGameplayAbility_EnemyDeath.h
@@ -1600,7 +1609,7 @@ Tag 输入、激活组、关系映射、Montage 复制和全局注册；失败�
 
 源码：[Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Melee.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Melee.h)
 
-项目内直接 include（不是运行调用关系）：[AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h)、[Combat/HodgeHitDetection.h](../../../Source/Hodgepodge/Public/Combat/HodgeHitDetection.h)、[Animation/HodgeCombatAnimNotifies.h](../../../Source/Hodgepodge/Public/Animation/HodgeCombatAnimNotifies.h)
+项目内直接 include（不是运行调用关系）：[AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h)、[Combat/HodgeHitDetection.h](../../../Source/Hodgepodge/Public/Combat/HodgeHitDetection.h)、[Animation/HodgeCombatAnimNotifies.h](../../../Source/Hodgepodge/Public/Animation/HodgeCombatAnimNotifies.h)、[Combat/HodgeAttackRule.h](../../../Source/Hodgepodge/Public/Combat/HodgeAttackRule.h)
 
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
@@ -1609,94 +1618,76 @@ Tag 输入、激活组、关系映射、Montage 复制和全局注册；失败�
    6: #include "AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h"
    7: #include "Combat/HodgeHitDetection.h"
    8: #include "Animation/HodgeCombatAnimNotifies.h"
-   9: #include "HodgeGameplayAbility_Melee.generated.h"
-  11: class UHodgeAbilityTask_WaitHitResults;
-  12: class UAbilitySystemComponent;
-  15: struct FHodgeMeleeHitHistory
-  16: {
-  18: 	TMap<TWeakObjectPtr<UAbilitySystemComponent>, double> LastHitTimes;
-  25: 	bool CanHit(UAbilitySystemComponent* Target, double Time, float RepeatInterval) const;
-  30: 	void RecordHit(UAbilitySystemComponent* Target, double Time);
-  31: };
-  34: struct FHodgeHitGroupKey
-  35: {
-  37: 	FName Group;
-  39: 	FName Phase;
-  44: 	bool operator==(const FHodgeHitGroupKey& Other) const { return Group == Other.Group && Phase == Other.Phase; }
-  49: 	friend uint32 GetTypeHash(const FHodgeHitGroupKey& Key) { return HashCombine(GetTypeHash(Key.Group), GetTypeHash(Key.Phase)); }
-  50: };
-  53: struct HODGEPODGE_API FHodgeResonancePhaseLedger
-  54: {
-  56: 	bool TryReserve(FName Group, FName Phase, float AcceptedDamage);
-  58: 	void Reset() { Phases.Reset(); }
-  59: private:
-  60: 	TSet<FHodgeHitGroupKey> Phases;
-  61: };
-  64: USTRUCT()
-  65: struct FHodgeMeleeHitState
-  66: {
-  67: 	GENERATED_BODY()
-  69: 	UPROPERTY() FHodgeHitEffectConfig Binding;
-  71: 	uint64 SessionHandle = 0;
-  73: 	int32 LastSampleSequence = 0;
-  75: 	TSharedPtr<FHodgeMeleeHitHistory> History;
-  76: };
-  79: UCLASS(Blueprintable)
-  80: class HODGEPODGE_API UHodgeGameplayAbility_Melee : public UHodgeGameplayAbility_Definition
-  81: {
-  82: 	GENERATED_BODY()
-  83: public:
-  85: 	UHodgeGameplayAbility_Melee();
-  90: 	virtual void ValidateExecutionConfiguration(const UHodgeAbilityDefinition& Definition, TArray<FText>& Errors) const override;
-  96: 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category="Hodge|Combat")
-  97: 	bool SetHitAnchor(FName Key, const FTransform& WorldTransform);
- 103: 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category="Hodge|Combat")
- 104: 	bool SetHitTarget(FName Key, AActor* Target);
- 106: 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category="Hodge|Combat")
- 107: 	void ResetHitGeometryHistory();
- 116: 	bool BeginNotifyHit(int32 OccurrenceId, const FHodgeAnimHitConfig& Config, USkeletalMeshComponent* Mesh, bool bSingle);
- 118: protected:
- 120: 	virtual void OnExecutionReady() override;
- 122: 	virtual void OnExecutionEvent(FGameplayTag Tag) override;
- 126: 	virtual void OnExecutionEnding(const FGuid& EndingExecutionId) override;
- 130: 	virtual void OnNotifyResourceEnded(int32 OccurrenceId) override;
- 134: 	UFUNCTION(BlueprintNativeEvent, Category="Hodge|Combat") bool PrepareHitExecutionContext();
- 138: 	virtual bool PrepareHitExecutionContext_Implementation();
- 144: 	UFUNCTION(BlueprintNativeEvent, Category="Hodge|Melee")
- 145: 	void ProcessMeleeHitResults(const FHodgeHitDetectionBatch& Batch);
- 149: 	virtual void ProcessMeleeHitResults_Implementation(const FHodgeHitDetectionBatch& Batch);
- 157: 	UFUNCTION(BlueprintNativeEvent, Category="Hodge|Melee")
- 158: 	bool CanApplyMeleeHit(AActor* Target, const FHitResult& Hit, const FHodgeHitEffectConfig& Binding) const;
- 165: 	virtual bool CanApplyMeleeHit_Implementation(AActor* Target, const FHitResult& Hit,
- 166: 		const FHodgeHitEffectConfig& Binding) const;
- 176: 	UFUNCTION(BlueprintNativeEvent, Category="Hodge|Melee")
- 177: 	void ApplyMeleeHitEffects(const FHodgeHitDetectionBatch& Batch, const FHitResult& Hit,
- 178: 		const FHodgeHitEffectConfig& Binding, UAbilitySystemComponent* TargetASC, const FGameplayEffectSpecHandle& Spec);
- 186: 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category="Hodge|Melee")
- 187: 	void SubmitMeleeHitEffects(const FHodgeHitDetectionBatch& Batch, const FHitResult& Hit,
- 188: 		const FHodgeHitEffectConfig& Binding, UAbilitySystemComponent* TargetASC, const FGameplayEffectSpecHandle& Spec);
- 193: 	UFUNCTION(BlueprintImplementableEvent, Category="Hodge|Melee")
- 194: 	void OnMeleeReactionResolved(AActor* Target, const FHodgeHitReactionResult& Result);
- 202: 	virtual void ApplyMeleeHitEffects_Implementation(const FHodgeHitDetectionBatch& Batch, const FHitResult& Hit,
- 203: 		const FHodgeHitEffectConfig& Binding, UAbilitySystemComponent* TargetASC, const FGameplayEffectSpecHandle& Spec);
- 210: 	virtual FGameplayEffectContextHandle MakeMeleeHitContext(const FHodgeHitDetectionBatch& Batch, const FHitResult& Hit) const;
- 217: 	virtual FGameplayEffectSpecHandle BuildMeleeHitSpec(const FHodgeHitDetectionBatch& Batch,
- 218: 		const FHitResult& Hit, const FHodgeHitEffectConfig& Binding) const;
- 223: 	bool IsMeleeBatchCurrent(const FHodgeHitDetectionBatch& Batch) const;
- 230: 	bool OpenHit(int32 OccurrenceId, const FHodgeHitEffectConfig& Binding, const FHodgeHitDetectionRequest& Request);
- 232: private:
- 233: 	friend struct FHodgeMeleeTestAccess;
- 237: 	void OnHitResults(const FHodgeHitDetectionBatch& Batch);
- 239: 	UPROPERTY(Transient) TObjectPtr<UHodgeAbilityTask_WaitHitResults> DetectionTask;
- 241: 	UPROPERTY(Transient) TMap<int32, FHodgeMeleeHitState> HitStates;
- 243: 	TMap<FHodgeHitGroupKey, TSharedPtr<FHodgeMeleeHitHistory>> HitGroups;
- 245: 	FHodgeResonancePhaseLedger ResonancePhases;
- 247: 	FHodgeResonancePhaseLedger DarkFlowPhases;
- 249: 	bool bDarkFlowCastCommitted=false;
- 251: 	void TryGrantResonanceEnergy(const FHodgeHitDetectionBatch& Batch, const FHodgeHitEffectConfig& Binding, float AcceptedDamage);
- 253: 	UPROPERTY(Transient) TMap<FName, FTransform> HitAnchors;
- 255: 	UPROPERTY(Transient) TMap<FName, TWeakObjectPtr<AActor>> HitTargets;
- 256: };
+   9: #include "Combat/HodgeAttackRule.h"
+  10: #include "HodgeGameplayAbility_Melee.generated.h"
+  12: class UHodgeAbilityTask_WaitHitResults;
+  13: class UAbilitySystemComponent;
+  16: struct FHodgeMeleeHitHistory
+  17: {
+  19: 	TMap<TWeakObjectPtr<UAbilitySystemComponent>, double> LastHitTimes;
+  26: 	bool CanHit(UAbilitySystemComponent* Target, double Time, float RepeatInterval) const;
+  31: 	void RecordHit(UAbilitySystemComponent* Target, double Time);
+  32: };
+  35: USTRUCT()
+  36: struct FHodgeMeleeHitState
+  37: {
+  38: 	GENERATED_BODY()
+  40: 	UPROPERTY() FHodgeHitEffectConfig Binding;
+  42: 	uint64 SessionHandle = 0;
+  44: 	int32 LastSampleSequence = 0;
+  46: 	TSharedPtr<FHodgeMeleeHitHistory> History;
+  47: };
+  50: UCLASS(Blueprintable)
+  51: class HODGEPODGE_API UHodgeGameplayAbility_Melee : public UHodgeGameplayAbility_Definition
+  52: {
+  53: 	GENERATED_BODY()
+  54: public:
+  56: 	UHodgeGameplayAbility_Melee();
+  61: 	virtual void ValidateExecutionConfiguration(const UHodgeAbilityDefinition& Definition, TArray<FText>& Errors) const override;
+  67: 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category="Hodge|Combat")
+  68: 	bool SetHitAnchor(FName Key, const FTransform& WorldTransform);
+  74: 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category="Hodge|Combat")
+  75: 	bool SetHitTarget(FName Key, AActor* Target);
+  77: 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category="Hodge|Combat")
+  78: 	void ResetHitGeometryHistory();
+  87: 	bool BeginNotifyHit(int32 OccurrenceId, const FHodgeAnimHitConfig& Config, USkeletalMeshComponent* Mesh, bool bSingle);
+  89: protected:
+  91: 	virtual void OnExecutionReady() override;
+  95: 	virtual void OnExecutionEnding(const FGuid& EndingExecutionId) override;
+  99: 	virtual void OnNotifyResourceEnded(int32 OccurrenceId) override;
+ 103: 	UFUNCTION(BlueprintNativeEvent, Category="Hodge|Combat") bool PrepareHitExecutionContext();
+ 107: 	virtual bool PrepareHitExecutionContext_Implementation();
+ 113: 	UFUNCTION(BlueprintNativeEvent, Category="Hodge|Melee")
+ 114: 	void ProcessMeleeHitResults(const FHodgeHitDetectionBatch& Batch);
+ 118: 	virtual void ProcessMeleeHitResults_Implementation(const FHodgeHitDetectionBatch& Batch);
+ 126: 	UFUNCTION(BlueprintNativeEvent, Category="Hodge|Melee")
+ 127: 	bool CanApplyMeleeHit(AActor* Target, const FHitResult& Hit, const FHodgeHitEffectConfig& Binding) const;
+ 134: 	virtual bool CanApplyMeleeHit_Implementation(AActor* Target, const FHitResult& Hit,
+ 135: 		const FHodgeHitEffectConfig& Binding) const;
+ 145: 	UFUNCTION(BlueprintNativeEvent, Category="Hodge|Melee")
+ 146: 	void ApplyMeleeHitEffects(const FHodgeHitDetectionBatch& Batch, const FHitResult& Hit,
+ 147: 		const FHodgeHitEffectConfig& Binding, UAbilitySystemComponent* TargetASC, const FGameplayEffectSpecHandle& Spec);
+ 155: 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category="Hodge|Melee")
+ 156: 	void SubmitMeleeHitEffects(const FHodgeHitDetectionBatch& Batch, const FHitResult& Hit,
+ 157: 		const FHodgeHitEffectConfig& Binding, UAbilitySystemComponent* TargetASC, const FGameplayEffectSpecHandle& Spec);
+ 162: 	UFUNCTION(BlueprintImplementableEvent, Category="Hodge|Melee")
+ 163: 	void OnMeleeReactionResolved(AActor* Target, const FHodgeHitReactionResult& Result);
+ 171: 	virtual void ApplyMeleeHitEffects_Implementation(const FHodgeHitDetectionBatch& Batch, const FHitResult& Hit,
+ 172: 		const FHodgeHitEffectConfig& Binding, UAbilitySystemComponent* TargetASC, const FGameplayEffectSpecHandle& Spec);
+ 179: 	virtual FGameplayEffectContextHandle MakeMeleeHitContext(const FHodgeHitDetectionBatch& Batch, const FHitResult& Hit) const;
+ 186: 	virtual FGameplayEffectSpecHandle BuildMeleeHitSpec(const FHodgeHitDetectionBatch& Batch,
+ 187: 		const FHitResult& Hit, const FHodgeHitEffectConfig& Binding) const;
+ 192: 	bool IsMeleeBatchCurrent(const FHodgeHitDetectionBatch& Batch) const;
+ 199: 	bool OpenHit(int32 OccurrenceId, const FHodgeHitEffectConfig& Binding, const FHodgeHitDetectionRequest& Request);
+ 201: private:
+ 202: 	friend struct FHodgeMeleeTestAccess;
+ 206: 	void OnHitResults(const FHodgeHitDetectionBatch& Batch);
+ 208: 	UPROPERTY(Transient) TObjectPtr<UHodgeAbilityTask_WaitHitResults> DetectionTask;
+ 210: 	UPROPERTY(Transient) TMap<int32, FHodgeMeleeHitState> HitStates;
+ 212: 	TMap<FHodgeHitGroupKey, TSharedPtr<FHodgeMeleeHitHistory>> HitGroups;
+ 214: 	UPROPERTY(Transient) TMap<FName, FTransform> HitAnchors;
+ 216: 	UPROPERTY(Transient) TMap<FName, TWeakObjectPtr<AActor>> HitTargets;
+ 217: };
 ```
 
 ## HodgeGameplayAbility_MovementAction.h

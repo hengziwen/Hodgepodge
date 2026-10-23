@@ -78,6 +78,20 @@ void UHodgeDamageExecution::Execute_Implementation(const FGameplayEffectCustomEx
 	// 当前伤害 Execution 依赖项目自定义 EffectContext，因此这里要求转换结果必须有效。
 	check(TypedContext);
 
+	// 自毁由服务器生命组件提交，绕过普通自伤和攻击倍率，但不能用于伤害另一 ASC。
+	if (Spec.GetDynamicAssetTags().HasTagExact(TAG_Gameplay_DamageSelfDestruct))
+	{
+		const auto* Source = ExecutionParams.GetSourceAbilitySystemComponent();
+		const auto* Target = ExecutionParams.GetTargetAbilitySystemComponent();
+		const float Amount = Spec.GetSetByCallerMagnitude(HodgeGameplayTags::SetByCaller_Damage, false, 0.f);
+		if (Source && Source == Target && Source->IsOwnerActorAuthoritative() && FMath::IsFinite(Amount) && Amount > 0.f)
+		{
+			OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(
+				UHodgeHealthSet::GetDamageAttribute(), EGameplayModOp::Additive, Amount));
+		}
+		return;
+	}
+
 	// 获取 GameplayEffectSpec 捕获到的 Source GameplayTag。
 	const FGameplayTagContainer* SourceTags = Spec.CapturedSourceTags.GetAggregatedTags();
 

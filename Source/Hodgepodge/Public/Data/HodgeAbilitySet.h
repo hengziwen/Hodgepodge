@@ -20,6 +20,13 @@ class UHodgeGameplayAbility;
 class UObject;
 class UHodgeAbilityDefinition;
 
+/** 玩家持久授予可先于 Pawn；装备和怪物仍要求本次 Avatar 有效。 */
+enum class EHodgeAbilityGrantContext : uint8
+{
+	AvatarBound,
+	OwnerInitialized
+};
+
 /** 受检授予的结果；失败清理不能撤销已经发生的 Instant 或自动激活副作用。 */
 USTRUCT(BlueprintType)
 struct FHodgeAbilityGrantResult
@@ -192,6 +199,12 @@ public:
 	 * @return GrantedDefinitions的当前值或引用。
 	 */
 	const TArray<FHodgeAbilitySet_Definition>& GetGrantedDefinitions() const { return GrantedAbilityDefinitions; }
+	/** 供跨来源预校验读取配置，不允许调用者修改资产。 */
+	const TArray<FHodgeAbilitySet_GameplayAbility>& GetGrantedAbilities() const { return GrantedGameplayAbilities; }
+	/** 供 GameFeature 检查直接属性与 AbilitySet 的重复声明。 */
+	const TArray<FHodgeAbilitySet_AttributeSet>& GetGrantedAttributes() const { return GrantedAttributes; }
+	/** 同族属性集不能重复驻留，避免 GAS 按基类查找时产生歧义。 */
+	static bool AreAttributeSetTypesConflicting(const UClass* First, const UClass* Second);
 
 	// 将当前 AbilitySet 中配置的所有内容授予指定的 AbilitySystemComponent，并可通过返回的 Handles 在之后移除这些内容。
 	/** 将配置中的能力、属性与效果授予目标ASC。
@@ -225,7 +238,13 @@ public:
 	 * @return 本次计算、查询或创建得到的能力授予结果。
 	 */
 	FHodgeAbilityGrantResult TryGiveToAbilitySystem(UHodgeAbilitySystemComponent* ASC,
-		FHodgeAbilitySet_GrantedHandles& OutHandles, UObject* SourceObject = nullptr, bool bForInitialization = false) const;
+		FHodgeAbilitySet_GrantedHandles& OutHandles, UObject* SourceObject = nullptr, bool bForInitialization = false,
+		EHodgeAbilityGrantContext Context = EHodgeAbilityGrantContext::AvatarBound) const;
+	/** 整批预校验并提交；失败仅清理本批可撤销资源，保留不可逆副作用标记。 */
+	static FHodgeAbilityGrantResult TryGiveBatchToAbilitySystem(const TArray<const UHodgeAbilitySet*>& Sets,
+		UHodgeAbilitySystemComponent* ASC, FHodgeAbilitySet_GrantedHandles& OutHandles,
+		UObject* SourceObject = nullptr, bool bForInitialization = false,
+		EHodgeAbilityGrantContext Context = EHodgeAbilityGrantContext::AvatarBound);
 
 protected:
 	// 授予 AbilitySet 时需要添加的 GameplayAbility 列表。
@@ -244,13 +263,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Attribute Sets", meta=(TitleProperty=AttributeSet))
 	TArray<FHodgeAbilitySet_AttributeSet> GrantedAttributes;
 private:
-	/** 执行内部授予步骤并收集来源句柄。
-	 * @param ASC 后续GAS操作使用的能力系统组件。
-	 * @param OutHandles 输出Handles。
-	 * @param SourceObject 能力或效果的来源对象。
-	 * @param bChecked 是否Checked的控制标记。
-	 * @return 本次计算、查询或创建得到的能力授予结果。
-	 */
+	/** 唯一授予循环；调用前完成预校验，调用后仍验证同步回调中的绑定变化。 */
 	FHodgeAbilityGrantResult GrantInternal(UHodgeAbilitySystemComponent* ASC,
-		FHodgeAbilitySet_GrantedHandles* OutHandles, UObject* SourceObject, bool bChecked) const;
+		FHodgeAbilitySet_GrantedHandles& OutHandles, UObject* SourceObject, EHodgeAbilityGrantContext Context) const;
 };

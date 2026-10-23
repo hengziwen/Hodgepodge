@@ -1,4 +1,4 @@
-﻿/** @file HodgeAbilityDefinition.cpp
+/** @file HodgeAbilityDefinition.cpp
  * @brief 实现单段技能执行定义相关的类型、接口与现有处理流程。
  */
 #include "Data/HodgeAbilityDefinition.h"
@@ -11,9 +11,10 @@
 #include "Animation/HodgeCombatAnimNotifies.h"
 #include "Animation/HodgeAnimNotifyState_CinematicCamera.h"
 #include "Data/HodgeCinematicCameraProfile.h"
-#include "AbilitySystem/Effects/HodgeResonanceEnergyEffect.h"
+#include "Combat/HodgeAttackRule.h"
+#include "Combat/HodgeLegacyAttackRuleAdapter.h"
 #include "AbilitySystem/HodgeGameplayTags.h"
-#include "AbilitySystem/AttributeSet/HodgeHavocSet.h"
+
 #if WITH_EDITOR
 #include "Misc/DataValidation.h"
 #endif
@@ -23,7 +24,7 @@
 UHodgeAbilityDefinition::UHodgeAbilityDefinition()
 {
 	StandaloneMoveCancelWindowTag = HodgeGameplayTags::Status_Attack_Cancel_Move;
-	ResonanceEnergyGainEffect = UHodgeResonanceEnergyEffect::StaticClass();
+	HodgeLegacyAttackRules::InitializeDefaults(*this);
 }
 
 /** 构造混合。 */
@@ -65,20 +66,15 @@ bool UHodgeAbilityDefinition::GetFacingWarpWindow(float& OutStart, float& OutEnd
 bool UHodgeAbilityDefinition::ValidateDefinition(TArray<FText>& Errors) const
 {
 	const int32 Before = Errors.Num();
-	if (!FMath::IsFinite(DarkFlowGainPerPhase) || DarkFlowGainPerPhase<0.f || !FMath::IsFinite(DarkFlowGainOnCast) || DarkFlowGainOnCast<0.f)
-	{ Errors.Add(FText::FromString(TEXT("DarkFlow gains must be finite and nonnegative"))); }
+	TSet<UClass*> Types;
+	for (const UHodgeAttackRuleConfig* Rule : AttackRules)
+	{
+		if (!IsValid(Rule) || Types.Contains(Rule->GetClass())) { Errors.Add(FText::FromString(TEXT("Missing or duplicate attack rule configuration"))); continue; }
+		Types.Add(Rule->GetClass()); Rule->ValidateRule(*this, Errors);
+	}
+	HodgeLegacyAttackRules::Validate(*this, Errors);
 	if (RequiredSourceTags.HasAny(BlockedSourceTags))
 	{ Errors.Add(FText::FromString(TEXT("Variant required and blocked tags conflict"))); }
-	if (DarkFlowGainOnCast>0.f)
-	{
-		int32 CommitCount=0;
-		if (ExecutionConfig.Montage) for (const auto& Event : ExecutionConfig.Montage->Notifies)
-		{ if (const auto* Notify=Cast<UHodgeAnimNotify_GameplayEvent>(Event.Notify); Notify && Notify->EventTag==HodgeHavocTags::CastCommitted) { ++CommitCount; } }
-		if (CommitCount!=1) { Errors.Add(FText::FromString(TEXT("Cast DarkFlow gain requires one GameplayEvent.Attack.CastCommitted notify"))); }
-	}
-	const float Gain=ResonanceEnergyGainPerPhase.GetValueAtLevel(1.f);
-	if (!FMath::IsFinite(Gain) || Gain<0.f || (Gain>0.f && (!ResonanceEnergyGainEffect || !ResonanceEnergyGainEffect->IsChildOf(UHodgeResonanceEnergyEffect::StaticClass()))))
-	{ Errors.Add(FText::FromString(TEXT("Resonance gain requires a finite nonnegative amount and compatible energy GE"))); }
 	auto Error = [&Errors](const FString& Message)
 	{
 		Errors.Add(FText::FromString(Message));
@@ -195,3 +191,18 @@ EDataValidationResult UHodgeAbilityDefinition::IsDataValid(FDataValidationContex
 		       : EDataValidationResult::Invalid;
 }
 #endif
+
+/** 新配置是唯一执行来源；兼容层只补充尚未迁移的规则。 */
+bool UHodgeAbilityDefinition::CreateAttackRules(UHodgeGameplayAbility_Definition* Source, TArray<TObjectPtr<UHodgeAttackRule>>& OutRules) const
+{
+ OutRules.Reset();
+ for (const UHodgeAttackRuleConfig* Config : AttackRules)
+ {
+  if (!IsValid(Config)) { return false; }
+  auto* Rule = Config->CreateRule(Source);
+  if (!Rule) { return false; }
+  OutRules.Add(Rule); Rule->Initialize(Source, Config);
+ }
+ HodgeLegacyAttackRules::CreateRules(*this, Source, OutRules);
+ return true;
+}

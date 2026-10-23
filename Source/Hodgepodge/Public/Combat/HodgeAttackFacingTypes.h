@@ -19,6 +19,8 @@ struct HODGEPODGE_API FHodgeAttackFacingConfig
 {
 	GENERATED_BODY()
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) bool bEnabled = false;
+	// 只在本刀原 Warp 窗口内跟随确认目标，冻结后不自动恢复。
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(EditCondition="bEnabled")) bool bTrackExecutionLockTargetDuringWarp = false;
 	// 同名目标只在当前动作占用中有效，不能按名称清理其他执行。
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) FName WarpTargetName = TEXT("HodgeAttackFacing");
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ClampMin="1",ClampMax="179",Units="deg")) float MaxCorrectionAngle = 90.f;

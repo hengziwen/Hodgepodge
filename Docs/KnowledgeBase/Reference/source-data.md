@@ -12,17 +12,18 @@ Montage/Blend/Timeline、HitWindows/HitPoints、Volume、独立/连段路由及�
 
 源码：[Source/Hodgepodge/Private/Data/HodgeAbilityDefinition.cpp](../../../Source/Hodgepodge/Private/Data/HodgeAbilityDefinition.cpp)
 
-项目内直接 include（不是运行调用关系）：[Data/HodgeAbilityDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilityDefinition.h)、[AbilitySystem/Abilities/HodgeGameplayAbility.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility.h)、[AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h)、[Animation/HodgeRootMotionModifier_AttackFacing.h](../../../Source/Hodgepodge/Public/Animation/HodgeRootMotionModifier_AttackFacing.h)、[Animation/HodgeCombatAnimNotifies.h](../../../Source/Hodgepodge/Public/Animation/HodgeCombatAnimNotifies.h)、[Animation/HodgeAnimNotifyState_CinematicCamera.h](../../../Source/Hodgepodge/Public/Animation/HodgeAnimNotifyState_CinematicCamera.h)、[Data/HodgeCinematicCameraProfile.h](../../../Source/Hodgepodge/Public/Data/HodgeCinematicCameraProfile.h)、[AbilitySystem/Effects/HodgeResonanceEnergyEffect.h](../../../Source/Hodgepodge/Public/AbilitySystem/Effects/HodgeResonanceEnergyEffect.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)、[AbilitySystem/AttributeSet/HodgeHavocSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeHavocSet.h)
+项目内直接 include（不是运行调用关系）：[Data/HodgeAbilityDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilityDefinition.h)、[AbilitySystem/Abilities/HodgeGameplayAbility.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility.h)、[AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h)、[Animation/HodgeRootMotionModifier_AttackFacing.h](../../../Source/Hodgepodge/Public/Animation/HodgeRootMotionModifier_AttackFacing.h)、[Animation/HodgeCombatAnimNotifies.h](../../../Source/Hodgepodge/Public/Animation/HodgeCombatAnimNotifies.h)、[Animation/HodgeAnimNotifyState_CinematicCamera.h](../../../Source/Hodgepodge/Public/Animation/HodgeAnimNotifyState_CinematicCamera.h)、[Data/HodgeCinematicCameraProfile.h](../../../Source/Hodgepodge/Public/Data/HodgeCinematicCameraProfile.h)、[Combat/HodgeAttackRule.h](../../../Source/Hodgepodge/Public/Combat/HodgeAttackRule.h)、[Combat/HodgeLegacyAttackRuleAdapter.h](../../../Source/Hodgepodge/Public/Combat/HodgeLegacyAttackRuleAdapter.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)
 
 定义候选（多行签名仅展示首行）：
 
-- L23: `UHodgeAbilityDefinition::UHodgeAbilityDefinition()`
-- L30: `FAlphaBlend FHodgeAbilityBlendSettings::MakeBlend() const`
-- L40: `bool FHodgeAbilityBlendSettings::IsValid() const`
-- L48: `float UHodgeAbilityDefinition::GetDuration() const`
-- L54: `bool UHodgeAbilityDefinition::GetFacingWarpWindow(float& OutStart, float& OutEnd) const`
-- L65: `bool UHodgeAbilityDefinition::ValidateDefinition(TArray<FText>& Errors) const`
-- L167: `EDataValidationResult UHodgeAbilityDefinition::IsDataValid(FDataValidationContext& Context) const`
+- L24: `UHodgeAbilityDefinition::UHodgeAbilityDefinition()`
+- L31: `FAlphaBlend FHodgeAbilityBlendSettings::MakeBlend() const`
+- L41: `bool FHodgeAbilityBlendSettings::IsValid() const`
+- L49: `float UHodgeAbilityDefinition::GetDuration() const`
+- L55: `bool UHodgeAbilityDefinition::GetFacingWarpWindow(float& OutStart, float& OutEnd) const`
+- L66: `bool UHodgeAbilityDefinition::ValidateDefinition(TArray<FText>& Errors) const`
+- L163: `EDataValidationResult UHodgeAbilityDefinition::IsDataValid(FDataValidationContext& Context) const`
+- L196: `bool UHodgeAbilityDefinition::CreateAttackRules(UHodgeGameplayAbility_Definition* Source, TArray<TObjectPtr<UHodgeAttackRule>>& OutRules) const`
 
 ## HodgeAbilitySet.cpp
 
@@ -34,18 +35,20 @@ Montage/Blend/Timeline、HitWindows/HitPoints、Volume、独立/连段路由及�
 
 定义候选（多行签名仅展示首行）：
 
-- L18: `void FHodgeAbilitySet_GrantedHandles::AddAbilitySpecHandle(const FGameplayAbilitySpecHandle& Handle)`
-- L28: `void FHodgeAbilitySet_GrantedHandles::AddGameplayEffectHandle(const FActiveGameplayEffectHandle& Handle)`
-- L38: `void FHodgeAbilitySet_GrantedHandles::AddAttributeSet(UAttributeSet* Set)`
-- L44: `void FHodgeAbilitySet_GrantedHandles::TakeFromAbilitySystem(UHodgeAbilitySystemComponent* HodgeASC)`
-- L86: `UHodgeAbilitySet::UHodgeAbilitySet(const FObjectInitializer& ObjectInitializer)`
-- L92: `FHodgeAbilityGrantResult UHodgeAbilitySet::GrantInternal(UHodgeAbilitySystemComponent* HodgeASC,`
-- L243: `void FHodgeAbilitySet_GrantedHandles::Append(FHodgeAbilitySet_GrantedHandles&& Other)`
-- L252: `bool FHodgeAbilitySet_GrantedHandles::AreValidFor(const UHodgeAbilitySystemComponent* ASC) const`
-- L263: `void UHodgeAbilitySet::GiveToAbilitySystem(UHodgeAbilitySystemComponent* ASC,`
-- L271: `FHodgeAbilityGrantResult UHodgeAbilitySet::TryGiveToAbilitySystem(UHodgeAbilitySystemComponent* ASC,`
-- L287: `bool UHodgeAbilitySet::ValidateForGrant(const UHodgeAbilitySystemComponent* ASC, TArray<FText>& Errors, bool bForInitialization) const`
-- L335: `bool UHodgeAbilitySet::ValidateBatchForGrant(const TArray<const UHodgeAbilitySet*>& Sets,`
+- L19: `void FHodgeAbilitySet_GrantedHandles::AddAbilitySpecHandle(const FGameplayAbilitySpecHandle& Handle)`
+- L29: `void FHodgeAbilitySet_GrantedHandles::AddGameplayEffectHandle(const FActiveGameplayEffectHandle& Handle)`
+- L39: `void FHodgeAbilitySet_GrantedHandles::AddAttributeSet(UAttributeSet* Set)`
+- L45: `void FHodgeAbilitySet_GrantedHandles::TakeFromAbilitySystem(UHodgeAbilitySystemComponent* HodgeASC)`
+- L90: `UHodgeAbilitySet::UHodgeAbilitySet(const FObjectInitializer& ObjectInitializer)`
+- L122: `FHodgeAbilityGrantResult UHodgeAbilitySet::GrantInternal(UHodgeAbilitySystemComponent* ASC,`
+- L177: `void FHodgeAbilitySet_GrantedHandles::Append(FHodgeAbilitySet_GrantedHandles&& Other)`
+- L186: `bool FHodgeAbilitySet_GrantedHandles::AreValidFor(const UHodgeAbilitySystemComponent* ASC) const`
+- L197: `void UHodgeAbilitySet::GiveToAbilitySystem(UHodgeAbilitySystemComponent* ASC,`
+- L208: `FHodgeAbilityGrantResult UHodgeAbilitySet::TryGiveToAbilitySystem(UHodgeAbilitySystemComponent* ASC,`
+- L216: `FHodgeAbilityGrantResult UHodgeAbilitySet::TryGiveBatchToAbilitySystem(const TArray<const UHodgeAbilitySet*>& Sets,`
+- L250: `bool UHodgeAbilitySet::AreAttributeSetTypesConflicting(const UClass* First, const UClass* Second)`
+- L259: `bool UHodgeAbilitySet::ValidateForGrant(const UHodgeAbilitySystemComponent* ASC, TArray<FText>& Errors, bool bForInitialization) const`
+- L305: `bool UHodgeAbilitySet::ValidateBatchForGrant(const TArray<const UHodgeAbilitySet*>& Sets,`
 
 ## HodgeAssetManager.cpp
 
@@ -193,12 +196,27 @@ Montage/Blend/Timeline、HitWindows/HitPoints、Volume、独立/连段路由及�
 
 源码：[Source/Hodgepodge/Private/Data/HodgeGameData.cpp](../../../Source/Hodgepodge/Private/Data/HodgeGameData.cpp)
 
-项目内直接 include（不是运行调用关系）：[Data/HodgeGameData.h](../../../Source/Hodgepodge/Public/Data/HodgeGameData.h)
+项目内直接 include（不是运行调用关系）：[Data/HodgeGameData.h](../../../Source/Hodgepodge/Public/Data/HodgeGameData.h)、[Data/HodgeAssetManager.h](../../../Source/Hodgepodge/Public/Data/HodgeAssetManager.h)
 
 定义候选（多行签名仅展示首行）：
 
-- L12: `UHodgeGameData::UHodgeGameData()`
-- L17: `const UHodgeGameData& UHodgeGameData::Get()`
+- L13: `UHodgeGameData::UHodgeGameData()`
+- L18: `const UHodgeGameData& UHodgeGameData::Get()`
+
+## HodgeHavocAttackRule.cpp
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Private/Data/HodgeHavocAttackRule.cpp](../../../Source/Hodgepodge/Private/Data/HodgeHavocAttackRule.cpp)
+
+项目内直接 include（不是运行调用关系）：[Data/HodgeHavocAttackRule.h](../../../Source/Hodgepodge/Public/Data/HodgeHavocAttackRule.h)、[Data/HodgeAbilityDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilityDefinition.h)、[AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h)、[AbilitySystem/Abilities/HodgeGameplayAbility_HavocRules.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_HavocRules.h)、[AbilitySystem/AttributeSet/HodgeHavocSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeHavocSet.h)、[Animation/HodgeCombatAnimNotifies.h](../../../Source/Hodgepodge/Public/Animation/HodgeCombatAnimNotifies.h)
+
+定义候选（多行签名仅展示首行）：
+
+- L14: `UHodgeAttackRule* UHodgeHavocAttackRuleConfig::CreateRule(UObject* Outer) const { return NewObject<UHodgeHavocAttackRule>(Outer); }`
+- L16: `void UHodgeHavocAttackRuleConfig::ValidateRule(const UHodgeAbilityDefinition& Definition, TArray<FText>& Errors) const`
+- L29: `void UHodgeHavocAttackRule::OnSettlement(const FHodgeAttackSettlement& Settlement)`
+- L42: `void UHodgeHavocAttackRule::OnExecutionEvent(FGameplayTag Tag)`
 
 ## HodgeHitReactionProfile.cpp
 
@@ -241,6 +259,21 @@ PawnClass、AbilitySets、ComboDefinition、DefaultWeaponDefinition、输入/相
 - L23: `UHodgePawnData::UHodgePawnData(const FObjectInitializer& ObjectInitializer)`
 - L34: `EDataValidationResult UHodgePawnData::IsDataValid(FDataValidationContext& Context) const`
 
+## HodgeResonanceAttackRule.cpp
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Private/Data/HodgeResonanceAttackRule.cpp](../../../Source/Hodgepodge/Private/Data/HodgeResonanceAttackRule.cpp)
+
+项目内直接 include（不是运行调用关系）：[Data/HodgeResonanceAttackRule.h](../../../Source/Hodgepodge/Public/Data/HodgeResonanceAttackRule.h)、[AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h)、[AbilitySystem/AttributeSet/HodgeResonanceSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeResonanceSet.h)、[AbilitySystem/AttributeSet/HodgeHealthSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeHealthSet.h)、[AbilitySystem/Effects/HodgeResonanceEnergyEffect.h](../../../Source/Hodgepodge/Public/AbilitySystem/Effects/HodgeResonanceEnergyEffect.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)
+
+定义候选（多行签名仅展示首行）：
+
+- L12: `UHodgeResonanceAttackRuleConfig::UHodgeResonanceAttackRuleConfig() { GainEffect = UHodgeResonanceEnergyEffect::StaticClass(); }`
+- L14: `UHodgeAttackRule* UHodgeResonanceAttackRuleConfig::CreateRule(UObject* Outer) const { return NewObject<UHodgeResonanceAttackRule>(Outer); }`
+- L16: `void UHodgeResonanceAttackRuleConfig::ValidateRule(const UHodgeAbilityDefinition&, TArray<FText>& Errors) const`
+- L23: `void UHodgeResonanceAttackRule::OnSettlement(const FHodgeAttackSettlement& Settlement)`
+
 ## HodgeSprintAbilityProfile.cpp
 
 模块或基础类型入口。
@@ -279,62 +312,67 @@ Montage/Blend/Timeline、HitWindows/HitPoints、Volume、独立/连段路由及�
   13: #include "ScalableFloat.h"
   14: #include "HodgeAbilityDefinition.generated.h"
   16: class UHodgeGameplayAbility;
-  17: class UAnimMontage;
-  20: UENUM(BlueprintType)
-  21: enum class EHodgeAbilityExecutionRoute : uint8 {                   ComboCoordinated,                      Standalone };
-  24: USTRUCT(BlueprintType)
-  25: struct HODGEPODGE_API FHodgeAbilityBlendSettings
-  26: {
-  27: 	GENERATED_BODY()
-  29: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(ClampMin="0")) float Time = 0.1f;
-  31: 	UPROPERTY(EditAnywhere, BlueprintReadOnly) EMontageBlendMode Mode = EMontageBlendMode::Standard;
-  33: 	UPROPERTY(EditAnywhere, BlueprintReadOnly) EAlphaBlendOption Curve = EAlphaBlendOption::Linear;
-  35: 	UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<UCurveFloat> CustomCurve;
-  39: 	FAlphaBlend MakeBlend() const;
-  43: 	bool IsValid() const;
-  44: };
-  47: USTRUCT(BlueprintType)
-  48: struct FHodgeAbilityExecutionConfig
-  49: {
-  50: 	GENERATED_BODY()
-  52: 	UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<UAnimMontage> Montage;
-  54: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(ClampMin="0.01")) float PlayRate = 1.f;
-  56: 	UPROPERTY(EditAnywhere, BlueprintReadOnly) FHodgeAbilityBlendSettings BlendIn;
-  58: 	UPROPERTY(EditAnywhere, BlueprintReadOnly) FHodgeAbilityBlendSettings NaturalBlendOut;
-  60: 	UPROPERTY(EditAnywhere, BlueprintReadOnly) FHodgeAbilityBlendSettings StopBlendOut;
-  61: };
-  64: UCLASS(BlueprintType, Const)
-  65: class HODGEPODGE_API UHodgeAbilityDefinition : public UPrimaryDataAsset
-  66: {
-  67: 	GENERATED_BODY()
-  68: public:
-  70: 	UHodgeAbilityDefinition();
-  72: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) FGameplayTag AbilityTag;
-  74: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Combat", meta=(Categories="State.Combat.Body")) FGameplayTag ExecutionBodyTag;
-  76: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) TSubclassOf<UHodgeGameplayAbility> AbilityClass;
-  78: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) FHodgeAbilityExecutionConfig ExecutionConfig;
-  80: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) EHodgeAbilityExecutionRoute ExecutionRoute = EHodgeAbilityExecutionRoute::ComboCoordinated;
-  83: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(Categories="InputTag")) FGameplayTag InputTag;
-  85: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Variant") FGameplayTagContainer RequiredSourceTags;
-  86: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Variant") FGameplayTagContainer BlockedSourceTags;
-  88: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Havoc", meta=(ClampMin="0")) float DarkFlowGainPerPhase=0.f;
-  90: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Havoc", meta=(ClampMin="0")) float DarkFlowGainOnCast=0.f;
-  92: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Havoc") bool bEnhancedNormalAttack=false;
-  94: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|MoveCancel", meta=(EditCondition="ExecutionRoute == EHodgeAbilityExecutionRoute::Standalone", Categories="Status.Attack.Cancel"))
-  95: 	FGameplayTag StandaloneMoveCancelWindowTag;
-  97: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|MoveCancel", meta=(EditCondition="ExecutionRoute == EHodgeAbilityExecutionRoute::Standalone", ClampMin="0.01", ClampMax="1"))
-  98: 	float StandaloneMoveIntentThreshold = .1f;
- 100: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Facing") FHodgeAttackFacingConfig FacingWarp;
- 102: 	bool GetFacingWarpWindow(float& OutStart, float& OutEnd) const;
- 104: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Combat") FHodgeHitEffectConfig DefaultHitConfig;
- 106: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Resonance") FScalableFloat ResonanceEnergyGainPerPhase = 0.f;
- 108: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Resonance") TSubclassOf<UGameplayEffect> ResonanceEnergyGainEffect;
- 112: 	UFUNCTION(BlueprintPure) float GetDuration() const;
- 117: 	bool ValidateDefinition(TArray<FText>& Errors) const;
- 118: #if WITH_EDITOR
- 123: 	virtual EDataValidationResult IsDataValid(FDataValidationContext& Context) const override;
- 124: #endif
- 125: };
+  17: class UHodgeAttackRuleConfig;
+  18: class UHodgeAttackRule;
+  19: class UHodgeGameplayAbility_Definition;
+  20: class UAnimMontage;
+  23: UENUM(BlueprintType)
+  24: enum class EHodgeAbilityExecutionRoute : uint8 {                   ComboCoordinated,                      Standalone };
+  27: USTRUCT(BlueprintType)
+  28: struct HODGEPODGE_API FHodgeAbilityBlendSettings
+  29: {
+  30: 	GENERATED_BODY()
+  32: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(ClampMin="0")) float Time = 0.1f;
+  34: 	UPROPERTY(EditAnywhere, BlueprintReadOnly) EMontageBlendMode Mode = EMontageBlendMode::Standard;
+  36: 	UPROPERTY(EditAnywhere, BlueprintReadOnly) EAlphaBlendOption Curve = EAlphaBlendOption::Linear;
+  38: 	UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<UCurveFloat> CustomCurve;
+  42: 	FAlphaBlend MakeBlend() const;
+  46: 	bool IsValid() const;
+  47: };
+  50: USTRUCT(BlueprintType)
+  51: struct FHodgeAbilityExecutionConfig
+  52: {
+  53: 	GENERATED_BODY()
+  55: 	UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<UAnimMontage> Montage;
+  57: 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(ClampMin="0.01")) float PlayRate = 1.f;
+  59: 	UPROPERTY(EditAnywhere, BlueprintReadOnly) FHodgeAbilityBlendSettings BlendIn;
+  61: 	UPROPERTY(EditAnywhere, BlueprintReadOnly) FHodgeAbilityBlendSettings NaturalBlendOut;
+  63: 	UPROPERTY(EditAnywhere, BlueprintReadOnly) FHodgeAbilityBlendSettings StopBlendOut;
+  64: };
+  67: UCLASS(BlueprintType, Const)
+  68: class HODGEPODGE_API UHodgeAbilityDefinition : public UPrimaryDataAsset
+  69: {
+  70: 	GENERATED_BODY()
+  71: public:
+  73: 	UHodgeAbilityDefinition();
+  75: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) FGameplayTag AbilityTag;
+  77: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Combat", meta=(Categories="State.Combat.Body")) FGameplayTag ExecutionBodyTag;
+  79: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) TSubclassOf<UHodgeGameplayAbility> AbilityClass;
+  81: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) FHodgeAbilityExecutionConfig ExecutionConfig;
+  83: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) EHodgeAbilityExecutionRoute ExecutionRoute = EHodgeAbilityExecutionRoute::ComboCoordinated;
+  86: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(Categories="InputTag")) FGameplayTag InputTag;
+  88: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Variant") FGameplayTagContainer RequiredSourceTags;
+  89: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Variant") FGameplayTagContainer BlockedSourceTags;
+  91: 	UPROPERTY(EditDefaultsOnly, Instanced, BlueprintReadOnly, Category="Hodge|Rules") TArray<TObjectPtr<UHodgeAttackRuleConfig>> AttackRules;
+  93: 	bool CreateAttackRules(UHodgeGameplayAbility_Definition* Source, TArray<TObjectPtr<UHodgeAttackRule>>& OutRules) const;
+  96: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Havoc", meta=(ClampMin="0")) float DarkFlowGainPerPhase=0.f;
+  98: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Havoc", meta=(ClampMin="0")) float DarkFlowGainOnCast=0.f;
+ 100: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Havoc") bool bEnhancedNormalAttack=false;
+ 102: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|MoveCancel", meta=(EditCondition="ExecutionRoute == EHodgeAbilityExecutionRoute::Standalone", Categories="Status.Attack.Cancel"))
+ 103: 	FGameplayTag StandaloneMoveCancelWindowTag;
+ 105: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|MoveCancel", meta=(EditCondition="ExecutionRoute == EHodgeAbilityExecutionRoute::Standalone", ClampMin="0.01", ClampMax="1"))
+ 106: 	float StandaloneMoveIntentThreshold = .1f;
+ 108: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Facing") FHodgeAttackFacingConfig FacingWarp;
+ 110: 	bool GetFacingWarpWindow(float& OutStart, float& OutEnd) const;
+ 112: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Combat") FHodgeHitEffectConfig DefaultHitConfig;
+ 114: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Resonance") FScalableFloat ResonanceEnergyGainPerPhase = 0.f;
+ 116: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Resonance") TSubclassOf<UGameplayEffect> ResonanceEnergyGainEffect;
+ 120: 	UFUNCTION(BlueprintPure) float GetDuration() const;
+ 125: 	bool ValidateDefinition(TArray<FText>& Errors) const;
+ 126: #if WITH_EDITOR
+ 131: 	virtual EDataValidationResult IsDataValid(FDataValidationContext& Context) const override;
+ 132: #endif
+ 133: };
 ```
 
 ## HodgeAbilitySet.h
@@ -359,98 +397,111 @@ Montage/Blend/Timeline、HitWindows/HitPoints、Volume、独立/连段路由及�
   19: class UHodgeGameplayAbility;
   20: class UObject;
   21: class UHodgeAbilityDefinition;
-  24: USTRUCT(BlueprintType)
-  25: struct FHodgeAbilityGrantResult
-  26: {
-  27: 	GENERATED_BODY()
-  29: 	UPROPERTY(BlueprintReadOnly) bool bSucceeded = false;
-  31: 	UPROPERTY(BlueprintReadOnly) bool bHasIrreversibleEffects = false;
-  33: 	UPROPERTY(BlueprintReadOnly) FString Error;
-  34: };
-  37: USTRUCT(BlueprintType)
-  38: struct FHodgeAbilitySet_Definition
-  39: {
-  40:  GENERATED_BODY()
-  42:  UPROPERTY(EditDefaultsOnly) TObjectPtr<UHodgeAbilityDefinition> Definition;
-  44:  UPROPERTY(EditDefaultsOnly, meta=(ClampMin="1")) int32 AbilityLevel = 1;
-  45: };
-  53: USTRUCT(BlueprintType)
-  54: struct FHodgeAbilitySet_GameplayAbility
-  55: {
-  56: 	GENERATED_BODY()
-  58: public:
-  60: 	UPROPERTY(EditDefaultsOnly)
-  61: 	TSubclassOf<UHodgeGameplayAbility> Ability = nullptr;
-  64: 	UPROPERTY(EditDefaultsOnly)
-  65: 	int32 AbilityLevel = 1;
-  68: 	UPROPERTY(EditDefaultsOnly, Meta = (Categories = "InputTag"))
-  69: 	FGameplayTag InputTag;
-  70: };
-  78: USTRUCT(BlueprintType)
-  79: struct FHodgeAbilitySet_GameplayEffect
-  80: {
-  81: 	GENERATED_BODY()
-  83: public:
-  85: 	UPROPERTY(EditDefaultsOnly)
-  86: 	TSubclassOf<UGameplayEffect> GameplayEffect = nullptr;
-  89: 	UPROPERTY(EditDefaultsOnly)
-  90: 	float EffectLevel = 1.0f;
-  91: };
-  98: USTRUCT(BlueprintType)
-  99: struct FHodgeAbilitySet_AttributeSet
- 100: {
- 101: 	GENERATED_BODY()
- 103: public:
- 105: 	UPROPERTY(EditDefaultsOnly)
- 106: 	TSubclassOf<UAttributeSet> AttributeSet;
- 107: };
- 115: USTRUCT(BlueprintType)
- 116: struct FHodgeAbilitySet_GrantedHandles
- 117: {
- 118: 	GENERATED_BODY()
- 120: public:
- 125: 	void AddAbilitySpecHandle(const FGameplayAbilitySpecHandle& Handle);
- 131: 	void AddGameplayEffectHandle(const FActiveGameplayEffectHandle& Handle);
- 137: 	void AddAttributeSet(UAttributeSet* Set);
- 143: 	void TakeFromAbilitySystem(UHodgeAbilitySystemComponent* HodgeASC);
- 147: 	void Append(FHodgeAbilitySet_GrantedHandles&& Other);
- 152: 	bool AreValidFor(const UHodgeAbilitySystemComponent* ASC) const;
- 156: 	int32 GetAbilityCount() const { return AbilitySpecHandles.Num(); }
- 158: protected:
- 160: 	UPROPERTY()
- 161: 	TArray<FGameplayAbilitySpecHandle> AbilitySpecHandles;
- 164: 	UPROPERTY()
- 165: 	TArray<FActiveGameplayEffectHandle> GameplayEffectHandles;
- 168: 	UPROPERTY()
- 169: 	TArray<TObjectPtr<UAttributeSet>> GrantedAttributeSets;
- 170: };
- 181: UCLASS(BlueprintType, Const)
- 182: class UHodgeAbilitySet : public UPrimaryDataAsset
- 183: {
- 184: 	GENERATED_BODY()
- 186: public:
- 190: 	UHodgeAbilitySet(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
- 194: 	const TArray<FHodgeAbilitySet_Definition>& GetGrantedDefinitions() const { return GrantedAbilityDefinitions; }
- 202: 	void GiveToAbilitySystem(UHodgeAbilitySystemComponent* HodgeASC, FHodgeAbilitySet_GrantedHandles* OutGrantedHandles,
- 203: 	                         UObject* SourceObject = nullptr) const;
- 210: 	bool ValidateForGrant(const UHodgeAbilitySystemComponent* ASC, TArray<FText>& Errors, bool bForInitialization = false) const;
- 218: 	static bool ValidateBatchForGrant(const TArray<const UHodgeAbilitySet*>& Sets, const UHodgeAbilitySystemComponent* ASC,
- 219: 		TArray<FText>& Errors, bool bForInitialization = false);
- 227: 	FHodgeAbilityGrantResult TryGiveToAbilitySystem(UHodgeAbilitySystemComponent* ASC,
- 228: 		FHodgeAbilitySet_GrantedHandles& OutHandles, UObject* SourceObject = nullptr, bool bForInitialization = false) const;
- 230: protected:
- 232: 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Abilities", meta=(TitleProperty=Ability))
- 233: 	TArray<FHodgeAbilitySet_GameplayAbility> GrantedGameplayAbilities;
- 236: 	UPROPERTY(EditDefaultsOnly, Category="Gameplay Abilities", meta=(TitleProperty="Definition"))
- 237: 	TArray<FHodgeAbilitySet_Definition> GrantedAbilityDefinitions;
- 240: 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Effects", meta=(TitleProperty=GameplayEffect))
- 241: 	TArray<FHodgeAbilitySet_GameplayEffect> GrantedGameplayEffects;
- 244: 	UPROPERTY(EditDefaultsOnly, Category = "Attribute Sets", meta=(TitleProperty=AttributeSet))
- 245: 	TArray<FHodgeAbilitySet_AttributeSet> GrantedAttributes;
- 246: private:
- 254: 	FHodgeAbilityGrantResult GrantInternal(UHodgeAbilitySystemComponent* ASC,
- 255: 		FHodgeAbilitySet_GrantedHandles* OutHandles, UObject* SourceObject, bool bChecked) const;
- 256: };
+  24: enum class EHodgeAbilityGrantContext : uint8
+  25: {
+  26: 	AvatarBound,
+  27: 	OwnerInitialized
+  28: };
+  31: USTRUCT(BlueprintType)
+  32: struct FHodgeAbilityGrantResult
+  33: {
+  34: 	GENERATED_BODY()
+  36: 	UPROPERTY(BlueprintReadOnly) bool bSucceeded = false;
+  38: 	UPROPERTY(BlueprintReadOnly) bool bHasIrreversibleEffects = false;
+  40: 	UPROPERTY(BlueprintReadOnly) FString Error;
+  41: };
+  44: USTRUCT(BlueprintType)
+  45: struct FHodgeAbilitySet_Definition
+  46: {
+  47:  GENERATED_BODY()
+  49:  UPROPERTY(EditDefaultsOnly) TObjectPtr<UHodgeAbilityDefinition> Definition;
+  51:  UPROPERTY(EditDefaultsOnly, meta=(ClampMin="1")) int32 AbilityLevel = 1;
+  52: };
+  60: USTRUCT(BlueprintType)
+  61: struct FHodgeAbilitySet_GameplayAbility
+  62: {
+  63: 	GENERATED_BODY()
+  65: public:
+  67: 	UPROPERTY(EditDefaultsOnly)
+  68: 	TSubclassOf<UHodgeGameplayAbility> Ability = nullptr;
+  71: 	UPROPERTY(EditDefaultsOnly)
+  72: 	int32 AbilityLevel = 1;
+  75: 	UPROPERTY(EditDefaultsOnly, Meta = (Categories = "InputTag"))
+  76: 	FGameplayTag InputTag;
+  77: };
+  85: USTRUCT(BlueprintType)
+  86: struct FHodgeAbilitySet_GameplayEffect
+  87: {
+  88: 	GENERATED_BODY()
+  90: public:
+  92: 	UPROPERTY(EditDefaultsOnly)
+  93: 	TSubclassOf<UGameplayEffect> GameplayEffect = nullptr;
+  96: 	UPROPERTY(EditDefaultsOnly)
+  97: 	float EffectLevel = 1.0f;
+  98: };
+ 105: USTRUCT(BlueprintType)
+ 106: struct FHodgeAbilitySet_AttributeSet
+ 107: {
+ 108: 	GENERATED_BODY()
+ 110: public:
+ 112: 	UPROPERTY(EditDefaultsOnly)
+ 113: 	TSubclassOf<UAttributeSet> AttributeSet;
+ 114: };
+ 122: USTRUCT(BlueprintType)
+ 123: struct FHodgeAbilitySet_GrantedHandles
+ 124: {
+ 125: 	GENERATED_BODY()
+ 127: public:
+ 132: 	void AddAbilitySpecHandle(const FGameplayAbilitySpecHandle& Handle);
+ 138: 	void AddGameplayEffectHandle(const FActiveGameplayEffectHandle& Handle);
+ 144: 	void AddAttributeSet(UAttributeSet* Set);
+ 150: 	void TakeFromAbilitySystem(UHodgeAbilitySystemComponent* HodgeASC);
+ 154: 	void Append(FHodgeAbilitySet_GrantedHandles&& Other);
+ 159: 	bool AreValidFor(const UHodgeAbilitySystemComponent* ASC) const;
+ 163: 	int32 GetAbilityCount() const { return AbilitySpecHandles.Num(); }
+ 165: protected:
+ 167: 	UPROPERTY()
+ 168: 	TArray<FGameplayAbilitySpecHandle> AbilitySpecHandles;
+ 171: 	UPROPERTY()
+ 172: 	TArray<FActiveGameplayEffectHandle> GameplayEffectHandles;
+ 175: 	UPROPERTY()
+ 176: 	TArray<TObjectPtr<UAttributeSet>> GrantedAttributeSets;
+ 177: };
+ 188: UCLASS(BlueprintType, Const)
+ 189: class UHodgeAbilitySet : public UPrimaryDataAsset
+ 190: {
+ 191: 	GENERATED_BODY()
+ 193: public:
+ 197: 	UHodgeAbilitySet(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+ 201: 	const TArray<FHodgeAbilitySet_Definition>& GetGrantedDefinitions() const { return GrantedAbilityDefinitions; }
+ 203: 	const TArray<FHodgeAbilitySet_GameplayAbility>& GetGrantedAbilities() const { return GrantedGameplayAbilities; }
+ 205: 	const TArray<FHodgeAbilitySet_AttributeSet>& GetGrantedAttributes() const { return GrantedAttributes; }
+ 207: 	static bool AreAttributeSetTypesConflicting(const UClass* First, const UClass* Second);
+ 215: 	void GiveToAbilitySystem(UHodgeAbilitySystemComponent* HodgeASC, FHodgeAbilitySet_GrantedHandles* OutGrantedHandles,
+ 216: 	                         UObject* SourceObject = nullptr) const;
+ 223: 	bool ValidateForGrant(const UHodgeAbilitySystemComponent* ASC, TArray<FText>& Errors, bool bForInitialization = false) const;
+ 231: 	static bool ValidateBatchForGrant(const TArray<const UHodgeAbilitySet*>& Sets, const UHodgeAbilitySystemComponent* ASC,
+ 232: 		TArray<FText>& Errors, bool bForInitialization = false);
+ 240: 	FHodgeAbilityGrantResult TryGiveToAbilitySystem(UHodgeAbilitySystemComponent* ASC,
+ 241: 		FHodgeAbilitySet_GrantedHandles& OutHandles, UObject* SourceObject = nullptr, bool bForInitialization = false,
+ 242: 		EHodgeAbilityGrantContext Context = EHodgeAbilityGrantContext::AvatarBound) const;
+ 244: 	static FHodgeAbilityGrantResult TryGiveBatchToAbilitySystem(const TArray<const UHodgeAbilitySet*>& Sets,
+ 245: 		UHodgeAbilitySystemComponent* ASC, FHodgeAbilitySet_GrantedHandles& OutHandles,
+ 246: 		UObject* SourceObject = nullptr, bool bForInitialization = false,
+ 247: 		EHodgeAbilityGrantContext Context = EHodgeAbilityGrantContext::AvatarBound);
+ 249: protected:
+ 251: 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Abilities", meta=(TitleProperty=Ability))
+ 252: 	TArray<FHodgeAbilitySet_GameplayAbility> GrantedGameplayAbilities;
+ 255: 	UPROPERTY(EditDefaultsOnly, Category="Gameplay Abilities", meta=(TitleProperty="Definition"))
+ 256: 	TArray<FHodgeAbilitySet_Definition> GrantedAbilityDefinitions;
+ 259: 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Effects", meta=(TitleProperty=GameplayEffect))
+ 260: 	TArray<FHodgeAbilitySet_GameplayEffect> GrantedGameplayEffects;
+ 263: 	UPROPERTY(EditDefaultsOnly, Category = "Attribute Sets", meta=(TitleProperty=AttributeSet))
+ 264: 	TArray<FHodgeAbilitySet_AttributeSet> GrantedAttributes;
+ 265: private:
+ 267: 	FHodgeAbilityGrantResult GrantInternal(UHodgeAbilitySystemComponent* ASC,
+ 268: 		FHodgeAbilitySet_GrantedHandles& OutHandles, UObject* SourceObject, EHodgeAbilityGrantContext Context) const;
+ 269: };
 ```
 
 ## HodgeAssetManager.h
@@ -971,17 +1022,55 @@ Montage/Blend/Timeline、HitWindows/HitPoints、Volume、独立/连段路由及�
   19: {
   20: public:
   22: 	UHodgeGameData();
-  28: 	static const UHodgeGameData& Get();
-  30: 	GENERATED_BODY()
-  32: 	UPROPERTY(EditDefaultsOnly, Category = "Default Gameplay Effects",
-  33: 		meta = (DisplayName = "Damage Gameplay Effect (SetByCaller)"))
-  35: 	TSoftClassPtr<UGameplayEffect> DamageGameplayEffect_SetByCaller;
-  38: 	UPROPERTY(EditDefaultsOnly, Category = "Default Gameplay Effects",
-  39: 		meta = (DisplayName = "Heal Gameplay Effect (SetByCaller)"))
-  41: 	TSoftClassPtr<UGameplayEffect> HealGameplayEffect_SetByCaller;
-  44: 	UPROPERTY(EditDefaultsOnly, Category = "Default Gameplay Effects")
-  45: 	TSoftClassPtr<UGameplayEffect> DynamicTagGameplayEffect;
-  46: };
+  25: 	static const UHodgeGameData& Get();
+  27: 	GENERATED_BODY()
+  29: 	UPROPERTY(EditDefaultsOnly, Category = "Default Gameplay Effects",
+  30: 		meta = (DisplayName = "Damage Gameplay Effect (SetByCaller)"))
+  32: 	TSoftClassPtr<UGameplayEffect> DamageGameplayEffect_SetByCaller;
+  35: 	UPROPERTY(EditDefaultsOnly, Category = "Default Gameplay Effects",
+  36: 		meta = (DisplayName = "Heal Gameplay Effect (SetByCaller)"))
+  38: 	TSoftClassPtr<UGameplayEffect> HealGameplayEffect_SetByCaller;
+  41: 	UPROPERTY(EditDefaultsOnly, Category = "Default Gameplay Effects")
+  42: 	TSoftClassPtr<UGameplayEffect> DynamicTagGameplayEffect;
+  43: };
+```
+
+## HodgeHavocAttackRule.h
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Public/Data/HodgeHavocAttackRule.h](../../../Source/Hodgepodge/Public/Data/HodgeHavocAttackRule.h)
+
+项目内直接 include（不是运行调用关系）：[Combat/HodgeAttackRule.h](../../../Source/Hodgepodge/Public/Combat/HodgeAttackRule.h)
+
+有效头文件声明摘录（未展开宏，未求值预处理分支）：
+
+```cpp
+   2: #pragma once
+   3: #include "Combat/HodgeAttackRule.h"
+   4: #include "HodgeHavocAttackRule.generated.h"
+   7: UCLASS()
+   8: class HODGEPODGE_API UHodgeHavocAttackRuleConfig : public UHodgeAttackRuleConfig
+   9: {
+  10: 	GENERATED_BODY()
+  11: public:
+  12: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ClampMin="0")) float DarkFlowGainPerPhase = 0.f;
+  13: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ClampMin="0")) float DarkFlowGainOnCast = 0.f;
+  14: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) bool bEnhancedNormalAttack = false;
+  15: 	virtual UHodgeAttackRule* CreateRule(UObject* Outer) const override;
+  16: 	virtual void ValidateRule(const UHodgeAbilityDefinition& Definition, TArray<FText>& Errors) const override;
+  17: };
+  20: UCLASS()
+  21: class HODGEPODGE_API UHodgeHavocAttackRule : public UHodgeAttackRule
+  22: {
+  23: 	GENERATED_BODY()
+  24: public:
+  25: 	virtual void OnSettlement(const FHodgeAttackSettlement& Settlement) override;
+  26: 	virtual void OnExecutionEvent(FGameplayTag Tag) override;
+  27: private:
+  28: 	FHodgeAttackPhaseLedger Phases;
+  29: 	bool bCastCommitted = false;
+  30: };
 ```
 
 ## HodgeHitReactionProfile.h
@@ -1158,6 +1247,44 @@ PawnClass、AbilitySets、ComboDefinition、DefaultWeaponDefinition、输入/相
  103: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hodge|Camera")
  104: 	TSubclassOf<UHodgeCameraMode> DefaultCameraMode;
  105: };
+```
+
+## HodgeResonanceAttackRule.h
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Public/Data/HodgeResonanceAttackRule.h](../../../Source/Hodgepodge/Public/Data/HodgeResonanceAttackRule.h)
+
+项目内直接 include（不是运行调用关系）：[Combat/HodgeAttackRule.h](../../../Source/Hodgepodge/Public/Combat/HodgeAttackRule.h)
+
+有效头文件声明摘录（未展开宏，未求值预处理分支）：
+
+```cpp
+   2: #pragma once
+   3: #include "Combat/HodgeAttackRule.h"
+   4: #include "ScalableFloat.h"
+   5: #include "HodgeResonanceAttackRule.generated.h"
+   6: class UGameplayEffect;
+   9: UCLASS()
+  10: class HODGEPODGE_API UHodgeResonanceAttackRuleConfig : public UHodgeAttackRuleConfig
+  11: {
+  12: 	GENERATED_BODY()
+  13: public:
+  14: 	UHodgeResonanceAttackRuleConfig();
+  15: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) FScalableFloat GainPerPhase = 0.f;
+  16: 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) TSubclassOf<UGameplayEffect> GainEffect;
+  17: 	virtual UHodgeAttackRule* CreateRule(UObject* Outer) const override;
+  18: 	virtual void ValidateRule(const UHodgeAbilityDefinition& Definition, TArray<FText>& Errors) const override;
+  19: };
+  22: UCLASS()
+  23: class HODGEPODGE_API UHodgeResonanceAttackRule : public UHodgeAttackRule
+  24: {
+  25: 	GENERATED_BODY()
+  26: public:
+  27: 	virtual void OnSettlement(const FHodgeAttackSettlement& Settlement) override;
+  28: private:
+  29: 	FHodgeAttackPhaseLedger Phases;
+  30: };
 ```
 
 ## HodgeSprintAbilityProfile.h

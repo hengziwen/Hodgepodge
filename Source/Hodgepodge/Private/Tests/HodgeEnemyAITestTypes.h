@@ -7,6 +7,7 @@
 #include "AbilitySystem/Abilities/HodgeGameplayAbility.h"
 #include "GameplayEffect.h"
 #include "GameFramework/Actor.h"
+#include "HodgeRelationshipTestAbility.h"
 #include "HodgeEnemyAITestTypes.generated.h"
 
 /** 封装敌人测试能力设置的状态与操作接口。 */
@@ -23,6 +24,17 @@ public:
 	 * @param Class 类型，由调用方传入。
 	 */
 	void AddEffect(TSubclassOf<UGameplayEffect> Class);
+	/** 为跨来源重复属性预检构造配置。 */
+	void AddAttribute(TSubclassOf<UAttributeSet> Class);
+};
+
+/** 验证 Pawn 前授予、Pawn 到达后自动激活，不依赖属性作者配置。 */
+UCLASS(Transient, NotBlueprintable)
+class UHodgeOwnerOnlyOnSpawnTestAbility : public UHodgeRelationshipTestAbility
+{
+	GENERATED_BODY()
+public:
+	UHodgeOwnerOnlyOnSpawnTestAbility();
 };
 
 /** 封装敌人测试装备的状态与操作接口。 */

@@ -86,11 +86,11 @@
 
 ## Main/Character/Hero/Ability/BasicAttack
 
-- [DA_Attack_1.uasset](../../../Content/Main/Character/Hero/Ability/BasicAttack/DA_Attack_1.uasset) — `/Game/Main/Character/Hero/Ability/BasicAttack/DA_Attack_1`；5,764 字节
-- [DA_Attack_2.uasset](../../../Content/Main/Character/Hero/Ability/BasicAttack/DA_Attack_2.uasset) — `/Game/Main/Character/Hero/Ability/BasicAttack/DA_Attack_2`；4,635 字节
-- [DA_Attack_3.uasset](../../../Content/Main/Character/Hero/Ability/BasicAttack/DA_Attack_3.uasset) — `/Game/Main/Character/Hero/Ability/BasicAttack/DA_Attack_3`；4,635 字节
-- [DA_Attack_4.uasset](../../../Content/Main/Character/Hero/Ability/BasicAttack/DA_Attack_4.uasset) — `/Game/Main/Character/Hero/Ability/BasicAttack/DA_Attack_4`；4,478 字节
-- [DA_Attack_5.uasset](../../../Content/Main/Character/Hero/Ability/BasicAttack/DA_Attack_5.uasset) — `/Game/Main/Character/Hero/Ability/BasicAttack/DA_Attack_5`；4,635 字节
+- [DA_Attack_1.uasset](../../../Content/Main/Character/Hero/Ability/BasicAttack/DA_Attack_1.uasset) — `/Game/Main/Character/Hero/Ability/BasicAttack/DA_Attack_1`；6,278 字节
+- [DA_Attack_2.uasset](../../../Content/Main/Character/Hero/Ability/BasicAttack/DA_Attack_2.uasset) — `/Game/Main/Character/Hero/Ability/BasicAttack/DA_Attack_2`；5,171 字节
+- [DA_Attack_3.uasset](../../../Content/Main/Character/Hero/Ability/BasicAttack/DA_Attack_3.uasset) — `/Game/Main/Character/Hero/Ability/BasicAttack/DA_Attack_3`；5,171 字节
+- [DA_Attack_4.uasset](../../../Content/Main/Character/Hero/Ability/BasicAttack/DA_Attack_4.uasset) — `/Game/Main/Character/Hero/Ability/BasicAttack/DA_Attack_4`；5,014 字节
+- [DA_Attack_5.uasset](../../../Content/Main/Character/Hero/Ability/BasicAttack/DA_Attack_5.uasset) — `/Game/Main/Character/Hero/Ability/BasicAttack/DA_Attack_5`；5,171 字节
 - [GA_Attack_1.uasset](../../../Content/Main/Character/Hero/Ability/BasicAttack/GA_Attack_1.uasset) — `/Game/Main/Character/Hero/Ability/BasicAttack/GA_Attack_1`；16,089 字节
 - [GA_Attack_2.uasset](../../../Content/Main/Character/Hero/Ability/BasicAttack/GA_Attack_2.uasset) — `/Game/Main/Character/Hero/Ability/BasicAttack/GA_Attack_2`；16,089 字节
 - [GA_Attack_3.uasset](../../../Content/Main/Character/Hero/Ability/BasicAttack/GA_Attack_3.uasset) — `/Game/Main/Character/Hero/Ability/BasicAttack/GA_Attack_3`；16,089 字节
@@ -116,13 +116,13 @@
 - [AM_Ex_Skill01_01_Montage.uasset](../../../Content/Main/Character/Hero/Ability/Havoc/AM_Ex_Skill01_01_Montage.uasset) — `/Game/Main/Character/Hero/Ability/Havoc/AM_Ex_Skill01_01_Montage`；17,749 字节
 - [AM_Ex_Skill02_Montage.uasset](../../../Content/Main/Character/Hero/Ability/Havoc/AM_Ex_Skill02_Montage.uasset) — `/Game/Main/Character/Hero/Ability/Havoc/AM_Ex_Skill02_Montage`；20,199 字节
 - [AS_Havoc.uasset](../../../Content/Main/Character/Hero/Ability/Havoc/AS_Havoc.uasset) — `/Game/Main/Character/Hero/Ability/Havoc/AS_Havoc`；4,174 字节
-- [DA_EnhancedAttack_1.uasset](../../../Content/Main/Character/Hero/Ability/Havoc/DA_EnhancedAttack_1.uasset) — `/Game/Main/Character/Hero/Ability/Havoc/DA_EnhancedAttack_1`；5,679 字节
-- [DA_EnhancedAttack_2.uasset](../../../Content/Main/Character/Hero/Ability/Havoc/DA_EnhancedAttack_2.uasset) — `/Game/Main/Character/Hero/Ability/Havoc/DA_EnhancedAttack_2`；5,679 字节
-- [DA_EnhancedAttack_3.uasset](../../../Content/Main/Character/Hero/Ability/Havoc/DA_EnhancedAttack_3.uasset) — `/Game/Main/Character/Hero/Ability/Havoc/DA_EnhancedAttack_3`；5,679 字节
-- [DA_EnhancedAttack_4.uasset](../../../Content/Main/Character/Hero/Ability/Havoc/DA_EnhancedAttack_4.uasset) — `/Game/Main/Character/Hero/Ability/Havoc/DA_EnhancedAttack_4`；5,679 字节
-- [DA_EnhancedAttack_5.uasset](../../../Content/Main/Character/Hero/Ability/Havoc/DA_EnhancedAttack_5.uasset) — `/Game/Main/Character/Hero/Ability/Havoc/DA_EnhancedAttack_5`；5,679 字节
-- [DA_MieYin.uasset](../../../Content/Main/Character/Hero/Ability/Havoc/DA_MieYin.uasset) — `/Game/Main/Character/Hero/Ability/Havoc/DA_MieYin`；5,914 字节
-- [DA_PoMing.uasset](../../../Content/Main/Character/Hero/Ability/Havoc/DA_PoMing.uasset) — `/Game/Main/Character/Hero/Ability/Havoc/DA_PoMing`；5,989 字节
+- [DA_EnhancedAttack_1.uasset](../../../Content/Main/Character/Hero/Ability/Havoc/DA_EnhancedAttack_1.uasset) — `/Game/Main/Character/Hero/Ability/Havoc/DA_EnhancedAttack_1`；6,193 字节
+- [DA_EnhancedAttack_2.uasset](../../../Content/Main/Character/Hero/Ability/Havoc/DA_EnhancedAttack_2.uasset) — `/Game/Main/Character/Hero/Ability/Havoc/DA_EnhancedAttack_2`；6,193 字节
+- [DA_EnhancedAttack_3.uasset](../../../Content/Main/Character/Hero/Ability/Havoc/DA_EnhancedAttack_3.uasset) — `/Game/Main/Character/Hero/Ability/Havoc/DA_EnhancedAttack_3`；6,193 字节
+- [DA_EnhancedAttack_4.uasset](../../../Content/Main/Character/Hero/Ability/Havoc/DA_EnhancedAttack_4.uasset) — `/Game/Main/Character/Hero/Ability/Havoc/DA_EnhancedAttack_4`；6,193 字节
+- [DA_EnhancedAttack_5.uasset](../../../Content/Main/Character/Hero/Ability/Havoc/DA_EnhancedAttack_5.uasset) — `/Game/Main/Character/Hero/Ability/Havoc/DA_EnhancedAttack_5`；6,193 字节
+- [DA_MieYin.uasset](../../../Content/Main/Character/Hero/Ability/Havoc/DA_MieYin.uasset) — `/Game/Main/Character/Hero/Ability/Havoc/DA_MieYin`；6,220 字节
+- [DA_PoMing.uasset](../../../Content/Main/Character/Hero/Ability/Havoc/DA_PoMing.uasset) — `/Game/Main/Character/Hero/Ability/Havoc/DA_PoMing`；6,503 字节
 - [GA_EnhancedNormalAttack.uasset](../../../Content/Main/Character/Hero/Ability/Havoc/GA_EnhancedNormalAttack.uasset) — `/Game/Main/Character/Hero/Ability/Havoc/GA_EnhancedNormalAttack`；19,814 字节
 - [GA_EnhancedResonanceSkill.uasset](../../../Content/Main/Character/Hero/Ability/Havoc/GA_EnhancedResonanceSkill.uasset) — `/Game/Main/Character/Hero/Ability/Havoc/GA_EnhancedResonanceSkill`；25,472 字节
 - [GA_HavocRules.uasset](../../../Content/Main/Character/Hero/Ability/Havoc/GA_HavocRules.uasset) — `/Game/Main/Character/Hero/Ability/Havoc/GA_HavocRules`；22,106 字节
@@ -151,7 +151,7 @@
 - [AM_Resonance_Skill.uasset](../../../Content/Main/Character/Hero/Ability/ResonanceSkill/AM_Resonance_Skill.uasset) — `/Game/Main/Character/Hero/Ability/ResonanceSkill/AM_Resonance_Skill`；1,392 字节
 - [AM_Resonance_Skill1.uasset](../../../Content/Main/Character/Hero/Ability/ResonanceSkill/AM_Resonance_Skill1.uasset) — `/Game/Main/Character/Hero/Ability/ResonanceSkill/AM_Resonance_Skill1`；27,066 字节
 - [AS_Resonance_Skill.uasset](../../../Content/Main/Character/Hero/Ability/ResonanceSkill/AS_Resonance_Skill.uasset) — `/Game/Main/Character/Hero/Ability/ResonanceSkill/AS_Resonance_Skill`；2,180 字节
-- [DA_Resonance_Skill.uasset](../../../Content/Main/Character/Hero/Ability/ResonanceSkill/DA_Resonance_Skill.uasset) — `/Game/Main/Character/Hero/Ability/ResonanceSkill/DA_Resonance_Skill`；6,258 字节
+- [DA_Resonance_Skill.uasset](../../../Content/Main/Character/Hero/Ability/ResonanceSkill/DA_Resonance_Skill.uasset) — `/Game/Main/Character/Hero/Ability/ResonanceSkill/DA_Resonance_Skill`；6,772 字节
 - [GA_Resonance_Skill.uasset](../../../Content/Main/Character/Hero/Ability/ResonanceSkill/GA_Resonance_Skill.uasset) — `/Game/Main/Character/Hero/Ability/ResonanceSkill/GA_Resonance_Skill`；17,168 字节
 - [GE_Resonance_Skill_Cooldown.uasset](../../../Content/Main/Character/Hero/Ability/ResonanceSkill/GE_Resonance_Skill_Cooldown.uasset) — `/Game/Main/Character/Hero/Ability/ResonanceSkill/GE_Resonance_Skill_Cooldown`；8,550 字节
 - [GE_Resonance_Skill_Damage.uasset](../../../Content/Main/Character/Hero/Ability/ResonanceSkill/GE_Resonance_Skill_Damage.uasset) — `/Game/Main/Character/Hero/Ability/ResonanceSkill/GE_Resonance_Skill_Damage`；6,786 字节
@@ -485,12 +485,13 @@
 
 - `Assets`：645 个文件（包含源资源，不等于 UE 资产数）。
 - `Characters`：148 个文件（包含源资源，不等于 UE 资产数）。
-- `CodexText`：534 个文件（包含源资源，不等于 UE 资产数）。
+- `CodexText`：563 个文件（包含源资源，不等于 UE 资产数）。
 - `GameplayEffects`：15 个文件（包含源资源，不等于 UE 资产数）。
 - `LevelPrototyping`：13 个文件（包含源资源，不等于 UE 资产数）。
 - `Main`：298 个文件（包含源资源，不等于 UE 资产数）。
+- `Tests`：1 个文件（包含源资源，不等于 UE 资产数）。
 - `ThirdPerson`：8 个文件（包含源资源，不等于 UE 资产数）。
 - `Wuwa`：887 个文件（包含源资源，不等于 UE 资产数）。
-- `__ExternalActors__`：258 个文件（包含源资源，不等于 UE 资产数）。
+- `__ExternalActors__`：257 个文件（包含源资源，不等于 UE 资产数）。
 - `__ExternalObjects__`：19 个文件（包含源资源，不等于 UE 资产数）。
 - `qiuyuan`：285 个文件（包含源资源，不等于 UE 资产数）。

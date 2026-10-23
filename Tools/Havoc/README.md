@@ -4,7 +4,7 @@
 
 ## 配置
 
-`/Game/Main/Character/Hero/Ability/Havoc/GA_HavocRules`配置每秒消费、长按阈值、有界等待及GE引用。GE_DarkFlow_Init配置容量，GE_DarkSurge_State配置20%增伤，GE_DarkFlow_Drain配置周期。收益在各Definition.DarkFlowGainPerPhase／DarkFlowGainOnCast中修改。
+`/Game/Main/Character/Hero/Ability/Havoc/GA_HavocRules`配置每秒消费、长按阈值、有界等待及GE引用。GE_DarkFlow_Init配置容量，GE_DarkSurge_State配置20%增伤，GE_DarkFlow_Drain配置周期。收益在各 Definition 的 AttackRules 中选择 HodgeHavocAttackRuleConfig，修改 DarkFlowGainPerPhase／DarkFlowGainOnCast；旧 Definition 同名字段仅保留读取适配，作者脚本使用 Tools/AttackRules/rule_config.py 写入新配置。
 
 命中与恢复窗口直接在七条AM_Ex_*_Montage通知轨编辑；灭音专用提交通知的Burst包含Box尺寸。保留源动画根运动；Box仅在提交时取位置，不持续跟随。首版新动作未开启朝向Warp，暂不接攻击吸附。
 

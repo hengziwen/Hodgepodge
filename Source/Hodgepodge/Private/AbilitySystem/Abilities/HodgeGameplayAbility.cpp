@@ -21,6 +21,9 @@
 #include "Character/HodgeCombatCharacter.h"
 #include "Component/HodgeHeroComponent.h"
 #include "Component/HodgeCharacterRotationComponent.h"
+#include "Component/HodgeHitReactionComponent.h"
+#include "Data/HodgeAbilityDefinition.h"
+#include "AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h"
 #include "Interface/HodgeAbilitySourceInterface.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeGameplayAbility)
@@ -191,6 +194,29 @@ void UHodgeGameplayAbility::NativeOnAbilityFailedToActivate(const FGameplayTagCo
 	}
 }
 
+/** 恢复动作仍走原有 GAS 授予与提交链，技能配置不等同于无条件免控。 */
+bool UHodgeGameplayAbility::CanRecoverFromHit(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* Info) const
+{
+	const auto* ASC = Info ? Cast<UHodgeAbilitySystemComponent>(Info->AbilitySystemComponent.Get()) : nullptr;
+	const auto* Reaction = Info && Info->AvatarActor.IsValid() ? Info->AvatarActor->FindComponentByClass<UHodgeHitReactionComponent>() : nullptr;
+	if (!ASC || !Reaction || ASC->GetAvatarActor() != Info->AvatarActor.Get()) { return false; }
+	if (GetAssetTags().HasTagExact(HodgeGameplayTags::Ability_Type_Action_Dash)) { return Reaction->CanRecover(EHodgeHitRecoveryAction::Dodge); }
+	const auto* Definition = IsA<UHodgeGameplayAbility_Definition>() ? ASC->FindAbilityDefinition(Handle) : nullptr;
+	return Definition && Definition->bAllowHitRecoveryAttack && Reaction->CanRecover(EHodgeHitRecoveryAction::BasicAttack);
+}
+
+/** 客户端等待原有复制通道解除控制，拒绝时无需重建被预测删除的受击。 */
+bool UHodgeGameplayAbility::CommitHitRecovery(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* Info, int32 Sequence) const
+{
+	if (!Info || !Info->AvatarActor.IsValid() || !Info->AbilitySystemComponent.IsValid()) { return false; }
+	if (!Info->AbilitySystemComponent->HasMatchingGameplayTag(HodgeHitReactionTags::Controlled)) { return true; }
+	auto* Reaction = Info->AvatarActor->FindComponentByClass<UHodgeHitReactionComponent>();
+	if (!Reaction || Reaction->GetReactionState().Sequence != Sequence || !CanRecoverFromHit(Handle, Info)) { return false; }
+	if (!Info->IsNetAuthority()) { return true; }
+	return Reaction->TryRecover(GetAssetTags().HasTagExact(HodgeGameplayTags::Ability_Type_Action_Dash) ?
+		EHodgeHitRecoveryAction::Dodge : EHodgeHitRecoveryAction::BasicAttack, Sequence);
+}
+
 // 检查当前 Ability 是否满足完整的激活条件。
 bool UHodgeGameplayAbility::CanActivateAbility(const FGameplayAbilitySpecHandle Handle,
                                                const FGameplayAbilityActorInfo* ActorInfo,
@@ -205,25 +231,31 @@ bool UHodgeGameplayAbility::CanActivateAbility(const FGameplayAbilitySpecHandle 
 	}
 
 	if (!bAllowWhileHitReacting && ActivationPolicy != EHodgeAbilityActivationPolicy::OnSpawn &&
-		ActorInfo->AbilitySystemComponent->HasMatchingGameplayTag(HodgeHitReactionTags::Controlled))
-	{ return false; }
+		ActorInfo->AbilitySystemComponent->HasMatchingGameplayTag(HodgeHitReactionTags::Controlled) && !CanRecoverFromHit(Handle, ActorInfo))
+	{
+		return false;
+	}
 
-    // 先检查对象与上下文，避免在依赖失效后继续处理。
-    if (bRequiresInitializedAttributes && ActorInfo->AvatarActor.IsValid() && ActorInfo->AvatarActor->IsA<AHodgeHeroCharacter>())
-    {
-        const auto* PS = Cast<AHodgePlayerState>(ActorInfo->OwnerActor.Get());
-        if (!PS || !PS->AreAttributesReadyFor(Cast<APawn>(ActorInfo->AvatarActor.Get())))
-        {
-            if (OptionalRelevantTags) { OptionalRelevantTags->AddTag(HodgeGameplayTags::Ability_ActivateFail_AttributesNotReady); }
-            return false;
-        }
+	// 先检查对象与上下文，避免在依赖失效后继续处理。
+	if (bRequiresInitializedAttributes && ActorInfo->AvatarActor.IsValid() && ActorInfo->AvatarActor->IsA<
+		AHodgeHeroCharacter>())
+	{
+		const auto* PS = Cast<AHodgePlayerState>(ActorInfo->OwnerActor.Get());
+		if (!PS || !PS->AreAttributesReadyFor(Cast<APawn>(ActorInfo->AvatarActor.Get())))
+		{
+			if (OptionalRelevantTags)
+			{
+				OptionalRelevantTags->AddTag(HodgeGameplayTags::Ability_ActivateFail_AttributesNotReady);
+			}
+			return false;
+		}
 		const auto* Health = ActorInfo->AbilitySystemComponent->GetSet<UHodgeHealthSet>();
 		if (!Health || Health->GetHealth() <= 0.f)
 		{
 			if (OptionalRelevantTags) { OptionalRelevantTags->AddTag(HodgeGameplayTags::Ability_ActivateFail_IsDead); }
 			return false;
 		}
-    }
+	}
 	// 先执行 UGameplayAbility 原本的通用激活条件检查。
 	if (!Super::CanActivateAbility(Handle, ActorInfo, SourceTags, TargetTags, OptionalRelevantTags))
 	{
@@ -317,7 +349,9 @@ void UHodgeGameplayAbility::EndAbility(const FGameplayAbilitySpecHandle Handle,
 	if (ActorInfo && ActorInfo->AvatarActor.IsValid())
 	{
 		if (auto* Rotation = ActorInfo->AvatarActor->FindComponentByClass<UHodgeCharacterRotationComponent>())
-		{ Rotation->ReleaseRequestsForSource(this); }
+		{
+			Rotation->ReleaseRequestsForSource(this);
+		}
 	}
 
 	// 执行 UGameplayAbility 的原始结束逻辑。

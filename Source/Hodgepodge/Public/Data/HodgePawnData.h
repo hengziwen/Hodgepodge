@@ -11,6 +11,7 @@
 // UPrimaryDataAsset 所需头文件。
 #include "Engine/DataAsset.h"
 #include "Inventory/HodgeInventoryTypes.h"
+#include "Combat/HodgeHitReactionTypes.h"
 
 #include "HodgePawnData.generated.h"
 
@@ -76,6 +77,9 @@ public:
 	// 目标自身的受击动作、恢复规则和支持的 Impact。
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Combat")
 	TObjectPtr<UHodgeHitReactionProfile> HitReactionProfile;
+	// 目标削韧与位移规则独立于动画资源配置，默认关闭兼容旧目标。
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Combat")
+	FHodgePoiseSettings Poise;
 	// Dash/Sprint参数配置的数据或对象引用。
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Movement")
 	TObjectPtr<UHodgeSprintAbilityProfile> SprintAbilityProfile;

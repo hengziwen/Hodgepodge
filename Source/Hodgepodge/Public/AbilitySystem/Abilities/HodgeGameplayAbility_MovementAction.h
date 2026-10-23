@@ -172,6 +172,9 @@ protected:
 	float ActorYawAtStart = 0.f;
 	// 控制是否Committed的状态标记。
 	bool bCommitted = false;
+	// 恢复闪避先提交既有消耗再等待权威解锁朝向，正式位移阶段不重复扣费。
+	bool bRecoveryCostCommitted = false;
+	int32 RecoverySequence = 0;
 	// Preparing时刻的数值或阈值。
 	double PreparingAt = 0.;
 	// Committed时刻的数值或阈值。

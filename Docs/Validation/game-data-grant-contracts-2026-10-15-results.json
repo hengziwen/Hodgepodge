@@ -1,0 +1,309 @@
+{
+  "date": "2026-10-15",
+  "engine": "5.5.4",
+  "baseline_head": "d028591",
+  "baseline": {
+    "succeeded": 68,
+    "succeededWithWarnings": 64,
+    "failed": 0,
+    "notRun": 0
+  },
+  "final": {
+    "succeeded": 78,
+    "succeededWithWarnings": 65,
+    "failed": 0,
+    "notRun": 0
+  },
+  "editor_build": {
+    "exit_code": 0,
+    "log": "Saved/GrantContracts/editor-build-3.log"
+  },
+  "game_build": {
+    "exit_code": 0,
+    "log": "Saved/GrantContracts/game-build-2.log"
+  },
+  "new_tests": [
+    {
+      "name": "Hodge.GameData.ConfiguredAssetAndGC",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.GameData.DynamicTagPair",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.GameData.SelfDestructAuthorityAndAvatar",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.Grants.GameFeature.LateInitAndOriginalASC",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.Grants.GameFeature.OverlappingEntriesAndSources",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.Grants.GameFeature.PreflightAllBranches",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.Grants.GameFeature.RealExtensionBindingLifecycle",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.Grants.GameFeature.WithdrawDuringCommit",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.Grants.BatchPreflightAndIrreversibleFailure",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.Grants.OwnerBeforePawnAndOnSpawn",
+      "state": "Success"
+    },
+    {
+      "name": "Hodge.Grants.PlayerStateCommitAndFailure",
+      "state": "Success"
+    }
+  ],
+  "blueprints": [
+    {
+      "asset": "/Game/GameplayEffects/Damage/GE_Damage_Basic_SetByCaller.GE_Damage_Basic_SetByCaller",
+      "generated_class": "/Game/GameplayEffects/Damage/GE_Damage_Basic_SetByCaller.GE_Damage_Basic_SetByCaller_C"
+    },
+    {
+      "asset": "/Game/GameplayEffects/GE_DynamicTag.GE_DynamicTag",
+      "generated_class": "/Game/GameplayEffects/GE_DynamicTag.GE_DynamicTag_C"
+    },
+    {
+      "asset": "/Game/GameplayEffects/Heal/GE_Heal_SetByCaller.GE_Heal_SetByCaller",
+      "generated_class": "/Game/GameplayEffects/Heal/GE_Heal_SetByCaller.GE_Heal_SetByCaller_C"
+    },
+    {
+      "asset": "/Game/Main/Character/Hero/Ability/GA_Hero_Dash.GA_Hero_Dash",
+      "generated_class": "/Game/Main/Character/Hero/Ability/GA_Hero_Dash.GA_Hero_Dash_C"
+    },
+    {
+      "asset": "/Game/Main/Character/Hero/Ability/GA_Hero_Death.GA_Hero_Death",
+      "generated_class": "/Game/Main/Character/Hero/Ability/GA_Hero_Death.GA_Hero_Death_C"
+    },
+    {
+      "asset": "/Game/Main/Character/Hero/Ability/GA_Hero_HitReaction.GA_Hero_HitReaction",
+      "generated_class": "/Game/Main/Character/Hero/Ability/GA_Hero_HitReaction.GA_Hero_HitReaction_C"
+    },
+    {
+      "asset": "/Game/Main/Character/Hero/Ability/GA_Hero_Jump.GA_Hero_Jump",
+      "generated_class": "/Game/Main/Character/Hero/Ability/GA_Hero_Jump.GA_Hero_Jump_C"
+    },
+    {
+      "asset": "/Game/Main/Character/Hero/Ability/GA_Hero_Sprint.GA_Hero_Sprint",
+      "generated_class": "/Game/Main/Character/Hero/Ability/GA_Hero_Sprint.GA_Hero_Sprint_C"
+    },
+    {
+      "asset": "/Game/Main/Character/Hero/Ability/Havoc/GA_HavocRules.GA_HavocRules",
+      "generated_class": "/Game/Main/Character/Hero/Ability/Havoc/GA_HavocRules.GA_HavocRules_C"
+    },
+    {
+      "asset": "/Game/Main/Character/Hero/BP_Hero_Pover.BP_Hero_Pover",
+      "generated_class": "/Game/Main/Character/Hero/BP_Hero_Pover.BP_Hero_Pover_C"
+    },
+    {
+      "asset": "/Game/Main/Experiences/Exp_HodgeDefaultExperience",
+      "generated_class": "/Game/Main/Experiences/Exp_HodgeDefaultExperience.Exp_HodgeDefaultExperience_C"
+    }
+  ],
+  "pie": [
+    {
+      "network": false,
+      "error": null,
+      "cases": [
+        {
+          "case": "initial",
+          "owner": {
+            "specs": 21,
+            "rules_active": [
+              true
+            ],
+            "pawn": "/Game/ThirdPerson/Maps/UEDPIE_0_ThirdPersonMap.ThirdPersonMap:PersistentLevel.BP_Hero_Pover_C_0",
+            "health": 150,
+            "max_health": 150,
+            "vitals_ready": true
+          },
+          "authority": {
+            "specs": 21,
+            "rules_active": [
+              true
+            ],
+            "pawn": "/Game/ThirdPerson/Maps/UEDPIE_0_ThirdPersonMap.ThirdPersonMap:PersistentLevel.BP_Hero_Pover_C_0",
+            "health": 150,
+            "max_health": 150,
+            "vitals_ready": true
+          }
+        },
+        {
+          "case": "fell_out_of_world_zero_health",
+          "owner": {
+            "specs": 21,
+            "rules_active": [
+              true
+            ],
+            "pawn": "/Game/ThirdPerson/Maps/UEDPIE_0_ThirdPersonMap.ThirdPersonMap:PersistentLevel.BP_Hero_Pover_C_0",
+            "health": 0,
+            "max_health": 150,
+            "vitals_ready": true
+          },
+          "authority": {
+            "specs": 21,
+            "rules_active": [
+              true
+            ],
+            "pawn": "/Game/ThirdPerson/Maps/UEDPIE_0_ThirdPersonMap.ThirdPersonMap:PersistentLevel.BP_Hero_Pover_C_0",
+            "health": 0,
+            "max_health": 150,
+            "vitals_ready": true
+          }
+        },
+        {
+          "case": "old_pawn_destroyed",
+          "owner": {
+            "specs": 21,
+            "rules_active": [
+              true
+            ],
+            "pawn": "",
+            "health": 0,
+            "max_health": 0,
+            "vitals_ready": false
+          }
+        },
+        {
+          "case": "respawn_same_asc_no_duplicate_grants",
+          "owner": {
+            "specs": 21,
+            "rules_active": [
+              true
+            ],
+            "pawn": "/Game/ThirdPerson/Maps/UEDPIE_0_ThirdPersonMap.ThirdPersonMap:PersistentLevel.BP_Hero_Pover_C_1",
+            "health": 200,
+            "max_health": 200,
+            "vitals_ready": true
+          },
+          "authority": {
+            "specs": 21,
+            "rules_active": [
+              true
+            ],
+            "pawn": "/Game/ThirdPerson/Maps/UEDPIE_0_ThirdPersonMap.ThirdPersonMap:PersistentLevel.BP_Hero_Pover_C_1",
+            "health": 200,
+            "max_health": 200,
+            "vitals_ready": true
+          }
+        }
+      ]
+    },
+    {
+      "network": true,
+      "error": null,
+      "cases": [
+        {
+          "case": "initial",
+          "owner": {
+            "specs": 21,
+            "rules_active": [
+              false
+            ],
+            "pawn": "/Game/ThirdPerson/Maps/UEDPIE_1_ThirdPersonMap.ThirdPersonMap:PersistentLevel.BP_Hero_Pover_C_0",
+            "health": 150,
+            "max_health": 150,
+            "vitals_ready": true
+          },
+          "authority": {
+            "specs": 21,
+            "rules_active": [
+              true
+            ],
+            "pawn": "/Game/ThirdPerson/Maps/UEDPIE_0_ThirdPersonMap.ThirdPersonMap:PersistentLevel.BP_Hero_Pover_C_1",
+            "health": null,
+            "max_health": null,
+            "vitals_ready": null
+          }
+        },
+        {
+          "case": "fell_out_of_world_zero_health",
+          "owner": {
+            "specs": 21,
+            "rules_active": [
+              false
+            ],
+            "pawn": "/Game/ThirdPerson/Maps/UEDPIE_1_ThirdPersonMap.ThirdPersonMap:PersistentLevel.BP_Hero_Pover_C_0",
+            "health": 0,
+            "max_health": 150,
+            "vitals_ready": true
+          },
+          "authority": {
+            "specs": 21,
+            "rules_active": [
+              true
+            ],
+            "pawn": "/Game/ThirdPerson/Maps/UEDPIE_0_ThirdPersonMap.ThirdPersonMap:PersistentLevel.BP_Hero_Pover_C_1",
+            "health": null,
+            "max_health": null,
+            "vitals_ready": null
+          }
+        },
+        {
+          "case": "old_pawn_destroyed",
+          "owner": {
+            "specs": 21,
+            "rules_active": [
+              false
+            ],
+            "pawn": "",
+            "health": 0,
+            "max_health": 0,
+            "vitals_ready": false
+          }
+        },
+        {
+          "case": "respawn_same_asc_no_duplicate_grants",
+          "owner": {
+            "specs": 21,
+            "rules_active": [
+              false
+            ],
+            "pawn": "/Game/ThirdPerson/Maps/UEDPIE_1_ThirdPersonMap.ThirdPersonMap:PersistentLevel.BP_Hero_Pover_C_2",
+            "health": 150,
+            "max_health": 150,
+            "vitals_ready": true
+          },
+          "authority": {
+            "specs": 21,
+            "rules_active": [
+              true
+            ],
+            "pawn": "/Game/ThirdPerson/Maps/UEDPIE_0_ThirdPersonMap.ThirdPersonMap:PersistentLevel.BP_Hero_Pover_C_2",
+            "health": null,
+            "max_health": null,
+            "vitals_ready": null
+          }
+        }
+      ]
+    }
+  ],
+  "editor_final": {
+    "pie_worlds": 0,
+    "dirty_content": [],
+    "dirty_maps": [],
+    "editor_map": "/Game/CodexText/L_MainMenu.L_MainMenu"
+  },
+  "unverified": [
+    "Independent GameFeature plugin cold load and Bundle cancellation",
+    "Dedicated Server",
+    "Separate client process",
+    "Latency and packet loss",
+    "Cook/package",
+    "Profiling"
+  ]
+}

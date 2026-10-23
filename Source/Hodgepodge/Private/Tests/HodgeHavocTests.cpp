@@ -15,6 +15,7 @@
 #include "GameFramework/Actor.h"
 #include "GameFramework/Pawn.h"
 #include "Data/HodgeAbilityDefinition.h"
+#include "Data/HodgeHavocAttackRule.h"
 #include "Data/HodgeAbilitySet.h"
 #include "Data/HodgeComboDefinition.h"
 #include "Animation/HodgeAnimNotify_DarkSurgeCommit.h"
@@ -273,8 +274,16 @@ bool FHodgeHavocAssetsTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("两种E复用同一份冷却GE"),NormalGA->GetCooldownGameplayEffect()==EnhancedGA->GetCooldownGameplayEffect());
 	float Duration=0.f;
 	TestTrue(TEXT("共享冷却为固定8秒"),NormalGA->GetCooldownGameplayEffect() && NormalGA->GetCooldownGameplayEffect()->DurationMagnitude.GetStaticMagnitudeIfPossible(1.f,Duration) && FMath::IsNearlyEqual(Duration,8.f));
-	TestEqual(TEXT("常态E成功施放回20点"),NormalE->DarkFlowGainOnCast,20.f);
-	TestEqual(TEXT("破命成功施放回20点"),EnhancedE->DarkFlowGainOnCast,20.f);
+	// 正式配置已迁入可选规则；旧字段不再作为第二份可调参数。
+	for (const auto* Data : {NormalE, EnhancedE})
+	{
+		const UHodgeHavocAttackRuleConfig* Rule = nullptr;
+		for (const UHodgeAttackRuleConfig* Candidate : Data->AttackRules)
+		{ if (const auto* Havoc = Cast<UHodgeHavocAttackRuleConfig>(Candidate)) { Rule = Havoc; } }
+		TestNotNull(TEXT("正式E具有独立暗流规则配置"), Rule);
+		if (Rule) { TestEqual(TEXT("成功施放回20点"), Rule->DarkFlowGainOnCast, 20.f); }
+		TestEqual(TEXT("旧字段收益已迁移"), Data->DarkFlowGainOnCast, 0.f);
+	}
 	TestNull(TEXT("灭音不配置CD"),Circuit->AbilityClass.GetDefaultObject()->GetCooldownGameplayEffect());
 	TestTrue(TEXT("灭音保留源动画根运动"),Circuit->ExecutionConfig.Montage->HasRootMotion());
 	int32 Commits=0;

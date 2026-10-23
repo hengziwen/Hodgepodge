@@ -1,0 +1,419 @@
+{
+  "date": "2026-10-16",
+  "engine": "5.5.4",
+  "mode": "Single-player PIE / NullRHI",
+  "error": null,
+  "cleanup_error": null,
+  "initial": {
+    "time": 0.7048218995332718,
+    "health": 1000000.0,
+    "max_health": 1000000.0,
+    "phase": "<HodgeHitReactionPhase.NONE: 0>",
+    "type": "<HodgeImpactType.HIT_STUN: 0>",
+    "sequence": 0,
+    "position": [
+      250.0,
+      0.0,
+      92.15000104904175
+    ],
+    "velocity": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "controlled": false,
+    "air_hits": 0,
+    "montage": "/Game/Main/Character/Hero/Anim/HitReactions/AM_Hero_LightFeedback.AM_Hero_LightFeedback",
+    "montage_position": 0.0,
+    "montage_weight": 0.0,
+    "montage_playing": false
+  },
+  "case_count": 7,
+  "final_health": 999971.875,
+  "cases": [
+    {
+      "case": "Light",
+      "health_before": 1000000.0,
+      "health_after": 999996.875,
+      "max_height": 95.0,
+      "max_x": 180.0,
+      "phases": [
+        "<HodgeHitReactionPhase.NONE: 0>"
+      ],
+      "reactions": [
+        {
+          "event": "reaction",
+          "time": 1.0439369976520538,
+          "health": 999996.875,
+          "max_health": 1000000.0,
+          "phase": "<HodgeHitReactionPhase.NONE: 0>",
+          "type": "<HodgeImpactType.HIT_STUN: 0>",
+          "sequence": 0,
+          "position": [
+            180.0,
+            0.0,
+            92.15000104904175
+          ],
+          "velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "controlled": false,
+          "air_hits": 0,
+          "montage": "/Game/Main/Character/Hero/Anim/HitReactions/AM_Hero_LightFeedback.AM_Hero_LightFeedback",
+          "montage_position": 0.0,
+          "montage_weight": 0.0,
+          "montage_playing": true,
+          "result": "(HitId=6B036B7E4E49CC595EE658A9A4291007,AttackJudgementTag=(TagName=\"Combat.Attack.Judgement.Skill\"),TargetBodyTag=(TagName=\"\"),AttackRank=2,TargetBodyRank=0,ActualDamage=3.125000,ReservedPoiseDamage=0.000000,Outcome=NoImpact,AppliedImpacts=)",
+          "hit_id": "6B036B7E4E49CC595EE658A9A4291007",
+          "outcome": "<HodgeHitReactionOutcome.NO_IMPACT: 6>",
+          "actual_damage": 3.125,
+          "attack_rank": 2,
+          "body_rank": 0
+        }
+      ],
+      "recovered": true
+    },
+    {
+      "case": "HitStun",
+      "health_before": 999996.875,
+      "health_after": 999993.75,
+      "max_height": 95.0,
+      "max_x": 180.0,
+      "phases": [
+        "<HodgeHitReactionPhase.NONE: 0>",
+        "<HodgeHitReactionPhase.CONTROLLED: 1>"
+      ],
+      "reactions": [
+        {
+          "event": "reaction",
+          "time": 5.544645298272371,
+          "health": 999993.75,
+          "max_health": 1000000.0,
+          "phase": "<HodgeHitReactionPhase.CONTROLLED: 1>",
+          "type": "<HodgeImpactType.HIT_STUN: 0>",
+          "sequence": 1,
+          "position": [
+            180.0,
+            0.0,
+            92.15000104904175
+          ],
+          "velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "controlled": true,
+          "air_hits": 0,
+          "montage": "/Game/Main/Character/Hero/Anim/HitReactions/AM_Hero_HitStun.AM_Hero_HitStun",
+          "montage_position": 0.0,
+          "montage_weight": 0.0,
+          "montage_playing": true,
+          "result": "(HitId=6685311B458E13298BF196A6AD624C63,AttackJudgementTag=(TagName=\"Combat.Attack.Judgement.Skill\"),TargetBodyTag=(TagName=\"\"),AttackRank=2,TargetBodyRank=0,ActualDamage=3.125000,ReservedPoiseDamage=0.000000,Outcome=Applied,AppliedImpacts=(HitStun))",
+          "hit_id": "6685311B458E13298BF196A6AD624C63",
+          "outcome": "<HodgeHitReactionOutcome.APPLIED: 11>",
+          "actual_damage": 3.125,
+          "attack_rank": 2,
+          "body_rank": 0
+        }
+      ],
+      "recovered": true
+    },
+    {
+      "case": "Knockback",
+      "health_before": 999993.75,
+      "health_after": 999990.625,
+      "max_height": 95.0,
+      "max_x": 330.0011404692425,
+      "phases": [
+        "<HodgeHitReactionPhase.NONE: 0>",
+        "<HodgeHitReactionPhase.CONTROLLED: 1>"
+      ],
+      "reactions": [
+        {
+          "event": "reaction",
+          "time": 10.06146140024066,
+          "health": 999990.625,
+          "max_health": 1000000.0,
+          "phase": "<HodgeHitReactionPhase.CONTROLLED: 1>",
+          "type": "<HodgeImpactType.KNOCKBACK: 1>",
+          "sequence": 2,
+          "position": [
+            180.0,
+            0.0,
+            92.15000104904175
+          ],
+          "velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "controlled": true,
+          "air_hits": 0,
+          "montage": "/Game/Main/Character/Hero/Anim/HitReactions/AM_Hero_Knockback.AM_Hero_Knockback",
+          "montage_position": 0.0,
+          "montage_weight": 0.0,
+          "montage_playing": true,
+          "result": "(HitId=C775C2D34046D4BE599DCAB90FD75323,AttackJudgementTag=(TagName=\"Combat.Attack.Judgement.Skill\"),TargetBodyTag=(TagName=\"\"),AttackRank=2,TargetBodyRank=0,ActualDamage=3.125000,ReservedPoiseDamage=0.000000,Outcome=Applied,AppliedImpacts=(Knockback))",
+          "hit_id": "C775C2D34046D4BE599DCAB90FD75323",
+          "outcome": "<HodgeHitReactionOutcome.APPLIED: 11>",
+          "actual_damage": 3.125,
+          "attack_rank": 2,
+          "body_rank": 0
+        }
+      ],
+      "recovered": true
+    },
+    {
+      "case": "Launch",
+      "health_before": 999990.625,
+      "health_after": 999987.5,
+      "max_height": 307.7050039857052,
+      "max_x": 244.24514637942272,
+      "phases": [
+        "<HodgeHitReactionPhase.NONE: 0>",
+        "<HodgeHitReactionPhase.AIRBORNE: 2>",
+        "<HodgeHitReactionPhase.CONTROLLED: 1>"
+      ],
+      "reactions": [
+        {
+          "event": "reaction",
+          "time": 14.601789399981499,
+          "health": 999987.5,
+          "max_health": 1000000.0,
+          "phase": "<HodgeHitReactionPhase.AIRBORNE: 2>",
+          "type": "<HodgeImpactType.LAUNCH: 2>",
+          "sequence": 3,
+          "position": [
+            180.0,
+            0.0,
+            92.15000104904175
+          ],
+          "velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "controlled": true,
+          "air_hits": 0,
+          "montage": "/Game/Main/Character/Hero/Anim/HitReactions/AM_Hero_Launch.AM_Hero_Launch",
+          "montage_position": 0.0,
+          "montage_weight": 0.0,
+          "montage_playing": true,
+          "result": "(HitId=453A717D490103BED92602AC1313916F,AttackJudgementTag=(TagName=\"Combat.Attack.Judgement.Skill\"),TargetBodyTag=(TagName=\"\"),AttackRank=2,TargetBodyRank=0,ActualDamage=3.125000,ReservedPoiseDamage=0.000000,Outcome=Applied,AppliedImpacts=(Launch))",
+          "hit_id": "453A717D490103BED92602AC1313916F",
+          "outcome": "<HodgeHitReactionOutcome.APPLIED: 11>",
+          "actual_damage": 3.125,
+          "attack_rank": 2,
+          "body_rank": 0
+        }
+      ],
+      "recovered": true
+    },
+    {
+      "case": "Knockdown",
+      "health_before": 999987.5,
+      "health_after": 999984.375,
+      "max_height": 95.0,
+      "max_x": 180.0,
+      "phases": [
+        "<HodgeHitReactionPhase.NONE: 0>",
+        "<HodgeHitReactionPhase.DOWNED: 3>",
+        "<HodgeHitReactionPhase.GETTING_UP: 4>"
+      ],
+      "reactions": [
+        {
+          "event": "reaction",
+          "time": 19.108598798513412,
+          "health": 999984.375,
+          "max_health": 1000000.0,
+          "phase": "<HodgeHitReactionPhase.DOWNED: 3>",
+          "type": "<HodgeImpactType.KNOCKDOWN: 3>",
+          "sequence": 4,
+          "position": [
+            180.0,
+            0.0,
+            92.15000104904175
+          ],
+          "velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "controlled": true,
+          "air_hits": 0,
+          "montage": "/Game/Main/Character/Hero/Anim/HitReactions/AM_Hero_Landing.AM_Hero_Landing",
+          "montage_position": 0.0,
+          "montage_weight": 0.0,
+          "montage_playing": true,
+          "result": "(HitId=E9268434405A8E1DDCC2F9BA4FF4019A,AttackJudgementTag=(TagName=\"Combat.Attack.Judgement.Skill\"),TargetBodyTag=(TagName=\"\"),AttackRank=2,TargetBodyRank=0,ActualDamage=3.125000,ReservedPoiseDamage=0.000000,Outcome=Applied,AppliedImpacts=(Knockdown))",
+          "hit_id": "E9268434405A8E1DDCC2F9BA4FF4019A",
+          "outcome": "<HodgeHitReactionOutcome.APPLIED: 11>",
+          "actual_damage": 3.125,
+          "attack_rank": 2,
+          "body_rank": 0
+        }
+      ],
+      "recovered": true
+    },
+    {
+      "case": "LaunchAirHit",
+      "health_before": 999984.375,
+      "health_after": 999978.125,
+      "max_height": 354.32866972322546,
+      "max_x": 284.02902939154006,
+      "phases": [
+        "<HodgeHitReactionPhase.NONE: 0>",
+        "<HodgeHitReactionPhase.AIRBORNE: 2>",
+        "<HodgeHitReactionPhase.CONTROLLED: 1>"
+      ],
+      "reactions": [
+        {
+          "event": "reaction",
+          "time": 26.1255286000669,
+          "health": 999981.25,
+          "max_health": 1000000.0,
+          "phase": "<HodgeHitReactionPhase.AIRBORNE: 2>",
+          "type": "<HodgeImpactType.LAUNCH: 2>",
+          "sequence": 5,
+          "position": [
+            180.0,
+            0.0,
+            92.15000104904175
+          ],
+          "velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "controlled": true,
+          "air_hits": 0,
+          "montage": "/Game/Main/Character/Hero/Anim/HitReactions/AM_Hero_Launch.AM_Hero_Launch",
+          "montage_position": 0.0,
+          "montage_weight": 0.0,
+          "montage_playing": true,
+          "result": "(HitId=DF3A9E5544418D4EC3004B8FB8B6AA2A,AttackJudgementTag=(TagName=\"Combat.Attack.Judgement.Skill\"),TargetBodyTag=(TagName=\"\"),AttackRank=2,TargetBodyRank=0,ActualDamage=3.125000,ReservedPoiseDamage=0.000000,Outcome=Applied,AppliedImpacts=(Launch))",
+          "hit_id": "DF3A9E5544418D4EC3004B8FB8B6AA2A",
+          "outcome": "<HodgeHitReactionOutcome.APPLIED: 11>",
+          "actual_damage": 3.125,
+          "attack_rank": 2,
+          "body_rank": 0
+        },
+        {
+          "event": "reaction",
+          "time": 26.608898296952248,
+          "health": 999978.125,
+          "max_health": 1000000.0,
+          "phase": "<HodgeHitReactionPhase.AIRBORNE: 2>",
+          "type": "<HodgeImpactType.AIR_HIT: 4>",
+          "sequence": 6,
+          "position": [
+            180.0,
+            0.0,
+            291.8536347296717
+          ],
+          "velocity": [
+            -0.0,
+            -0.0,
+            176.29769705235958
+          ],
+          "controlled": true,
+          "air_hits": 1,
+          "montage": "/Game/Main/Character/Hero/Anim/HitReactions/AM_Hero_AirHit.AM_Hero_AirHit",
+          "montage_position": 0.0,
+          "montage_weight": 0.0,
+          "montage_playing": true,
+          "result": "(HitId=B90B70FE44B8061F7DA1F68FF173CB62,AttackJudgementTag=(TagName=\"Combat.Attack.Judgement.Skill\"),TargetBodyTag=(TagName=\"\"),AttackRank=2,TargetBodyRank=0,ActualDamage=3.125000,ReservedPoiseDamage=0.000000,Outcome=Applied,AppliedImpacts=(AirHit))",
+          "hit_id": "B90B70FE44B8061F7DA1F68FF173CB62",
+          "outcome": "<HodgeHitReactionOutcome.APPLIED: 11>",
+          "actual_damage": 3.125,
+          "attack_rank": 2,
+          "body_rank": 0
+        }
+      ],
+      "recovered": true
+    },
+    {
+      "case": "LaunchSlam",
+      "health_before": 999978.125,
+      "health_after": 999971.875,
+      "max_height": 291.86184973430954,
+      "max_x": 576.5197308244385,
+      "phases": [
+        "<HodgeHitReactionPhase.NONE: 0>",
+        "<HodgeHitReactionPhase.AIRBORNE: 2>",
+        "<HodgeHitReactionPhase.DOWNED: 3>",
+        "<HodgeHitReactionPhase.GETTING_UP: 4>"
+      ],
+      "reactions": [
+        {
+          "event": "reaction",
+          "time": 30.643047999590635,
+          "health": 999975.0,
+          "max_health": 1000000.0,
+          "phase": "<HodgeHitReactionPhase.AIRBORNE: 2>",
+          "type": "<HodgeImpactType.LAUNCH: 2>",
+          "sequence": 7,
+          "position": [
+            180.0,
+            0.0,
+            92.15000104904175
+          ],
+          "velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "controlled": true,
+          "air_hits": 0,
+          "montage": "/Game/Main/Character/Hero/Anim/HitReactions/AM_Hero_Launch.AM_Hero_Launch",
+          "montage_position": 0.0,
+          "montage_weight": 0.0,
+          "montage_playing": true,
+          "result": "(HitId=FC53629E42638105CECD00A2694D901B,AttackJudgementTag=(TagName=\"Combat.Attack.Judgement.Skill\"),TargetBodyTag=(TagName=\"\"),AttackRank=2,TargetBodyRank=0,ActualDamage=3.125000,ReservedPoiseDamage=0.000000,Outcome=Applied,AppliedImpacts=(Launch))",
+          "hit_id": "FC53629E42638105CECD00A2694D901B",
+          "outcome": "<HodgeHitReactionOutcome.APPLIED: 11>",
+          "actual_damage": 3.125,
+          "attack_rank": 2,
+          "body_rank": 0
+        },
+        {
+          "event": "reaction",
+          "time": 31.126464299857616,
+          "health": 999971.875,
+          "max_health": 1000000.0,
+          "phase": "<HodgeHitReactionPhase.AIRBORNE: 2>",
+          "type": "<HodgeImpactType.SLAM: 5>",
+          "sequence": 8,
+          "position": [
+            180.0,
+            0.0,
+            291.86184973430954
+          ],
+          "velocity": [
+            -0.0,
+            -0.0,
+            176.2520257383585
+          ],
+          "controlled": true,
+          "air_hits": 0,
+          "montage": "/Game/Main/Character/Hero/Anim/HitReactions/AM_Hero_Launch.AM_Hero_Launch",
+          "montage_position": 0.0,
+          "montage_weight": 0.0,
+          "montage_playing": true,
+          "result": "(HitId=D1482E214C1EA51C0D0AA9B41CF210CD,AttackJudgementTag=(TagName=\"Combat.Attack.Judgement.Skill\"),TargetBodyTag=(TagName=\"\"),AttackRank=2,TargetBodyRank=0,ActualDamage=3.125000,ReservedPoiseDamage=0.000000,Outcome=Applied,AppliedImpacts=(Slam))",
+          "hit_id": "D1482E214C1EA51C0D0AA9B41CF210CD",
+          "outcome": "<HodgeHitReactionOutcome.APPLIED: 11>",
+          "actual_damage": 3.125,
+          "attack_rank": 2,
+          "body_rank": 0
+        }
+      ],
+      "recovered": true
+    }
+  ],
+  "visual_quality_verified": false,
+  "network_verified": false,
+  "raw_log": "Saved/HitReactionDummy/pie-7.log"
+}

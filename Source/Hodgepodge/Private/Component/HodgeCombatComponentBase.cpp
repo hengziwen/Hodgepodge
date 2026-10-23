@@ -1,19 +1,13 @@
-﻿/** @file HodgeCombatComponentBase.cpp
+/** @file HodgeCombatComponentBase.cpp
  * @brief 实现统一战斗组件相关的类型、接口与现有处理流程。
  */
 #include "Component/HodgeCombatComponentBase.h"
-#include "AbilitySystem/AttributeSet/HodgeHavocSet.h"
+#include "Component/HodgeHitDetectionComponent.h"
 #include "Component/HodgeEnemyInitComponent.h"
 #include "AbilitySystem/AttributeSet/HodgeHealthSet.h"
 #include "Character/HodgeHeroCharacter.h"
 #include "Core/PlayState/HodgePlayerState.h"
 #include "Combat/HodgeHitReactionTypes.h"
-#include "Equipment/HodgeEquipmentManagerComponent.h"
-#include "Equipment/HodgeWeaponInstance.h"
-#include "GameFramework/Character.h"
-#include "Components/SkeletalMeshComponent.h"
-#include "Components/PrimitiveComponent.h"
-#include "Components/BoxComponent.h"
 #include "Engine/World.h"
 #include "AbilitySystem/HodgeAbilitySystemComponent.h"
 #include "AbilitySystem/HodgeGameplayTags.h"
@@ -32,36 +26,12 @@
 #include "Animation/AnimMontage.h"
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeCombatComponentBase)
 
+// 装备切换继续服从现有战斗请求占用。
 bool UHodgeCombatComponentBase::IsEquipmentChangeBlocked() const
 {
 	if (CurrentAbility || bSwitching || bMoveRequestPending) { return true; }
 	for (const auto& Pair : ActionRequests) { if (!Pair.Value.State.IsTerminal()) { return true; } }
 	return false;
-}
-
-namespace
-{
-	/** 查找来源组件。
-	 * @param Actor 本次操作关联的Actor。
-	 * @param Name 名称，由调用方传入。
-	 * @return 来源组件的当前值或引用。
-	 */
-	USceneComponent* FindSourceComponent(AActor* Actor, FName Name)
-	{
-		// 先检查对象与上下文，避免在依赖失效后继续处理。
-		if (!Actor) { return nullptr; }
-		if (Name.IsNone())
-		{
-			if (ACharacter* Character = Cast<ACharacter>(Actor)) { return Character->GetMesh(); }
-			return Actor->GetRootComponent();
-		}
-		TInlineComponentArray<USceneComponent*> Components(Actor);
-		for (USceneComponent* Component : Components)
-		{
-			if (Component->GetFName() == Name) { return Component; }
-		}
-		return nullptr;
-	}
 }
 
 /** 构造统一战斗组件并初始化其默认状态。 */
@@ -76,402 +46,78 @@ UHodgeCombatComponentBase::UHodgeCombatComponentBase()
 /** 申请一份动作姿势占用，供结束时按来源释放。 */
 FGuid UHodgeCombatComponentBase::AcquirePoseLease()
 {
-	// 按服务器权限区分本次处理分支。
-	if (!CanExecuteAbilities() || !GetOwner() || !GetOwner()->HasAuthority()) { return {}; }
-	const auto* Character = Cast<ACharacter>(GetOwner());
-	if (!Character || !Character->GetMesh()) { return {}; }
-	if (PoseLeases.IsEmpty())
-	{
-		PoseMesh = Character->GetMesh();
-		SavedPosePolicy = static_cast<uint8>(PoseMesh->VisibilityBasedAnimTickOption);
-		PoseMesh->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
-	}
-	const FGuid Handle = FGuid::NewGuid();
-	PoseLeases.Add(Handle);
-	return Handle;
+	auto* Detection = GetHitDetectionComponent(); return Detection ? Detection->AcquirePoseLease() : FGuid();
 }
 
 /** 释放该动作拥有的姿势占用。 */
 void UHodgeCombatComponentBase::ReleasePoseLease(FGuid Handle)
 {
-	if (!PoseLeases.Remove(Handle) || !PoseLeases.IsEmpty()) { return; }
-	// 先检查对象与上下文，避免在依赖失效后继续处理。
-	if (PoseMesh.IsValid() && PoseMesh->VisibilityBasedAnimTickOption ==
-		EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones)
-	{
-		PoseMesh->VisibilityBasedAnimTickOption = static_cast<EVisibilityBasedAnimTickOption>(SavedPosePolicy);
-	}
-	PoseMesh.Reset();
+	if (HitDetection) { HitDetection->ReleasePoseLease(Handle); }
 }
 
 /** 离开世界运行阶段并解除本对象持有的监听或资源。 */
 void UHodgeCombatComponentBase::EndPlay(const EEndPlayReason::Type Reason)
 {
 	Shutdown();
-	TArray<FGuid> Leases = PoseLeases.Array();
-	for (FGuid Lease : Leases) { ReleasePoseLease(Lease); }
+	if (HitDetection) { HitDetection->Shutdown(); }
 	Super::EndPlay(Reason);
-}
-
-/** 解析来源。 */
-bool UHodgeCombatComponentBase::ResolveSource(FGameplayTag Tag, FHodgeHitDetectionSession& Session) const
-{
-	int32 Matches = 0;
-	for (const FHodgeHitSource& Source : HitSources)
-	{
-		if (Source.SourceTag != Tag) { continue; }
-		++Matches;
-		Session.Source = Source;
-		Session.SourceComponent = FindSourceComponent(GetOwner(), Source.ComponentName);
-	}
-	if (auto* Equipment = GetOwner()->FindComponentByClass<UHodgeEquipmentManagerComponent>())
-	{
-		for (UHodgeEquipmentInstance* Instance : Equipment->GetEquipmentInstancesOfType(
-			     UHodgeWeaponInstance::StaticClass()))
-		{
-			UHodgeWeaponInstance* Weapon = CastChecked<UHodgeWeaponInstance>(Instance);
-			for (const FHodgeHitSource& Source : Weapon->HitSources)
-			{
-				if (Source.SourceTag != Tag) { continue; }
-				++Matches;
-				Session.Source = Source;
-				Session.Weapon = Weapon;
-				Session.bWeaponSource = true;
-				const TArray<AActor*> Actors = Weapon->GetSpawnedActors();
-				Session.SourceComponent = Actors.IsValidIndex(Source.WeaponActorIndex)
-					                          ? FindSourceComponent(Actors[Source.WeaponActorIndex],
-					                                                Source.ComponentName)
-					                          : nullptr;
-			}
-		}
-	}
-	// 同一来源标签必须唯一，配置冲突时不猜测使用哪一把武器。
-	return Matches == 1 && Session.SourceComponent.IsValid();
-}
-
-/** 判断来源有效。 */
-bool UHodgeCombatComponentBase::IsSourceValid(const FHodgeHitDetectionSession& Session) const
-{
-	// 先检查对象与上下文，避免在依赖失效后继续处理。
-	if (!IsValid(GetOwner())) { return false; }
-	if (Session.Request.TargetPolicy != EHodgeHitTargetPolicy::AnyInVolume ||
-		Session.Request.Volume.AnchorKind == EHodgeHitAnchorKind::ExecutionTarget)
-	{
-		AActor* Target = Session.Request.RuntimeTarget.Get();
-		if (!IsValid(Target) || Target->GetWorld() != GetWorld() ||
-			FVector::DistSquared(GetOwner()->GetActorLocation(), Target->GetActorLocation()) > FMath::Square(
-				Session.Request.MaxTargetDistance)) { return false; }
-	}
-	if (Session.Request.TargetPolicy == EHodgeHitTargetPolicy::ConfirmedTarget) { return true; }
-	if (Session.Request.Volume.GeometryMode == EHodgeHitGeometryMode::ConfiguredShape &&
-		Session.Request.Volume.AnchorKind != EHodgeHitAnchorKind::RegisteredSource)
-	{
-		return Session.Request.Volume.AnchorKind != EHodgeHitAnchorKind::ExecutionTransform || Session.Request.
-			bHasRuntimeAnchor;
-	}
-	if (!Session.SourceComponent.IsValid()) { return false; }
-	if (Session.bWeaponSource)
-	{
-		const auto* Equipment = GetOwner()->FindComponentByClass<UHodgeEquipmentManagerComponent>();
-		return Session.Weapon.IsValid() && Equipment &&
-			Equipment->GetEquipmentInstancesOfType(UHodgeWeaponInstance::StaticClass()).Contains(Session.Weapon.Get());
-	}
-	return Session.SourceComponent->GetOwner() == GetOwner();
-}
-
-/** 采集检测几何。 */
-bool UHodgeCombatComponentBase::CaptureDetectionGeometry(const FHodgeHitDetectionSession& Session,
-                                                         FHodgeHitGeometry& Out) const
-{
-	if (!IsSourceValid(Session)) { return false; }
-	const auto& Request = Session.Request;
-	if (Request.TargetPolicy == EHodgeHitTargetPolicy::ConfirmedTarget)
-	{
-		Out = FHodgeHitGeometry();
-		Out.Transform = GetOwner()->GetActorTransform();
-		return true;
-	}
-	const auto& Volume = Request.Volume;
-	if (Volume.GeometryMode == EHodgeHitGeometryMode::ExistingSource)
-	{
-		return Session.Strategy.GetDefaultObject()->Capture(Session.SourceComponent.Get(), Session.Source, Out);
-	}
-	FTransform Anchor;
-	if (Session.bHasFixedAnchor) { Anchor = Session.FixedAnchor; }
-	else if (Volume.AnchorKind == EHodgeHitAnchorKind::AvatarRoot) { Anchor = GetOwner()->GetActorTransform(); }
-	else if (Volume.AnchorKind == EHodgeHitAnchorKind::ExecutionTransform) { Anchor = Request.RuntimeAnchor; }
-	else if (Volume.AnchorKind == EHodgeHitAnchorKind::ExecutionTarget)
-	{
-		Anchor = Request.RuntimeTarget->GetActorTransform();
-	}
-	else
-	{
-		USceneComponent* Component = Session.SourceComponent.Get();
-		if (!Volume.AnchorSocket.IsNone() && !Component->DoesSocketExist(Volume.AnchorSocket)) { return false; }
-		Anchor = Volume.AnchorSocket.IsNone()
-			         ? Component->GetComponentTransform()
-			         : Component->GetSocketTransform(Volume.AnchorSocket);
-	}
-	if (Anchor.ContainsNaN() || !Anchor.GetRotation().IsNormalized() ||
-		FVector::DistSquared(GetOwner()->GetActorLocation(), Anchor.GetLocation()) > FMath::Square(
-			Volume.MaxAnchorDistance)) { return false; }
-	Anchor.SetScale3D(FVector::OneVector);
-	Out = FHodgeHitGeometry();
-	Out.Transform = Volume.LocalTransform * Anchor;
-	Out.Shape = Volume.Shape;
-	Out.Radius = Volume.Shape == EHodgeHitShape::Capsule ? Volume.CapsuleRadius : Volume.SphereRadius;
-	Out.HalfHeight = Volume.CapsuleHalfHeight;
-	Out.BoxExtent = Volume.BoxHalfExtent;
-	return !Out.Transform.ContainsNaN();
 }
 
 /** 创建检测会话。 */
 uint64 UHodgeCombatComponentBase::CreateDetectionSession(const FGuid& ExecutionId, int32 OccurrenceId,
                                                          const FHodgeHitDetectionRequest& Request)
 {
-	// 按服务器权限区分本次处理分支。
-	if (!IsValid(GetOwner()) || !GetOwner()->HasAuthority() || !ExecutionId.IsValid() || OccurrenceId < 0 ||
-		!Request.Profile) { return 0; }
-	for (const auto& Pair : Sessions)
-	{
-		if (Pair.Value.ExecutionId == ExecutionId && Pair.Value.OccurrenceId == OccurrenceId) { return Pair.Key; }
-	}
-	TArray<FText> Errors;
-	if (!Request.Profile->Validate(Errors) || !Request.Volume.Validate(Errors) ||
-		!FMath::IsFinite(Request.MaxTargetDistance) || Request.MaxTargetDistance <= 0.f)
-	{
-		UE_LOG(LogTemp, Error, TEXT("Invalid detection profile [%s] on [%s]."),
-		       *GetNameSafe(Request.Profile), *GetNameSafe(GetOwner()));
-		return 0;
-	}
-	FHodgeHitDetectionSession Session;
-	Session.ExecutionId = ExecutionId;
-	Session.OccurrenceId = OccurrenceId;
-	Session.Request = Request;
-	const bool bComponentSource = Request.TargetPolicy != EHodgeHitTargetPolicy::ConfirmedTarget &&
-	(Request.Volume.GeometryMode == EHodgeHitGeometryMode::ExistingSource || Request.Volume.AnchorKind ==
-		EHodgeHitAnchorKind::RegisteredSource);
-	// 先检查对象与上下文，避免在依赖失效后继续处理。
-	if (bComponentSource)
-	{
-		if (Request.DirectComponent.IsValid())
-		{
-			Session.SourceComponent = Request.DirectComponent;
-			Session.Source = Request.DirectSource;
-		}
-		else if (!Request.SourceTag.IsValid() || !ResolveSource(Request.SourceTag, Session)) { return 0; }
-	}
-	Session.Strategy = Request.Volume.GeometryMode == EHodgeHitGeometryMode::ConfiguredShape
-		                   ? UHodgeShapeQueryStrategy::StaticClass()
-		                   : (Session.SourceComponent.IsValid() && Session.SourceComponent->IsA<UBoxComponent>()
-			                      ? UHodgeBoxSweepStrategy::StaticClass()
-			                      : UHodgeSocketSweepStrategy::StaticClass());
-	if (!CaptureDetectionGeometry(Session, Session.Previous))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Cannot resolve notification hit geometry on [%s]."), *GetNameSafe(GetOwner()));
-		return 0;
-	}
-
-	if (Request.Volume.GeometryMode == EHodgeHitGeometryMode::ConfiguredShape && Request.Volume.TransformPolicy ==
-		EHodgeHitTransformPolicy::SnapshotOnEventEnter)
-	{
-		// 存储锚点本身，后续 Capture 仍只施加一次局部变换。
-		Session.FixedAnchor = Request.Volume.LocalTransform.Inverse() * Session.Previous.Transform;
-		Session.bHasFixedAnchor = true;
-	}
-	// 创建会话不广播结果，调用方登记句柄和回调后再首次采样。
-	if (NextHandle == MAX_uint64) { return 0; }
-	const uint64 Handle = ++NextHandle;
-	Sessions.Add(Handle, MoveTemp(Session));
-	return Handle;
+	auto* Detection = GetHitDetectionComponent(); if (!Detection) { return 0; }
+	Detection->ConfigureSources(HitSources); return Detection->CreateDetectionSession(ExecutionId, OccurrenceId, Request);
 }
 
 /** 判断检测会话有效。 */
 bool UHodgeCombatComponentBase::IsDetectionSessionValid(uint64 Handle, const FGuid& ExecutionId) const
 {
-	const FHodgeHitDetectionSession* Session = Sessions.Find(Handle);
-	return Session && Session->ExecutionId == ExecutionId && IsSourceValid(*Session);
+	return HitDetection && HitDetection->IsDetectionSessionValid(Handle, ExecutionId);
 }
 
 /** 重置检测历史。 */
 bool UHodgeCombatComponentBase::ResetDetectionHistory(uint64 Handle, const FGuid& ExecutionId)
 {
-	FHodgeHitDetectionSession* Session = Sessions.Find(Handle);
-	if (!Session || Session->ExecutionId != ExecutionId) { return false; }
-	if (!CaptureDetectionGeometry(*Session, Session->Previous))
-	{
-		Sessions.Remove(Handle);
-		return false;
-	}
-	return true;
+	return HitDetection && HitDetection->ResetDetectionHistory(Handle, ExecutionId);
 }
 
 /** 获取检测来源组件。 */
 USceneComponent* UHodgeCombatComponentBase::GetDetectionSourceComponent(uint64 Handle, const FGuid& ExecutionId) const
 {
-	const FHodgeHitDetectionSession* Session = Sessions.Find(Handle);
-	return Session && Session->ExecutionId == ExecutionId && IsSourceValid(*Session)
-		       ? Session->SourceComponent.Get()
-		       : nullptr;
+	return HitDetection ? HitDetection->GetDetectionSourceComponent(Handle, ExecutionId) : nullptr;
 }
 
 /** 结束检测会话。 */
 void UHodgeCombatComponentBase::EndDetectionSession(uint64 Handle, const FGuid& ExecutionId)
 {
-	const FHodgeHitDetectionSession* Session = Sessions.Find(Handle);
-	if (Session && Session->ExecutionId == ExecutionId) { Sessions.Remove(Handle); }
+	if (HitDetection) { HitDetection->EndDetectionSession(Handle, ExecutionId); }
 }
 
 /** 结束检测Sessions关联执行。 */
 void UHodgeCombatComponentBase::EndDetectionSessionsForExecution(const FGuid& ExecutionId)
 {
-	for (auto It = Sessions.CreateIterator(); It; ++It)
-	{
-		if (It.Value().ExecutionId == ExecutionId) { It.RemoveCurrent(); }
-	}
+	if (HitDetection) { HitDetection->EndDetectionSessionsForExecution(ExecutionId); }
 }
 
 /** 结束All检测Sessions。 */
 void UHodgeCombatComponentBase::EndAllDetectionSessions()
 {
-	Sessions.Reset();
+	if (HitDetection) { HitDetection->EndAllDetectionSessions(); }
 }
 
 /** 更新检测锚点。 */
 void UHodgeCombatComponentBase::UpdateDetectionAnchor(const FGuid& ExecutionId, FName Key, const FTransform& Transform)
 {
-	// 按服务器权限区分本次处理分支。
-	if (!GetOwner() || !GetOwner()->HasAuthority() || Transform.ContainsNaN() || !Transform.GetRotation().
-		IsNormalized()) { return; }
-	for (auto& Pair : Sessions)
-	{
-		auto& Session = Pair.Value;
-		if (Session.ExecutionId == ExecutionId && Session.Request.Volume.AnchorKind ==
-			EHodgeHitAnchorKind::ExecutionTransform &&
-			Session.Request.Volume.AnchorKey == Key && !Session.bHasFixedAnchor)
-		{
-			Session.Request.RuntimeAnchor = Transform;
-		}
-	}
+	if (HitDetection) { HitDetection->UpdateDetectionAnchor(ExecutionId, Key, Transform); }
 }
 
 /** 按当前检测配置采样几何与目标。 */
 bool UHodgeCombatComponentBase::SampleDetection(uint64 Handle, const FGuid& ExecutionId,
                                                 FHodgeHitDetectionBatch& OutBatch)
 {
-	OutBatch = FHodgeHitDetectionBatch();
-	FHodgeHitDetectionSession* Live = Sessions.Find(Handle);
-	// 按服务器权限区分本次处理分支。
-	if (!Live || Live->ExecutionId != ExecutionId || !IsValid(GetOwner()) || !GetOwner()->HasAuthority() || !GetWorld())
-	{
-		return false;
-	}
-	if (!IsSourceValid(*Live))
-	{
-		Sessions.Remove(Handle);
-		return false;
-	}
-	const FHodgeHitDetectionSession Snapshot = *Live;
-	FHodgeHitGeometry Current;
-	const UHodgeHitDetectionStrategy* Strategy = Snapshot.Strategy.GetDefaultObject();
-	if (!CaptureDetectionGeometry(Snapshot, Current))
-	{
-		Sessions.Remove(Handle);
-		return false;
-	}
-	// 策略扩展可能使会话失效，捕获返回后重新查找再更新历史。
-	Live = Sessions.Find(Handle);
-	if (!Live || Live->ExecutionId != ExecutionId || !IsSourceValid(*Live)) { return false; }
-	Live->Previous = Current;
-	OutBatch.ExecutionId = ExecutionId;
-	OutBatch.OccurrenceId = Snapshot.OccurrenceId;
-	OutBatch.SessionHandle = Handle;
-	OutBatch.SampleSequence = ++Live->SampleSequence;
-	OutBatch.SampleTime = GetWorld()->GetTimeSeconds();
-	OutBatch.SourceComponent = Snapshot.SourceComponent;
-	OutBatch.Weapon = Snapshot.Weapon;
-	OutBatch.SourceOrigin = Current.Transform.GetLocation();
-	OutBatch.ResultKind = Snapshot.Request.TargetPolicy == EHodgeHitTargetPolicy::ConfirmedTarget
-		                      ? EHodgeHitResultKind::ConfirmedTarget
-		                      : Snapshot.Request.Profile->QueryMode == EHodgeHitQueryMode::Overlap
-		                      ? EHodgeHitResultKind::Overlap
-		                      : EHodgeHitResultKind::Sweep;
-	FCollisionQueryParams Params(SCENE_QUERY_STAT(HodgeHitDetection), false, GetOwner());
-	Params.bReturnPhysicalMaterial = true;
-	for (const auto& Actor : Snapshot.Request.IgnoredActors)
-	{
-		if (Actor.IsValid()) { Params.AddIgnoredActor(Actor.Get()); }
-	}
-	if (auto* Equipment = GetOwner()->FindComponentByClass<UHodgeEquipmentManagerComponent>())
-	{
-		for (UHodgeEquipmentInstance* Instance : Equipment->GetEquipmentInstancesOfType(
-			     UHodgeEquipmentInstance::StaticClass()))
-		{
-			Params.AddIgnoredActors(Instance->GetSpawnedActors());
-		}
-	}
-	TArray<FHitResult> Hits;
-	if (Snapshot.Request.TargetPolicy == EHodgeHitTargetPolicy::ConfirmedTarget)
-	{
-		AActor* Target = Snapshot.Request.RuntimeTarget.Get();
-		auto* Component = Cast<UPrimitiveComponent>(Target->GetRootComponent());
-		if (Component) { Hits.Add(FHitResult(Target, Component, Target->GetActorLocation(), FVector::ZeroVector)); }
-	}
-	else if (Snapshot.Request.Profile->QueryMode == EHodgeHitQueryMode::Overlap && Snapshot.Request.Volume.GeometryMode
-		== EHodgeHitGeometryMode::ExistingSource)
-	{
-		const auto* ShapeQuery = GetDefault<UHodgeShapeQueryStrategy>();
-		FHodgeHitGeometry Geometry = Current;
-		Geometry.Shape = Snapshot.SourceComponent.IsValid() && Snapshot.SourceComponent->IsA<UBoxComponent>()
-			                 ? EHodgeHitShape::Box
-			                 : EHodgeHitShape::Sphere;
-		if (Geometry.Shape == EHodgeHitShape::Box)
-		{
-			ShapeQuery->Detect(GetWorld(), Snapshot.Source, Snapshot.Request.Profile, Geometry, Geometry, Params, Hits);
-		}
-		else
-		{
-			for (const FVector& Point : Current.Points)
-			{
-				Geometry.Transform.SetLocation(Point);
-				ShapeQuery->Detect(GetWorld(), Snapshot.Source, Snapshot.Request.Profile, Geometry, Geometry, Params,
-				                   Hits);
-			}
-		}
-	}
-	else
-	{
-		Strategy->Detect(GetWorld(), Snapshot.Source, Snapshot.Request.Profile, Snapshot.Previous, Current, Params,
-		                 Hits);
-	}
-	const FTransform Filter = Snapshot.Request.Profile->FilterFrame == EHodgeHitFilterFrame::DetectionAnchor
-		                          ? Current.Transform
-		                          : GetOwner()->GetActorTransform();
-	for (const FHitResult& Hit : Hits)
-	{
-		AActor* Target = Hit.GetActor();
-		if (!IsValid(Target) || Target == GetOwner()) { continue; }
-		if (Snapshot.Request.TargetPolicy == EHodgeHitTargetPolicy::LockedTargetInVolume && Target != Snapshot.Request.
-			RuntimeTarget) { continue; }
-		const FVector Direction = (Target->GetActorLocation() - Filter.GetLocation()).GetSafeNormal2D();
-		if (Snapshot.Request.Profile->HalfAngleDegrees < 180.f && !Direction.IsNearlyZero() &&
-			FVector::DotProduct(Filter.GetRotation().GetForwardVector().GetSafeNormal2D(), Direction) <
-			FMath::Cos(FMath::DegreesToRadians(Snapshot.Request.Profile->HalfAngleDegrees))) { continue; }
-		if (Snapshot.Request.Profile->bRequireLineOfSight)
-		{
-			FCollisionQueryParams VisibilityParams = Params;
-			VisibilityParams.AddIgnoredActor(Target);
-			FHitResult Obstruction;
-			if (GetWorld()->LineTraceSingleByChannel(Obstruction, Filter.GetLocation(), Target->GetActorLocation(),
-			                                         Snapshot.Request.Profile->ObstructionChannel, VisibilityParams))
-			{
-				continue;
-			}
-		}
-		// 保留没有 ASC 的几何命中，交由接收 GA 决定其用途。
-		OutBatch.Hits.Add(Hit);
-	}
-	return true;
+	if (!HitDetection) { OutBatch = {}; return false; } return HitDetection->SampleDetection(Handle, ExecutionId, OutBatch);
 }
 
 // 连段、输入缓存和网络协调
@@ -491,7 +137,7 @@ void UHodgeCombatComponentBase::Configure(UHodgeAbilitySystemComponent* InASC,
 	ASC = InASC;
 	// 按当前对象生命周期建立状态监听。
 	if (ASC) { ActionEndedHandle = ASC->OnAbilityEnded.AddUObject(this, &ThisClass::HandleActionAbilityEnded); }
-	if (ASC) { CombatModeChangedHandle=ASC->RegisterGameplayTagEvent(HodgeHavocTags::DarkSurge).AddUObject(this,&ThisClass::HandleCombatModeChanged); }
+	if (ASC) { CombatModeChangedHandle=ASC->RegisterGenericGameplayTagEvent().AddUObject(this,&ThisClass::HandleCombatModeChanged); }
 	TArray<FText> Errors;
 	if (InDefinition && InDefinition->ValidateDefinition(Errors)) { Definition = InDefinition; }
 	for (const FText& Error : Errors) { UE_LOG(LogTemp, Error, TEXT("[Hodge] Combo: %s"), *Error.ToString()); }
@@ -520,12 +166,11 @@ void UHodgeCombatComponentBase::Shutdown()
 	ResetSession(true);
 	SetNode(FGameplayTag());
 	if (ASC) { ASC->RemoveLooseGameplayTags(AppliedObserverTags); }
-	if (ASC) { ASC->RegisterGameplayTagEvent(HodgeHavocTags::DarkSurge).Remove(CombatModeChangedHandle); }
+	if (ASC) { ASC->RegisterGenericGameplayTagEvent().Remove(CombatModeChangedHandle); }
 	CombatModeChangedHandle.Reset(); bModeContinuationInvalidated=false;
 	AppliedObserverTags.Reset();
 	EndAllDetectionSessions();
-	const TArray<FGuid> Leases = PoseLeases.Array();
-	for (FGuid Lease : Leases) { ReleasePoseLease(Lease); }
+	if (HitDetection) { HitDetection->Shutdown(); }
 	AuthorizedHandle = {};
 	PendingNode = FGameplayTag();
 	Definition = nullptr;
@@ -574,24 +219,45 @@ bool UHodgeCombatComponentBase::InputPressed(FGameplayTag InputTag)
 /** 按当前意图与窗口条件选择连段转换边。 */
 const FHodgeComboTransition* UHodgeCombatComponentBase::SelectTransition(FGameplayTag Trigger, bool bEvent) const
 {
-	// 本次操作的来源。
+	const auto Evaluation = EvaluateTransition(Trigger, bEvent);
+	return Evaluation.Readiness == ETransitionReadiness::Ready ? Evaluation.Edge : nullptr;
+}
+
+/** 共享选边规则；同目标开放边优先，不同目标的预测请求保留原有等待。 */
+UHodgeCombatComponentBase::FTransitionEvaluation UHodgeCombatComponentBase::EvaluateTransition(
+	FGameplayTag Trigger, bool bEvent, FGameplayAbilitySpecHandle WaitingHandle) const
+{
 	const FGameplayTag Source = TransitionSourceNode();
 	const auto* Node = Definition ? Definition->FindNode(Source) : nullptr;
-	// 先检查对象与上下文，避免在依赖失效后继续处理。
-	if (!ASC || !Node || !Trigger.IsValid()) { return nullptr; }
+	if (!ASC || !Node || !Trigger.IsValid()) { return {}; }
 	const auto Windows = CurrentAbility ? CurrentAbility->GetExecutionWindows() : FGameplayTagContainer();
 	const auto& Tags = ASC->GetOwnedGameplayTags();
 	const FHodgeComboTransition* Best = nullptr;
+	const FHodgeComboTransition* Waiting = nullptr;
+	bool bRequestedTargetReady = false;
+	const bool bResume = !CurrentAbility && Source != Definition->EntryComboTag;
 	for (const auto& Edge : Node->Transitions)
 	{
-		const bool bResume = !CurrentAbility && Source != Definition->EntryComboTag;
 		if ((bEvent ? Edge.TriggerEventTag : Edge.TriggerInputIntentTag) != Trigger
-			|| (bResume ? (bEvent || !Edge.bAllowAfterExecutionEnded) : !Windows.HasAll(Edge.RequiredWindowTags))
 			|| !Tags.HasAll(Edge.RequiredSourceTags)
 			|| Tags.HasAny(Edge.BlockedSourceTags)) { continue; }
-		if (!Best || Edge.TransitionPriority > Best->TransitionPriority) { Best = &Edge; }
+		const bool bOpen = bResume ? !bEvent && Edge.bAllowAfterExecutionEnded : Windows.HasAll(Edge.RequiredWindowTags);
+		if (bOpen)
+		{
+			if (!Best || Edge.TransitionPriority > Best->TransitionPriority) { Best = &Edge; }
+			const auto* Target = WaitingHandle.IsValid() ? Definition->FindNode(Edge.TargetComboTag) : nullptr;
+			bRequestedTargetReady |= Target && ASC->FindDefinitionAbility(Target->AbilityTag) == WaitingHandle;
+		}
+		else if (CurrentAbility && !bEvent && WaitingHandle.IsValid())
+		{
+			const auto* Target = Definition->FindNode(Edge.TargetComboTag);
+			if (Target && ASC->FindDefinitionAbility(Target->AbilityTag) == WaitingHandle &&
+				(!Waiting || Edge.TransitionPriority > Waiting->TransitionPriority)) { Waiting = &Edge; }
+		}
 	}
-	return Best;
+	// 其他动作已开窗不等于当前预测目标已开窗，不能因此改变原派生等待策略。
+	if (Waiting && !bRequestedTargetReady) { return {ETransitionReadiness::Wait, Waiting}; }
+	return Best ? FTransitionEvaluation{ETransitionReadiness::Ready, Best} : FTransitionEvaluation{};
 }
 
 /** 判断Authorized。 */
@@ -766,7 +432,8 @@ bool UHodgeCombatComponentBase::TryTransition(FGameplayTag Trigger, bool bEvent)
 	if (Key.IsServerInitiatedKey())
 	{
 		const auto* AttackData=ASC->FindAbilityDefinition(Handle); FHodgeAttackFacingTargetData Facing;
-		if (AttackData && AttackData->FacingWarp.bEnabled && UHodgeGameplayAbility_Definition::BuildAttackFacingData(ASC->AbilityActorInfo.Get(),Facing))
+		if (AttackData && AttackData->FacingWarp.bEnabled && UHodgeGameplayAbility_Definition::BuildAttackFacingData(
+			ASC->AbilityActorInfo.Get(), Facing, AttackData->FacingWarp.bTrackExecutionLockTargetDuringWarp))
 		{ Payload.TargetData.Add(new FHodgeAttackFacingTargetData(Facing)); }
 	}
 	// 通过ASC发起激活，保留GAS自身的条件与消耗校验。
@@ -800,18 +467,7 @@ bool UHodgeCombatComponentBase::CanBufferServerActivation(FGameplayAbilitySpecHa
 	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (!Handle.IsValid() || !CurrentAbility || !ValidateServerRequestIdentity(Payload)
 		|| !ASC->FindAbilitySpecFromHandle(Handle)) { return false; }
-	const auto* Node = Definition->FindNode(TransitionSourceNode());
-	if (!Node) { return false; }
-	const auto Windows = CurrentAbility->GetExecutionWindows();
-	const auto& Tags = ASC->GetOwnedGameplayTags();
-	for (const auto& Edge : Node->Transitions)
-	{
-		const auto* Target = Definition->FindNode(Edge.TargetComboTag);
-		if (Edge.TriggerInputIntentTag == Payload->InstigatorTags.First() && Target
-			&& ASC->FindDefinitionAbility(Target->AbilityTag) == Handle && Tags.HasAll(Edge.RequiredSourceTags)
-			&& !Tags.HasAny(Edge.BlockedSourceTags) && !Windows.HasAll(Edge.RequiredWindowTags)) { return true; }
-	}
-	return false;
+	return EvaluateTransition(Payload->InstigatorTags.First(), false, Handle).Readiness == ETransitionReadiness::Wait;
 }
 
 /** 准备服务器Activation。 */
@@ -1517,6 +1173,9 @@ void UHodgeCombatComponentBase::InvalidateModeContinuation(FGuid ModeSessionId)
 
 void UHodgeCombatComponentBase::HandleCombatModeChanged(FGameplayTag Tag,int32 Count)
 {
+	// 通用形态父标签过滤，角色规则不再进入公共 Combat。
+	const auto ModeRoot = FGameplayTag::RequestGameplayTag(TEXT("State.Combat.Mode"), false);
+	if (Tag == ModeRoot || !Tag.MatchesTag(ModeRoot)) { return; }
 	if (!ASC || ASC->GetAvatarActor()!=GetOwner() || !ASC->AbilityActorInfo.IsValid() ||
 		(!GetOwner()->HasAuthority() && !ASC->AbilityActorInfo->IsLocallyControlled())) { return; }
 	ClearModeContinuation();
@@ -1530,3 +1189,19 @@ void UHodgeCombatComponentBase::ClearModeContinuation()
 	if (!CurrentAbility) { SetNode(Definition ? Definition->EntryComboTag : FGameplayTag()); }
 	PublishComboMemory();
 }
+
+/** 只创建一个 Actor 级检测服务；保留旧 Combat 接口供已有调用者与资产兼容。 */
+UHodgeHitDetectionComponent* UHodgeCombatComponentBase::GetHitDetectionComponent()
+{
+ if (!CanExecuteAbilities()) { return nullptr; }
+ if (!IsValid(HitDetection))
+ {
+  HitDetection = GetOwner()->FindComponentByClass<UHodgeHitDetectionComponent>();
+  if (!HitDetection) { HitDetection = NewObject<UHodgeHitDetectionComponent>(GetOwner()); HitDetection->RegisterComponent(); }
+ }
+ HitDetection->EnableDetection();
+ return HitDetection;
+}
+/** 查询由检测组件唯一持有的资源账本。 */
+int32 UHodgeCombatComponentBase::GetPoseLeaseCount() const { return HitDetection ? HitDetection->GetPoseLeaseCount() : 0; }
+int32 UHodgeCombatComponentBase::GetDetectionSessionCount() const { return HitDetection ? HitDetection->GetDetectionSessionCount() : 0; }

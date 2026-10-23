@@ -17,6 +17,12 @@
 namespace
 {
 #if ENABLE_DRAW_DEBUG
+	// 总开关只影响调试绘制，分类开关继续独立保留。
+	TAutoConsoleVariable<int32> CVarHitDebugEnabled(TEXT("Hodge.Combat.DebugDraw"), 1,
+	                                             TEXT("Enable hit detection debug drawing. 0: off, 1: category settings."));
+	// 配置判定体没有必需的组件来源，不能用默认武器 Tag 决定其显示。
+	TAutoConsoleVariable<int32> CVarHitDebugConfiguredShape(TEXT("Hodge.Combat.DebugDraw.ConfiguredShape"), 1,
+	                                                     TEXT("Draw configured attack volumes, including Resonance Liberation. 0: off, 1: on."));
 	TAutoConsoleVariable<int32> CVarHitDebugWeapon(TEXT("Hodge.Combat.DebugDraw.Weapon"), 1,
 	                                               TEXT("Draw weapon hit detection geometry. 0: off, 1: on."));
 	TAutoConsoleVariable<int32> CVarHitDebugBody(TEXT("Hodge.Combat.DebugDraw.Body"), 1,
@@ -42,15 +48,22 @@ namespace
 	 * @param Source 本次操作的来源。
 	 * @return 命中调试设置的当前值或引用。
 	 */
-	FHitDebugSettings GetHitDebugSettings(const UWorld* World, const FHodgeHitSource& Source)
+	FHitDebugSettings GetHitDebugSettings(const UWorld* World, const FHodgeHitSource& Source,
+	                                    bool bConfiguredShape = false)
 	{
 		FHitDebugSettings Result;
 		// 先检查对象与上下文，避免在依赖失效后继续处理。
-		if (!World || World->GetNetMode() == NM_DedicatedServer) { return Result; }
+		if (!World || World->GetNetMode() == NM_DedicatedServer || CVarHitDebugEnabled.GetValueOnGameThread() == 0)
+		{ return Result; }
 		static const FGameplayTag WeaponTag = FGameplayTag::RequestGameplayTag(TEXT("Combat.Source.Weapon"), false);
 		static const FGameplayTag BodyTag = FGameplayTag::RequestGameplayTag(TEXT("Combat.Source.Body"), false);
 		static const FGameplayTag HitBoxTag = FGameplayTag::RequestGameplayTag(TEXT("Combat.Source.Hitbox"), false);
-		if (Source.SourceTag.MatchesTag(WeaponTag))
+		if (bConfiguredShape)
+		{
+			Result.bEnabled = CVarHitDebugConfiguredShape.GetValueOnGameThread() != 0;
+			Result.Color = FColor::Magenta;
+		}
+		else if (Source.SourceTag.MatchesTag(WeaponTag))
 		{
 			Result.bEnabled = CVarHitDebugWeapon.GetValueOnGameThread() != 0;
 			Result.Color = FColor::Cyan;
@@ -246,6 +259,8 @@ bool UHodgeSocketSweepStrategy::Capture(const USceneComponent* Component, const 
 		return false;
 	}
 	OutGeometry = FHodgeHitGeometry();
+	// Overlap 读取捕获几何，须与 Sweep 使用相同的来源球半径。
+	OutGeometry.Radius = Source.Radius;
 	OutGeometry.Transform = Component->GetComponentTransform();
 	for (FName Socket : Source.Sockets)
 	{
@@ -402,12 +417,8 @@ void UHodgeShapeQueryStrategy::Detect(UWorld* World, const FHodgeHitSource& Sour
 		}
 	}
 #if ENABLE_DRAW_DEBUG
-	FHodgeHitSource DebugSource = Source;
-	if (!DebugSource.SourceTag.IsValid())
-	{
-		DebugSource.SourceTag = FGameplayTag::RequestGameplayTag(TEXT("Combat.Source.Hitbox.Chest"), false);
-	}
-	const auto Debug = GetHitDebugSettings(World, DebugSource);
+	// 所有配置形状共用独立开关，实际查询和返回结果不受显示状态影响。
+	const auto Debug = GetHitDebugSettings(World, Source, true);
 	const FVector Start = Profile->QueryMode == EHodgeHitQueryMode::Overlap ||
 	                      (!Profile->bContinuousMotion && FVector::DistSquared(Previous.Transform.GetLocation(), End) >
 		                      FMath::Square(Profile->MaxSweepDistance))

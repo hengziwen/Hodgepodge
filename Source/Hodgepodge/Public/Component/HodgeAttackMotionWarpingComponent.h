@@ -14,7 +14,7 @@ public:
 	virtual void InitializeComponent() override;
 	/** GA 暂停、取消或更换执行后立即移除本次攻击辅助。 */
 	void ClearAttackWarp();
-	/** 用与本次求值一致的历史快照准备目标，不读取其他执行的当前方向。 */
+	/** 用本次快照准备目标；正常移动记录实际Yaw，SavedMove回放只消费历史输入。 */
 	void PrepareAttackTarget(const FHodgeCharacterRotationState& State, const UAnimMontage* Montage, float Position);
 	void ClearAttackWarpForRequest(FGuid Request) { if (EvaluationRequest==Request) { ClearAttackWarp(); } }
 private:

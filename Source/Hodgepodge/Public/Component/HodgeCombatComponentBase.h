@@ -10,9 +10,8 @@
 #include "Combat/HodgeCombatActionRequest.h"
 #include "HodgeCombatComponentBase.generated.h"
 
-class UHodgeWeaponInstance;
+class UHodgeHitDetectionComponent;
 class USceneComponent;
-class USkeletalMeshComponent;
 class UHodgeAbilitySystemComponent;
 class UHodgeComboDefinition;
 class UHodgeGameplayAbility_Definition;
@@ -34,38 +33,7 @@ struct FHodgeComboMemoryState
 	UPROPERTY() int16 ExecutionKey = 0;
 };
 
-/** 保存命中检测会话的数据和接口契约。 */
-USTRUCT()
-struct FHodgeHitDetectionSession
-{
-	GENERATED_BODY()
-	// 本次动作执行的唯一身份。
-	UPROPERTY() FGuid ExecutionId;
-	// 通知次数标识的数值或阈值。
-	UPROPERTY() int32 OccurrenceId = INDEX_NONE;
-	// 请求的数据或对象引用。
-	UPROPERTY() FHodgeHitDetectionRequest Request;
-	// 本次操作的来源。
-	UPROPERTY() FHodgeHitSource Source;
-	// 来源组件的弱引用，不延长目标对象生命周期。
-	UPROPERTY() TWeakObjectPtr<USceneComponent> SourceComponent;
-	// 武器的弱引用，不延长目标对象生命周期。
-	UPROPERTY() TWeakObjectPtr<UHodgeWeaponInstance> Weapon;
-	// Strategy的数据或对象引用。
-	TSubclassOf<UHodgeHitDetectionStrategy> Strategy;
-	// 控制是否武器来源的状态标记。
-	bool bWeaponSource = false;
-	// 采样序号的数值或阈值。
-	int32 SampleSequence = 0;
-	// 更新前的状态。
-	FHodgeHitGeometry Previous;
-	// Fixed锚点的几何或变换数据。
-	FTransform FixedAnchor = FTransform::Identity;
-	// 控制是否存在判断Fixed锚点的状态标记。
-	bool bHasFixedAnchor = false;
-};
-
-/** Pawn 级战斗入口，统一连招协调和几何检测；命中规则与 GE 应用仍由攻击 GA 处理。 */
+/** Pawn 级战斗入口，负责连招与请求；旧检测接口仅代理独立检测组件。 */
 UCLASS(Blueprintable, ClassGroup=(Combat), meta=(BlueprintSpawnableComponent))
 class HODGEPODGE_API UHodgeCombatComponentBase : public UHodgeActorComponentBase
 {
@@ -93,11 +61,11 @@ public:
 	/** 获取姿势占用许可数量。
 	 * @return 姿势占用许可数量的当前值或引用。
 	 */
-	int32 GetPoseLeaseCount() const { return PoseLeases.Num(); }
+	int32 GetPoseLeaseCount() const;
 	/** 获取检测会话数量。
 	 * @return 检测会话数量的当前值或引用。
 	 */
-	int32 GetDetectionSessionCount() const { return Sessions.Num(); }
+	int32 GetDetectionSessionCount() const;
 	/** 检查是否允许执行Abilities。
 	 * @return true表示满足该查询条件，false表示不满足。
 	 */
@@ -236,6 +204,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Hodge|Combat", meta=(TitleProperty="SourceTag"))
 	TArray<FHodgeHitSource> HitSources;
 
+	/** 返回当前唯一检测服务；仅在注册且未关闭时创建。 */
+	UHodgeHitDetectionComponent* GetHitDetectionComponent();
 	/** 创建检测会话。
 	 * @param ExecutionId 本次动作执行的唯一身份。
 	 * @param OccurrenceId 通知次数标识，由调用方传入。
@@ -358,18 +328,8 @@ private:
 	bool bNotifyingActions = false;
 	// 等待按顺序分发的请求状态快照。
 	TArray<FHodgeCombatActionRequestState> PendingActionNotifications;
-	// 姿势Leases的记录集合。
-	TSet<FGuid> PoseLeases;
-	// 姿势网格的弱引用，不延长目标对象生命周期。
-	TWeakObjectPtr<USkeletalMeshComponent> PoseMesh;
-	// Saved姿势策略的数值或阈值。
-	uint8 SavedPosePolicy = 0;
-	/** 采集检测几何。
-	 * @param Session 会话，由调用方传入。
-	 * @param Out 输出输出。
-	 * @return true表示本次检查或操作成功，false表示失败。
-	 */
-	bool CaptureDetectionGeometry(const FHodgeHitDetectionSession& Session, FHodgeHitGeometry& Out) const;
+	/** 兼容入口的本地检测服务，状态只在服务中保存。 */
+	UPROPERTY(Transient) TObjectPtr<UHodgeHitDetectionComponent> HitDetection;
 	/** 绑定Pawn角色扩展。 */
 	void BindPawnExtension();
 	/** 判断连段就绪。
@@ -411,6 +371,16 @@ private:
 	 * @return 本次计算、查询或创建得到的连段转换。
 	 */
 	const FHodgeComboTransition* SelectTransition(FGameplayTag Trigger, bool bEvent) const;
+	/** 一次纯判定同时决定开放边、合法等待或拒绝，避免服务器与本地选边分叉。 */
+	enum class ETransitionReadiness : uint8 { Reject, Wait, Ready };
+	struct FTransitionEvaluation
+	{
+		ETransitionReadiness Readiness = ETransitionReadiness::Reject;
+		const FHodgeComboTransition* Edge = nullptr;
+	};
+	/** WaitingHandle 只限制闭窗等待目标，已开放边仍按全图优先级选择。 */
+	FTransitionEvaluation EvaluateTransition(FGameplayTag Trigger, bool bEvent,
+		FGameplayAbilitySpecHandle WaitingHandle = FGameplayAbilitySpecHandle()) const;
 	/** 尝试转换。
 	 * @param Trigger Trigger，用于对应标签查询或匹配。
 	 * @param bEvent 是否事件的控制标记。
@@ -588,20 +558,4 @@ private:
 	// 正在解绑或关闭，阻止重入执行。
 	bool bShuttingDown = false;
 
-	/** 解析来源。
-	 * @param Tag 标签，用于对应标签查询或匹配。
-	 * @param Session 会话，由调用方传入。
-	 * @return true表示本次检查或操作成功，false表示失败。
-	 */
-	bool ResolveSource(FGameplayTag Tag, FHodgeHitDetectionSession& Session) const;
-	/** 判断来源有效。
-	 * @param Session 会话，由调用方传入。
-	 * @return true表示满足该查询条件，false表示不满足。
-	 */
-	bool IsSourceValid(const FHodgeHitDetectionSession& Session) const;
-	// Sessions的记录集合。
-	UPROPERTY(Transient)
-	TMap<uint64, FHodgeHitDetectionSession> Sessions;
-	// 下次句柄的数值或阈值。
-	uint64 NextHandle = 0;
 };

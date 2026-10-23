@@ -3,6 +3,8 @@ sys.path.insert(0, 'E:/Project/Git/Hodgepodge/Tools/HitReaction')
 import feedback_listener
 s = builtins.HODGE_REACTION_TEST
 w = s['world']
+# 重跑夹具时先解绑上一轮监听器，避免把监听次数误报成接触次数。
+feedback_listener.unbind(s)
 for manager, grant in s.get('grants', []):
     if unreal.SystemLibrary.is_valid(grant): manager.unequip_item(grant)
 if s.get('floor') and unreal.SystemLibrary.is_valid(s['floor']): s['floor'].destroy_actor()
@@ -13,6 +15,11 @@ s['profile'] = unreal.load_asset('/Game/Main/Character/Hero/Anim/HitReactions/DA
 s['definition'] = unreal.load_asset('/Game/CodexText/HitReactionValidation/DA_ProbeAttack')
 s['hold'] = unreal.load_asset('/Game/CodexText/HitReactionValidation/DA_ProbeHold')
 s['grant_class'] = unreal.load_asset(s.get('grant_path', '/Game/CodexText/HitReactionValidation/BP_ReactionGrant')).generated_class()
+# 正式玩家已有受击 GA；夹具只补测试动作，重复授予会被唯一性守卫拒绝。
+if s.get('use_formal_profile'):
+    probe_set = unreal.load_asset('/Game/CodexText/HitReactionValidation/AS_ReactionProbe')
+    probe_set.set_editor_property('GrantedGameplayAbilities', [])
+    s['modified_probe_set'] = True
 s['grants'] = []
 s['feedback'] = {}
 floor = unreal.HodgeCombatValidationLibrary.spawn_hit_reaction_validation_actor(w, unreal.StaticMeshActor, unreal.Vector(1000, 1000, -30))
@@ -42,6 +49,7 @@ if s.get('network'):
     for p in [s['remote'],s['client_host']]:
         key=p.get_path_name();s['feedback'][key]=0
         feedback_listener.bind(p, s)
-s['lib'] = unreal.get_default_object(unreal.load_class(None, '/Script/GameplayAbilities.AbilitySystemBlueprintLibrary'))
+# 使用 UE 5.5 实际导出的 Python 名称，避免 ScriptName 与 C++ 类名不一致。
+s['lib'] = unreal.get_default_object(unreal.AbilitySystemLibrary)
 print(json.dumps({'source': s['source'].get_path_name(), 'target': s['target'].get_path_name(),
                  'floor': floor.get_path_name(), 'profile': s['profile'].get_path_name()}))

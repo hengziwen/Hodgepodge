@@ -14,6 +14,15 @@
 
 // 项目自定义的 AbilitySystemComponent。
 #include "AbilitySystem/HodgeAbilitySystemComponent.h"
+#include "AbilitySystem/Abilities/HodgeGameplayAbility.h"
+#include "AbilitySystem/HodgeGameplayTags.h"
+#include "AbilitySystemGlobals.h"
+#include "AbilitySystemInterface.h"
+#include "Engine/DataTable.h"
+#include "Misc/ScopeExit.h"
+#include "UObject/StrongObjectPtr.h"
+#include "GameFramework/Pawn.h"
+#include "Component/HodgePawnExtensionComponent.h"
 
 // World：用于判断当前是否为有效的游戏世界。
 #include "Engine/World.h"
@@ -41,36 +50,21 @@
 // GameFeature 开始激活时调用。
 void UGameFeatureAction_AddAbilities::OnGameFeatureActivating(FGameFeatureActivatingContext& Context)
 {
-	// 获取当前 GameFeature 激活上下文对应的运行时数据。
-	FPerContextData& ActiveData = ContextData.FindOrAdd(Context);
-
-	// 如果当前上下文已经残留运行时数据，说明上一次状态没有正常清理。
-	if (!ensureAlways(ActiveData.ActiveExtensions.IsEmpty()) ||
-		!ensureAlways(ActiveData.ComponentRequests.IsEmpty()))
-	{
-		// 清理残留的 Ability、AttributeSet、AbilitySet 和组件请求。
-		Reset(ActiveData);
-	}
-
-	// 调用父类，继续执行 WorldActionBase 的激活流程。
-	Super::OnGameFeatureActivating(Context);
+    const auto Previous = ContextData.FindRef(Context);
+    const auto ActiveData = MakeShared<FPerContextData>();
+    ContextData.Add(Context, ActiveData);
+    if (Previous) { Reset(*Previous); }
+    if (ContextData.FindRef(Context) == ActiveData && ActiveData->bActive)
+    { Super::OnGameFeatureActivating(Context); }
 }
 
-// GameFeature 开始停用时调用。
+/** 先停止接受本上下文回调，再撤销其来源资源。 */
 void UGameFeatureAction_AddAbilities::OnGameFeatureDeactivating(FGameFeatureDeactivatingContext& Context)
 {
-	// 先调用父类的停用逻辑。
-	Super::OnGameFeatureDeactivating(Context);
-
-	// 查找当前 GameFeature 激活上下文对应的运行时数据。
-	FPerContextData* ActiveData = ContextData.Find(Context);
-
-	// 如果找到了对应的数据，则清理当前 GameFeature 添加的所有内容。
-	if (ensure(ActiveData))
-	{
-		// 移除当前上下文创建的 Ability、AttributeSet、AbilitySet 和组件请求。
-		Reset(*ActiveData);
-	}
+    Super::OnGameFeatureDeactivating(Context);
+    const auto ActiveData = ContextData.FindRef(Context);
+    ContextData.Remove(Context);
+    if (ActiveData) { Reset(*ActiveData); }
 }
 
 #if WITH_EDITOR
@@ -188,264 +182,260 @@ EDataValidationResult UGameFeatureAction_AddAbilities::IsDataValid(FDataValidati
 	// 返回最终的数据验证结果。
 	return Result;
 
-	// 这行实际上不会执行，因为上面的 return Result 已经返回。
-	return EDataValidationResult::NotValidated;
 }
 #endif
 
 // GameFeature 被加入某个 World 时调用。
 // 这里主要负责向 GameFrameworkComponentManager 注册 Actor 扩展监听。
 void UGameFeatureAction_AddAbilities::AddToWorld(const FWorldContext& WorldContext,
-                                                 const FGameFeatureStateChangeContext& ChangeContext)
+    const FGameFeatureStateChangeContext& ChangeContext)
 {
-	// 获取当前 World。
-	UWorld* World = WorldContext.World();
-
-	// 获取当前 World 所属的 GameInstance。
-	UGameInstance* GameInstance = WorldContext.OwningGameInstance;
-
-	// 获取当前 GameFeature 上下文对应的运行时数据。
-	FPerContextData& ActiveData = ContextData.FindOrAdd(ChangeContext);
-
-	// 只在有效 GameInstance、有效 World 且当前是 GameWorld 时执行。
-	if ((GameInstance != nullptr) && (World != nullptr) && World->IsGameWorld())
-	{
-		// 获取 GameFrameworkComponentManager 子系统。
-		if (UGameFrameworkComponentManager* ComponentMan = UGameInstance::GetSubsystem<
-			UGameFrameworkComponentManager>(GameInstance))
-		{
-			// 当前遍历到的 AbilitiesList 配置下标。
-			int32 EntryIndex = 0;
-
-			// 遍历所有 Actor → Ability/Attribute/AbilitySet 配置。
-			for (const FGameFeatureAbilitiesEntry& Entry : AbilitiesList)
-			{
-				// 只有指定了目标 ActorClass 的配置才需要注册监听。
-				if (!Entry.ActorClass.IsNull())
-				{
-					// 创建 Actor 扩展事件回调。
-					UGameFrameworkComponentManager::FExtensionHandlerDelegate AddAbilitiesDelegate =
-						UGameFrameworkComponentManager::FExtensionHandlerDelegate::CreateUObject(
-							this, &UGameFeatureAction_AddAbilities::HandleActorExtension, EntryIndex, ChangeContext);
-
-					// 监听指定 ActorClass 的扩展生命周期。
-					TSharedPtr<FComponentRequestHandle> ExtensionRequestHandle = ComponentMan->AddExtensionHandler(
-						Entry.ActorClass, AddAbilitiesDelegate);
-
-					// 保存监听请求，GameFeature 停用时需要撤销。
-					ActiveData.ComponentRequests.Add(ExtensionRequestHandle);
-
-					// 移动到下一条 AbilitiesList 配置。
-					EntryIndex++;
-				}
-			}
-		}
-	}
+    const auto ActiveData = ContextData.FindRef(ChangeContext);
+    UWorld* World = WorldContext.World();
+    UGameInstance* Instance = WorldContext.OwningGameInstance;
+    if (!ActiveData || !ActiveData->bActive || !World || !World->IsGameWorld() || !Instance) { return; }
+    auto* Manager = Instance->GetSubsystem<UGameFrameworkComponentManager>();
+    if (!Manager) { return; }
+    // 下标始终对应原数组，非法空项不会令后续条目错位。
+    for (int32 Index = 0; Index < AbilitiesList.Num() && ActiveData->bActive; ++Index)
+    {
+        if (AbilitiesList[Index].ActorClass.IsNull()) { continue; }
+        TWeakPtr<FPerContextData> WeakContext = ActiveData;
+        const auto Delegate = UGameFrameworkComponentManager::FExtensionHandlerDelegate::CreateWeakLambda(this,
+            [this, WeakContext, Index, ChangeContext](AActor* Actor, FName Event)
+            {
+                const auto Context = WeakContext.Pin();
+                if (Context && ContextData.FindRef(ChangeContext) == Context)
+                { HandleActorExtension(Actor, Event, Index, ChangeContext); }
+            });
+        auto Request = Manager->AddExtensionHandler(AbilitiesList[Index].ActorClass, Delegate);
+        if (ActiveData->bActive) { ActiveData->ComponentRequests.Add(MoveTemp(Request)); }
+    }
 }
 
-// 清理当前 GameFeature 上下文创建的所有运行时资源。
+/** 上下文共享记录在同步撤销回调期间仍存活，已开始的提交随后失败关闭。 */
 void UGameFeatureAction_AddAbilities::Reset(FPerContextData& ActiveData)
 {
-	// 持续移除所有已经添加 Ability 扩展的 Actor。
-	while (!ActiveData.ActiveExtensions.IsEmpty())
-	{
-		// 获取当前 ActiveExtensions 中的一个 Actor。
-		auto ExtensionIt = ActiveData.ActiveExtensions.CreateIterator();
-
-		// 移除这个 Actor 身上的 Ability、AttributeSet 和 AbilitySet。
-		RemoveActorAbilities(ExtensionIt->Key, ActiveData);
-	}
-
-	// 清除所有 GameFrameworkComponentManager 的组件请求。
-	ActiveData.ComponentRequests.Empty();
+    ActiveData.bActive = false;
+    auto Extensions = MoveTemp(ActiveData.ActiveExtensions);
+    for (const auto& Actor : Extensions)
+    { for (const auto& Entry : Actor.Value) { RetireExtension(Entry.Value.ToSharedRef()); } }
+    ActiveData.ComponentRequests.Reset();
 }
 
-// 处理指定 Actor 的扩展生命周期事件。
+/** Actor 和配置条目共同确定一次扩展的归属。 */
 void UGameFeatureAction_AddAbilities::HandleActorExtension(AActor* Actor, FName EventName, int32 EntryIndex,
-                                                           FGameFeatureStateChangeContext ChangeContext)
+    FGameFeatureStateChangeContext ChangeContext)
 {
-	// 找到当前 GameFeature 上下文对应的运行时数据。
-	FPerContextData* ActiveData = ContextData.Find(ChangeContext);
-
-	// 确保 EntryIndex 有效，并且运行时数据存在。
-	if (AbilitiesList.IsValidIndex(EntryIndex) && ActiveData)
-	{
-		// 获取当前 Actor 对应的 Ability 配置。
-		const FGameFeatureAbilitiesEntry& Entry = AbilitiesList[EntryIndex];
-
-		// Actor 扩展被移除，或者 Actor 本身不再是监听对象。
-		if ((EventName == UGameFrameworkComponentManager::NAME_ExtensionRemoved) || (EventName ==
-			UGameFrameworkComponentManager::NAME_ReceiverRemoved))
-		{
-			// 移除这个 Actor 身上由当前 GameFeature 添加的所有内容。
-			RemoveActorAbilities(Actor, *ActiveData);
-		}
-
-		// Actor 扩展已经添加，或者项目自定义的 AbilityReady 事件触发。
-		else if ((EventName == UGameFrameworkComponentManager::NAME_ExtensionAdded) || (EventName ==
-			AHodgePlayerState::NAME_HodgeAbilityReady))
-		{
-			// 给这个 Actor 添加配置中的 Ability、AttributeSet 和 AbilitySet。
-			AddActorAbilities(Actor, Entry, *ActiveData);
-		}
-	}
+    const auto ActiveData = ContextData.FindRef(ChangeContext);
+    if (!ActiveData || !ActiveData->bActive || !AbilitiesList.IsValidIndex(EntryIndex) || !IsValid(Actor)) { return; }
+    if (EventName == UGameFrameworkComponentManager::NAME_ExtensionRemoved ||
+        EventName == UGameFrameworkComponentManager::NAME_ReceiverRemoved ||
+        EventName == UHodgePawnExtensionComponent::NAME_AbilitySystemUninitialized)
+    { RemoveActorAbilities(Actor, EntryIndex, *ActiveData, EventName == UHodgePawnExtensionComponent::NAME_AbilitySystemUninitialized); }
+    else if (EventName == UGameFrameworkComponentManager::NAME_ExtensionAdded ||
+        EventName == AHodgePlayerState::NAME_HodgeAbilityReady ||
+        EventName == UHodgePawnExtensionComponent::NAME_AbilitySystemInitialized)
+    { AddActorAbilities(Actor, EntryIndex, ActiveData.ToSharedRef()); }
 }
 
-// 给指定 Actor 添加 Ability、AttributeSet 和 AbilitySet。
-void UGameFeatureAction_AddAbilities::AddActorAbilities(AActor* Actor, const FGameFeatureAbilitiesEntry& AbilitiesEntry,
-                                                        FPerContextData& ActiveData)
+/** 预检全部分支，未驻留或非法配置不产生任何授予，也不登记为成功。 */
+void UGameFeatureAction_AddAbilities::AddActorAbilities(AActor* Actor, int32 EntryIndex,
+    const TSharedRef<FPerContextData>& ActiveData)
 {
-	// Actor 必须有效。
-	check(Actor);
+    if (!IsValid(Actor) || !Actor->HasAuthority() || !ActiveData->bActive || !AbilitiesList.IsValidIndex(EntryIndex)) { return; }
+    TStrongObjectPtr<AActor> KeepActor(Actor);
+    TStrongObjectPtr<UGameFeatureAction_AddAbilities> KeepAction(this);
+    auto& Slot = ActiveData->ActiveExtensions.FindOrAdd(Actor).FindOrAdd(EntryIndex);
+    if (!Slot) { Slot = MakeShared<FActorExtensions>(); Slot->Actor = Actor; }
+    const auto Entry = Slot;
+    if (Entry->bApplying || Entry->State == EGrantState::Failed || Entry->State == EGrantState::Removed) { return; }
+    Entry->bApplying = true;
+    ON_SCOPE_EXIT
+    {
+        Entry->bApplying = false;
+        if (Entry->State == EGrantState::Failed || Entry->State == EGrantState::Removed)
+        { RevokeExtension(*Entry, true); }
+    };
+    auto Fail = [&](const FString& Error)
+    {
+        if (Entry->State != EGrantState::Removed)
+        {
+            Entry->State = EGrantState::Failed;
+            UE_LOG(LogGameFeatures, Error, TEXT("Ability extension failed: %s Actor=%s Entry=%d: %s (irreversible=%d)"),
+                *GetPathName(), *GetNameSafe(Actor), EntryIndex, *Error, Entry->bHasIrreversibleEffects ? 1 : 0);
+        }
+    };
+    // 监听已有 Init State；注册后本函数立即查询，依赖晚到不依靠 Tick 轮询。
+    if (!Entry->InitStateHandle.IsValid())
+    {
+        if (auto* Instance = Actor->GetGameInstance())
+        {
+            if (auto* Manager = Instance->GetSubsystem<UGameFrameworkComponentManager>())
+            {
+                TWeakPtr<FPerContextData> WeakContext = ActiveData;
+                TWeakObjectPtr<AActor> WeakActor = Actor;
+                const auto Delegate = FActorInitStateChangedDelegate::CreateWeakLambda(this,
+                    [this, WeakContext, WeakActor, EntryIndex](const FActorInitStateChangedParams&)
+                    {
+                        const auto Context = WeakContext.Pin();
+                        if (Context && WeakActor.IsValid()) { AddActorAbilities(WeakActor.Get(), EntryIndex, Context.ToSharedRef()); }
+                    });
+                Entry->InitManager = Manager;
+                Entry->InitStateHandle = Manager->RegisterAndCallForActorInitState(Actor, NAME_None,
+                    HodgeGameplayTags::InitState_DataInitialized, Delegate, false);
+            }
+        }
+    }
+    const auto& Config = AbilitiesList[EntryIndex];
+    UAbilitySystemComponent* Existing = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(Actor, true);
+    // 实现 ASC 接口的玩家 Pawn 可能仍在等 PlayerState，不能为其创建第二份 ASC。
+    if (!Existing && !Actor->GetClass()->ImplementsInterface(UAbilitySystemInterface::StaticClass()))
+    { Existing = FindOrAddComponentForActor<UHodgeAbilitySystemComponent>(Actor, Config, *ActiveData); }
+    if (!ActiveData->bActive || Entry->State == EGrantState::Removed) { return; }
+    auto* ASC = Cast<UHodgeAbilitySystemComponent>(Existing);
+    if (Existing && !ASC) { Fail(TEXT("Actor requires HodgeAbilitySystemComponent")); return; }
+    if (!ASC || !ASC->IsRegistered() || !ASC->GetOwnerActor()) { Entry->State = EGrantState::Waiting; return; }
+    if (Actor->IsA<APawn>() && ASC->GetAvatarActor() != Actor) { Entry->State = EGrantState::Waiting; return; }
+    if (!ASC->IsOwnerActorAuthoritative()) { Fail(TEXT("ASC owner lacks authority")); return; }
+    TStrongObjectPtr<UHodgeAbilitySystemComponent> KeepASC(ASC);
+    if (Entry->State == EGrantState::Applied)
+    {
+        if (Entry->GrantedASC.Get() == ASC) { return; }
+        RevokeExtension(*Entry, false);
+        if (!ActiveData->bActive || Entry->State == EGrantState::Removed) { return; }
+        Entry->bCommitted = false;
+    }
+    Entry->GrantedASC = ASC;
+    Entry->State = EGrantState::Applying;
+    const TWeakObjectPtr<AActor> Owner = ASC->GetOwnerActor();
+    const TWeakObjectPtr<AActor> Avatar = ASC->GetAvatarActor();
+    const bool bHadAvatar = Avatar.IsValid();
+    auto Current = [&]()
+    {
+        return ActiveData->bActive && Entry->State == EGrantState::Applying && IsValid(Actor) &&
+            !Actor->IsActorBeingDestroyed() && ASC->IsRegistered() && Owner.IsValid() &&
+            !Owner->IsActorBeingDestroyed() && ASC->GetOwnerActor() == Owner.Get() &&
+            ASC->GetAvatarActor() == Avatar.Get() && (!bHadAvatar || (Avatar.IsValid() && !Avatar->IsActorBeingDestroyed()));
+    };
 
-	// 当前逻辑只允许服务器授予 GameplayAbility 等能力资源。
-	if (!Actor->HasAuthority())
-	{
-		// 客户端直接退出，不执行授予逻辑。
-		return;
-	}
-
-	// early out if Actor already has ability extensions applied
-	// 如果这个 Actor 已经添加过当前 GameFeature 的能力扩展，则直接退出，避免重复添加。
-	if (ActiveData.ActiveExtensions.Find(Actor) != nullptr)
-	{
-		return;
-	}
-
-	// 查找 Actor 上的 AbilitySystemComponent；如果没有则尝试通过 ComponentManager 添加。
-	if (UAbilitySystemComponent* AbilitySystemComponent = FindOrAddComponentForActor<UAbilitySystemComponent>(
-		Actor, AbilitiesEntry, ActiveData))
-	{
-		// 记录本次实际添加到 Actor 身上的所有资源，用于之后精确移除。
-		FActorExtensions AddedExtensions;
-
-		// 预留 GameplayAbility Handle 数组容量。
-		AddedExtensions.Abilities.Reserve(AbilitiesEntry.GrantedAbilities.Num());
-
-		// 预留 AttributeSet 数组容量。
-		AddedExtensions.Attributes.Reserve(AbilitiesEntry.GrantedAttributes.Num());
-
-		// 预留 AbilitySet Handle 数组容量。
-		AddedExtensions.AbilitySetHandles.Reserve(AbilitiesEntry.GrantedAbilitySets.Num());
-
-		// 遍历当前配置中的所有 GameplayAbility。
-		for (const FHodgeAbilityGrant& Ability : AbilitiesEntry.GrantedAbilities)
-		{
-			// 确保 Ability 引用有效。
-			if (!Ability.AbilityType.IsNull())
-			{
-				// 同步加载 GameplayAbility 类，并创建对应的 AbilitySpec。
-				FGameplayAbilitySpec NewAbilitySpec(Ability.AbilityType.LoadSynchronous());
-
-				// 将 AbilitySpec 授予 ASC，并获得唯一 Handle。
-				FGameplayAbilitySpecHandle AbilityHandle = AbilitySystemComponent->GiveAbility(NewAbilitySpec);
-
-				// 保存这个 Handle，之后移除时使用同一个 Handle。
-				AddedExtensions.Abilities.Add(AbilityHandle);
-			}
-		}
-
-		// 遍历当前配置中的所有 AttributeSet。
-		for (const FHodgeAttributeSetGrant& Attributes : AbilitiesEntry.GrantedAttributes)
-		{
-			// 确保 AttributeSet 类型有效。
-			if (!Attributes.AttributeSetType.IsNull())
-			{
-				// 同步加载 AttributeSet 类。
-				TSubclassOf<UAttributeSet> SetType = Attributes.AttributeSetType.LoadSynchronous();
-
-				// 确保最终得到的是有效的 AttributeSet 类。
-				if (SetType)
-				{
-					// 创建 AttributeSet 对象，并让 ASC 的 Owner 作为其 Outer。
-					UAttributeSet* NewSet = NewObject<UAttributeSet>(AbilitySystemComponent->GetOwner(), SetType);
-
-					// 如果配置了 Attribute 初始化 DataTable，则继续进行初始化。
-					if (!Attributes.InitializationData.IsNull())
-					{
-						// 同步加载 Attribute 初始化数据表。
-						UDataTable* InitData = Attributes.InitializationData.LoadSynchronous();
-
-						// 数据表有效时，从 MetaDataTable 初始化 AttributeSet。
-						if (InitData)
-						{
-							NewSet->InitFromMetaDataTable(InitData);
-						}
-					}
-
-					// 保存创建出来的 AttributeSet，用于之后移除。
-					AddedExtensions.Attributes.Add(NewSet);
-
-					// 将 AttributeSet 注册到 ASC，使 GAS 可以管理和访问它。
-					AbilitySystemComponent->AddAttributeSetSubobject(NewSet);
-				}
-			}
-		}
-
-		// 当前项目使用自定义 HodgeAbilitySystemComponent，因此这里进行类型转换。
-		UHodgeAbilitySystemComponent* HodgeASC = CastChecked<UHodgeAbilitySystemComponent>(AbilitySystemComponent);
-
-		// 遍历当前配置中的所有 AbilitySet。
-		for (const TSoftObjectPtr<const UHodgeAbilitySet>& SetPtr : AbilitiesEntry.GrantedAbilitySets)
-		{
-			// 获取已经加载的 AbilitySet 资源。
-			if (const UHodgeAbilitySet* Set = SetPtr.Get())
-			{
-				// 将 AbilitySet 中定义的所有 Ability、Effect、AttributeSet 等资源授予 ASC，
-				// 并把本次授予产生的所有 Handle 记录到 AddedExtensions 中。
-				Set->GiveToAbilitySystem(HodgeASC, &AddedExtensions.AbilitySetHandles.AddDefaulted_GetRef());
-			}
-		}
-
-		// 记录当前 Actor 已经由这个 GameFeature 添加了哪些资源。
-		ActiveData.ActiveExtensions.Add(Actor, AddedExtensions);
-	}
-	else
-	{
-		// 找不到或无法创建 ASC 时，无法继续授予 Ability。
-		UE_LOG(LogGameFeatures, Error,
-		       TEXT("Failed to find/add an ability component to '%s'. Abilities will not be granted."),
-		       *Actor->GetPathName());
-	}
+    TArray<const UHodgeAbilitySet*> Sets;
+    TArray<TStrongObjectPtr<UObject>> Resources;
+    for (const auto& Reference : Config.GrantedAbilitySets)
+    {
+        const auto* Set = Reference.Get();
+        if (!Set) { Fail(FString::Printf(TEXT("AbilitySet is missing or not resident: %s"), *Reference.ToString())); return; }
+        Sets.Add(Set); Resources.Emplace(const_cast<UHodgeAbilitySet*>(Set));
+    }
+    TArray<FText> Errors;
+    if (!UHodgeAbilitySet::ValidateBatchForGrant(Sets, ASC, Errors))
+    { Fail(Errors[0].ToString()); return; }
+    TArray<UClass*> AttributeTypes;
+    TSet<UClass*> AbilityTypes;
+    for (const auto* Set : Sets)
+    {
+        for (const auto& Attribute : Set->GetGrantedAttributes()) { AttributeTypes.Add(Attribute.AttributeSet); }
+        for (const auto& Ability : Set->GetGrantedAbilities()) { AbilityTypes.Add(Ability.Ability); }
+    }
+    for (const auto& Attribute : Config.GrantedAttributes)
+    {
+        UClass* Type = Attribute.AttributeSetType.Get();
+        if (!Type || Type->HasAnyClassFlags(CLASS_Abstract))
+        { Fail(FString::Printf(TEXT("AttributeSet is invalid or not resident: %s"), *Attribute.AttributeSetType.ToString())); return; }
+        for (const UClass* Other : AttributeTypes)
+        {
+            if (UHodgeAbilitySet::AreAttributeSetTypesConflicting(Type, Other))
+            { Fail(TEXT("Duplicate AttributeSet in extension entry")); return; }
+        }
+        for (const UAttributeSet* Set : ASC->GetSpawnedAttributes())
+        {
+            if (Set && UHodgeAbilitySet::AreAttributeSetTypesConflicting(Type, Set->GetClass()))
+            { Fail(TEXT("AttributeSet is already present on ASC")); return; }
+        }
+        AttributeTypes.Add(Type); Resources.Emplace(Type);
+        if (!Attribute.InitializationData.IsNull())
+        {
+            auto* Table = Attribute.InitializationData.Get();
+            if (!Table || Table->GetRowStruct() != FAttributeMetaData::StaticStruct())
+            { Fail(TEXT("Attribute initialization table is invalid or not resident")); return; }
+            Resources.Emplace(Table);
+        }
+    }
+    for (const auto& Ability : Config.GrantedAbilities)
+    {
+        UClass* Type = Ability.AbilityType.Get();
+        if (!Type || Type->HasAnyClassFlags(CLASS_Abstract) || AbilityTypes.Contains(Type))
+        { Fail(FString::Printf(TEXT("Ability is invalid, duplicated or not resident: %s"), *Ability.AbilityType.ToString())); return; }
+        AbilityTypes.Add(Type); Resources.Emplace(Type);
+    }
+    if (!Current()) { Fail(TEXT("Binding changed during preflight")); return; }
+    for (const auto& Attribute : Config.GrantedAttributes)
+    {
+        auto* Set = NewObject<UAttributeSet>(ASC->GetOwner(), Attribute.AttributeSetType.Get());
+        if (!Attribute.InitializationData.IsNull()) { Set->InitFromMetaDataTable(Attribute.InitializationData.Get()); }
+        ASC->AddAttributeSetSubobject(Set); Entry->GrantedHandles.AddAttributeSet(Set);
+        if (!Current()) { Fail(TEXT("Binding changed during AttributeSet grant")); return; }
+    }
+    const auto Context = Actor->IsA<APawn>() ? EHodgeAbilityGrantContext::AvatarBound : EHodgeAbilityGrantContext::OwnerInitialized;
+    const auto Result = UHodgeAbilitySet::TryGiveBatchToAbilitySystem(Sets, ASC, Entry->GrantedHandles, nullptr, false, Context);
+    Entry->bHasIrreversibleEffects |= Result.bHasIrreversibleEffects;
+    if (!Result.bSucceeded || !Current()) { Fail(Result.Error.IsEmpty() ? TEXT("Extension invalidated during AbilitySet grant") : Result.Error); return; }
+    for (const auto& Ability : Config.GrantedAbilities)
+    {
+        const auto* CDO = Cast<UHodgeGameplayAbility>(Ability.AbilityType.Get()->GetDefaultObject());
+        Entry->bHasIrreversibleEffects |= !CDO || CDO->GetActivationPolicy() == EHodgeAbilityActivationPolicy::OnSpawn;
+        const auto Handle = ASC->GiveAbility(FGameplayAbilitySpec(Ability.AbilityType.Get()));
+        Entry->DirectAbilities.Add(Handle);
+        if (!Current() || !Handle.IsValid() || !ASC->FindAbilitySpecFromHandle(Handle))
+        { Fail(TEXT("Direct ability grant failed or binding changed")); return; }
+    }
+    if (!Current() || !Entry->GrantedHandles.AreValidFor(ASC))
+    { Fail(TEXT("Granted resources disappeared before commit")); return; }
+    for (const auto Handle : Entry->DirectAbilities)
+    {
+        if (!ASC->FindAbilitySpecFromHandle(Handle))
+        { Fail(TEXT("Direct ability disappeared before commit")); return; }
+    }
+    Entry->bCommitted = true;
+    Entry->State = EGrantState::Applied;
 }
 
-// 移除当前 GameFeature 之前给 Actor 添加的所有能力资源。
-void UGameFeatureAction_AddAbilities::RemoveActorAbilities(AActor* Actor, FPerContextData& ActiveData)
+/** 仅移除当前条目，其他匹配同 Actor 的来源继续有效。 */
+void UGameFeatureAction_AddAbilities::RemoveActorAbilities(AActor* Actor, int32 EntryIndex, FPerContextData& ActiveData, bool bCancelDirect)
 {
-	// 查找这个 Actor 对应的运行时资源记录。
-	if (FActorExtensions* ActorExtensions = ActiveData.ActiveExtensions.Find(Actor))
-	{
-		// 查找 Actor 身上的 AbilitySystemComponent。
-		if (UAbilitySystemComponent* AbilitySystemComponent = Actor->FindComponentByClass<UAbilitySystemComponent>())
-		{
-			// 移除本次 GameFeature 创建的 AttributeSet。
-			for (UAttributeSet* AttribSetInstance : ActorExtensions->Attributes)
-			{
-				// 从 ASC 中移除指定的 AttributeSet 实例。
-				AbilitySystemComponent->RemoveSpawnedAttribute(AttribSetInstance);
-			}
+    auto* Entries = ActiveData.ActiveExtensions.Find(Actor);
+    if (!Entries) { return; }
+    TSharedPtr<FActorExtensions> Entry;
+    Entries->RemoveAndCopyValue(EntryIndex, Entry);
+    if (Entries->IsEmpty()) { ActiveData.ActiveExtensions.Remove(Actor); }
+    if (Entry) { RetireExtension(Entry.ToSharedRef(), bCancelDirect); }
+}
 
-			// 遍历本次 GameFeature 授予的所有 GameplayAbility。
-			for (FGameplayAbilitySpecHandle AbilityHandle : ActorExtensions->Abilities)
-			{
-				// 标记 Ability，在当前 Ability 结束后移除。
-				AbilitySystemComponent->SetRemoveAbilityOnEnd(AbilityHandle);
-			}
+/** 停止依赖回调，提交中的资源由退出作用域统一清理。 */
+void UGameFeatureAction_AddAbilities::RetireExtension(const TSharedRef<FActorExtensions>& Entry, bool bCancelDirect)
+{
+    Entry->State = EGrantState::Removed;
+    Entry->bCancelDirectOnRemoval |= bCancelDirect;
+    if (Entry->InitManager.IsValid() && Entry->Actor.IsValid() && Entry->InitStateHandle.IsValid())
+    { Entry->InitManager->UnregisterActorInitStateDelegate(Entry->Actor.Get(), Entry->InitStateHandle); }
+    Entry->InitStateHandle.Reset();
+    if (!Entry->bApplying) { RevokeExtension(*Entry, Entry->bCancelDirectOnRemoval || !Entry->bCommitted); }
+}
 
-			// 转换为项目自定义的 HodgeAbilitySystemComponent。
-			UHodgeAbilitySystemComponent* HodgeASC = CastChecked<UHodgeAbilitySystemComponent>(AbilitySystemComponent);
-
-			// 遍历本次授予的所有 AbilitySet。
-			for (FHodgeAbilitySet_GrantedHandles& SetHandle : ActorExtensions->AbilitySetHandles)
-			{
-				// 使用 AbilitySet 授予时保存的精确 Handle，将整个 AbilitySet 完整撤销。
-				SetHandle.TakeFromAbilitySystem(HodgeASC);
-			}
-		}
-
-		// 从当前 GameFeature 的运行时记录中移除 Actor。
-		ActiveData.ActiveExtensions.Remove(Actor);
-	}
+/** 使用授予时 ASC 和来源句柄撤销，回调重入不会再次遍历原账本。 */
+void UGameFeatureAction_AddAbilities::RevokeExtension(FActorExtensions& Entry, bool bCancelDirectAbilities)
+{
+    auto Abilities = MoveTemp(Entry.DirectAbilities);
+    if (auto* ASC = Entry.GrantedASC.Get())
+    {
+        TStrongObjectPtr<UHodgeAbilitySystemComponent> KeepASC(ASC);
+        for (const auto Handle : Abilities)
+        {
+            if (bCancelDirectAbilities) { ASC->ClearAbility(Handle); }
+            else { ASC->SetRemoveAbilityOnEnd(Handle); }
+        }
+        Entry.GrantedHandles.TakeFromAbilitySystem(ASC);
+    }
 }
 
 // 查找 Actor 上指定类型的组件；如果没有，则通过 GameFrameworkComponentManager 请求创建。

@@ -19,6 +19,8 @@ class UActorComponent;
 
 // PawnExtension 在 InitState 系统中的 Feature 名称，用于区分 Pawn 上的不同初始化功能模块
 const FName UHodgePawnExtensionComponent::NAME_ActorFeatureName("PawnExtension");
+const FName UHodgePawnExtensionComponent::NAME_AbilitySystemInitialized("HodgeASCInitialized");
+const FName UHodgePawnExtensionComponent::NAME_AbilitySystemUninitialized("HodgeASCUninitialized");
 
 /** 构造Pawn初始化扩展组件并初始化其默认状态。 */
 UHodgePawnExtensionComponent::UHodgePawnExtensionComponent(const FObjectInitializer& ObjectInitializer)
@@ -194,6 +196,9 @@ void UHodgePawnExtensionComponent::InitializeAbilitySystem(UHodgeAbilitySystemCo
 
 	// 通知所有依赖 ASC 初始化完成的系统
 	OnAbilitySystemInitialized.Broadcast();
+	// 通知 GameFeature 重查当前绑定，避免等待依赖能力本身才能推进的 Init State。
+	if (AbilitySystemComponent == InASC && InASC->GetAvatarActor() == Pawn)
+	{ UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent(Pawn, NAME_AbilitySystemInitialized); }
 }
 
 /** 解除当前Pawn与ASC的绑定并通知依赖组件。 */
@@ -240,6 +245,8 @@ void UHodgePawnExtensionComponent::UninitializeAbilitySystem()
 
 	// 清除 PawnExtension 对 ASC 的缓存引用
 	AbilitySystemComponent = nullptr;
+	// 先解除本地缓存再通知来源撤销，回调不能重新使用本次已失效的绑定。
+	UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent(GetOwner(), NAME_AbilitySystemUninitialized);
 }
 
 /** 处理控制器变化。 */

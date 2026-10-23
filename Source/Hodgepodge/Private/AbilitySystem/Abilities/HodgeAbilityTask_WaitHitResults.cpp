@@ -6,7 +6,7 @@
 #include "AbilitySystem/HodgeGameplayTags.h"
 #include "AbilitySystemComponent.h"
 #include "Component/HodgeCombatComponentBase.h"
-#include "Component/HodgeWingComponent.h"
+#include "Component/HodgeHitDetectionComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/Character.h"
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeAbilityTask_WaitHitResults)
@@ -33,6 +33,7 @@ UHodgeAbilityTask_WaitHitResults* UHodgeAbilityTask_WaitHitResults::WaitHitResul
 	auto* Task = NewAbilityTask<UHodgeAbilityTask_WaitHitResults>(OwningAbility);
 	Task->ExecutionAbility = OwningAbility;
 	Task->CombatComponent = Combat;
+	Task->DetectionComponent = Combat ? Combat->GetHitDetectionComponent() : nullptr;
 	Task->ExecutionId = InExecutionId;
 	Task->Avatar = OwningAbility->GetAvatarActorFromActorInfo();
 	return Task;
@@ -46,7 +47,7 @@ bool UHodgeAbilityTask_WaitHitResults::IsRunningForExecution(const FGuid& InExec
 	return !bStopped && !IsFinished() && ExecutionId.IsValid() && ExecutionId == InExecutionId &&
 		ExecutionAbility.IsValid() && ExecutionAbility->IsActive() && !ExecutionAbility->IsExecutionEnding() &&
 		ExecutionAbility->GetExecutionId() == ExecutionId && Avatar.IsValid() && Avatar->HasAuthority() &&
-		CombatComponent.IsValid() && CombatComponent->CanExecuteAbilities() && CombatComponent->GetOwner() == Avatar.Get() && ASC &&
+		CombatComponent.IsValid() && CombatComponent->CanExecuteAbilities() && DetectionComponent.IsValid() && DetectionComponent->CanExecuteAbilities() && CombatComponent->GetOwner() == Avatar.Get() && ASC &&
 		ASC->IsOwnerActorAuthoritative() && ASC->GetAvatarActor() == Avatar.Get() &&
 		!ASC->HasMatchingGameplayTag(HodgeGameplayTags::Status_Death);
 }
@@ -63,10 +64,7 @@ void UHodgeAbilityTask_WaitHitResults::Activate()
 	DetectionTick.bAllowTickOnDedicatedServer = true;
 	DetectionTick.TickGroup = TG_PostPhysics;
 	DetectionTick.EndTickGroup = TG_PostPhysics;
-	if (ACharacter* Character = Cast<ACharacter>(Avatar.Get()))
-	{
-		DetectionTick.AddPrerequisite(Character->GetMesh(), Character->GetMesh()->PrimaryComponentTick);
-	}
+	DetectionComponent->AddSamplingPrerequisites(DetectionTick, 0, ExecutionId);
 	DetectionTick.RegisterTickFunction(Avatar->GetLevel());
 	UpdateTickState();
 }
@@ -77,15 +75,7 @@ uint64 UHodgeAbilityTask_WaitHitResults::CreateWindow(int32 OccurrenceId, const 
 	if (!IsRunningForExecution(ExecutionId) || Windows.Contains(OccurrenceId)) { return 0; }
 	const uint64 Handle = CombatComponent->CreateDetectionSession(ExecutionId, OccurrenceId, Request);
 	if (Handle == 0) { return 0; }
-	if (USceneComponent* Source = CombatComponent->GetDetectionSourceComponent(Handle, ExecutionId))
-	{
-		// 武器骨骼也可能有独立更新任务，采样等待实际来源组件完成更新。
-		DetectionTick.AddPrerequisite(Source, Source->PrimaryComponentTick);
-		if (auto* Wing = Avatar->FindComponentByClass<UHodgeWingComponent>(); Wing && Wing->GetWingMesh() == Source)
-		{
-			DetectionTick.AddPrerequisite(Wing, Wing->PrimaryComponentTick);
-		}
-	}
+	DetectionComponent->AddSamplingPrerequisites(DetectionTick, Handle, ExecutionId);
 	FWindow Window;
 	Window.Handle = Handle;
 	Window.bOnce = Request.Profile && Request.Profile->SampleMode == EHodgeHitSampleMode::OnceOnEnter;
@@ -99,20 +89,13 @@ bool UHodgeAbilityTask_WaitHitResults::IsBatchCurrent(const FHodgeHitDetectionBa
 {
 	const FWindow* Window = Windows.Find(Batch.OccurrenceId);
 	return !IsPaused() && IsRunningForExecution(Batch.ExecutionId) && Window && Window->Handle == Batch.SessionHandle &&
-		CombatComponent->IsDetectionSessionValid(Batch.SessionHandle, Batch.ExecutionId);
+		DetectionComponent->IsDetectionSessionValid(Batch.SessionHandle, Batch.ExecutionId);
 }
 
 /** 按当前动画窗口采样检测几何与候选命中。 */
 bool UHodgeAbilityTask_WaitHitResults::PrepareSourcePose(uint64 Handle)
 {
-	if (!Avatar.IsValid() || !CombatComponent.IsValid()) { return false; }
-	if (auto* Wing = Avatar->FindComponentByClass<UHodgeWingComponent>(); Wing && Wing->Profile &&
-		Wing->Profile->PlaybackMode == EHodgeWingPlaybackMode::AnimationAsset &&
-		Wing->GetWingMesh() == CombatComponent->GetDetectionSourceComponent(Handle, ExecutionId))
-	{
-		return Wing->PrepareAuthorityHitPose(ExecutionId);
-	}
-	return true;
+ return DetectionComponent.IsValid() && DetectionComponent->PrepareSourcePose(Handle, ExecutionId);
 }
 
 /** 按当前动画窗口采样检测几何与候选命中。 */
@@ -123,7 +106,7 @@ void UHodgeAbilityTask_WaitHitResults::SampleWindow(int32 OccurrenceId)
 	if (!Window || (Window->bOnce && Window->bSampled)) { return; }
 	if (!PrepareSourcePose(Window->Handle)) { CloseWindow(OccurrenceId, false); return; }
 	// 首次几何历史在翼姿势准备后重置，避免从参考姿势补扫到当前动作。
-	if (!Window->bSampled && !CombatComponent->ResetDetectionHistory(Window->Handle, ExecutionId))
+	if (!Window->bSampled && !DetectionComponent->ResetDetectionHistory(Window->Handle, ExecutionId))
 	{
 		CloseWindow(OccurrenceId, false);
 		return;
@@ -132,10 +115,10 @@ void UHodgeAbilityTask_WaitHitResults::SampleWindow(int32 OccurrenceId)
 	const uint64 Handle = Window->Handle;
 	TGuardValue<bool> Guard(bSampling, true);
 	FHodgeHitDetectionBatch Batch;
-	if (!CombatComponent->SampleDetection(Handle, ExecutionId, Batch))
+	if (!DetectionComponent->SampleDetection(Handle, ExecutionId, Batch))
 	{
 		UE_LOG(LogTemp, Verbose, TEXT("[HodgeNotify] Sample failed %d"), OccurrenceId);
-		CombatComponent->EndDetectionSession(Handle, ExecutionId);
+		DetectionComponent->EndDetectionSession(Handle, ExecutionId);
 		Windows.Remove(OccurrenceId);
 		UpdateTickState();
 		return;
@@ -154,7 +137,7 @@ void UHodgeAbilityTask_WaitHitResults::CloseWindow(int32 OccurrenceId, bool bSam
 	if (bSampleFinal) { Window->bClosing = true; UpdateTickState(); return; }
 	const uint64 Handle = Window->Handle;
 	// 先检查对象与上下文，避免在依赖失效后继续处理。
-	if (CombatComponent.IsValid()) { CombatComponent->EndDetectionSession(Handle, ExecutionId); }
+	if (DetectionComponent.IsValid()) { DetectionComponent->EndDetectionSession(Handle, ExecutionId); }
 	Windows.Remove(OccurrenceId);
 	UpdateTickState();
 }
@@ -179,7 +162,7 @@ void UHodgeAbilityTask_WaitHitResults::TickDetection()
 		if (bClosing && IsRunningForExecution(TickExecution))
 		{
 			Window = Windows.Find(OccurrenceId);
-			if (Window) { CombatComponent->EndDetectionSession(Window->Handle, TickExecution); Windows.Remove(OccurrenceId); }
+			if (Window) { DetectionComponent->EndDetectionSession(Window->Handle, TickExecution); Windows.Remove(OccurrenceId); }
 		}
 
 	}
@@ -212,7 +195,7 @@ void UHodgeAbilityTask_WaitHitResults::Resume()
 	for (int32 OccurrenceId : Indices)
 	{
 		const FWindow* Window = Windows.Find(OccurrenceId);
-		if (Window && (!PrepareSourcePose(Window->Handle) || !CombatComponent->ResetDetectionHistory(Window->Handle, ExecutionId)))
+		if (Window && (!PrepareSourcePose(Window->Handle) || !DetectionComponent->ResetDetectionHistory(Window->Handle, ExecutionId)))
 		{
 			CloseWindow(OccurrenceId, false);
 		}
@@ -231,7 +214,7 @@ void UHodgeAbilityTask_WaitHitResults::ReleaseSessions()
 	OnHitResults.Clear();
 	Windows.Reset();
 	// 先检查对象与上下文，避免在依赖失效后继续处理。
-	if (CombatComponent.IsValid()) { CombatComponent->EndDetectionSessionsForExecution(EndingExecution); }
+	if (DetectionComponent.IsValid()) { DetectionComponent->EndDetectionSessionsForExecution(EndingExecution); }
 }
 
 /** 处理销毁。 */

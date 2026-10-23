@@ -11,6 +11,7 @@
 #include "HodgePlayerStateBase.h"
 #include "AbilitySystem/GameplayTagStack.h"
 #include "AbilitySystem/Stats/HodgeAttributeTypes.h"
+#include "Data/HodgeAbilitySet.h"
 #include "HodgePlayerState.generated.h"
 
 class UHodgeExperienceDefinition;
@@ -138,6 +139,8 @@ public:
 	// 初始化 PlayerState 上的 Gameplay 组件和 GAS。
 	/** 在组件初始化后建立本对象的运行依赖。 */
 	virtual void PostInitializeComponents() override;
+	/** 结束持久 Owner 生命周期时，只撤销基础来源自己的句柄。 */
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	//~End of AActor interface
 
@@ -342,6 +345,14 @@ private:
 	FRotator ReplicatedViewRotation;
 
 private:
+	// 基础授予属于 PlayerState，换 Pawn 不重新授予或交给装备撤销。
+	UPROPERTY(Transient)
+	FHodgeAbilitySet_GrantedHandles BaseAbilityHandles;
+	// 配置错误及不可逆副作用失败均停止本 PlayerState 的自动重试。
+	bool bBaseGrantFailed = false;
+	bool bBaseGrantInProgress = false;
+	bool bBaseGrantsClosed = false;
+
 	// MyTeamID 复制到客户端后触发的回调。
 	/** 收到My队伍ID复制后更新本地状态。
 	 * @param OldTeamID 旧队伍ID，由调用方传入。

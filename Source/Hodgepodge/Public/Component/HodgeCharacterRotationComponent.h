@@ -15,6 +15,7 @@ class UHodgeAbilityDefinition;
 
 class UHodgeAbilitySystemComponent;
 class UHodgeLockOnComponent;
+class UHodgeGameplayAbility_Definition;
 
 /** 可复制的旋转约束；Actor Transform 仍由 CharacterMovement 同步。 */
 USTRUCT(BlueprintType)
@@ -105,6 +106,9 @@ public:
 	FHodgeFacingRequestHandle RequestActionFacing(FVector WorldDirection, UObject* Source, FGuid ExecutionId, bool bInstantAtStart = false);
 	/** GAS 已验证方向后申请根运动占用，不另发方向 RPC。 */
 	FHodgeFacingRequestHandle RequestMontageWarpFacing(float TargetYaw, UObject* Source, FGuid ExecutionId);
+	/** 只更新当前 GAS 请求的有界方向，同身份的服务器移动覆盖同步消费新 Yaw。 */
+	bool UpdateMontageWarpFacing(FHodgeFacingRequestHandle Handle, UHodgeGameplayAbility_Definition* Source,
+		FGuid ExecutionId, float TargetYaw);
 	/** 预测取消只改变本地执行许可，不提前撤销权威请求。 */
 	bool SetFacingRequestSuspended(FHodgeFacingRequestHandle Handle, bool bSuspended);
 	/** 查询当前请求是否获得执行权，不等同于已转到目标。 */
@@ -167,6 +171,10 @@ public:
 	 */
 	UFUNCTION(BlueprintPure, Category = "Hodge|Rotation")
 	bool IsYawLocked() const;
+	/** 区分外部硬锁与受击自身的控制；回放读取该移动保存的锁原因。 */
+	bool IsExternallyYawLocked() const;
+	/** 仅由CMC把合法受击结果交回冻结约束，不申请普通动作或另发RPC。 */
+	void UpdateHitReactionLockedYaw(float Yaw);
 
 	/** 判断Recovering朝向。
 	 * @return true表示满足该查询条件，false表示不满足。
@@ -211,7 +219,7 @@ public:
 	/** 设置移动回放状态。
 	 * @param State 当前状态数据。
 	 */
-	void SetMoveReplayState(const FHodgeCharacterRotationState& State);
+	void SetMoveReplayState(const FHodgeCharacterRotationState& State, TOptional<bool> bExternalLock = {});
 	/** 清空移动回放状态。 */
 	void ClearMoveReplayState();
 
@@ -346,6 +354,8 @@ private:
 	FDelegateHandle DeathTagHandle;
 	// 控制是否存在判断回放状态的状态标记。
 	bool bHasReplayState = false;
+	// 旧移动的硬锁不能从当前受击标签反推。
+	bool bReplayExternalYawLocked = false;
 	// 控制是否服务器移动Override的状态标记。
 	bool bServerMoveOverride = false;
 	// 控制是否ResolvingRequests的状态标记。

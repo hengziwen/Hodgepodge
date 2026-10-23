@@ -1,0 +1,959 @@
+{
+  "date": "2026-10-16",
+  "timezone": "Asia/Shanghai",
+  "engine": "5.5.4",
+  "baseline": {
+    "succeeded": 78,
+    "succeededWithWarnings": 65,
+    "failed": 0,
+    "notRun": 0
+  },
+  "final": {
+    "succeeded": 84,
+    "succeededWithWarnings": 65,
+    "failed": 0,
+    "notRun": 0
+  },
+  "new_tests": [
+    {
+      "test": "Hodge.Refactor.DetectionOwnerCleanup",
+      "state": "Success"
+    },
+    {
+      "test": "Hodge.Refactor.RuleCancellationDuringSettlement",
+      "state": "Success"
+    },
+    {
+      "test": "Hodge.Refactor.RuleCastCommitOnce",
+      "state": "Success"
+    },
+    {
+      "test": "Hodge.Refactor.RuleNewConfigPrecedence",
+      "state": "Success"
+    },
+    {
+      "test": "Hodge.Refactor.RulePhaseAndIdentity",
+      "state": "Success"
+    },
+    {
+      "test": "Hodge.Refactor.RuleSynchronousReentry",
+      "state": "Success"
+    }
+  ],
+  "builds": {
+    "editor": {
+      "exit_code": 0,
+      "log": "Saved/R1R3/editor-build-4.log"
+    },
+    "game": {
+      "exit_code": 0,
+      "log": "Saved/R1R3/game-build-2.log"
+    }
+  },
+  "assets": {
+    "migrated": [
+      {
+        "asset": "/Game/Main/Character/Hero/Ability/Havoc/DA_EnhancedAttack_2.DA_EnhancedAttack_2",
+        "rules": [
+          "HodgeResonanceAttackRuleConfig",
+          "HodgeHavocAttackRuleConfig"
+        ],
+        "before": {
+          "DarkFlowGainPerPhase": 0.0,
+          "DarkFlowGainOnCast": 0.0,
+          "bEnhancedNormalAttack": true,
+          "ResonanceEnergyGainPerPhase": "(Value=5.000000,Curve=(CurveTable=None,RowName=\"\"),RegistryType=\"None\")",
+          "ResonanceEnergyGainEffect": "/Game/Main/Character/Hero/Ability/ResonanceLiberation/GE_ResonanceEnergy_Gain.GE_ResonanceEnergy_Gain_C"
+        }
+      },
+      {
+        "asset": "/Game/Main/Character/Hero/Ability/Havoc/DA_EnhancedAttack_3.DA_EnhancedAttack_3",
+        "rules": [
+          "HodgeResonanceAttackRuleConfig",
+          "HodgeHavocAttackRuleConfig"
+        ],
+        "before": {
+          "DarkFlowGainPerPhase": 0.0,
+          "DarkFlowGainOnCast": 0.0,
+          "bEnhancedNormalAttack": true,
+          "ResonanceEnergyGainPerPhase": "(Value=5.000000,Curve=(CurveTable=None,RowName=\"\"),RegistryType=\"None\")",
+          "ResonanceEnergyGainEffect": "/Game/Main/Character/Hero/Ability/ResonanceLiberation/GE_ResonanceEnergy_Gain.GE_ResonanceEnergy_Gain_C"
+        }
+      },
+      {
+        "asset": "/Game/Main/Character/Hero/Ability/Havoc/DA_EnhancedAttack_4.DA_EnhancedAttack_4",
+        "rules": [
+          "HodgeResonanceAttackRuleConfig",
+          "HodgeHavocAttackRuleConfig"
+        ],
+        "before": {
+          "DarkFlowGainPerPhase": 0.0,
+          "DarkFlowGainOnCast": 0.0,
+          "bEnhancedNormalAttack": true,
+          "ResonanceEnergyGainPerPhase": "(Value=5.000000,Curve=(CurveTable=None,RowName=\"\"),RegistryType=\"None\")",
+          "ResonanceEnergyGainEffect": "/Game/Main/Character/Hero/Ability/ResonanceLiberation/GE_ResonanceEnergy_Gain.GE_ResonanceEnergy_Gain_C"
+        }
+      },
+      {
+        "asset": "/Game/Main/Character/Hero/Ability/Havoc/DA_EnhancedAttack_5.DA_EnhancedAttack_5",
+        "rules": [
+          "HodgeResonanceAttackRuleConfig",
+          "HodgeHavocAttackRuleConfig"
+        ],
+        "before": {
+          "DarkFlowGainPerPhase": 0.0,
+          "DarkFlowGainOnCast": 0.0,
+          "bEnhancedNormalAttack": true,
+          "ResonanceEnergyGainPerPhase": "(Value=5.000000,Curve=(CurveTable=None,RowName=\"\"),RegistryType=\"None\")",
+          "ResonanceEnergyGainEffect": "/Game/Main/Character/Hero/Ability/ResonanceLiberation/GE_ResonanceEnergy_Gain.GE_ResonanceEnergy_Gain_C"
+        }
+      },
+      {
+        "asset": "/Game/Main/Character/Hero/Ability/Havoc/DA_MieYin.DA_MieYin",
+        "rules": [
+          "HodgeResonanceAttackRuleConfig"
+        ],
+        "before": {
+          "DarkFlowGainPerPhase": 0.0,
+          "DarkFlowGainOnCast": 0.0,
+          "bEnhancedNormalAttack": false,
+          "ResonanceEnergyGainPerPhase": "(Value=5.000000,Curve=(CurveTable=None,RowName=\"\"),RegistryType=\"None\")",
+          "ResonanceEnergyGainEffect": "/Game/Main/Character/Hero/Ability/ResonanceLiberation/GE_ResonanceEnergy_Gain.GE_ResonanceEnergy_Gain_C"
+        }
+      },
+      {
+        "asset": "/Game/Main/Character/Hero/Ability/Havoc/DA_PoMing.DA_PoMing",
+        "rules": [
+          "HodgeResonanceAttackRuleConfig",
+          "HodgeHavocAttackRuleConfig"
+        ],
+        "before": {
+          "DarkFlowGainPerPhase": 0.0,
+          "DarkFlowGainOnCast": 20.0,
+          "bEnhancedNormalAttack": false,
+          "ResonanceEnergyGainPerPhase": "(Value=20.000000,Curve=(CurveTable=None,RowName=\"\"),RegistryType=\"None\")",
+          "ResonanceEnergyGainEffect": "/Game/Main/Character/Hero/Ability/ResonanceLiberation/GE_ResonanceEnergy_Gain.GE_ResonanceEnergy_Gain_C"
+        }
+      },
+      {
+        "asset": "/Game/Main/Character/Hero/Ability/BasicAttack/DA_Attack_1.DA_Attack_1",
+        "rules": [
+          "HodgeResonanceAttackRuleConfig",
+          "HodgeHavocAttackRuleConfig"
+        ],
+        "before": {
+          "DarkFlowGainPerPhase": 5.0,
+          "DarkFlowGainOnCast": 0.0,
+          "bEnhancedNormalAttack": false,
+          "ResonanceEnergyGainPerPhase": "(Value=5.000000,Curve=(CurveTable=None,RowName=\"\"),RegistryType=\"None\")",
+          "ResonanceEnergyGainEffect": "/Game/Main/Character/Hero/Ability/ResonanceLiberation/GE_ResonanceEnergy_Gain.GE_ResonanceEnergy_Gain_C"
+        }
+      },
+      {
+        "asset": "/Game/Main/Character/Hero/Ability/BasicAttack/DA_Attack_2.DA_Attack_2",
+        "rules": [
+          "HodgeResonanceAttackRuleConfig",
+          "HodgeHavocAttackRuleConfig"
+        ],
+        "before": {
+          "DarkFlowGainPerPhase": 5.0,
+          "DarkFlowGainOnCast": 0.0,
+          "bEnhancedNormalAttack": false,
+          "ResonanceEnergyGainPerPhase": "(Value=5.000000,Curve=(CurveTable=None,RowName=\"\"),RegistryType=\"None\")",
+          "ResonanceEnergyGainEffect": "/Game/Main/Character/Hero/Ability/ResonanceLiberation/GE_ResonanceEnergy_Gain.GE_ResonanceEnergy_Gain_C"
+        }
+      },
+      {
+        "asset": "/Game/Main/Character/Hero/Ability/BasicAttack/DA_Attack_3.DA_Attack_3",
+        "rules": [
+          "HodgeResonanceAttackRuleConfig",
+          "HodgeHavocAttackRuleConfig"
+        ],
+        "before": {
+          "DarkFlowGainPerPhase": 5.0,
+          "DarkFlowGainOnCast": 0.0,
+          "bEnhancedNormalAttack": false,
+          "ResonanceEnergyGainPerPhase": "(Value=5.000000,Curve=(CurveTable=None,RowName=\"\"),RegistryType=\"None\")",
+          "ResonanceEnergyGainEffect": "/Game/Main/Character/Hero/Ability/ResonanceLiberation/GE_ResonanceEnergy_Gain.GE_ResonanceEnergy_Gain_C"
+        }
+      },
+      {
+        "asset": "/Game/Main/Character/Hero/Ability/BasicAttack/DA_Attack_4.DA_Attack_4",
+        "rules": [
+          "HodgeResonanceAttackRuleConfig",
+          "HodgeHavocAttackRuleConfig"
+        ],
+        "before": {
+          "DarkFlowGainPerPhase": 5.0,
+          "DarkFlowGainOnCast": 0.0,
+          "bEnhancedNormalAttack": false,
+          "ResonanceEnergyGainPerPhase": "(Value=5.000000,Curve=(CurveTable=None,RowName=\"\"),RegistryType=\"None\")",
+          "ResonanceEnergyGainEffect": "/Game/Main/Character/Hero/Ability/ResonanceLiberation/GE_ResonanceEnergy_Gain.GE_ResonanceEnergy_Gain_C"
+        }
+      },
+      {
+        "asset": "/Game/Main/Character/Hero/Ability/Havoc/DA_EnhancedAttack_1.DA_EnhancedAttack_1",
+        "rules": [
+          "HodgeResonanceAttackRuleConfig",
+          "HodgeHavocAttackRuleConfig"
+        ],
+        "before": {
+          "DarkFlowGainPerPhase": 0.0,
+          "DarkFlowGainOnCast": 0.0,
+          "bEnhancedNormalAttack": true,
+          "ResonanceEnergyGainPerPhase": "(Value=5.000000,Curve=(CurveTable=None,RowName=\"\"),RegistryType=\"None\")",
+          "ResonanceEnergyGainEffect": "/Game/Main/Character/Hero/Ability/ResonanceLiberation/GE_ResonanceEnergy_Gain.GE_ResonanceEnergy_Gain_C"
+        }
+      },
+      {
+        "asset": "/Game/Main/Character/Hero/Ability/ResonanceSkill/DA_Resonance_Skill.DA_Resonance_Skill",
+        "rules": [
+          "HodgeResonanceAttackRuleConfig",
+          "HodgeHavocAttackRuleConfig"
+        ],
+        "before": {
+          "DarkFlowGainPerPhase": 0.0,
+          "DarkFlowGainOnCast": 20.0,
+          "bEnhancedNormalAttack": false,
+          "ResonanceEnergyGainPerPhase": "(Value=20.000000,Curve=(CurveTable=None,RowName=\"\"),RegistryType=\"None\")",
+          "ResonanceEnergyGainEffect": "/Game/Main/Character/Hero/Ability/ResonanceLiberation/GE_ResonanceEnergy_Gain.GE_ResonanceEnergy_Gain_C"
+        }
+      },
+      {
+        "asset": "/Game/Main/Character/Hero/Ability/BasicAttack/DA_Attack_5.DA_Attack_5",
+        "rules": [
+          "HodgeResonanceAttackRuleConfig",
+          "HodgeHavocAttackRuleConfig"
+        ],
+        "before": {
+          "DarkFlowGainPerPhase": 5.0,
+          "DarkFlowGainOnCast": 0.0,
+          "bEnhancedNormalAttack": false,
+          "ResonanceEnergyGainPerPhase": "(Value=5.000000,Curve=(CurveTable=None,RowName=\"\"),RegistryType=\"None\")",
+          "ResonanceEnergyGainEffect": "/Game/Main/Character/Hero/Ability/ResonanceLiberation/GE_ResonanceEnergy_Gain.GE_ResonanceEnergy_Gain_C"
+        }
+      }
+    ],
+    "dirty_content": [],
+    "dirty_maps": []
+  },
+  "asset_checks": {
+    "passed": true,
+    "checks": [
+      {
+        "case": "HDS-01 PawnData只引用一次AS_Havoc",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-01 不重复授予原生属性集",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-05 提前授予七个新攻击",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-05 两种E使用同一份8秒冷却GE",
+        "passed": true,
+        "detail": "/Game/Main/Character/Hero/Ability/ResonanceSkill/GE_Resonance_Skill_Cooldown.GE_Resonance_Skill_Cooldown_C"
+      },
+      {
+        "case": "HDS-09 AM_Ex_Skill01_01链接指定源动画",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-09 AM_Ex_Skill01_01正式通知存在",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-09 AM_Ex_Skill02链接指定源动画",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-09 AM_Ex_Skill02正式通知存在",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-09 AM_Ex_Attack01链接指定源动画",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-09 AM_Ex_Attack01正式通知存在",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-09 AM_Ex_Attack02链接指定源动画",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-09 AM_Ex_Attack02正式通知存在",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-09 AM_Ex_Attack03链接指定源动画",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-09 AM_Ex_Attack03正式通知存在",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-09 AM_Ex_Attack04链接指定源动画",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-09 AM_Ex_Attack04正式通知存在",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-09 AM_Ex_Attack05链接指定源动画",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-09 AM_Ex_Attack05正式通知存在",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-06 常态第1段每阶段5点",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-05/06 强化第1段资格和拢音分类",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-06 常态第2段每阶段5点",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-05/06 强化第2段资格和拢音分类",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-06 常态第3段每阶段5点",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-05/06 强化第3段资格和拢音分类",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-06 常态第4段每阶段5点",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-05/06 强化第4段资格和拢音分类",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-06 常态第5段每阶段5点",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-05/06 强化第5段资格和拢音分类",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-07 EAS只注入一次WBP_DarkFlow",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "case": "HDS-01 普攻不再使用提前Completed的Pressed触发器",
+        "passed": true,
+        "detail": null
+      }
+    ]
+  },
+  "blueprints": {
+    "blueprints": [
+      {
+        "asset": "/Game/Main/Character/Hero/Ability/BasicAttack/GA_Attack_1.GA_Attack_1",
+        "class": "/Game/Main/Character/Hero/Ability/BasicAttack/GA_Attack_1.GA_Attack_1_C"
+      },
+      {
+        "asset": "/Game/Main/Character/Hero/Ability/BasicAttack/GA_Attack_2.GA_Attack_2",
+        "class": "/Game/Main/Character/Hero/Ability/BasicAttack/GA_Attack_2.GA_Attack_2_C"
+      },
+      {
+        "asset": "/Game/Main/Character/Hero/Ability/BasicAttack/GA_Attack_3.GA_Attack_3",
+        "class": "/Game/Main/Character/Hero/Ability/BasicAttack/GA_Attack_3.GA_Attack_3_C"
+      },
+      {
+        "asset": "/Game/Main/Character/Hero/Ability/BasicAttack/GA_Attack_4.GA_Attack_4",
+        "class": "/Game/Main/Character/Hero/Ability/BasicAttack/GA_Attack_4.GA_Attack_4_C"
+      },
+      {
+        "asset": "/Game/Main/Character/Hero/Ability/BasicAttack/GA_Attack_5.GA_Attack_5",
+        "class": "/Game/Main/Character/Hero/Ability/BasicAttack/GA_Attack_5.GA_Attack_5_C"
+      },
+      {
+        "asset": "/Game/Main/Character/Hero/Ability/Havoc/GA_EnhancedNormalAttack.GA_EnhancedNormalAttack",
+        "class": "/Game/Main/Character/Hero/Ability/Havoc/GA_EnhancedNormalAttack.GA_EnhancedNormalAttack_C"
+      },
+      {
+        "asset": "/Game/Main/Character/Hero/Ability/Havoc/GA_EnhancedResonanceSkill.GA_EnhancedResonanceSkill",
+        "class": "/Game/Main/Character/Hero/Ability/Havoc/GA_EnhancedResonanceSkill.GA_EnhancedResonanceSkill_C"
+      },
+      {
+        "asset": "/Game/Main/Character/Hero/Ability/Havoc/GA_HavocRules",
+        "class": "/Game/Main/Character/Hero/Ability/Havoc/GA_HavocRules.GA_HavocRules_C"
+      },
+      {
+        "asset": "/Game/Main/Character/Hero/Ability/Havoc/GA_Resonance_Circuit.GA_Resonance_Circuit",
+        "class": "/Game/Main/Character/Hero/Ability/Havoc/GA_Resonance_Circuit.GA_Resonance_Circuit_C"
+      },
+      {
+        "asset": "/Game/Main/Character/Hero/Ability/ResonanceSkill/GA_Resonance_Skill.GA_Resonance_Skill",
+        "class": "/Game/Main/Character/Hero/Ability/ResonanceSkill/GA_Resonance_Skill.GA_Resonance_Skill_C"
+      },
+      {
+        "asset": "/Game/Main/Character/Hero/BP_Hero_Pover",
+        "class": "/Game/Main/Character/Hero/BP_Hero_Pover.BP_Hero_Pover_C"
+      },
+      {
+        "asset": "/Game/Main/Experiences/Exp_HodgeDefaultExperience",
+        "class": "/Game/Main/Experiences/Exp_HodgeDefaultExperience.Exp_HodgeDefaultExperience_C"
+      }
+    ],
+    "dirty_content": [],
+    "dirty_maps": []
+  },
+  "pie": [
+    {
+      "source": "Saved/Havoc/single-havoc-e2e.json",
+      "mode": "single",
+      "passed": true,
+      "checks": [
+        {
+          "case": "HDS-01 正式能力集初始化100容量且初始0",
+          "passed": true,
+          "detail": {
+            "time": 2.225488603115082,
+            "phase": "warmup",
+            "authority_fuel": 0.0,
+            "local_fuel": 0.0,
+            "mode": false,
+            "e_cd": 0.0
+          }
+        },
+        {
+          "case": "HDS-07 Experience注入四个扩展，暗流数据源就绪",
+          "passed": true,
+          "detail": {
+            "root": true,
+            "pawn": "/Game/Main/Maps/UEDPIE_0_L_EnemyAIValidation.L_EnemyAIValidation:PersistentLevel.BP_Hero_Pover_C_0",
+            "managed_players": 1,
+            "platform_user": 0,
+            "input_device": 0,
+            "own_viewport": true,
+            "game_input": true,
+            "pending": 0,
+            "game_count": 1,
+            "game_active": true,
+            "menu_count": 0,
+            "menu_active": false,
+            "modal_count": 0,
+            "modal_active": false,
+            "vitals_center_x": 0.5000000357400901,
+            "vitals_center_y": 0.9782973424662368,
+            "end_center_x": 0.9830186680497605,
+            "end_center_y": 0.0542564933092469,
+            "resonance_center_x": 0.9748206776721364,
+            "resonance_center_y": 0.9270004146667141,
+            "skill_center_x": 0.9314888921229699,
+            "skill_center_y": 0.9270004146667141,
+            "ability_extension_slots": true,
+            "resonance_widget": true,
+            "resonance_percent": 0,
+            "resonance_cooldown": 0,
+            "resonance_cooldown_progress": 1,
+            "resonance_text": "0/100",
+            "resonance_enabled": false,
+            "resonance_opacity": 1,
+            "skill_cooldown": 0,
+            "skill_cooldown_progress": 1,
+            "skill_enabled": true,
+            "skill_icon_ready": true,
+            "display_percent": 1,
+            "display_text": "150/150",
+            "display_level": "Lv. 1",
+            "health": 150,
+            "max_health": 150,
+            "vitals_ready": true,
+            "entries": 4,
+            "indicators": 0,
+            "indicator_widgets": [],
+            "move_intent": false
+          }
+        },
+        {
+          "case": "HDS-06 普通E空挥成功施放回20点",
+          "passed": true,
+          "detail": {
+            "time": 2.395735003054142,
+            "phase": "normalE",
+            "authority_fuel": 20.0,
+            "local_fuel": 20.0,
+            "mode": false,
+            "e_cd": 7.8464202880859375
+          }
+        },
+        {
+          "case": "HDS-01 真实长按普攻切入灭音Montage",
+          "passed": true,
+          "detail": {
+            "time": 7.529182702302933,
+            "phase": "hold",
+            "authority_fuel": 100.0,
+            "local_fuel": 100.0,
+            "mode": false,
+            "e_cd": 2.712972640991211
+          }
+        },
+        {
+          "case": "HDS-02 空挥提交可入态且不一次扣空100",
+          "passed": true,
+          "detail": {
+            "time": 7.929545104503632,
+            "phase": "enter",
+            "authority_fuel": 100.0,
+            "local_fuel": 100.0,
+            "mode": true,
+            "e_cd": 2.312610626220703
+          }
+        },
+        {
+          "case": "HDS-05 入态继承普通E未结束的8秒CD",
+          "passed": true,
+          "detail": {
+            "time": 8.129547204822302,
+            "phase": "shared_cd",
+            "authority_fuel": 97.9999771118164,
+            "local_fuel": 97.9999771118164,
+            "mode": true,
+            "e_cd": 2.1126084327697754
+          }
+        },
+        {
+          "case": "HDS-05 强化普攻第1段正确",
+          "passed": true,
+          "detail": {
+            "time": 10.962947603315115,
+            "phase": "enhanced",
+            "authority_fuel": 69.99932098388672,
+            "local_fuel": 69.99932098388672,
+            "mode": true,
+            "e_cd": 0.0
+          }
+        },
+        {
+          "case": "HDS-05 强化普攻第2段正确",
+          "passed": true,
+          "detail": {
+            "time": 12.096308302134275,
+            "phase": "enhanced",
+            "authority_fuel": 58.99905014038086,
+            "local_fuel": 58.99905014038086,
+            "mode": true,
+            "e_cd": 0.0
+          }
+        },
+        {
+          "case": "HDS-05 强化普攻第3段正确",
+          "passed": true,
+          "detail": {
+            "time": 13.079696204513311,
+            "phase": "enhanced",
+            "authority_fuel": 48.998497009277344,
+            "local_fuel": 48.998497009277344,
+            "mode": true,
+            "e_cd": 0.0
+          }
+        },
+        {
+          "case": "HDS-05 强化普攻第4段正确",
+          "passed": true,
+          "detail": {
+            "time": 14.213045604526997,
+            "phase": "enhanced",
+            "authority_fuel": 37.99834442138672,
+            "local_fuel": 37.99834442138672,
+            "mode": true,
+            "e_cd": 0.0
+          }
+        },
+        {
+          "case": "HDS-05 强化普攻第5段正确",
+          "passed": true,
+          "detail": {
+            "time": 15.796411003917456,
+            "phase": "enhanced",
+            "authority_fuel": 21.998016357421875,
+            "local_fuel": 21.998016357421875,
+            "mode": true,
+            "e_cd": 0.0
+          }
+        },
+        {
+          "case": "HDS-05/06 破命使用新动作并成功施放回能",
+          "passed": true,
+          "detail": {
+            "time": 17.09643930196762,
+            "phase": "po_ming",
+            "authority_fuel": 28.99773406982422,
+            "local_fuel": 28.99773406982422,
+            "mode": true,
+            "e_cd": 7.81666374206543
+          }
+        },
+        {
+          "case": "HDS-05 破命重新建立共享8秒CD",
+          "passed": true,
+          "detail": {
+            "time": 17.09643930196762,
+            "phase": "po_ming",
+            "authority_fuel": 28.99773406982422,
+            "local_fuel": 28.99773406982422,
+            "mode": true,
+            "e_cd": 7.81666374206543
+          }
+        },
+        {
+          "case": "HDS-02 超过基础10秒仍由燃料维持，无额外时长上限",
+          "passed": true,
+          "detail": {
+            "time": 18.92982540279627,
+            "phase": "extended",
+            "authority_fuel": 80.99947357177734,
+            "local_fuel": 80.99947357177734,
+            "mode": true,
+            "e_cd": 5.983278274536133
+          }
+        },
+        {
+          "case": "生命周期 驱散清空暗流并退态",
+          "passed": true,
+          "detail": {
+            "time": 19.429847802966833,
+            "phase": "dispel",
+            "authority_fuel": 0.0,
+            "local_fuel": 0.0,
+            "mode": false,
+            "e_cd": 5.483255386352539
+          }
+        },
+        {
+          "case": "HDS-05 退态不刷新E冷却",
+          "passed": true,
+          "detail": {
+            "time": 19.429847802966833,
+            "phase": "dispel",
+            "authority_fuel": 0.0,
+            "local_fuel": 0.0,
+            "mode": false,
+            "e_cd": 5.483255386352539
+          }
+        },
+        {
+          "case": "HDS-05 退态后下一次输入从普通第一段开始",
+          "passed": true,
+          "detail": {
+            "time": 19.4465145021677,
+            "phase": "normal_again",
+            "authority_fuel": 0.0,
+            "local_fuel": 0.0,
+            "mode": false,
+            "e_cd": 5.466588973999023
+          }
+        }
+      ],
+      "sample_count": 1090
+    },
+    {
+      "source": "Saved/Havoc/single-havoc-hits-e2e.json",
+      "mode": "single",
+      "passed": true,
+      "checks": [
+        {
+          "case": "HDS-06 常态普攻受检生命伤害只回5点暗流",
+          "passed": true,
+          "detail": {
+            "time": 1.5416787043213844,
+            "phase": "normal_hit",
+            "flow": 5.0,
+            "energy": 5.0,
+            "hp": [
+              319.0,
+              319.0
+            ]
+          }
+        },
+        {
+          "case": "HDS-06 强化普攻多目标共享阶段回能和拢音，R只增加6",
+          "passed": true,
+          "detail": {
+            "time": 10.275701902806759,
+            "phase": "enhanced_1",
+            "flow": 69.99739074707031,
+            "energy": 6.0,
+            "hp": [
+              281.79998779296875,
+              281.79998779296875
+            ]
+          }
+        },
+        {
+          "case": "HDS-04 两个目标都收到实际强化攻击伤害",
+          "passed": true,
+          "detail": {
+            "time": 10.275701902806759,
+            "phase": "enhanced_1",
+            "flow": 69.99739074707031,
+            "energy": 6.0,
+            "hp": [
+              281.79998779296875,
+              281.79998779296875
+            ]
+          }
+        },
+        {
+          "case": "HDS-04 相同伤害配置湮灭增伤20%",
+          "passed": true,
+          "detail": {
+            "normal": 31.0,
+            "enhanced": 37.20001220703125
+          }
+        },
+        {
+          "case": "HDS-06 换段未满一秒不重复拢音，R累计11",
+          "passed": true,
+          "detail": {
+            "time": 10.759040001779795,
+            "phase": "enhanced_2",
+            "flow": 65.99735260009766,
+            "energy": 11.0,
+            "hp": [
+              244.59999084472656,
+              244.59999084472656
+            ]
+          }
+        },
+        {
+          "case": "网络收益只作用于施法者ASC",
+          "passed": true,
+          "detail": []
+        }
+      ],
+      "sample_count": 635
+    },
+    {
+      "source": "Saved/Havoc/listen-havoc-hits-e2e.json",
+      "mode": "listen",
+      "passed": true,
+      "checks": [
+        {
+          "case": "HDS-06 常态普攻受检生命伤害只回5点暗流",
+          "passed": true,
+          "detail": {
+            "time": 3.583597306162119,
+            "phase": "normal_hit",
+            "flow": 5.0,
+            "energy": 5.0,
+            "hp": [
+              319.0,
+              319.0
+            ]
+          }
+        },
+        {
+          "case": "HDS-06 强化普攻多目标共享阶段回能和拢音，R只增加6",
+          "passed": true,
+          "detail": {
+            "time": 12.364345204085112,
+            "phase": "enhanced_1",
+            "flow": 69.98222351074219,
+            "energy": 6.0,
+            "hp": [
+              281.79998779296875,
+              281.79998779296875
+            ]
+          }
+        },
+        {
+          "case": "HDS-04 两个目标都收到实际强化攻击伤害",
+          "passed": true,
+          "detail": {
+            "time": 12.364345204085112,
+            "phase": "enhanced_1",
+            "flow": 69.98222351074219,
+            "energy": 6.0,
+            "hp": [
+              281.79998779296875,
+              281.79998779296875
+            ]
+          }
+        },
+        {
+          "case": "HDS-04 相同伤害配置湮灭增伤20%",
+          "passed": true,
+          "detail": {
+            "normal": 31.0,
+            "enhanced": 37.20001220703125
+          }
+        },
+        {
+          "case": "HDS-06 换段未满一秒不重复拢音，R累计11",
+          "passed": true,
+          "detail": {
+            "time": 12.880313403904438,
+            "phase": "enhanced_2",
+            "flow": 64.92449951171875,
+            "energy": 11.0,
+            "hp": [
+              244.59999084472656,
+              244.59999084472656
+            ]
+          }
+        },
+        {
+          "case": "网络收益只作用于施法者ASC",
+          "passed": true,
+          "detail": [
+            0.0
+          ]
+        }
+      ],
+      "sample_count": 624
+    },
+    {
+      "source": "Saved/Havoc/dedicated-havoc-hits-e2e.json",
+      "mode": "dedicated",
+      "passed": true,
+      "checks": [
+        {
+          "case": "HDS-06 常态普攻受检生命伤害只回5点暗流",
+          "passed": true,
+          "detail": {
+            "time": 3.664092406630516,
+            "phase": "normal_hit",
+            "flow": 5.0,
+            "energy": 5.0,
+            "hp": [
+              319.0,
+              319.0
+            ]
+          }
+        },
+        {
+          "case": "HDS-06 强化普攻多目标共享阶段回能和拢音，R只增加6",
+          "passed": true,
+          "detail": {
+            "time": 12.446840707212687,
+            "phase": "enhanced_1",
+            "flow": 69.85557556152344,
+            "energy": 6.0,
+            "hp": [
+              281.79998779296875,
+              281.79998779296875
+            ]
+          }
+        },
+        {
+          "case": "HDS-04 两个目标都收到实际强化攻击伤害",
+          "passed": true,
+          "detail": {
+            "time": 12.446840707212687,
+            "phase": "enhanced_1",
+            "flow": 69.85557556152344,
+            "energy": 6.0,
+            "hp": [
+              281.79998779296875,
+              281.79998779296875
+            ]
+          }
+        },
+        {
+          "case": "HDS-04 相同伤害配置湮灭增伤20%",
+          "passed": true,
+          "detail": {
+            "normal": 31.0,
+            "enhanced": 37.20001220703125
+          }
+        },
+        {
+          "case": "HDS-06 换段未满一秒不重复拢音，R累计11",
+          "passed": true,
+          "detail": {
+            "time": 12.949293605983257,
+            "phase": "enhanced_2",
+            "flow": 64.83104705810547,
+            "energy": 11.0,
+            "hp": [
+              244.59999084472656,
+              244.59999084472656
+            ]
+          }
+        },
+        {
+          "case": "网络收益只作用于施法者ASC",
+          "passed": true,
+          "detail": [
+            0.0
+          ]
+        }
+      ],
+      "sample_count": 587
+    }
+  ],
+  "editor_final": {
+    "map": "/Game/ThirdPerson/Maps/ThirdPersonMap",
+    "pie_worlds": 0,
+    "dirty_content": [],
+    "dirty_maps": [],
+    "restored_preferences": {
+      "players": 1,
+      "one_process": true,
+      "mode": 1,
+      "throttle": false,
+      "slate": 1,
+      "idle": 0,
+      "original_map": "/Game/ThirdPerson/Maps/ThirdPersonMap"
+    }
+  },
+  "known_issue": "Client模式下释放共鸣回路前的普攻连段窗口疑似异常；用户要求暂缓，未定位或修复。",
+  "unverified": [
+    "Standalone dedicated-server executable",
+    "Cook/package",
+    "Profiling",
+    "Exhaustive skill/character regression"
+  ],
+  "preexisting_source_preserved": true
+}

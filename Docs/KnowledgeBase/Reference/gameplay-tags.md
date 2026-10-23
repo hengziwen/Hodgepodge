@@ -144,8 +144,8 @@
 - `GameplayEvent.Attack.Completed` — `GameplayEvent_Attack_Completed`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L147
 - `GameplayEvent.Attack.Interrupted` — `GameplayEvent_Attack_Interrupted`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L148
 - `GameplayEvent.Attack.Test` — `GameplayEvent_Attack_Test`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L146
-- `GameplayEvent.Combo.EventRequest` — `TAG_ComboEventRequest`；[HodgeCombatComponentBase.cpp](../../../Source/Hodgepodge/Private/Component/HodgeCombatComponentBase.cpp) L473
-- `GameplayEvent.Combo.InputRequest` — `TAG_ComboInputRequest`；[HodgeCombatComponentBase.cpp](../../../Source/Hodgepodge/Private/Component/HodgeCombatComponentBase.cpp) L472
+- `GameplayEvent.Combo.EventRequest` — `TAG_ComboEventRequest`；[HodgeCombatComponentBase.cpp](../../../Source/Hodgepodge/Private/Component/HodgeCombatComponentBase.cpp) L118
+- `GameplayEvent.Combo.InputRequest` — `TAG_ComboInputRequest`；[HodgeCombatComponentBase.cpp](../../../Source/Hodgepodge/Private/Component/HodgeCombatComponentBase.cpp) L117
 - `GameplayEvent.Death` — `GameplayEvent_Death`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L138
 - `GameplayEvent.MeleeHit` — `GameplayEvent_MeleeHit`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L137
 - `GameplayEvent.RequestReset` — `GameplayEvent_RequestReset`；[HodgeGameplayTags.cpp](../../../Source/Hodgepodge/Private/AbilitySystem/HodgeGameplayTags.cpp) L140

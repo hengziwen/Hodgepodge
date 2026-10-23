@@ -10,6 +10,7 @@
 
 class UHodgeGameplayAbility_Definition;
 class UHodgeCombatComponentBase;
+class UHodgeHitDetectionComponent;
 class UHodgeAbilityTask_WaitHitResults;
 
 // 独立 Tick 保证骨骼更新后采样，不改变 ASC 上其他任务的阶段。
@@ -92,6 +93,8 @@ protected:
 	virtual void OnDestroy(bool bInOwnerFinished) override;
 
 private:
+	// 几何与来源状态只保存在独立检测组件，Task 不再经 Combat 采样。
+	UPROPERTY() TWeakObjectPtr<UHodgeHitDetectionComponent> DetectionComponent;
 	friend struct FHodgeHitResultsTickFunction;
 	friend struct FHodgeMeleeTestAccess;
 	/** 保存窗口的数据和接口契约。 */

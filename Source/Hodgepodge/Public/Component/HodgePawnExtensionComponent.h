@@ -37,6 +37,9 @@ public:
 
 	// 当前 PawnExtensionComponent 在 InitState 系统中的功能名称
 	static const FName NAME_ActorFeatureName;
+	// 组件扩展事件只表示 ASC 绑定变化，不代表属性或所有能力均已就绪。
+	static const FName NAME_AbilitySystemInitialized;
+	static const FName NAME_AbilitySystemUninitialized;
 	// 事件Pawn角色数据变化对应的事件通知。
 	FSimpleMulticastDelegate OnPawnDataChanged;
 

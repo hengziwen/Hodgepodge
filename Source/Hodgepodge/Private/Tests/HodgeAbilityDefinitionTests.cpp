@@ -235,6 +235,27 @@ bool FHodgeComboRetentionTest::RunTest(const FString& Parameters)
 	Request.EventMagnitude = FHodgeComboTestAccess::SourceKey(Combo);
 	TestTrue(TEXT("Valid early input may wait for its native window"), Combo->CanBufferServerActivation(TargetHandle, &Request));
 	TestFalse(TEXT("Waiting never grants a closed execution window"), Combo->PrepareServerActivation(TargetHandle, &Request));
+	// 同一目标有开放边时应立即准备，较高优先级闭边不能劫持请求进入等待。
+	auto* SourceRow = Definition->ComboTable->FindRow<FHodgeComboRow>(Source.GetTagName(), TEXT("MixedWindowRegression"));
+	FHodgeComboTransition OpenEdge = SourceRow->Transitions[0];
+	OpenEdge.RequiredWindowTags.Reset();
+	OpenEdge.TransitionPriority = -1;
+	SourceRow->Transitions.Add(OpenEdge);
+	TestFalse(TEXT("An open edge prevents waiting for another closed edge to the same target"), Combo->CanBufferServerActivation(TargetHandle, &Request));
+	TestTrue(TEXT("Normal selection still chooses the ready edge"), FHodgeComboTestAccess::Select(Combo, Intent) == &SourceRow->Transitions[1]);
+	SourceRow->Transitions[1].BlockedSourceTags.AddTag(Intent);
+	TestTrue(TEXT("A blocked open edge does not bypass valid waiting"), Combo->CanBufferServerActivation(TargetHandle, &Request));
+	// 另一个合法目标动作开放时，仍保留已请求派生动作的原有短暂等待。
+	auto* OtherDefinition = NewObject<UHodgeAbilityDefinition>();
+	OtherDefinition->AbilityTag = Source;
+	OtherDefinition->AbilityClass = UHodgeGameplayAbility_Definition::StaticClass();
+	OtherDefinition->ExecutionConfig.Montage = TargetDefinition->ExecutionConfig.Montage;
+	const auto OtherHandle = ASC->GiveAbilityDefinition(OtherDefinition, 1, Combo);
+	TestTrue(TEXT("Alternative target is really granted"), OtherHandle.IsValid());
+	SourceRow->Transitions[1] = OpenEdge;
+	SourceRow->Transitions[1].TargetComboTag = Source;
+	TestTrue(TEXT("Another ready target does not reject the requested target's native wait"), Combo->CanBufferServerActivation(TargetHandle, &Request));
+	SourceRow->Transitions.SetNum(1);
 	Request.EventMagnitude += 1;
 	TestFalse(TEXT("Another activation key cannot be buffered"), Combo->CanBufferServerActivation(TargetHandle, &Request));
 	Request.EventMagnitude -= 1;

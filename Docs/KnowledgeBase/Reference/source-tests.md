@@ -60,6 +60,46 @@
 - L14: `bool FHodgeNotifyConfigurationTest::RunTest(const FString& Parameters)`
 - L35: `bool FHodgeNotifyContextTest::RunTest(const FString& Parameters)`
 
+## HodgeAttackRuleTestAbility.cpp
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Private/Tests/HodgeAttackRuleTestAbility.cpp](../../../Source/Hodgepodge/Private/Tests/HodgeAttackRuleTestAbility.cpp)
+
+定义候选（多行签名仅展示首行）：
+
+- L6: `UHodgeAttackRuleTestAbility::UHodgeAttackRuleTestAbility()`
+- L10: `bool UHodgeAttackRuleTestAbility::CanActivateAbility(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* Info,`
+- L15: `void UHodgeAttackRuleTestAbility::ActivateAbility(FGameplayAbilitySpecHandle, const FGameplayAbilityActorInfo*, FGameplayAbilityActivationInfo, const FGameplayEventData*) {}`
+
+## HodgeAttackRuleTestAbility.h
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Private/Tests/HodgeAttackRuleTestAbility.h](../../../Source/Hodgepodge/Private/Tests/HodgeAttackRuleTestAbility.h)
+
+项目内直接 include（不是运行调用关系）：[AbilitySystem/Abilities/HodgeGameplayAbility_Melee.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Melee.h)
+
+有效头文件声明摘录（未展开宏，未求值预处理分支）：
+
+```cpp
+   2: #pragma once
+   3: #include "AbilitySystem/Abilities/HodgeGameplayAbility_Melee.h"
+   4: #include "HodgeAttackRuleTestAbility.generated.h"
+   7: UCLASS(Transient, NotBlueprintable)
+   8: class UHodgeAttackRuleTestAbility : public UHodgeGameplayAbility_Melee
+   9: {
+  10: 	GENERATED_BODY()
+  11: public:
+  12: 	UHodgeAttackRuleTestAbility();
+  13: 	virtual bool CanActivateAbility(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* Info,
+  14: 		const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* RelevantTags) const override;
+  15: protected:
+  16: 	virtual void ActivateAbility(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* Info,
+  17: 		FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* Event) override;
+  18: };
+```
+
 ## HodgeAttackWarpTests.cpp
 
 模块或基础类型入口。
@@ -204,6 +244,23 @@
 - L402: `bool FHodgeVerifyHeldDeath::Update()`
 - L415: `bool FHodgeActionHeldDeathTest::RunTest(const FString&)`
 
+## HodgeCombatSeparationTests.cpp
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Private/Tests/HodgeCombatSeparationTests.cpp](../../../Source/Hodgepodge/Private/Tests/HodgeCombatSeparationTests.cpp)
+
+项目内直接 include（不是运行调用关系）：[Combat/HodgeAttackRule.h](../../../Source/Hodgepodge/Public/Combat/HodgeAttackRule.h)、[Data/HodgeAbilityDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilityDefinition.h)、[Data/HodgeHavocAttackRule.h](../../../Source/Hodgepodge/Public/Data/HodgeHavocAttackRule.h)、[Data/HodgeResonanceAttackRule.h](../../../Source/Hodgepodge/Public/Data/HodgeResonanceAttackRule.h)、[Component/HodgeCombatComponentBase.h](../../../Source/Hodgepodge/Public/Component/HodgeCombatComponentBase.h)、[Component/HodgeHitDetectionComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeHitDetectionComponent.h)、[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)、[AbilitySystem/Abilities/HodgeGameplayAbility_HavocRules.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_HavocRules.h)、[AbilitySystem/AttributeSet/HodgeHealthSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeHealthSet.h)、[AbilitySystem/AttributeSet/HodgeCombatSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeCombatSet.h)、[AbilitySystem/AttributeSet/HodgeHavocSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeHavocSet.h)、[AbilitySystem/AttributeSet/HodgeResonanceSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeResonanceSet.h)、[AbilitySystem/Effects/HodgeResonanceEnergyEffect.h](../../../Source/Hodgepodge/Public/AbilitySystem/Effects/HodgeResonanceEnergyEffect.h)、[AbilitySystem/Effects/HodgeHavocEffects.h](../../../Source/Hodgepodge/Public/AbilitySystem/Effects/HodgeHavocEffects.h)
+
+定义候选（多行签名仅展示首行）：
+
+- L79: `bool FHodgeDetectionOwnerCleanupTest::RunTest(const FString&)`
+- L103: `bool FHodgeAttackRulePhaseTest::RunTest(const FString&)`
+- L128: `bool FHodgeAttackRuleReentryTest::RunTest(const FString&)`
+- L140: `bool FHodgeAttackRuleCompatibilityTest::RunTest(const FString&)`
+- L152: `bool FHodgeAttackRuleCastTest::RunTest(const FString&)`
+- L163: `bool FHodgeAttackRuleCancellationTest::RunTest(const FString&)`
+
 ## HodgeDashAirTests.cpp
 
 模块或基础类型入口。
@@ -297,12 +354,14 @@
 
 - L12: `void UHodgeEnemyTestAbilitySet::AddAbility(TSubclassOf<UHodgeGameplayAbility> Class)`
 - L17: `void UHodgeEnemyTestAbilitySet::AddEffect(TSubclassOf<UGameplayEffect> Class)`
-- L22: `UHodgeEnemyTestEquipment::UHodgeEnemyTestEquipment() { InstanceType = UHodgeWeaponInstance::StaticClass(); }`
-- L24: `void UHodgeEnemyRebindOnGrantAbility::OnGiveAbility(const FGameplayAbilityActorInfo* Info, const FGameplayAbilitySpec& Spec)`
-- L32: `UHodgeEnemyOnSpawnTestAbility::UHodgeEnemyOnSpawnTestAbility() { ActivationPolicy = EHodgeAbilityActivationPolicy::OnSpawn; }`
-- L34: `AHodgeEnemyEquipmentTestActor::AHodgeEnemyEquipmentTestActor()`
-- L39: `void AHodgeEnemyEquipmentFailActor::OnConstruction(const FTransform& Transform)`
-- L45: `UHodgeEnemyInstantTestEffect::UHodgeEnemyInstantTestEffect()`
+- L22: `void UHodgeEnemyTestAbilitySet::AddAttribute(TSubclassOf<UAttributeSet> Class)`
+- L27: `UHodgeOwnerOnlyOnSpawnTestAbility::UHodgeOwnerOnlyOnSpawnTestAbility()`
+- L33: `UHodgeEnemyTestEquipment::UHodgeEnemyTestEquipment() { InstanceType = UHodgeWeaponInstance::StaticClass(); }`
+- L35: `void UHodgeEnemyRebindOnGrantAbility::OnGiveAbility(const FGameplayAbilityActorInfo* Info, const FGameplayAbilitySpec& Spec)`
+- L43: `UHodgeEnemyOnSpawnTestAbility::UHodgeEnemyOnSpawnTestAbility() { ActivationPolicy = EHodgeAbilityActivationPolicy::OnSpawn; }`
+- L45: `AHodgeEnemyEquipmentTestActor::AHodgeEnemyEquipmentTestActor()`
+- L50: `void AHodgeEnemyEquipmentFailActor::OnConstruction(const FTransform& Transform)`
+- L56: `UHodgeEnemyInstantTestEffect::UHodgeEnemyInstantTestEffect()`
 
 ## HodgeEnemyAITestTypes.h
 
@@ -321,58 +380,89 @@
    7: #include "AbilitySystem/Abilities/HodgeGameplayAbility.h"
    8: #include "GameplayEffect.h"
    9: #include "GameFramework/Actor.h"
-  10: #include "HodgeEnemyAITestTypes.generated.h"
-  13: UCLASS(Transient, NotBlueprintable)
-  14: class UHodgeEnemyTestAbilitySet : public UHodgeAbilitySet
-  15: {
-  16: 	GENERATED_BODY()
-  17: public:
-  21: 	void AddAbility(TSubclassOf<UHodgeGameplayAbility> Class);
-  25: 	void AddEffect(TSubclassOf<UGameplayEffect> Class);
-  26: };
-  29: UCLASS(Transient, NotBlueprintable)
-  30: class UHodgeEnemyTestEquipment : public UHodgeEquipmentDefinition
-  31: {
-  32: 	GENERATED_BODY()
-  33: public:
-  35: 	UHodgeEnemyTestEquipment();
-  36: };
-  39: UCLASS(Transient, NotBlueprintable)
-  40: class UHodgeEnemyRebindOnGrantAbility : public UHodgeGameplayAbility
-  41: {
-  42: 	GENERATED_BODY()
-  43: protected:
-  48: 	virtual void OnGiveAbility(const FGameplayAbilityActorInfo* Info, const FGameplayAbilitySpec& Spec) override;
-  49: };
-  52: UCLASS(Transient, NotBlueprintable)
-  53: class UHodgeEnemyOnSpawnTestAbility : public UHodgeGameplayAbility
-  54: {
-  55: 	GENERATED_BODY()
-  56: public:
-  58: 	UHodgeEnemyOnSpawnTestAbility();
-  59: };
-  62: UCLASS(Transient, NotBlueprintable)
-  63: class AHodgeEnemyEquipmentTestActor : public AActor
-  64: {
-  65: 	GENERATED_BODY()
-  66: public:
-  68: 	AHodgeEnemyEquipmentTestActor();
-  69: };
-  72: UCLASS(Transient, NotBlueprintable)
-  73: class UHodgeEnemyInstantTestEffect : public UGameplayEffect
-  74: {
-  75: 	GENERATED_BODY()
-  76: public:
-  78: 	UHodgeEnemyInstantTestEffect();
-  79: };
-  82: UCLASS(Transient, NotBlueprintable)
-  83: class AHodgeEnemyEquipmentFailActor : public AHodgeEnemyEquipmentTestActor
-  84: {
-  85: 	GENERATED_BODY()
-  86: protected:
-  90: 	virtual void OnConstruction(const FTransform& Transform) override;
+  10: #include "HodgeRelationshipTestAbility.h"
+  11: #include "HodgeEnemyAITestTypes.generated.h"
+  14: UCLASS(Transient, NotBlueprintable)
+  15: class UHodgeEnemyTestAbilitySet : public UHodgeAbilitySet
+  16: {
+  17: 	GENERATED_BODY()
+  18: public:
+  22: 	void AddAbility(TSubclassOf<UHodgeGameplayAbility> Class);
+  26: 	void AddEffect(TSubclassOf<UGameplayEffect> Class);
+  28: 	void AddAttribute(TSubclassOf<UAttributeSet> Class);
+  29: };
+  32: UCLASS(Transient, NotBlueprintable)
+  33: class UHodgeOwnerOnlyOnSpawnTestAbility : public UHodgeRelationshipTestAbility
+  34: {
+  35: 	GENERATED_BODY()
+  36: public:
+  37: 	UHodgeOwnerOnlyOnSpawnTestAbility();
+  38: };
+  41: UCLASS(Transient, NotBlueprintable)
+  42: class UHodgeEnemyTestEquipment : public UHodgeEquipmentDefinition
+  43: {
+  44: 	GENERATED_BODY()
+  45: public:
+  47: 	UHodgeEnemyTestEquipment();
+  48: };
+  51: UCLASS(Transient, NotBlueprintable)
+  52: class UHodgeEnemyRebindOnGrantAbility : public UHodgeGameplayAbility
+  53: {
+  54: 	GENERATED_BODY()
+  55: protected:
+  60: 	virtual void OnGiveAbility(const FGameplayAbilityActorInfo* Info, const FGameplayAbilitySpec& Spec) override;
+  61: };
+  64: UCLASS(Transient, NotBlueprintable)
+  65: class UHodgeEnemyOnSpawnTestAbility : public UHodgeGameplayAbility
+  66: {
+  67: 	GENERATED_BODY()
+  68: public:
+  70: 	UHodgeEnemyOnSpawnTestAbility();
+  71: };
+  74: UCLASS(Transient, NotBlueprintable)
+  75: class AHodgeEnemyEquipmentTestActor : public AActor
+  76: {
+  77: 	GENERATED_BODY()
+  78: public:
+  80: 	AHodgeEnemyEquipmentTestActor();
+  81: };
+  84: UCLASS(Transient, NotBlueprintable)
+  85: class UHodgeEnemyInstantTestEffect : public UGameplayEffect
+  86: {
+  87: 	GENERATED_BODY()
+  88: public:
+  90: 	UHodgeEnemyInstantTestEffect();
   91: };
+  94: UCLASS(Transient, NotBlueprintable)
+  95: class AHodgeEnemyEquipmentFailActor : public AHodgeEnemyEquipmentTestActor
+  96: {
+  97: 	GENERATED_BODY()
+  98: protected:
+ 102: 	virtual void OnConstruction(const FTransform& Transform) override;
+ 103: };
 ```
+
+## HodgeGrantContractTests.cpp
+
+模块或基础类型入口。
+
+源码：[Source/Hodgepodge/Private/Tests/HodgeGrantContractTests.cpp](../../../Source/Hodgepodge/Private/Tests/HodgeGrantContractTests.cpp)
+
+项目内直接 include（不是运行调用关系）：[GameFeatures/GameFeatureAction_AddAbilities.h](../../../Source/Hodgepodge/Public/GameFeatures/GameFeatureAction_AddAbilities.h)、[Core/PlayState/HodgePlayerState.h](../../../Source/Hodgepodge/Public/Core/PlayState/HodgePlayerState.h)、[Data/HodgeAssetManager.h](../../../Source/Hodgepodge/Public/Data/HodgeAssetManager.h)、[Data/HodgeGameData.h](../../../Source/Hodgepodge/Public/Data/HodgeGameData.h)、[Data/HodgePawnData.h](../../../Source/Hodgepodge/Public/Data/HodgePawnData.h)、[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)、[AbilitySystem/AttributeSet/HodgeHealthSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeHealthSet.h)、[AbilitySystem/AttributeSet/HodgeCombatSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeCombatSet.h)、[AbilitySystem/AttributeSet/HodgeResonanceSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeResonanceSet.h)、[Component/HodgeHealthComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeHealthComponent.h)、[Component/HodgePawnExtensionComponent.h](../../../Source/Hodgepodge/Public/Component/HodgePawnExtensionComponent.h)
+
+定义候选（多行签名仅展示首行）：
+
+- L85: `bool FHodgeGameDataLifetimeTest::RunTest(const FString&)`
+- L100: `bool FHodgeDynamicTagContractTest::RunTest(const FString&)`
+- L112: `bool FHodgeSelfDestructContractTest::RunTest(const FString&)`
+- L136: `bool FHodgeOwnerOnlyGrantTest::RunTest(const FString&)`
+- L158: `bool FHodgeGrantBatchAtomicTest::RunTest(const FString&)`
+- L181: `bool FHodgePlayerBaseGrantTest::RunTest(const FString&)`
+- L212: `bool FHodgeGFOverlappingEntriesTest::RunTest(const FString&)`
+- L234: `bool FHodgeGFPreflightTest::RunTest(const FString&)`
+- L260: `bool FHodgeGFWithdrawalTest::RunTest(const FString&)`
+- L279: `bool FHodgeGFLateBindingTest::RunTest(const FString&)`
+- L300: `bool FHodgeGFBindingLifecycleTest::RunTest(const FString&)`
 
 ## HodgeHavocTests.cpp
 
@@ -380,19 +470,19 @@
 
 源码：[Source/Hodgepodge/Private/Tests/HodgeHavocTests.cpp](../../../Source/Hodgepodge/Private/Tests/HodgeHavocTests.cpp)
 
-项目内直接 include（不是运行调用关系）：[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)、[AbilitySystem/AttributeSet/HodgeHavocSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeHavocSet.h)、[AbilitySystem/AttributeSet/HodgeCombatSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeCombatSet.h)、[AbilitySystem/Effects/HodgeHavocEffects.h](../../../Source/Hodgepodge/Public/AbilitySystem/Effects/HodgeHavocEffects.h)、[AbilitySystem/Abilities/HodgeGameplayAbility_HavocRules.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_HavocRules.h)、[AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h)、[Combat/HodgeHavocRules.h](../../../Source/Hodgepodge/Public/Combat/HodgeHavocRules.h)、[Combat/HodgeHitReactionTypes.h](../../../Source/Hodgepodge/Public/Combat/HodgeHitReactionTypes.h)、[Data/HodgeAbilityDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilityDefinition.h)、[Data/HodgeAbilitySet.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilitySet.h)、[Data/HodgeComboDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeComboDefinition.h)、[Animation/HodgeAnimNotify_DarkSurgeCommit.h](../../../Source/Hodgepodge/Public/Animation/HodgeAnimNotify_DarkSurgeCommit.h)、[UI/Data/HodgeGameplayUIDataSource.h](../../../Source/Hodgepodge/Public/UI/Data/HodgeGameplayUIDataSource.h)、[Core/PlayState/HodgePlayerState.h](../../../Source/Hodgepodge/Public/Core/PlayState/HodgePlayerState.h)、[Core/PlayerController/HodgePlayerController.h](../../../Source/Hodgepodge/Public/Core/PlayerController/HodgePlayerController.h)
+项目内直接 include（不是运行调用关系）：[AbilitySystem/HodgeAbilitySystemComponent.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeAbilitySystemComponent.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)、[AbilitySystem/AttributeSet/HodgeHavocSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeHavocSet.h)、[AbilitySystem/AttributeSet/HodgeCombatSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeCombatSet.h)、[AbilitySystem/Effects/HodgeHavocEffects.h](../../../Source/Hodgepodge/Public/AbilitySystem/Effects/HodgeHavocEffects.h)、[AbilitySystem/Abilities/HodgeGameplayAbility_HavocRules.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_HavocRules.h)、[AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h)、[Combat/HodgeHavocRules.h](../../../Source/Hodgepodge/Public/Combat/HodgeHavocRules.h)、[Combat/HodgeHitReactionTypes.h](../../../Source/Hodgepodge/Public/Combat/HodgeHitReactionTypes.h)、[Data/HodgeAbilityDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilityDefinition.h)、[Data/HodgeHavocAttackRule.h](../../../Source/Hodgepodge/Public/Data/HodgeHavocAttackRule.h)、[Data/HodgeAbilitySet.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilitySet.h)、[Data/HodgeComboDefinition.h](../../../Source/Hodgepodge/Public/Data/HodgeComboDefinition.h)、[Animation/HodgeAnimNotify_DarkSurgeCommit.h](../../../Source/Hodgepodge/Public/Animation/HodgeAnimNotify_DarkSurgeCommit.h)、[UI/Data/HodgeGameplayUIDataSource.h](../../../Source/Hodgepodge/Public/UI/Data/HodgeGameplayUIDataSource.h)、[Core/PlayState/HodgePlayerState.h](../../../Source/Hodgepodge/Public/Core/PlayState/HodgePlayerState.h)、[Core/PlayerController/HodgePlayerController.h](../../../Source/Hodgepodge/Public/Core/PlayerController/HodgePlayerController.h)
 
 定义候选（多行签名仅展示首行）：
 
-- L70: `bool FHodgeHavocResourceTest::RunTest(const FString& Parameters)`
-- L87: `bool FHodgeHavocFuelTest::RunTest(const FString& Parameters)`
-- L103: `bool FHodgeHavocProcTest::RunTest(const FString& Parameters)`
-- L117: `bool FHodgeHavocEffectTest::RunTest(const FString& Parameters)`
-- L136: `bool FHodgeHavocHoldTest::RunTest(const FString& Parameters)`
-- L152: `bool FHodgeHavocVariantTest::RunTest(const FString& Parameters)`
-- L185: `bool FHodgeHavocSessionTest::RunTest(const FString& Parameters)`
-- L257: `bool FHodgeHavocAssetsTest::RunTest(const FString& Parameters)`
-- L292: `bool FHodgeHavocDebugFillTest::RunTest(const FString& Parameters)`
+- L71: `bool FHodgeHavocResourceTest::RunTest(const FString& Parameters)`
+- L88: `bool FHodgeHavocFuelTest::RunTest(const FString& Parameters)`
+- L104: `bool FHodgeHavocProcTest::RunTest(const FString& Parameters)`
+- L118: `bool FHodgeHavocEffectTest::RunTest(const FString& Parameters)`
+- L137: `bool FHodgeHavocHoldTest::RunTest(const FString& Parameters)`
+- L153: `bool FHodgeHavocVariantTest::RunTest(const FString& Parameters)`
+- L186: `bool FHodgeHavocSessionTest::RunTest(const FString& Parameters)`
+- L258: `bool FHodgeHavocAssetsTest::RunTest(const FString& Parameters)`
+- L301: `bool FHodgeHavocDebugFillTest::RunTest(const FString& Parameters)`
 
 ## HodgeHitDetectionTests.cpp
 
@@ -523,13 +613,13 @@
 
 源码：[Source/Hodgepodge/Private/Tests/HodgeMeleeRoutingTests.cpp](../../../Source/Hodgepodge/Private/Tests/HodgeMeleeRoutingTests.cpp)
 
-项目内直接 include（不是运行调用关系）：[AbilitySystem/Abilities/HodgeAbilityTask_WaitHitResults.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeAbilityTask_WaitHitResults.h)、[AbilitySystem/Abilities/HodgeGameplayAbility_Melee.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Melee.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)、[AbilitySystem/HodgeGameplayEffectContext.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayEffectContext.h)、[AbilitySystem/AttributeSet/HodgeCombatSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeCombatSet.h)、[Component/HodgeCombatComponentBase.h](../../../Source/Hodgepodge/Public/Component/HodgeCombatComponentBase.h)
+项目内直接 include（不是运行调用关系）：[AbilitySystem/Abilities/HodgeAbilityTask_WaitHitResults.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeAbilityTask_WaitHitResults.h)、[AbilitySystem/Abilities/HodgeGameplayAbility_Melee.h](../../../Source/Hodgepodge/Public/AbilitySystem/Abilities/HodgeGameplayAbility_Melee.h)、[AbilitySystem/HodgeGameplayTags.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayTags.h)、[AbilitySystem/HodgeGameplayEffectContext.h](../../../Source/Hodgepodge/Public/AbilitySystem/HodgeGameplayEffectContext.h)、[AbilitySystem/AttributeSet/HodgeCombatSet.h](../../../Source/Hodgepodge/Public/AbilitySystem/AttributeSet/HodgeCombatSet.h)、[Component/HodgeCombatComponentBase.h](../../../Source/Hodgepodge/Public/Component/HodgeCombatComponentBase.h)、[Component/HodgeHitDetectionComponent.h](../../../Source/Hodgepodge/Public/Component/HodgeHitDetectionComponent.h)
 
 定义候选（多行签名仅展示首行）：
 
-- L109: `bool FHodgeDetectionRoutingTest::RunTest(const FString& Parameters)`
-- L140: `bool FHodgeMeleeHitHistoryTest::RunTest(const FString& Parameters)`
-- L165: `bool FHodgeMeleeSpecContextTest::RunTest(const FString& Parameters)`
+- L111: `bool FHodgeDetectionRoutingTest::RunTest(const FString& Parameters)`
+- L142: `bool FHodgeMeleeHitHistoryTest::RunTest(const FString& Parameters)`
+- L167: `bool FHodgeMeleeSpecContextTest::RunTest(const FString& Parameters)`
 
 ## HodgeMovementActionTests.cpp
 

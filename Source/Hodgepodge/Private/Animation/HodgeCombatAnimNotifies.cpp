@@ -41,6 +41,14 @@ FHodgeAnimHitConfig::FHodgeAnimHitConfig()
 	WeaponSourceTag = HodgeGameplayTags::Combat_Source_Weapon_MainHand;
 }
 
+/** 分段开关独立于伤害与反应覆盖，避免继承默认配置时意外击飞。 */
+FHodgeHitReactionConfig FHodgeAnimHitConfig::ResolveReaction(const FHodgeHitReactionConfig& DefaultReaction) const
+{
+	FHodgeHitReactionConfig Result = bUseDefaultReaction ? DefaultReaction : ReactionOverride;
+	Result.bCanLaunch = bCanLaunch;
+	return Result;
+}
+
 /** 检查当前配置并收集诊断。 */
 bool FHodgeAnimHitConfig::Validate(TArray<FText>& Errors) const
 {
@@ -67,17 +75,28 @@ bool FHodgeAnimHitConfig::Validate(TArray<FText>& Errors) const
 	if ((Source == EHodgeAnimHitSource::ExecutionTarget || TargetPolicy != EHodgeHitTargetPolicy::AnyInVolume) &&
 		TargetKey.IsNone()) { Error(TEXT("Selected targets require TargetKey.")); }
 	if (!AttackPhase.IsNone() && HitGroup.IsNone()) { Error(TEXT("AttackPhase requires an explicit HitGroup.")); }
-	if (LocalTransform.ContainsNaN() || !LocalTransform.GetRotation().IsNormalized() || !LocalTransform.GetScale3D().
-		Equals(FVector::OneVector)) { Error(TEXT("LocalTransform must be finite, normalized and unit scale.")); }
-	if (!FMath::IsFinite(Radius) || Radius <= 0.f || BoxHalfExtent.ContainsNaN() || BoxHalfExtent.GetMin() <= 0.f ||
-		!FMath::IsFinite(CapsuleHalfHeight) || (Shape == EHodgeHitShape::Capsule && CapsuleHalfHeight < Radius) ||
-		!FMath::IsFinite(DamageScale) || DamageScale < 0.f || !FMath::IsFinite(RepeatHitInterval) || RepeatHitInterval <
-		0.f ||
-		!FMath::IsFinite(MaxTargetDistance) || MaxTargetDistance <= 0.f || !FMath::IsFinite(MaxAnchorDistance) ||
-		MaxAnchorDistance <= 0.f)
+	if (uint8(Source) > uint8(EHodgeAnimHitSource::ExecutionTarget) || uint8(TargetPolicy) > uint8(EHodgeHitTargetPolicy::ConfirmedTarget))
+	{ Error(TEXT("Source or TargetPolicy is invalid.")); }
+	// 武器沿用其注册来源，通知中隐藏的尺寸和局部变换不参与本次校验。
+	if (Source != EHodgeAnimHitSource::EquippedWeapon)
 	{
-		Error(TEXT("Invalid hit dimensions, multiplier, interval or distance."));
+		if (LocalTransform.ContainsNaN() || !LocalTransform.GetRotation().IsNormalized() || !LocalTransform.GetScale3D().Equals(FVector::OneVector))
+		{ Error(TEXT("LocalTransform must be finite, normalized and unit scale.")); }
+		if (uint8(Shape) > uint8(EHodgeHitShape::Capsule)) { Error(TEXT("Shape is invalid.")); }
+		if ((Shape == EHodgeHitShape::Sphere || Shape == EHodgeHitShape::Capsule) && (!FMath::IsFinite(Radius) || Radius <= 0.f))
+		{ Error(TEXT("Sphere/Capsule Radius must be finite and positive.")); }
+		if (Shape == EHodgeHitShape::Box && (BoxHalfExtent.ContainsNaN() || BoxHalfExtent.GetMin() <= 0.f))
+		{ Error(TEXT("BoxHalfExtent must be finite and positive on every axis.")); }
+		if (Shape == EHodgeHitShape::Capsule && (!FMath::IsFinite(CapsuleHalfHeight) || CapsuleHalfHeight < Radius))
+		{ Error(TEXT("CapsuleHalfHeight must be finite and no smaller than Radius.")); }
+		if (!FMath::IsFinite(MaxAnchorDistance) || MaxAnchorDistance <= 0.f)
+		{ Error(TEXT("MaxAnchorDistance must be finite and positive.")); }
 	}
+	if ((Source == EHodgeAnimHitSource::ExecutionTarget || TargetPolicy != EHodgeHitTargetPolicy::AnyInVolume) &&
+		(!FMath::IsFinite(MaxTargetDistance) || MaxTargetDistance <= 0.f))
+	{ Error(TEXT("Selected targets require finite positive MaxTargetDistance.")); }
+	if (!FMath::IsFinite(DamageScale) || DamageScale < 0.f || !FMath::IsFinite(RepeatHitInterval) || RepeatHitInterval < 0.f)
+	{ Error(TEXT("DamageScale and RepeatHitInterval must be finite and nonnegative.")); }
 	if (Profile) { Profile->Validate(Errors); }
 	return Errors.Num() == Before;
 }

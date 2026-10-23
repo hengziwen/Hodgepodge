@@ -20,13 +20,34 @@
 #include "Component/HodgeHealthComponent.h"
 #include "TimerManager.h"
 #include "Animation/AnimMontage.h"
+#include "Animation/HodgeCombatAnimNotifies.h"
+#include "Animation/HodgeRootMotionModifier_AttackFacing.h"
+#include "AnimNotifyState_MotionWarping.h"
+#include "Component/HodgeCharacterRotationComponent.h"
+#include "Component/HodgeAttackMotionWarpingComponent.h"
+#include "HodgeAttackWarpTestTypes.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Engine/SkeletalMesh.h"
+#include "GameFramework/PlayerState.h"
 #include <limits>
 
 /** 保存战斗动作测试Access的数据和接口契约。 */
 struct FHodgeCombatActionTestAccess
 {
+	/** 注入服务器收到的请求；传输层另由 PIE 验证，不把此入口当成真实 RPC。 */
+	static void ServerComboRequest(UHodgeAbilitySystemComponent* ASC, FGameplayAbilitySpecHandle Handle,
+		const FPredictionKey& Key, const FGameplayEventData& Payload)
+	{ ASC->InternalServerTryActivateAbility(Handle, true, Key, &Payload); }
+	/** 等待记录由生产 Timer 创建和移除，测试不直接改写队列。 */
+	static int32 PendingComboRequests(const UHodgeAbilitySystemComponent* ASC) { return ASC->DeferredComboPayloads.Num(); }
+	/** 只读确认数据确已进入原 GAS 缓存，避免缺失上行输入也误判交接成功。 */
+	static bool HasConfirmedTargetData(UHodgeAbilitySystemComponent* ASC, FGameplayAbilitySpecHandle Handle, const FPredictionKey& Key)
+	{
+		const auto Cached = ASC->AbilityTargetDataMap.Find(FGameplayAbilitySpecHandleAndPredictionKey(Handle, Key));
+		return Cached.IsValid() && Cached->bTargetConfirmed && Cached->TargetData.Num() > 0;
+	}
+	/** 读取当前执行的网络来源身份，不能用新请求身份替代旧来源。 */
+	static int16 ComboSourceKey(const UHodgeCombatComponentBase* Combat) { return Combat->ExecutionKey(); }
 	/** 使当前测试的缓存或会话达到过期条件。
 	 * @param Combat 统一战斗组件。
 	 */
@@ -424,5 +445,320 @@ bool FHodgeActionHeldDeathTest::RunTest(const FString&)
 	// 通过ASC发起激活，保留GAS自身的条件与消耗校验。
 	TestTrue(TEXT("Existing death GA can activate"), F.ASC->TryActivateAbility(Handle));
 	ADD_LATENT_AUTOMATION_COMMAND(FHodgeVerifyHeldDeath(Data)); return true;
+}
+
+/** 分帧运行真实服务器等待 Timer；每个场景独立创建和销毁测试世界。 */
+struct FHodgeDeferredComboFixture
+{
+	TSharedPtr<HodgeActionTests::FFixture> Fixture;
+	FAutomationTestBase* Test = nullptr;
+	FName Scenario;
+	FGameplayAbilitySpecHandle TargetHandle;
+	FGameplayEventData Payload;
+	FPredictionKey Key;
+	int32 Step = 0;
+	// 使用生产入口的同一世界时钟验证截止边界，不将其他提前拒绝误判成超时。
+	double ExpiresAt = 0.0;
+};
+
+DEFINE_LATENT_AUTOMATION_COMMAND_ONE_PARAMETER(FHodgeVerifyDeferredCombo, TSharedPtr<FHodgeDeferredComboFixture>, Data);
+/** 生产队列只能在开窗时激活，超时或取消必须清理且不能被重复消息复活。 */
+bool FHodgeVerifyDeferredCombo::Update()
+{
+	if (!Data->Fixture)
+	{
+		Data->Fixture = MakeShared<HodgeActionTests::FFixture>();
+		auto& F = *Data->Fixture;
+		if (!Data->Test->TestTrue(TEXT("Deferred combo fixture is ready"), F.bReady)) { return true; }
+		F.ConfigureCombo();
+		auto* Combo = const_cast<UHodgeComboDefinition*>(F.Pawn->EnemyPawnData->ComboDefinition.Get());
+		auto* Target = DuplicateObject<UHodgeAbilityDefinition>(F.Definition, F.Pawn);
+		Target->AbilityTag = HodgeGameplayTags::Status_Attack_Recovery;
+		Data->TargetHandle = F.ASC->GiveAbilityDefinition(Target, 1, F.Pawn);
+		if (!Data->Test->TestTrue(TEXT("Separate target action is granted"), Data->TargetHandle.IsValid())) { return true; }
+		FHodgeComboRow TargetRow;
+		TargetRow.ComboTag = HodgeGameplayTags::Status_Attack_Recovery;
+		TargetRow.AbilityTag = Target->AbilityTag;
+		Combo->ComboTable->AddRow(TargetRow.ComboTag.GetTagName(), TargetRow);
+		const FGameplayTag SourceTag = HodgeGameplayTags::Status_Attack_Active;
+		auto* SourceRow = Combo->ComboTable->FindRow<FHodgeComboRow>(SourceTag.GetTagName(), TEXT("DeferredComboTest"));
+		if (!Data->Test->TestNotNull(TEXT("Source combo node exists"), SourceRow) ||
+			!Data->Test->TestTrue(TEXT("Source node has its native closed edge"), !SourceRow->Transitions.IsEmpty())) { return true; }
+		SourceRow->Transitions[0].TargetComboTag = TargetRow.ComboTag;
+		const auto Started = F.Combat->SubmitCombatIntent(HodgeGameplayTags::Status_Attack_Cancel_NextAttack);
+		if (!Data->Test->TestEqual(TEXT("Source action starts through Combat"), Started.Status, HodgeActionTests::EStatus::Started)) { return true; }
+		Data->Payload.EventTag = FGameplayTag::RequestGameplayTag(TEXT("GameplayEvent.Combo.InputRequest"));
+		Data->Payload.Instigator = F.Pawn;
+		Data->Payload.OptionalObject = Combo;
+		Data->Payload.TargetTags.AddTag(HodgeGameplayTags::Status_Attack_Active);
+		Data->Payload.InstigatorTags.AddTag(HodgeGameplayTags::Status_Attack_Cancel_NextAttack);
+		Data->Payload.EventMagnitude = FHodgeCombatActionTestAccess::ComboSourceKey(F.Combat);
+		Data->Key.Current = 101;
+		Data->ExpiresAt = F.World->GetTimeSeconds() + F.Combat->GetServerInputBufferSeconds();
+		FHodgeCombatActionTestAccess::ServerComboRequest(F.ASC, Data->TargetHandle, Data->Key, Data->Payload);
+		Data->Test->TestEqual(TEXT("Closed edge really enters server wait queue"), FHodgeCombatActionTestAccess::PendingComboRequests(F.ASC), 1);
+		return false;
+	}
+	auto& F = *Data->Fixture;
+	F.World->Tick(LEVELTICK_All, .01f);
+	const auto* TargetSpec = F.ASC->FindAbilitySpecFromHandle(Data->TargetHandle);
+	if (!TargetSpec) { Data->Test->AddError(TEXT("Target grant disappeared during deferred test")); return true; }
+	if (Data->Scenario == TEXT("Timeout"))
+	{
+		// 来源在整个等待期间仍有效，队列只能由真正到期而不是动作结束清理。
+		Data->Test->TestTrue(TEXT("Source remains active through the timeout boundary"), F.Ability() && F.Ability()->IsActive());
+		const bool bBeforeDeadline = F.World->GetTimeSeconds() < Data->ExpiresAt;
+		Data->Test->TestEqual(TEXT("Queue is retained before its deadline and removed at expiry"),
+			FHodgeCombatActionTestAccess::PendingComboRequests(F.ASC), bBeforeDeadline ? 1 : 0);
+		Data->Test->TestFalse(TEXT("Closed target never activates while timing out"), TargetSpec->IsActive());
+	}
+	if (++Data->Step == 1)
+	{
+		Data->Test->TestFalse(TEXT("A scheduled closed edge cannot activate early"), TargetSpec->IsActive());
+		Data->Test->TestEqual(TEXT("Closed edge remains queued after real Timer tick"), FHodgeCombatActionTestAccess::PendingComboRequests(F.ASC), 1);
+		if (Data->Scenario == TEXT("Open"))
+		{
+			// 同一预测请求重复到达仍由原去重逻辑处理，不在测试中删掉重复队列。
+			FHodgeCombatActionTestAccess::ServerComboRequest(F.ASC, Data->TargetHandle, Data->Key, Data->Payload);
+			FHodgeCombatActionTestAccess::Window(F.Ability(), HodgeGameplayTags::Status_Attack_Cancel_Move);
+		}
+		else if (Data->Scenario == TEXT("Cancel")) { F.Ability()->FinishExecution(true, false); }
+		return false;
+	}
+	if (FHodgeCombatActionTestAccess::PendingComboRequests(F.ASC) > 0 && Data->Step < 100) { return false; }
+	Data->Test->TestEqual(TEXT("Wait records are eventually removed"), FHodgeCombatActionTestAccess::PendingComboRequests(F.ASC), 0);
+	const bool bOpen = Data->Scenario == TEXT("Open");
+	Data->Test->TestEqual(TEXT("Only the opened edge activates its requested action"), TargetSpec->IsActive(), bOpen);
+	if (bOpen)
+	{
+		auto* Ability = Cast<UHodgeGameplayAbility_Definition>(TargetSpec->GetPrimaryInstance());
+		if (!Data->Test->TestNotNull(TEXT("Opened target owns a real ability instance"), Ability)) { return true; }
+		const FGuid Execution = Ability->GetExecutionId();
+		FHodgeCombatActionTestAccess::ServerComboRequest(F.ASC, Data->TargetHandle, Data->Key, Data->Payload);
+		Data->Test->TestTrue(TEXT("Duplicate request does not restart target execution"), Ability->IsActive() && Ability->GetExecutionId() == Execution);
+	}
+	else
+	{
+		FHodgeCombatActionTestAccess::ServerComboRequest(F.ASC, Data->TargetHandle, Data->Key, Data->Payload);
+		Data->Test->TestFalse(TEXT("Expired or cancelled source cannot be revived by a duplicate"), TargetSpec->IsActive());
+	}
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeDeferredComboPipelineTest, "Hodge.Combo.DeferredServerPipeline",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 开窗、超时和来源取消分别穿过现有服务器等待流程，不只测试 Ready／Wait 的即时查询。 */
+bool FHodgeDeferredComboPipelineTest::RunTest(const FString&)
+{
+	for (FName Scenario : {FName(TEXT("Open")), FName(TEXT("Timeout")), FName(TEXT("Cancel"))})
+	{
+		auto Data = MakeShared<FHodgeDeferredComboFixture>();
+		Data->Test = this;
+		Data->Scenario = Scenario;
+		ADD_LATENT_AUTOMATION_COMMAND(FHodgeVerifyDeferredCombo(Data));
+	}
+	return true;
+}
+
+/** 真实远端权威身份与临时动画配置只属于新用例，不改变旧 Deferred 矩阵的 AI 前提。 */
+struct FHodgeDeferredFacingFixture
+{
+	TSharedPtr<HodgeActionTests::FFixture> Fixture;
+	FAutomationTestBase* Test = nullptr;
+	FName Scenario;
+	FGameplayAbilitySpecHandle TargetHandle;
+	UHodgeAbilityDefinition* Target = nullptr;
+	FGameplayEventData Payload;
+	FPredictionKey Key;
+	FHodgeAttackFacingTargetData Facing;
+	int32 Step = 0;
+	double ExpiresAt = 0.;
+	// 只通过原 RPC 实现投递值；网络传输本身仍由 PIE 验证。
+	void SendFacing(const FPredictionKey& ForKey, const FHodgeAttackFacingTargetData& Value) const
+	{
+		Fixture->ASC->ServerSetReplicatedTargetData_Implementation(TargetHandle, ForKey,
+			FGameplayAbilityTargetDataHandle(new FHodgeAttackFacingTargetData(Value)), {}, ForKey);
+	}
+};
+
+DEFINE_LATENT_AUTOMATION_COMMAND_ONE_PARAMETER(FHodgeVerifyDeferredFacingHandoff, TSharedPtr<FHodgeDeferredFacingFixture>, Data);
+/** 跨真实延后 Timer 和引擎 Super 的数据交接；旧版本会在开窗后仍停在 FacingData 等待。 */
+bool FHodgeVerifyDeferredFacingHandoff::Update()
+{
+	if (!Data->Fixture)
+	{
+		Data->Fixture = MakeShared<HodgeActionTests::FFixture>();
+		auto& F = *Data->Fixture;
+		if (!Data->Test->TestTrue(TEXT("方向交接基础场景就绪"), F.bReady)) { return true; }
+		auto* Controller = F.World->SpawnActor<AHodgeDeferredFacingTestController>();
+		if (!Data->Test->TestNotNull(TEXT("远端玩家控制器存在"), Controller)) { return true; }
+		// 无GameMode的测试世界不会自动创建PlayerState；原生IsPlayerControlled要求真实非Bot状态。
+		FActorSpawnParameters StateSpawn; StateSpawn.Owner = Controller;
+		auto* PlayerState = F.World->SpawnActor<APlayerState>(StateSpawn);
+		if (!Data->Test->TestNotNull(TEXT("远端玩家状态存在"), PlayerState)) { return true; }
+		PlayerState->SetIsABot(false);
+		Controller->SetPlayerState(PlayerState);
+		Controller->Possess(F.Pawn);
+		// 两刀使用同一套真实骨架；仅复制动画通知到内存，不保存正式资源。
+		F.Pawn->GetMesh()->SetSkeletalMesh(LoadObject<USkeletalMesh>(nullptr,
+			TEXT("/Game/Main/Character/Hero/Anim/Model/SKM_Pover_LyraLab.SKM_Pover_LyraLab")));
+		F.Pawn->GetMesh()->SetAnimInstanceClass(UAnimInstance::StaticClass());
+		F.ASC->RefreshAbilityActorInfo();
+		// 分别验证远端前提，失败报告能直接区分控制权、Pawn状态和GAS缓存。
+		bool bRemoteReady = Data->Test->TestTrue(TEXT("方向交接Pawn具有权威"), F.Pawn->HasAuthority());
+		bRemoteReady &= Data->Test->TestTrue(TEXT("非Bot PlayerState使Pawn确认为玩家控制"), F.Pawn->IsPlayerControlled());
+		bRemoteReady &= Data->Test->TestFalse(TEXT("远端Pawn不属于本地控制"), F.Pawn->IsLocallyControlled());
+		bRemoteReady &= Data->Test->TestFalse(TEXT("GAS ActorInfo不属于本地控制"), F.ASC->AbilityActorInfo->IsLocallyControlled());
+		bRemoteReady &= Data->Test->TestEqual(TEXT("Pawn持有本次真实PlayerState"), F.Pawn->GetPlayerState(), PlayerState);
+		bRemoteReady &= Data->Test->TestEqual(TEXT("GAS缓存本次远端PlayerController"), F.ASC->AbilityActorInfo->PlayerController.Get(), static_cast<APlayerController*>(Controller));
+		if (!bRemoteReady) { return true; }
+		auto* Original = LoadObject<UAnimMontage>(nullptr,
+			TEXT("/Game/Main/Character/Hero/Anim/Montages/AM_Attack01_Montage.AM_Attack01_Montage"));
+		if (!Data->Test->TestNotNull(TEXT("真实根运动源动画存在"), Original)) { return true; }
+		F.Definition->ExecutionConfig.Montage = DuplicateObject<UAnimMontage>(Original, F.Definition);
+		F.Definition->ExecutionConfig.Montage->Notifies.Reset();
+		F.Definition->FacingWarp.bEnabled = false;
+		F.ConfigureCombo();
+		Data->Target = DuplicateObject<UHodgeAbilityDefinition>(F.Definition, F.Pawn);
+		Data->Target->AbilityTag = HodgeGameplayTags::Status_Attack_Recovery;
+		Data->Target->AbilityClass = UHodgeGameplayAbility_Melee::StaticClass();
+		Data->Target->FacingWarp.bEnabled = true;
+		Data->Target->FacingWarp.bTrackExecutionLockTargetDuringWarp = false;
+		Data->Target->ExecutionConfig.Montage = DuplicateObject<UAnimMontage>(Original, Data->Target);
+		auto* Montage = Data->Target->ExecutionConfig.Montage.Get();
+		Montage->Notifies.Reset();
+		auto* WarpNotify = NewObject<UAnimNotifyState_MotionWarping>(Montage);
+		auto* Modifier = NewObject<UHodgeRootMotionModifier_AttackFacing>(WarpNotify);
+		Modifier->WarpTargetName = Data->Target->FacingWarp.WarpTargetName;
+		WarpNotify->RootMotionModifier = Modifier;
+		auto& WarpEvent = Montage->Notifies.AddDefaulted_GetRef();
+		WarpEvent.NotifyStateClass = WarpNotify; WarpEvent.Link(Montage, 0.f);
+		WarpEvent.SetDuration(.1f); WarpEvent.EndLink.Link(Montage, .1f);
+		auto* HitNotify = NewObject<UHodgeAnimNotify_Hit>(Montage);
+		HitNotify->Hit.BoneOrSocket = TEXT("root");
+		auto& HitEvent = Montage->Notifies.AddDefaulted_GetRef();
+		HitEvent.Notify = HitNotify; HitEvent.Link(Montage, .3f);
+		TArray<FText> Errors;
+		if (!Data->Test->TestTrue(TEXT("临时目标保持完整生产配置校验"), Data->Target->ValidateDefinition(Errors)))
+		{
+			for (const auto& Error : Errors) { Data->Test->AddError(Error.ToString()); }
+			return true;
+		}
+		Data->TargetHandle = F.ASC->GiveAbilityDefinition(Data->Target, 1, F.Pawn);
+		if (!Data->Test->TestTrue(TEXT("开启方向等待的目标获得真实Spec"), Data->TargetHandle.IsValid())) { return true; }
+		F.Pawn->GetCharacterRotationComponent()->InitializeWithAbilitySystem(F.ASC);
+		auto* Warp = F.Pawn->FindComponentByClass<UHodgeAttackMotionWarpingComponent>();
+		if (!Data->Test->TestNotNull(TEXT("原运动修正组件存在"), Warp)) { return true; }
+		if (!Warp->HasBeenInitialized()) { Warp->InitializeComponent(); }
+		auto* Combo = const_cast<UHodgeComboDefinition*>(F.Pawn->EnemyPawnData->ComboDefinition.Get());
+		FHodgeComboRow TargetRow; TargetRow.ComboTag = HodgeGameplayTags::Status_Attack_Recovery;
+		TargetRow.AbilityTag = Data->Target->AbilityTag;
+		Combo->ComboTable->AddRow(TargetRow.ComboTag.GetTagName(), TargetRow);
+		const FGameplayTag SourceTag = HodgeGameplayTags::Status_Attack_Active;
+		auto* Source = Combo->ComboTable->FindRow<FHodgeComboRow>(SourceTag.GetTagName(), TEXT("DeferredFacingHandoff"));
+		if (!Data->Test->TestNotNull(TEXT("来源保留原关闭窗口边"), Source) ||
+			!Data->Test->TestTrue(TEXT("来源转换边存在"), !Source->Transitions.IsEmpty())) { return true; }
+		Source->Transitions[0].TargetComboTag = TargetRow.ComboTag;
+		// 远端权威不能用无预测键的本地输入冒充客户端；首刀也走真实服务器请求入口。
+		FGameplayEventData SourcePayload;
+		SourcePayload.EventTag = FGameplayTag::RequestGameplayTag(TEXT("GameplayEvent.Combo.InputRequest"));
+		SourcePayload.Instigator = F.Pawn; SourcePayload.OptionalObject = Combo;
+		SourcePayload.TargetTags.AddTag(Combo->EntryComboTag);
+		SourcePayload.InstigatorTags.AddTag(HodgeGameplayTags::Status_Attack_Cancel_NextAttack);
+		SourcePayload.EventMagnitude = FHodgeCombatActionTestAccess::ComboSourceKey(F.Combat);
+		FPredictionKey SourceKey; SourceKey.Current = 169;
+		FHodgeCombatActionTestAccess::ServerComboRequest(F.ASC, F.Handle, SourceKey, SourcePayload);
+		if (!Data->Test->TestTrue(TEXT("第一刀通过正式服务器Combat授权与Super激活"), F.Ability() && F.Ability()->IsActive() &&
+			F.ASC->GetAnimatingAbility() == F.Ability())) { return true; }
+		Data->Payload.EventTag = FGameplayTag::RequestGameplayTag(TEXT("GameplayEvent.Combo.InputRequest"));
+		Data->Payload.Instigator = F.Pawn; Data->Payload.OptionalObject = Combo;
+		Data->Payload.TargetTags.AddTag(HodgeGameplayTags::Status_Attack_Active);
+		Data->Payload.InstigatorTags.AddTag(HodgeGameplayTags::Status_Attack_Cancel_NextAttack);
+		Data->Payload.EventMagnitude = FHodgeCombatActionTestAccess::ComboSourceKey(F.Combat);
+		Data->Key.Current = 171;
+		Data->Facing.SourceAvatar = F.Pawn;
+		Data->Facing.Source = EHodgeAttackFacingSource::Actor;
+		Data->Facing.StartYaw = FRotator::NormalizeAxis(F.Pawn->GetActorRotation().Yaw);
+		Data->Facing.DesiredYaw = FRotator::NormalizeAxis(Data->Facing.StartYaw + 35.f);
+		Data->ExpiresAt = F.World->GetTimeSeconds() + F.Combat->GetServerInputBufferSeconds();
+		FHodgeCombatActionTestAccess::ServerComboRequest(F.ASC, Data->TargetHandle, Data->Key, Data->Payload);
+		Data->Test->TestEqual(TEXT("激活实际进入Deferred队列"), FHodgeCombatActionTestAccess::PendingComboRequests(F.ASC), 1);
+		// 旧Key及旧Avatar都不能冒充本笔方向，再提供唯一有效的当前载荷。
+		auto OldKey = Data->Key; --OldKey.Current;
+		auto WrongYaw = Data->Facing; WrongYaw.DesiredYaw = FRotator::NormalizeAxis(Data->Facing.StartYaw - 25.f);
+		Data->SendFacing(OldKey, WrongYaw);
+		auto WrongAvatar = Data->Facing; WrongAvatar.SourceAvatar = F.World->SpawnActor<AActor>();
+		Data->SendFacing(Data->Key, WrongAvatar);
+		Data->Test->TestFalse(TEXT("旧Avatar没有建立本笔方向缓存"),
+			FHodgeCombatActionTestAccess::HasConfirmedTargetData(F.ASC, Data->TargetHandle, Data->Key));
+		Data->SendFacing(Data->Key, Data->Facing);
+		Data->Test->TestTrue(TEXT("方向RPC实现已在激活前缓存本笔数据"),
+			FHodgeCombatActionTestAccess::HasConfirmedTargetData(F.ASC, Data->TargetHandle, Data->Key));
+		return false;
+	}
+	auto& F = *Data->Fixture;
+	F.World->Tick(LEVELTICK_All, .01f);
+	const auto* Spec = F.ASC->FindAbilitySpecFromHandle(Data->TargetHandle);
+	if (!Data->Test->TestNotNull(TEXT("目标Spec在交接期间存在"), Spec)) { return true; }
+	if (++Data->Step == 1)
+	{
+		Data->Test->TestFalse(TEXT("关闭窗口期间缓存方向不会提前激活目标"), Spec->IsActive());
+		Data->Test->TestEqual(TEXT("真实Timer仍等待原窗口"), FHodgeCombatActionTestAccess::PendingComboRequests(F.ASC), 1);
+		if (Data->Scenario == TEXT("Open"))
+		{
+			FHodgeCombatActionTestAccess::ServerComboRequest(F.ASC, Data->TargetHandle, Data->Key, Data->Payload);
+			FHodgeCombatActionTestAccess::Window(F.Ability(), HodgeGameplayTags::Status_Attack_Cancel_Move);
+		}
+		else if (Data->Scenario == TEXT("Cancel")) { F.Ability()->FinishExecution(true, false); }
+		else if (Data->Scenario == TEXT("Avatar")) { F.ASC->InitAbilityActorInfo(F.Pawn, nullptr); }
+		return false;
+	}
+	if (FHodgeCombatActionTestAccess::PendingComboRequests(F.ASC) > 0 && Data->Step < 100) { return false; }
+	Data->Test->TestEqual(TEXT("交接结束后生产等待记录被移除"), FHodgeCombatActionTestAccess::PendingComboRequests(F.ASC), 0);
+	const bool bOpen = Data->Scenario == TEXT("Open");
+	Data->Test->TestEqual(TEXT("只有真实开窗场景激活目标"), Spec->IsActive(), bOpen);
+	if (bOpen)
+	{
+		auto* Ability = Cast<UHodgeGameplayAbility_Definition>(Spec->GetPrimaryInstance());
+		if (!Data->Test->TestNotNull(TEXT("目标通过Super创建活动实例"), Ability)) { return true; }
+		Data->Test->TestFalse(TEXT("Super清缓存后仍完整交接方向，不等待第二次RPC"), Ability->IsAwaitingFacingData());
+		Data->Test->TestEqual(TEXT("交接真正到达目标Montage播放"), F.ASC->GetAnimatingAbility(), static_cast<UGameplayAbility*>(Ability));
+		Data->Test->TestEqual(TEXT("当前片段就是目标临时Montage"), F.ASC->GetCurrentMontage(), Data->Target->ExecutionConfig.Montage.Get());
+		Data->Test->TestTrue(TEXT("采用当前Key的35度Yaw，不混入旧Key"), FMath::IsNearlyEqual(Ability->GetAttackFacingYaw(), Data->Facing.DesiredYaw, .01f));
+		Data->Test->TestFalse(TEXT("数据按原路径消费一次"), FHodgeCombatActionTestAccess::HasConfirmedTargetData(F.ASC, Data->TargetHandle, Data->Key));
+		const FGuid Execution = Ability->GetExecutionId();
+		auto Duplicate = Data->Facing; Duplicate.DesiredYaw = FRotator::NormalizeAxis(Data->Facing.StartYaw - 20.f);
+		Data->SendFacing(Data->Key, Duplicate);
+		FHodgeCombatActionTestAccess::ServerComboRequest(F.ASC, Data->TargetHandle, Data->Key, Data->Payload);
+		Data->Test->TestTrue(TEXT("重复和已消费数据不重启或改写本次执行"), Ability->IsActive() && Ability->GetExecutionId() == Execution &&
+			FMath::IsNearlyEqual(Ability->GetAttackFacingYaw(), Data->Facing.DesiredYaw, .01f));
+		Ability->FinishExecution(true, false);
+		Data->SendFacing(Data->Key, Duplicate);
+		FHodgeCombatActionTestAccess::ServerComboRequest(F.ASC, Data->TargetHandle, Data->Key, Data->Payload);
+		Data->Test->TestFalse(TEXT("结束后旧数据和旧激活不能复活目标"), Spec->IsActive());
+	}
+	else
+	{
+		if (Data->Scenario == TEXT("Timeout"))
+		{ Data->Test->TestTrue(TEXT("来源有效直到生产截止时刻"), F.Ability() && F.Ability()->IsActive() && F.World->GetTimeSeconds() >= Data->ExpiresAt); }
+		Data->SendFacing(Data->Key, Data->Facing);
+		FHodgeCombatActionTestAccess::ServerComboRequest(F.ASC, Data->TargetHandle, Data->Key, Data->Payload);
+		Data->Test->TestFalse(TEXT("取消、到期或旧Avatar不能因缓存数据复活"), Spec->IsActive());
+	}
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeDeferredFacingHandoffTest, "Hodge.Combo.DeferredFacingTargetDataHandoff",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 真实Timer覆盖开窗交接与三项失效边界；不替代独立进程网络传输验收。 */
+bool FHodgeDeferredFacingHandoffTest::RunTest(const FString&)
+{
+	for (FName Scenario : {FName(TEXT("Open")), FName(TEXT("Cancel")), FName(TEXT("Timeout")), FName(TEXT("Avatar"))})
+	{
+		auto Data = MakeShared<FHodgeDeferredFacingFixture>();
+		Data->Test = this; Data->Scenario = Scenario;
+		ADD_LATENT_AUTOMATION_COMMAND(FHodgeVerifyDeferredFacingHandoff(Data));
+	}
+	return true;
 }
 #endif

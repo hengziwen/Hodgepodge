@@ -4,6 +4,7 @@ from pathlib import Path
 
 s = builtins.HODGE_REACTION_TEST
 world = s['world']
+dedicated = unreal.SystemLibrary.is_dedicated_server(world)
 source = s['source']
 target = s['target']
 lib = s['lib']
@@ -39,11 +40,15 @@ if s.get('extended'):
              ('WallKnockback', 'Skill', 'Normal', unreal.HodgeImpactType.KNOCKBACK),
              ('CeilingLaunch', 'Skill', 'Normal', unreal.HodgeImpactType.LAUNCH)]
 state = {'index': -1, 'stage': 'idle', 'after': clock() + 0.8, 'start_wall': time.monotonic()}
+# 定向复核只覆盖调用者明确选择的用例，不冒充完整七项套件。
+cases = s.get('cases', cases)
 rows = []; reports = []
 owned_target = s.get('owned_target', target)
 observer_target = s.get('observer_target', target)
 source_owner = s.get('source_owner', source)
 light_montage = s['profile'].get_editor_property('LightFeedbackMontage')
+light_montages = [e.get_editor_property('Montage') for e in s['profile'].get_editor_property('DirectionalLightFeedback')]
+light_montages += [light_montage] if light_montage else []
 hold_montage = s['hold'].get_editor_property('ExecutionConfig').get_editor_property('Montage')
 hold_sequence = unreal.load_asset('/Game/CodexText/HitReactionValidation/A_Hold') if s.get('use_formal_profile') else None
 
@@ -61,12 +66,13 @@ def snapshot(pawn):
             dot = abs(actual.x*expected.x + actual.y*expected.y + actual.z*expected.z + actual.w*expected.w)
             bone_deviation[bone] = math.degrees(2*math.acos(min(1.0, dot)))
     return {'role': str(pawn.get_local_role()), 'phase': str(st.phase), 'sequence': st.sequence,
+            'presentation_count': r.get_presentation_count(),
             'type': str(st.type), 'controlled': r.is_controlled(), 'health': hp(pawn),
             'position': [pos.x, pos.y, pos.z], 'velocity': [vel.x, vel.y, vel.z],
             'montage': m.get_name() if m else None,
             'montage_position': ai.montage_get_position(m) if ai and m else None,
             'montage_playing': bool(ai and m and ai.montage_is_playing(m)), 'air_hit_count': st.air_hit_count,
-            'light_playing': bool(ai and light_montage and ai.montage_is_playing(light_montage)),
+            'light_playing': bool(ai and any(ai.montage_is_playing(m) for m in light_montages if m)),
             'hold_playing': bool(ai and hold_montage and ai.montage_is_playing(hold_montage)), 'light_bone_deviation': bone_deviation}
 
 def finish(error=None):
@@ -120,7 +126,8 @@ def prepare(index):
                   'max_z': 0.0, 'max_x_delta': 0.0, 'max_owner_z': 0.0, 'max_observer_z': 0.0,
                   'max_owner_x_delta': 0.0, 'max_observer_x_delta': 0.0, 'chain_requested': False,
                   'chain_queued': False, 'seen_chain_type': False, 'max_air_hits': 0, 'first_control_at': None,
-                  'seen_light_overlap': False, 'seen_owner_light_overlap': False, 'seen_observer_light_overlap': False})
+                  'seen_light_overlap': False, 'seen_owner_light_overlap': False, 'seen_observer_light_overlap': False,
+                  'accepted_hits': {}})
 
 def tick(delta):
     try:
@@ -139,7 +146,8 @@ def tick(delta):
                 pawn.set_actor_rotation(unreal.Rotator(0, 0, 0), False)
                 pawn.character_movement.set_movement_mode(unreal.MovementMode.MOVE_WALKING)
             state.update({'stage': 'hold_wait', 'start': now, 'initial_health': hp(target),
-                          'initial_id': str(react(target).get_last_result().hit_id),
+                          'presentation_before': [react(p).get_presentation_count() for p in [target, owned_target, observer_target]],
+                          'initial_id': react(target).get_last_result().hit_id.export_text(),
                           'feedback_before': s['feedback'].get(target.get_path_name(), 0),
                           'owner_feedback_before': s['feedback'].get(owned_target.get_path_name(), 0),
                           'observer_feedback_before': s['feedback'].get(observer_target.get_path_name(), 0)})
@@ -156,7 +164,11 @@ def tick(delta):
         state['last_sample'] = t
         a = snapshot(target); o = snapshot(owned_target); v = snapshot(observer_target)
         r = react(target).get_last_result()
-        state['result_seen'] |= str(r.hit_id) != state['initial_id']
+        # 正式玩家属性会影响实际伤害，按独立结算身份核对，不假定每刀固定扣五血。
+        hit_key = r.hit_id.export_text()
+        if hit_key != state['initial_id'] and r.actual_damage > 0:
+            state['accepted_hits'][hit_key] = r.actual_damage
+        state['result_seen'] |= hit_key != state['initial_id']
         state['seen_control'] |= a['controlled']; state['seen_air'] |= 'AIRBORNE' in a['phase']
         state['seen_down'] |= 'DOWNED' in a['phase']; state['seen_getup'] |= 'GETTING_UP' in a['phase']
         state['seen_montage'] |= a['montage_playing']
@@ -201,6 +213,7 @@ def tick(delta):
                    'cancelled', 'chain_queued', 'seen_chain_type', 'max_air_hits', 'seen_light_overlap',
                    'seen_owner_light_overlap', 'seen_observer_light_overlap']}
         report.update({'outcome': str(r.outcome), 'health_before': state['initial_health'], 'health_after': hp(target),
+                       'accepted_hits': state['accepted_hits'],
                        'owner_health': hp(owned_target), 'observer_health': hp(observer_target),
                        'target_hold_active': active(ga(target, s['hold'])), 'controlled_after': react(target).is_controlled(),
                        'owner_controlled_after': react(owned_target).is_controlled(), 'observer_controlled_after': react(observer_target).is_controlled(),
@@ -210,11 +223,18 @@ def tick(delta):
                        'owner_final_position_error': sum((a['position'][i]-o['position'][i])**2 for i in range(3))**.5,
                        'observer_final_position_error': sum((a['position'][i]-v['position'][i])**2 for i in range(3))**.5})
         reports.append(report)
+        if s.get('verify_presentation_count'):
+            # 读取组件实际去重计数，不用 Python 委托监听次数代替网络事件次数。
+            report['contact_events'] = [react(p).get_presentation_count() - n for p, n in zip([target, owned_target, observer_target], state['presentation_before'])]
+            assert report['contact_events'] == [1, 1, 1], report
         assert state['result_seen'] and hp(target) < state['initial_health'], report
         if expected_low:
             assert r.outcome == unreal.HodgeHitReactionOutcome.LOW_JUDGEMENT and not state['seen_control'], report
-            assert report['target_hold_active'] and report['light_feedback_events'] > 0, report
-            if light_montage:
+            # 专服仍需保持出招和结算接触，但轻动画及其表现委托只在渲染端执行。
+            assert report['target_hold_active'], report
+            if not dedicated:
+                assert report['light_feedback_events'] > 0, report
+            if light_montage and not dedicated:
                 assert state['seen_light_overlap'] and a['hold_playing'], report
             if network:
                 assert report['owner_light_feedback_events'] > 0 and report['observer_light_feedback_events'] > 0, report
@@ -229,7 +249,8 @@ def tick(delta):
             if state['name'] == 'WallKnockback': assert 10 < state['max_x_delta'] < 85, report
             if state['name'] == 'CeilingLaunch': assert 70 < state['max_z'] < 165, report
             if state['name'] in ['AirHit', 'Slam']:
-                assert state['chain_queued'] and state['seen_chain_type'] and hp(target) <= state['initial_health'] - 10, report
+                assert state['chain_queued'] and state['seen_chain_type'] and len(state['accepted_hits']) == 2, report
+                assert abs((state['initial_health'] - hp(target)) - sum(state['accepted_hits'].values())) < .01, report
                 if state['name'] == 'AirHit': assert state['max_air_hits'] == 1, report
                 else: assert state['seen_down'] and state['seen_getup'], report
             if network:

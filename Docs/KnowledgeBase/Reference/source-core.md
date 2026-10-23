@@ -213,6 +213,7 @@ HUD Receiver 提供 Experience AddWidgets 的真实注入／撤销入口，同�
 - L80: `AHodgePlayerController* AHodgePlayerState::GetHodgePlayerController() const`
 - L87: `UAbilitySystemComponent* AHodgePlayerState::GetAbilitySystemComponent() const`
 - L94: `void AHodgePlayerState::SetPawnData(const UHodgePawnData* InPawnData)`
+- L131: `void AHodgePlayerState::EndPlay(const EEndPlayReason::Type EndPlayReason)`
 - L139: `void AHodgePlayerState::PreInitializeComponents()`
 - L146: `void AHodgePlayerState::PostInitializeComponents()`
 - L182: `void AHodgePlayerState::Reset()`
@@ -231,14 +232,14 @@ HUD Receiver 提供 Experience AddWidgets 的真实注入／撤销入口，同�
 - L358: `void AHodgePlayerState::SetReplicatedViewRotation(const FRotator& NewRotation)`
 - L372: `void AHodgePlayerState::OnExperienceLoaded(const UHodgeExperienceDefinition* CurrentExperience)`
 - L395: `void AHodgePlayerState::OnRep_PawnData()`
-- L401: `void AHodgePlayerState::OnRep_MyTeamID(FGenericTeamId OldTeamID)`
-- L408: `void AHodgePlayerState::OnRep_MySquadID()`
-- L415: `bool AHodgePlayerState::SetCharacterLevel(int32 Level)`
-- L421: `bool AHodgePlayerState::RestoreCharacterHealth(float Health)`
-- L427: `bool AHodgePlayerState::InitializeCharacterProgression(FGuid CharacterId, int32 Level, float SavedHealth)`
-- L440: `bool AHodgePlayerState::AreAttributesReadyFor(const APawn* Avatar) const`
-- L447: `void AHodgePlayerState::NotifyAttributeReadiness()`
-- L458: `void AHodgePlayerState::OnRep_AttributeReadyState()`
+- L402: `void AHodgePlayerState::OnRep_MyTeamID(FGenericTeamId OldTeamID)`
+- L409: `void AHodgePlayerState::OnRep_MySquadID()`
+- L416: `bool AHodgePlayerState::SetCharacterLevel(int32 Level)`
+- L422: `bool AHodgePlayerState::RestoreCharacterHealth(float Health)`
+- L428: `bool AHodgePlayerState::InitializeCharacterProgression(FGuid CharacterId, int32 Level, float SavedHealth)`
+- L441: `bool AHodgePlayerState::AreAttributesReadyFor(const APawn* Avatar) const`
+- L448: `void AHodgePlayerState::NotifyAttributeReadiness()`
+- L459: `void AHodgePlayerState::OnRep_AttributeReadyState()`
 
 ## HodgePlayerStateBase.cpp
 
@@ -621,7 +622,7 @@ HUD Receiver 提供 Experience AddWidgets 的真实注入／撤销入口，同�
 
 源码：[Source/Hodgepodge/Public/Core/PlayState/HodgePlayerState.h](../../../Source/Hodgepodge/Public/Core/PlayState/HodgePlayerState.h)
 
-项目内直接 include（不是运行调用关系）：[AbilitySystem/GameplayTagStack.h](../../../Source/Hodgepodge/Public/AbilitySystem/GameplayTagStack.h)、[AbilitySystem/Stats/HodgeAttributeTypes.h](../../../Source/Hodgepodge/Public/AbilitySystem/Stats/HodgeAttributeTypes.h)
+项目内直接 include（不是运行调用关系）：[AbilitySystem/GameplayTagStack.h](../../../Source/Hodgepodge/Public/AbilitySystem/GameplayTagStack.h)、[AbilitySystem/Stats/HodgeAttributeTypes.h](../../../Source/Hodgepodge/Public/AbilitySystem/Stats/HodgeAttributeTypes.h)、[Data/HodgeAbilitySet.h](../../../Source/Hodgepodge/Public/Data/HodgeAbilitySet.h)
 
 有效头文件声明摘录（未展开宏，未求值预处理分支）：
 
@@ -633,107 +634,114 @@ HUD Receiver 提供 Experience AddWidgets 的真实注入／撤销入口，同�
   11: #include "HodgePlayerStateBase.h"
   12: #include "AbilitySystem/GameplayTagStack.h"
   13: #include "AbilitySystem/Stats/HodgeAttributeTypes.h"
-  14: #include "HodgePlayerState.generated.h"
-  16: class UHodgeExperienceDefinition;
-  17: class UHodgePawnData;
-  18: class UHodgeAbilitySystemComponent;
-  19: class AHodgePlayerController;
-  20: class UHodgeAttributeCoordinator;
-  25: UENUM()
-  26: enum class EHodgePlayerConnectionType : uint8
-  27: {
-  29: 	Player = 0,
-  32: 	LiveSpectator,
-  35: 	ReplaySpectator,
-  38: 	InactivePlayer
-  39: };
-  47: UCLASS(Config = Game)
-  48: class AHodgePlayerState : public AHodgePlayerStateBase, public IAbilitySystemInterface
-  49: {
-  50: 	GENERATED_BODY()
-  52: public:
-  57: 	AHodgePlayerState(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-  63: 	UFUNCTION(BlueprintCallable, Category = "Hodge|PlayerState")
-  64: 	AHodgePlayerController* GetHodgePlayerController() const;
-  70: 	UFUNCTION(BlueprintCallable, Category = "Hodge|PlayerState")
-  71: 	UHodgeAbilitySystemComponent* GetHodgeAbilitySystemComponent() const { return AbilitySystemComponent; }
-  75: 	UFUNCTION(BlueprintPure, Category="Hodge|Attributes") int32 GetCharacterLevel() const { return CharacterProgression.Level; }
-  80: 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category="Hodge|Attributes") bool SetCharacterLevel(int32 Level);
-  85: 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category="Hodge|Attributes") bool RestoreCharacterHealth(float Health);
-  92: 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category="Hodge|Attributes") bool InitializeCharacterProgression(FGuid CharacterId, int32 Level, float SavedHealth = -1.f);
-  96: 	UFUNCTION(BlueprintPure, Category="Hodge|Attributes") FHodgeAttributeReadyState GetAttributeReadyState() const { return AttributeReadyState; }
- 100: 	UHodgeAttributeCoordinator* GetAttributeCoordinator() const { return AttributeCoordinator; }
- 105: 	bool AreAttributesReadyFor(const APawn* Avatar) const;
- 107: 	void NotifyAttributeReadiness();
- 109: 	FSimpleMulticastDelegate OnAttributeReadinessChanged;
- 115: 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
- 118: 	template <class T>
- 122: 	const T* GetPawnData() const { return Cast<T>(PawnData); }
- 128: 	void SetPawnData(const UHodgePawnData* InPawnData);
- 134: 	virtual void PreInitializeComponents() override;
- 138: 	virtual void PostInitializeComponents() override;
- 146: 	virtual void Reset() override;
- 152: 	virtual void ClientInitialize(AController* C) override;
- 158: 	virtual void CopyProperties(APlayerState* PlayerState) override;
- 162: 	virtual void OnDeactivated() override;
- 166: 	virtual void OnReactivated() override;
- 184: 	static const FName NAME_HodgeAbilityReady;
- 190: 	void SetPlayerConnectionType(EHodgePlayerConnectionType NewType);
- 196: 	EHodgePlayerConnectionType GetPlayerConnectionType() const { return MyPlayerConnectionType; }
- 202: 	UFUNCTION(BlueprintCallable)
- 203: 	int32 GetSquadId() const
- 204: 	{
- 205: 		return MySquadID;
- 206: 	}
- 221: 	void SetSquadID(int32 NewSquadID);
- 228: 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category=Teams)
- 229: 	void AddStatTagStack(FGameplayTag Tag, int32 StackCount);
- 236: 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category=Teams)
- 237: 	void RemoveStatTagStack(FGameplayTag Tag, int32 StackCount);
- 244: 	UFUNCTION(BlueprintCallable, Category=Teams)
- 245: 	int32 GetStatTagStackCount(FGameplayTag Tag) const;
- 252: 	UFUNCTION(BlueprintCallable, Category=Teams)
- 253: 	bool HasStatTag(FGameplayTag Tag) const;
- 264: 	FRotator GetReplicatedViewRotation() const;
- 270: 	void SetReplicatedViewRotation(const FRotator& NewRotation);
- 272: private:
- 277: 	void OnExperienceLoaded(const UHodgeExperienceDefinition* CurrentExperience);
- 278: 	friend class UHodgeAttributeCoordinator;
- 280: 	UPROPERTY(VisibleAnywhere, Category="Hodge|Attributes") TObjectPtr<UHodgeAttributeCoordinator> AttributeCoordinator;
- 282: 	UPROPERTY(Replicated) FHodgeCharacterProgression CharacterProgression;
- 284: 	UPROPERTY(ReplicatedUsing=OnRep_AttributeReadyState) FHodgeAttributeReadyState AttributeReadyState;
- 286: 	UPROPERTY(Replicated) TArray<FHodgeOwnedEquipmentState> OwnedEquipmentStates;
- 288: 	UFUNCTION() void OnRep_AttributeReadyState();
- 290: protected:
- 293: 	UFUNCTION()
- 294: 	void OnRep_PawnData();
- 297: 	UPROPERTY(ReplicatedUsing = OnRep_PawnData)
- 298: 	TObjectPtr<const UHodgePawnData> PawnData;
- 300: private:
- 302: 	UPROPERTY(VisibleAnywhere, Category = "Hodge|PlayerState")
- 303: 	TObjectPtr<UHodgeAbilitySystemComponent> AbilitySystemComponent;
- 306: 	UPROPERTY()
- 307: 	TObjectPtr<const class UHodgeHealthSet> HealthSet;
- 311: 	UPROPERTY()
- 312: 	TObjectPtr<const class UHodgeCombatSet> CombatSet;
- 314: 	UPROPERTY() TObjectPtr<const class UHodgeResonanceSet> ResonanceSet;
- 316: 	UPROPERTY() TObjectPtr<const class UHodgeHavocSet> HavocSet;
- 319: 	UPROPERTY(Replicated)
- 320: 	EHodgePlayerConnectionType MyPlayerConnectionType;
- 326: 	UPROPERTY(ReplicatedUsing=OnRep_MyTeamID)
- 327: 	FGenericTeamId MyTeamID;
- 330: 	UPROPERTY(ReplicatedUsing=OnRep_MySquadID)
- 331: 	int32 MySquadID;
- 334: 	UPROPERTY(Replicated)
- 335: 	FGameplayTagStackContainer StatTags;
- 338: 	UPROPERTY(Replicated)
- 339: 	FRotator ReplicatedViewRotation;
- 341: private:
- 346: 	UFUNCTION()
- 347: 	void OnRep_MyTeamID(FGenericTeamId OldTeamID);
- 351: 	UFUNCTION()
- 352: 	void OnRep_MySquadID();
- 353: };
+  14: #include "Data/HodgeAbilitySet.h"
+  15: #include "HodgePlayerState.generated.h"
+  17: class UHodgeExperienceDefinition;
+  18: class UHodgePawnData;
+  19: class UHodgeAbilitySystemComponent;
+  20: class AHodgePlayerController;
+  21: class UHodgeAttributeCoordinator;
+  26: UENUM()
+  27: enum class EHodgePlayerConnectionType : uint8
+  28: {
+  30: 	Player = 0,
+  33: 	LiveSpectator,
+  36: 	ReplaySpectator,
+  39: 	InactivePlayer
+  40: };
+  48: UCLASS(Config = Game)
+  49: class AHodgePlayerState : public AHodgePlayerStateBase, public IAbilitySystemInterface
+  50: {
+  51: 	GENERATED_BODY()
+  53: public:
+  58: 	AHodgePlayerState(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+  64: 	UFUNCTION(BlueprintCallable, Category = "Hodge|PlayerState")
+  65: 	AHodgePlayerController* GetHodgePlayerController() const;
+  71: 	UFUNCTION(BlueprintCallable, Category = "Hodge|PlayerState")
+  72: 	UHodgeAbilitySystemComponent* GetHodgeAbilitySystemComponent() const { return AbilitySystemComponent; }
+  76: 	UFUNCTION(BlueprintPure, Category="Hodge|Attributes") int32 GetCharacterLevel() const { return CharacterProgression.Level; }
+  81: 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category="Hodge|Attributes") bool SetCharacterLevel(int32 Level);
+  86: 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category="Hodge|Attributes") bool RestoreCharacterHealth(float Health);
+  93: 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category="Hodge|Attributes") bool InitializeCharacterProgression(FGuid CharacterId, int32 Level, float SavedHealth = -1.f);
+  97: 	UFUNCTION(BlueprintPure, Category="Hodge|Attributes") FHodgeAttributeReadyState GetAttributeReadyState() const { return AttributeReadyState; }
+ 101: 	UHodgeAttributeCoordinator* GetAttributeCoordinator() const { return AttributeCoordinator; }
+ 106: 	bool AreAttributesReadyFor(const APawn* Avatar) const;
+ 108: 	void NotifyAttributeReadiness();
+ 110: 	FSimpleMulticastDelegate OnAttributeReadinessChanged;
+ 116: 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+ 119: 	template <class T>
+ 123: 	const T* GetPawnData() const { return Cast<T>(PawnData); }
+ 129: 	void SetPawnData(const UHodgePawnData* InPawnData);
+ 135: 	virtual void PreInitializeComponents() override;
+ 139: 	virtual void PostInitializeComponents() override;
+ 141: 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+ 149: 	virtual void Reset() override;
+ 155: 	virtual void ClientInitialize(AController* C) override;
+ 161: 	virtual void CopyProperties(APlayerState* PlayerState) override;
+ 165: 	virtual void OnDeactivated() override;
+ 169: 	virtual void OnReactivated() override;
+ 187: 	static const FName NAME_HodgeAbilityReady;
+ 193: 	void SetPlayerConnectionType(EHodgePlayerConnectionType NewType);
+ 199: 	EHodgePlayerConnectionType GetPlayerConnectionType() const { return MyPlayerConnectionType; }
+ 205: 	UFUNCTION(BlueprintCallable)
+ 206: 	int32 GetSquadId() const
+ 207: 	{
+ 208: 		return MySquadID;
+ 209: 	}
+ 224: 	void SetSquadID(int32 NewSquadID);
+ 231: 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category=Teams)
+ 232: 	void AddStatTagStack(FGameplayTag Tag, int32 StackCount);
+ 239: 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category=Teams)
+ 240: 	void RemoveStatTagStack(FGameplayTag Tag, int32 StackCount);
+ 247: 	UFUNCTION(BlueprintCallable, Category=Teams)
+ 248: 	int32 GetStatTagStackCount(FGameplayTag Tag) const;
+ 255: 	UFUNCTION(BlueprintCallable, Category=Teams)
+ 256: 	bool HasStatTag(FGameplayTag Tag) const;
+ 267: 	FRotator GetReplicatedViewRotation() const;
+ 273: 	void SetReplicatedViewRotation(const FRotator& NewRotation);
+ 275: private:
+ 280: 	void OnExperienceLoaded(const UHodgeExperienceDefinition* CurrentExperience);
+ 281: 	friend class UHodgeAttributeCoordinator;
+ 283: 	UPROPERTY(VisibleAnywhere, Category="Hodge|Attributes") TObjectPtr<UHodgeAttributeCoordinator> AttributeCoordinator;
+ 285: 	UPROPERTY(Replicated) FHodgeCharacterProgression CharacterProgression;
+ 287: 	UPROPERTY(ReplicatedUsing=OnRep_AttributeReadyState) FHodgeAttributeReadyState AttributeReadyState;
+ 289: 	UPROPERTY(Replicated) TArray<FHodgeOwnedEquipmentState> OwnedEquipmentStates;
+ 291: 	UFUNCTION() void OnRep_AttributeReadyState();
+ 293: protected:
+ 296: 	UFUNCTION()
+ 297: 	void OnRep_PawnData();
+ 300: 	UPROPERTY(ReplicatedUsing = OnRep_PawnData)
+ 301: 	TObjectPtr<const UHodgePawnData> PawnData;
+ 303: private:
+ 305: 	UPROPERTY(VisibleAnywhere, Category = "Hodge|PlayerState")
+ 306: 	TObjectPtr<UHodgeAbilitySystemComponent> AbilitySystemComponent;
+ 309: 	UPROPERTY()
+ 310: 	TObjectPtr<const class UHodgeHealthSet> HealthSet;
+ 314: 	UPROPERTY()
+ 315: 	TObjectPtr<const class UHodgeCombatSet> CombatSet;
+ 317: 	UPROPERTY() TObjectPtr<const class UHodgeResonanceSet> ResonanceSet;
+ 319: 	UPROPERTY() TObjectPtr<const class UHodgeHavocSet> HavocSet;
+ 322: 	UPROPERTY(Replicated)
+ 323: 	EHodgePlayerConnectionType MyPlayerConnectionType;
+ 329: 	UPROPERTY(ReplicatedUsing=OnRep_MyTeamID)
+ 330: 	FGenericTeamId MyTeamID;
+ 333: 	UPROPERTY(ReplicatedUsing=OnRep_MySquadID)
+ 334: 	int32 MySquadID;
+ 337: 	UPROPERTY(Replicated)
+ 338: 	FGameplayTagStackContainer StatTags;
+ 341: 	UPROPERTY(Replicated)
+ 342: 	FRotator ReplicatedViewRotation;
+ 344: private:
+ 346: 	UPROPERTY(Transient)
+ 347: 	FHodgeAbilitySet_GrantedHandles BaseAbilityHandles;
+ 349: 	bool bBaseGrantFailed = false;
+ 350: 	bool bBaseGrantInProgress = false;
+ 351: 	bool bBaseGrantsClosed = false;
+ 357: 	UFUNCTION()
+ 358: 	void OnRep_MyTeamID(FGenericTeamId OldTeamID);
+ 362: 	UFUNCTION()
+ 363: 	void OnRep_MySquadID();
+ 364: };
 ```
 
 ## HodgePlayerStateBase.h

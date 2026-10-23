@@ -1,0 +1,933 @@
+{
+  "date": "2026-10-16",
+  "engine": "5.5.4",
+  "status": "prototype_pending_visual_acceptance",
+  "native": {
+    "succeeded": 86,
+    "succeededWithWarnings": 65,
+    "failed": 0,
+    "notRun": 0
+  },
+  "builds": {
+    "Editor": {
+      "exit": 0,
+      "log": "Saved/HitPresentation/editor-build-blendfix.log"
+    },
+    "Game": {
+      "exit": 0,
+      "log": "Saved/HitPresentation/game-build-blendfix.log"
+    }
+  },
+  "pie": [
+    {
+      "mode": "Standalone",
+      "cases": 12,
+      "error": null
+    },
+    {
+      "mode": "Listen",
+      "cases": 12,
+      "error": null
+    },
+    {
+      "mode": "Dedicated",
+      "cases": 12,
+      "error": null
+    }
+  ],
+  "player_targets": [
+    {
+      "target": "owner",
+      "cases": [
+        {
+          "name": "EqualSkill",
+          "result_seen": true,
+          "seen_control": true,
+          "seen_air": false,
+          "seen_down": false,
+          "seen_getup": false,
+          "seen_montage": true,
+          "seen_owner_control": true,
+          "seen_observer_control": true,
+          "seen_owner_montage": true,
+          "seen_observer_montage": true,
+          "max_z": 0.0,
+          "max_x_delta": 0.0,
+          "max_owner_z": 0.0,
+          "max_observer_z": 0.0,
+          "max_owner_x_delta": 0.0,
+          "max_observer_x_delta": 0.0,
+          "cancelled": false,
+          "chain_queued": false,
+          "seen_chain_type": false,
+          "max_air_hits": 0,
+          "seen_light_overlap": false,
+          "seen_owner_light_overlap": false,
+          "seen_observer_light_overlap": false,
+          "outcome": "<HodgeHitReactionOutcome.APPLIED: 11>",
+          "health_before": 140.69998168945312,
+          "health_after": 137.5999755859375,
+          "owner_health": 137.5999755859375,
+          "observer_health": 137.5999755859375,
+          "target_hold_active": false,
+          "controlled_after": false,
+          "owner_controlled_after": false,
+          "observer_controlled_after": false,
+          "light_feedback_events": 0,
+          "owner_light_feedback_events": 0,
+          "observer_light_feedback_events": 0,
+          "owner_final_position_error": 0.0,
+          "observer_final_position_error": 0.0,
+          "contact_events": [
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "name": "LowerAgainstArmor",
+          "result_seen": true,
+          "seen_control": false,
+          "seen_air": false,
+          "seen_down": false,
+          "seen_getup": false,
+          "seen_montage": false,
+          "seen_owner_control": false,
+          "seen_observer_control": false,
+          "seen_owner_montage": false,
+          "seen_observer_montage": false,
+          "max_z": 0.0,
+          "max_x_delta": 0.0,
+          "max_owner_z": 0.0,
+          "max_observer_z": 0.0,
+          "max_owner_x_delta": 0.0,
+          "max_observer_x_delta": 0.0,
+          "cancelled": false,
+          "chain_queued": false,
+          "seen_chain_type": false,
+          "max_air_hits": 0,
+          "seen_light_overlap": true,
+          "seen_owner_light_overlap": true,
+          "seen_observer_light_overlap": true,
+          "outcome": "<HodgeHitReactionOutcome.LOW_JUDGEMENT: 5>",
+          "health_before": 137.5999755859375,
+          "health_after": 134.49996948242188,
+          "owner_health": 134.49996948242188,
+          "observer_health": 134.49996948242188,
+          "target_hold_active": true,
+          "controlled_after": false,
+          "owner_controlled_after": false,
+          "observer_controlled_after": false,
+          "light_feedback_events": 1,
+          "owner_light_feedback_events": 1,
+          "observer_light_feedback_events": 1,
+          "owner_final_position_error": 0.0,
+          "observer_final_position_error": 0.0,
+          "contact_events": [
+            1,
+            1,
+            1
+          ]
+        }
+      ],
+      "runtime": "before_final_blendout_fix"
+    },
+    {
+      "target": "simulated",
+      "cases": [
+        {
+          "name": "EqualSkill",
+          "result_seen": true,
+          "seen_control": true,
+          "seen_air": false,
+          "seen_down": false,
+          "seen_getup": false,
+          "seen_montage": true,
+          "seen_owner_control": true,
+          "seen_observer_control": true,
+          "seen_owner_montage": true,
+          "seen_observer_montage": true,
+          "max_z": 0.0,
+          "max_x_delta": 0.0,
+          "max_owner_z": 0.0,
+          "max_observer_z": 0.0,
+          "max_owner_x_delta": 0.0,
+          "max_observer_x_delta": 0.0,
+          "cancelled": false,
+          "chain_queued": false,
+          "seen_chain_type": false,
+          "max_air_hits": 0,
+          "seen_light_overlap": false,
+          "seen_owner_light_overlap": false,
+          "seen_observer_light_overlap": false,
+          "outcome": "<HodgeHitReactionOutcome.APPLIED: 11>",
+          "health_before": 143.79998779296875,
+          "health_after": 140.69998168945312,
+          "owner_health": 140.69998168945312,
+          "observer_health": 140.69998168945312,
+          "target_hold_active": false,
+          "controlled_after": false,
+          "owner_controlled_after": false,
+          "observer_controlled_after": false,
+          "light_feedback_events": 0,
+          "owner_light_feedback_events": 0,
+          "observer_light_feedback_events": 0,
+          "owner_final_position_error": 0.0,
+          "observer_final_position_error": 1.0490417423625331e-06,
+          "contact_events": [
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "name": "LowerAgainstArmor",
+          "result_seen": true,
+          "seen_control": false,
+          "seen_air": false,
+          "seen_down": false,
+          "seen_getup": false,
+          "seen_montage": false,
+          "seen_owner_control": false,
+          "seen_observer_control": false,
+          "seen_owner_montage": false,
+          "seen_observer_montage": false,
+          "max_z": 0.0,
+          "max_x_delta": 0.0,
+          "max_owner_z": 0.0,
+          "max_observer_z": 0.0,
+          "max_owner_x_delta": 0.0,
+          "max_observer_x_delta": 0.0,
+          "cancelled": false,
+          "chain_queued": false,
+          "seen_chain_type": false,
+          "max_air_hits": 0,
+          "seen_light_overlap": true,
+          "seen_owner_light_overlap": true,
+          "seen_observer_light_overlap": true,
+          "outcome": "<HodgeHitReactionOutcome.LOW_JUDGEMENT: 5>",
+          "health_before": 140.69998168945312,
+          "health_after": 137.5999755859375,
+          "owner_health": 137.5999755859375,
+          "observer_health": 137.5999755859375,
+          "target_hold_active": true,
+          "controlled_after": false,
+          "owner_controlled_after": false,
+          "observer_controlled_after": false,
+          "light_feedback_events": 1,
+          "owner_light_feedback_events": 1,
+          "observer_light_feedback_events": 1,
+          "owner_final_position_error": 0.0,
+          "observer_final_position_error": 1.0490417423625331e-06,
+          "contact_events": [
+            1,
+            1,
+            1
+          ]
+        }
+      ],
+      "runtime": "before_final_blendout_fix"
+    }
+  ],
+  "dense": [
+    {
+      "target": "owner",
+      "cases": [
+        {
+          "name": "LightSameStrength",
+          "passed": true,
+          "first": [
+            {
+              "contacts": 1,
+              "started": 24.479867935180664,
+              "sequence": 2,
+              "position": 0.0,
+              "instance_id": 43,
+              "health": 128.29995727539062,
+              "weight": 0.0,
+              "playing": true
+            },
+            {
+              "contacts": 1,
+              "started": 24.479867935180664,
+              "sequence": 2,
+              "position": 0.016694098711013794,
+              "instance_id": 44,
+              "health": 128.29995727539062,
+              "weight": 0.8347049355506897,
+              "playing": true
+            },
+            {
+              "contacts": 1,
+              "started": 24.479867935180664,
+              "sequence": 2,
+              "position": 0.0,
+              "instance_id": 43,
+              "health": 128.29995727539062,
+              "weight": 0.0,
+              "playing": true
+            }
+          ],
+          "second": [
+            {
+              "contacts": 2,
+              "started": 24.479867935180664,
+              "sequence": 2,
+              "position": 0.1340789794921875,
+              "instance_id": 43,
+              "health": 125.19995880126953,
+              "weight": 1.0,
+              "playing": true
+            },
+            {
+              "contacts": 2,
+              "started": 24.479867935180664,
+              "sequence": 2,
+              "position": 0.1507495939731598,
+              "instance_id": 44,
+              "health": 125.19995880126953,
+              "weight": 0.7471520900726318,
+              "playing": true
+            },
+            {
+              "contacts": 2,
+              "started": 24.479867935180664,
+              "sequence": 2,
+              "position": 0.1340789794921875,
+              "instance_id": 43,
+              "health": 125.19995880126953,
+              "weight": 1.0,
+              "playing": true
+            }
+          ],
+          "final": [
+            {
+              "contacts": 2,
+              "started": 24.479867935180664,
+              "sequence": 2,
+              "position": 0.0,
+              "instance_id": -1,
+              "health": 125.19995880126953,
+              "weight": 0.0,
+              "playing": false
+            },
+            {
+              "contacts": 2,
+              "started": 24.479867935180664,
+              "sequence": 2,
+              "position": 0.0,
+              "instance_id": -1,
+              "health": 125.19995880126953,
+              "weight": 0.0,
+              "playing": false
+            },
+            {
+              "contacts": 2,
+              "started": 24.479867935180664,
+              "sequence": 2,
+              "position": 0.0,
+              "instance_id": -1,
+              "health": 125.19995880126953,
+              "weight": 0.0,
+              "playing": false
+            }
+          ]
+        },
+        {
+          "name": "LightEscalation",
+          "passed": true,
+          "first": [
+            {
+              "contacts": 1,
+              "started": 24.479867935180664,
+              "sequence": 2,
+              "position": 0.0,
+              "instance_id": 47,
+              "health": 122.09996032714844,
+              "weight": 0.0,
+              "playing": true
+            },
+            {
+              "contacts": 1,
+              "started": 24.479867935180664,
+              "sequence": 2,
+              "position": 0.016666896641254425,
+              "instance_id": 48,
+              "health": 122.09996032714844,
+              "weight": 0.8333448171615601,
+              "playing": true
+            },
+            {
+              "contacts": 1,
+              "started": 24.479867935180664,
+              "sequence": 2,
+              "position": 0.0,
+              "instance_id": 47,
+              "health": 122.09996032714844,
+              "weight": 0.0,
+              "playing": true
+            }
+          ],
+          "second": [
+            {
+              "contacts": 2,
+              "started": 24.479867935180664,
+              "sequence": 2,
+              "position": 0.0,
+              "instance_id": 49,
+              "health": 118.99996185302734,
+              "weight": 0.0,
+              "playing": true
+            },
+            {
+              "contacts": 2,
+              "started": 24.479867935180664,
+              "sequence": 2,
+              "position": 0.016666799783706665,
+              "instance_id": 50,
+              "health": 118.99996185302734,
+              "weight": 0.8333399891853333,
+              "playing": true
+            },
+            {
+              "contacts": 2,
+              "started": 24.479867935180664,
+              "sequence": 2,
+              "position": 0.0,
+              "instance_id": 49,
+              "health": 118.99996185302734,
+              "weight": 0.0,
+              "playing": true
+            }
+          ],
+          "final": [
+            {
+              "contacts": 2,
+              "started": 24.479867935180664,
+              "sequence": 2,
+              "position": 0.0,
+              "instance_id": -1,
+              "health": 118.99996185302734,
+              "weight": 0.0,
+              "playing": false
+            },
+            {
+              "contacts": 2,
+              "started": 24.479867935180664,
+              "sequence": 2,
+              "position": 0.0,
+              "instance_id": -1,
+              "health": 118.99996185302734,
+              "weight": 0.0,
+              "playing": false
+            },
+            {
+              "contacts": 2,
+              "started": 24.479867935180664,
+              "sequence": 2,
+              "position": 0.0,
+              "instance_id": -1,
+              "health": 118.99996185302734,
+              "weight": 0.0,
+              "playing": false
+            }
+          ]
+        },
+        {
+          "name": "StrongContinue",
+          "passed": true,
+          "first": [
+            {
+              "contacts": 1,
+              "started": 67.71111297607422,
+              "sequence": 3,
+              "position": 0.0,
+              "instance_id": 53,
+              "health": 115.89996337890625,
+              "weight": 0.0,
+              "playing": true
+            },
+            {
+              "contacts": 1,
+              "started": 67.71111297607422,
+              "sequence": 3,
+              "position": 0.016666699200868607,
+              "instance_id": 54,
+              "health": 115.89996337890625,
+              "weight": 0.20833374559879303,
+              "playing": true
+            },
+            {
+              "contacts": 1,
+              "started": 67.71111297607422,
+              "sequence": 3,
+              "position": 0.0,
+              "instance_id": 53,
+              "health": 115.89996337890625,
+              "weight": 0.0,
+              "playing": true
+            }
+          ],
+          "second": [
+            {
+              "contacts": 2,
+              "started": 67.71111297607422,
+              "sequence": 4,
+              "position": 0.13336181640625,
+              "instance_id": 53,
+              "health": 112.79996490478516,
+              "weight": 1.0,
+              "playing": true
+            },
+            {
+              "contacts": 2,
+              "started": 67.71111297607422,
+              "sequence": 4,
+              "position": 0.15000100433826447,
+              "instance_id": 54,
+              "health": 112.79996490478516,
+              "weight": 1.0,
+              "playing": true
+            },
+            {
+              "contacts": 2,
+              "started": 67.71111297607422,
+              "sequence": 4,
+              "position": 0.13336181640625,
+              "instance_id": 53,
+              "health": 112.79996490478516,
+              "weight": 1.0,
+              "playing": true
+            }
+          ],
+          "final": [
+            {
+              "contacts": 2,
+              "started": 67.71111297607422,
+              "sequence": 4,
+              "position": 0.0,
+              "instance_id": -1,
+              "health": 112.79996490478516,
+              "weight": 0.0,
+              "playing": false
+            },
+            {
+              "contacts": 2,
+              "started": 67.71111297607422,
+              "sequence": 4,
+              "position": 0.0,
+              "instance_id": -1,
+              "health": 112.79996490478516,
+              "weight": 0.0,
+              "playing": false
+            },
+            {
+              "contacts": 2,
+              "started": 67.71111297607422,
+              "sequence": 4,
+              "position": 0.0,
+              "instance_id": -1,
+              "health": 112.79996490478516,
+              "weight": 0.0,
+              "playing": false
+            }
+          ]
+        }
+      ],
+      "runtime": "final_blendout_fix"
+    },
+    {
+      "target": "simulated",
+      "cases": [
+        {
+          "name": "LightSameStrength",
+          "passed": true,
+          "first": [
+            {
+              "contacts": 1,
+              "started": 0.0,
+              "sequence": 0,
+              "position": 0.0,
+              "instance_id": 59,
+              "health": 146.89999389648438,
+              "weight": 0.0,
+              "playing": true
+            },
+            {
+              "contacts": 1,
+              "started": 0.0,
+              "sequence": 0,
+              "position": 0.0,
+              "instance_id": 59,
+              "health": 146.89999389648438,
+              "weight": 0.0,
+              "playing": true
+            },
+            {
+              "contacts": 1,
+              "started": 0.0,
+              "sequence": 0,
+              "position": 0.016666799783706665,
+              "instance_id": 60,
+              "health": 146.89999389648438,
+              "weight": 0.8333399891853333,
+              "playing": true
+            }
+          ],
+          "second": [
+            {
+              "contacts": 2,
+              "started": 0.0,
+              "sequence": 0,
+              "position": 0.11666759848594666,
+              "instance_id": 59,
+              "health": 143.79998779296875,
+              "weight": 1.0,
+              "playing": true
+            },
+            {
+              "contacts": 2,
+              "started": 0.0,
+              "sequence": 0,
+              "position": 0.11666759848594666,
+              "instance_id": 59,
+              "health": 143.79998779296875,
+              "weight": 1.0,
+              "playing": true
+            },
+            {
+              "contacts": 2,
+              "started": 0.0,
+              "sequence": 0,
+              "position": 0.13333439826965332,
+              "instance_id": 60,
+              "health": 143.79998779296875,
+              "weight": 1.0,
+              "playing": true
+            }
+          ],
+          "final": [
+            {
+              "contacts": 2,
+              "started": 0.0,
+              "sequence": 0,
+              "position": 0.0,
+              "instance_id": -1,
+              "health": 143.79998779296875,
+              "weight": 0.0,
+              "playing": false
+            },
+            {
+              "contacts": 2,
+              "started": 0.0,
+              "sequence": 0,
+              "position": 0.0,
+              "instance_id": -1,
+              "health": 143.79998779296875,
+              "weight": 0.0,
+              "playing": false
+            },
+            {
+              "contacts": 2,
+              "started": 0.0,
+              "sequence": 0,
+              "position": 0.0,
+              "instance_id": -1,
+              "health": 143.79998779296875,
+              "weight": 0.0,
+              "playing": false
+            }
+          ]
+        },
+        {
+          "name": "LightEscalation",
+          "passed": true,
+          "first": [
+            {
+              "contacts": 1,
+              "started": 0.0,
+              "sequence": 0,
+              "position": 0.0,
+              "instance_id": 63,
+              "health": 140.69998168945312,
+              "weight": 0.0,
+              "playing": true
+            },
+            {
+              "contacts": 1,
+              "started": 0.0,
+              "sequence": 0,
+              "position": 0.0,
+              "instance_id": 63,
+              "health": 140.69998168945312,
+              "weight": 0.0,
+              "playing": true
+            },
+            {
+              "contacts": 1,
+              "started": 0.0,
+              "sequence": 0,
+              "position": 0.016666799783706665,
+              "instance_id": 64,
+              "health": 140.69998168945312,
+              "weight": 0.8333399891853333,
+              "playing": true
+            }
+          ],
+          "second": [
+            {
+              "contacts": 2,
+              "started": 0.0,
+              "sequence": 0,
+              "position": 0.0,
+              "instance_id": 65,
+              "health": 137.5999755859375,
+              "weight": 0.0,
+              "playing": true
+            },
+            {
+              "contacts": 2,
+              "started": 0.0,
+              "sequence": 0,
+              "position": 0.0,
+              "instance_id": 65,
+              "health": 137.5999755859375,
+              "weight": 0.0,
+              "playing": true
+            },
+            {
+              "contacts": 2,
+              "started": 0.0,
+              "sequence": 0,
+              "position": 0.016666900366544724,
+              "instance_id": 66,
+              "health": 137.5999755859375,
+              "weight": 0.8333449959754944,
+              "playing": true
+            }
+          ],
+          "final": [
+            {
+              "contacts": 2,
+              "started": 0.0,
+              "sequence": 0,
+              "position": 0.0,
+              "instance_id": -1,
+              "health": 137.5999755859375,
+              "weight": 0.0,
+              "playing": false
+            },
+            {
+              "contacts": 2,
+              "started": 0.0,
+              "sequence": 0,
+              "position": 0.0,
+              "instance_id": -1,
+              "health": 137.5999755859375,
+              "weight": 0.0,
+              "playing": false
+            },
+            {
+              "contacts": 2,
+              "started": 0.0,
+              "sequence": 0,
+              "position": 0.0,
+              "instance_id": -1,
+              "health": 137.5999755859375,
+              "weight": 0.0,
+              "playing": false
+            }
+          ]
+        },
+        {
+          "name": "StrongContinue",
+          "passed": true,
+          "first": [
+            {
+              "contacts": 1,
+              "started": 91.84917449951172,
+              "sequence": 1,
+              "position": 0.0,
+              "instance_id": 69,
+              "health": 134.49996948242188,
+              "weight": 0.0,
+              "playing": true
+            },
+            {
+              "contacts": 1,
+              "started": 91.84917449951172,
+              "sequence": 1,
+              "position": 0.0,
+              "instance_id": 69,
+              "health": 134.49996948242188,
+              "weight": 0.0,
+              "playing": true
+            },
+            {
+              "contacts": 1,
+              "started": 91.84917449951172,
+              "sequence": 1,
+              "position": 0.016666699200868607,
+              "instance_id": 70,
+              "health": 134.49996948242188,
+              "weight": 0.20833374559879303,
+              "playing": true
+            }
+          ],
+          "second": [
+            {
+              "contacts": 2,
+              "started": 91.84917449951172,
+              "sequence": 2,
+              "position": 0.13333430886268616,
+              "instance_id": 69,
+              "health": 131.39996337890625,
+              "weight": 1.0,
+              "playing": true
+            },
+            {
+              "contacts": 2,
+              "started": 91.84917449951172,
+              "sequence": 2,
+              "position": 0.13333430886268616,
+              "instance_id": 69,
+              "health": 131.39996337890625,
+              "weight": 1.0,
+              "playing": true
+            },
+            {
+              "contacts": 2,
+              "started": 91.84917449951172,
+              "sequence": 2,
+              "position": 0.15000098943710327,
+              "instance_id": 70,
+              "health": 131.39996337890625,
+              "weight": 1.0,
+              "playing": true
+            }
+          ],
+          "final": [
+            {
+              "contacts": 2,
+              "started": 91.84917449951172,
+              "sequence": 2,
+              "position": 0.0,
+              "instance_id": -1,
+              "health": 131.39996337890625,
+              "weight": 0.0,
+              "playing": false
+            },
+            {
+              "contacts": 2,
+              "started": 91.84917449951172,
+              "sequence": 2,
+              "position": 0.0,
+              "instance_id": -1,
+              "health": 131.39996337890625,
+              "weight": 0.0,
+              "playing": false
+            },
+            {
+              "contacts": 2,
+              "started": 91.84917449951172,
+              "sequence": 2,
+              "position": 0.0,
+              "instance_id": -1,
+              "health": 131.39996337890625,
+              "weight": 0.0,
+              "playing": false
+            }
+          ]
+        }
+      ],
+      "runtime": "final_blendout_fix"
+    }
+  ],
+  "assets": {
+    "attacks": [
+      {
+        "name": "DA_Attack_1",
+        "unchanged_damage_and_execution": true,
+        "reaction": "(AttackJudgementTag=(TagName=\"Combat.Attack.Judgement.Normal\"),Impacts=,ReservedPoiseDamage=0.000000,PresentationStrength=0.650000,HitAcceptancePolicy=AcceptedDamage)"
+      },
+      {
+        "name": "DA_Attack_2",
+        "unchanged_damage_and_execution": true,
+        "reaction": "(AttackJudgementTag=(TagName=\"Combat.Attack.Judgement.Normal\"),Impacts=,ReservedPoiseDamage=0.000000,PresentationStrength=0.800000,HitAcceptancePolicy=AcceptedDamage)"
+      },
+      {
+        "name": "DA_Attack_3",
+        "unchanged_damage_and_execution": true,
+        "reaction": "(AttackJudgementTag=(TagName=\"Combat.Attack.Judgement.Normal\"),Impacts=(()),ReservedPoiseDamage=0.000000,PresentationStrength=1.150000,HitAcceptancePolicy=AcceptedDamage)"
+      },
+      {
+        "name": "DA_Attack_5",
+        "unchanged_damage_and_execution": true,
+        "reaction": "(AttackJudgementTag=(TagName=\"Combat.Attack.Judgement.Normal\"),Impacts=(()),ReservedPoiseDamage=0.000000,PresentationStrength=1.000000,HitAcceptancePolicy=AcceptedDamage)"
+      },
+      {
+        "name": "DA_Attack_4",
+        "unchanged_damage_and_execution": true,
+        "reaction": "(AttackJudgementTag=(TagName=\"Combat.Attack.Judgement.Normal\"),Impacts=((Type=Knockback)),ReservedPoiseDamage=0.000000,PresentationStrength=1.600000,HitAcceptancePolicy=AcceptedDamage)"
+      }
+    ],
+    "prototypes": [
+      {
+        "direction": "<HodgeHitPresentationDirection.FRONT: 0>",
+        "montage": "/Game/Main/Character/Hero/Anim/HitReactions/PresentationPrototype/AM_Hit_Front.AM_Hit_Front",
+        "length": 0.20000000298023224,
+        "additive": true,
+        "pelvis_static": true
+      },
+      {
+        "direction": "<HodgeHitPresentationDirection.BACK: 1>",
+        "montage": "/Game/Main/Character/Hero/Anim/HitReactions/PresentationPrototype/AM_Hit_Back.AM_Hit_Back",
+        "length": 0.20000000298023224,
+        "additive": true,
+        "pelvis_static": true
+      },
+      {
+        "direction": "<HodgeHitPresentationDirection.LEFT: 2>",
+        "montage": "/Game/Main/Character/Hero/Anim/HitReactions/PresentationPrototype/AM_Hit_Left.AM_Hit_Left",
+        "length": 0.20000000298023224,
+        "additive": true,
+        "pelvis_static": true
+      },
+      {
+        "direction": "<HodgeHitPresentationDirection.RIGHT: 3>",
+        "montage": "/Game/Main/Character/Hero/Anim/HitReactions/PresentationPrototype/AM_Hit_Right.AM_Hit_Right",
+        "length": 0.20000000298023224,
+        "additive": true,
+        "pelvis_static": true
+      }
+    ],
+    "reserved_nonzero": [],
+    "errors": [],
+    "formal_definitions_checked": 16
+  },
+  "media": [
+    {
+      "path": "E:\\Project\\Git\\Hodgepodge\\Saved\\HitPresentation\\comparison-normal.mp4",
+      "frames": 420,
+      "fps": 60,
+      "seconds": 7.0
+    },
+    {
+      "path": "E:\\Project\\Git\\Hodgepodge\\Saved\\HitPresentation\\comparison-quarter.mp4",
+      "frames": 420,
+      "fps": 15,
+      "seconds": 28.0
+    }
+  ],
+  "source_sha256": {
+    "Source/Hodgepodge/Private/Component/HodgeHitReactionComponent.cpp": "ecf26203f6404f5a1deb0b28a993cda4387133e0c3caed45f6f223a868a3882f",
+    "Source/Hodgepodge/Private/AbilitySystem/Abilities/HodgeGameplayAbility_HitReaction.cpp": "e54314deb4ec7c64ee0151de00bb6caca2bf1963c5d1db931941c7906fb6ce0b"
+  },
+  "remaining": [
+    "P0 subjective animation and audio acceptance; physical input; visual active Guardian test",
+    "P1 native Details array visibility",
+    "P2 gated common animation defaults migration",
+    "P3 movement and animation polish",
+    "Deferred Client combo window; poise; optional HitStop"
+  ]
+}
