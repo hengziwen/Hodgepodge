@@ -66,6 +66,18 @@ bool HodgeHitReaction::CanImpact(int32 AttackRank, int32 BodyRank)
 	return AttackRank >= 1 && AttackRank <= 4 && BodyRank >= 0 && BodyRank <= 4 && AttackRank >= BodyRank;
 }
 
+/** 只处理反应之间的覆盖关系；调用方仍先执行伤害资格与判定检查。 */
+bool HodgeHitReaction::IsContactOnlyTransition(const FHodgeHitReactionState& Current, const FHodgeHitReactionConfig& Incoming)
+{
+	if (!Current.IsActive() || Incoming.Impacts.IsEmpty()) { return false; }
+	const bool bDown = Current.Phase == EHodgeHitReactionPhase::Downed || Current.Phase == EHodgeHitReactionPhase::GettingUp;
+	const bool bKnockback = Current.Phase == EHodgeHitReactionPhase::Controlled && Current.Type == EHodgeImpactType::Knockback;
+	return (bDown || bKnockback) && !Incoming.Impacts.ContainsByPredicate([bDown](const auto& Impact)
+	{
+		return Impact.Type != EHodgeImpactType::HitStun && !(bDown && Impact.Type == EHodgeImpactType::Knockback);
+	});
+}
+
 /** 检查是否允许Use蒙太奇。 */
 bool HodgeHitReaction::CanUseMontage(const UAnimMontage* Montage, const USkeletalMesh* Mesh)
 {
@@ -102,7 +114,7 @@ bool FHodgeImpactSpec::Validate(TArray<FText>& Errors) const
 /** 判断Configured。 */
 bool FHodgeHitReactionConfig::IsConfigured() const
 {
-	return AttackJudgementTag.IsValid() || !Impacts.IsEmpty() || ReservedPoiseDamage != 0.f;
+	return bCanLaunch || InputMode != EHodgeReactionInputMode::Legacy || AttackJudgementTag.IsValid() || !Impacts.IsEmpty() || ReservedPoiseDamage != 0.f;
 }
 
 /** 检查当前配置并收集诊断。 */
@@ -110,12 +122,18 @@ bool FHodgeHitReactionConfig::Validate(TArray<FText>& Errors) const
 {
 	const int32 Before = Errors.Num();
 	if (!IsConfigured()) { return true; }
+	// 新入口互斥；合法空削韧仍允许接触反馈，但不能暗用旧 Impact。
+	if (uint8(InputMode) > uint8(EHodgeReactionInputMode::ExplicitImpact) ||
+		(InputMode == EHodgeReactionInputMode::PoiseDriven && (!Impacts.IsEmpty() || HitAcceptancePolicy != EHodgeHitAcceptancePolicy::AcceptedDamage)) ||
+		(InputMode == EHodgeReactionInputMode::ExplicitImpact && ReservedPoiseDamage != 0.f) ||
+		((InputMode == EHodgeReactionInputMode::PoiseDriven || bCanLaunch) && (!FMath::IsFinite(ImpulseScale) || ImpulseScale < 0.f || ImpulseScale > 4.f)))
+	{ Errors.Add(FText::FromString(TEXT("PoiseDriven requires AcceptedDamage and no Impacts; ExplicitImpact cannot also submit poise. ImpulseScale must be 0..4."))); }
 	if (HodgeHitReaction::JudgementRank(AttackJudgementTag) == 0)
 	{
 		Errors.Add(FText::FromString(TEXT("Reaction requires one exact Normal/Skill/SuperArmor/Vajra judgement tag.")));
 	}
 	if (!FMath::IsFinite(ReservedPoiseDamage) || ReservedPoiseDamage < 0.f || !FMath::IsFinite(PresentationStrength) || PresentationStrength < 0.1f || PresentationStrength > 2.f ||
-		uint8(HitAcceptancePolicy) > uint8(EHodgeHitAcceptancePolicy::ExplicitControl))
+		uint8(HitAcceptancePolicy) > uint8(EHodgeHitAcceptancePolicy::ExplicitControl) || uint8(PresentationSide) > uint8(EHodgeHitSide::Right))
 	{
 		Errors.Add(FText::FromString(TEXT("Invalid reaction acceptance policy or reserved poise magnitude.")));
 	}
@@ -132,5 +150,30 @@ bool FHodgeHitReactionConfig::Validate(TArray<FText>& Errors) const
 	{
 		Errors.Add(FText::FromString(TEXT("One phase supports one movement Impact; use bKnockdownOnLanding for airborne-to-down transitions.")));
 	}
+	return Before == Errors.Num();
+}
+
+/** 仅校验仍生效的轻重阈值与运动参数，不再读取兼容破韧字段。 */
+bool FHodgePoiseSettings::Validate(TArray<FText>& Errors) const
+{
+	const int32 Before = Errors.Num();
+	if (bEnabled && (!FMath::IsFinite(Window) || Window <= 0.f || !FMath::IsFinite(LightThreshold) || LightThreshold <= 0.f ||
+		!FMath::IsFinite(HeavyThreshold) || HeavyThreshold <= LightThreshold || MaxSamples < 1 || MaxSamples > 1024))
+	{ Errors.Add(FText::FromString(TEXT("Poise requires a positive window, increasing Light/Heavy thresholds and MaxSamples in 1..1024."))); }
+	ValidateLaunchMotion(Errors);
+	if (bEnabled && (!FMath::IsFinite(HeavyDistance) || HeavyDistance < 0.f || !FMath::IsFinite(MoveDuration) || MoveDuration <= 0.f ||
+		!FMath::IsFinite(MaxDistance) || MaxDistance < 0.f))
+	{ Errors.Add(FText::FromString(TEXT("Ground poise motion requires finite nonnegative distances and positive duration."))); }
+	return Before == Errors.Num();
+}
+
+/** 完整资产校验复用此边界；运行时独立Fly不被无关削韧设置连带拒绝。 */
+bool FHodgePoiseSettings::ValidateLaunchMotion(TArray<FText>& Errors) const
+{
+	const int32 Before = Errors.Num();
+	if (!FMath::IsFinite(DisplacementScale) || DisplacementScale < 0.f || DisplacementScale > 4.f ||
+		!FMath::IsFinite(LaunchHorizontalSpeed) || LaunchHorizontalSpeed < 0.f ||
+		!FMath::IsFinite(LaunchVerticalSpeed) || LaunchVerticalSpeed < 0.f)
+	{ Errors.Add(FText::FromString(TEXT("Launch motion requires finite nonnegative speeds and DisplacementScale in 0..4."))); }
 	return Before == Errors.Num();
 }

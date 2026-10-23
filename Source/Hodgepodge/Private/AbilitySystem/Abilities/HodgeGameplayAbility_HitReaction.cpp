@@ -12,6 +12,8 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/RootMotionSource.h"
+#include "Data/HodgeHitReactionProfile.h"
+#include "Combat/HodgeHitReactionMotion.h"
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeGameplayAbility_HitReaction)
 
 /** 构造玩法能力命中受击并初始化其默认状态。 */
@@ -87,36 +89,45 @@ bool UHodgeGameplayAbility_HitReaction::Synchronize(const FHodgeHitReactionState
 		CurrentActorInfo->AvatarActor.Get() != Reaction->GetOwner()) { return false; }
 	// 根据当前生命周期状态决定是否继续执行。
 	if (!State.IsActive()) { return true; }
+	auto* ASC = GetAbilitySystemComponentFromActorInfo();
 	if (AppliedSequence == State.Sequence && AppliedPhase == State.Phase && PlayedMontage.Get() == State.Montage &&
-		AppliedStartedAt == State.StartedAt) { return true; }
+		AppliedStartedAt == State.StartedAt)
+	{
+		const auto* Animating = ASC->GetAnimatingAbility();
+		const auto* Instance = CurrentActorInfo->GetAnimInstance() && State.Montage ? CurrentActorInfo->GetAnimInstance()->GetInstanceForMontage(State.Montage) : nullptr;
+		// 预测反击被拒绝后重建尚未结束的受击；新动作仍活跃时不能抢回主动画。
+		if (!State.Montage || (Animating && Animating != this && Animating->IsActive()) ||
+			(Animating == this && Instance && (Instance->IsActive() || Instance->GetWeight() > UE_KINDA_SMALL_NUMBER))) { return true; }
+	}
 	if (State.Montage && !CurrentActorInfo->GetAnimInstance()) { return false; }
 	auto* Character = Cast<ACharacter>(GetAvatarActorFromActorInfo());
 	if (!Character) { return false; }
 	auto* Movement = Character->GetCharacterMovement();
-	// 后续GAS操作使用的能力系统组件。
-	auto* ASC = GetAbilitySystemComponentFromActorInfo();
 	// 控制身份更新不等于动画重播；服务端保留的起播时间使迟到客户端得到同一姿态。
+	const auto* CurrentInstance = State.Montage ? CurrentActorInfo->GetAnimInstance()->GetInstanceForMontage(State.Montage) : nullptr;
 	const bool bContinuePresentation = AppliedPhase == State.Phase && PlayedMontage.Get() == State.Montage &&
-		AppliedStartedAt == State.StartedAt && State.Montage && CurrentActorInfo->GetAnimInstance()->Montage_IsPlaying(
-			State.Montage);
+		AppliedStartedAt == State.StartedAt && ASC->GetAnimatingAbility() == this && CurrentInstance &&
+		(CurrentInstance->IsActive() || CurrentInstance->GetWeight() > UE_KINDA_SMALL_NUMBER);
 	if (State.Sequence != AppliedSequence && State.Phase != EHodgeHitReactionPhase::Airborne)
 	{
 		Movement->StopMovementImmediately();
 	}
 	const bool bNewMotion = State.Sequence != AppliedSequence;
-	if (bNewMotion || State.Phase != EHodgeHitReactionPhase::Airborne) { ClearMotion(); }
+	// 没有新运动的空中接触继续原 Launch，不能清除尚未由 CMC 消费的排队速度。
+	if (State.Phase != EHodgeHitReactionPhase::Airborne || (bNewMotion && State.bHasMovement)) { ClearMotion(); }
 	const float Elapsed = FMath::Max(0.f, Reaction->GetServerTime() - State.StartedAt);
 	// 按服务器权限区分本次处理分支。
-	if (bNewMotion && State.bHasMovement && (CurrentActorInfo->IsNetAuthority() || CurrentActorInfo->
+	if (bNewMotion && State.bHasMovement && State.MotionSource == EHodgeReactionMotionSource::Impact && (CurrentActorInfo->IsNetAuthority() || CurrentActorInfo->
 		IsLocallyControlled()))
 	{
 		if (State.Type == EHodgeImpactType::Knockback && Elapsed < State.MoveDuration)
 		{
-			auto Force = MakeShared<FRootMotionSource_ConstantForce>();
+			auto Force = MakeShared<FHodgeRootMotionSource_Knockback>();
 			Force->InstanceName = FName(*FString::Printf(TEXT("HodgeReaction_%d"), State.Sequence));
 			Force->Priority = 500;
 			Force->AccumulateMode = ERootMotionAccumulateMode::Override;
 			Force->Force = State.MotionVelocity;
+			Force->StrengthOverTime = Reaction->GetProfile() ? Reaction->GetProfile()->KnockbackStrengthCurve : nullptr;
 			Force->Duration = State.MoveDuration;
 			Force->SetTime(Elapsed);
 			Force->FinishVelocityParams.Mode = ERootMotionFinishVelocityMode::SetVelocity;
@@ -133,24 +144,33 @@ bool UHodgeGameplayAbility_HitReaction::Synchronize(const FHodgeHitReactionState
 	}
 	if (!bContinuePresentation && ASC->GetAnimatingAbility() == this && PlayedMontage.IsValid())
 	{
-		ASC->CurrentMontageStop(0.05f);
+		if (PlayedMontage->HasRootMotion() && CurrentActorInfo->GetAnimInstance())
+		{
+			if (auto* Old = CurrentActorInfo->GetAnimInstance()->GetInstanceForMontage(PlayedMontage.Get())) { Old->PushDisableRootMotion(); }
+		}
+		ASC->CurrentMontageStop(Reaction->GetProfile() ? Reaction->GetProfile()->ReplacementBlendOut : 0.05f);
 		ASC->ClearAnimatingAbility(this);
 	}
 	if (!bContinuePresentation) { PlayedMontage.Reset(); }
 	if (!bContinuePresentation && State.Montage && (CurrentActorInfo->IsNetAuthority() || CurrentActorInfo->
 		IsLocallyControlled()))
 	{
-		const float Position = FMath::Min(Elapsed, FMath::Max(0.f, State.Montage->GetPlayLength() - 0.01f));
+		const float PresentationTime = Reaction->GetProfile() ? Reaction->GetProfile()->GetPresentationPosition(State, Elapsed) : Elapsed;
+		const float Position = FMath::Min(PresentationTime, FMath::Max(0.f, State.Montage->GetPlayLength() - 0.01f));
 		if (ASC->PlayMontage(this, CurrentActivationInfo, State.Montage, 1.f, NAME_None, Position) <= 0.f)
 		{
 			return false;
 		}
 		PlayedMontage = State.Montage;
+		FHodgeHitReactionAnimation Entry;
+		if (Reaction->GetProfile() && Reaction->GetProfile()->ResolveAnimation(State.Type, Entry) &&
+			!State.bLanding && State.Phase == EHodgeHitReactionPhase::Controlled && !Entry.SustainSection.IsNone())
+		{ ASC->CurrentMontageSetNextSectionName(Entry.SustainSection, Entry.SustainSection); }
 		if (UAnimInstance* Anim = CurrentActorInfo->GetAnimInstance())
 		{
 			if (FAnimMontageInstance* Instance = Anim->GetActiveInstanceForMontage(State.Montage))
 			{
-				Instance->bEnableAutoBlendOut = State.Phase != EHodgeHitReactionPhase::Downed;
+				Instance->bEnableAutoBlendOut = Reaction->GetProfile() ? !Reaction->GetProfile()->ShouldSustainPose(State) : State.Phase != EHodgeHitReactionPhase::Downed;
 			}
 		}
 	}
@@ -216,7 +236,22 @@ void UHodgeGameplayAbility_HitReaction::EndAbility(FGameplayAbilitySpecHandle Ha
 	if (auto* ASC = GetAbilitySystemComponentFromActorInfo(); ASC && ASC->GetAnimatingAbility() == this &&
 		Info && Info->AvatarActor.Get() == ReactionAvatar.Get())
 	{
-		ASC->CurrentMontageStop();
+		auto* Instance = Info->GetAnimInstance() && PlayedMontage.IsValid() ?
+			Info->GetAnimInstance()->GetInstanceForMontage(PlayedMontage.Get()) : nullptr;
+		const bool bRetired = !bCancelled && Instance && Reaction.IsValid() &&
+			Reaction->RetirePresentation(PlayedMontage.Get(), Instance->GetInstanceID());
+		if (bRetired && AppliedPhase == EHodgeHitReactionPhase::Controlled)
+		{
+			FHodgeHitReactionAnimation Entry;
+			if (Reaction->GetProfile()->ResolveAnimation(Reaction->GetReactionState().Type, Entry) && !Entry.RecoverySection.IsNone())
+			{ ASC->CurrentMontageJumpToSection(Entry.RecoverySection); }
+		}
+		if (!bRetired)
+		{
+			if (Instance && PlayedMontage->HasRootMotion())
+			{ Instance->PushDisableRootMotion(); }
+			ASC->CurrentMontageStop();
+		}
 		ASC->ClearAnimatingAbility(this);
 	}
 	PlayedMontage.Reset();

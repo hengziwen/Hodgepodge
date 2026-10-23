@@ -211,24 +211,45 @@ bool UHodgeCombatComponentBase::InputPressed(FGameplayTag InputTag)
 /** 按当前意图与窗口条件选择连段转换边。 */
 const FHodgeComboTransition* UHodgeCombatComponentBase::SelectTransition(FGameplayTag Trigger, bool bEvent) const
 {
-	// 本次操作的来源。
+	const auto Evaluation = EvaluateTransition(Trigger, bEvent);
+	return Evaluation.Readiness == ETransitionReadiness::Ready ? Evaluation.Edge : nullptr;
+}
+
+/** 共享选边规则；同目标开放边优先，不同目标的预测请求保留原有等待。 */
+UHodgeCombatComponentBase::FTransitionEvaluation UHodgeCombatComponentBase::EvaluateTransition(
+	FGameplayTag Trigger, bool bEvent, FGameplayAbilitySpecHandle WaitingHandle) const
+{
 	const FGameplayTag Source = TransitionSourceNode();
 	const auto* Node = Definition ? Definition->FindNode(Source) : nullptr;
-	// 先检查对象与上下文，避免在依赖失效后继续处理。
-	if (!ASC || !Node || !Trigger.IsValid()) { return nullptr; }
+	if (!ASC || !Node || !Trigger.IsValid()) { return {}; }
 	const auto Windows = CurrentAbility ? CurrentAbility->GetExecutionWindows() : FGameplayTagContainer();
 	const auto& Tags = ASC->GetOwnedGameplayTags();
 	const FHodgeComboTransition* Best = nullptr;
+	const FHodgeComboTransition* Waiting = nullptr;
+	bool bRequestedTargetReady = false;
+	const bool bResume = !CurrentAbility && Source != Definition->EntryComboTag;
 	for (const auto& Edge : Node->Transitions)
 	{
-		const bool bResume = !CurrentAbility && Source != Definition->EntryComboTag;
 		if ((bEvent ? Edge.TriggerEventTag : Edge.TriggerInputIntentTag) != Trigger
-			|| (bResume ? (bEvent || !Edge.bAllowAfterExecutionEnded) : !Windows.HasAll(Edge.RequiredWindowTags))
 			|| !Tags.HasAll(Edge.RequiredSourceTags)
 			|| Tags.HasAny(Edge.BlockedSourceTags)) { continue; }
-		if (!Best || Edge.TransitionPriority > Best->TransitionPriority) { Best = &Edge; }
+		const bool bOpen = bResume ? !bEvent && Edge.bAllowAfterExecutionEnded : Windows.HasAll(Edge.RequiredWindowTags);
+		if (bOpen)
+		{
+			if (!Best || Edge.TransitionPriority > Best->TransitionPriority) { Best = &Edge; }
+			const auto* Target = WaitingHandle.IsValid() ? Definition->FindNode(Edge.TargetComboTag) : nullptr;
+			bRequestedTargetReady |= Target && ASC->FindDefinitionAbility(Target->AbilityTag) == WaitingHandle;
+		}
+		else if (CurrentAbility && !bEvent && WaitingHandle.IsValid())
+		{
+			const auto* Target = Definition->FindNode(Edge.TargetComboTag);
+			if (Target && ASC->FindDefinitionAbility(Target->AbilityTag) == WaitingHandle &&
+				(!Waiting || Edge.TransitionPriority > Waiting->TransitionPriority)) { Waiting = &Edge; }
+		}
 	}
-	return Best;
+	// 其他动作已开窗不等于当前预测目标已开窗，不能因此改变原派生等待策略。
+	if (Waiting && !bRequestedTargetReady) { return {ETransitionReadiness::Wait, Waiting}; }
+	return Best ? FTransitionEvaluation{ETransitionReadiness::Ready, Best} : FTransitionEvaluation{};
 }
 
 /** 判断Authorized。 */
@@ -403,7 +424,8 @@ bool UHodgeCombatComponentBase::TryTransition(FGameplayTag Trigger, bool bEvent)
 	if (Key.IsServerInitiatedKey())
 	{
 		const auto* AttackData=ASC->FindAbilityDefinition(Handle); FHodgeAttackFacingTargetData Facing;
-		if (AttackData && AttackData->FacingWarp.bEnabled && UHodgeGameplayAbility_Definition::BuildAttackFacingData(ASC->AbilityActorInfo.Get(),Facing))
+		if (AttackData && AttackData->FacingWarp.bEnabled && UHodgeGameplayAbility_Definition::BuildAttackFacingData(
+			ASC->AbilityActorInfo.Get(), Facing, AttackData->FacingWarp.bTrackExecutionLockTargetDuringWarp))
 		{ Payload.TargetData.Add(new FHodgeAttackFacingTargetData(Facing)); }
 	}
 	// 通过ASC发起激活，保留GAS自身的条件与消耗校验。
@@ -437,18 +459,7 @@ bool UHodgeCombatComponentBase::CanBufferServerActivation(FGameplayAbilitySpecHa
 	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (!Handle.IsValid() || !CurrentAbility || !ValidateServerRequestIdentity(Payload)
 		|| !ASC->FindAbilitySpecFromHandle(Handle)) { return false; }
-	const auto* Node = Definition->FindNode(TransitionSourceNode());
-	if (!Node) { return false; }
-	const auto Windows = CurrentAbility->GetExecutionWindows();
-	const auto& Tags = ASC->GetOwnedGameplayTags();
-	for (const auto& Edge : Node->Transitions)
-	{
-		const auto* Target = Definition->FindNode(Edge.TargetComboTag);
-		if (Edge.TriggerInputIntentTag == Payload->InstigatorTags.First() && Target
-			&& ASC->FindDefinitionAbility(Target->AbilityTag) == Handle && Tags.HasAll(Edge.RequiredSourceTags)
-			&& !Tags.HasAny(Edge.BlockedSourceTags) && !Windows.HasAll(Edge.RequiredWindowTags)) { return true; }
-	}
-	return false;
+	return EvaluateTransition(Payload->InstigatorTags.First(), false, Handle).Readiness == ETransitionReadiness::Wait;
 }
 
 /** 准备服务器Activation。 */

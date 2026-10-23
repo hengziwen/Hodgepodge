@@ -116,6 +116,10 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Attributes") bool bRequiresInitializedAttributes = false;
 	// 控制是否Allow持续期间命中Reacting的状态标记。
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Combat") bool bAllowWhileHitReacting = false;
+	/** 按授予记录识别 Dash 或显式标记的普攻，不替代费用、冷却和授权检查。 */
+	bool CanRecoverFromHit(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* Info) const;
+	/** 只在正常 Commit 成功后调用；客户端保留受控状态直到权威结果到达。 */
+	bool CommitHitRecovery(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* Info, int32 Sequence) const;
 
 	// 从 Ability 的 ActorInfo 中获取项目自定义的 AbilitySystemComponent。
 	/** 获取能力System组件来源Actor对象信息。

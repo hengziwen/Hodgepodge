@@ -7,12 +7,14 @@
 #include "Equipment/HodgeWeaponPresentationTypes.h"
 #include "Combat/HodgeAttackFacingTypes.h"
 #include "Combat/HodgeCharacterFacingTypes.h"
+#include "Targeting/HodgeLockOnTypes.h"
 #include "TimerManager.h"
 #include "HodgeGameplayAbility_Definition.generated.h"
 
 class UHodgeAbilityDefinition;
 class UHodgeWeaponInstance;
 class UHodgeCombatComponentBase;
+class UHodgeLockOnComponent;
 class UHodgeAttackRule;
 struct FHodgeAttackSettlement;
 class UAnimMontage;
@@ -26,7 +28,8 @@ class HODGEPODGE_API UHodgeGameplayAbility_Definition : public UHodgeGameplayAbi
 
 public:
 	/** 采样锁定、移动意图或镜头水平朝向，供预测与服务器发起的激活使用。 */
-	static bool BuildAttackFacingData(const FGameplayAbilityActorInfo* Info, FHodgeAttackFacingTargetData& OutData);
+	static bool BuildAttackFacingData(const FGameplayAbilityActorInfo* Info, FHodgeAttackFacingTargetData& OutData,
+		bool bUseConfirmedLockPoint = false);
 	/** 依据实际 Montage 位置补偿被跳过的恢复通知。 */
 	void UpdateAttackFacingLifecycle();
 	bool IsFacingExecutionSuspended() const { return bPredictedMoveCancel; }
@@ -174,6 +177,9 @@ protected:
  void PublishAttackSettlement(const FHodgeAttackSettlement& Settlement);
  bool HasAttackSettlementRules() const { return !AttackRules.IsEmpty(); }
 private:
+	/** EndAbility独占调用，释放动作资源但不再次完成GAS或提交请求结果。 */
+	void ReleaseExecutionResources(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* Info,
+		FGameplayAbilityActivationInfo ActivationInfo);
 	friend struct FHodgeAttackRuleTestAccess;
  /** 规则跟随执行创建／失效，不能沿用到下一次激活或另一 Pawn。 */
  UPROPERTY(Transient) TArray<TObjectPtr<UHodgeAttackRule>> AttackRules;
@@ -181,10 +187,23 @@ private:
 	friend struct FHodgeAttackWarpTestAccess;
 	void StartExecutionMontage();
 	void InitializeAttackFacing(const FGameplayEventData* Payload);
+	/** 权威解除本次受击后恢复原朝向流程；旧身份、换 Pawn 和超时均取消。 */
+	void ResumeAfterHitRecovery(FGuid ForExecution, int32 RecoverySequence, double Deadline);
+	UPROPERTY(Transient) FGameplayEventData RecoveryPayload;
+	bool bHasRecoveryPayload = false;
 	void OnAttackFacingData(const FGameplayAbilityTargetDataHandle& Data, FGameplayTag ApplicationTag, FGuid ForExecution);
 	bool ApplyAttackFacing(const FHodgeAttackFacingTargetData& Data);
 	void OnAttackFacingTimeout(FGuid ForExecution);
-	void ReleaseAttackFacing();
+	/** 本刀仅在原窗口内更新同一朝向请求；任何终止条件永久冻结本次追踪。 */
+	void UpdateExecutionLockTargetFacing();
+	/** 确认切换事件只冻结本刀，不在委托里重新计算方向。 */
+	UFUNCTION() void HandleExecutionLockStateChanged(FHodgeLockOnState Confirmed, AActor* PresentationTarget, int32 PresentationRevision);
+	/** 起手即监听确认事实，等待 TargetData 期间的切换也不能被后续接受覆盖。 */
+	void BindExecutionLockTracking();
+	/** 重新激活和结束均配对移除当前锁定事件，避免旧 Pawn 回调。 */
+	void UnbindExecutionLockTracking();
+	/** 只有同执行首次接受 TargetData 时保留已有监视及永久冻结事实。 */
+	void ReleaseAttackFacing(bool bPreserveExecutionLockTracking = false);
 	FDelegateHandle FacingDataDelegate;
 	FTimerHandle FacingDataTimer;
 	FHodgeFacingRequestHandle AttackFacingHandle;
@@ -193,6 +212,15 @@ private:
 	bool bFacingDataProcessed = false;
 	bool bActivationReturned = false;
 	bool bAttackFacingRetired = false;
+	// 角度始终以已接受的起手 Yaw 为上限锚点，不能逐帧累积旋转额度。
+	float AcceptedFacingStartYaw = 0.f;
+	FGuid LockTrackingExecutionId;
+	UPROPERTY(Transient) TWeakObjectPtr<AActor> LockTrackingAvatar;
+	UPROPERTY(Transient) TWeakObjectPtr<UHodgeLockOnComponent> LockTrackingSource;
+	int32 LockTrackingGeneration = 0;
+	int32 LockTrackingInitialStateVersion = 0;
+	bool bTrackExecutionLockTarget = false;
+	bool bExecutionLockTrackingFrozen = true;
 	friend struct FHodgeCombatActionTestAccess;
 	// 同一个 GA 实例会重复激活，每次执行使用新的身份。
 	// 每次执行独立采样，切换全局锁定不修改本刀快照。

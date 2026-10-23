@@ -2,6 +2,7 @@
  * @brief 实现玩法能力定义相关的类型、接口与现有处理流程。
  */
 #include "AbilitySystem/Abilities/HodgeGameplayAbility_Definition.h"
+#include "Component/HodgeHitReactionComponent.h"
 #include "Combat/HodgeAttackRule.h"
 #include "UObject/StrongObjectPtr.h"
 #include "Component/HodgeLockOnComponent.h"
@@ -24,7 +25,26 @@
 #include "Component/HodgeHeroComponent.h"
 #include "Component/HodgeCharacterRotationComponent.h"
 #include "Component/HodgeAttackMotionWarpingComponent.h"
+#include "Interface/HodgeLockOnTargetInterface.h"
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HodgeGameplayAbility_Definition)
+
+namespace
+{
+	/** 确认点只读取确认状态，排队或预测目标不能混入本刀方向。 */
+	bool ReadConfirmedAttackLockPoint(const UHodgeLockOnComponent* Lock, AActor*& OutTarget, FVector& OutPoint)
+	{
+		if (!Lock || !Lock->IsConfirmedTargetValid()) { return false; }
+		const FHodgeLockOnState Confirmed = Lock->GetConfirmedState();
+		AActor* Target = Confirmed.Target.Get();
+		if (!IsValid(Target) || !Target->Implements<UHodgeLockOnTargetInterface>() ||
+			!IHodgeLockOnTargetInterface::Execute_GetLockPoint(Target, Confirmed.LockPointId, OutPoint) || OutPoint.ContainsNaN()) { return false; }
+		// 接口回调若改变确认事实，本次采样不能继续使用旧目标或旧点位。
+		const FHodgeLockOnState Current = Lock->GetConfirmedState();
+		if (!IsValid(Target) || Current.Target != Target || Current.LockPointId != Confirmed.LockPointId) { return false; }
+		OutTarget = Target;
+		return true;
+	}
+}
 
 /** 构造玩法能力定义并初始化其默认状态。 */
 UHodgeGameplayAbility_Definition::UHodgeGameplayAbility_Definition(const FObjectInitializer& Initializer)
@@ -102,12 +122,19 @@ void UHodgeGameplayAbility_Definition::ActivateAbility(FGameplayAbilitySpecHandl
 	bEnding = false;
 	bLifecycleEventSent = false;
 	bPredictedMoveCancel = false;
+	bActivationReturned = false;
 	PresentationWeapon.Reset();
 	NotifyResources.Reset();
 	StateCounts.Reset();
 	NextOccurrence = 0;
 	MontageInstanceId = INDEX_NONE;
+	UnbindExecutionLockTracking();
 	ExecutionId = FGuid::NewGuid();
+	// 每次激活重新建立追踪资格，旧执行的冻结状态不能污染下一刀。
+	bTrackExecutionLockTarget = false;
+	bExecutionLockTrackingFrozen = true;
+	LockTrackingExecutionId.Invalidate();
+	LockTrackingAvatar.Reset();
 	ExecutionLockTarget.Reset();
 	if (const auto* Lock = Info && Info->AvatarActor.IsValid()
 		                       ? Info->AvatarActor->FindComponentByClass<UHodgeLockOnComponent>()
@@ -117,6 +144,7 @@ void UHodgeGameplayAbility_Definition::ActivateAbility(FGameplayAbilitySpecHandl
 	}
 	// 当前操作使用的定义配置。
 	const auto* Definition = GetDefinition();
+	BindExecutionLockTracking();
 	TArray<FText> Errors;
 	if (!Definition || !Definition->ValidateDefinition(Errors))
 	{
@@ -131,7 +159,9 @@ void UHodgeGameplayAbility_Definition::ActivateAbility(FGameplayAbilitySpecHandl
 	CurrentActivationInfo.bCanBeEndedByOtherInstance = !Info->IsNetAuthority() ||
 	(Definition->ExecutionRoute == EHodgeAbilityExecutionRoute::Standalone &&
 		bServerRespectsRemoteAbilityCancellation);
-	if (!CommitAbility(Handle, Info, ActivationInfo))
+	const auto* HitReaction = Info->AvatarActor->FindComponentByClass<UHodgeHitReactionComponent>();
+	const int32 RecoverySequence = HitReaction ? HitReaction->GetReactionState().Sequence : 0;
+	if (!CommitAbility(Handle, Info, ActivationInfo) || !CommitHitRecovery(Handle, Info, RecoverySequence))
 	{
 		FinishExecution(true, true);
 		return;
@@ -143,7 +173,43 @@ void UHodgeGameplayAbility_Definition::ActivateAbility(FGameplayAbilitySpecHandl
 	if (ExecutionBodyTag.IsValid()) { ASC->AddLooseGameplayTag(ExecutionBodyTag); }
 	// 根据当前生命周期状态决定是否继续执行。
 	if (!IsActive() || bEnding) { return; }
-	InitializeAttackFacing(Payload);
+	// 拥有者不预测删除服务器受击状态，等待复制解锁后再申请同一条 Montage 朝向链。
+	if (!Info->IsNetAuthority() && ASC->HasMatchingGameplayTag(HodgeHitReactionTags::Controlled))
+	{
+		// 保留连段准备授权，等待中的恢复普攻仍属于本次异步激活。
+		bFacingDataWaiting = true;
+		ExecutionCombat = UHodgeCombatComponentBase::FindCombatComponent(Info->AvatarActor.Get());
+		bHasRecoveryPayload = Payload != nullptr;
+		RecoveryPayload = Payload ? *Payload : FGameplayEventData();
+		const double Deadline = GetWorld()->GetTimeSeconds() + FMath::Max(.5f, Definition->FacingWarp.TargetDataTimeout);
+		GetWorld()->GetTimerManager().SetTimer(FacingDataTimer,
+			FTimerDelegate::CreateUObject(this, &ThisClass::ResumeAfterHitRecovery, ExecutionId, RecoverySequence, Deadline), .01f, true);
+	}
+	else { InitializeAttackFacing(Payload); }
+	bActivationReturned = true;
+}
+
+/** 仅延迟表现起手，不重收费用、不补发旧动作，也不改变权威控制时长。 */
+void UHodgeGameplayAbility_Definition::ResumeAfterHitRecovery(FGuid ForExecution, int32 RecoverySequence, double Deadline)
+{
+	if (!IsActive() || bEnding || ForExecution != ExecutionId) { return; }
+	auto* ASC = GetAbilitySystemComponentFromActorInfo();
+	const auto* Avatar = GetAvatarActorFromActorInfo();
+	const auto* Reaction = Avatar ? Avatar->FindComponentByClass<UHodgeHitReactionComponent>() : nullptr;
+	if (!ASC || ASC->GetAvatarActor() != Avatar || !Reaction || !ExecutionCombat.IsValid() || ExecutionCombat->GetOwner() != Avatar ||
+		ASC->HasMatchingGameplayTag(HodgeGameplayTags::Status_Death) || GetWorld()->GetTimeSeconds() >= Deadline ||
+		(Reaction->IsControlled() && Reaction->GetReactionState().Sequence != RecoverySequence))
+	{
+		FinishExecution(true, true);
+		return;
+	}
+	if (ASC->HasMatchingGameplayTag(HodgeHitReactionTags::Controlled)) { return; }
+	GetWorld()->GetTimerManager().ClearTimer(FacingDataTimer);
+	const FGameplayEventData Payload = MoveTemp(RecoveryPayload);
+	const bool bHadPayload = bHasRecoveryPayload;
+	RecoveryPayload = FGameplayEventData();
+	bHasRecoveryPayload = false;
+	InitializeAttackFacing(bHadPayload ? &Payload : nullptr);
 	bActivationReturned = true;
 }
 
@@ -195,7 +261,7 @@ void UHodgeGameplayAbility_Definition::StartExecutionMontage()
 
 /** 锁定目标优先，移动意图其次，零输入使用镜头水平朝向。 */
 bool UHodgeGameplayAbility_Definition::BuildAttackFacingData(const FGameplayAbilityActorInfo* Info,
-                                                             FHodgeAttackFacingTargetData& Out)
+                                                             FHodgeAttackFacingTargetData& Out, bool bUseConfirmedLockPoint)
 {
 	const auto* Pawn = Info && Info->AvatarActor.IsValid() ? Cast<APawn>(Info->AvatarActor.Get()) : nullptr;
 	if (!Pawn) { return false; }
@@ -203,18 +269,38 @@ bool UHodgeGameplayAbility_Definition::BuildAttackFacingData(const FGameplayAbil
 	Out.StartYaw = FRotator::NormalizeAxis(Pawn->GetActorRotation().Yaw);
 	Out.DesiredYaw = Out.StartYaw;
 	Out.Source = EHodgeAttackFacingSource::Actor;
-	if (const auto* Lock = Pawn->FindComponentByClass<UHodgeLockOnComponent>(); Lock && Lock->IsConfirmedTargetValid())
+	if (bUseConfirmedLockPoint)
 	{
+		const auto* Lock = Pawn->FindComponentByClass<UHodgeLockOnComponent>();
+		AActor* Target = nullptr;
 		FVector Point;
-		if (Lock->GetPresentationLockPoint(Point))
+		if (ReadConfirmedAttackLockPoint(Lock, Target, Point))
 		{
 			const FVector Direction = (Point - Pawn->GetActorLocation()).GetSafeNormal2D();
 			if (!Direction.IsNearlyZero())
 			{
-				Out.LockedTarget = Lock->GetConfirmedTarget();
+				Out.LockedTarget = Target;
 				Out.DesiredYaw = Direction.Rotation().Yaw;
 				Out.Source = EHodgeAttackFacingSource::LockedTarget;
 				return true;
+			}
+		}
+	}
+	else
+	{
+		if (const auto* Lock = Pawn->FindComponentByClass<UHodgeLockOnComponent>(); Lock && Lock->IsConfirmedTargetValid())
+		{
+			FVector Point;
+			if (Lock->GetPresentationLockPoint(Point))
+			{
+				const FVector Direction = (Point - Pawn->GetActorLocation()).GetSafeNormal2D();
+				if (!Direction.IsNearlyZero())
+				{
+					Out.LockedTarget = Lock->GetConfirmedTarget();
+					Out.DesiredYaw = Direction.Rotation().Yaw;
+					Out.Source = EHodgeAttackFacingSource::LockedTarget;
+					return true;
+				}
 			}
 		}
 	}
@@ -254,7 +340,6 @@ void UHodgeGameplayAbility_Definition::InitializeAttackFacing(const FGameplayEve
 {
 	bFacingDataWaiting = false;
 	bFacingDataProcessed = false;
-	bActivationReturned = false;
 	bAttackFacingRetired = false;
 	AttackFacingHandle = {};
 	const auto* Data = GetDefinition();
@@ -273,7 +358,7 @@ void UHodgeGameplayAbility_Definition::InitializeAttackFacing(const FGameplayEve
 		GetAvatarActorFromActorInfo())->IsPlayerControlled())
 	{
 		FHodgeAttackFacingTargetData Target;
-		if (!BuildAttackFacingData(CurrentActorInfo, Target))
+		if (!BuildAttackFacingData(CurrentActorInfo, Target, Data->FacingWarp.bTrackExecutionLockTargetDuringWarp))
 		{
 			FinishExecution(true, true);
 			return;
@@ -315,15 +400,17 @@ void UHodgeGameplayAbility_Definition::OnAttackFacingData(const FGameplayAbility
 {
 	if (!IsActive() || bEnding || ForExecution != ExecutionId) { return; }
 	auto* ASC = Cast<UHodgeAbilitySystemComponent>(GetAbilitySystemComponentFromActorInfo());
+	// GAS 可按引用广播缓存本体；先持有本笔数据，消费缓存不能清空当前回调输入。
+	const FGameplayAbilityTargetDataHandle LocalData = Handle;
 	ASC->ConsumeClientReplicatedTargetData(CurrentSpecHandle, CurrentActivationInfo.GetActivationPredictionKey());
 	if (bFacingDataProcessed) { return; }
 	bFacingDataProcessed = true;
 	bFacingDataWaiting = false;
 	GetWorld()->GetTimerManager().ClearTimer(FacingDataTimer);
 	ASC->RetireAttackFacingData(CurrentSpecHandle, CurrentActivationInfo.GetActivationPredictionKey());
-	if (Handle.Num() != 1 || !Handle.Get(0) || Handle.Get(0)->GetScriptStruct() !=
+	if (LocalData.Num() != 1 || !LocalData.Get(0) || LocalData.Get(0)->GetScriptStruct() !=
 		FHodgeAttackFacingTargetData::StaticStruct() ||
-		!ApplyAttackFacing(*static_cast<const FHodgeAttackFacingTargetData*>(Handle.Get(0))))
+		!ApplyAttackFacing(*static_cast<const FHodgeAttackFacingTargetData*>(LocalData.Get(0))))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Attack facing rejected for %s"), *GetName());
 		FinishExecution(true, true);
@@ -336,6 +423,7 @@ bool UHodgeGameplayAbility_Definition::ApplyAttackFacing(const FHodgeAttackFacin
 {
 	const auto* Data = GetDefinition();
 	AActor* Avatar = GetAvatarActorFromActorInfo();
+	const FGuid ForExecution = ExecutionId;
 	if (!Data || !Avatar || Target.SourceAvatar.Get() != Avatar || !FMath::IsFinite(Target.StartYaw) || !
 		FMath::IsFinite(Target.DesiredYaw) ||
 		FMath::Abs(Target.StartYaw) > 180.f || FMath::Abs(Target.DesiredYaw) > 180.f || static_cast<uint8>(Target.
@@ -347,7 +435,12 @@ bool UHodgeGameplayAbility_Definition::ApplyAttackFacing(const FHodgeAttackFacin
 	{
 		const auto* Lock = Avatar->FindComponentByClass<UHodgeLockOnComponent>();
 		FVector Point;
-		if (!Lock || !Lock->IsConfirmedTargetValid() || Lock->GetConfirmedTarget() != Target.LockedTarget.Get() || !Lock
+		if (Data->FacingWarp.bEnabled && Data->FacingWarp.bTrackExecutionLockTargetDuringWarp)
+		{
+			AActor* ConfirmedTarget = nullptr;
+			if (!ReadConfirmedAttackLockPoint(Lock, ConfirmedTarget, Point) || ConfirmedTarget != Target.LockedTarget.Get()) { return false; }
+		}
+		else if (!Lock || !Lock->IsConfirmedTargetValid() || Lock->GetConfirmedTarget() != Target.LockedTarget.Get() || !Lock
 			->GetPresentationLockPoint(Point)) { return false; }
 		const FVector Direction = (Point - Avatar->GetActorLocation()).GetSafeNormal2D();
 		if (Direction.IsNearlyZero() || FMath::Abs(
@@ -355,14 +448,33 @@ bool UHodgeGameplayAbility_Definition::ApplyAttackFacing(const FHodgeAttackFacin
 			TargetYawTolerance) { return false; }
 	}
 	else if (Target.LockedTarget.IsValid()) { return false; }
+	// 确认点可由蓝图解析；旧执行回调不能给已换刀或换 Pawn 的能力提交请求。
+	if (Data->FacingWarp.bEnabled && Data->FacingWarp.bTrackExecutionLockTargetDuringWarp &&
+		(!IsActive() || bEnding || ExecutionId != ForExecution || GetAvatarActorFromActorInfo() != Avatar)) { return false; }
 	if (!HodgeAttackFacing::ResolveYaw(Target.StartYaw, Target.DesiredYaw, Data->FacingWarp.MaxCorrectionAngle,
 	                                   FacingTargetYaw)) { return false; }
 	auto* Rotation = Avatar->FindComponentByClass<UHodgeCharacterRotationComponent>();
 	if (!Rotation || !Avatar->FindComponentByClass<UHodgeAttackMotionWarpingComponent>()) { return false; }
-	ReleaseAttackFacing();
+	// 首次接受数据只替换朝向请求，不能抹掉等待期间已经发生的确认切换。
+	ReleaseAttackFacing(Data->FacingWarp.bEnabled && Data->FacingWarp.bTrackExecutionLockTargetDuringWarp &&
+		LockTrackingExecutionId == ExecutionId && LockTrackingAvatar.Get() == Avatar);
 	AttackFacingHandle = Rotation->RequestMontageWarpFacing(FacingTargetYaw, this, ExecutionId);
 	bAttackFacingRetired = false;
-	return Rotation->IsFacingRequestSelected(AttackFacingHandle);
+	const bool bSelected = Rotation->IsFacingRequestSelected(AttackFacingHandle);
+	if (Data->FacingWarp.bEnabled && Data->FacingWarp.bTrackExecutionLockTargetDuringWarp && bSelected &&
+		Target.Source == EHodgeAttackFacingSource::LockedTarget && Target.LockedTarget.IsValid() &&
+		Target.LockedTarget == ExecutionLockTarget)
+	{
+		auto* Lock = Avatar->FindComponentByClass<UHodgeLockOnComponent>();
+		if (Lock && LockTrackingSource.Get() == Lock && LockTrackingGeneration == Lock->GetGeneration() &&
+			LockTrackingExecutionId == ExecutionId && LockTrackingAvatar.Get() == Avatar &&
+			Lock->IsConfirmedTargetValid() && Lock->GetConfirmedState().Target == ExecutionLockTarget.Get())
+		{
+			AcceptedFacingStartYaw = Target.StartYaw;
+			bTrackExecutionLockTarget = true;
+		}
+	}
+	return bSelected;
 }
 
 void UHodgeGameplayAbility_Definition::OnAttackFacingTimeout(FGuid ForExecution)
@@ -376,6 +488,7 @@ void UHodgeGameplayAbility_Definition::OnAttackFacingTimeout(FGuid ForExecution)
 
 void UHodgeGameplayAbility_Definition::UpdateAttackFacingLifecycle()
 {
+	if (bTrackExecutionLockTarget) { UpdateExecutionLockTargetFacing(); }
 	if (!IsActive() || bEnding || bPredictedMoveCancel || !AttackFacingHandle.IsValid() || !CurrentActorInfo)
 	{
 		return;
@@ -396,9 +509,124 @@ void UHodgeGameplayAbility_Definition::UpdateAttackFacingLifecycle()
 	}
 }
 
-void UHodgeGameplayAbility_Definition::ReleaseAttackFacing()
+/** 只更新原请求的有限 Yaw，停止追踪不会提前释放动作朝向占用。 */
+void UHodgeGameplayAbility_Definition::UpdateExecutionLockTargetFacing()
 {
+	if (!bTrackExecutionLockTarget || bExecutionLockTrackingFrozen) { return; }
+	const FGuid ForExecution = LockTrackingExecutionId;
+	const FHodgeFacingRequestHandle FacingHandle = AttackFacingHandle;
+	const auto* Avatar = Cast<ACharacter>(GetAvatarActorFromActorInfo());
+	// 移动回放消费历史朝向，不重采样或修改当前执行的追踪状态。
+	if (Avatar && (Avatar->bClientUpdating || Avatar->GetLocalRole() == ROLE_SimulatedProxy)) { return; }
+	const auto Freeze = [this, ForExecution]()
+	{
+		if (LockTrackingExecutionId == ForExecution) { bExecutionLockTrackingFrozen = true; }
+	};
+	const auto* Data = GetDefinition();
+	auto* ASC = GetAbilitySystemComponentFromActorInfo();
+	auto* Rotation = Avatar ? Avatar->FindComponentByClass<UHodgeCharacterRotationComponent>() : nullptr;
+	if (!IsActive() || bEnding || bPredictedMoveCancel || bAttackFacingRetired || !CurrentActorInfo ||
+		!Avatar || LockTrackingAvatar.Get() != Avatar || LockTrackingExecutionId != ExecutionId || !ExecutionId.IsValid() ||
+		!Data || !Data->FacingWarp.bEnabled || !Data->FacingWarp.bTrackExecutionLockTargetDuringWarp ||
+		!ASC || ASC->GetAvatarActor() != Avatar || ASC->GetAnimatingAbility() != this ||
+		!Rotation || Rotation->IsYawLocked() || !Rotation->IsFacingRequestSelected(AttackFacingHandle))
+	{ Freeze(); return; }
+	auto* Anim = CurrentActorInfo->GetAnimInstance();
+	const auto* Instance = Anim ? Anim->GetMontageInstanceForID(MontageInstanceId) : nullptr;
+	if (!Instance || !Instance->IsActive() || Instance->Montage != Data->ExecutionConfig.Montage)
+	{ Freeze(); return; }
+	float WarpStart = 0.f, WarpEnd = 0.f;
+	const float Position = Instance->GetPosition();
+	float FirstHit = MAX_flt;
+	for (const auto& Notify : Data->ExecutionConfig.Montage->Notifies)
+	{
+		if ((Notify.NotifyStateClass && Notify.NotifyStateClass->IsA<UHodgeAnimNotifyState_HitCheck>()) ||
+			(Notify.Notify && Notify.Notify->IsA<UHodgeAnimNotify_Hit>()))
+		{ FirstHit = FMath::Min(FirstHit, Notify.GetTriggerTime()); }
+	}
+	// 使用当前实例位置，跨帧越过窗口尾或首伤害通知后不能补做一次追踪。
+	if (!Data->GetFacingWarpWindow(WarpStart, WarpEnd) || !FMath::IsFinite(Position) ||
+		Position >= WarpEnd || Position >= FirstHit)
+	{ Freeze(); return; }
+	const auto* Lock = Avatar->FindComponentByClass<UHodgeLockOnComponent>();
+	AActor* Target = nullptr;
+	FVector Point;
+	if (!Lock || LockTrackingSource.Get() != Lock || LockTrackingGeneration != Lock->GetGeneration() ||
+		!ExecutionLockTarget.IsValid() || !ReadConfirmedAttackLockPoint(Lock, Target, Point) || Target != ExecutionLockTarget.Get())
+	{ Freeze(); return; }
+	// 锁定点接口允许蓝图实现；重入结束或换刀后不能更新新执行的请求。
+	if (bExecutionLockTrackingFrozen || !IsActive() || bEnding || bPredictedMoveCancel ||
+		ExecutionId != ForExecution || LockTrackingExecutionId != ForExecution || LockTrackingAvatar.Get() != Avatar ||
+		AttackFacingHandle.Id != FacingHandle.Id || AttackFacingHandle.AvatarGeneration != FacingHandle.AvatarGeneration)
+	{ Freeze(); return; }
+	// 蓝图点位查询可能移动或替换 Montage，提交前再次核对实际实例与窗口。
+	auto* CurrentAnim = CurrentActorInfo ? CurrentActorInfo->GetAnimInstance() : nullptr;
+	const auto* VerifiedInstance = CurrentAnim ? CurrentAnim->GetMontageInstanceForID(MontageInstanceId) : nullptr;
+	if (!VerifiedInstance || VerifiedInstance != Instance || !VerifiedInstance->IsActive() ||
+		VerifiedInstance->Montage != Data->ExecutionConfig.Montage || !FMath::IsFinite(VerifiedInstance->GetPosition()) ||
+		VerifiedInstance->GetPosition() >= WarpEnd || VerifiedInstance->GetPosition() >= FirstHit)
+	{ Freeze(); return; }
+	if (VerifiedInstance->GetPosition() < WarpStart) { return; }
+	const FVector Direction = (Point - Avatar->GetActorLocation()).GetSafeNormal2D();
+	float UpdatedYaw = 0.f;
+	if (Direction.IsNearlyZero() || !HodgeAttackFacing::ResolveYaw(AcceptedFacingStartYaw, Direction.Rotation().Yaw,
+		Data->FacingWarp.MaxCorrectionAngle, UpdatedYaw) ||
+		!Rotation->UpdateMontageWarpFacing(FacingHandle, this, ForExecution, UpdatedYaw))
+	{ Freeze(); return; }
+	if (ExecutionId != ForExecution || LockTrackingExecutionId != ForExecution || AttackFacingHandle.Id != FacingHandle.Id) { return; }
+	FacingTargetYaw = UpdatedYaw;
+}
+
+/** 记录确认切换这一事实，即使两次求值之间又切回原目标也不能恢复本刀。 */
+void UHodgeGameplayAbility_Definition::HandleExecutionLockStateChanged(FHodgeLockOnState Confirmed,
+	AActor* PresentationTarget, int32 PresentationRevision)
+{
+	if (bExecutionLockTrackingFrozen || LockTrackingExecutionId != ExecutionId ||
+		!ExecutionId.IsValid() || LockTrackingAvatar.Get() != GetAvatarActorFromActorInfo()) { return; }
+	const auto* Lock = LockTrackingSource.Get();
+	if (!IsActive() || bEnding || !Lock || Lock->GetOwner() != LockTrackingAvatar.Get() ||
+		Lock->GetGeneration() != LockTrackingGeneration)
+	{ bExecutionLockTrackingFrozen = true; return; }
+	// 初始化前的迟到事件不属于本刀；Queued/Pending 的表现变化不替代确认目标。
+	if (Confirmed.StateVersion <= LockTrackingInitialStateVersion) { return; }
+	if (!Confirmed.bHasTarget || !IsValid(Confirmed.Target) || Confirmed.Target != ExecutionLockTarget.Get())
+	{ bExecutionLockTrackingFrozen = true; }
+}
+
+void UHodgeGameplayAbility_Definition::BindExecutionLockTracking()
+{
+	const auto* Data = GetDefinition();
+	AActor* Avatar = GetAvatarActorFromActorInfo();
+	// 同一执行重复初始化不得清除已经发生的永久冻结事实。
+	if (LockTrackingExecutionId == ExecutionId && LockTrackingAvatar.Get() == Avatar) { return; }
+	auto* Lock = Avatar ? Avatar->FindComponentByClass<UHodgeLockOnComponent>() : nullptr;
+	if (!Data || !Data->FacingWarp.bEnabled || !Data->FacingWarp.bTrackExecutionLockTargetDuringWarp ||
+		!ExecutionLockTarget.IsValid() || !Lock || !Lock->IsConfirmedTargetValid() ||
+		Lock->GetConfirmedState().Target != ExecutionLockTarget.Get()) { return; }
+	// 监视从激活建立；只有初始 TargetData 验证通过后才取得实际追踪资格。
+	LockTrackingExecutionId = ExecutionId;
+	LockTrackingAvatar = Avatar;
+	LockTrackingSource = Lock;
+	LockTrackingGeneration = Lock->GetGeneration();
+	LockTrackingInitialStateVersion = Lock->GetConfirmedState().StateVersion;
+	bExecutionLockTrackingFrozen = false;
+	Lock->OnLockStateChanged.AddUniqueDynamic(this, &ThisClass::HandleExecutionLockStateChanged);
+}
+
+void UHodgeGameplayAbility_Definition::UnbindExecutionLockTracking()
+{
+	bExecutionLockTrackingFrozen = true;
+	if (auto* Lock = LockTrackingSource.Get())
+	{ Lock->OnLockStateChanged.RemoveDynamic(this, &ThisClass::HandleExecutionLockStateChanged); }
+	LockTrackingSource.Reset();
+}
+
+void UHodgeGameplayAbility_Definition::ReleaseAttackFacing(bool bPreserveExecutionLockTracking)
+{
+	if (!bPreserveExecutionLockTracking) { UnbindExecutionLockTracking(); }
 	if (!AttackFacingHandle.IsValid()) { return; }
+	// 释放会同步解析请求，必须先退役以阻止服务器旧租约在清理过程中回填。
+	bAttackFacingRetired = true;
 	if (auto* Avatar = GetAvatarActorFromActorInfo())
 	{
 		if (auto* Warp = Avatar->FindComponentByClass<UHodgeAttackMotionWarpingComponent>())
@@ -411,7 +639,6 @@ void UHodgeGameplayAbility_Definition::ReleaseAttackFacing()
 		}
 	}
 	AttackFacingHandle = {};
-	bAttackFacingRetired = true;
 }
 
 /** 在仍活动时按指定结束方式结束当前执行。 */
@@ -436,6 +663,8 @@ bool UHodgeGameplayAbility_Definition::BeginPredictedMoveCancel()
 	if (!ASC || ASC->GetAnimatingAbility() != this || !GetDefinition()) { return false; }
 	// 先预测姿势退出，保留执行身份等待服务器接受或恢复。
 	bPredictedMoveCancel = true;
+	// 预测暂停即冻结本刀追踪，服务器恢复旧动作时也只使用最后合法方向。
+	bExecutionLockTrackingFrozen = true;
 	if (auto* Avatar = GetAvatarActorFromActorInfo())
 	{
 		if (auto* Rotation = Avatar->FindComponentByClass<UHodgeCharacterRotationComponent>())
@@ -518,31 +747,15 @@ void UHodgeGameplayAbility_Definition::ResolvePredictedMoveCancel(bool bEnd, flo
 	}
 }
 
-/** 结束本次技能并释放其拥有的资源，再交还GAS生命周期。 */
-void UHodgeGameplayAbility_Definition::EndAbility(FGameplayAbilitySpecHandle Handle,
-                                                  const FGameplayAbilityActorInfo* Info,
-                                                  FGameplayAbilityActivationInfo ActivationInfo, bool bReplicate,
-                                                  bool bCancelled)
+/** 仅由EndAbility在结束保护内调用；按原顺序释放本次执行拥有的全部资源。 */
+void UHodgeGameplayAbility_Definition::ReleaseExecutionResources(FGameplayAbilitySpecHandle Handle,
+	const FGameplayAbilityActorInfo* Info, FGameplayAbilityActivationInfo ActivationInfo)
 {
-	// 根据当前生命周期状态决定是否继续执行。
-	if (bEnding || !IsActive())
-	{
-		return;
-	}
-	const FGuid RequestedExecution = ExecutionId;
-	if (!bLifecycleEventSent)
-	{
-		bLifecycleEventSent = true;
-		SendExecutionEvent(bCancelled
-			                   ? HodgeGameplayTags::GameplayEvent_Attack_Interrupted
-			                   : HodgeGameplayTags::GameplayEvent_Attack_Completed);
-		if (ExecutionId != RequestedExecution || !IsActive()) { return; }
-	}
-	const bool bCompletePreparing = bActivationReturned && IsComboCoordinated() && MontageInstanceId == INDEX_NONE;
-	TGuardValue<bool> Guard(bEnding, true);
 	bPredictedMoveCancel = false;
 	bFacingDataWaiting = false;
 	if (GetWorld()) { GetWorld()->GetTimerManager().ClearTimer(FacingDataTimer); }
+	RecoveryPayload = FGameplayEventData();
+	bHasRecoveryPayload = false;
 	if (Info && Info->AbilitySystemComponent.IsValid())
 	{
 		Info->AbilitySystemComponent->AbilityTargetDataSetDelegate(Handle, ActivationInfo.GetActivationPredictionKey()).
@@ -599,6 +812,31 @@ void UHodgeGameplayAbility_Definition::EndAbility(FGameplayAbilitySpecHandle Han
 	if (ExecutionCombat.IsValid()) { ExecutionCombat->ReleasePoseLease(PoseLease); }
 	PoseLease.Invalidate();
 	ExecutionCombat.Reset();
+}
+
+/** 结束本次技能并释放其拥有的资源，再交还GAS生命周期。 */
+void UHodgeGameplayAbility_Definition::EndAbility(FGameplayAbilitySpecHandle Handle,
+                                                  const FGameplayAbilityActorInfo* Info,
+                                                  FGameplayAbilityActivationInfo ActivationInfo, bool bReplicate,
+                                                  bool bCancelled)
+{
+	// 根据当前生命周期状态决定是否继续执行。
+	if (bEnding || !IsActive())
+	{
+		return;
+	}
+	const FGuid RequestedExecution = ExecutionId;
+	if (!bLifecycleEventSent)
+	{
+		bLifecycleEventSent = true;
+		SendExecutionEvent(bCancelled
+			                   ? HodgeGameplayTags::GameplayEvent_Attack_Interrupted
+			                   : HodgeGameplayTags::GameplayEvent_Attack_Completed);
+		if (ExecutionId != RequestedExecution || !IsActive()) { return; }
+	}
+	const bool bCompletePreparing = bActivationReturned && IsComboCoordinated() && MontageInstanceId == INDEX_NONE;
+	TGuardValue<bool> Guard(bEnding, true);
+	ReleaseExecutionResources(Handle, Info, ActivationInfo);
 	if (auto* ASC = Cast<UHodgeAbilitySystemComponent>(Info->AbilitySystemComponent.Get()))
 	{
 		ASC->StopDefinitionMontage(this, !bCancelled);

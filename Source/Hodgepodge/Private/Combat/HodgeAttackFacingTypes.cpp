@@ -6,6 +6,7 @@
 
 bool FHodgeAttackFacingConfig::Validate(FString& Error) const
 {
+	// 固定方向与确认目标追踪共用同一组角度、速率和通知窗口约束。
 	if (!bEnabled) { Error.Reset(); return true; }
 	const float Positive[] = {MaxCorrectionAngle,MaxRotationRate,RotationTimeMultiplier,TargetDataTimeout};
 	for (float V : Positive) { if (!FMath::IsFinite(V) || V <= 0.f) { Error=TEXT("Attack facing thresholds must be finite and positive."); return false; } }

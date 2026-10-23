@@ -56,6 +56,8 @@ struct HODGEPODGE_API FHodgeAnimHitConfig
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) bool bUseDefaultDamage = true;
 	// 反应覆盖独立于伤害覆盖，终结刀无需复制伤害配置。
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Reaction") bool bUseDefaultReaction = true;
+	// 本分段是击飞资格的唯一作者入口，不从默认削韧或默认 Impact 隐式继承。
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Reaction", meta=(DisplayName="Can Launch", ToolTip="允许本命中分段触发或续接 Fly；关闭时空中目标正常落地起身。")) bool bCanLaunch = false;
 	// 受击Override的数据或对象引用。
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Reaction", meta=(EditCondition="!bUseDefaultReaction", EditConditionHides)) FHodgeHitReactionConfig ReactionOverride;
 	// 关闭默认伤害时使用的显式效果参数。
@@ -75,6 +77,8 @@ struct HODGEPODGE_API FHodgeAnimHitConfig
 	 * @return true表示本次检查或操作成功，false表示失败。
 	 */
 	bool Validate(TArray<FText>& Errors) const;
+	/** 解析默认／覆盖反应后，始终使用本分段的击飞开关。 */
+	FHodgeHitReactionConfig ResolveReaction(const FHodgeHitReactionConfig& DefaultReaction) const;
 };
 
 /** 持续命中区间；通知对象只存配置，运行状态属于当前 GA。 */

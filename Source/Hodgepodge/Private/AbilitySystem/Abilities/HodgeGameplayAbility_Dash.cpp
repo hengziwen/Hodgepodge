@@ -9,6 +9,7 @@
 #include "Component/HodgeCharacterRotationComponent.h"
 #include "Component/HodgeLockOnComponent.h"
 #include "Component/HodgeDefenseComponent.h"
+#include "Combat/HodgeHitReactionTypes.h"
 #include "Data/HodgeSprintAbilityProfile.h"
 #include "Abilities/Tasks/AbilityTask_ApplyRootMotionConstantForce.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
@@ -76,13 +77,19 @@ void UHodgeGameplayAbility_Dash::BeginMovement(const FHodgeMoveIntentSnapshot& I
 		Finish();
 		return;
 	}
-	FacingHandle = Rotation->RequestActionFacing(Directions.FacingDirection, this, ExecutionId,
-	                                             ExecutionProfile->bInstantFacingAtStart);
-	// 先检查对象与上下文，避免在依赖失效后继续处理。
-	if (!FacingHandle.IsValid())
+	// 恢复闪避在方向与素材校验通过后提交一次费用，服务器再解除旧控制供朝向确认。
+	if (RecoverySequence != 0)
 	{
-		Finish();
-		return;
+		if (!CommitAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo) ||
+			!CommitHitRecovery(CurrentSpecHandle, CurrentActorInfo, RecoverySequence)) { Finish(); return; }
+		bRecoveryCostCommitted = true;
+	}
+	// 拥有者等待权威解除受击锁；UpdateMovement 再申请方向，不能绕过旋转仲裁。
+	if (!bRecoveryCostCommitted || CurrentActorInfo->IsNetAuthority())
+	{
+		FacingHandle = Rotation->RequestActionFacing(Directions.FacingDirection, this, ExecutionId,
+		                                             ExecutionProfile->bInstantFacingAtStart);
+		if (!FacingHandle.IsValid()) { Finish(); return; }
 	}
 	// 按服务器权限区分本次处理分支。
 	if (CurrentActorInfo->IsNetAuthority() && !CurrentActorInfo->IsLocallyControlled())
@@ -111,7 +118,7 @@ void UHodgeGameplayAbility_Dash::OnCommitRequested()
 /** 提交Dash冲刺。 */
 void UHodgeGameplayAbility_Dash::CommitDash()
 {
-	if (!CommitAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo))
+	if (!bRecoveryCostCommitted && !CommitAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo))
 	{
 		Finish();
 		return;
@@ -158,6 +165,15 @@ void UHodgeGameplayAbility_Dash::UpdateMovement(float DeltaTime)
 		{
 			Finish();
 			return;
+		}
+		// 恢复闪避等待权威控制复制，不把一次网络往返误判为普通转向超时。
+		if (bRecoveryCostCommitted && !CurrentActorInfo->IsNetAuthority() &&
+			GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(HodgeHitReactionTags::Controlled)) { return; }
+		if (bRecoveryCostCommitted && !FacingHandle.IsValid())
+		{
+			FacingHandle = Rotation->RequestActionFacing(Directions.FacingDirection, this, ExecutionId,
+			                                             ExecutionProfile->bInstantFacingAtStart);
+			if (!FacingHandle.IsValid()) { Finish(); return; }
 		}
 		const auto Status = Rotation->GetFacingRequestStatus(FacingHandle);
 		if (Rotation->IsActionFacingApplied(FacingHandle))

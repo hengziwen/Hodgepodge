@@ -9,6 +9,7 @@
 #include "AbilitySystem/HodgeAbilitySystemComponent.h"
 #include "AbilitySystem/HodgeGameplayTags.h"
 #include "Component/HodgeCharacterMovementComponent.h"
+#include "Component/HodgeHitReactionComponent.h"
 #include "GameFramework/Character.h"
 #include "Net/UnrealNetwork.h"
 #include "Abilities/GameplayAbility.h"
@@ -111,6 +112,15 @@ void UHodgeCharacterRotationComponent::UninitializeFromAbilitySystem()
 /** 处理约束标签变化。 */
 void UHodgeCharacterRotationComponent::HandleConstraintTagChanged(FGameplayTag Tag, int32 NewCount)
 {
+	// 外部硬锁只终止本段补转；解锁不能重新取得该段预算。
+	if (NewCount > 0 && (Tag == HodgeGameplayTags::Status_Rotation_Locked || Tag == TAG_Gameplay_MovementStopped))
+	{
+		if (auto* Character = GetPawn<ACharacter>())
+		{
+			if (auto* Movement = Cast<UHodgeCharacterMovementComponent>(Character->GetCharacterMovement()))
+			{ Movement->FreezeHitReactionFacing(); }
+		}
+	}
 	RefreshLocalState();
 }
 
@@ -180,6 +190,27 @@ FHodgeCharacterRotationState UHodgeCharacterRotationComponent::GetResolvedState(
 
 /** 判断Yaw角锁定。 */
 bool UHodgeCharacterRotationComponent::IsYawLocked() const { return GetResolvedState().bYawLocked; }
+/** 受击自身仍禁止输入转向，但不属于使本段永久冻结的外部硬锁。 */
+bool UHodgeCharacterRotationComponent::IsExternallyYawLocked() const
+{
+	if (IsReplayingMove()) { return bReplayExternalYawLocked; }
+	const auto* ASC = AbilitySystemComponent.Get();
+	return ASC && (ASC->HasMatchingGameplayTag(HodgeGameplayTags::Status_Rotation_Locked) ||
+		ASC->HasMatchingGameplayTag(TAG_Gameplay_MovementStopped) || ASC->HasMatchingGameplayTag(HodgeGameplayTags::Status_Death));
+}
+
+/** 合法受击转向改变冻结参考，避免后续根运动或控制器把本步结果改回起点。 */
+void UHodgeCharacterRotationComponent::UpdateHitReactionLockedYaw(float Yaw)
+{
+	if (!FMath::IsFinite(Yaw)) { return; }
+	const float Normalized = FRotator::NormalizeAxis(Yaw);
+	if (IsReplayingMove()) { ReplayState.LockedYaw = Normalized; }
+	else
+	{
+		LocalState.LockedYaw = Normalized;
+		if (bServerMoveOverride) { ServerMoveState.LockedYaw = Normalized; }
+	}
+}
 /** 判断Recovering朝向。 */
 bool UHodgeCharacterRotationComponent::IsRecoveringFacing() const { return GetResolvedState().bRecoveringFacing; }
 /** 获取锁定Yaw角。 */
@@ -222,9 +253,10 @@ void UHodgeCharacterRotationComponent::NotifyFacingApplied(float DesiredYaw)
 }
 
 /** 设置移动回放状态。 */
-void UHodgeCharacterRotationComponent::SetMoveReplayState(const FHodgeCharacterRotationState& State)
+void UHodgeCharacterRotationComponent::SetMoveReplayState(const FHodgeCharacterRotationState& State, TOptional<bool> bExternalLock)
 {
 	ReplayState = State;
+	bReplayExternalYawLocked = bExternalLock.Get(State.bYawLocked);
 	bHasReplayState = true;
 	ApplyResolvedMode();
 }
@@ -233,6 +265,7 @@ void UHodgeCharacterRotationComponent::SetMoveReplayState(const FHodgeCharacterR
 void UHodgeCharacterRotationComponent::ClearMoveReplayState()
 {
 	bHasReplayState = false;
+	bReplayExternalYawLocked = false;
 	ReplayState = {};
 	ApplyResolvedMode();
 }
@@ -243,7 +276,10 @@ void UHodgeCharacterRotationComponent::OnRep_RotationState()
 	// 当前操作关联的Pawn角色。
 	const APawn* Pawn = GetPawn<APawn>();
 	// 本地窗口决定预测锁的期限，权威结果只校正仍有效的锁定朝向。
-	if (Pawn && Pawn->IsLocallyControlled() && LocalState.bYawLocked && ReplicatedState.bYawLocked)
+	const auto* Reaction = GetOwner() ? GetOwner()->FindComponentByClass<UHodgeHitReactionComponent>() : nullptr;
+	const bool bReactionFacingCurrent = Reaction && Reaction->IsFacingStateCurrent(
+		Reaction->GetFacingState().ChainId, Reaction->GetFacingState().Segment);
+	if (Pawn && Pawn->IsLocallyControlled() && LocalState.bYawLocked && ReplicatedState.bYawLocked && !bReactionFacingCurrent)
 	{
 		LocalState.LockedYaw = ReplicatedState.LockedYaw;
 	}
@@ -360,6 +396,35 @@ FHodgeFacingRequestHandle UHodgeCharacterRotationComponent::RequestMontageWarpFa
 	if (auto* Request=Requests.Find(Handle.Id))
 	{ Request->bAbilityManaged=true; Request->ExecutionMode=EHodgeFacingExecutionMode::MontageWarp; ResolveRequests(); }
 	return Handle;
+}
+/** 同一受控请求持续更新方向，保持唯一仲裁者与原运动执行链。 */
+bool UHodgeCharacterRotationComponent::UpdateMontageWarpFacing(FHodgeFacingRequestHandle Handle,
+	UHodgeGameplayAbility_Definition* Source, FGuid ExecutionId, float TargetYaw)
+{
+	const auto* Pawn = GetPawn<APawn>();
+	const auto* Character = Cast<ACharacter>(Pawn);
+	if (!Pawn || (!Pawn->HasAuthority() && !Pawn->IsLocallyControlled()) || !IsFacingSystemReady() ||
+		IsReplayingMove() || (Character && Character->bClientUpdating) || IsYawLocked() ||
+		!Handle.IsValid() || Handle.AvatarGeneration != AvatarGeneration ||
+		!IsValidSource(Source, true) || !Source->IsActive() || Source->IsExecutionEnding() ||
+		Source->IsFacingExecutionSuspended() || Source->IsFacingAuthorityRetired() ||
+		Source->GetExecutionId() != ExecutionId || !ExecutionId.IsValid() || !FMath::IsFinite(TargetYaw)) { return false; }
+	auto* Request = Requests.Find(Handle.Id);
+	if (!Request || Request->Source.Get() != Source || Request->ExecutionId != ExecutionId || !Request->bAbilityManaged ||
+		Request->bSuspended || Request->ExecutionMode != EHodgeFacingExecutionMode::MontageWarp ||
+		LocalState.ActionRequestId != Handle.Id) { return false; }
+	const float Yaw = FRotator::NormalizeAxis(TargetYaw);
+	Request->Yaw = Yaw;
+	// 当前服务器移动视图已在模拟前复制，不能等下一步才看到本次 Warp 采用的方向。
+	if (bServerMoveOverride && ServerMoveState.ActionRequestId == Handle.Id &&
+		ServerMoveState.Driver == EHodgeCharacterFacingDriver::ActionDirection &&
+		ServerMoveState.ExecutionMode == EHodgeFacingExecutionMode::MontageWarp &&
+		ServerMoveState.WarpDefinition == Source->GetDefinition() &&
+		ServerMoveState.ActionAbilityHandle == Source->GetCurrentAbilitySpecHandle() &&
+		ServerMoveState.ActionPredictionKey == Source->GetCurrentActivationInfo().GetActivationPredictionKey().Current)
+	{ ServerMoveState.ActionYaw = Yaw; }
+	ResolveRequests();
+	return true;
 }
 /** 暂停只影响本地解析，保留当前执行身份及拒绝取消后的恢复数据。 */
 bool UHodgeCharacterRotationComponent::SetFacingRequestSuspended(FHodgeFacingRequestHandle Handle, bool bSuspended)

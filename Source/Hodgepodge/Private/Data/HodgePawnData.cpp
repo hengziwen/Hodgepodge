@@ -34,6 +34,24 @@ UHodgePawnData::UHodgePawnData(const FObjectInitializer& ObjectInitializer)
 EDataValidationResult UHodgePawnData::IsDataValid(FDataValidationContext& Context) const
 {
 	const auto Parent = Super::IsDataValid(Context);
+	// 玩法规则与目标可用的执行动作必须同时有效。
+	TArray<FText> PoiseErrors;
+	Poise.Validate(PoiseErrors);
+	if (Poise.bEnabled && (!HitReactionProfile ||
+		!HitReactionProfile->SupportsImpact(EHodgeImpactType::HitStun) || !HitReactionProfile->SupportsImpact(EHodgeImpactType::Knockback)))
+	{ PoiseErrors.Add(FText::FromString(TEXT("Enabled poise requires Light/Heavy animation paths."))); }
+	if (Poise.bEnabled && HitReactionProfile)
+	{
+		for (auto Type : {EHodgeImpactType::HitStun, EHodgeImpactType::Knockback})
+		{
+			FHodgeHitReactionAnimation Entry;
+			if (HitReactionProfile->ResolveAnimation(Type, Entry) && (Entry.MotionSource != EHodgeReactionMotionSource::Impact ||
+				Entry.LandingMotionSource != EHodgeReactionMotionSource::Impact || Entry.GetUpMotionSource != EHodgeReactionMotionSource::Impact))
+			{ PoiseErrors.Add(FText::FromString(TEXT("Ordinary poise requires in-place reaction, landing and get-up motion; use ExplicitImpact for legacy animation displacement."))); }
+		}
+	}
+	for (const auto& Error : PoiseErrors) { Context.AddError(Error); }
+	if (!PoiseErrors.IsEmpty()) { return EDataValidationResult::Invalid; }
 	if (StatProfile)
 	{
 		TArray<FText> Errors;

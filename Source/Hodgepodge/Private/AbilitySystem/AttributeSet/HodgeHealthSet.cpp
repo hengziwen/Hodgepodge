@@ -203,6 +203,8 @@ void UHodgeHealthSet::PostGameplayEffectExecute(const FGameplayEffectModCallback
     const FVector2D Snapshot = GameplayResourceSnapshots.IsEmpty() ? FVector2D(GetHealth(), GetMaxHealth()) : GameplayResourceSnapshots.Pop();
     const float OldHealthForEffect = Snapshot.X;
     const float OldMaxForEffect = Snapshot.Y;
+	const bool bDamageExecution = Data.EvaluatedData.Attribute == GetDamageAttribute();
+	float DamageHealthSnapshot = GetHealth();
 
 	// 判断当前效果是否属于自毁伤害。
 	const bool bIsDamageFromSelfDestruct = Data.EffectSpec.GetDynamicAssetTags().HasTagExact(
@@ -261,13 +263,15 @@ void UHodgeHealthSet::PostGameplayEffectExecute(const FGameplayEffectModCallback
 
 		// Convert into -Health and then clamp
 		// 将 Damage Meta Attribute 真正转换为 Health 减少，并限制在 MinimumHealth ~ MaxHealth 范围。
-		SetHealth(FMath::Clamp(GetHealth() - GetDamage(), MinimumHealth, GetResourceClampMax()));
-		RecordHitDamage(Data, true, FMath::Max(OldHealthForEffect - GetHealth(), 0.f));
-		const float Accepted = FMath::Max(OldHealthForEffect - GetHealth(), 0.f);
-		if (Accepted > 0.f) { OnDamageAccepted.Broadcast(Instigator, Causer, &Data.EffectSpec, Accepted, OldHealthForEffect, GetHealth()); }
-
-		// Damage 只是一次性 Meta Attribute，消费完成后立即清零，避免污染下一次伤害计算。
+		// 先消费临时伤害，属性与接受事件的同步重入不得再次读到外层数值。
+		const float PendingDamage = GetDamage();
 		SetDamage(0.0f);
+		DamageHealthSnapshot = FMath::Clamp(GetHealth() - PendingDamage, MinimumHealth, GetResourceClampMax());
+		SetHealth(DamageHealthSnapshot);
+		const float Accepted = FMath::Max(OldHealthForEffect - DamageHealthSnapshot, 0.f);
+		RecordHitDamage(Data, true, Accepted);
+		// 每笔通知保留自身扣血结果，内层立即结算不改写外层的历史快照。
+		if (Accepted > 0.f) { OnDamageAccepted.Broadcast(Instigator, Causer, &Data.EffectSpec, Accepted, OldHealthForEffect, DamageHealthSnapshot); }
 	}
 
 	// 本次 GameplayEffect 修改的是 Healing Meta Attribute。
@@ -303,31 +307,35 @@ void UHodgeHealthSet::PostGameplayEffectExecute(const FGameplayEffectModCallback
 
 	// If health has actually changed activate callbacks
 	// 只有最终 Health 确实发生变化时才广播 HealthChanged。
+	const float NewHealthForEffect = bDamageExecution ? DamageHealthSnapshot : GetHealth();
 	if (AttributeRebuildDepth > 0 && (Data.EvaluatedData.Attribute == GetHealthAttribute() || Data.EvaluatedData.Attribute == GetDamageAttribute() || Data.EvaluatedData.Attribute == GetHealingAttribute()))
 	{
-		AttributeRebuildResourceDelta += GetHealth() - OldHealthForEffect;
-		bReachedZeroDuringRebuild |= GetHealth() <= 0.f;
+		AttributeRebuildResourceDelta += NewHealthForEffect - OldHealthForEffect;
+		bReachedZeroDuringRebuild |= NewHealthForEffect <= 0.f;
 	}
 	const bool bResourceExecution = Data.EvaluatedData.Attribute == GetHealthAttribute() || Data.EvaluatedData.Attribute == GetDamageAttribute() || Data.EvaluatedData.Attribute == GetHealingAttribute();
 	// 向当前监听者发布状态变化，调用方继续负责后续处理。
-	if ((AttributeRebuildDepth == 0 || bResourceExecution) && GetHealth() != OldHealthForEffect)
+	if ((AttributeRebuildDepth == 0 || bResourceExecution) && NewHealthForEffect != OldHealthForEffect)
 	{
 		// 广播生命值变化，并携带伤害来源、GE、修改前 Health 和修改后 Health。
 		OnHealthChanged.Broadcast(Instigator, Causer, &Data.EffectSpec, Data.EvaluatedData.Magnitude,
-		                          OldHealthForEffect, GetHealth());
+		                          OldHealthForEffect, NewHealthForEffect);
 	}
 
 	// Health 首次下降到 0 或以下时触发生命耗尽事件。
-	if ((GetHealth() <= 0.0f) && !bOutOfHealth)
+	const bool bConsumedHealth = !bDamageExecution || NewHealthForEffect < OldHealthForEffect;
+	if ((GetHealth() <= 0.0f) && !bOutOfHealth && bConsumedHealth)
 	{
-		// 广播 OutOfHealth，供死亡系统等逻辑继续处理。
+		// 先登记再广播，死亡监听器重入不能重复通知或抢走致死来源。
+		bOutOfHealth = true;
 		OnOutOfHealth.Broadcast(Instigator, Causer, &Data.EffectSpec, Data.EvaluatedData.Magnitude,
 		                        OldHealthForEffect, GetHealth());
 	}
 
 	// Check health again in case an event above changed it.
 	// 上面的事件回调本身可能再次修改 Health，因此最后重新计算一次生命耗尽状态。
-	bOutOfHealth = (GetHealth() <= 0.0f);
+	// 零损失的内层伤害不登记死亡，留给真正消耗生命的外层事务通知。
+	if (GetHealth() > 0.f) { bOutOfHealth = false; }
 }
 
 // Attribute 的 BaseValue 即将发生变化之前调用。

@@ -7,6 +7,7 @@
 #include "Animation/AnimNotifyQueue.h"
 #include "Animation/ActiveMontageInstanceScope.h"
 #include "Misc/AutomationTest.h"
+#include <limits>
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeNotifyConfigurationTest, "Hodge.AnimNotify.Configuration",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
@@ -26,6 +27,37 @@ bool FHodgeNotifyConfigurationTest::RunTest(const FString& Parameters)
 	TestFalse(TEXT("Capsule dimensions are validated before session creation"), Hit.Validate(Errors));
 	Hit.CapsuleHalfHeight = 100.f; Hit.LocalTransform.SetScale3D(FVector(2.f)); Errors.Reset();
 	TestFalse(TEXT("Scale cannot silently change query dimensions"), Hit.Validate(Errors));
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHodgeNotifyRelevantFieldsTest, "Hodge.AnimNotify.RelevantFields",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+/** 隐藏字段不阻断有效来源，实际使用的形状、目标和伤害参数仍严格校验。 */
+bool FHodgeNotifyRelevantFieldsTest::RunTest(const FString& Parameters)
+{
+	const float NaN = std::numeric_limits<float>::quiet_NaN();
+	FHodgeAnimHitConfig Hit;
+	Hit.Source = EHodgeAnimHitSource::AvatarRoot;
+	Hit.Shape = EHodgeHitShape::Sphere;
+	Hit.BoxHalfExtent = FVector::ZeroVector;
+	Hit.CapsuleHalfHeight = NaN;
+	Hit.MaxTargetDistance = -1.f;
+	TArray<FText> Errors;
+	TestTrue(TEXT("Sphere ignores hidden box, capsule and unselected target fields"), Hit.Validate(Errors));
+	Hit.Radius = NaN; Errors.Reset();
+	TestFalse(TEXT("Sphere still rejects its own invalid radius"), Hit.Validate(Errors));
+	Hit.Shape = EHodgeHitShape::Box; Hit.BoxHalfExtent = FVector(30.f); Errors.Reset();
+	TestTrue(TEXT("Box ignores unused radius and capsule height"), Hit.Validate(Errors));
+	Hit.Source = EHodgeAnimHitSource::EquippedWeapon;
+	Hit.BoxHalfExtent = FVector::ZeroVector;
+	Hit.LocalTransform.SetScale3D(FVector(2.f));
+	Hit.MaxAnchorDistance = -1.f; Errors.Reset();
+	TestTrue(TEXT("Weapon uses registered geometry rather than hidden notification values"), Hit.Validate(Errors));
+	Hit.TargetPolicy = EHodgeHitTargetPolicy::LockedTargetInVolume;
+	Hit.TargetKey = TEXT("LockedTarget"); Errors.Reset();
+	TestFalse(TEXT("Selected target still requires a valid visible distance"), Hit.Validate(Errors));
+	Hit.MaxTargetDistance = 1000.f; Hit.DamageScale = NaN; Errors.Reset();
+	TestFalse(TEXT("Unrelated geometry never weakens damage multiplier validation"), Hit.Validate(Errors));
 	return true;
 }
 

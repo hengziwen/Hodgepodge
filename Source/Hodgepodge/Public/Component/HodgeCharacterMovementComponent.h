@@ -9,11 +9,17 @@
 #include "NativeGameplayTags.h"
 #include "GameFramework/CharacterMovementReplication.h"
 #include "Combat/HodgeMovementActionTypes.h"
+#include "Combat/HodgeHitReactionTypes.h"
+#include "GameplayAbilitySpecHandle.h"
 
 #include "HodgeCharacterMovementComponent.generated.h"
 
 class UObject;
+class UHodgeAbilityDefinition;
+class UAnimMontage;
 struct FFrame;
+struct FHodgeCharacterRotationState;
+namespace HodgeRotationPrediction { class FSavedMove; }
 
 // 角色移动停止时使用的 GameplayTag。
 HODGEPODGE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_MovementStopped);
@@ -74,6 +80,12 @@ public:
 	 * @param DeltaTime 本次更新的时间步长，单位秒。
 	 */
 	virtual void PerformMovement(float DeltaTime) override;
+	/** 仅追踪开关启用时记录本步实际Warp输入；回放和移动作用域外调用不录入。 */
+	void RecordAttackWarpEvaluation(const FHodgeCharacterRotationState& State, const UAnimMontage* Montage);
+	/** 硬锁出现时记住当前段的实际Yaw；服务器发布冻结，客户端等待同段权威结果。 */
+	void FreezeHitReactionFacing();
+	/** Avatar解绑或换代时清理补转与一次校正，不改Actor朝向。 */
+	void ResetHitReactionFacing();
 
 	// 判断角色当前是否允许尝试跳跃。
 	/** 检查是否允许尝试序号跳跃。
@@ -172,6 +184,15 @@ public:
 	virtual void ClientAdjustPosition_Implementation(float TimeStamp, FVector NewLoc, FVector NewVel,
 		UPrimitiveComponent* NewBase, FName NewBaseBoneName, bool bHasBase, bool bBaseRelativePosition,
 		uint8 ServerMovementMode, TOptional<FRotator> OptionalRotation = TOptional<FRotator>()) override;
+	/** 原生Montage纠正携带真实朝向，legacy入口也禁止可选补转锚点覆盖它。 */
+	virtual void ClientAdjustRootMotionPosition_Implementation(float TimeStamp, float ServerMontageTrackPosition,
+		FVector ServerLoc, FVector_NetQuantizeNormal ServerRotation, float ServerVelZ, UPrimitiveComponent* ServerBase,
+		FName ServerBoneName, bool bHasBase, bool bBaseRelativePosition, uint8 ServerMovementMode) override;
+	/** 原生RMS纠正沿原有Super执行，作用域只隔离嵌套位置纠正的锚点记录。 */
+	virtual void ClientAdjustRootMotionSourcePosition_Implementation(float TimeStamp, FRootMotionSourceGroup ServerRootMotion,
+		bool bHasAnimRootMotion, float ServerMontageTrackPosition, FVector ServerLoc, FVector_NetQuantizeNormal ServerRotation,
+		float ServerVelZ, UPrimitiveComponent* ServerBase, FName ServerBoneName, bool bHasBase, bool bBaseRelativePosition,
+		uint8 ServerMovementMode) override;
 #if WITH_DEV_AUTOMATION_TESTS
 	/** 获取朝向移动数据关联Tests。
 	 * @return 朝向移动数据关联Tests的当前值或引用。
@@ -227,4 +248,109 @@ protected:
 	bool IsHitReactionControlled() const;
 	// 朝向移动数据的数据或对象引用。
 	TUniquePtr<FCharacterNetworkMoveDataContainer> FacingMoveData;
+
+private:
+	friend class HodgeRotationPrediction::FSavedMove;
+	friend struct FHodgeAttackWarpTestAccess;
+	friend struct FHodgeHitReactionFacingMovementTestAccess;
+	/** 单个历史移动只消费自身的权威快照、时段与暂停/硬锁事实。 */
+	struct FHitReactionFacingMoveSnapshot
+	{
+		FHodgeHitReactionFacingState Facing;
+		TWeakObjectPtr<ACharacter> Avatar;
+		int32 AvatarGeneration = INDEX_NONE;
+		float EvaluatedAt = 0.f;
+		float EvaluationStartedAt = 0.f;
+		bool bCurrent = false;
+		bool bPaused = false;
+		bool bExternalLock = false;
+		bool bCorrectionPending = false;
+		bool bLocallyFrozen = false;
+		bool bHasRecordedYaw = false;
+		float RecordedYaw = 0.f;
+	};
+	/** 录制实时事实；SetMoveFor在真正移动前调用，回放不重新读取世界时间。 */
+	FHitReactionFacingMoveSnapshot CaptureHitReactionFacing(float DeltaTime) const;
+	/** 在PerformMovement唯一入口消费本步补转，不改世界运动速度。 */
+	void ApplyHitReactionFacing(const FHitReactionFacingMoveSnapshot& Snapshot, float DeltaTime);
+	/** 当前段Final只消费一次；回放或原生新ACK后的首允许入口可恢复已消费约束。 */
+	void ApplyHitReactionFacingCorrection(bool bRestoreAfterReplay = false);
+	/** 所有合法Yaw写入均经过CMC，并同步当前冻结参考。 */
+	void MoveHitReactionFacingYaw(float Yaw);
+	/** 核对当前Avatar代与段，历史移动不能恢复已退役的当前占用。 */
+	bool IsLiveHitReactionFacing(const FHodgeHitReactionFacingState& Facing) const;
+	TOptional<FHitReactionFacingMoveSnapshot> HitReactionReplay;
+	FGuid LiveFacingChainId;
+	uint32 LiveFacingSegment = 0;
+	int32 LiveFacingAvatarGeneration = INDEX_NONE;
+	float LastFacingEvaluatedAt = -MAX_flt;
+	// 客户端本地硬锁永久终止本段普通补转，权威冻结Yaw仍可校正一次。
+	bool bFacingLocallyFrozen = false;
+	float LocallyFrozenFacingYaw = 0.f;
+	FGuid CorrectedFacingChainId;
+	uint32 CorrectedFacingSegment = 0;
+	uint32 CorrectedFacingRevision = 0;
+	float CorrectedFacingYaw = 0.f;
+	// 原生新ACK可改变身体Yaw；已消费Final须在首个允许入口恢复，暂停不丢失待办。
+	bool bNativeFacingFinalRestorePending = false;
+	bool bApplyingHitReactionFacing = false;
+	/** 保留同身份当前参考；显式原生Yaw只有新ACK实际应用后才可成为锚点。 */
+	struct FHitReactionReplayAnchor
+	{
+		TWeakObjectPtr<ACharacter> Avatar;
+		int32 AvatarGeneration = INDEX_NONE;
+		FGuid ChainId;
+		uint32 Segment = 0;
+		FGuid ActionRequestId;
+		uint8 Driver = 0;
+		float VisibleYaw = 0.f;
+		bool bMayRestore = false;
+		bool bNativeCorrection = false;
+		bool bFacingCurrent = false;
+	};
+	/** 默认仅为受击历史留参考；原生纠正核验可额外捕获当前有效段身份。 */
+	FHitReactionReplayAnchor CaptureHitReactionReplayAnchor(bool bMayRestore, bool bRequireFacingHistory = true) const;
+	/** 保存原生处理前的真实未确认移动对象，重复时间戳不能冒充新ACK。 */
+	FSavedMovePtr FindHitReactionCorrectionMove(float TimeStamp) const;
+	/** 新ACK必须替换原引用并移出未确认列表，不能只比较LastAcked时间戳。 */
+	bool IsHitReactionCorrectionAcknowledged(const FSavedMovePtr& ExpectedAck, const FSavedMovePtr& PreviousAck,
+		float TimeStamp) const;
+	/** 只同步新ACK实际应用的同身份原生Yaw，不改变RPC校验和历史移动载荷。 */
+	void CommitHitReactionNativeCorrection(const FHitReactionReplayAnchor& Before, const FSavedMovePtr& ExpectedAck,
+		const FSavedMovePtr& PreviousAck, float TimeStamp, const TCHAR* NativeType, float BeforeYaw, float ServerYaw);
+	/** Super仍完整执行；未获新ACK的RMS只能恢复同身份回包前姿态，不能取得新授权。 */
+	void RestoreRejectedHitReactionNativeCorrection(const FHitReactionReplayAnchor& Before, const FSavedMovePtr& ExpectedAck,
+		const FSavedMovePtr& PreviousAck, float TimeStamp);
+	/** 回放只恢复仍匹配的当前约束；原生新ACK恢复纠正后Yaw，动画根运动保持原机制。 */
+	void RestoreHitReactionFacingAfterReplay(const FHitReactionReplayAnchor& Anchor);
+	TOptional<FHitReactionReplayAnchor> HitReactionReplayAnchor;
+	// Packed与根运动入口已记录本次响应，嵌套ClientAdjustPosition不能覆盖其真实Rotation标记。
+	bool bHitReactionFacingResponseScope = false;
+	/** 求值仅保留弱身份；完成后交给同一SavedMove回填Yaw，不延长动作或资产生命周期。 */
+	struct FAttackWarpEvaluation
+	{
+		uint64 Sequence = 0;
+		FGuid RequestId;
+		FGameplayAbilitySpecHandle AbilityHandle;
+		int32 PredictionKey = 0;
+		int32 AvatarGeneration = INDEX_NONE;
+		TWeakObjectPtr<ACharacter> Avatar;
+		TWeakObjectPtr<const UHodgeAbilityDefinition> Definition;
+		TWeakObjectPtr<const UAnimMontage> Montage;
+		float ActionYaw = 0.f;
+	};
+	/** 每次移动开始清旧结果；序号把SetMoveFor和随后唯一移动步配对。 */
+	void BeginAttackWarpEvaluation();
+	/** 离开作用域后停止录入，仅保留本步无歧义的完成结果供PostUpdate消费。 */
+	void EndAttackWarpEvaluation();
+	/** SetMoveFor在PerformMovement之前执行，预记下一次求值序号。 */
+	uint64 GetNextAttackWarpEvaluationSequence() const;
+	/** 只消费同一步同身份结果；失败不改OutYaw或SavedMove其他状态。 */
+	bool ConsumeAttackWarpEvaluation(uint64 Sequence, int32 AvatarGeneration,
+		const FHodgeCharacterRotationState& InitialState, const UAnimMontage* Montage, float& OutYaw);
+	uint64 AttackWarpEvaluationSequence = 0;
+	bool bAttackWarpEvaluationActive = false;
+	bool bAttackWarpEvaluationAmbiguous = false;
+	TOptional<FAttackWarpEvaluation> ActiveAttackWarpEvaluation;
+	TOptional<FAttackWarpEvaluation> CompletedAttackWarpEvaluation;
 };

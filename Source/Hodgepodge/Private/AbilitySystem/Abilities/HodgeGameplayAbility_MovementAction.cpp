@@ -8,6 +8,7 @@
 #include "Component/HodgeLocomotionPolicyComponent.h"
 #include "Component/HodgeCharacterRotationComponent.h"
 #include "Component/HodgeCharacterMovementComponent.h"
+#include "Component/HodgeHitReactionComponent.h"
 #include "Combat/HodgeHitReactionTypes.h"
 #include "Data/HodgeSprintAbilityProfile.h"
 #include "GameFramework/Character.h"
@@ -73,6 +74,9 @@ void UHodgeGameplayAbility_MovementAction::ActivateAbility(FGameplayAbilitySpecH
 	Super::ActivateAbility(Handle, Info, ActivationInfo, Event);
 	ExecutionId = FGuid::NewGuid();
 	bCommitted = bReceivedData = false;
+	bRecoveryCostCommitted = false;
+	const auto* Reaction = Info->AvatarActor->FindComponentByClass<UHodgeHitReactionComponent>();
+	RecoverySequence = Reaction && Reaction->IsControlled() ? Reaction->GetReactionState().Sequence : 0;
 	SessionId = 0;
 	ExecutionProfile = ResolveProfile(Info);
 	PreparingAt = GetWorld()->GetTimeSeconds();
@@ -173,11 +177,14 @@ bool UHodgeGameplayAbility_MovementAction::IsMovementValid() const
 	const auto* Character = Cast<ACharacter>(GetAvatarActorFromActorInfo());
 	// 后续GAS操作使用的能力系统组件。
 	const auto* ASC = GetAbilitySystemComponentFromActorInfo();
+	const auto* Reaction = Character ? Character->FindComponentByClass<UHodgeHitReactionComponent>() : nullptr;
+	const bool bAllowedRecovery = RecoverySequence != 0 && Reaction && Reaction->GetReactionState().Sequence == RecoverySequence &&
+		CanRecoverFromHit(CurrentSpecHandle, CurrentActorInfo);
 	return Character && !Character->bIsCrouched && ASC && ASC->GetAvatarActor() == Character && Policy.IsValid() &&
 		Rotation.IsValid() &&
 		Rotation->IsFacingSystemReady() && IsExecutionMovementModeValid(Character->GetCharacterMovement()) &&
-		!ASC->HasMatchingGameplayTag(HodgeGameplayTags::Status_Death) && !ASC->HasMatchingGameplayTag(
-			HodgeHitReactionTags::Controlled) &&
+		!ASC->HasMatchingGameplayTag(HodgeGameplayTags::Status_Death) && (!ASC->HasMatchingGameplayTag(
+			HodgeHitReactionTags::Controlled) || bAllowedRecovery) &&
 		!ASC->HasMatchingGameplayTag(TAG_Gameplay_MovementStopped);
 }
 

@@ -81,6 +81,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) FHodgeAbilityExecutionConfig ExecutionConfig;
 	// 连段技能走协调器授权，Standalone 技能走正常 GAS 激活流程。
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) EHodgeAbilityExecutionRoute ExecutionRoute = EHodgeAbilityExecutionRoute::ComboCoordinated;
+	// 仅明确标记的普攻可消费目标 Profile 的反击恢复窗口，E/R 不隐式获得免控。
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Combat") bool bAllowHitRecoveryAttack = false;
 	// 仅独立 Definition 使用；授予时写入 Spec 的输入标签。
 	// Standalone 授予时写入 Spec 的输入标签，不会自动创建输入动作或按键映射。
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(Categories="InputTag")) FGameplayTag InputTag;

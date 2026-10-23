@@ -211,16 +211,23 @@ bool UHodgeGameplayAbility_Melee::BeginNotifyHit(int32 OccurrenceId, const FHodg
 {
 	// 按服务器权限区分本次处理分支。
 	if (OccurrenceId == INDEX_NONE || !CurrentActorInfo || !CurrentActorInfo->IsNetAuthority()) { return false; }
-	TArray<FText> Errors;
-	if (!Config.Validate(Errors)) { return false; }
-	// 当前操作使用的定义配置。
 	const auto* Definition = GetDefinition();
+	TArray<FText> Errors;
+	if (!Config.Validate(Errors))
+	{
+		// 按分段输出真正失败的字段，避免只表现为无命中、无伤害。
+		for (const FText& Error : Errors)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Invalid notify hit Definition=%s Montage=%s Avatar=%s Occurrence=%d Source=%d Shape=%d: %s"),
+				*GetPathNameSafe(Definition), *GetPathNameSafe(Definition ? Definition->ExecutionConfig.Montage.Get() : nullptr),
+				*GetNameSafe(GetAvatarActorFromActorInfo()), OccurrenceId, int32(Config.Source), int32(Config.Shape), *Error.ToString());
+		}
+		return false;
+	}
 	FHodgeHitEffectConfig Effect = Config.bUseDefaultDamage && Definition
 		                               ? Definition->DefaultHitConfig
 		                               : Config.Damage;
-	Effect.Reaction = Config.bUseDefaultReaction && Definition
-		                  ? Definition->DefaultHitConfig.Reaction
-		                  : Config.ReactionOverride;
+	Effect.Reaction = Config.ResolveReaction(Definition ? Definition->DefaultHitConfig.Reaction : FHodgeHitReactionConfig());
 	Effect.DamageMultiplier *= Config.DamageScale;
 	Effect.RepeatHitInterval = Config.RepeatHitInterval;
 	Effect.HitGroup = Config.HitGroup;
@@ -256,7 +263,9 @@ bool UHodgeGameplayAbility_Melee::BeginNotifyHit(int32 OccurrenceId, const FHodg
 	Request.Volume.MaxAnchorDistance = Config.MaxAnchorDistance;
 	Request.Volume.AnchorKey = Config.AnchorKey;
 	Request.TargetPolicy = Config.TargetPolicy;
-	Request.MaxTargetDistance = Config.MaxTargetDistance;
+	// 无指定目标时保留请求的合法默认值，隐藏的旧距离不应使几何会话失败。
+	if (Config.TargetPolicy != EHodgeHitTargetPolicy::AnyInVolume || Config.Source == EHodgeAnimHitSource::ExecutionTarget)
+	{ Request.MaxTargetDistance = Config.MaxTargetDistance; }
 	if (const FTransform* Anchor = HitAnchors.Find(Config.AnchorKey))
 	{
 		Request.RuntimeAnchor = *Anchor;

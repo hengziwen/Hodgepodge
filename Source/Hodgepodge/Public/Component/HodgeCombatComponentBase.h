@@ -369,6 +369,16 @@ private:
 	 * @return 本次计算、查询或创建得到的连段转换。
 	 */
 	const FHodgeComboTransition* SelectTransition(FGameplayTag Trigger, bool bEvent) const;
+	/** 一次纯判定同时决定开放边、合法等待或拒绝，避免服务器与本地选边分叉。 */
+	enum class ETransitionReadiness : uint8 { Reject, Wait, Ready };
+	struct FTransitionEvaluation
+	{
+		ETransitionReadiness Readiness = ETransitionReadiness::Reject;
+		const FHodgeComboTransition* Edge = nullptr;
+	};
+	/** WaitingHandle 只限制闭窗等待目标，已开放边仍按全图优先级选择。 */
+	FTransitionEvaluation EvaluateTransition(FGameplayTag Trigger, bool bEvent,
+		FGameplayAbilitySpecHandle WaitingHandle = FGameplayAbilitySpecHandle()) const;
 	/** 尝试转换。
 	 * @param Trigger Trigger，用于对应标签查询或匹配。
 	 * @param bEvent 是否事件的控制标记。

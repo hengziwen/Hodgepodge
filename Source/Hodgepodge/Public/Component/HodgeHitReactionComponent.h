@@ -11,6 +11,8 @@ class UHodgeAbilitySystemComponent;
 class UHodgeHitReactionProfile;
 class UHodgeGameplayAbility_HitReaction;
 class UAbilitySystemComponent;
+class UHodgeCombatComponentBase;
+class UHodgePawnData;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHodgeReactionResolved, const FHodgeHitReactionResult&, Result);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHodgeReactionStateChanged, const FHodgeHitReactionState&, State);
@@ -22,6 +24,15 @@ class HODGEPODGE_API UHodgeHitReactionComponent : public UPawnComponent
 {
 	GENERATED_BODY()
 public:
+	/** 返回权威补转段；客户端只消费复制值，不能提交目标角或有效时间。 */
+	UFUNCTION(BlueprintPure, Category="Hodge|HitReaction")
+	FHodgeHitReactionFacingState GetFacingState() const { return FacingState; }
+	/** 旧段及旧 Avatar 的回放不能取得当前控制许可。 */
+	bool IsFacingStateCurrent(const FGuid& ChainId, uint32 Segment) const;
+	/** 局部动画停顿也暂停可选补转及校正，但不延长服务器截止时间。 */
+	bool IsFacingPaused() const;
+	/** 仅 CMC 已执行的同段结果可冻结服务器状态，不接受客户端请求。 */
+	void FinishFacingSegment(const FGuid& ChainId, uint32 Segment, uint32 Revision, float FinalYaw, bool bHardLocked);
 	/** 构造受击状态组件并初始化其默认状态。
 	 * @param ObjectInitializer UE构造对象时传入的初始化器。
 	 */
@@ -42,6 +53,10 @@ public:
 	 * @return 上次结果的当前值或引用。
 	 */
 	UFUNCTION(BlueprintPure, Category="Hodge|HitReaction") FHodgeHitReactionResult GetLastResult() const { return LastResult; }
+	/** 服务器诊断值；客户端不反推权威削韧，不复制时间窗队列。 */
+	UFUNCTION(BlueprintPure, Category="Hodge|HitReaction") float GetAccumulatedPoise() const;
+	/** 死亡、解绑或显式重置目标时清空积累与保护，不取消其他系统动作。 */
+	void ResetPoise();
 	/** 当前 Avatar 已接受的独立表现次数，供跨端核对，不参与结算。 */
 	UFUNCTION(BlueprintPure, Category="Hodge|HitReaction") int32 GetPresentationCount() const { return PresentationCount; }
 	/** 最近一次接触快照不代替逐事件日志，同帧多接触以日志为准。 */
@@ -95,6 +110,14 @@ public:
 	 * @param Ability 能力，由调用方传入。
 	 */
 	void DetachAbility(UHodgeGameplayAbility_HitReaction* Ability);
+	/** 接管已释放控制的恢复尾部；根运动仍由 CMC 消费，保存具体实例身份。 */
+	bool RetirePresentation(UAnimMontage* Montage, int32 InstanceId);
+	/** 新强反应或解绑只停止本组件持有的旧视觉实例。 */
+	void StopRetiredPresentation();
+	/** 查询本 Avatar 当前地面硬直的恢复资格，不放行死亡、击退或空中状态。 */
+	UFUNCTION(BlueprintPure, Category="Hodge|HitReaction") bool CanRecover(EHodgeHitRecoveryAction Action) const;
+	/** 仅供成功提交的行动在服务器交接；迟到身份不得解除新受击。 */
+	bool TryRecover(EHodgeHitRecoveryAction Action, int32 ExpectedSequence);
 	/** 完成Plan。
 	 * @param Sequence 序号，由调用方传入。
 	 */
@@ -122,6 +145,7 @@ public:
 
 private:
 	friend struct FHodgeHitReactionTestAccess;
+	friend struct FHodgeHitReactionFacingMovementTestAccess;
 	/** 保存待处理命中的数据和接口契约。 */
 	struct FPendingHit
 	{
@@ -135,6 +159,8 @@ private:
 		TWeakObjectPtr<AActor> Avatar;
 		// Origin的几何或变换数据。
 		FVector Origin = FVector::ZeroVector;
+		// 仅供补转使用，来源销毁后仍保留命中时的有效值。
+		FHodgeHitReactionFacingSource FacingSource;
 		// 体状态标签的数据或对象引用。
 		FGameplayTag BodyTag;
 		// 体状态Rank的数值或阈值。
@@ -145,7 +171,25 @@ private:
 		bool bAccepted = false;
 		// 控制是否Rejected的状态标记。
 		bool bRejected = false;
+		// 仅内部目标裁决设置，攻击方不能通过此字段直接选择等级。
+		EHodgeReactionLevel ReactionLevel = EHodgeReactionLevel::None;
 	};
+	/** 只记录服务器已接受的正值样本，数量由目标配置限制。 */
+	struct FPoiseSample { float Time = 0.f; float Amount = 0.f; };
+	TArray<FPoiseSample> PoiseSamples;
+	EHodgeReactionLevel ConsumedPoiseLevel = EHodgeReactionLevel::None;
+	uint32 PoiseGeneration = 0;
+	FTimerHandle PoiseTimer;
+	FDelegateHandle PoiseDeathHandle;
+	FDelegateHandle PoiseHealthHandle;
+	TWeakObjectPtr<const UHodgePawnData> PoisePawnData;
+	/** 计时器只清理过期样本，永远不自动触发控制。 */
+	void ExpirePoise(float Now);
+	void SchedulePoiseExpiry();
+	/** 将合格的一次结算转为一个目标计划，失败不消费阈值。 */
+	void ResolvePoise(FPendingHit Hit, FHodgeHitReactionResult& Result);
+	/** 分段开关只提交一次 Fly；空中重播沿用原控制链与续飞次数上限。 */
+	void ResolveSegmentLaunch(FPendingHit Hit, FHodgeHitReactionResult& Result);
 	// 待处理Hits的记录集合。
 	TMap<FGuid, FPendingHit> PendingHits;
 	// 后续GAS操作使用的能力系统组件。
@@ -156,6 +200,10 @@ private:
 	UPROPERTY(ReplicatedUsing=OnRep_Profile) TObjectPtr<UHodgeHitReactionProfile> Profile;
 	// 当前状态数据。
 	UPROPERTY(ReplicatedUsing=OnRep_State) FHodgeHitReactionState State;
+	// 与动画计划分别发布，GA 激活或同步失败时不能泄漏候选许可。
+	UPROPERTY(ReplicatedUsing=OnRep_FacingState) FHodgeHitReactionFacingState FacingState;
+	// 生命周期代只约束可选补转，不能改变既有伤害及受击裁决。
+	uint32 FacingGeneration = 1;
 	// 上次结果的数据或对象引用。
 	UPROPERTY(Transient) FHodgeHitReactionResult LastResult;
 	// 下次序号的数值或阈值。
@@ -171,6 +219,14 @@ private:
 	// 客户端只保留有限命中身份，解绑时清空，避免重复副作用与无限增长。
 	TArray<FGuid> PresentedHits;
 	UPROPERTY(Transient) TWeakObjectPtr<UAnimMontage> LastLightMontage;
+	// 恢复尾部不持有控制或收益；可继续动画根运动，同资产的新实例不受旧记录影响。
+	UPROPERTY(Transient) TWeakObjectPtr<UAnimMontage> RetiredMontage;
+	int32 RetiredMontageInstanceId = INDEX_NONE;
+	// 动画更新被可见性策略暂停时，尾部也必须有有限的收尾期限。
+	float RetiredExpiresAt = 0.f;
+	// 根运动尾部在权威端继续持有骨骼更新租约，不能随受击 GA 提前释放。
+	FGuid RetiredPoseLease;
+	UPROPERTY(Transient) TWeakObjectPtr<UHodgeCombatComponentBase> RetiredPoseCombat;
 	float LastLightStrength = 0.f;
 	int32 PresentationCount = 0;
 	UPROPERTY(Transient) FHodgeHitPresentation LastPresentation;
@@ -190,7 +246,16 @@ private:
 	 * @param Failure 失败，由调用方传入。
 	 * @return true表示本次检查或操作成功，false表示失败。
 	 */
-	bool SubmitPlan(FHodgeHitReactionState Plan, EHodgeHitReactionOutcome& Failure);
+	bool SubmitPlan(FHodgeHitReactionState Plan, EHodgeHitReactionOutcome& Failure,
+		const FHodgeHitReactionFacingSource& FacingSource = FHodgeHitReactionFacingSource());
+	/** 在原 GA 提交成功后建立或升级补转段，同级不重取来源。 */
+	void CommitFacing(const FHodgeHitReactionFacingSource& Source, const FHodgeHitReactionState& Previous, bool bWasAir);
+	/** 纯身份核验供冻结记录使用；记录仍在不代表拥有执行许可。 */
+	bool IsFacingIdentityCurrent(const FGuid& ChainId, uint32 Segment) const;
+	/** 先使段身份失效，再通知仲裁和移动缓存释放，避免旧状态复活。 */
+	void ClearFacing(bool bInvalidatePending = false);
+	/** 复制只通知现有仲裁链，不在 OnRep 中写 Actor 朝向。 */
+	UFUNCTION() void OnRep_FacingState();
 	/** 设置控制。
 	 * @param bControlled 是否Controlled的控制标记。
 	 */

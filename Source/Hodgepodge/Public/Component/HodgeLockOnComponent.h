@@ -81,6 +81,7 @@ protected:
 private:
 #if WITH_DEV_AUTOMATION_TESTS
 	friend struct FHodgeLockOnTestAccess;
+	friend struct FHodgeAttackWarpTestAccess;
 #endif
 	void InitializeFromExtension();
 	void SynchronizePresentation();
