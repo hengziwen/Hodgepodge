@@ -402,6 +402,12 @@ bool UHodgeUIAuthoringLibrary::QueueUIAction(APlayerController* Player, FName Ac
             if (PC->IsLocalController()) { PC->InputKey(FInputKeyParams(EKeys::MiddleMouseButton,Value > .5f ? IE_Pressed : IE_Released,Value > .5f ? 1. : 0.)); }
             return;
         }
+        // 交互验证经过真实 F 键映射和 GAS，入口只接受本地 PIE Controller。
+        if (Action == TEXT("InteractionKey"))
+        {
+            if (PC->IsLocalController()) { PC->InputKey(FInputKeyParams(EKeys::F, Value > .5f ? IE_Pressed : IE_Released, Value > .5f ? 1. : 0.)); }
+            return;
+        }
         if (Action == TEXT("CameraOverride"))
         {
             // 此入口只操作 PIE 本地 Hero，复用实际 GA 使用的模式所有权接口。

@@ -48,6 +48,8 @@ bool UHodgePawnData::ValidateAutoRespawn(FString& OutError) const
 EDataValidationResult UHodgePawnData::IsDataValid(FDataValidationContext& Context) const
 {
 	const auto Parent = Super::IsDataValid(Context);
+	if (!FMath::IsFinite(InteractionDistance) || InteractionDistance <= 0.0f)
+	{ Context.AddError(FText::FromString(TEXT("交互距离必须为有限正数"))); return EDataValidationResult::Invalid; }
 	FString RespawnError;
 	if (!ValidateAutoRespawn(RespawnError))
 	{

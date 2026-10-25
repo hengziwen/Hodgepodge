@@ -45,6 +45,9 @@ public:
 	UFUNCTION(Client, Reliable) void ClientInventoryResult(FGuid RequestId, const FHodgeInventoryOperation& Result);
 	UFUNCTION(BlueprintPure, Category="Hodge|Inventory") FHodgeInventoryOperation GetLastInventoryResult() const { return LastInventoryResult; }
 	UFUNCTION(BlueprintPure, Category="Hodge|Inventory") FGuid GetLastInventoryRequestId() const { return LastInventoryRequestId; }
+	/** Controller 持有无 Tick 的交互请求组件，Pawn 更换后仍复核当前 Avatar。 */
+	UFUNCTION(BlueprintPure, Category="Hodge|Interaction")
+	class UHodgeInteractionComponentBase* GetInteractionComponent() const { return InteractionComponent; }
 	// 构造函数，允许通过 FObjectInitializer 初始化默认子对象。
 	/** 构造玩家控制器并初始化其默认状态。
 	 * @param ObjectInitializer UE构造对象时传入的初始化器。
@@ -262,6 +265,10 @@ public:
 	bool GetIsAutoRunning() const;
 
 private:
+	/** 默认复制组件只在拥有 Controller 的连接收发交互请求。 */
+	UPROPERTY(VisibleAnywhere, Category="Hodge|Interaction")
+	TObjectPtr<class UHodgeInteractionComponentBase> InteractionComponent;
+
 	/** 门面通过原生 RPC 包装发送，反射调用不能误入本地实现。 */
 	UFUNCTION(Server, Reliable) void ServerRequestInventoryEquip(FGuid ItemId, FGuid RequestId);
 	UFUNCTION(Server, Reliable) void ServerRequestInventoryUnequip(FGuid RequestId);

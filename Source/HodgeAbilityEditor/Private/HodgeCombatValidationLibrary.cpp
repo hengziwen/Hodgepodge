@@ -558,7 +558,9 @@ AActor* UHodgeCombatValidationLibrary::SpawnHitReactionValidationActor(UObject* 
 	const bool bFixtureEnemy = ActorClass->IsChildOf(AHodgeEnemyCharacter::StaticClass()) &&
 		(ActorClass->GetPathName().StartsWith(TEXT("/Game/CodexText/HitReactionValidation/")) ||
 		 ActorClass->GetPathName().StartsWith(TEXT("/Game/Main/Character/Enemies/Guardian/Validation/")));
-	if (!bFixtureEnemy && ActorClass != AStaticMeshActor::StaticClass()) { return nullptr; }
+	// 交互回归仅允许这个原生隔离目标，不扩展为任意运行时生成入口。
+	const bool bInteractionFixture = ActorClass->GetPathName() == TEXT("/Script/Hodgepodge.HodgeInteractionTestTarget");
+	if (!bFixtureEnemy && !bInteractionFixture && ActorClass != AStaticMeshActor::StaticClass()) { return nullptr; }
 	FActorSpawnParameters Parameters;
 	Parameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	AActor* Actor = World->SpawnActor<AActor>(ActorClass, Location, FRotator::ZeroRotator, Parameters);

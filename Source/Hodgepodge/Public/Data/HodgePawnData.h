@@ -120,6 +120,9 @@ public:
 	// 玩家控制 Pawn 使用的输入配置，用于建立 InputAction 与项目输入逻辑之间的绑定关系。
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Hodge|Input")
 	TObjectPtr<UHodgeInputConfig> InputConfig;
+	/** 玩家交互查询与服务器复核共用的最大距离，单位厘米。 */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Interaction", meta=(ClampMin="0.001", Units="cm"))
+	float InteractionDistance = 250.0f;
 
 	// Default camera mode used by player controlled pawns.
 	// 玩家控制 Pawn 默认使用的相机模式。

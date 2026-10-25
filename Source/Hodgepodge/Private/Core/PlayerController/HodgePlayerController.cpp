@@ -8,6 +8,7 @@
 #include "Core/PlayerController/HodgePlayerController.h"
 #include "Inventory/HodgeEquipmentSelectionComponent.h"
 #include "Component/HodgeLockOnComponent.h"
+#include "Component/HodgeInteractionComponentBase.h"
 #include "UI/IndicatorSystem/HodgeIndicatorManagerComponent.h"
 #include "Feedback/NumberPops/HodgeNumberPopComponent_NiagaraText.h"
 #include "TimerManager.h"
@@ -150,6 +151,8 @@ AHodgePlayerController::AHodgePlayerController(const FObjectInitializer& ObjectI
 	PlayerCameraManagerClass = AHodgePlayerCameraManager::StaticClass();
 	IndicatorManager = CreateDefaultSubobject<UHodgeIndicatorManagerComponent>(TEXT("IndicatorManager"));
 	NumberPopComponent = CreateDefaultSubobject<UHodgeNumberPopComponent_NiagaraText>(TEXT("NumberPopComponent"));
+	// 交互组件随 Controller 创建；输入查询和权威执行不依赖 Pawn 默认子对象。
+	InteractionComponent = CreateDefaultSubobject<UHodgeInteractionComponentBase>(TEXT("InteractionComponent"));
 
 	// 如果启用了 CheatManager，则可以在这里指定项目自定义 CheatManager。
 	// #if USING_CHEAT_MANAGER
