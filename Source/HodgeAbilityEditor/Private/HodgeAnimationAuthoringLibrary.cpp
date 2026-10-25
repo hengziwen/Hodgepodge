@@ -1513,8 +1513,11 @@ bool UHodgeAnimationAuthoringLibrary::ConfigureEnemyAnimationAsset(UAnimationAss
 bool UHodgeAnimationAuthoringLibrary::ConfigureEnemyNavigationBounds(ANavMeshBoundsVolume* Volume, FVector Size)
 {
 	if (!Volume || !Volume->GetWorld() || Volume->GetWorld()->WorldType != EWorldType::Editor ||
-		!Volume->GetOutermost()->GetName().StartsWith(TEXT("/Game/Main/Maps/L_EnemyAIValidation")) ||
 		Size.ContainsNaN() || Size.GetMin() <= 0.f) { return false; }
+	// 只为已有敌人验证图与本次独立刷怪示例制作导航，不开放其他关卡写入。
+	const FString Package = Volume->GetOutermost()->GetName();
+	if (!Package.StartsWith(TEXT("/Game/Main/Maps/L_EnemyAIValidation")) &&
+		!Package.StartsWith(TEXT("/Game/Main/Maps/L_EncounterValidation"))) { return false; }
 	Volume->Modify();
 	// 先检查对象与上下文，避免在依赖失效后继续处理。
 	if (!Volume->Brush) { Volume->Brush = NewObject<UModel>(Volume, NAME_None, RF_Transactional); Volume->Brush->Initialize(nullptr, true); }
