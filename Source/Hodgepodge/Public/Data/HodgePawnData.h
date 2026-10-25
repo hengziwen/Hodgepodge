@@ -80,6 +80,20 @@ public:
 	// 目标削韧与位移规则独立于动画资源配置，默认关闭兼容旧目标。
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Combat")
 	FHodgePoiseSettings Poise;
+	/** 只为明确启用的玩家 Pawn 调度自动重生；普通敌人与旧资产默认关闭。 */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Respawn")
+	bool bEnableAutoRespawn = false;
+	/** 死亡完成并解除旧 Avatar 后额外等待的世界时间，单位秒。 */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Respawn", meta=(EditCondition="bEnableAutoRespawn", ClampMin="0"))
+	float AutoRespawnDelay = 0.f;
+	/** 包含首次生成在内的最大尝试次数。 */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Respawn", meta=(EditCondition="bEnableAutoRespawn", ClampMin="1"))
+	int32 AutoRespawnMaxAttempts = 3;
+	/** 生成失败后的重试间隔，单位秒。 */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Respawn", meta=(EditCondition="bEnableAutoRespawn", ClampMin="0.001"))
+	float AutoRespawnRetryInterval = .5f;
+	/** Runtime 与编辑器共用校验；关闭时保持旧资产兼容。 */
+	bool ValidateAutoRespawn(FString& OutError) const;
 	// Dash/Sprint参数配置的数据或对象引用。
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hodge|Movement")
 	TObjectPtr<UHodgeSprintAbilityProfile> SprintAbilityProfile;

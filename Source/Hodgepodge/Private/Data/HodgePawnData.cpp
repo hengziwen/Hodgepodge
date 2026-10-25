@@ -28,6 +28,19 @@ UHodgePawnData::UHodgePawnData(const FObjectInitializer& ObjectInitializer)
 	DefaultCameraMode = nullptr;
 }
 
+bool UHodgePawnData::ValidateAutoRespawn(FString& OutError) const
+{
+	// 非法时不能退化成无限下一帧重试。
+	OutError.Reset();
+	if (bEnableAutoRespawn && (!FMath::IsFinite(AutoRespawnDelay) || AutoRespawnDelay < 0.f ||
+		AutoRespawnMaxAttempts < 1 || !FMath::IsFinite(AutoRespawnRetryInterval) || AutoRespawnRetryInterval <= 0.f))
+	{
+		OutError = TEXT("AutoRespawn requires finite delay >= 0, attempts >= 1 and finite retry interval > 0.");
+		return false;
+	}
+	return true;
+}
+
 // 编辑器资产校验
 
 #if WITH_EDITOR
@@ -35,6 +48,12 @@ UHodgePawnData::UHodgePawnData(const FObjectInitializer& ObjectInitializer)
 EDataValidationResult UHodgePawnData::IsDataValid(FDataValidationContext& Context) const
 {
 	const auto Parent = Super::IsDataValid(Context);
+	FString RespawnError;
+	if (!ValidateAutoRespawn(RespawnError))
+	{
+		Context.AddError(FText::FromString(RespawnError));
+		return EDataValidationResult::Invalid;
+	}
 	if (bUseInventory)
 	{
 		bool bValid = InventoryMaxEntries > 0;

@@ -4,6 +4,10 @@
 // HodgeGameModeBase 的实现文件。
 #include "Core/GameMode/HodgeGameModeBase.h"
 #include "AbilitySystem/Stats/HodgeAttributeCoordinator.h"
+#include "AbilitySystem/HodgeAbilitySystemComponent.h"
+#include "Data/HodgePawnData.h"
+#include "Misc/ScopeExit.h"
+#include "Engine/World.h"
 
 #include "GameMapsSettings.h"
 #include "Character/HodgeCharacterBase.h"
@@ -622,6 +626,8 @@ void AHodgeGameModeBase::FailedToRestartPlayer(AController* NewPlayer)
 {
 	// 先执行父类的重生失败处理。
 	Super::FailedToRestartPlayer(NewPlayer);
+	// 自动重生由持久 GA 有界调度；父类仍负责失败后的 Controller 状态。
+	if (AutoRespawnAttempts.Contains(NewPlayer)) { return; }
 
 	// 重生失败后，如果当前仍然存在有效 PawnClass，则尝试在下一帧重新生成。
 	if (UClass* PawnClass = GetDefaultPawnClassForController(NewPlayer))
@@ -655,6 +661,32 @@ void AHodgeGameModeBase::FailedToRestartPlayer(AController* NewPlayer)
 		UE_LOG(LogTemp, Verbose, TEXT("FailedToRestartPlayer(%s) but there's no pawn class so giving up."),
 		       *GetPathNameSafe(NewPlayer));
 	}
+}
+
+bool AHodgeGameModeBase::TryRestartPlayerForAutoRespawn(APlayerController* Player)
+{
+	auto* PS = IsValid(Player) ? Player->GetPlayerState<AHodgePlayerState>() : nullptr;
+	auto* ASC = PS ? PS->GetHodgeAbilitySystemComponent() : nullptr;
+	const auto* Data = PS ? PS->GetPawnData<UHodgePawnData>() : nullptr;
+	FString Error;
+	if (!HasAuthority() || !GetWorld() || GetWorld()->bIsTearingDown || GetWorld()->GetAuthGameMode() != this ||
+		!IsValid(Player) || Player->GetWorld() != GetWorld() || !IsValid(PS) || PS->GetOwner() != Player ||
+		!ASC || ASC->GetOwnerActor() != PS || Player->GetPawn() || ASC->GetAvatarActor() ||
+		!GameState || !IsExperienceLoaded() || !Data || !Data->bEnableAutoRespawn || !Data->ValidateAutoRespawn(Error) ||
+		!PlayerCanRestart(Player) || AutoRespawnAttempts.Contains(Player))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AutoRespawn attempt rejected Controller=%s Data=%s Error=%s"),
+			*GetNameSafe(Player), *GetPathNameSafe(Data), *Error);
+		return false;
+	}
+	// 沿用 Lyra 的 Controller Reset + ServerRestart 路径，旧 Pawn 已由前置条件排除。
+	const TWeakObjectPtr<AController> AttemptPlayer(Player);
+	AutoRespawnAttempts.Add(AttemptPlayer);
+	ON_SCOPE_EXIT { AutoRespawnAttempts.Remove(AttemptPlayer); };
+	Player->Reset();
+	Player->ServerRestartPlayer_Implementation();
+	const APawn* Pawn = IsValid(Player) ? Player->GetPawn() : nullptr;
+	return IsValid(Pawn) && Pawn->GetController() == Player && Pawn->GetPlayerState() == PS;
 }
 
 /** 按游戏模式的既有生成流程重新建立玩家角色。 */

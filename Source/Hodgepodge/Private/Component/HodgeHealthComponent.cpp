@@ -121,6 +121,11 @@ void UHodgeHealthComponent::InitializeWithAbilitySystem(UHodgeAbilitySystemCompo
 	}
 
 	// Register to listen for attribute changes.
+	// Lyra 在绑定时清死亡标签；这里只清当前新身体的客户端残留，生命值仍由权威协调器管理。
+	if (!Owner->HasAuthority() && AbilitySystemComponent->GetAvatarActor() == Owner && DeathState == EHodgeDeathState::NotDead)
+	{
+		ClearGameplayTags();
+	}
 	// 监听 HealthSet 的 Health 变化事件。
 	HealthSet->OnHealthChanged.AddUObject(this, &ThisClass::HandleHealthChanged);
 
@@ -214,8 +219,8 @@ void UHodgeHealthComponent::HandleDamageAccepted(AActor* DamageInstigator, AActo
 // 清除 HealthComponent 维护的死亡相关 GameplayTag。
 void UHodgeHealthComponent::ClearGameplayTags()
 {
-	// 只有已经绑定 ASC 时才能操作 LooseGameplayTag。
-	if (AbilitySystemComponent)
+	// 旧身体不能清除已经交给新 Avatar 的共享 ASC 标签。
+	if (AbilitySystemComponent && AbilitySystemComponent->GetAvatarActor() == GetOwner())
 	{
 		// 清除“正在死亡”状态。
 		AbilitySystemComponent->SetLooseGameplayTagCount(HodgeGameplayTags::Status_Death_Dying, 0);
@@ -284,7 +289,7 @@ void UHodgeHealthComponent::HandleOutOfHealth(AActor* DamageInstigator, AActor* 
 {
 #if WITH_SERVER_CODE
 	// 死亡 GameplayEvent 需要有效 ASC 和造成此次死亡的 GameplayEffectSpec。
-	if (AbilitySystemComponent && DamageEffectSpec)
+	if (AbilitySystemComponent && AbilitySystemComponent->GetAvatarActor() == GetOwner() && DamageEffectSpec)
 	{
 		// Send the "GameplayEvent.Death" gameplay event through the owner's ability system.  This can be used to trigger a death gameplay ability.
 		// 通过 ASC 发送 GameplayEvent.Death，可由监听该 EventTag 的死亡 GameplayAbility 响应。
@@ -435,7 +440,7 @@ void UHodgeHealthComponent::StartDeath()
 	// 将死亡状态推进到 DeathStarted。
 	DeathState = EHodgeDeathState::DeathStarted;
 	// 死亡只由服务器清空当前能量，冷却和PlayerState资源归属保持不变。
-	if (GetOwner()->HasAuthority() && AbilitySystemComponent)
+	if (GetOwner()->HasAuthority() && AbilitySystemComponent && AbilitySystemComponent->GetAvatarActor() == GetOwner())
 	{
 		if (const auto* Resource=AbilitySystemComponent->GetSet<UHodgeResonanceSet>(); Resource && Resource->IsResourceReady())
 		{
@@ -444,8 +449,8 @@ void UHodgeHealthComponent::StartDeath()
 		}
 	}
 
-	// ASC 有效时同步 GAS 层的“正在死亡”状态。
-	if (AbilitySystemComponent)
+	// 迟到的旧 Pawn 死亡只推进自身表现，不能污染新 Avatar 的共享 ASC。
+	if (AbilitySystemComponent && AbilitySystemComponent->GetAvatarActor() == GetOwner())
 	{
 		// 添加 Status.Death.Dying LooseGameplayTag。
 		AbilitySystemComponent->SetLooseGameplayTagCount(HodgeGameplayTags::Status_Death_Dying, 1);
@@ -476,8 +481,8 @@ void UHodgeHealthComponent::FinishDeath()
 	// 将死亡状态推进到 DeathFinished。
 	DeathState = EHodgeDeathState::DeathFinished;
 
-	// ASC 有效时同步 GAS 层的“已经死亡”状态。
-	if (AbilitySystemComponent)
+	// 共享 ASC 只能由当前 Avatar 的死亡阶段写入。
+	if (AbilitySystemComponent && AbilitySystemComponent->GetAvatarActor() == GetOwner())
 	{
 		// 添加 Status.Death.Dead LooseGameplayTag。
 		AbilitySystemComponent->SetLooseGameplayTagCount(HodgeGameplayTags::Status_Death_Dead, 1);
